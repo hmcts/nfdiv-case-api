@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.bsp.common.config.BulkScanEndpoints;
-import uk.gov.hmcts.reform.bsp.common.error.UnsupportedFormTypeException;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.ExceptionRecord;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.CaseCreationDetails;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.SuccessfulTransformationResponse;
@@ -19,7 +18,6 @@ import uk.gov.hmcts.reform.bsp.common.model.transformation.output.SuccessfulTran
 import java.util.Map;
 import javax.validation.Valid;
 
-import static java.lang.String.format;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
@@ -52,24 +50,19 @@ public class BulkScanController {
 
         ResponseEntity<SuccessfulTransformationResponse> controllerResponse;
 
-        try {
-            Map<String, Object> transformedCaseData = bulkScanService.transformBulkScanForm(exceptionRecord);
+        Map<String, Object> transformedCaseData = bulkScanService.transformBulkScanForm(exceptionRecord);
 
-            SuccessfulTransformationResponse callbackResponse = SuccessfulTransformationResponse.builder()
-                .caseCreationDetails(
-                    new CaseCreationDetails(
-                        CASE_TYPE,
-                        CREATE_PAPER_CASE,
-                        transformedCaseData
-                    )
+        SuccessfulTransformationResponse callbackResponse = SuccessfulTransformationResponse.builder()
+            .caseCreationDetails(
+                new CaseCreationDetails(
+                    CASE_TYPE,
+                    CREATE_PAPER_CASE,
+                    transformedCaseData
                 )
-                .build();
+            )
+            .build();
 
-            controllerResponse = ok(callbackResponse);
-        } catch (UnsupportedFormTypeException exception) {
-            log.error(format("Error transforming Exception Record. Exception record ID is: %s", exceptionRecordId), exception);
-            controllerResponse = ResponseEntity.unprocessableEntity().build();
-        }
+        controllerResponse = ok(callbackResponse);
 
         return controllerResponse;
     }

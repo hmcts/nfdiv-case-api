@@ -72,11 +72,6 @@ public class Solicitor {
     )
     private Set<Prayer> agreeToReceiveEmailsCheckbox;
 
-    @CCD(
-        label = "Solicitor’s firm name"
-    )
-    private String firmName;
-
     @Getter
     @AllArgsConstructor
     public enum Prayer implements HasLabel {

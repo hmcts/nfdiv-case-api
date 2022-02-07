@@ -2,12 +2,14 @@ package uk.gov.hmcts.divorce.endpoint;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationFor;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
@@ -17,12 +19,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
+import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 import uk.gov.hmcts.reform.bsp.common.service.transformation.BulkScanFormTransformer;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -32,8 +37,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.apache.commons.collections4.ListUtils.union;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.join;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -53,8 +60,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_DOMICILED;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION;
+import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 
 @Component
+@Slf4j
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveMethodLength", "PMD.NcssCount", "PMD.PreserveStackTrace"})
 public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
     private static final String THE_SOLE_APPLICANT_OR_APPLICANT_1 = "theSoleApplicantOrApplicant1";
@@ -70,6 +80,9 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
     @Autowired
     private ObjectMapper mapper;
 
+    @Autowired
+    private OcrValidator validator;
+
     @Override
     protected Map<String, String> getOcrToCCDMapping() {
         return Collections.emptyMap();
@@ -79,185 +92,222 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
     protected Map<String, Object> runFormSpecificTransformation(List<OcrDataField> ocrDataMapFields) {
         OcrDataFields ocrDataFields = transformOcrMapToObject(ocrDataMapFields);
 
+        OcrValidationResponse ocrValidationResponse = validator.validateOcrData(D8.getName(), ocrDataFields);
+
+        if (!isEmpty(ocrValidationResponse.getErrors())) {
+            throw new InvalidDataException(
+                "Error during D8 transformation",
+                ocrValidationResponse.getWarnings(),
+                ocrValidationResponse.getErrors()
+            );
+        }
         var caseData = CaseData.builder().build();
 
-        // Section 1 – Your application
-        // boolean marriageOrCivilPartnershipCert = toBoolean(ocrDataFields.getMarriageOrCivilPartnershipCertificate());
-        final var marriageDetails = marriageDetails(ocrDataFields.getTranslation());
+        List<String> errors = new ArrayList<>();
 
-        caseData.getApplication().setMarriageDetails(marriageDetails);
-        caseData.setDivorceOrDissolution(getDivorceType(ocrDataFields));
-        caseData.setApplicationType(getApplicationType(ocrDataFields));
+        try {
+            // Section 1 – Your application
+            boolean marriageOrCivilPartnershipCert = toBoolean(ocrDataFields.getMarriageOrCivilPartnershipCertificate());
+            caseData.getApplication().setScreenHasMarriageCert(from(marriageOrCivilPartnershipCert));
+            final var marriageDetails = marriageDetails(ocrDataFields.getTranslation());
 
-        // Section 2 – About you(the sole applicant or applicant 1)
-        final var isApp1SolicitorRepresented = toBoolean(ocrDataFields.getSoleOrApplicant1Solicitor());
-        caseData.setApplicant1(applicant1(ocrDataFields, isApp1SolicitorRepresented));
-        if (isApp1SolicitorRepresented) {
-            caseData.getApplicant1().setSolicitor(solicitor1(ocrDataFields));
+            caseData.getApplication().setMarriageDetails(marriageDetails);
+            caseData.setDivorceOrDissolution(getDivorceType(ocrDataFields, errors));
+            caseData.setApplicationType(getApplicationType(ocrDataFields, errors));
+
+            // Section 2 – About you(the sole applicant or applicant 1)
+            final var isApp1SolicitorRepresented = toBoolean(ocrDataFields.getSoleOrApplicant1Solicitor());
+            caseData.setApplicant1(applicant1(ocrDataFields, isApp1SolicitorRepresented));
+            if (isApp1SolicitorRepresented) {
+                caseData.getApplicant1().setSolicitor(solicitor1(ocrDataFields));
+            }
+
+            // Section 3 – About the respondent or applicant 2
+            final var isApp2SolicitorRepresented = ocrDataFields.getRespondentOrApplicant2SolicitorName() != null;
+            caseData.setApplicant2(applicant2(ocrDataFields, isApp2SolicitorRepresented));
+            if (isApp2SolicitorRepresented) {
+                caseData.getApplicant1().setSolicitor(solicitor2(ocrDataFields));
+            }
+
+            caseData.getPaperFormDetails().setServiceOutsideUK(from(toBoolean(ocrDataFields.getServeOutOfUK())));
+            caseData.getApplicant2().setOffline(from(toBoolean(ocrDataFields.getRespondentServePostOnly())));
+            caseData.getPaperFormDetails().setApplicantWillServeApplication(
+                from(toBoolean(ocrDataFields.getApplicantWillServeApplication()))
+            );
+            caseData.getPaperFormDetails().setRespondentDifferentServiceAddress(
+                from(toBoolean(ocrDataFields.getRespondentDifferentServiceAddress()))
+            );
+
+            // Section 4 – Details of marriage/civil partnership
+            marriageDetails.setMarriedInUk(from(toBoolean(ocrDataFields.getMarriageOutsideOfUK())));
+            marriageDetails.setIssueApplicationWithoutMarriageCertificate(
+                from(toBoolean(ocrDataFields.getMakingAnApplicationWithoutCertificate()))
+            );
+            marriageDetails.setDate(deriveMarriageDate(ocrDataFields, errors));
+            marriageDetails.setApplicant1Name(ocrDataFields.getSoleOrApplicant1FullNameAsOnCert());
+            marriageDetails.setApplicant2Name(ocrDataFields.getRespondentOrApplicant2FullNameAsOnCert());
+            marriageDetails.setCertifyMarriageCertificateIsCorrect(from(toBoolean(ocrDataFields.getDetailsOnCertCorrect())));
+            marriageDetails.setMarriageCertificateIsIncorrectDetails(ocrDataFields.getReasonWhyCertNotCorrect());
+
+            // Section 5 – Why this court can deal with your case (Jurisdiction)
+            caseData.getApplication().getJurisdiction().setConnections(deriveJurisdictionConnections(ocrDataFields, errors));
+
+            // Section 6 – Statement of irretrievable breakdown (the legal reason for your divorce or dissolution)
+            caseData.getApplication().setApplicant1ScreenHasMarriageBroken(
+                from(toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown()))
+            );
+            caseData.getApplication().setApplicant1ScreenHasMarriageBroken(
+                from(toBoolean(ocrDataFields.getApplicant2ConfirmationOfBreakdown()))
+            );
+
+            // Section 7 – Existing or previous court cases
+            caseData.getApplicant1().setLegalProceedings(from(toBoolean(ocrDataFields.getExistingOrPreviousCourtCases())));
+            caseData.getApplicant1().setLegalProceedingsDetails(
+                join(ocrDataFields.getExistingOrPreviousCourtCaseNumbers(), ocrDataFields.getSummaryOfExistingOrPreviousCourtCases())
+            );
+
+            // Section 8 – Dividing your money and property – Orders which are sought
+            caseData.getApplicant1().setFinancialOrder(from(toBoolean(ocrDataFields.getSoleOrApplicant1FinancialOrder())));
+            caseData.getApplicant1().setFinancialOrdersFor(deriveFinancialOrderFor(ocrDataFields.getSoleOrApplicant1FinancialOrderFor()));
+
+            caseData.getApplicant2().setFinancialOrder(from(toBoolean(ocrDataFields.getApplicant2FinancialOrder())));
+            caseData.getApplicant2().setFinancialOrdersFor(deriveFinancialOrderFor(ocrDataFields.getApplicant2FinancialOrderFor()));
+
+            // Section 9 – Summary of what is being applied for (the prayer)
+            final var isMarriageDissolved = toBoolean(ocrDataFields.getPrayerMarriageDissolved());
+            final var isCivilPartnershipDissolved = toBoolean(ocrDataFields.getPrayerCivilPartnershipDissolved());
+            if (SOLE_APPLICATION.equals(caseData.getApplicationType()) && (isMarriageDissolved || isCivilPartnershipDissolved)) {
+                caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(Application.ThePrayer.I_CONFIRM));
+            } else if (JOINT_APPLICATION.equals(caseData.getApplicationType()) && (isMarriageDissolved || isCivilPartnershipDissolved)) {
+                caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(Application.ThePrayer.I_CONFIRM));
+                caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(Application.ThePrayer.I_CONFIRM));
+            } else {
+                errors.add("Error in OCR fields prayerMarriageDissolved and prayerCivilPartnershipDissolved");
+            }
+
+            applicantSummaryFinancialOrderFor(ocrDataFields.getSoleOrApplicant1prayerFinancialOrderFor());
+            applicantSummaryFinancialOrderFor(ocrDataFields.getSoleOrApplicant1prayerFinancialOrderFor());
+
+            caseData.getPaperFormDetails().setSummaryApplicant1FinancialOrdersFor(
+                applicantSummaryFinancialOrderFor(ocrDataFields.getSoleOrApplicant1prayerFinancialOrderFor())
+            );
+            caseData.getPaperFormDetails().setSummaryApplicant2FinancialOrdersFor(
+                applicantSummaryFinancialOrderFor(ocrDataFields.getApplicant2PrayerFinancialOrderFor())
+            );
+
+            // Section 10 – Statement of truth
+            // Applicant 1
+            caseData.getApplication().setApplicant1StatementOfTruth(
+                from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1StatementOfTruth()))
+            );
+            caseData.getApplication().setSolSignStatementOfTruth(
+                from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1LegalRepStatementOfTruth()))
+            );
+            caseData.getPaperFormDetails().setApplicant1SigningSOT(
+                from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1Signing()))
+            );
+            caseData.getPaperFormDetails().setApplicant1LegalRepSigningSOT(
+                from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1OrLegalRepSignature()))
+            );
+            caseData.getApplication().setSolStatementOfReconciliationName(ocrDataFields.getSoleApplicantOrApplicant1OrLegalRepFullName());
+            caseData.getApplication().setSolStatementOfReconciliationFirm(ocrDataFields.getSoleApplicantOrApplicant1LegalRepFirm());
+            caseData.getPaperFormDetails().setApplicant1LegalRepPosition(ocrDataFields.getSoleApplicantOrApplicant1LegalRepPosition());
+
+            caseData.getPaperFormDetails().setApplicant1SOTSignedOn(
+                deriveStatementOfTruthDate(
+                    ocrDataFields.getStatementOfTruthDateDay(),
+                    ocrDataFields.getStatementOfTruthDateMonth(),
+                    ocrDataFields.getStatementOfTruthDateYear(),
+                    errors
+                )
+            );
+
+            // Applicant 2
+            caseData.getApplication().setApplicant2StatementOfTruth(
+                from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1StatementOfTruth()))
+            );
+            caseData.getApplication().setApplicant2SolSignStatementOfTruth(
+                from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1LegalRepStatementOfTruth()))
+            );
+
+            caseData.getPaperFormDetails().setApplicant2SigningSOT(
+                from(toBoolean(ocrDataFields.getApplicant2Signing()))
+            );
+            caseData.getPaperFormDetails().setApplicant2LegalRepSigningSOT(
+                from(toBoolean(ocrDataFields.getApplicant2LegalRepSigning()))
+            );
+
+            caseData.getApplication().setApplicant2SolStatementOfReconciliationName(ocrDataFields.getApplicant2OrLegalRepFullName());
+            caseData.getApplication().setApplicant2SolStatementOfReconciliationFirm(ocrDataFields.getApplicant2LegalRepFirm());
+            caseData.getPaperFormDetails().setApplicant2LegalRepPosition(ocrDataFields.getApplicant2LegalRepPosition());
+
+            caseData.getPaperFormDetails().setApplicant2SOTSignedOn(
+                deriveStatementOfTruthDate(
+                    ocrDataFields.getApplicant2StatementOfTruthDateDay(),
+                    ocrDataFields.getApplicant2StatementOfTruthDateMonth(),
+                    ocrDataFields.getApplicant2StatementOfTruthDateYear(),
+                    errors
+                )
+            );
+
+            // Court fee
+            caseData.getPaperFormDetails().setFeeInPounds(ocrDataFields.getCourtFee());
+            caseData.getPaperFormDetails().setApplicant1NoPaymentIncluded(
+                from(toBoolean(ocrDataFields.getSoleOrApplicant1NoPaymentIncluded()))
+            );
+            caseData.getPaperFormDetails().setApplicant2NoPaymentIncluded(
+                from(toBoolean(ocrDataFields.getApplicant2NoPaymentIncluded()))
+            );
+
+            caseData.getPaperFormDetails().setSoleOrApplicant1PaymentOther(
+                from(toBoolean(ocrDataFields.getSoleOrApplicant1PaymentOther()))
+            );
+            caseData.getPaperFormDetails().setApplicant2PaymentOther(
+                from(toBoolean(ocrDataFields.getApplicant2PaymentOther()))
+            );
+
+            caseData.getApplication().setApplicant1HelpWithFees(
+                HelpWithFees
+                    .builder()
+                    .appliedForFees(from(toBoolean(ocrDataFields.getSoleOrApplicant1HWFConfirmation())))
+                    .referenceNumber(ocrDataFields.getSoleOrApplicant1HWFNo())
+                    .needHelp(from(toBoolean(ocrDataFields.getSoleOrApplicant1HWFApp())))
+                    .build()
+            );
+            caseData.getApplication().setApplicant2HelpWithFees(
+                HelpWithFees
+                    .builder()
+                    .appliedForFees(from(toBoolean(ocrDataFields.getApplicant2HWFConfirmation())))
+                    .referenceNumber(ocrDataFields.getApplicant2HWFConfirmationNo())
+                    .needHelp(from(toBoolean(ocrDataFields.getApplicant2HWFApp())))
+                    .build()
+            );
+
+            caseData.getPaperFormDetails().setDebitCreditCardPayment(from(toBoolean(ocrDataFields.getDebitCreditCardPayment())));
+            caseData.getPaperFormDetails().setDebitCreditCardPaymentPhone(from(toBoolean(ocrDataFields.getDebitCreditCardPaymentPhone())));
+            caseData.getPaperFormDetails().setHowToPayEmail(from(toBoolean(ocrDataFields.getHowToPayEmail())));
+            caseData.getPaperFormDetails().setPaymentDetailEmail(ocrDataFields.getPaymentDetailEmail());
+            caseData.getPaperFormDetails().setChequeOrPostalOrderPayment(from(toBoolean(ocrDataFields.getChequeOrPostalOrderPayment())));
+
+            // Set label content
+            caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
+            caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
+
+            // Set gender
+            caseData.deriveAndPopulateApplicantGenderDetails();
+
+            return mapper.convertValue(caseData, new TypeReference<>() {
+            });
+        } catch (Exception exception) {
+            //this will result in bulk scan service to create exception record
+            log.error("Exception occurred while transforming D8 form with error {}", exception.getMessage());
+
+            throw new InvalidDataException(
+                "Exception occurred while transforming D8 form",
+                ocrValidationResponse.getWarnings(),
+                union(errors, ocrValidationResponse.getErrors())
+            );
         }
-
-        // Section 3 – About the respondent or applicant 2
-        final var isApp2SolicitorRepresented = ocrDataFields.getRespondentOrApplicant2SolicitorName() != null;
-        caseData.setApplicant2(applicant2(ocrDataFields, isApp2SolicitorRepresented));
-        if (isApp2SolicitorRepresented) {
-            caseData.getApplicant1().setSolicitor(solicitor2(ocrDataFields));
-        }
-
-        caseData.getPaperFormDetails().setServiceOutsideUK(from(toBoolean(ocrDataFields.getServeOutOfUK())));
-        caseData.getPaperFormDetails().setRespondentServePostOnly(from(toBoolean(ocrDataFields.getRespondentServePostOnly())));
-        caseData.getPaperFormDetails().setApplicantWillServeApplication(from(toBoolean(ocrDataFields.getApplicantWillServeApplication())));
-        caseData.getPaperFormDetails().setRespondentDifferentServiceAddress(
-            from(toBoolean(ocrDataFields.getRespondentDifferentServiceAddress()))
-        );
-
-        // Section 4 – Details of marriage/civil partnership
-        marriageDetails.setMarriedInUk(from(toBoolean(ocrDataFields.getMarriageOutsideOfUK())));
-        marriageDetails.setIssueApplicationWithoutMarriageCertificate(
-            from(toBoolean(ocrDataFields.getMakingAnApplicationWithoutCertificate()))
-        );
-        marriageDetails.setDate(deriveMarriageDate(ocrDataFields));
-        marriageDetails.setApplicant1Name(ocrDataFields.getSoleOrApplicant1FullNameAsOnCert());
-        marriageDetails.setApplicant2Name(ocrDataFields.getRespondentOrApplicant2FullNameAsOnCert());
-        marriageDetails.setCertifyMarriageCertificateIsCorrect(from(toBoolean(ocrDataFields.getDetailsOnCertCorrect())));
-        marriageDetails.setMarriageCertificateIsIncorrectDetails(ocrDataFields.getReasonWhyCertNotCorrect());
-
-        // Section 5 – Why this court can deal with your case (Jurisdiction)
-        caseData.getApplication().getJurisdiction().setConnections(deriveJurisdictionConnections(ocrDataFields));
-
-        // Section 6 – Statement of irretrievable breakdown (the legal reason for your divorce or dissolution)
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(
-            from(toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown()))
-        );
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(
-            from(toBoolean(ocrDataFields.getApplicant2ConfirmationOfBreakdown()))
-        );
-
-        // Section 7 – Existing or previous court cases
-        caseData.getApplicant1().setLegalProceedings(from(toBoolean(ocrDataFields.getExistingOrPreviousCourtCases())));
-        caseData.getApplicant1().setLegalProceedingsDetails(
-            join(ocrDataFields.getExistingOrPreviousCourtCaseNumbers(), ocrDataFields.getSummaryOfExistingOrPreviousCourtCases())
-        );
-
-        // Section 8 – Dividing your money and property – Orders which are sought
-        caseData.getApplicant1().setFinancialOrder(from(toBoolean(ocrDataFields.getSoleOrApplicant1FinancialOrder())));
-        caseData.getApplicant1().setFinancialOrdersFor(deriveFinancialOrderFor(ocrDataFields.getSoleOrApplicant1FinancialOrderFor()));
-
-        caseData.getApplicant2().setFinancialOrder(from(toBoolean(ocrDataFields.getApplicant2FinancialOrder())));
-        caseData.getApplicant2().setFinancialOrdersFor(deriveFinancialOrderFor(ocrDataFields.getApplicant2FinancialOrderFor()));
-
-        // Section 9 – Summary of what is being applied for (the prayer)
-        caseData.getPaperFormDetails().setSummaryApplicationFor(applicationFor(ocrDataFields));
-
-        applicantSummaryFinancialOrderFor(ocrDataFields.getSoleOrApplicant1prayerFinancialOrderFor());
-        applicantSummaryFinancialOrderFor(ocrDataFields.getSoleOrApplicant1prayerFinancialOrderFor());
-
-        caseData.getPaperFormDetails().setSummaryApplicant1FinancialOrdersFor(
-            applicantSummaryFinancialOrderFor(ocrDataFields.getSoleOrApplicant1prayerFinancialOrderFor())
-        );
-        caseData.getPaperFormDetails().setSummaryApplicant2FinancialOrdersFor(
-            applicantSummaryFinancialOrderFor(ocrDataFields.getApplicant2PrayerFinancialOrderFor())
-        );
-
-        // Section 10 – Statement of truth
-        // Applicant 1
-        caseData.getApplication().setApplicant1StatementOfTruth(
-            from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1StatementOfTruth()))
-        );
-        caseData.getApplication().setSolSignStatementOfTruth(
-            from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1LegalRepStatementOfTruth()))
-        );
-        caseData.getPaperFormDetails().setApplicant1SigningSOT(
-            from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1Signing()))
-        );
-        caseData.getPaperFormDetails().setApplicant1LegalRepSigningSOT(
-            from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1OrLegalRepSignature()))
-        );
-        caseData.getApplication().setSolStatementOfReconciliationName(ocrDataFields.getSoleApplicantOrApplicant1OrLegalRepFullName());
-        caseData.getApplication().setSolStatementOfReconciliationFirm(ocrDataFields.getSoleApplicantOrApplicant1LegalRepFirm());
-        caseData.getPaperFormDetails().setApplicant1LegalRepPosition(ocrDataFields.getSoleApplicantOrApplicant1LegalRepPosition());
-
-        caseData.getPaperFormDetails().setApplicant1SOTSignedOn(
-            deriveStatementOfTruthDate(
-                ocrDataFields.getStatementOfTruthDateDay(),
-                ocrDataFields.getStatementOfTruthDateMonth(),
-                ocrDataFields.getStatementOfTruthDateYear()
-            )
-        );
-
-        // Applicant 2
-        caseData.getApplication().setApplicant2StatementOfTruth(
-            from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1StatementOfTruth()))
-        );
-        caseData.getApplication().setApplicant2SolSignStatementOfTruth(
-            from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1LegalRepStatementOfTruth()))
-        );
-
-        caseData.getPaperFormDetails().setApplicant2SigningSOT(
-            from(toBoolean(ocrDataFields.getApplicant2Signing()))
-        );
-        caseData.getPaperFormDetails().setApplicant2LegalRepSigningSOT(
-            from(toBoolean(ocrDataFields.getApplicant2LegalRepSigning()))
-        );
-
-        caseData.getApplication().setApplicant2SolStatementOfReconciliationName(ocrDataFields.getApplicant2OrLegalRepFullName());
-        caseData.getApplication().setApplicant2SolStatementOfReconciliationFirm(ocrDataFields.getApplicant2LegalRepFirm());
-        caseData.getPaperFormDetails().setApplicant2LegalRepPosition(ocrDataFields.getApplicant2LegalRepPosition());
-
-        caseData.getPaperFormDetails().setApplicant2SOTSignedOn(
-            deriveStatementOfTruthDate(
-                ocrDataFields.getApplicant2StatementOfTruthDateDay(),
-                ocrDataFields.getApplicant2StatementOfTruthDateMonth(),
-                ocrDataFields.getApplicant2StatementOfTruthDateYear()
-            )
-        );
-
-        // Court fee
-        caseData.getPaperFormDetails().setFeeInPounds(ocrDataFields.getCourtFee());
-        caseData.getPaperFormDetails().setApplicant1NoPaymentIncluded(
-            from(toBoolean(ocrDataFields.getSoleOrApplicant1NoPaymentIncluded()))
-        );
-        caseData.getPaperFormDetails().setApplicant2NoPaymentIncluded(
-            from(toBoolean(ocrDataFields.getApplicant2NoPaymentIncluded()))
-        );
-
-        caseData.getPaperFormDetails().setSoleOrApplicant1PaymentOther(from(toBoolean(ocrDataFields.getSoleOrApplicant1PaymentOther())));
-        caseData.getPaperFormDetails().setApplicant2PaymentOther(from(toBoolean(ocrDataFields.getApplicant2PaymentOther())));
-
-        caseData.getApplication().setApplicant1HelpWithFees(
-            HelpWithFees
-                .builder()
-                .appliedForFees(from(toBoolean(ocrDataFields.getSoleOrApplicant1HWFConfirmation())))
-                .referenceNumber(ocrDataFields.getSoleOrApplicant1HWFNo())
-                .needHelp(from(toBoolean(ocrDataFields.getSoleOrApplicant1HWFApp())))
-                .build()
-        );
-        caseData.getApplication().setApplicant2HelpWithFees(
-            HelpWithFees
-                .builder()
-                .appliedForFees(from(toBoolean(ocrDataFields.getApplicant2HWFConfirmation())))
-                .referenceNumber(ocrDataFields.getApplicant2HWFConfirmationNo())
-                .needHelp(from(toBoolean(ocrDataFields.getApplicant2HWFApp())))
-                .build()
-        );
-
-        caseData.getPaperFormDetails().setDebitCreditCardPayment(from(toBoolean(ocrDataFields.getDebitCreditCardPayment())));
-        caseData.getPaperFormDetails().setDebitCreditCardPaymentPhone(from(toBoolean(ocrDataFields.getDebitCreditCardPaymentPhone())));
-        caseData.getPaperFormDetails().setHowToPayEmail(from(toBoolean(ocrDataFields.getHowToPayEmail())));
-        caseData.getPaperFormDetails().setPaymentDetailEmail(ocrDataFields.getPaymentDetailEmail());
-        caseData.getPaperFormDetails().setChequeOrPostalOrderPayment(from(toBoolean(ocrDataFields.getChequeOrPostalOrderPayment())));
-
-        return mapper.convertValue(caseData, new TypeReference<Map<String, Object>>() {
-        });
-    }
-
-    private Set<ApplicationFor> applicationFor(OcrDataFields ocrDataFields) {
-        Set<ApplicationFor> applicationFor = new HashSet<>();
-        if (toBoolean(ocrDataFields.getPrayerMarriageDissolved())) {
-            applicationFor.add(ApplicationFor.MARRIAGE_DISSOLVED);
-        } else if (toBoolean(ocrDataFields.getPrayerCivilPartnershipDissolved())) {
-            applicationFor.add(ApplicationFor.CIVIL_PARTNERSHIP_DISSOLVED);
-        }
-        return applicationFor;
     }
 
     private Set<FinancialOrderFor> applicantSummaryFinancialOrderFor(String applicantPrayerFinancialOrderFor) {
@@ -286,7 +336,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
         return financialOrdersFor;
     }
 
-    private Set<JurisdictionConnections> deriveJurisdictionConnections(OcrDataFields ocrDataFields) {
+    private Set<JurisdictionConnections> deriveJurisdictionConnections(OcrDataFields ocrDataFields, List<String> errors) {
         Set<JurisdictionConnections> connections = new HashSet<>();
         if (toBoolean(ocrDataFields.getJurisdictionReasonsBothPartiesHabitual())) {
             connections.add(APP_1_APP_2_RESIDENT);
@@ -309,7 +359,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                 || RESPONDENT.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsOnePartyDomiciledWho())) {
                 connections.add(APP_2_DOMICILED);
             } else {
-                //add warning
+                errors.add("More than one option selected for only one party domiciled. OCR Field jurisdictionReasonsOnePartyDomiciledWho");
             }
         } else if (toBoolean(ocrDataFields.getJurisdictionReasonsSameSex())) {
             // only for civil partnership
@@ -318,19 +368,20 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
         return connections;
     }
 
-    private LocalDate deriveStatementOfTruthDate(String day, String month, String year) {
+    private LocalDate deriveStatementOfTruthDate(String day, String month, String year, List<String> errors) {
         try {
             int dayParsed = Integer.parseInt(day); // format "18"
             int monthParsed = Integer.parseInt(month); //format "06"
             int yearParsed = Integer.parseInt(year); // format "2022"
             return LocalDate.of(dayParsed, monthParsed, yearParsed);
         } catch (DateTimeException exception) {
-            // log and add validation it as will be corrected manually the caseworker
+            // log and add error it as will be corrected manually the caseworker
+            errors.add("Statement of truth date format is invalid. Expected format is 01/01/2022");
         }
         return null;
     }
 
-    private LocalDate deriveMarriageDate(OcrDataFields ocrDataFields) {
+    private LocalDate deriveMarriageDate(OcrDataFields ocrDataFields, List<String> errors) {
         try {
             String marriageMonth = ocrDataFields.getDateOfMarriageOrCivilPartnershipMonth();
             int dayParsed = Integer.parseInt(ocrDataFields.getDateOfMarriageOrCivilPartnershipDay()); // format "18"
@@ -339,6 +390,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
             return LocalDate.of(dayParsed, monthParsed, yearParsed);
         } catch (DateTimeException exception) {
             // log and add validation it as will be corrected manually the caseworker
+            errors.add("Marriage date format is invalid. Expected format is 01/January/2022");
         }
         return null;
     }
@@ -359,7 +411,8 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                     .addressLine2(ocrDataFields.getRespondentOrApplicant2SecondLineOfAddress())
                     .postTown(ocrDataFields.getRespondentOrApplicant2TownOrCity())
                     .county(ocrDataFields.getRespondentOrApplicant2County())
-                    .country(ocrDataFields.getRespondentOrApplicant2Country())
+                    .country(ocrDataFields.getRespondentOrApplicant2Country())// ste country to UK if not overseas
+
                     .postCode(ocrDataFields.getRespondentOrApplicant2Postcode())
                     .build()
             )
@@ -377,25 +430,31 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
             .build();
     }
 
-    private ApplicationType getApplicationType(OcrDataFields ocrDataFields) {
+    private ApplicationType getApplicationType(OcrDataFields ocrDataFields, List<String> errors) {
         boolean isSole = toBoolean(ocrDataFields.getSoleApplication());
         boolean isJoint = toBoolean(ocrDataFields.getJointApplication());
         if (isJoint && !isSole) {
             return JOINT_APPLICATION;
-        } else {
+        } else if (isSole && !isJoint) {
             return SOLE_APPLICATION;
+        } else {
+            errors.add("Both sole and joint application selected. OCR fields aSoleApplication and aJointApplication");
         }
+        return null;
     }
 
-    private DivorceOrDissolution getDivorceType(OcrDataFields ocrDataFields) {
+    private DivorceOrDissolution getDivorceType(OcrDataFields ocrDataFields, List<String> errors) {
         boolean isApplicationForDivorce = toBoolean(ocrDataFields.getApplicationForDivorce());
         boolean isApplicationForDissolution = toBoolean(ocrDataFields.getApplicationForDissolution());
 
         if (isApplicationForDissolution && !isApplicationForDivorce) {
             return DISSOLUTION;
-        } else {
+        } else if (isApplicationForDivorce && !isApplicationForDissolution) {
             return DIVORCE;
+        } else {
+            errors.add("Both application type selected. OCR fields applicationForDivorce and applicationForDissolution");
         }
+        return null;
     }
 
     private Applicant applicant1(OcrDataFields ocrDataFields, boolean isApp1SolicitorRepresented) {

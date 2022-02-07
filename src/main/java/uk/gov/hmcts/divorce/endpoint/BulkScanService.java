@@ -14,7 +14,6 @@ public class BulkScanService {
     private BulkScanFormTransformerFactory bulkScanFormTransformerFactory;
 
     public Map<String, Object> transformBulkScanForm(ExceptionRecord exceptionRecord) {
-        // TODO: validate exception record for mandatory fields
         BulkScanFormTransformer bulkScanFormTransformer = bulkScanFormTransformerFactory.getTransformer(exceptionRecord.getFormType());
         return bulkScanFormTransformer.transformIntoCaseData(exceptionRecord);
     }

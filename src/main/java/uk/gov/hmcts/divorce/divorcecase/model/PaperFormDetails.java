@@ -17,13 +17,9 @@ import java.util.Set;
 public class PaperFormDetails {
     private YesOrNo serviceOutsideUK;
 
-    private YesOrNo respondentServePostOnly;
-
     private YesOrNo applicantWillServeApplication;
 
     private YesOrNo respondentDifferentServiceAddress;
-
-    private Set<ApplicationFor> summaryApplicationFor;
 
     private Set<FinancialOrderFor> summaryApplicant1FinancialOrdersFor;
 
