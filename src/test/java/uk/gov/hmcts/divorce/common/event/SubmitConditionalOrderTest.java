@@ -10,7 +10,8 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -42,7 +43,10 @@ class SubmitConditionalOrderTest {
     private static final String DUMMY_AUTH_TOKEN = "ASAFSDFASDFASDFASDFASDF";
 
     @Mock
-    private AppliedForConditionalOrderNotification appliedForConditionalOrderNotification;
+    private Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
+
+    @Mock
+    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -107,24 +111,26 @@ class SubmitConditionalOrderTest {
     }
 
     @Test
-    void shouldSetSubmittingUserOnAboutToSubmit() {
-        setupMocks(clock);
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData()).id(1L).build();
-
-        submitConditionalOrder.aboutToSubmit(caseDetails, null);
-
-        verify(appliedForConditionalOrderNotification).setSubmittingUser(true);
-    }
-
-    @Test
-    void shouldSendEmailOnAboutToSubmitIfApplicantIsNotRepresented() {
+    void shouldSendApp1NotificationsOnAboutToSubmit() {
         setupMocks(clock);
         CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
 
         submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher).send(appliedForConditionalOrderNotification, caseData, 1L);
+        verify(notificationDispatcher).send(app1AppliedForConditionalOrderNotification, caseData, 1L);
+    }
+
+    @Test
+    void shouldSendApp2NotificationsOnAboutToSubmit() {
+        setupMocks(clock);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(false);
+        CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+
+        submitConditionalOrder.aboutToSubmit(caseDetails, null);
+
+        verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, 1L);
     }
 
     private CaseData caseData() {
@@ -142,7 +148,6 @@ class SubmitConditionalOrderTest {
             setMockClock(mockClock);
         }
         when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
-        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L))
-            .thenReturn(true);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(true);
     }
 }

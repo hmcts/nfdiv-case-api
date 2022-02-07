@@ -7,7 +7,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -42,7 +43,10 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     public static final String SUBMIT_CONDITIONAL_ORDER = "submit-conditional-order";
 
     @Autowired
-    private AppliedForConditionalOrderNotification appliedForConditionalOrderNotification;
+    private Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
+
+    @Autowired
+    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -91,9 +95,11 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
-        boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId());
-        appliedForConditionalOrderNotification.setSubmittingUser(isApplicant1);
-        notificationDispatcher.send(appliedForConditionalOrderNotification, data, details.getId());
+        if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
+            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, data, details.getId());
+        } else {
+            notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
