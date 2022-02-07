@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant2Represented;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicantTemplateDataProvider;
@@ -12,11 +13,14 @@ import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataPro
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
@@ -26,6 +30,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_FIRM_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP;
@@ -98,6 +106,26 @@ public class DivorceApplicationSoleTemplateContent {
         if (null != applicant1.getLegalProceedings()) {
             templateContent.put(HAS_OTHER_COURT_CASES_APPLICANT_1, applicant1.getLegalProceedings().toBoolean());
             templateContent.put(APPLICANT_1_COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
+        }
+        if (null != application.getApplicant1IsApplicant2Represented()) {
+            boolean applicant1IsApplicant2Represented = application.getApplicant1IsApplicant2Represented() == Applicant2Represented.YES;
+            templateContent.put(APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS, applicant1IsApplicant2Represented);
+            if (applicant1IsApplicant2Represented) {
+                String solicitorName = applicant2.getSolicitor().getName();
+                String solicitorEmail = applicant2.getSolicitor().getEmail();
+                String solicitorFirmName = applicant2.getSolicitor().getFirmName();
+                String solicitorAddress = applicant2.getSolicitor().getAddress();
+                boolean hasEnteredSolicitorDetails =
+                    nonNull(solicitorName)
+                    || nonNull(solicitorEmail)
+                    || nonNull(solicitorFirmName)
+                    || nonNull(solicitorAddress);
+                templateContent.put(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, hasEnteredSolicitorDetails);
+                templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName);
+                templateContent.put(APPLICANT_2_SOLICITOR_EMAIL, solicitorEmail);
+                templateContent.put(APPLICANT_2_SOLICITOR_FIRM_NAME, solicitorFirmName);
+                templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, solicitorAddress);
+            }
         }
 
         templateContent.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
