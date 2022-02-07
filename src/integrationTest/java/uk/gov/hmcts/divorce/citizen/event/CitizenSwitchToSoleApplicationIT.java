@@ -15,11 +15,8 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +25,7 @@ import java.nio.file.Files;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -72,9 +70,6 @@ public class CitizenSwitchToSoleApplicationIT {
     private CcdAccessService ccdAccessService;
 
     @MockBean
-    private IdamService idamService;
-
-    @MockBean
     private WebMvcConfig webMvcConfig;
 
     @BeforeAll
@@ -87,13 +82,7 @@ public class CitizenSwitchToSoleApplicationIT {
         CaseData data = validJointApplicant1CaseData();
         setValidCaseInviteData(data);
 
-        final var userDetails = UserDetails.builder()
-            .email("test@test.com")
-            .id("app1")
-            .build();
-
-        when(idamService.retrieveUser(anyString()))
-            .thenReturn(new User("token", userDetails));
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -124,14 +113,8 @@ public class CitizenSwitchToSoleApplicationIT {
     public void givenValidCaseDataWhenCallbackIsInvokedForApplicant2SwitchToSoleThenCaseIsWithdrawnAndNotificationsSent() throws Exception {
         CaseData data = validApplicant2CaseData();
         setValidCaseInviteData(data);
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(false);
 
-        final var userDetails = UserDetails.builder()
-            .email("test@test.com")
-            .id("app2")
-            .build();
-
-        when(idamService.retrieveUser(anyString()))
-            .thenReturn(new User("token", userDetails));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -164,13 +147,7 @@ public class CitizenSwitchToSoleApplicationIT {
         data.setCaseInvite(new CaseInvite(null, ACCESS_CODE, null));
         setValidCaseInviteData(data);
 
-        final var userDetails = UserDetails.builder()
-            .email("test@test.com")
-            .id("app1")
-            .build();
-
-        when(idamService.retrieveUser(anyString()))
-            .thenReturn(new User("token", userDetails));
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
