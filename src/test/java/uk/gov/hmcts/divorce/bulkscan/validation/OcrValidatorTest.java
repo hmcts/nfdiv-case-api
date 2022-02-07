@@ -12,12 +12,13 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELDS_CANNOT_MATCH;
-import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELD_EMPTY_OR_MISSING;
+import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELD_EMPTY_OR_MISSING_ERROR;
+import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELD_EMPTY_OR_MISSING_WARNING;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.WARNING_NOT_APPLYING_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
+import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.ERRORS;
 import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.SUCCESS;
-import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.WARNINGS;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8OcrDataFields;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateKeyValue;
 
@@ -41,36 +42,36 @@ public class OcrValidatorTest {
     }
 
     @Test
-    void shouldReturnWarningsWhenNoOcrDataPassed() {
+    void shouldReturnErrorsAndWarningsWhenNoOcrDataPassed() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(emptyList())
             .build();
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
-        assertThat(response.getErrors()).hasSize(0);
-        assertThat(response.getWarnings()).hasSize(28);
-        assertThat(response.getStatus()).isEqualTo(WARNINGS);
+        assertThat(response.getErrors()).hasSize(23);
+        assertThat(response.getWarnings()).hasSize(7);
+        assertThat(response.getStatus()).isEqualTo(ERRORS);
     }
 
     @Test
-    void shouldReturnWarningsIfValidateYourApplicationD8ValidationFails() {
+    void shouldReturnErrorsIfValidateYourApplicationD8ValidationFails() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(emptyList())
             .build();
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicationForDivorce"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "aSoleApplication"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "marriageOrCivilPartnershipCertificate"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "applicationForDivorce"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "aSoleApplication"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "marriageOrCivilPartnershipCertificate"));
     }
 
     @Test
-    void shouldReturnWarningsIfDuplicateValuesPassedToValidateYourApplication() {
+    void shouldReturnErrorsIfDuplicateValuesPassedToValidateYourApplication() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(List.of(
                 populateKeyValue("aSoleApplication", "true"),
@@ -82,44 +83,48 @@ public class OcrValidatorTest {
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
-        assertThat(response.getWarnings())
+        assertThat(response.getErrors())
             .contains(String.format(FIELDS_CANNOT_MATCH, "aSoleApplication", "aJointApplication"));
-        assertThat(response.getWarnings())
+        assertThat(response.getErrors())
             .contains(String.format(FIELDS_CANNOT_MATCH, "marriageOrCivilPartnershipCertificate", "translation"));
     }
 
     @Test
-    void shouldReturnWarningsIfValidateYourApplicationD8SValidationFails() {
+    void shouldReturnErrorsIfValidateYourApplicationD8SValidationFails() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(emptyList())
             .build();
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8S.getName(), request);
 
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "aSoleApplication"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "marriageOrCivilPartnershipCertificate"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "aSoleApplication"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "marriageOrCivilPartnershipCertificate"));
     }
 
     @Test
-    void shouldReturnWarningsIfValidateAboutYouSolicitorValidationFails() {
+    void shouldReturnErrorsAndWarningsIfValidateAboutYouValidationFails() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(List.of(populateKeyValue("soleOrApplicant1Solicitor", "Yes")))
             .build();
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleApplicantOrApplicant1FirstName"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleApplicantOrApplicant1LastName"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleOrApplicant1SolicitorName"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1SolicitorName"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleOrApplicant1SolicitorFirm"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1SolicitorFirm"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1SolicitorBuildingAndStreet"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleOrApplicant1SolicitorBuildingAndStreet"));
     }
 
     @Test
-    void shouldReturnWarningsIfValidateAboutTheRespondentValidationFails() {
+    void shouldReturnErrorsAndWarningsIfValidateAboutTheRespondentValidationFails() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(
                 List.of(
@@ -131,22 +136,26 @@ public class OcrValidatorTest {
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "respondentOrApplicant2FirstName"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "respondentOrApplicant2LastName"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "respondentOrApplicant2WhyMarriedNameChanged"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "respondentOrApplicant2WhyMarriedNameChanged"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "respondentEmailAccess"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "respondentEmailAccess"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "serveOutOfUK"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "serveOutOfUK"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "respondentServePostOnly"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "respondentServePostOnly"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicantWillServeApplication"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicantWillServeApplication"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "respondentDifferentServiceAddress"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "respondentDifferentServiceAddress"));
     }
 
     @Test
-    void shouldReturnWarningsIfValidateDetailsOfUnionValidationFailsNoDate() {
+    void shouldReturnErrorsAndWarningsIfValidateDetailsOfUnionValidationFailsNoDate() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(
                 List.of(
@@ -160,24 +169,24 @@ public class OcrValidatorTest {
 
         assertThat(response.getWarnings())
             .contains("Additional D11 application should be filed with additional fee when applying without certificate");
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "placeOfMarriageOrCivilPartnership"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "dateOfMarriageOrCivilPartnershipDay"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "dateOfMarriageOrCivilPartnershipMonth"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "dateOfMarriageOrCivilPartnershipYear"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1FullNameAsOnCert"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "respondentOrApplicant2FullNameAsOnCert"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "reasonWhyCertNotCorrect"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "placeOfMarriageOrCivilPartnership"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "dateOfMarriageOrCivilPartnershipDay"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "dateOfMarriageOrCivilPartnershipMonth"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "dateOfMarriageOrCivilPartnershipYear"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleOrApplicant1FullNameAsOnCert"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "respondentOrApplicant2FullNameAsOnCert"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "reasonWhyCertNotCorrect"));
     }
 
     @Test
-    void shouldReturnWarningsIfValidateDetailsOfUnionValidationFailsInvalidDate() {
+    void shouldReturnErrorsAndWarningsIfValidateDetailsOfUnionValidationFailsInvalidDate() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(
                 List.of(
@@ -194,27 +203,27 @@ public class OcrValidatorTest {
 
         assertThat(response.getWarnings())
             .contains("Additional D11 application should be filed with additional fee when applying without certificate");
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "placeOfMarriageOrCivilPartnership"));
-        assertThat(response.getWarnings())
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "placeOfMarriageOrCivilPartnership"));
+        assertThat(response.getErrors())
             .contains("dateOfMarriageOrCivilPartnership is not valid");
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1FullNameAsOnCert"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "respondentOrApplicant2FullNameAsOnCert"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "reasonWhyCertNotCorrect"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleOrApplicant1FullNameAsOnCert"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "respondentOrApplicant2FullNameAsOnCert"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "reasonWhyCertNotCorrect"));
     }
 
     @Test
-    void shouldReturnWarningsIfValidateJurisdictionValidationFails() {
+    void shouldReturnErrorsIfValidateJurisdictionValidationFails() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(emptyList())
             .build();
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
-        assertThat(response.getWarnings())
+        assertThat(response.getErrors())
             .contains("Invalid jurisdiction: jurisdiction connection has not been selected");
     }
 
@@ -230,43 +239,43 @@ public class OcrValidatorTest {
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1ConfirmationOfBreakdown"));
-        assertThat(response.getWarnings())
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleOrApplicant1ConfirmationOfBreakdown"));
+        assertThat(response.getErrors())
             .contains("applicant2ConfirmationOfBreakdown should not be populated for sole applications");
     }
 
     @Test
-    void shouldReturnWarningsIfValidateStatementOfIrretrievableBreakdownJointValidationFails() {
+    void shouldReturnErrorsIfValidateStatementOfIrretrievableBreakdownJointValidationFails() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(List.of(populateKeyValue("aJointApplication", "true")))
             .build();
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1ConfirmationOfBreakdown"));
-        assertThat(response.getWarnings())
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleOrApplicant1ConfirmationOfBreakdown"));
+        assertThat(response.getErrors())
             .contains("applicant2ConfirmationOfBreakdown should be populated for joint applications");
 
     }
 
     @Test
-    void shouldReturnWarningsIfValidateExistingCourtCaseValidationFails() {
+    void shouldReturnErrorsIfValidateExistingCourtCaseValidationFails() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(List.of(populateKeyValue("existingOrPreviousCourtCases", "Yes")))
             .build();
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "existingOrPreviousCourtCaseNumbers"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "summaryOfExistingOrPreviousCourtCases"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "existingOrPreviousCourtCaseNumbers"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "summaryOfExistingOrPreviousCourtCases"));
     }
 
     @Test
-    void shouldReturnWarningsIfValidateMoneyPropertyAndPrayerValidationFailsWithFinancialOrder() {
+    void shouldReturnErrorsAndWarningsIfValidateMoneyPropertyAndPrayerValidationFailsWithFinancialOrder() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(
                 List.of(
@@ -277,20 +286,20 @@ public class OcrValidatorTest {
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1FinancialOrderFor"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2FinancialOrderFor"));
-        assertThat(response.getWarnings())
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleOrApplicant1FinancialOrderFor"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "applicant2FinancialOrderFor"));
+        assertThat(response.getErrors())
             .contains("One of prayerMarriageDissolved or prayerCivilPartnershipDissolved must be populated");
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1prayerFinancialOrder"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleOrApplicant1prayerFinancialOrder"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1prayerFinancialOrderFor"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleOrApplicant1prayerFinancialOrderFor"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2PrayerFinancialOrder"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2PrayerFinancialOrder"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2PrayerFinancialOrderFor"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2PrayerFinancialOrderFor"));
     }
 
     @Test
@@ -332,43 +341,43 @@ public class OcrValidatorTest {
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleApplicantOrApplicant1StatementOfTruth"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleApplicantOrApplicant1LegalRepStatementOfTruth"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleApplicantOrApplicant1StatementOfTruth"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleApplicantOrApplicant1OrLegalRepSignature"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleApplicantOrApplicant1LegalRepStatementOfTruth"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleApplicantOrApplicant1Signing"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleApplicantOrApplicant1OrLegalRepSignature"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "legalRepSigning"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleApplicantOrApplicant1Signing"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "statementOfTruthDateDay"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "legalRepSigning"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "statementOfTruthDateMonth"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "statementOfTruthDateDay"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "statementOfTruthDateYear"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "statementOfTruthDateMonth"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleApplicantOrApplicant1OrLegalRepFullName"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "applicant2StatementOfTruth"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "applicant2LegalRepStatementOfTruth"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "statementOfTruthDateYear"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2OrLegalRepSignature"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleApplicantOrApplicant1OrLegalRepFullName"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2Signing"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2StatementOfTruth"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2LegalRepSigning"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2LegalRepStatementOfTruth"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2StatementOfTruthDateDay"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2OrLegalRepSignature"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2StatementOfTruthDateMonth"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2Signing"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2StatementOfTruthDateYear"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2LegalRepSigning"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2StatementOfTruthDateDay"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2StatementOfTruthDateMonth"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2StatementOfTruthDateYear"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicant2OrLegalRepFullName"));
-        assertThat(response.getWarnings())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2OrLegalRepFullName"));
+        assertThat(response.getErrors())
             .contains("soleOrApplicant1HWFNo should be 6 digits long");
     }
 }

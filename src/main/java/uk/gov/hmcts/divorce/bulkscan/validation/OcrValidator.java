@@ -29,7 +29,8 @@ import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.getValidationS
 @Slf4j
 public class OcrValidator {
 
-    public static final String FIELD_EMPTY_OR_MISSING = "Mandatory field '%s' is missing";
+    public static final String FIELD_EMPTY_OR_MISSING_ERROR = "Mandatory field '%s' should not be empty";
+    public static final String FIELD_EMPTY_OR_MISSING_WARNING = "Mandatory field '%s' is missing";
     public static final String WARNING_NOT_APPLYING_FINANCIAL_ORDER = "Field must be empty as not applying for financial order: %s";
     public static final String FIELDS_CANNOT_MATCH = "Fields cannot have the same value: %s, %s";
 
@@ -74,81 +75,93 @@ public class OcrValidator {
             && isEmpty(data.getApplicationForDivorce())
             && isEmpty(data.getApplicationForDissolution())
         ) {
-            warnings.add(String.format(FIELD_EMPTY_OR_MISSING, "applicationForDivorce"));
+            errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "applicationForDivorce"));
         }
         if (isEmpty(data.getSoleApplication()) && isEmpty(data.getJointApplication())) {
-            warnings.add(String.format(FIELD_EMPTY_OR_MISSING, "aSoleApplication"));
+            errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "aSoleApplication"));
         } else if (Objects.equals(data.getSoleApplication(), data.getJointApplication())) {
-            warnings.add(String.format(FIELDS_CANNOT_MATCH, "aSoleApplication", "aJointApplication"));
+            errors.add(String.format(FIELDS_CANNOT_MATCH, "aSoleApplication", "aJointApplication"));
         }
         if (isEmpty(data.getMarriageOrCivilPartnershipCertificate())) {
-            warnings.add(String.format(FIELD_EMPTY_OR_MISSING, "marriageOrCivilPartnershipCertificate"));
+            errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "marriageOrCivilPartnershipCertificate"));
         }
 
         if (Objects.equals(data.getMarriageOrCivilPartnershipCertificate(), data.getTranslation())) {
-            warnings.add(String.format(FIELDS_CANNOT_MATCH, "marriageOrCivilPartnershipCertificate", "translation"));
+            errors.add(String.format(FIELDS_CANNOT_MATCH, "marriageOrCivilPartnershipCertificate", "translation"));
         }
     }
 
     private void validateAboutYou(OcrDataFields data, List<String> warnings, List<String> errors) {
 
-        Map<String, String> validateFields = new HashMap<>();
-        validateFields.put("soleApplicantOrApplicant1FirstName", data.getSoleApplicantOrApplicant1FirstName());
-        validateFields.put("soleApplicantOrApplicant1LastName", data.getSoleApplicantOrApplicant1LastName());
+        Map<String, String> validateWarningFields = new HashMap<>();
+        Map<String, String> validateErrorFields = new HashMap<>();
+
+        validateErrorFields.put("soleApplicantOrApplicant1FirstName", data.getSoleApplicantOrApplicant1FirstName());
+        validateErrorFields.put("soleApplicantOrApplicant1LastName", data.getSoleApplicantOrApplicant1LastName());
 
         if (!isEmpty(data.getSoleOrApplicant1Solicitor())
             && data.getSoleOrApplicant1Solicitor().equalsIgnoreCase("yes")
         ) {
-            validateFields.put("soleOrApplicant1SolicitorName", data.getSoleOrApplicant1SolicitorName());
-            validateFields.put("soleOrApplicant1SolicitorFirm", data.getSoleOrApplicant1SolicitorFirm());
-            validateFields.put("soleOrApplicant1SolicitorBuildingAndStreet", data.getSoleOrApplicant1SolicitorBuildingAndStreet());
+            validateErrorFields.put("soleOrApplicant1SolicitorName", data.getSoleOrApplicant1SolicitorName());
+            validateWarningFields.put("soleOrApplicant1SolicitorFirm", data.getSoleOrApplicant1SolicitorFirm());
+            validateWarningFields.put("soleOrApplicant1SolicitorBuildingAndStreet", data.getSoleOrApplicant1SolicitorBuildingAndStreet());
         }
 
-        validateFields.entrySet().stream()
+        validateWarningFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_WARNING, e.getKey())));
+
+        validateErrorFields.entrySet().stream()
+            .filter(e -> isEmpty(e.getValue()))
+            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
     }
 
     private void validateAboutTheRespondent(OcrDataFields data, List<String> warnings, List<String> errors) {
 
-        Map<String, String> validateFields = new HashMap<>();
-        validateFields.put("respondentOrApplicant2FirstName", data.getRespondentOrApplicant2FirstName());
-        validateFields.put("respondentOrApplicant2LastName", data.getRespondentOrApplicant2LastName());
-        validateFields.put("respondentOrApplicant2MarriedName", data.getRespondentOrApplicant2MarriedName());
+        Map<String, String> validateWarningFields = new HashMap<>();
+        Map<String, String> validateErrorFields = new HashMap<>();
+
+        validateErrorFields.put("respondentOrApplicant2FirstName", data.getRespondentOrApplicant2FirstName());
+        validateErrorFields.put("respondentOrApplicant2LastName", data.getRespondentOrApplicant2LastName());
+        validateErrorFields.put("respondentOrApplicant2MarriedName", data.getRespondentOrApplicant2MarriedName());
 
         if (!isEmpty(data.getRespondentOrApplicant2MarriedName())
             && data.getRespondentOrApplicant2MarriedName().equalsIgnoreCase("yes")
         ) {
-            validateFields.put("respondentOrApplicant2WhyMarriedNameChanged", data.getRespondentOrApplicant2WhyMarriedNameChanged());
+            validateErrorFields.put("respondentOrApplicant2WhyMarriedNameChanged", data.getRespondentOrApplicant2WhyMarriedNameChanged());
         }
 
         if (!isEmpty(data.getRespondentOrApplicant2Email())) {
-            validateFields.put("respondentEmailAccess", data.getRespondentEmailAccess());
+            validateWarningFields.put("respondentEmailAccess", data.getRespondentEmailAccess());
         }
 
         if (!isEmpty(data.getSoleApplication())
             && data.getSoleApplication().equalsIgnoreCase("true")
         ) {
-            validateFields.put("serveOutOfUK", data.getServeOutOfUK());
+            validateWarningFields.put("serveOutOfUK", data.getServeOutOfUK());
 
             if (isEmpty(data.getRespondentServePostOnly()) && isEmpty(data.getApplicantWillServeApplication())) {
-                validateFields.put("respondentServePostOnly", data.getRespondentServePostOnly());
-                validateFields.put("applicantWillServeApplication", data.getApplicantWillServeApplication());
+                validateWarningFields.put("respondentServePostOnly", data.getRespondentServePostOnly());
+                validateWarningFields.put("applicantWillServeApplication", data.getApplicantWillServeApplication());
             }
 
-            validateFields.put("respondentDifferentServiceAddress", data.getRespondentDifferentServiceAddress());
+            validateWarningFields.put("respondentDifferentServiceAddress", data.getRespondentDifferentServiceAddress());
         }
 
-        validateFields.entrySet().stream()
+        validateWarningFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_WARNING, e.getKey())));
+
+        validateErrorFields.entrySet().stream()
+            .filter(e -> isEmpty(e.getValue()))
+            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
     }
 
     private void validateDetailsOfUnion(OcrDataFields data, List<String> warnings, List<String> errors) {
 
-        Map<String, String> validateFields = new HashMap<>();
+        Map<String, String> validateErrorFields = new HashMap<>();
 
-        validateFields.put("marriageOutsideOfUK", data.getMarriageOutsideOfUK());
+        validateErrorFields.put("marriageOutsideOfUK", data.getMarriageOutsideOfUK());
         if (!isEmpty(data.getMakingAnApplicationWithoutCertificate())
             && data.getMakingAnApplicationWithoutCertificate().equalsIgnoreCase("yes")
         ) {
@@ -159,7 +172,7 @@ public class OcrValidator {
             && data.getMarriageOutsideOfUK().equalsIgnoreCase("yes")
             && data.getMakingAnApplicationWithoutCertificate().equalsIgnoreCase("yes")
         ) {
-            validateFields.put("placeOfMarriageOrCivilPartnership", data.getPlaceOfMarriageOrCivilPartnership());
+            validateErrorFields.put("placeOfMarriageOrCivilPartnership", data.getPlaceOfMarriageOrCivilPartnership());
         }
 
         if (!isEmpty(data.getDateOfMarriageOrCivilPartnershipDay())
@@ -178,27 +191,27 @@ public class OcrValidator {
                         .ofPattern("dd/MM/uuuu")
                         .withResolverStyle(ResolverStyle.STRICT));
             } catch (DateTimeParseException e) {
-                warnings.add("dateOfMarriageOrCivilPartnership is not valid");
+                errors.add("dateOfMarriageOrCivilPartnership is not valid");
             }
         } else {
-            validateFields.put("dateOfMarriageOrCivilPartnershipDay", data.getDateOfMarriageOrCivilPartnershipDay());
-            validateFields.put("dateOfMarriageOrCivilPartnershipMonth", data.getDateOfMarriageOrCivilPartnershipMonth());
-            validateFields.put("dateOfMarriageOrCivilPartnershipYear", data.getDateOfMarriageOrCivilPartnershipYear());
+            validateErrorFields.put("dateOfMarriageOrCivilPartnershipDay", data.getDateOfMarriageOrCivilPartnershipDay());
+            validateErrorFields.put("dateOfMarriageOrCivilPartnershipMonth", data.getDateOfMarriageOrCivilPartnershipMonth());
+            validateErrorFields.put("dateOfMarriageOrCivilPartnershipYear", data.getDateOfMarriageOrCivilPartnershipYear());
         }
 
-        validateFields.put("soleOrApplicant1FullNameAsOnCert", data.getSoleOrApplicant1FullNameAsOnCert());
-        validateFields.put("respondentOrApplicant2FullNameAsOnCert", data.getRespondentOrApplicant2FullNameAsOnCert());
-        validateFields.put("detailsOnCertCorrect", data.getDetailsOnCertCorrect());
+        validateErrorFields.put("soleOrApplicant1FullNameAsOnCert", data.getSoleOrApplicant1FullNameAsOnCert());
+        validateErrorFields.put("respondentOrApplicant2FullNameAsOnCert", data.getRespondentOrApplicant2FullNameAsOnCert());
+        validateErrorFields.put("detailsOnCertCorrect", data.getDetailsOnCertCorrect());
 
         if (!isEmpty(data.getDetailsOnCertCorrect())
             && data.getDetailsOnCertCorrect().equalsIgnoreCase("no")
         ) {
-            validateFields.put("reasonWhyCertNotCorrect", data.getReasonWhyCertNotCorrect());
+            validateErrorFields.put("reasonWhyCertNotCorrect", data.getReasonWhyCertNotCorrect());
         }
 
-        validateFields.entrySet().stream()
+        validateErrorFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
+            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
     }
 
     private void validateJurisdiction(OcrDataFields data, List<String> warnings, List<String> errors) {
@@ -217,74 +230,78 @@ public class OcrValidator {
         if (validateFields.entrySet().stream().allMatch(e -> isEmpty(e.getValue()))
             && isEmpty(data.getJurisdictionReasonsSameSex())
         ) {
-            warnings.add("Invalid jurisdiction: jurisdiction connection has not been selected");
+            errors.add("Invalid jurisdiction: jurisdiction connection has not been selected");
         }
     }
 
     private void validateStatementOfIrretrievableBreakdown(OcrDataFields data, List<String> warnings, List<String> errors) {
 
-        Map<String, String> validateFields = new HashMap<>();
-        validateFields.put("soleOrApplicant1ConfirmationOfBreakdown", data.getSoleOrApplicant1ConfirmationOfBreakdown());
-        validateFields.entrySet().stream()
-            .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
+        if (isEmpty(data.getSoleOrApplicant1ConfirmationOfBreakdown())) {
+            errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleOrApplicant1ConfirmationOfBreakdown"));
+        }
 
         if (!isEmpty(data.getSoleApplication())
             && data.getSoleApplication().equalsIgnoreCase("true")
             && !isEmpty(data.getApplicant2ConfirmationOfBreakdown())
         ) {
-            warnings.add("applicant2ConfirmationOfBreakdown should not be populated for sole applications");
+            errors.add("applicant2ConfirmationOfBreakdown should not be populated for sole applications");
         } else if (!isEmpty(data.getJointApplication())
             && data.getJointApplication().equalsIgnoreCase("true")
             && isEmpty(data.getApplicant2ConfirmationOfBreakdown())
         ) {
-            warnings.add("applicant2ConfirmationOfBreakdown should be populated for joint applications");
+            errors.add("applicant2ConfirmationOfBreakdown should be populated for joint applications");
         }
     }
 
     private void validateExistingCourtCases(OcrDataFields data, List<String> warnings, List<String> errors) {
 
-        Map<String, String> validateFields = new HashMap<>();
+        Map<String, String> validateErrorFields = new HashMap<>();
 
+        validateErrorFields.put("existingOrPreviousCourtCases", data.getExistingOrPreviousCourtCases());
         if (!isEmpty(data.getExistingOrPreviousCourtCases())
             && data.getExistingOrPreviousCourtCases().equalsIgnoreCase("yes")
         ) {
-            validateFields.put("existingOrPreviousCourtCaseNumbers", data.getExistingOrPreviousCourtCaseNumbers());
-            validateFields.put("summaryOfExistingOrPreviousCourtCases", data.getSummaryOfExistingOrPreviousCourtCases());
-
-            validateFields.entrySet().stream()
-                .filter(e -> isEmpty(e.getValue()))
-                .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
+            validateErrorFields.put("existingOrPreviousCourtCaseNumbers", data.getExistingOrPreviousCourtCaseNumbers());
+            validateErrorFields.put("summaryOfExistingOrPreviousCourtCases", data.getSummaryOfExistingOrPreviousCourtCases());
         }
+
+        validateErrorFields.entrySet().stream()
+            .filter(e -> isEmpty(e.getValue()))
+            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
     }
 
     private void validateMoneyPropertyAndPrayer(OcrDataFields data, List<String> warnings, List<String> errors) {
 
-        Map<String, String> validateFields = new HashMap<>();
+        Map<String, String> validateWarningFields = new HashMap<>();
+        Map<String, String> validateErrorFields = new HashMap<>();
+
+        if (isEmpty(data.getSoleOrApplicant1FinancialOrder())) {
+            validateErrorFields.put("soleOrApplicant1FinancialOrder", data.getSoleOrApplicant1FinancialOrderFor());
+        }
 
         if (!isEmpty(data.getSoleOrApplicant1FinancialOrder())
             && data.getSoleOrApplicant1FinancialOrder().equalsIgnoreCase("yes")
         ) {
-            validateFields.put("soleOrApplicant1FinancialOrderFor", data.getSoleOrApplicant1FinancialOrderFor());
+            validateErrorFields.put("soleOrApplicant1FinancialOrderFor", data.getSoleOrApplicant1FinancialOrderFor());
         }
 
         if (!isEmpty(data.getApplicant2FinancialOrder())
             && data.getApplicant2FinancialOrder().equalsIgnoreCase("yes")
         ) {
-            validateFields.put("applicant2FinancialOrderFor", data.getApplicant2FinancialOrderFor());
+            validateErrorFields.put("applicant2FinancialOrderFor", data.getApplicant2FinancialOrderFor());
         }
 
         if (isEmpty(data.getPrayerMarriageDissolved()) && isEmpty(data.getPrayerCivilPartnershipDissolved())) {
-            warnings.add("One of prayerMarriageDissolved or prayerCivilPartnershipDissolved must be populated");
+            errors.add("One of prayerMarriageDissolved or prayerCivilPartnershipDissolved must be populated");
         }
 
         if (!isEmpty(data.getSoleOrApplicant1FinancialOrder())
             && data.getSoleOrApplicant1FinancialOrder().equalsIgnoreCase("yes")
         ) {
-            validateFields.put("soleOrApplicant1prayerFinancialOrder", data.getSoleOrApplicant1prayerFinancialOrder());
-            validateFields.put("soleOrApplicant1prayerFinancialOrderFor", data.getSoleOrApplicant1prayerFinancialOrderFor());
-            validateFields.put("applicant2PrayerFinancialOrder", data.getApplicant2PrayerFinancialOrder());
-            validateFields.put("applicant2PrayerFinancialOrderFor", data.getApplicant2PrayerFinancialOrderFor());
+            validateWarningFields.put("soleOrApplicant1prayerFinancialOrder", data.getSoleOrApplicant1prayerFinancialOrder());
+            validateWarningFields.put("soleOrApplicant1prayerFinancialOrderFor", data.getSoleOrApplicant1prayerFinancialOrderFor());
+            validateWarningFields.put("applicant2PrayerFinancialOrder", data.getApplicant2PrayerFinancialOrder());
+            validateWarningFields.put("applicant2PrayerFinancialOrderFor", data.getApplicant2PrayerFinancialOrderFor());
         } else if (!isEmpty(data.getSoleOrApplicant1FinancialOrder())
             && data.getSoleOrApplicant1FinancialOrder().equalsIgnoreCase("no")
         ) {
@@ -302,47 +319,57 @@ public class OcrValidator {
             }
         }
 
-        validateFields.entrySet().stream()
+        validateWarningFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_WARNING, e.getKey())));
+
+        validateErrorFields.entrySet().stream()
+            .filter(e -> isEmpty(e.getValue()))
+            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
     }
 
     private void validateSoT(OcrDataFields data, List<String> warnings, List<String> errors) {
 
-        Map<String, String> validateFields = new HashMap<>();
-        validateFields.put("soleApplicantOrApplicant1StatementOfTruth",data.getSoleApplicantOrApplicant1StatementOfTruth());
-        validateFields.put("soleApplicantOrApplicant1LegalRepStatementOfTruth",
+        Map<String, String> validateWarningFields = new HashMap<>();
+        Map<String, String> validateErrorFields = new HashMap<>();
+
+        validateErrorFields.put("soleApplicantOrApplicant1StatementOfTruth",data.getSoleApplicantOrApplicant1StatementOfTruth());
+        validateErrorFields.put("soleApplicantOrApplicant1LegalRepStatementOfTruth",
             data.getSoleApplicantOrApplicant1LegalRepStatementOfTruth());
-        validateFields.put("soleApplicantOrApplicant1OrLegalRepSignature", data.getSoleApplicantOrApplicant1OrLegalRepSignature());
-        validateFields.put("soleApplicantOrApplicant1Signing",data.getSoleApplicantOrApplicant1Signing());
-        validateFields.put("legalRepSigning",data.getLegalRepSigning());
-        validateFields.put("statementOfTruthDateDay",data.getStatementOfTruthDateDay());
-        validateFields.put("statementOfTruthDateMonth",data.getStatementOfTruthDateMonth());
-        validateFields.put("statementOfTruthDateYear",data.getStatementOfTruthDateYear());
-        validateFields.put("soleApplicantOrApplicant1OrLegalRepFullName",data.getSoleApplicantOrApplicant1OrLegalRepFullName());
+        validateWarningFields.put("soleApplicantOrApplicant1OrLegalRepSignature", data.getSoleApplicantOrApplicant1OrLegalRepSignature());
+        validateWarningFields.put("soleApplicantOrApplicant1Signing",data.getSoleApplicantOrApplicant1Signing());
+        validateWarningFields.put("legalRepSigning",data.getLegalRepSigning());
+        validateWarningFields.put("statementOfTruthDateDay",data.getStatementOfTruthDateDay());
+        validateWarningFields.put("statementOfTruthDateMonth",data.getStatementOfTruthDateMonth());
+        validateWarningFields.put("statementOfTruthDateYear",data.getStatementOfTruthDateYear());
+        validateWarningFields.put("soleApplicantOrApplicant1OrLegalRepFullName",data.getSoleApplicantOrApplicant1OrLegalRepFullName());
 
         if (!isEmpty(data.getJointApplication())
             && data.getJointApplication().equalsIgnoreCase("true")
         ) {
-            validateFields.put("applicant2StatementOfTruth", data.getApplicant2StatementOfTruth());
-            validateFields.put("applicant2LegalRepStatementOfTruth", data.getApplicant2LegalRepStatementOfTruth());
-            validateFields.put("applicant2OrLegalRepSignature", data.getApplicant2OrLegalRepSignature());
-            validateFields.put("applicant2Signing", data.getApplicant2Signing());
-            validateFields.put("applicant2LegalRepSigning", data.getApplicant2LegalRepSigning());
-            validateFields.put("applicant2StatementOfTruthDateDay", data.getApplicant2StatementOfTruthDateDay());
-            validateFields.put("applicant2StatementOfTruthDateMonth", data.getApplicant2StatementOfTruthDateMonth());
-            validateFields.put("applicant2StatementOfTruthDateYear", data.getApplicant2StatementOfTruthDateYear());
-            validateFields.put("applicant2OrLegalRepFullName", data.getApplicant2OrLegalRepFullName());
+            validateErrorFields.put("applicant2StatementOfTruth", data.getApplicant2StatementOfTruth());
+            validateErrorFields.put("applicant2LegalRepStatementOfTruth", data.getApplicant2LegalRepStatementOfTruth());
+            validateWarningFields.put("applicant2OrLegalRepSignature", data.getApplicant2OrLegalRepSignature());
+            validateWarningFields.put("applicant2Signing", data.getApplicant2Signing());
+            validateWarningFields.put("applicant2LegalRepSigning", data.getApplicant2LegalRepSigning());
+            validateWarningFields.put("applicant2StatementOfTruthDateDay", data.getApplicant2StatementOfTruthDateDay());
+            validateWarningFields.put("applicant2StatementOfTruthDateMonth", data.getApplicant2StatementOfTruthDateMonth());
+            validateWarningFields.put("applicant2StatementOfTruthDateYear", data.getApplicant2StatementOfTruthDateYear());
+            validateWarningFields.put("applicant2OrLegalRepFullName", data.getApplicant2OrLegalRepFullName());
         }
 
-        validateFields.entrySet().stream()
+        validateWarningFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_WARNING, e.getKey())));
+
+        validateErrorFields.entrySet().stream()
+            .filter(e -> isEmpty(e.getValue()))
+            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
 
         if (!isEmpty(data.getSoleOrApplicant1HWFNo())
             && data.getSoleOrApplicant1HWFNo().length() != 6
         ) {
-            warnings.add("soleOrApplicant1HWFNo should be 6 digits long");
+            errors.add("soleOrApplicant1HWFNo should be 6 digits long");
         }
     }
 }

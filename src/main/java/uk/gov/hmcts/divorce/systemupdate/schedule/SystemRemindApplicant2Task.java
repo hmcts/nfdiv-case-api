@@ -65,7 +65,7 @@ public class SystemRemindApplicant2Task implements Runnable {
             final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingApplicant2Response))
-                    .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
+                    .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().plusDays(FOUR_DAYS)))
                     .must(existsQuery(ACCESS_CODE))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 

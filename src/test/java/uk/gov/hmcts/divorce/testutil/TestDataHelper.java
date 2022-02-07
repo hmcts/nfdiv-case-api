@@ -829,6 +829,8 @@ public class TestDataHelper {
         kv.add(populateKeyValue("respondentOrApplicant2FullNameAsOnCert", "the respondent"));
         kv.add(populateKeyValue("detailsOnCertCorrect", "Yes"));
         kv.add(populateKeyValue("jurisdictionReasonsBothPartiesHabitual", "true"));
+        kv.add(populateKeyValue("existingOrPreviousCourtCases", "No"));
+        kv.add(populateKeyValue("soleOrApplicant1FinancialOrder", "No"));
         kv.add(populateKeyValue("soleOrApplicant1ConfirmationOfBreakdown", "true"));
         kv.add(populateKeyValue("prayerMarriageDissolved", "true"));
         kv.add(populateKeyValue("soleApplicantOrApplicant1StatementOfTruth", "true"));
