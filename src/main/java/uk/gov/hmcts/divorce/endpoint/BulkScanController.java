@@ -1,8 +1,10 @@
 package uk.gov.hmcts.divorce.endpoint;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +17,8 @@ import uk.gov.hmcts.reform.bsp.common.model.shared.in.ExceptionRecord;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.CaseCreationDetails;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.SuccessfulTransformationResponse;
 
-import java.util.Map;
 import javax.validation.Valid;
+import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
@@ -32,14 +34,16 @@ public class BulkScanController {
     private BulkScanService bulkScanService;
 
     @PostMapping(path = BulkScanEndpoints.TRANSFORM, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Transform exception record into CCD case data")
+    @Operation(summary = "Transform exception record into CCD case data")
     @ApiResponses({
-        @ApiResponse(code = 200, response = SuccessfulTransformationResponse.class,
-            message = "Transformation of Exception Record into CCD Case Data has been successful"),
-        @ApiResponse(code = 400, message = "Request failed due to malformed syntax"),
-        @ApiResponse(code = 401, message = "Provided S2S token is missing or invalid"),
-        @ApiResponse(code = 403, message = "Calling service is not authorised to use the endpoint"),
-        @ApiResponse(code = 422, message = "Exception Record is well-formed, but contains invalid data")
+        @ApiResponse(responseCode = "200", description = "Transformation of Exception Record into CCD Case Data has been successful",
+            content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessfulTransformationResponse.class))
+            }),
+        @ApiResponse(responseCode = "400", description = "Request failed due to malformed syntax"),
+        @ApiResponse(responseCode = "401", description = "Provided S2S token is missing or invalid"),
+        @ApiResponse(responseCode = "403", description = "Calling service is not authorised to use the endpoint"),
+        @ApiResponse(responseCode = "422", description = "Exception Record is well-formed, but contains invalid data")
     })
     public ResponseEntity<SuccessfulTransformationResponse> transformExceptionRecordIntoCase(
         @RequestHeader(name = SERVICE_AUTHORIZATION) String s2sAuthToken,
@@ -66,5 +70,4 @@ public class BulkScanController {
 
         return controllerResponse;
     }
-
 }
