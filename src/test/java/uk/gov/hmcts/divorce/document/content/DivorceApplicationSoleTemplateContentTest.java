@@ -65,6 +65,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_ADDRESS;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
@@ -168,7 +171,12 @@ public class DivorceApplicationSoleTemplateContentTest {
             .lastName(TEST_LAST_NAME)
             .email(TEST_USER_EMAIL)
             .contactDetailsType(PUBLIC)
-            .solicitor(Solicitor.builder().name(TEST_FIRST_NAME).build())
+            .solicitor(Solicitor.builder()
+                .name(TEST_SOLICITOR_NAME)
+                .email(TEST_SOLICITOR_EMAIL)
+                .firmName(TEST_SOLICITOR_NAME)
+                .address(TEST_SOLICITOR_ADDRESS)
+                .build())
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -215,10 +223,10 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS, true),
             entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, true),
-            entry(APPLICANT_2_SOLICITOR_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_2_SOLICITOR_EMAIL, null),
-            entry(APPLICANT_2_SOLICITOR_FIRM_NAME, null),
-            entry(APPLICANT_2_SOLICITOR_ADDRESS, null)
+            entry(APPLICANT_2_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
+            entry(APPLICANT_2_SOLICITOR_EMAIL, TEST_SOLICITOR_EMAIL),
+            entry(APPLICANT_2_SOLICITOR_FIRM_NAME, TEST_SOLICITOR_NAME),
+            entry(APPLICANT_2_SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS)
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));

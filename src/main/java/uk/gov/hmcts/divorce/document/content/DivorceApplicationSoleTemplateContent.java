@@ -145,10 +145,7 @@ public class DivorceApplicationSoleTemplateContent {
         String solicitorFirmName = applicant.getSolicitor().getFirmName();
         String solicitorAddress = applicant.getSolicitor().getAddress();
         boolean hasEnteredSolicitorDetails =
-            nonNull(solicitorName)
-                || nonNull(solicitorEmail)
-                || nonNull(solicitorFirmName)
-                || nonNull(solicitorAddress);
+            nonNull(solicitorName) || nonNull(solicitorEmail) || nonNull(solicitorFirmName) || nonNull(solicitorAddress);
         templateContent.put(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, hasEnteredSolicitorDetails);
         templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName);
         templateContent.put(APPLICANT_2_SOLICITOR_EMAIL, solicitorEmail);
