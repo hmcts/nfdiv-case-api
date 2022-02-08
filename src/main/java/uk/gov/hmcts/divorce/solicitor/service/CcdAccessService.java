@@ -123,6 +123,9 @@ public class CcdAccessService {
             .stream()
             .map(CaseAssignmentUserRole::getCaseRole)
             .collect(Collectors.toList());
+        log.info("Roles for user on case {} are {}", caseId, userRoles);
+        log.info(CREATOR.getRole());
+        log.info(String.valueOf(userRoles.contains(CREATOR.getRole())));
         return userRoles.contains(CREATOR.getRole()) || userRoles.contains(APPLICANT_1_SOLICITOR.getRole());
     }
 
