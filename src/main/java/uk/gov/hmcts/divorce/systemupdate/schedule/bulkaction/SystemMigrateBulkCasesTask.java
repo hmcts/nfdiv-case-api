@@ -18,6 +18,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Map;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateBulkCase.SYSTEM_MIGRATE_BULK_CASE;
 
 @Component
@@ -58,25 +59,40 @@ public class SystemMigrateBulkCasesTask implements Runnable {
     }
 
     private void migrateCase(final CaseDetails caseDetails, final User user, final String serviceAuthorization) {
+        final Long caseId = caseDetails.getId();
+
         try {
             final var data = BulkCaseRetiredFields.migrate(caseDetails.getData());
-            verifyData(data, caseDetails.getId());
+            verifyData(data, caseId);
 
             caseDetails.setData(data);
             ccdUpdateService.updateBulkCaseWithRetries(
-                caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization, caseDetails.getId());
-            log.info("Migration complete for case id: {}", caseDetails.getId());
+                caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization, caseId);
+            log.info("Migration complete for case id: {}", caseId);
         } catch (final CcdConflictException e) {
-            log.error("Could not get lock for case id: {}, continuing to next case", caseDetails.getId());
+            log.error("Could not get lock for case id: {}, continuing to next case", caseId);
         } catch (final CcdManagementException e) {
-            log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+            log.error("Submit event failed for case id: {}, continuing to next case", caseId);
+            failedMigrationSetVersionToZero(caseDetails, user, serviceAuthorization, caseId, e);
+        }
+    }
+
+    private void failedMigrationSetVersionToZero(final CaseDetails caseDetails,
+                                                 final User user,
+                                                 final String serviceAuthorization,
+                                                 final Long caseId,
+                                                 final CcdManagementException ccdManagementException) {
+
+        if (ccdManagementException.getStatus() != NOT_FOUND.value()) {
+            log.info("Setting bulkCaseDataVersion to 0 for case id: {} after failed migration", caseId);
 
             caseDetails.setData(Map.of("bulkCaseDataVersion", 0));
-            log.info("Setting bulkCaseDataVersion to 0 for case id: {} after failed migration", caseDetails.getId());
             ccdUpdateService.updateBulkCaseWithRetries(
-                caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization, caseDetails.getId());
-            log.info("bulkCaseDataVersion set for case id: {}", caseDetails.getId());
+                caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization, caseId);
 
+            log.info("bulkCaseDataVersion set for case id: {}", caseId);
+        } else {
+            log.info("Version not set to 0 case not found for case id: {}", caseId);
         }
     }
 

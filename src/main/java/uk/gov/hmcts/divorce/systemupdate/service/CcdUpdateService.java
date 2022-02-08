@@ -65,7 +65,7 @@ public class CcdUpdateService {
                 throw new CcdConflictException(message, e);
             }
 
-            throw new CcdManagementException(message, e);
+            throw new CcdManagementException(e.status(), message, e);
         }
     }
 
@@ -137,7 +137,7 @@ public class CcdUpdateService {
             log.info(message, e);
             log.info(e.contentUTF8());
 
-            throw new CcdManagementException(message, e);
+            throw new CcdManagementException(e.status(), message, e);
         }
     }
 
@@ -182,7 +182,7 @@ public class CcdUpdateService {
             log.info(message, e);
             log.info(e.contentUTF8());
 
-            throw new CcdManagementException(message, e);
+            throw new CcdManagementException(e.status(), message, e);
         }
     }
 
