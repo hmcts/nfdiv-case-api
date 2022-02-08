@@ -19,9 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_1;
@@ -40,9 +38,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_NOTICE_OF_CHANGE = "caseworker-notice-of-change";
     private static final String NEVER_SHOW = "nocWhichApplicant=\"never\"";
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Autowired
     private CcdAccessService caseAccessService;
@@ -130,12 +125,11 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             applicant.setOffline(NO);
         }
 
-        final var auth = request.getHeader(AUTHORIZATION);
         final var roles = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1
             ? List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole())
             : List.of(APPLICANT_2.getRole(), APPLICANT_2_SOLICITOR.getRole());
 
-        caseAccessService.removeUsersWithRole(auth, details.getId(), roles);
+        caseAccessService.removeUsersWithRole(details.getId(), roles);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
