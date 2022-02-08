@@ -18,8 +18,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -55,6 +58,9 @@ class CitizenSwitchedToSoleTest {
     private CcdAccessService ccdAccessService;
 
     @Mock
+    private IdamService idamService;
+
+    @Mock
     private HttpServletRequest httpServletRequest;
 
     @Mock
@@ -86,6 +92,8 @@ class CitizenSwitchedToSoleTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
         when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
@@ -126,6 +134,8 @@ class CitizenSwitchedToSoleTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app2-token");
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
         when(ccdAccessService.isApplicant1("app2-token", caseId)).thenReturn(false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
@@ -159,6 +169,8 @@ class CitizenSwitchedToSoleTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
         when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
@@ -188,6 +200,8 @@ class CitizenSwitchedToSoleTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
         when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
