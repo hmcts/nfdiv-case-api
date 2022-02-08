@@ -113,20 +113,7 @@ public class DivorceApplicationSoleTemplateContent {
             boolean applicant1IsApplicant2Represented = application.getApplicant1IsApplicant2Represented() == Applicant2Represented.YES;
             templateContent.put(APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS, applicant1IsApplicant2Represented);
             if (applicant1IsApplicant2Represented) {
-                String solicitorName = applicant2.getSolicitor().getName();
-                String solicitorEmail = applicant2.getSolicitor().getEmail();
-                String solicitorFirmName = applicant2.getSolicitor().getFirmName();
-                String solicitorAddress = applicant2.getSolicitor().getAddress();
-                boolean hasEnteredSolicitorDetails =
-                    nonNull(solicitorName)
-                    || nonNull(solicitorEmail)
-                    || nonNull(solicitorFirmName)
-                    || nonNull(solicitorAddress);
-                templateContent.put(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, hasEnteredSolicitorDetails);
-                templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName);
-                templateContent.put(APPLICANT_2_SOLICITOR_EMAIL, solicitorEmail);
-                templateContent.put(APPLICANT_2_SOLICITOR_FIRM_NAME, solicitorFirmName);
-                templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, solicitorAddress);
+                setSolicitorDetails(templateContent, applicant2);
             }
         }
 
@@ -150,5 +137,22 @@ public class DivorceApplicationSoleTemplateContent {
         templateContent.put("jurisdictions", applicationTemplateDataProvider.deriveSoleJurisdictionList(application, caseId));
 
         return templateContent;
+    }
+
+    private void setSolicitorDetails(Map<String, Object> templateContent, Applicant applicant) {
+        String solicitorName = applicant.getSolicitor().getName();
+        String solicitorEmail = applicant.getSolicitor().getEmail();
+        String solicitorFirmName = applicant.getSolicitor().getFirmName();
+        String solicitorAddress = applicant.getSolicitor().getAddress();
+        boolean hasEnteredSolicitorDetails =
+            nonNull(solicitorName)
+                || nonNull(solicitorEmail)
+                || nonNull(solicitorFirmName)
+                || nonNull(solicitorAddress);
+        templateContent.put(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, hasEnteredSolicitorDetails);
+        templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName);
+        templateContent.put(APPLICANT_2_SOLICITOR_EMAIL, solicitorEmail);
+        templateContent.put(APPLICANT_2_SOLICITOR_FIRM_NAME, solicitorFirmName);
+        templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, solicitorAddress);
     }
 }
