@@ -414,7 +414,7 @@ public class Application {
     private YesOrNo applicant2NeedsHelpWithFees;
 
     @CCD(
-        label = "Does Applicant 2 have a solicitor representing them?",
+        label = "Does applicant 2 have a solicitor representing them?",
         access = {DefaultAccess.class}
     )
     private Applicant2Represented applicant1IsApplicant2Represented;
