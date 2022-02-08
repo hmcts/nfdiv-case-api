@@ -76,13 +76,11 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                 .mandatory(ConditionalOrderQuestions::getStatementOfTruth)
+                .mandatory(ConditionalOrderQuestions::getSolicitorName)
+                .mandatory(ConditionalOrderQuestions::getSolicitorFirm)
+                .optional(ConditionalOrderQuestions::getSolicitorAdditionalComments)
                 .done()
-            .done()
-            .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getSolicitorName)
-                .mandatory(ConditionalOrder::getSolicitorFirm)
-                .optional(ConditionalOrder::getSolicitorAdditionalComments)
-                .done();
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -91,7 +89,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
         CaseData data = details.getData();
         setSubmittedDate(data.getConditionalOrder());
-        var state = details.getData().getApplicationType().isSole()
+        var state = data.getApplicationType().isSole()
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
