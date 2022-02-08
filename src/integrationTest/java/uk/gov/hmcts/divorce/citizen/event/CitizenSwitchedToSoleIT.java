@@ -12,8 +12,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -57,10 +60,15 @@ public class CitizenSwitchedToSoleIT {
     private CcdAccessService ccdAccessService;
 
     @MockBean
+    private IdamService idamService;
+
+    @MockBean
     private WebMvcConfig webMvcConfig;
 
     @BeforeEach
     public void setUp() {
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
     }
 
