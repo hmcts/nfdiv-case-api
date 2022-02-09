@@ -1,0 +1,168 @@
+package uk.gov.hmcts.divorce.bulkscan.transformation;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
+import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
+
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
+import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_DOMICILED;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_DOMICILED;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_DOMICILED;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.SAME_SEX_COUPLE;
+
+@Component
+public class ApplicationTransformer implements Function<TransformationDetails, TransformationDetails> {
+    private static final String APPLICANT_2 = "applicant2";
+    private static final String RESPONDENT = "respondent";
+    private static final String APPLICANT_APPLICANT_1 = "applicant,applicant1";
+    private static final int HWF_NO_VALID_LENGTH = 6;
+
+    @Autowired
+    private Clock clock;
+
+    @Override
+    public TransformationDetails apply(TransformationDetails transformationDetails) {
+        CaseData caseData = transformationDetails.getCaseData();
+        OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
+        caseData.getApplication().getJurisdiction().setConnections(
+            deriveJurisdictionConnections(ocrDataFields, caseData.getTransformationAndOcrWarnings())
+        );
+
+        caseData.getApplication().getMarriageDetails().setFormationType(
+            toBoolean(ocrDataFields.getJurisdictionReasonsSameSex()) ? SAME_SEX_COUPLE : OPPOSITE_SEX_COUPLE
+        );
+        caseData.deriveAndPopulateApplicantGenderDetails();
+
+        caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
+        setMarriageBrokenDetails(ocrDataFields, caseData);
+        setPrayer(ocrDataFields, caseData);
+        setCourtFee(ocrDataFields, caseData);
+        return transformationDetails;
+    }
+
+    private void setMarriageBrokenDetails(OcrDataFields ocrDataFields, CaseData caseData) {
+
+        if (SOLE_APPLICATION.equals(caseData.getApplicationType())
+            && (!toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown())
+            || toBoolean(ocrDataFields.getApplicant2ConfirmationOfBreakdown()))) {
+            caseData.getTransformationAndOcrWarnings().add("Please review confirmation of breakdown in the scanned form");
+        } else if (JOINT_APPLICATION.equals(caseData.getApplicationType())
+            && (!toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown())
+            || !toBoolean(ocrDataFields.getApplicant2ConfirmationOfBreakdown()))) {
+            caseData.getTransformationAndOcrWarnings().add("Please review confirmation of breakdown in the scanned form");
+        }
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(
+            from(toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown()))
+        );
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(
+            from(toBoolean(ocrDataFields.getApplicant2ConfirmationOfBreakdown()))
+        );
+    }
+
+    private Set<JurisdictionConnections> deriveJurisdictionConnections(OcrDataFields ocrDataFields, List<String> warnings) {
+        Set<JurisdictionConnections> connections = new HashSet<>();
+        if (toBoolean(ocrDataFields.getJurisdictionReasonsBothPartiesHabitual())) {
+            connections.add(APP_1_APP_2_RESIDENT);
+        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsBothPartiesLastHabitual())) {
+            connections.add(APP_1_APP_2_LAST_RESIDENT);
+        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsRespHabitual())) {
+            connections.add(APP_2_RESIDENT);
+        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsJointHabitual())) {
+            connections.add(APP_1_RESIDENT_JOINT);
+        } else if (toBoolean(ocrDataFields.getJurisdictionReasons1YrHabitual())) {
+            connections.add(APP_1_RESIDENT_TWELVE_MONTHS);
+        } else if (toBoolean(ocrDataFields.getJurisdictionReasons6MonthsHabitual())) {
+            connections.add(APP_1_RESIDENT_SIX_MONTHS);
+        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsBothPartiesDomiciled())) {
+            connections.add(APP_1_APP_2_DOMICILED);
+        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsOnePartyDomiciled())) {
+            if (APPLICANT_APPLICANT_1.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsOnePartyDomiciledWho())) {
+                connections.add(APP_1_DOMICILED);
+            } else if (APPLICANT_2.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsOnePartyDomiciledWho())
+                || RESPONDENT.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsOnePartyDomiciledWho())) {
+                connections.add(APP_2_DOMICILED);
+            } else {
+                warnings.add("Please verify jurisdiction connections in scanned form");
+            }
+        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsSameSex())) {
+            // only for civil partnership/same-sex
+            connections.add(RESIDUAL_JURISDICTION);
+        }
+
+        if (CollectionUtils.isEmpty(connections)) {
+            warnings.add("Please verify jurisdiction connections in scanned form");
+        }
+        return connections;
+    }
+
+    private void setPrayer(OcrDataFields ocrDataFields, CaseData caseData) {
+        final var isMarriageDissolved = toBoolean(ocrDataFields.getPrayerMarriageDissolved());
+        final var isCivilPartnershipDissolved = toBoolean(ocrDataFields.getPrayerCivilPartnershipDissolved());
+
+        if (DIVORCE.equals(caseData.getDivorceOrDissolution()) && isMarriageDissolved) {
+            caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+            caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        } else if (DISSOLUTION.equals(caseData.getDivorceOrDissolution()) && isCivilPartnershipDissolved) {
+            caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+            caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        } else {
+            caseData.getTransformationAndOcrWarnings().add("Please review prayer in the scanned form");
+        }
+    }
+
+    private void setCourtFee(OcrDataFields ocrDataFields, CaseData caseData) {
+        if (isNotEmpty(ocrDataFields.getSoleOrApplicant1HWFNo())
+            && ocrDataFields.getSoleOrApplicant1HWFNo().length() != HWF_NO_VALID_LENGTH) {
+            caseData.getTransformationAndOcrWarnings().add("Please review HWF number for applicant1 in scanned form");
+        }
+
+        if (isNotEmpty(ocrDataFields.getApplicant2HWFConfirmationNo())
+            && ocrDataFields.getApplicant2HWFConfirmationNo().length() != HWF_NO_VALID_LENGTH) {
+            caseData.getTransformationAndOcrWarnings().add("Please review HWF number for applicant2 in scanned form");
+        }
+
+        caseData.getApplication().setApplicant1HelpWithFees(
+            HelpWithFees
+                .builder()
+                .appliedForFees(from(toBoolean(ocrDataFields.getSoleOrApplicant1HWFConfirmation())))
+                .referenceNumber(ocrDataFields.getSoleOrApplicant1HWFNo())
+                .needHelp(from(toBoolean(ocrDataFields.getSoleOrApplicant1HWFApp())))
+                .build()
+        );
+        caseData.getApplication().setApplicant2HelpWithFees(
+            HelpWithFees
+                .builder()
+                .appliedForFees(from(toBoolean(ocrDataFields.getApplicant2HWFConfirmation())))
+                .referenceNumber(ocrDataFields.getApplicant2HWFConfirmationNo())
+                .needHelp(from(toBoolean(ocrDataFields.getApplicant2HWFApp())))
+                .build()
+        );
+
+    }
+}

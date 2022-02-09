@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.bulkscan.transformation;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ class D8FormToCaseTransformerTest {
     private AuthTokenGenerator serviceTokenGenerator;
 
     @Test
+    @Disabled
     void shouldSuccessfullyTransformD8FormWithoutWarnings() throws Exception {
         String validOcrJson = Files.readString(Paths.get("src/test/resources/transformation/valid-ocr.json"), UTF_8);
         List<OcrDataField> ocrDataFields = mapper.readValue(validOcrJson, new TypeReference<>() {

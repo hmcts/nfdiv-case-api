@@ -272,6 +272,14 @@ public class CaseData {
     @CCD(access = {CaseworkerBulkScanAccess.class})
     private PaperFormDetails paperFormDetails = new PaperFormDetails();
 
+    @CCD(
+        label = "Transformation and OCR warnings",
+        typeOverride = Collection,
+        typeParameterOverride = "TextArea"
+    )
+    @Builder.Default
+    private List<String> transformationAndOcrWarnings = new ArrayList<>();
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
