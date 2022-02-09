@@ -58,22 +58,6 @@ public class ConditionalOrder {
     private Document onlinePetitionLink;
 
     @CCD(
-        label = "Solicitor’s name"
-    )
-    private String solicitorName;
-
-    @CCD(
-        label = "Solicitor’s firm"
-    )
-    private String solicitorFirm;
-
-    @CCD(
-        label = "Additional comments",
-        typeOverride = TextArea
-    )
-    private String solicitorAdditionalComments;
-
-    @CCD(
         label = "Grant Conditional Order?"
     )
     private YesOrNo granted;
