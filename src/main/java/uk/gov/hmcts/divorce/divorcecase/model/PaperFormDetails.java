@@ -1,13 +1,11 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 @Data
@@ -15,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class PaperFormDetails {
-    private YesOrNo serviceOutsideUK;
+    private String serviceOutsideUK;
 
     private YesOrNo applicantWillServeApplication;
 
@@ -37,11 +35,9 @@ public class PaperFormDetails {
 
     private String applicant2LegalRepPosition;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate applicant1SOTSignedOn;
+    private String applicant1SOTSignedOn;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate applicant2SOTSignedOn;
+    private String applicant2SOTSignedOn;
 
     private String feeInPounds;
 
