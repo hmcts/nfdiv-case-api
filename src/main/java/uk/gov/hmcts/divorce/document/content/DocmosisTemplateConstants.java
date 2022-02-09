@@ -38,6 +38,9 @@ public final class DocmosisTemplateConstants {
     public static final String JOINT_APPLICATION = "Joint application";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_1 = "hasFinancialOrderApplicant1";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_2 = "hasFinancialOrderApplicant2";
+    public static final String APPLICANT_1_FINANCIAL_ORDER = "applicant1FinancialOrder";
+    public static final String APPLICANT_2_FINANCIAL_ORDER = "applicant2FinancialOrder";
+    public static final String HAS_FINANCIAL_ORDERS_FOR_CHILD = "hasFinancialOrdersForChild";
     public static final String GENERAL_ORDER_DATE = "generalOrderDate";
     public static final String GENERAL_ORDER_DETAILS = "generalOrderDetails";
     public static final String GENERAL_ORDER_RECITALS = "generalOrderRecitals";

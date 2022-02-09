@@ -55,6 +55,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDER_APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDER_APPLICANT_2;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS_FOR_CHILD;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
@@ -134,6 +135,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
+            entry(HAS_FINANCIAL_ORDERS_FOR_CHILD, false),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(MARRIAGE_DATE, null),
@@ -185,6 +187,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, true),
+            entry(HAS_FINANCIAL_ORDERS_FOR_CHILD, false),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(MARRIAGE_DATE, null),
