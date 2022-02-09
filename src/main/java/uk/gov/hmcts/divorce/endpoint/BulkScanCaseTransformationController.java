@@ -18,11 +18,13 @@ import uk.gov.hmcts.reform.bsp.common.model.shared.in.ExceptionRecord;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.CaseCreationDetails;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.SuccessfulTransformationResponse;
 
-import java.util.Map;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
+import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransformer.TRANSFORMATION_AND_OCR_WARNINGS;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
@@ -57,6 +59,8 @@ public class BulkScanCaseTransformationController {
 
         Map<String, Object> transformedCaseData = bulkScanService.transformBulkScanForm(exceptionRecord);
 
+        @SuppressWarnings("unchecked") final var warnings = (List<String>) transformedCaseData.get(TRANSFORMATION_AND_OCR_WARNINGS);
+
         SuccessfulTransformationResponse callbackResponse = SuccessfulTransformationResponse.builder()
             .caseCreationDetails(
                 new CaseCreationDetails(
@@ -65,6 +69,7 @@ public class BulkScanCaseTransformationController {
                     transformedCaseData
                 )
             )
+            .warnings(warnings)
             .build();
 
         controllerResponse = ok(callbackResponse);

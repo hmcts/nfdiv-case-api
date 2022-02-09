@@ -89,6 +89,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
     private static final String OCR_FIELD_VALUE_YES = "yes";
     private static final String OCR_FIELD_VALUE_NO = "no";
     private static final String OCR_FIELD_VALUE_BOTH = "both";
+    public static final String TRANSFORMATION_AND_OCR_WARNINGS = "transformationAndOcrWarnings";
 
     @Autowired
     private ObjectMapper mapper;
@@ -193,8 +194,13 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
             //Set application submitted date
             caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
 
-            return mapper.convertValue(caseData, new TypeReference<>() {
+            Map<String, Object> transformedCaseData = mapper.convertValue(caseData, new TypeReference<>() {
             });
+
+            transformedCaseData.put(TRANSFORMATION_AND_OCR_WARNINGS, union(ocrValidationResponse.getWarnings(), transformationWarnings));
+
+            return transformedCaseData;
+
         } catch (Exception exception) {
             //this will result in bulk scan service to create exception record if case creation is automatic case creation
             // In case of caseworker triggering the event it will result into error/transformationWarnings shown on the UI
