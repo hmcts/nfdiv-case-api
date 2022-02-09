@@ -56,5 +56,4 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
                 SUPER_USER,
                 LEGAL_ADVISOR));
     }
-
 }
