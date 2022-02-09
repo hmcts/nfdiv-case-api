@@ -29,8 +29,8 @@ public final class DocumentConstants {
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
     public static final String SERVICE_ORDER_TEMPLATE_ID = "SERVICE_ORDER";
 
-    public static final String REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID = "REFUSAL_ORDER_CLARIFICATION";
-    public static final String REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME = "NFD_Refusal_Order_Clarification";
+    public static final String REFUSAL_ORDER_TEMPLATE_ID = "REFUSAL_ORDER";
+    public static final String REFUSAL_ORDER_DOCUMENT_NAME = "NFD_Refusal_Order";
 
     public static final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID = "CERTIFICATE_OF_SERVICE";
 
