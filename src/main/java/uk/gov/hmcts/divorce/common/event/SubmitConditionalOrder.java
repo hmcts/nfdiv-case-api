@@ -24,6 +24,7 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -68,6 +69,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
             .endButtonLabel("Save Conditional Order")
+            .showCondition("coApplicant2IsSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
             .grant(READ, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
@@ -87,9 +89,20 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
-        CaseData data = details.getData();
+
+        final CaseData data = details.getData();
+        final boolean isSole = data.getApplicationType().isSole();
+
         setSubmittedDate(data.getConditionalOrder());
-        var state = data.getApplicationType().isSole()
+
+        if (!isSole
+            && data.getApplication().isSolicitorServiceMethod()
+            && data.getApplication().isSolicitorApplication()
+        ) {
+            data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(YES);
+        }
+
+        var state = isSole
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 

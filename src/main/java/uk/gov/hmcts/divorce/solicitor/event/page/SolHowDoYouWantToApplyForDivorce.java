@@ -9,6 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+
 @Slf4j
 public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
 
@@ -61,6 +63,10 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
         final CaseData data = details.getData();
         data.getLabelContent().setApplicationType(data.getApplicationType());
         data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
+        if (!data.getApplicationType().isSole()) {
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

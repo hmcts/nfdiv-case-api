@@ -38,6 +38,11 @@ public class ConditionalOrderQuestions {
     private String solicitorAdditionalComments;
 
     @CCD(
+        label = "Has applicant submitted conditional order"
+    )
+    private YesOrNo isSubmitted;
+
+    @CCD(
         label = "Date applicant submitted Conditional Order to HMCTS"
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")

@@ -17,8 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 import java.time.LocalDateTime;
 
-import static java.util.Collections.singletonList;
-import static java.util.Objects.isNull;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -47,11 +46,11 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
             .endButtonLabel("Save Conditional Order")
-            .showCondition("applicationType=\"jointApplication\"")
+            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .grant(READ, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
-            .page("JointConditionalOrderSoT", this::midEvent)
+            .page("JointConditionalOrderSoT")
             .pageLabel("Statement of Truth - submit joint conditional order")
             .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
@@ -63,35 +62,15 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             .done();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
-        CaseDetails<CaseData, State> details,
-        CaseDetails<CaseData, State> detailsBefore
-    ) {
-        log.info("Mid-event callback triggered for joint conditional order submission");
-
-        final CaseData data = details.getData();
-        data.getLabelContent().setApplicationType(data.getApplicationType());
-        data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
-
-        if (!data.getApplicationType().isSole()
-            && !isNull(data.getConditionalOrder().getConditionalOrderApplicant2Questions().getSubmittedDate())) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(data)
-                .errors(singletonList(""))
-                .build();
-        }
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
-            .build();
-    }
-
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Submit joint conditional order about to submit callback invoked for case id: {}", details.getId());
+
         final CaseData data = details.getData();
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setSubmittedDate(LocalDateTime.now(clock));
+        data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(YES);
+
         var state = beforeDetails.getState() == ConditionalOrderDrafted
             ? ConditionalOrderPending
             : AwaitingLegalAdvisorReferral;
