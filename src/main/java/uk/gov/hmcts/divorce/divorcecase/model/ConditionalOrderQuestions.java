@@ -22,6 +22,27 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 public class ConditionalOrderQuestions {
 
     @CCD(
+        label = "Solicitor’s name"
+    )
+    private String solicitorName;
+
+    @CCD(
+        label = "Solicitor’s firm"
+    )
+    private String solicitorFirm;
+
+    @CCD(
+        label = "Additional comments",
+        typeOverride = TextArea
+    )
+    private String solicitorAdditionalComments;
+
+    @CCD(
+        label = "Has applicant submitted conditional order"
+    )
+    private YesOrNo isSubmitted;
+
+    @CCD(
         label = "Date applicant submitted Conditional Order to HMCTS"
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -61,7 +82,7 @@ public class ConditionalOrderQuestions {
     private YesOrNo isEverythingInApplicationTrue;
 
     @CCD(
-        label = "The applicant believes that the facts stated in this application are true."
+        label = "The applicant believes that the facts stated in the application for a conditional order are true."
     )
     private YesOrNo statementOfTruth;
 }

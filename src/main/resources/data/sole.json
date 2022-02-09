@@ -93,5 +93,6 @@
   "labelContentTheApplicant2UC": "Respondent",
   "labelContentApplicant2UC": "The respondent",
   "labelContentUnionType": "divorce",
-  "labelContentUnionTypeUC": "Divorce"
+  "labelContentUnionTypeUC": "Divorce",
+  "coApplicant1IsSubmitted": "No"
 }
