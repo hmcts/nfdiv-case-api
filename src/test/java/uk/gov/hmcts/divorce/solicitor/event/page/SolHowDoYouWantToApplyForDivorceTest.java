@@ -5,7 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,6 +61,43 @@ class SolHowDoYouWantToApplyForDivorceTest {
         assertEquals(
             response.getData().getLabelContent().getUnionType(),
             "dissolution"
+        );
+    }
+
+    @Test
+    public void shouldSetCoIsSubmittedForSole() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setConditionalOrder(ConditionalOrder.builder().build());
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertEquals(
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted(),
+            YesOrNo.NO
+        );
+    }
+
+    @Test
+    public void shouldSetCoIsSubmittedForJoint() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertEquals(
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted(),
+            YesOrNo.NO
+        );
+        assertEquals(
+            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted(),
+            YesOrNo.NO
         );
     }
 }
