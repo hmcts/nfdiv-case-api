@@ -21,8 +21,7 @@ public class ConditionalOrderReviewAoSTest {
 
     private final ConditionalOrderReviewAoS page = new ConditionalOrderReviewAoS();
 
-    private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1 = "Applicant 1 must select yes to apply for a conditional order";
-    private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP2 = "Applicant 2 must select yes to apply for a conditional order";
+    private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1 = "Applicant must select yes to apply for a conditional order";
 
     @Test
     public void shouldPreventProgressIfNoIsSelectedOnApplyForConditionalOrderQuestion() {
@@ -51,37 +50,6 @@ public class ConditionalOrderReviewAoSTest {
     }
 
     @Test
-    public void shouldPreventProgressIfNoIsSelectedOnApplyForConditionalOrderQuestionForBothApplicants() {
-
-        final CaseData caseData = caseData();
-
-        ConditionalOrderQuestions conditionalOrderQuestions = new ConditionalOrderQuestions();
-        conditionalOrderQuestions.setApplyForConditionalOrder(NO);
-
-        caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant1Questions(conditionalOrderQuestions)
-            .conditionalOrderApplicant2Questions(conditionalOrderQuestions)
-            .build());
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(1L);
-        details.setCreatedDate(LOCAL_DATE_TIME);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
-
-        assertEquals(response.getErrors().size(), 2);
-        assertEquals(
-            response.getErrors().get(0),
-            APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1
-        );
-        assertEquals(
-            response.getErrors().get(1),
-            APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP2
-        );
-    }
-
-    @Test
     public void shouldAllowProgressIfYesIsSelectedOnApplyForConditionalOrderQuestion() {
 
         final CaseData caseData = caseData();
@@ -91,29 +59,6 @@ public class ConditionalOrderReviewAoSTest {
 
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(conditionalOrderQuestions)
-            .build());
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(1L);
-        details.setCreatedDate(LOCAL_DATE_TIME);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
-
-        assertEquals(response.getErrors().size(), 0);
-    }
-
-    @Test
-    public void shouldAllowProgressIfYesIsSelectedOnApplyForConditionalOrderQuestionForBothApplicants() {
-
-        final CaseData caseData = caseData();
-
-        ConditionalOrderQuestions conditionalOrderQuestions = new ConditionalOrderQuestions();
-        conditionalOrderQuestions.setApplyForConditionalOrder(YES);
-
-        caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant1Questions(conditionalOrderQuestions)
-            .conditionalOrderApplicant2Questions(conditionalOrderQuestions)
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
