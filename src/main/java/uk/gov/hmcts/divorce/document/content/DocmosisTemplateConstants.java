@@ -60,6 +60,12 @@ public final class DocmosisTemplateConstants {
     public static final String HAS_OTHER_COURT_CASES_APPLICANT_2 = "hasOtherCourtCasesApplicant2";
     public static final String APPLICANT_1_COURT_CASE_DETAILS = "applicant1CourtCaseDetails";
     public static final String APPLICANT_2_COURT_CASE_DETAILS = "applicant2CourtCaseDetails";
+    public static final String APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS = "applicant1KnowsRespondentsSolicitorDetails";
+    public static final String APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS = "applicant1HasEnteredRespondentsSolicitorDetails";
+    public static final String APPLICANT_2_SOLICITOR_NAME = "applicant2SolicitorName";
+    public static final String APPLICANT_2_SOLICITOR_EMAIL = "applicant2SolicitorEmail";
+    public static final String APPLICANT_2_SOLICITOR_FIRM_NAME = "applicant2SolicitorFirmName";
+    public static final String APPLICANT_2_SOLICITOR_ADDRESS = "applicant2SolicitorAddress";
     public static final String SERVICE_APPLICATION_RECEIVED_DATE = "serviceApplicationReceivedDate";
     public static final String SERVICE_APPLICATION_DECISION_DATE = "serviceApplicationDecisionDate";
     public static final String IS_SERVICE_ORDER_TYPE_DEEMED = "isServiceOrderTypeDeemed";
