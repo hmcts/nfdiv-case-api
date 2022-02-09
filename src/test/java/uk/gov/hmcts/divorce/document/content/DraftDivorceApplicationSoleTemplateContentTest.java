@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -20,6 +21,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -35,12 +37,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
@@ -53,7 +57,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS_FOR_CHILD;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDER_APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDER_APPLICANT_2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
@@ -134,8 +137,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(DIVORCE_OR_DISSOLUTION, DIVORCE_APPLICATION),
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
-            entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
-            entry(HAS_FINANCIAL_ORDERS_FOR_CHILD, false),
+            entry(APPLICANT_1_FINANCIAL_ORDER, null),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(MARRIAGE_DATE, null),
@@ -161,6 +163,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setFinancialOrder(YES);
+        caseData.getApplicant2().setFinancialOrdersFor(Set.of(FinancialOrderFor.CHILDREN));
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
@@ -171,6 +174,10 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
         when(applicantTemplateDataProvider.deriveApplicant2PostalAddress(eq(caseData.getApplicant2()), any()))
             .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
+        when(applicantTemplateDataProvider.deriveJointFinancialOrder(eq(caseData.getApplicant1().getFinancialOrderFor())))
+            .thenReturn(null);
+        when(applicantTemplateDataProvider.deriveJointFinancialOrder(eq(caseData.getApplicant2().getFinancialOrdersFor())))
+            .thenReturn("children of the applicant and the respondent.");
 
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -187,7 +194,8 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, true),
-            entry(HAS_FINANCIAL_ORDERS_FOR_CHILD, false),
+            entry(APPLICANT_1_FINANCIAL_ORDER, null),
+            entry(APPLICANT_2_FINANCIAL_ORDER, "children of the applicant and the respondent."),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(MARRIAGE_DATE, null),
