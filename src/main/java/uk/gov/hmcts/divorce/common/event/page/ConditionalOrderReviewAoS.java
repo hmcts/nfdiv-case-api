@@ -33,7 +33,7 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
                 .done()
                 .label(
                     "ConditionalOrderReviewAoSNo",
-                    "You must select yes to be able to draft a conditional order",
+                    "You must select yes to apply for a conditional order",
                     "coApplicant1ApplyForConditionalOrder=\"No\""
                 )
             .done();
@@ -49,14 +49,13 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
         List<String> errors = new ArrayList<>();
         ConditionalOrder conditionalOrder = data.getConditionalOrder();
 
-        // TODO: Review error message to get actual text
         if (!conditionalOrder.getConditionalOrderApplicant1Questions().getApplyForConditionalOrder().toBoolean()) {
-            errors.add("To continue, applicant 1 must select Yes");
+            errors.add("Applicant 1 must select yes to apply for a conditional order");
         }
 
         if (conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrder() != null &&
             !conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrder().toBoolean()) {
-            errors.add("To continue, applicant 2 must select Yes");
+            errors.add("Applicant 2 must select yes to apply for a conditional order");
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

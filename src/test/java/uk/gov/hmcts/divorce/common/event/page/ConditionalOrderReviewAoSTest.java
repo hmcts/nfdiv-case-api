@@ -21,9 +21,8 @@ public class ConditionalOrderReviewAoSTest {
 
     private final ConditionalOrderReviewAoS page = new ConditionalOrderReviewAoS();
 
-    // TODO: Review error message to get actual text
-    private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1 = "To continue, applicant 1 must select Yes";
-    private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP2 = "To continue, applicant 2 must select Yes";
+    private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1 = "Applicant 1 must select yes to apply for a conditional order";
+    private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP2 = "Applicant 2 must select yes to apply for a conditional order";
 
     @Test
     public void shouldPreventProgressIfNoIsSelectedOnApplyForConditionalOrderQuestion() {
