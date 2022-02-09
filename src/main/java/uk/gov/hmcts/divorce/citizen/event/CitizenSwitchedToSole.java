@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,7 +28,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Res
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
@@ -48,10 +48,10 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
     private Applicant1SwitchToSoleNotification applicant1SwitchToSoleNotification;
 
     @Autowired
-    private IdamService idamService;
+    private Applicant2SwitchToSoleNotification applicant2SwitchToSoleNotification;
 
     @Autowired
-    private Applicant2SwitchToSoleNotification applicant2SwitchToSoleNotification;
+    private IdamService idamService;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -64,7 +64,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             .forStates(AwaitingApplicant1Response, AwaitingApplicant2Response, Applicant2Approved, AwaitingPayment)
             .name("Application switched to sole")
             .description("Application type switched to sole")
-            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE, CITIZEN, APPLICANT_2)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
@@ -77,7 +77,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         if (isNull(data.getCaseInvite().accessCode())) {
             log.info("Unlinking Applicant 2 from Case");
             ccdAccessService.unlinkUserFromApplication(
-                httpServletRequest.getHeader(AUTHORIZATION),
+                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
                 details.getId(),
                 data.getCaseInvite().applicant2UserId()
             );
@@ -86,12 +86,10 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             data.setCaseInvite(data.getCaseInvite().useAccessCode());
         }
 
-        User user = idamService.retrieveUser(httpServletRequest.getHeader(AUTHORIZATION));
-
-        if (data.getCaseInvite().isApplicant2(user.getUserDetails().getId())) {
-            notificationDispatcher.send(applicant2SwitchToSoleNotification, data, details.getId());
-        } else {
+        if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), details.getId())) {
             notificationDispatcher.send(applicant1SwitchToSoleNotification, data, details.getId());
+        } else {
+            notificationDispatcher.send(applicant2SwitchToSoleNotification, data, details.getId());
         }
 
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);

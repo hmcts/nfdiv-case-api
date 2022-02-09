@@ -148,16 +148,6 @@ public class RetiredFields {
     private YesOrNo coIsEverythingInPetitionTrue;
 
     @CCD(
-        label = "Retired applicant 1 who is the financial order for?"
-    )
-    private Set<FinancialOrderFor> applicant1FinancialOrderFor;
-
-    @CCD(
-        label = "Retired applicant 2 who is the financial order for?"
-    )
-    private Set<FinancialOrderFor> applicant2FinancialOrderFor;
-
-    @CCD(
         label = "Previous Service Applications",
         typeOverride = Collection,
         typeParameterOverride = "AlternativeService"

@@ -16,16 +16,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerNoticeOfChange.CASEWORKER_NOTICE_OF_CHANGE;
@@ -43,9 +40,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 class CaseworkerNoticeOfChangeTest {
 
     @Mock
-    private HttpServletRequest request;
-
-    @Mock
     private CcdAccessService caseAccessService;
 
     @InjectMocks
@@ -53,8 +47,7 @@ class CaseworkerNoticeOfChangeTest {
 
     @Before
     public void setup() {
-        doNothing().when(caseAccessService).removeUsersWithRole(anyString(), anyLong(), anyList());
-        when(request.getHeader(anyString())).thenReturn("TOKEN");
+        doNothing().when(caseAccessService).removeUsersWithRole(anyLong(), anyList());
     }
 
     @Test
@@ -96,7 +89,7 @@ class CaseworkerNoticeOfChangeTest {
         assertThat(result.getData().getApplicant1().getSolicitor()).isNull();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
-        verify(caseAccessService).removeUsersWithRole(eq(null), anyLong(), eq(
+        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
                 CREATOR.getRole(),
                 APPLICANT_1_SOLICITOR.getRole()
@@ -119,7 +112,7 @@ class CaseworkerNoticeOfChangeTest {
         assertThat(result.getData().getApplicant1().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
 
-        verify(caseAccessService).removeUsersWithRole(eq(null), anyLong(), eq(
+        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
                 CREATOR.getRole(),
                 APPLICANT_1_SOLICITOR.getRole()
@@ -142,7 +135,7 @@ class CaseworkerNoticeOfChangeTest {
         assertThat(result.getData().getApplicant1().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
 
-        verify(caseAccessService).removeUsersWithRole(eq(null), anyLong(), eq(
+        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
                 CREATOR.getRole(),
                 APPLICANT_1_SOLICITOR.getRole()
@@ -164,7 +157,7 @@ class CaseworkerNoticeOfChangeTest {
         assertThat(result.getData().getApplicant2().getSolicitor()).isNull();
         assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(NO);
 
-        verify(caseAccessService).removeUsersWithRole(eq(null), anyLong(), eq(
+        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
                 UserRole.APPLICANT_2.getRole(),
                 APPLICANT_2_SOLICITOR.getRole()
@@ -187,7 +180,7 @@ class CaseworkerNoticeOfChangeTest {
         assertThat(result.getData().getApplicant2().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(YES);
 
-        verify(caseAccessService).removeUsersWithRole(eq(null), anyLong(), eq(
+        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
                 UserRole.APPLICANT_2.getRole(),
                 APPLICANT_2_SOLICITOR.getRole()
@@ -210,7 +203,7 @@ class CaseworkerNoticeOfChangeTest {
         assertThat(result.getData().getApplicant2().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(YES);
 
-        verify(caseAccessService).removeUsersWithRole(eq(null), anyLong(), eq(
+        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
                 UserRole.APPLICANT_2.getRole(),
                 APPLICANT_2_SOLICITOR.getRole()

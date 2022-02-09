@@ -10,17 +10,16 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
 import java.util.Objects;
@@ -42,16 +41,18 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 class SubmitConditionalOrderTest {
 
     private static final String DUMMY_AUTH_TOKEN = "ASAFSDFASDFASDFASDFASDF";
-    private static final String DUMMY_USER_ID = "123123123123";
 
     @Mock
-    private AppliedForConditionalOrderNotification appliedForConditionalOrderNotification;
+    private Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
+
+    @Mock
+    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
-    private IdamService idamService;
+    private CcdAccessService ccdAccessService;
 
     @Mock
     private HttpServletRequest request;
@@ -87,7 +88,7 @@ class SubmitConditionalOrderTest {
                 .build())
             .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
@@ -102,31 +103,34 @@ class SubmitConditionalOrderTest {
         setupMocks(null);
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(State.ConditionalOrderDrafted).build();
+            .data(caseData).state(State.ConditionalOrderDrafted).id(1L).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
         assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
     }
 
     @Test
-    void shouldSetSubmittingUserIdOnAboutToSubmit() {
-        setupMocks(clock);
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData()).build();
-
-        submitConditionalOrder.aboutToSubmit(caseDetails, null);
-
-        verify(appliedForConditionalOrderNotification).setSubmittingUserId(DUMMY_USER_ID);
-    }
-
-    @Test
-    void shouldSendEmailOnAboutToSubmitIfApplicantIsNotRepresented() {
+    void shouldSendApp1NotificationsOnAboutToSubmit() {
         setupMocks(clock);
         CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
 
         submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher).send(appliedForConditionalOrderNotification, caseData, 1L);
+        verify(notificationDispatcher).send(app1AppliedForConditionalOrderNotification, caseData, 1L);
+    }
+
+    @Test
+    void shouldSendApp2NotificationsOnAboutToSubmit() {
+        setupMocks(clock);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(false);
+        CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+
+        submitConditionalOrder.aboutToSubmit(caseDetails, null);
+
+        verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, 1L);
     }
 
     private CaseData caseData() {
@@ -144,7 +148,6 @@ class SubmitConditionalOrderTest {
             setMockClock(mockClock);
         }
         when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
-        when(idamService.retrieveUser(DUMMY_AUTH_TOKEN))
-            .thenReturn(new User(DUMMY_AUTH_TOKEN, UserDetails.builder().id(DUMMY_USER_ID).build()));
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(true);
     }
 }

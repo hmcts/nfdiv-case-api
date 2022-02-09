@@ -19,7 +19,7 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_FULL_NAME = "applicant2FullName";
     public static final String MARRIAGE_DATE = "marriageDate";
     public static final String PLACE_OF_MARRIAGE = "placeOfMarriage";
-    public static final String HAS_FINANCIAL_ORDERS = "hasFinancialOrders";
+    public static final String FINANCIAL_ORDER_CHILD = "financialOrderChild";
     public static final String APPLICANT_1_POSTAL_ADDRESS = "applicant1PostalAddress";
     public static final String APPLICANT_2_POSTAL_ADDRESS = "applicant2PostalAddress";
     public static final String DIVORCE_APPLICATION = "divorce application";
@@ -36,9 +36,10 @@ public final class DocmosisTemplateConstants {
     public static final String SOLE_APPLICATION = "Application";
     public static final String CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP = "conditionalOrderDivorceOrCivilPartnership";
     public static final String JOINT_APPLICATION = "Joint application";
+    public static final String HAS_FINANCIAL_ORDERS = "hasFinancialOrders";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_1 = "hasFinancialOrderApplicant1";
-    public static final String HAS_FINANCIAL_ORDER_APPLICANT_2 = "hasFinancialOrderApplicant2";
     public static final String APPLICANT_1_FINANCIAL_ORDER = "applicant1FinancialOrder";
+    public static final String HAS_FINANCIAL_ORDER_APPLICANT_2 = "hasFinancialOrderApplicant2";
     public static final String APPLICANT_2_FINANCIAL_ORDER = "applicant2FinancialOrder";
     public static final String HAS_FINANCIAL_ORDERS_FOR_CHILD = "hasFinancialOrdersForChild";
     public static final String GENERAL_ORDER_DATE = "generalOrderDate";
@@ -54,6 +55,12 @@ public final class DocmosisTemplateConstants {
     public static final String HAS_OTHER_COURT_CASES_APPLICANT_2 = "hasOtherCourtCasesApplicant2";
     public static final String APPLICANT_1_COURT_CASE_DETAILS = "applicant1CourtCaseDetails";
     public static final String APPLICANT_2_COURT_CASE_DETAILS = "applicant2CourtCaseDetails";
+    public static final String APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS = "applicant1KnowsRespondentsSolicitorDetails";
+    public static final String APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS = "applicant1HasEnteredRespondentsSolicitorDetails";
+    public static final String APPLICANT_2_SOLICITOR_NAME = "applicant2SolicitorName";
+    public static final String APPLICANT_2_SOLICITOR_EMAIL = "applicant2SolicitorEmail";
+    public static final String APPLICANT_2_SOLICITOR_FIRM_NAME = "applicant2SolicitorFirmName";
+    public static final String APPLICANT_2_SOLICITOR_ADDRESS = "applicant2SolicitorAddress";
     public static final String SERVICE_APPLICATION_RECEIVED_DATE = "serviceApplicationReceivedDate";
     public static final String SERVICE_APPLICATION_DECISION_DATE = "serviceApplicationDecisionDate";
     public static final String IS_SERVICE_ORDER_TYPE_DEEMED = "isServiceOrderTypeDeemed";
