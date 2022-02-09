@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -59,7 +60,12 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         final Long caseId = details.getId();
 
         log.info("Conditional order pronounced for Case({}), notifying Applicants their conditional order has been pronounced", caseId);
-        notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, caseId);
+
+        try {
+            notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, caseId);
+        } catch (final NotificationTemplateException e) {
+            log.error("Notification failed with message: {}", e.getMessage(), e);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

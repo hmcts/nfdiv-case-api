@@ -258,9 +258,13 @@ public class CcdAccessServiceTest {
 
     @Test
     public void shouldNotThrowAnyExceptionWhenRemoveRolesIsCalled() {
+        var systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(systemUpdateUser);
+
         when(authTokenGenerator.generate())
             .thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
 
         var response = CaseAssignmentUserRolesResource.builder()
             .caseAssignmentUserRoles(List.of(
@@ -276,7 +280,7 @@ public class CcdAccessServiceTest {
             )
         ).thenReturn(response);
 
-        assertThatCode(() -> ccdAccessService.removeUsersWithRole(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, List.of("[CREATOR]")))
+        assertThatCode(() -> ccdAccessService.removeUsersWithRole(TEST_CASE_ID, List.of("[CREATOR]")))
             .doesNotThrowAnyException();
 
         var request = CaseAssignmentUserRolesRequest.builder()
@@ -289,6 +293,7 @@ public class CcdAccessServiceTest {
                     .build()))
             .build();
 
+        verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
         verify(caseAssignmentApi)
             .getUserRoles(

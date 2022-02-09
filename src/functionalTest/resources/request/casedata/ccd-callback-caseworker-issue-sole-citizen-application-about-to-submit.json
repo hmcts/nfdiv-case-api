@@ -29,6 +29,7 @@
   "applicant2LanguagePreferenceWelsh": "No",
   "applicant2ContactDetailsType": "public",
   "applicant2Gender": "female",
+  "applicant1IsApplicant2Represented": "notSure",
   "marriageApplicant1Name": "test_first_name test_last_name",
   "marriageApplicant2Name": "test_first_name test_last_name",
   "marriagePlaceOfMarriage": "Somewhere",

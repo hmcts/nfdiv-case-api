@@ -141,7 +141,8 @@ public class CcdAccessService {
             .build();
     }
 
-    public void removeUsersWithRole(String auth, Long caseId, List<String> roles) {
+    public void removeUsersWithRole(Long caseId, List<String> roles) {
+        final var auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         final var s2sToken = authTokenGenerator.generate();
         final var response = caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));
 
