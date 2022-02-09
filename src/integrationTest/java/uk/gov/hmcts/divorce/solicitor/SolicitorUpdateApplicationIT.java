@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
@@ -27,6 +28,8 @@ import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -39,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateApplication.SOLICITOR_UPDATE;
@@ -174,12 +178,14 @@ public class SolicitorUpdateApplicationIT {
                     .build()
             )
             .build();
+        application.getJurisdiction().setConnections(Set.of(APP_1_RESIDENT_JOINT));
 
         return CaseData
             .builder()
             .application(application)
             .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
+            .applicationType(ApplicationType.SOLE_APPLICATION)
             .divorceUnit(Court.SERVICE_CENTRE)
             .build();
     }
