@@ -45,13 +45,15 @@ public enum State {
 
     @CCD(
         name = "Applicant 2 approved",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
     )
     Applicant2Approved("Applicant2Approved"),
 
     @CCD(
         name = "Application awaiting payment",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
     )
     AwaitingPayment("AwaitingPayment"),
 
@@ -92,19 +94,22 @@ public enum State {
 
     @CCD(
         name = "Awaiting applicant",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
     )
     AwaitingDocuments("AwaitingDocuments"),
 
     @CCD(
         name = "Awaiting applicant 1 response",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
     )
     AwaitingApplicant1Response("AwaitingApplicant1Response"),
 
     @CCD(
         name = "Awaiting applicant 2 response",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
     )
     AwaitingApplicant2Response("AwaitingApplicant2Response"),
 
@@ -166,7 +171,8 @@ public enum State {
 
     @CCD(
         name = "Awaiting HWF decision",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
     )
     AwaitingHWFDecision("AwaitingHWFDecision"),
 
@@ -193,7 +199,8 @@ public enum State {
 
     @CCD(
         name = "Awaiting service",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
     )
     AwaitingService("AwaitingService"),
 
@@ -302,7 +309,9 @@ public enum State {
     NewPaperCase("NewPaperCase"),
 
     @CCD(
-        name = "Offline document received by CW"
+        name = "Offline document received by CW",
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
     )
     OfflineDocumentReceived("OfflineDocumentReceived"),
 
@@ -315,7 +324,8 @@ public enum State {
 
     @CCD(
         name = "Submitted",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n\n"
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
     )
     Submitted("Submitted");
 
