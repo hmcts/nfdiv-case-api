@@ -53,8 +53,8 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
             errors.add("Applicant 1 must select yes to apply for a conditional order");
         }
 
-        if (conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrder() != null &&
-            !conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrder().toBoolean()) {
+        if (conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrder() != null
+            && !conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrder().toBoolean()) {
             errors.add("Applicant 2 must select yes to apply for a conditional order");
         }
 
