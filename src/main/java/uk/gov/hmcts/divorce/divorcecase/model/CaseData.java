@@ -51,7 +51,7 @@ public class CaseData {
 
     @CCD(
         label = "Application type",
-        access = {DefaultAccess.class},
+        access = {DefaultAccess.class, Applicant2Access.class},
         typeOverride = FixedRadioList,
         typeParameterOverride = "ApplicationType"
     )
