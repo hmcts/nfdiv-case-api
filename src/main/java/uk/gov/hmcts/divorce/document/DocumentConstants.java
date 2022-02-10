@@ -13,7 +13,12 @@ public final class DocumentConstants {
 
     public static final String DIVORCE_DRAFT_APPLICATION = "DIVORCE_DRAFT_APPLICATION";
     public static final String DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME = "draft-divorce-application-";
-    public static final String JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME = "joint-draft-divorce-application-";
+
+    public static final String DIVORCE_SOLE_APPLICANT_1_ANSWERS = "DIVORCE_SOLE_APPLICANT_1_ANSWERS";
+    public static final String DIVORCE_JOINT_APPLICANT_1_ANSWERS = "DIVORCE_JOINT_APPLICANT_1_ANSWERS";
+    public static final String DIVORCE_JOINT_APPLICANT_2_ANSWERS = "DIVORCE_JOINT_APPLICANT_2_ANSWERS";
+    public static final String JOINT_DIVORCE_APPLICANT_1_ANSWERS_DOCUMENT_NAME = "joint-divorce-application-applicant-1-answers-";
+    public static final String JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME = "joint-divorce-application-applicant-2-answers-";
 
     public static final String RESP_SOLICITOR_AOS_INVITATION = "RESP_SOLICITOR_AOS_INVITATION";
     public static final String CITIZEN_RESP_AOS_INVITATION = "CITIZEN_RESP_AOS_INVITATION";
@@ -29,8 +34,8 @@ public final class DocumentConstants {
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
     public static final String SERVICE_ORDER_TEMPLATE_ID = "SERVICE_ORDER";
 
-    public static final String REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID = "REFUSAL_ORDER_CLARIFICATION";
-    public static final String REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME = "NFD_Refusal_Order_Clarification";
+    public static final String REFUSAL_ORDER_TEMPLATE_ID = "REFUSAL_ORDER";
+    public static final String REFUSAL_ORDER_DOCUMENT_NAME = "NFD_Refusal_Order";
 
     public static final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID = "CERTIFICATE_OF_SERVICE";
 

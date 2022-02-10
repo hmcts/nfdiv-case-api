@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.CHILDREN;
 
@@ -25,6 +26,25 @@ public class ApplicantTemplateDataProvider {
 
             final Set<FinancialOrderFor> financialOrderFor = applicant.getFinancialOrderFor();
 
+            if (financialOrderFor.contains(APPLICANT) && financialOrderFor.contains(CHILDREN)) {
+                return "applicants, and for the children of both the applicants.";
+            }
+
+            if (financialOrderFor.contains(APPLICANT)) {
+                return "applicants.";
+            }
+
+            if (financialOrderFor.contains(CHILDREN)) {
+                return "children of both the applicants.";
+            }
+        }
+
+        return null;
+    }
+
+    public String deriveJointFinancialOrder(Set<FinancialOrderFor> financialOrderFor) {
+
+        if (!isEmpty(financialOrderFor)) {
             if (financialOrderFor.contains(APPLICANT) && financialOrderFor.contains(CHILDREN)) {
                 return "applicants, and for the children of both the applicants.";
             }

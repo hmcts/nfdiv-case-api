@@ -20,8 +20,9 @@ public class ConditionalOrderReviewApplicant1 implements CcdPageConfiguration {
                 .done()
             .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
-                .mandatory(ConditionalOrderQuestions::getChangeOrAddToApplication)
-                .mandatory(ConditionalOrderQuestions::getIsEverythingInApplicationTrue)
+            .mandatory(ConditionalOrderQuestions::getConfirmInformationStillCorrect)
+            .mandatory(ConditionalOrderQuestions::getReasonInformationNotCorrect,
+                "coApplicant1ConfirmInformationStillCorrect=\"No\"")
                 .done()
             .done();
     }

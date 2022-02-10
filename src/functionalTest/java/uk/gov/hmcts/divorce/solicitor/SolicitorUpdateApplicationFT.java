@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.testutil.DocumentManagementStore;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.document.domain.Document;
 
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
@@ -18,6 +19,8 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateApplication.SOLICITOR_UPDATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
@@ -37,6 +40,8 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("applicationType", SOLE_APPLICATION);
+        caseData.put("jurisdictionConnections", List.of(APP_1_APP_2_RESIDENT));
         caseData.put("applicant2OrgContactInformation", organisationContactInformation());
 
         Document document = documentManagementStore.upload("", "draft-divorce-application-1234567890123456.pdf", "classpath:Test.pdf");
