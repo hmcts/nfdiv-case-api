@@ -1,0 +1,187 @@
+[
+  {
+    "name": "marriageOrCivilPartnershipCertificate",
+    "value": "true"
+  },
+  {
+    "name": "translation",
+    "value": "false"
+  },
+  {
+    "name": "soleOrApplicant1FullNameAsOnCert",
+    "value": "app1 fullname"
+  },
+  {
+    "name": "respondentOrApplicant2FullNameAsOnCert",
+    "value": "app2 fullname"
+  },
+  {
+    "name": "placeOfMarriageOrCivilPartnership",
+    "value": "London"
+  },
+  {
+    "name": "marriageOutsideOfUK",
+    "value": "No"
+  },
+  {
+    "name": "makingAnApplicationWithoutCertificate",
+    "value": "No"
+  },
+  {
+    "name": "dateOfMarriageOrCivilPartnershipDay",
+    "value": "01"
+  },
+  {
+    "name": "dateOfMarriageOrCivilPartnershipMonth",
+    "value": "January"
+  },
+  {
+    "name": "dateOfMarriageOrCivilPartnershipYear",
+    "value": "1990"
+  },
+  {
+    "name": "detailsOnCertCorrect",
+    "value": "Yes"
+  },
+  {
+    "name": "reasonWhyCertNotCorrect",
+    "value": ""
+  },
+  {
+    "name": "jurisdictionReasonsBothPartiesHabitual",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsSameSex",
+    "value": "false"
+  },
+  {
+    "name": "soleOrApplicant1ConfirmationOfBreakdown",
+    "value": "true"
+  },
+  {
+    "name": "applicant2ConfirmationOfBreakdown",
+    "value": "true"
+  },
+  {
+    "name": "existingOrPreviousCourtCases",
+    "value": "Both"
+  },
+  {
+    "name": "existingOrPreviousCourtCaseNumbers",
+    "value": ""
+  },
+  {
+    "name": "summaryOfExistingOrPreviousCourtCases",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1FinancialOrder",
+    "value": "Yes"
+  },
+  {
+    "name": "soleOrApplicant1FinancialOrderFor",
+    "value": "myself,children"
+  },
+  {
+    "name": "applicant2FinancialOrder",
+    "value": "No"
+  },
+  {
+    "name": "applicant2FinancialOrderFor",
+    "value": ""
+  },
+  {
+    "name": "prayerMarriageDissolved",
+    "value": "true"
+  },
+  {
+    "name": "prayerCivilPartnershipDissolved",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1prayerFinancialOrderFor",
+    "value": "theSoleApplicantOrApplicant1,forTheChildren"
+  },
+  {
+    "name": "applicant2prayerFinancialOrderFor",
+    "value": ""
+  },
+  {
+    "name": "soleApplicantOrApplicant1StatementOfTruth",
+    "value": "true"
+  },
+  {
+    "name": "soleApplicantOrApplicant1Signing",
+    "value": "true"
+  },
+  {
+    "name": "legalRepSigning",
+    "value": "false"
+  },
+  {
+    "name": "statementOfTruthDateDay",
+    "value": "18"
+  },
+  {
+    "name": "statementOfTruthDateMonth",
+    "value": "1"
+  },
+  {
+    "name": "statementOfTruthDateYear",
+    "value": "2022"
+  },
+  {
+    "name": "soleApplicantOrApplicant1OrLegalRepFullName",
+    "value": ""
+  },
+  {
+    "name": "soleApplicantOrApplicant1LegalRepPosition",
+    "value": ""
+  },
+  {
+    "name": "applicant2StatementOfTruth",
+    "value": "true"
+  },
+  {
+    "name": "applicant2LegalRepStatementOfTruth",
+    "value": "false"
+  },
+  {
+    "name": "applicant2OrLegalRepSignature",
+    "value": ""
+  },
+  {
+    "name": "applicant2Signing",
+    "value": "true"
+  },
+  {
+    "name": "applicant2LegalRepSigning",
+    "value": "false"
+  },
+  {
+    "name": "applicant2StatementOfTruthDateDay",
+    "value": ""
+  },
+  {
+    "name": "applicant2StatementOfTruthDateMonth",
+    "value": ""
+  },
+  {
+    "name": "applicant2StatementOfTruthDateYear",
+    "value": ""
+  },
+  {
+    "name": "applicant2OrLegalRepFullName",
+    "value": ""
+  },
+  {
+    "name": "applicant2LegalRepFirm",
+    "value": ""
+  },
+  {
+    "name": "soleApplicantOrApplicant1LegalRepFirm",
+    "value": ""
+  }
+]
+

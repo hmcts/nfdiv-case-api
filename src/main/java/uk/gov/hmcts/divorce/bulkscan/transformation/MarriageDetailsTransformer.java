@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransform
 
 @Component
 public class MarriageDetailsTransformer implements Function<TransformationDetails, TransformationDetails> {
+
     @Override
     public TransformationDetails apply(TransformationDetails transformationDetails) {
         CaseData caseData = transformationDetails.getCaseData();
@@ -64,7 +65,13 @@ public class MarriageDetailsTransformer implements Function<TransformationDetail
         caseData.getApplication().getMarriageDetails().setDate(deriveMarriageDate(ocrDataFields, warnings));
         caseData.getApplication().getMarriageDetails().setApplicant1Name(ocrDataFields.getSoleOrApplicant1FullNameAsOnCert());
         caseData.getApplication().getMarriageDetails().setApplicant2Name(ocrDataFields.getRespondentOrApplicant2FullNameAsOnCert());
-        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage(setPlaceOfMarriageOrCivilPartnership(ocrDataFields, warnings));
+
+        if (isEmpty(ocrDataFields.getPlaceOfMarriageOrCivilPartnership())
+            && (YES.equals(caseData.getApplication().getMarriageDetails().getMarriedInUk())
+            || YES.equals(caseData.getApplication().getMarriageDetails().getIssueApplicationWithoutMarriageCertificate()))) {
+            warnings.add("Please review making an application without marriage certificate in the scanned form");
+        }
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage(ocrDataFields.getPlaceOfMarriageOrCivilPartnership());
 
         if (OCR_FIELD_VALUE_YES.equalsIgnoreCase(ocrDataFields.getDetailsOnCertCorrect())) {
             caseData.getApplication().getMarriageDetails().setCertifyMarriageCertificateIsCorrect(YES);
@@ -105,16 +112,6 @@ public class MarriageDetailsTransformer implements Function<TransformationDetail
         }
     }
 
-    private String setPlaceOfMarriageOrCivilPartnership(OcrDataFields ocrDataFields, List<String> warnings) {
-        if (isEmpty(ocrDataFields.getPlaceOfMarriageOrCivilPartnership())
-            && (OCR_FIELD_VALUE_YES.equalsIgnoreCase(ocrDataFields.getMarriageOutsideOfUK())
-            || OCR_FIELD_VALUE_YES.equalsIgnoreCase(ocrDataFields.getMakingAnApplicationWithoutCertificate()))) {
-            warnings.add("Please review making an application with marriage certificate in the scanned form");
-            return ocrDataFields.getPlaceOfMarriageOrCivilPartnership();
-        }
-        return ocrDataFields.getPlaceOfMarriageOrCivilPartnership();
-    }
-
     private LocalDate deriveMarriageDate(OcrDataFields ocrDataFields, List<String> warnings) {
         try {
             String marriageMonth = ocrDataFields.getDateOfMarriageOrCivilPartnershipMonth();
@@ -122,7 +119,7 @@ public class MarriageDetailsTransformer implements Function<TransformationDetail
             int monthParsed = Month.valueOf(marriageMonth.toUpperCase(Locale.UK)).getValue(); //format "January"
             int yearParsed = Integer.parseInt(ocrDataFields.getDateOfMarriageOrCivilPartnershipYear()); // format "2022"
             return LocalDate.of(yearParsed, dayParsed, monthParsed);
-        } catch (DateTimeException exception) {
+        } catch (DateTimeException | IllegalArgumentException exception) {
             // log and add validation it as will be corrected manually the caseworker
             warnings.add("Please review marriage date in the scanned form");
         }

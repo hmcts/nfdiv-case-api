@@ -85,13 +85,10 @@ public class PaperFormDetailsTransformerTest {
 
         final var expectedPaperForm =
             jsonToObject("src/test/resources/transformation/output/paper-form-transformed-warnings.json", PaperFormDetails.class);
-        System.out.println(MAPPER.writeValueAsString(transformedOutput.getCaseData().getPaperFormDetails()));
-
 
         assertThat(transformedOutput.getCaseData().getPaperFormDetails())
             .usingRecursiveComparison()
             .ignoringActualNullFields()
             .isEqualTo(expectedPaperForm);
     }
-
 }

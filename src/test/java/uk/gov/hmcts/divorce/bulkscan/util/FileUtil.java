@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.bulkscan.util;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,12 @@ public final class FileUtil {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    static {
+        JavaTimeModule datetime = new JavaTimeModule();
+        datetime.addSerializer(LocalDateSerializer.INSTANCE);
+        MAPPER.registerModule(datetime);
+    }
+
     private FileUtil() {
     }
 
@@ -23,7 +29,6 @@ public final class FileUtil {
     }
 
     public static <T> T jsonToObject(String s, Class<T> clazz) throws IOException {
-        MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         return MAPPER.readValue(new File(s), clazz);
     }
 }
