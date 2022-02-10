@@ -210,8 +210,9 @@ public class SystemMigrateBulkCasesTaskTest {
                 .build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
+        final int latestVersion = BulkCaseRetiredFields.getVersion();
 
-        when(ccdSearchService.searchForBulkCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForBulkCasesWithVersionLessThan(latestVersion, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(NOT_FOUND, "Failed processing of case", mock(FeignException.class)))
@@ -221,6 +222,6 @@ public class SystemMigrateBulkCasesTaskTest {
 
         systemMigrateBulkCasesTask.run();
 
-        assertThat(caseDetails1.getData()).isEqualTo(Map.of("bulkCaseDataVersion", 1));
+        assertThat(caseDetails1.getData()).isEqualTo(Map.of("bulkCaseDataVersion", latestVersion));
     }
 }

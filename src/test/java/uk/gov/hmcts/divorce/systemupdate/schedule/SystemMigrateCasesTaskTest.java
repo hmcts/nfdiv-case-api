@@ -183,8 +183,9 @@ class SystemMigrateCasesTaskTest {
                 .build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
+        final int latestVersion = RetiredFields.getVersion();
 
-        when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForCasesWithVersionLessThan(latestVersion, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(NOT_FOUND, "Failed processing of case", mock(FeignException.class)))
@@ -193,6 +194,6 @@ class SystemMigrateCasesTaskTest {
 
         systemMigrateCasesTask.run();
 
-        assertThat(caseDetails1.getData()).isEqualTo(Map.of("dataVersion", 43));
+        assertThat(caseDetails1.getData()).isEqualTo(Map.of("dataVersion", latestVersion));
     }
 }
