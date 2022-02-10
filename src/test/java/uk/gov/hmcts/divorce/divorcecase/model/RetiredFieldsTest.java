@@ -328,4 +328,19 @@ class RetiredFieldsTest {
         );
     }
 
+    @Test
+    void shouldMigrateCoSolicitorFields() {
+        final var data = new TreeMap<String, Object>();
+        data.put("coSolicitorName", "Mr Solicitor");
+        data.put("coSolicitorFirm", "Solicitor Bros");
+        data.put("coSolicitorAdditionalComments", "Some comments");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("coApplicant1SolicitorName", "Mr Solicitor"),
+            entry("coApplicant1SolicitorFirm", "Solicitor Bros"),
+            entry("coApplicant1SolicitorAdditionalComments", "Some comments")
+        );
+    }
 }
