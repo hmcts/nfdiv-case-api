@@ -178,30 +178,6 @@
   {
     "name": "soleApplicantOrApplicant1LegalRepFirm",
     "value": ""
-  },
-  {
-    "name": "courtFee",
-    "value": "595£"
-  },
-  {
-    "name": "soleOrApplicant1NoPaymentIncluded",
-    "value": "Yes"
-  },
-  {
-    "name": "soleOrApplicant1HWFConfirmation",
-    "value": "HWF-123"
-  },
-  {
-    "name": "soleOrApplicant1HWFApp",
-    "value": "true"
-  },
-  {
-    "name": "soleOrApplicant1PaymentOther",
-    "value": "false"
-  },
-  {
-    "name": "soleOrApplicant1PaymentOtherDetail",
-    "value": ""
   }
 ]
 

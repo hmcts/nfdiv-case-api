@@ -162,21 +162,5 @@
   {
     "name": "applicant2HWFConfirmation",
     "value": "true"
-  },
-  {
-    "name": "applicant2HWFNo",
-    "value": "HWF-456"
-  },
-  {
-    "name": "applicant2HWFApp",
-    "value": "true"
-  },
-  {
-    "name": "applicant2PaymentOther",
-    "value": "false"
-  },
-  {
-    "name": "respondentServePostOnly",
-    "value": "false"
   }
 ]
