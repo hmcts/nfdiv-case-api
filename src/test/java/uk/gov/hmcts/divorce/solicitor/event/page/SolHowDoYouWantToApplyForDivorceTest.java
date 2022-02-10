@@ -100,4 +100,41 @@ class SolHowDoYouWantToApplyForDivorceTest {
             YesOrNo.NO
         );
     }
+
+    @Test
+    public void shouldSetCoIsDraftedForSole() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setConditionalOrder(ConditionalOrder.builder().build());
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertEquals(
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted(),
+            YesOrNo.NO
+        );
+    }
+
+    @Test
+    public void shouldSetCoIsDraftedForJoint() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertEquals(
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted(),
+            YesOrNo.NO
+        );
+        assertEquals(
+            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted(),
+            YesOrNo.NO
+        );
+    }
 }
