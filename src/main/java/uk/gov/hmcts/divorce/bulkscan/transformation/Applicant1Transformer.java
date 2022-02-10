@@ -70,10 +70,10 @@ public class Applicant1Transformer implements Function<TransformationDetails, Tr
         String soleOrApplicant1MarriedName = ocrDataFields.getSoleOrApplicant1MarriedName();
         YesOrNo nameDifferentToMarriageCertificate = null;
         if (OCR_FIELD_VALUE_YES.equalsIgnoreCase(soleOrApplicant1MarriedName)
-            || OCR_FIELD_VALUE_NO.equalsIgnoreCase(soleOrApplicant1MarriedName)) {
-            nameDifferentToMarriageCertificate = YesOrNo.valueOf(soleOrApplicant1MarriedName);
-        } else if (OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(soleOrApplicant1MarriedName)) {
+            || OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(soleOrApplicant1MarriedName)) {
             nameDifferentToMarriageCertificate = YES;
+        } else if (OCR_FIELD_VALUE_NO.equalsIgnoreCase(soleOrApplicant1MarriedName)) {
+            nameDifferentToMarriageCertificate = NO;
         } else {
             warnings.add("Please review applicant1 name different to marriage certificate in the scanned form");
         }
@@ -103,11 +103,13 @@ public class Applicant1Transformer implements Function<TransformationDetails, Tr
             .build();
 
         if (isApp1SolicitorRepresented) {
-            if (isNull(ocrDataFields.getSoleOrApplicant1SolicitorName())) {
+            if (isEmpty(ocrDataFields.getSoleOrApplicant1SolicitorName())) {
                 warnings.add("Please review applicant1 solicitor name in the scanned form");
-            } else if (isNull(ocrDataFields.getSoleOrApplicant1SolicitorFirm())) {
+            }
+            if (isEmpty(ocrDataFields.getSoleOrApplicant1SolicitorFirm())) {
                 warnings.add("Please review applicant1 solicitor firm in the scanned form");
-            } else if (isNull(ocrDataFields.getSoleOrApplicant1BuildingAndStreet())) {
+            }
+            if (isEmpty(ocrDataFields.getSoleOrApplicant1BuildingAndStreet())) {
                 warnings.add("Please review applicant1 solicitor building and street in the scanned form");
             }
             applicant.setSolicitor(solicitor1(ocrDataFields));
@@ -116,14 +118,13 @@ public class Applicant1Transformer implements Function<TransformationDetails, Tr
     }
 
     private boolean deriveSolicitorRepresented(String soleOrApplicant1Solicitor, List<String> warnings) {
-        if (OCR_FIELD_VALUE_YES.equalsIgnoreCase(soleOrApplicant1Solicitor)) {
-            return true;
-        } else if (OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(soleOrApplicant1Solicitor)) {
+        if (OCR_FIELD_VALUE_YES.equalsIgnoreCase(soleOrApplicant1Solicitor)
+            || OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(soleOrApplicant1Solicitor)) {
             return true;
         } else if (OCR_FIELD_VALUE_NO.equalsIgnoreCase(soleOrApplicant1Solicitor)) {
             return false;
         } else {
-            warnings.add("Please review applicant1 name different to marriage certificate in the scanned form");
+            warnings.add("Please review applicant1 solicitor details in the scanned form");
             return false;
         }
     }
