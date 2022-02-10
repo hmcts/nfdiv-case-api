@@ -70,11 +70,7 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
         log.info("Draft conditional order about to submit callback invoked for case id: {}", details.getId());
 
         final CaseData data = details.getData();
-        final boolean isSole = data.getApplicationType().isSole();
-
-        if (!isSole && data.getApplication().isSolicitorServiceMethod() && data.getApplication().isSolicitorApplication()) {
-            data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(YES);
-        }
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
