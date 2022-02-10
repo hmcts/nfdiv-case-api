@@ -95,5 +95,7 @@
   "labelContentUnionType": "divorce",
   "labelContentUnionTypeUC": "Divorce",
   "coApplicant1IsSubmitted": "No",
-  "coApplicant2IsSubmitted": "No"
+  "coApplicant2IsSubmitted": "No",
+  "coApplicant1IsDrafted": "No",
+  "coApplicant2IsDrafted": "No"
 }

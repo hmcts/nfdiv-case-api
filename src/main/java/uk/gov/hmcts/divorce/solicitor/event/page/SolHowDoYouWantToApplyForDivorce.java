@@ -64,8 +64,10 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
         data.getLabelContent().setApplicationType(data.getApplicationType());
         data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
         data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
         if (!data.getApplicationType().isSole()) {
             data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
