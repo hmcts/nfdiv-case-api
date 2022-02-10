@@ -38,5 +38,6 @@
   "LegalProceedings": null,
   "LegalProceedingsDetails": null,
   "PcqId": null,
-  "ContinueApplication": null
+  "ContinueApplication": null,
+  "Offline" : "No"
 }

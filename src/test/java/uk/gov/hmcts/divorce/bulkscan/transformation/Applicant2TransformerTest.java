@@ -44,7 +44,7 @@ public class Applicant2TransformerTest {
         assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
 
         final var expectedApplicant2 =
-            jsonToObject("src/test/resources/transformation/output/applicant2-transformed-output.json", Applicant.class);
+            jsonToObject("src/test/resources/transformation/output/applicant2-transformed.json", Applicant.class);
         expectedApplicant2.setOffline(NO);
 
         assertThat(transformedOutput.getCaseData().getApplicant2())
@@ -55,8 +55,8 @@ public class Applicant2TransformerTest {
 
     @Test
     void shouldSuccessfullyTransformApplicant2DetailsWithWarningsWhenOcrContainsInvalidData() throws Exception {
-        String validApplicant2OcrJson = loadJson("src/test/resources/transformation/input/invalid-applicant2-ocr.json");
-        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicant2OcrJson, new TypeReference<>() {
+        String invalidApplicant2OcrJson = loadJson("src/test/resources/transformation/input/invalid-applicant2-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(invalidApplicant2OcrJson, new TypeReference<>() {
         });
 
         final var caseData = CaseData.builder().build();
@@ -78,7 +78,7 @@ public class Applicant2TransformerTest {
             );
 
         final var expectedApplicant2 =
-            jsonToObject("src/test/resources/transformation/output/applicant2-transformed-output-with-warnings.json", Applicant.class);
+            jsonToObject("src/test/resources/transformation/output/applicant2-transformed-warnings.json", Applicant.class);
         expectedApplicant2.setOffline(NO);
 
         assertThat(transformedOutput.getCaseData().getApplicant2())

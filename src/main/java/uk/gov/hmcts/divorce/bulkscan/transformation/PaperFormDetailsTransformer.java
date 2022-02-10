@@ -17,6 +17,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
 
 @Component
@@ -30,6 +31,10 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
     public TransformationDetails apply(TransformationDetails transformationDetails) {
         CaseData caseData = transformationDetails.getCaseData();
         OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
+
+        if (SOLE_APPLICATION.equals(caseData.getApplicationType()) && isEmpty(ocrDataFields.getServeOutOfUK())) {
+            caseData.getTransformationAndOcrWarnings().add("Please review serve respondent outside UK in scanned form");
+        }
 
         caseData.getPaperFormDetails().setServiceOutsideUK(ocrDataFields.getServeOutOfUK());
         caseData.getPaperFormDetails().setApplicantWillServeApplication(
@@ -95,10 +100,10 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
         }
         if (!toBoolean(ocrDataFields.getSoleApplicantOrApplicant1Signing())
             && !toBoolean(ocrDataFields.getSoleApplicantOrApplicant1OrLegalRepSignature())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth for applicant1 in scanned form");
+            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth signing for applicant1 in scanned form");
         }
         if (isEmpty(ocrDataFields.getSoleApplicantOrApplicant1OrLegalRepFullName())) {
-            caseData.getTransformationAndOcrWarnings().add("Please sole or applicant1/legal representative name in scanned form");
+            caseData.getTransformationAndOcrWarnings().add("Please review sole or applicant1/legal representative name in scanned form");
         }
 
         caseData.getPaperFormDetails().setApplicant1SigningSOT(
@@ -129,11 +134,11 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
     private void applicant2StatementOfTruth(OcrDataFields ocrDataFields, CaseData caseData) {
         if (!toBoolean(ocrDataFields.getApplicant2StatementOfTruth())
             && !toBoolean(ocrDataFields.getApplicant2LegalRepStatementOfTruth())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth for applicant1 in scanned form");
+            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth for applicant2 in scanned form");
         }
         if (!toBoolean(ocrDataFields.getApplicant2Signing())
             && !toBoolean(ocrDataFields.getApplicant2LegalRepSigning())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth for applicant1 in scanned form");
+            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth for applicant2 in scanned form");
         }
         if (isEmpty(ocrDataFields.getApplicant2OrLegalRepFullName())) {
             caseData.getTransformationAndOcrWarnings().add("Please sole or applicant2/legal representative name in scanned form");

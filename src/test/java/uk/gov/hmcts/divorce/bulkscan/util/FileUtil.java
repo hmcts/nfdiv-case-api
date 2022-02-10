@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.bulkscan.util;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -21,6 +23,7 @@ public final class FileUtil {
     }
 
     public static <T> T jsonToObject(String s, Class<T> clazz) throws IOException {
+        MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         return MAPPER.readValue(new File(s), clazz);
     }
 }

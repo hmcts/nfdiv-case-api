@@ -1,0 +1,31 @@
+{
+  "serviceOutsideUK": "No",
+  "applicantWillServeApplication": "Yes",
+  "respondentDifferentServiceAddress": "No",
+  "summaryApplicant1FinancialOrdersFor": [
+    "children"
+  ],
+  "summaryApplicant2FinancialOrdersFor": [
+    "children",
+    "applicant"
+  ],
+  "applicant1SigningSOT": "Yes",
+  "applicant1LegalRepSigningSOT": "No",
+  "applicant2SigningSOT": "Yes",
+  "applicant2LegalRepSigningSOT": "No",
+  "applicant1LegalRepPosition": "some position",
+  "applicant2LegalRepPosition": null,
+  "applicant1SOTSignedOn": "18 6 2022",
+  "applicant2SOTSignedOn": "18 6 2022",
+  "feeInPounds": "595£",
+  "applicant1NoPaymentIncluded": "Yes",
+  "applicant2NoPaymentIncluded": "No",
+  "soleOrApplicant1PaymentOther": "No",
+  "applicant2PaymentOther": "No",
+  "soleOrApplicant1PaymentOtherDetail": null,
+  "debitCreditCardPayment": null,
+  "debitCreditCardPaymentPhone": null,
+  "howToPayEmail": null,
+  "paymentDetailEmail": null,
+  "chequeOrPostalOrderPayment": null
+}

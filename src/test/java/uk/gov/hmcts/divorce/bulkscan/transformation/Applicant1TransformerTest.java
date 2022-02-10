@@ -43,7 +43,7 @@ public class Applicant1TransformerTest {
         assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
 
         final var expectedApplicant1 =
-            jsonToObject("src/test/resources/transformation/output/applicant1-transformed-output.json", Applicant.class);
+            jsonToObject("src/test/resources/transformation/output/applicant1-transformed.json", Applicant.class);
 
         assertThat(transformedOutput.getCaseData().getApplicant1())
             .usingRecursiveComparison()
@@ -53,8 +53,8 @@ public class Applicant1TransformerTest {
 
     @Test
     void shouldSuccessfullyTransformApplicant1DetailsWithWarningsWhenOcrContainsInvalidData() throws Exception {
-        String validApplicant1OcrJson = loadJson("src/test/resources/transformation/input/invalid-applicant1-ocr.json");
-        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicant1OcrJson, new TypeReference<>() {
+        String invalidApplicant1OcrJson = loadJson("src/test/resources/transformation/input/invalid-applicant1-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(invalidApplicant1OcrJson, new TypeReference<>() {
         });
 
         final var caseData = CaseData.builder().build();
@@ -77,7 +77,7 @@ public class Applicant1TransformerTest {
             );
 
         final var expectedApplicant1 =
-            jsonToObject("src/test/resources/transformation/output/applicant1-transformed-output-with-warnings.json", Applicant.class);
+            jsonToObject("src/test/resources/transformation/output/applicant1-transformed-warnings.json", Applicant.class);
 
         assertThat(transformedOutput.getCaseData().getApplicant1())
             .usingRecursiveComparison()
@@ -108,7 +108,7 @@ public class Applicant1TransformerTest {
 
         final var expectedApplicant1 =
             jsonToObject(
-                "src/test/resources/transformation/output/applicant1-transformed-output-invalid-sol-warnings.json",
+                "src/test/resources/transformation/output/applicant1-transformed-invalid-sol-warnings.json",
                 Applicant.class
             );
 
