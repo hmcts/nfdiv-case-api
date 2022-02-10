@@ -11,8 +11,8 @@ public class UpdateApplicant2ContactDetails implements CcdPageConfiguration {
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder
             .page("RespondentContactDetails")
-            .showCondition("applicationType=\"soleApplication\"")
             .pageLabel("Update the respondent's contact details")
+            .showCondition("applicationType=\"soleApplication\"")
             .complex(CaseData::getApplicant2)
                 .mandatory(Applicant::getEmail)
                 .mandatory(Applicant::getPhoneNumber)
@@ -21,9 +21,9 @@ public class UpdateApplicant2ContactDetails implements CcdPageConfiguration {
                 .mandatory(Applicant::getContactDetailsType)
                 .done()
             .page("Applicant2ContactDetails")
-                .showCondition("applicationType=\"jointApplication\"")
-                .pageLabel("Update applicant 2 contact details")
-                .complex(CaseData::getApplicant2)
+            .pageLabel("Update applicant 2 contact details")
+            .showCondition("applicationType=\"jointApplication\"")
+            .complex(CaseData::getApplicant2)
                 .mandatory(Applicant::getEmail)
                 .mandatory(Applicant::getPhoneNumber)
                 .mandatory(Applicant::getHomeAddress)
