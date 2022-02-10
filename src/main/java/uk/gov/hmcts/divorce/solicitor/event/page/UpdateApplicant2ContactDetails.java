@@ -10,25 +10,18 @@ public class UpdateApplicant2ContactDetails implements CcdPageConfiguration {
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder
-            .page("RespondentContactDetails")
-            .pageLabel("Update the respondent's contact details")
-            .showCondition("applicationType=\"soleApplication\"")
-            .complex(CaseData::getApplicant2)
-                .mandatory(Applicant::getEmail)
-                .mandatory(Applicant::getPhoneNumber)
-                .mandatory(Applicant::getHomeAddress)
-                .label("LabelHorizontalLine1Resp", "<hr>")
-                .mandatory(Applicant::getContactDetailsType)
-                .done()
             .page("Applicant2ContactDetails")
-            .pageLabel("Update applicant 2 contact details")
-            .showCondition("applicationType=\"jointApplication\"")
+            .pageLabel("Update contact details")
             .complex(CaseData::getApplicant2)
-                .mandatory(Applicant::getEmail)
-                .mandatory(Applicant::getPhoneNumber)
-                .mandatory(Applicant::getHomeAddress)
+                .mandatoryWithLabel(Applicant::getEmail,
+                    "${labelContentTheApplicant2UC} email address")
+                .mandatoryWithLabel(Applicant::getPhoneNumber,
+                    "${labelContentTheApplicant2UC} phone number")
+                .mandatoryWithLabel(Applicant::getHomeAddress,
+                    "${labelContentTheApplicant2UC} home address")
                 .label("LabelHorizontalLine1App2", "<hr>")
-                .mandatory(Applicant::getContactDetailsType)
+                .mandatoryWithLabel(Applicant::getContactDetailsType,
+                    "Should ${labelContentTheApplicant2} contact details be kept private?")
                 .done();
     }
 }
