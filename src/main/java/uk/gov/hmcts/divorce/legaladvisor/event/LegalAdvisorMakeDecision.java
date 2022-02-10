@@ -39,8 +39,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 
 @Component
@@ -161,16 +161,16 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
                                                                final Long caseId) {
 
         log.info("Generating conditional order refused document for templateId : {} caseId: {}",
-            REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID, caseId);
+            REFUSAL_ORDER_TEMPLATE_ID, caseId);
 
         var templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
 
         Document document = caseDataDocumentService.renderDocument(
             templateContents,
             caseId,
-            REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID,
+            REFUSAL_ORDER_TEMPLATE_ID,
             ENGLISH,
-            REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME
+            REFUSAL_ORDER_DOCUMENT_NAME
         );
 
         var refusalConditionalOrderDoc = DivorceDocument
