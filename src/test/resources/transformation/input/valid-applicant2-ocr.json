@@ -1,0 +1,182 @@
+[
+  {
+    "name": "respondentOrApplicant2FirstName",
+    "value": "respFname"
+  },
+  {
+    "name": "respondentOrApplicant2MiddleName",
+    "value": "respMname"
+  },
+  {
+    "name": "respondentOrApplicant2LastName",
+    "value": "respLname"
+  },
+  {
+    "name": "respondentOrApplicant2MarriedName",
+    "value": "No"
+  },
+  {
+    "name": "respondentOrApplicant2WhyMarriedNameChanged",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2BuildingAndStreet",
+    "value": "some street"
+  },
+  {
+    "name": "respondentOrApplicant2SecondLineOfAddress",
+    "value": "second line of address"
+  },
+  {
+    "name": "respondentOrApplicant2TownOrCity",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2Country",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2Postcode",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2PhoneNo",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2Email",
+    "value": "app2test@dummy.com"
+  },
+  {
+    "name": "respondentEmailAccess",
+    "value": "true"
+  },
+  {
+    "name": "serviceOutOfUK",
+    "value": "No"
+  },
+  {
+    "name": "respondentDifferentServiceAddress",
+    "value": "No"
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorName",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorRefNo",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorFirm",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorBuildingAndStreet",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorSecondLineOfAddress",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorTownOrCity",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorCounty",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorCountry",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorPostcode",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorDX",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2FullNameAsOnCert",
+    "value": ""
+  },
+  {
+    "name": "applicant2ConfirmationOfBreakdown",
+    "value": "true"
+  },
+  {
+    "name": "applicant2FinancialOrder",
+    "value": "No"
+  },
+  {
+    "name": "applicant2FinancialOrderFor",
+    "value": ""
+  },
+  {
+    "name": "applicant2StatementOfTruth",
+    "value": "true"
+  },
+  {
+    "name": "applicant2LegalRepStatementOfTruth",
+    "value": "false"
+  },
+  {
+    "name": "applicant2OrLegalRepSignature",
+    "value": ""
+  },
+  {
+    "name": "applicant2Signing",
+    "value": "true"
+  },
+  {
+    "name": "applicant2LegalRepSigning",
+    "value": "false"
+  },
+  {
+    "name": "applicant2StatementOfTruthDateDay",
+    "value": ""
+  },
+  {
+    "name": "applicant2StatementOfTruthDateMonth",
+    "value": ""
+  },
+  {
+    "name": "applicant2StatementOfTruthDateYear",
+    "value": ""
+  },
+  {
+    "name": "applicant2OrLegalRepFullName",
+    "value": ""
+  },
+  {
+    "name": "applicant2LegalRepFirm",
+    "value": ""
+  },
+  {
+    "name": "applicant2NoPaymentIncluded",
+    "value": "true"
+  },
+  {
+    "name": "applicant2HWFConfirmation",
+    "value": "true"
+  },
+  {
+    "name": "applicant2HWFNo",
+    "value": "HWF-456"
+  },
+  {
+    "name": "applicant2HWFApp",
+    "value": "true"
+  },
+  {
+    "name": "applicant2PaymentOther",
+    "value": "false"
+  },
+  {
+    "name": "respondentServePostOnly",
+    "value": "false"
+  }
+]

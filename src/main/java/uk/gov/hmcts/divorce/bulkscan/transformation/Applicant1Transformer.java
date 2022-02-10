@@ -220,5 +220,4 @@ public class Applicant1Transformer implements Function<TransformationDetails, Tr
         }
         return financialOrdersFor;
     }
-
 }

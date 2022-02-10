@@ -10,10 +10,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
-import java.io.File;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.jsonToObject;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 
@@ -42,11 +42,13 @@ public class Applicant1TransformerTest {
 
         assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
 
-        final var expectedApplicant1 = MAPPER.readValue(
-            new File("src/test/resources/transformation/output/applicant1-transformed-output.json"),
-            Applicant.class);
+        final var expectedApplicant1 =
+            jsonToObject("src/test/resources/transformation/output/applicant1-transformed-output.json", Applicant.class);
 
-        assertThat(transformedOutput.getCaseData().getApplicant1()).isEqualTo(expectedApplicant1);
+        assertThat(transformedOutput.getCaseData().getApplicant1())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplicant1);
     }
 
     @Test
@@ -74,10 +76,45 @@ public class Applicant1TransformerTest {
                 "Please review existing or previous court cases in the scanned form"
             );
 
-        final var expectedApplicant1 = MAPPER.readValue(
-            new File("src/test/resources/transformation/output/applicant1-transformed-output-with-warnings.json"),
-            Applicant.class);
+        final var expectedApplicant1 =
+            jsonToObject("src/test/resources/transformation/output/applicant1-transformed-output-with-warnings.json", Applicant.class);
 
-        assertThat(transformedOutput.getCaseData().getApplicant1()).isEqualTo(expectedApplicant1);
+        assertThat(transformedOutput.getCaseData().getApplicant1())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplicant1);
+    }
+
+    @Test
+    void shouldSuccessfullyTransformApplicant1DetailsWithWarningsWhenOcrContainsInvalidSolicitorDetails() throws Exception {
+        String validApplicant1OcrJson = loadJson("src/test/resources/transformation/input/invalid-applicant1-solicitor-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicant1OcrJson, new TypeReference<>() {
+        });
+
+        final var caseData = CaseData.builder().build();
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(transformOcrMapToObject(ocrDataFields))
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = applicant1Transformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+            .containsExactlyInAnyOrder(
+                "Please review applicant1 solicitor details in the scanned form"
+            );
+
+        final var expectedApplicant1 =
+            jsonToObject(
+                "src/test/resources/transformation/output/applicant1-transformed-output-invalid-sol-warnings.json",
+                Applicant.class
+            );
+
+        assertThat(transformedOutput.getCaseData().getApplicant1())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplicant1);
     }
 }

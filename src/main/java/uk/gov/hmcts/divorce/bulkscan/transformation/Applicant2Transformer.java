@@ -57,10 +57,10 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
         String respondentOrApplicant2MarriedName = ocrDataFields.getRespondentOrApplicant2MarriedName();
         YesOrNo nameDifferentToMarriageCertificate = null;
         if (OCR_FIELD_VALUE_YES.equalsIgnoreCase(respondentOrApplicant2MarriedName)
-            || OCR_FIELD_VALUE_NO.equalsIgnoreCase(respondentOrApplicant2MarriedName)) {
-            nameDifferentToMarriageCertificate = YesOrNo.valueOf(respondentOrApplicant2MarriedName);
-        } else if (OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(respondentOrApplicant2MarriedName)) {
+            || OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(respondentOrApplicant2MarriedName)) {
             nameDifferentToMarriageCertificate = YES;
+        } else if (OCR_FIELD_VALUE_NO.equalsIgnoreCase(respondentOrApplicant2MarriedName)) {
+            nameDifferentToMarriageCertificate = NO;
         } else {
             warnings.add("Please review respondent/applicant2 name different to marriage certificate in the scanned form");
         }
@@ -122,8 +122,8 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
         Set<FinancialOrderFor> app2FinancialOrderFor =
             deriveFinancialOrderFor(ocrDataFields.getApplicant2FinancialOrderFor());
 
-        if (OCR_FIELD_VALUE_YES.equalsIgnoreCase(ocrDataFields.getApplicant2FinancialOrderFor())
-            || OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(ocrDataFields.getApplicant2FinancialOrderFor())) {
+        if (OCR_FIELD_VALUE_YES.equalsIgnoreCase(ocrDataFields.getApplicant2FinancialOrder())
+            || OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(ocrDataFields.getApplicant2FinancialOrder())) {
             caseData.getApplicant2().setFinancialOrder(YES);
             if (CollectionUtils.isEmpty(app2FinancialOrderFor)) {
                 caseData.getTransformationAndOcrWarnings().add("Please review applicant2 financial for in scanned form");
