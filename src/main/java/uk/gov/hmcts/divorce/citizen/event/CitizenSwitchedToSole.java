@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -66,25 +67,14 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             .description("Application type switched to sole")
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
             .retries(120, 120)
-            .aboutToSubmitCallback(this::aboutToSubmit);
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("Citizen switched to sole about to submit callback invoked");
         CaseData data = details.getData();
-
-        if (isNull(data.getCaseInvite().accessCode())) {
-            log.info("Unlinking Applicant 2 from Case");
-            ccdAccessService.unlinkUserFromApplication(
-                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
-                details.getId(),
-                data.getCaseInvite().applicant2UserId()
-            );
-        } else {
-            log.info("Removing the case invite access code for Applicant 2");
-            data.setCaseInvite(data.getCaseInvite().useAccessCode());
-        }
 
         if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), details.getId())) {
             notificationDispatcher.send(applicant1SwitchToSoleNotification, data, details.getId());
@@ -99,6 +89,22 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             .data(data)
             .state(Draft)
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Citizen switched to sole submitted callback invoked");
+        CaseData data = beforeDetails.getData();
+
+        if (isNull(data.getCaseInvite().accessCode())) {
+            log.info("Unlinking Applicant 2 from Case");
+            ccdAccessService.unlinkUserFromApplication(
+                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
+                details.getId(),
+                data.getCaseInvite().applicant2UserId()
+            );
+        }
+        return SubmittedCallbackResponse.builder().build();
     }
 
     private CaseData removeApplicant2AnswersFromCase(CaseData caseData) {

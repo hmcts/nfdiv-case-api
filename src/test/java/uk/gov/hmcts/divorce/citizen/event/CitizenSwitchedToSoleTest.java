@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -92,8 +93,6 @@ class CitizenSwitchedToSoleTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
-        when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
         when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
@@ -134,8 +133,6 @@ class CitizenSwitchedToSoleTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app2-token");
-        when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
         when(ccdAccessService.isApplicant1("app2-token", caseId)).thenReturn(false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
@@ -169,8 +166,6 @@ class CitizenSwitchedToSoleTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
-        when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
         when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
@@ -200,8 +195,6 @@ class CitizenSwitchedToSoleTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
-        when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
         when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
@@ -286,6 +279,34 @@ class CitizenSwitchedToSoleTest {
         assertThat(response.getData().getApplication().getApplicant2CannotUploadSupportingDocument()).isNull();
         assertThat(response.getData().getApplication().getApplicant2ConfirmApplicant1Information()).isNull();
         assertThat(response.getData().getApplication().getApplicant2ReminderSent()).isNull();
+    }
+
+    @Test
+    void shouldUnlinkApp2OnSubmittedCallback() {
+        CaseData caseData = CaseData.builder().caseInvite(
+            CaseInvite.builder().applicant2UserId("app2-user-id").build()
+        ).build();
+        CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(12345L).build();
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(new User("auth-token", UserDetails.builder().build()));
+
+        citizenSwitchedToSole.submitted(caseDetails, beforeDetails);
+
+        verify(ccdAccessService)
+            .unlinkUserFromApplication(eq("auth-token"), eq(12345L), eq("app2-user-id"));
+    }
+
+    @Test
+    void shouldNotUnlinkApp2OnSubmittedCallback() {
+        CaseData caseData = CaseData.builder().caseInvite(
+            CaseInvite.builder().accessCode("access-code").build()
+        ).build();
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+
+        citizenSwitchedToSole.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(ccdAccessService);
     }
 
     private CaseData setValidCaseInviteData(CaseData caseData) {
