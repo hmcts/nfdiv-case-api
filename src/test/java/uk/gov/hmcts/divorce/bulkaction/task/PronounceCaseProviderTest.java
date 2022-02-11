@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -66,5 +67,28 @@ class PronounceCaseProviderTest {
         assertThat(resultFinalOrder.getDateFinalOrderEligibleFrom()).isEqualTo(expectedFinalOrderEligibleFrom);
         assertThat(resultFinalOrder.getDateFinalOrderNoLongerEligible()).isEqualTo(expectedFinalOrderNoLongerEligible);
         assertThat(resultFinalOrder.getDateFinalOrderEligibleToRespondent()).isEqualTo(expectedFinalOrderEligibleToRespondent);
+    }
+
+    @Test
+    void shouldThrowBulkActionCaseTaskExceptionIfBulkCaseDateAndTimeOfHearingIsNotSet() {
+
+        final var bulkActionCaseData = BulkActionCaseData.builder().build();
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+        bulkCaseDetails.setId(12L);
+        bulkCaseDetails.setData(bulkActionCaseData);
+
+        final var caseData = CaseData.builder()
+            .finalOrder(FinalOrder.builder().build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(123L);
+        caseDetails.setData(caseData);
+
+        assertThatExceptionOfType(BulkActionCaseTaskException.class)
+            .isThrownBy(() -> pronounceCaseProvider.getCaseTask(bulkCaseDetails).apply(caseDetails))
+            .withMessage("Bulk Case has no dateAndTimeOfHearing set for Bulk Case Id: 12, "
+                + "while processing Case Id: 123, Event: system-pronounce-case");
     }
 }
