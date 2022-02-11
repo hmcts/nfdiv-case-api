@@ -39,7 +39,6 @@ public class NoticeOfProceedingContent {
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER = "divorceOrCivilPartnershipServiceHeader";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS = "divorceOrCivilPartnershipPapers";
     public static final String END_A_CIVIL_PARTNERSHIP_SERVICE = "End A Civil Partnership Service";
-    public static final String CONTACT_DIVORCE_JUSTICE_GOV_UK = "contactdivorce@justice.gov.uk";
     public static final String DIVORCE_PROCEEDINGS = "divorce proceedings";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String DIVORCE_PROCESS = "divorce process";
@@ -48,7 +47,6 @@ public class NoticeOfProceedingContent {
     public static final String DIVORCE_URL = "https://www.gov.uk/divorce";
     public static final String DIVORCE_SERVICE = "Divorce service";
     public static final String THE_DIVORCE_SERVICE = "The Divorce service";
-    public static final String CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK = "civilpartnership.case@justice.gov.uk";
     public static final String PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP = "proceedings to end your civil partnership";
     public static final String TO_END_YOUR_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String CIVIL_PARTNER = "civil partner";
@@ -115,7 +113,7 @@ public class NoticeOfProceedingContent {
         );
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
             templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
@@ -132,7 +130,7 @@ public class NoticeOfProceedingContent {
             templateContent.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         } else {
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(RELATION, CIVIL_PARTNER);

@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ServiceOrderTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -58,6 +59,9 @@ class LegalAdvisorMakeServiceDecisionTest {
 
     @Mock
     private ServiceOrderTemplateContent serviceOrderTemplateContent;
+
+    @Mock
+    private CommonContent commonContent;
 
     @InjectMocks
     private LegalAdvisorMakeServiceDecision makeServiceDecision;
