@@ -94,13 +94,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         final boolean isSole = data.getApplicationType().isSole();
 
         setSubmittedDate(data.getConditionalOrder());
-
-        if (!isSole
-            && data.getApplication().isSolicitorServiceMethod()
-            && data.getApplication().isSolicitorApplication()
-        ) {
-            data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(YES);
-        }
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(YES);
 
         var state = isSole
             ? AwaitingLegalAdvisorReferral
