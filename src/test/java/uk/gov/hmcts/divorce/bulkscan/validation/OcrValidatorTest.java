@@ -377,8 +377,7 @@ public class OcrValidatorTest {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(
                 List.of(
-                    populateKeyValue("aJointApplication", "true"),
-                    populateKeyValue("soleOrApplicant1HWFNo", "HWF1")
+                    populateKeyValue("aJointApplication", "true")
                 )
             )
             .build();
@@ -421,7 +420,24 @@ public class OcrValidatorTest {
             .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2StatementOfTruthDateYear"));
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2OrLegalRepFullName"));
+    }
+
+    @Test
+    void shouldValidateHelpWithFeesNumbers() {
+        final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
+            .ocrDataFields(
+                List.of(
+                    populateKeyValue("soleOrApplicant1HWFNo", "HWF1"),
+                    populateKeyValue("applicant2HWFNo", "HWF1")
+                )
+            )
+            .build();
+
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
+
         assertThat(response.getErrors())
             .contains("soleOrApplicant1HWFNo should be 6 digits long");
+        assertThat(response.getErrors())
+            .contains("applicant2HWFNo should be 6 digits long");
     }
 }
