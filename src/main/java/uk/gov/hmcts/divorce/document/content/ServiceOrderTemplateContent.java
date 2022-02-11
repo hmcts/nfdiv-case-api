@@ -87,13 +87,6 @@ public class ServiceOrderTemplateContent {
             serviceApplicationDecisionDate.format(DATE_TIME_FORMATTER));
         templateContent.put(IS_SERVICE_ORDER_TYPE_DEEMED, isServiceOrderTypeDeemed);
 
-        if (NO.equals(alternativeService.getServiceApplicationGranted())) {
-            templateContent.put(REFUSAL_REASON, alternativeService.getServiceApplicationRefusalReason());
-            templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
-            templateContent.put(IS_DIVORCE, caseData.isDivorce() ? YES.getValue() : NO.getValue());
-            email = caseData.isDivorce() ? CONTACT_DIVORCE_JUSTICE_GOV_UK : CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
-        }
-
         var ctscContactDetails = CtscContactDetails
             .builder()
             .centreName(centreName)
@@ -104,6 +97,14 @@ public class ServiceOrderTemplateContent {
             .postcode(postcode)
             .phoneNumber(phoneNumber)
             .build();
+
+        if (NO.equals(alternativeService.getServiceApplicationGranted())) {
+            templateContent.put(REFUSAL_REASON, alternativeService.getServiceApplicationRefusalReason());
+            templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
+            templateContent.put(IS_DIVORCE, caseData.isDivorce() ? YES.getValue() : NO.getValue());
+            ctscContactDetails.setEmailAddress(
+                caseData.isDivorce() ? CONTACT_DIVORCE_JUSTICE_GOV_UK : CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
+        }
 
         templateContent.put("ctscContactDetails", ctscContactDetails);
 
