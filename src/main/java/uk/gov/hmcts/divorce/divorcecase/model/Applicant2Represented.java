@@ -13,7 +13,7 @@ public enum Applicant2Represented implements HasLabel {
     YES("Yes"),
 
     @JsonProperty("No")
-    No("No"),
+    NO("No"),
 
     @JsonProperty("notSure")
     NOT_SURE("I'm not sure");
