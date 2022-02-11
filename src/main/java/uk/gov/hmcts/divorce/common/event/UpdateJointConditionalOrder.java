@@ -42,7 +42,7 @@ public class UpdateJointConditionalOrder implements CCDConfig<CaseData, State, U
         return new PageBuilder(configBuilder
             .event(UPDATE_JOINT_CONDITIONAL_ORDER)
             .forStateTransition(ConditionalOrderDrafted, ConditionalOrderDrafted)
-            .name("Update joint conditional order")
+            .name("Update conditional order")
             .description("Update joint conditional order")
             .endButtonLabel("Save conditional order")
             .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted=\"Yes\"")
