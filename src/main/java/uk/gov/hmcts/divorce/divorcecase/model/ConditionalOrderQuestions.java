@@ -43,6 +43,11 @@ public class ConditionalOrderQuestions {
     private YesOrNo isSubmitted;
 
     @CCD(
+        label = "Has applicant drafted conditional order"
+    )
+    private YesOrNo isDrafted;
+
+    @CCD(
         label = "Date applicant submitted Conditional Order to HMCTS"
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
