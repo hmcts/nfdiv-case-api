@@ -1,0 +1,115 @@
+[
+  {
+    "name": "jurisdictionReasonsBothPartiesHabitual",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsSameSex",
+    "value": "false"
+  },
+  {
+    "name": "soleOrApplicant1ConfirmationOfBreakdown",
+    "value": "true"
+  },
+  {
+    "name": "applicant2ConfirmationOfBreakdown",
+    "value": "false"
+  },
+  {
+    "name": "existingOrPreviousCourtCases",
+    "value": "Both"
+  },
+  {
+    "name": "existingOrPreviousCourtCaseNumbers",
+    "value": ""
+  },
+  {
+    "name": "summaryOfExistingOrPreviousCourtCases",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1FinancialOrder",
+    "value": "Yes"
+  },
+  {
+    "name": "soleOrApplicant1FinancialOrderFor",
+    "value": "myself,children"
+  },
+  {
+    "name": "applicant2FinancialOrder",
+    "value": "No"
+  },
+  {
+    "name": "applicant2FinancialOrderFor",
+    "value": ""
+  },
+  {
+    "name": "prayerMarriageDissolved",
+    "value": "true"
+  },
+  {
+    "name": "prayerCivilPartnershipDissolved",
+    "value": ""
+  },
+  {
+    "name": "courtFee",
+    "value": "595£"
+  },
+  {
+    "name": "soleOrApplicant1NoPaymentIncluded",
+    "value": "Yes"
+  },
+  {
+    "name": "soleOrApplicant1HWFConfirmation",
+    "value": "HWF-123"
+  },
+  {
+    "name": "soleOrApplicant1HWFApp",
+    "value": "true"
+  },
+  {
+    "name": "soleOrApplicant1PaymentOther",
+    "value": "false"
+  },
+  {
+    "name": "soleOrApplicant1PaymentOtherDetail",
+    "value": ""
+  },
+  {
+    "name": "applicant2NoPaymentIncluded",
+    "value": "true"
+  },
+  {
+    "name": "applicant2HWFConfirmation",
+    "value": "true"
+  },
+  {
+    "name": "applicant2HWFNo",
+    "value": "HWF-456"
+  },
+  {
+    "name": "applicant2HWFApp",
+    "value": "true"
+  },
+  {
+    "name": "applicant2PaymentOther",
+    "value": "false"
+  },
+  {
+    "name": "debitCreditCardPayment",
+    "value": "false"
+  },
+  {
+    "name": "debitCreditCardPaymentPhone",
+    "value": "false"
+  },
+  {
+    "name": "paymentDetailEmail",
+    "value": ""
+  },
+  {
+    "name": "chequeOrPostalOrderPayment",
+    "value": "false"
+  }
+]
+

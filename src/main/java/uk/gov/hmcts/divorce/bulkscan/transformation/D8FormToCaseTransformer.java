@@ -125,6 +125,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
             verifyServeOutOfUK(caseData.getApplicationType(), ocrDataFields, transformationWarnings);
             verifyHowApplicationIsServed(caseData.getApplicationType(), ocrDataFields, transformationWarnings);
 
+            caseData.deriveAndPopulateApplicantGenderDetails();
             caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
             caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
 

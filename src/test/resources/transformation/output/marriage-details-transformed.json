@@ -7,7 +7,7 @@
   "CountryOfMarriage": null,
   "PlaceOfMarriage": "London",
   "Date": "1990-01-01",
-  "FormationType": null,
+  "FormationType": "oppositeSexCouple",
   "CertifyMarriageCertificateIsCorrect": "Yes",
   "MarriageCertificateIsIncorrectDetails": "",
   "IssueApplicationWithoutMarriageCertificate": "No"

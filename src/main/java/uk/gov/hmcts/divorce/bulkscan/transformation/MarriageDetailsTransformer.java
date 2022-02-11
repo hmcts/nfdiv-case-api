@@ -20,6 +20,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
 import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransformer.OCR_FIELD_VALUE_BOTH;
 import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransformer.OCR_FIELD_VALUE_NO;
 import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransformer.OCR_FIELD_VALUE_YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.SAME_SEX_COUPLE;
 
 @Component
 public class MarriageDetailsTransformer implements Function<TransformationDetails, TransformationDetails> {
@@ -65,6 +67,9 @@ public class MarriageDetailsTransformer implements Function<TransformationDetail
         caseData.getApplication().getMarriageDetails().setDate(deriveMarriageDate(ocrDataFields, warnings));
         caseData.getApplication().getMarriageDetails().setApplicant1Name(ocrDataFields.getSoleOrApplicant1FullNameAsOnCert());
         caseData.getApplication().getMarriageDetails().setApplicant2Name(ocrDataFields.getRespondentOrApplicant2FullNameAsOnCert());
+        caseData.getApplication().getMarriageDetails().setFormationType(
+            toBoolean(ocrDataFields.getJurisdictionReasonsSameSex()) ? SAME_SEX_COUPLE : OPPOSITE_SEX_COUPLE
+        );
 
         if (isEmpty(ocrDataFields.getPlaceOfMarriageOrCivilPartnership())
             && (YES.equals(caseData.getApplication().getMarriageDetails().getMarriedInUk())

@@ -33,8 +33,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_DOMICILED;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION;
-import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
-import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.SAME_SEX_COUPLE;
 
 @Component
 public class ApplicationTransformer implements Function<TransformationDetails, TransformationDetails> {
@@ -53,11 +51,6 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         caseData.getApplication().getJurisdiction().setConnections(
             deriveJurisdictionConnections(ocrDataFields, caseData.getTransformationAndOcrWarnings())
         );
-
-        caseData.getApplication().getMarriageDetails().setFormationType(
-            toBoolean(ocrDataFields.getJurisdictionReasonsSameSex()) ? SAME_SEX_COUPLE : OPPOSITE_SEX_COUPLE
-        );
-        caseData.deriveAndPopulateApplicantGenderDetails();
 
         caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
         setMarriageBrokenDetails(ocrDataFields, caseData);
