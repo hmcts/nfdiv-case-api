@@ -49,7 +49,7 @@ public class OcrValidatorTest {
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
-        assertThat(response.getErrors()).hasSize(23);
+        assertThat(response.getErrors()).hasSize(22);
         assertThat(response.getWarnings()).hasSize(7);
         assertThat(response.getStatus()).isEqualTo(ERRORS);
     }
@@ -275,7 +275,7 @@ public class OcrValidatorTest {
     }
 
     @Test
-    void shouldReturnErrorsAndWarningsIfValidateMoneyPropertyAndPrayerValidationFailsWithFinancialOrder() {
+    void shouldReturnErrorsAndWarningsIfD8FormValidateMoneyPropertyAndPrayerValidationFailsWithFinancialOrder() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(
                 List.of(
@@ -293,9 +293,9 @@ public class OcrValidatorTest {
         assertThat(response.getErrors())
             .contains("One of prayerMarriageDissolved or prayerCivilPartnershipDissolved must be populated");
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleOrApplicant1prayerFinancialOrder"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleOrApplicant1PrayerFinancialOrder"));
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleOrApplicant1prayerFinancialOrderFor"));
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleOrApplicant1PrayerFinancialOrderFor"));
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2PrayerFinancialOrder"));
         assertThat(response.getWarnings())
@@ -303,7 +303,7 @@ public class OcrValidatorTest {
     }
 
     @Test
-    void shouldReturnWarningsIfValidateMoneyPropertyAndPrayerValidationFailsWithoutFinancialOrder() {
+    void shouldReturnWarningsIfD8FormValidateMoneyPropertyAndPrayerValidationFailsWithoutFinancialOrder() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(
                 List.of(
@@ -324,6 +324,50 @@ public class OcrValidatorTest {
             .contains(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "soleOrApplicant1prayerFinancialOrderFor"));
         assertThat(response.getWarnings())
             .contains(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "applicant2PrayerFinancialOrder"));
+        assertThat(response.getWarnings())
+            .contains(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "applicant2PrayerFinancialOrderFor"));
+    }
+
+    @Test
+    void shouldReturnErrorsAndWarningsIfD8sFormValidateMoneyPropertyAndPrayerValidationFailsWithFinancialOrder() {
+        final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
+            .ocrDataFields(
+                List.of(
+                    populateKeyValue("soleOrApplicant1FinancialOrder", "Yes"),
+                    populateKeyValue("applicant2FinancialOrder", "Yes"))
+            )
+            .build();
+
+        OcrValidationResponse response = validator.validateExceptionRecord(D8S.getName(), request);
+
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleOrApplicant1FinancialOrderFor"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "applicant2FinancialOrderFor"));
+        assertThat(response.getErrors())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "prayerApplicant1JudiciallySeparated"));
+        assertThat(response.getWarnings())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "soleOrApplicant1PrayerFinancialOrderFor"));
+        assertThat(response.getWarnings())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING_WARNING, "applicant2PrayerFinancialOrderFor"));
+    }
+
+    @Test
+    void shouldReturnWarningsIfD8sFormValidateMoneyPropertyAndPrayerValidationFailsWithoutFinancialOrder() {
+        final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
+            .ocrDataFields(
+                List.of(
+                    populateKeyValue("soleOrApplicant1FinancialOrder", "No"),
+                    populateKeyValue("applicant2FinancialOrder", "Yes"),
+                    populateKeyValue("soleOrApplicant1prayerFinancialOrderFor", "test"),
+                    populateKeyValue("applicant2PrayerFinancialOrderFor", "test"))
+            )
+            .build();
+
+        OcrValidationResponse response = validator.validateExceptionRecord(D8S.getName(), request);
+
+        assertThat(response.getWarnings())
+            .contains(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "soleOrApplicant1prayerFinancialOrderFor"));
         assertThat(response.getWarnings())
             .contains(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "applicant2PrayerFinancialOrderFor"));
     }
