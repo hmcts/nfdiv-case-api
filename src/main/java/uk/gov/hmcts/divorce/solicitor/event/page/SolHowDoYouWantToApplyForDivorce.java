@@ -6,6 +6,8 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
@@ -39,6 +41,16 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
                 .readonly(LabelContent::getGotMarriedOrFormedCivilPartnership, NEVER_SHOW)
                 .readonly(LabelContent::getRespondentsOrApplicant2s, NEVER_SHOW)
                 .readonly(LabelContent::getTheApplicantOrApplicant1, NEVER_SHOW)
+            .done()
+            .complex(CaseData::getConditionalOrder)
+                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
+                    .readonly(ConditionalOrderQuestions::getIsDrafted, NEVER_SHOW)
+                    .readonly(ConditionalOrderQuestions::getIsSubmitted, NEVER_SHOW)
+                .done()
+                .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
+                    .readonly(ConditionalOrderQuestions::getIsDrafted, NEVER_SHOW)
+                    .readonly(ConditionalOrderQuestions::getIsSubmitted, NEVER_SHOW)
+                .done()
             .done()
             .mandatory(CaseData::getDivorceOrDissolution, null, null, " ")
             .label("soleLabelDivorce", "### Sole applications<br>"
