@@ -323,6 +323,22 @@ public class RetiredFields {
     )
     private String labelContentTheApplicantsOrApplicant1s;
 
+    @CCD(
+        label = "retiredCoSolicitorName"
+    )
+    private String coSolicitorName;
+
+    @CCD(
+        label = "retiredCoSolicitorFirm"
+    )
+    private String coSolicitorFirm;
+
+    @CCD(
+        label = "retiredCoSolicitorAdditionalComments",
+        typeOverride = TextArea
+    )
+    private String coSolicitorAdditionalComments;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -445,6 +461,13 @@ public class RetiredFields {
             data -> data.put("servicePaymentFeeAccountReferenceNumber", data.get("feeAccountReferenceNumber")));
         init.put("helpWithFeesReferenceNumber",
             data -> data.put("servicePaymentFeeHelpWithFeesReferenceNumber", data.get("helpWithFeesReferenceNumber")));
+
+        init.put("coSolicitorName",
+            data -> data.put("coApplicant1SolicitorName", data.get("coSolicitorName")));
+        init.put("coSolicitorFirm",
+            data -> data.put("coApplicant1SolicitorFirm", data.get("coSolicitorFirm")));
+        init.put("coSolicitorAdditionalComments",
+            data -> data.put("coApplicant1SolicitorAdditionalComments", data.get("coSolicitorAdditionalComments")));
 
         migrations = unmodifiableMap(init);
     }

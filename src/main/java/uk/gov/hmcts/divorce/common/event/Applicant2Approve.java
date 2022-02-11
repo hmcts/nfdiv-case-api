@@ -12,15 +12,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
+import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -32,10 +30,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_2_ANSWERS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Slf4j
@@ -54,7 +50,7 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
+    private DraftApplicationTemplateContent draftApplicationTemplateContent;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -116,24 +112,15 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
 
     private void generateJointApplication(CaseDetails<CaseData, State> details, CaseData data) {
         final long caseId = details.getId();
-        final var templateVars = divorceApplicationJointTemplateContent.apply(data, caseId);
-
-        if (nonNull(data.getApplicant1().getSolicitor()) && isNotBlank(data.getApplicant1().getSolicitor().getAddress())) {
-            templateVars.put(APPLICANT_1_POSTAL_ADDRESS, data.getApplicant1().getSolicitor().getAddress());
-        }
-
-        if (nonNull(data.getApplicant2().getSolicitor()) && isNotBlank(data.getApplicant2().getSolicitor().getAddress())) {
-            templateVars.put(APPLICANT_2_POSTAL_ADDRESS, data.getApplicant2().getSolicitor().getAddress());
-        }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             data,
             APPLICATION,
-            templateVars,
+            draftApplicationTemplateContent.apply(data, caseId),
             caseId,
-            DIVORCE_APPLICATION_JOINT,
+            DIVORCE_JOINT_APPLICANT_2_ANSWERS,
             data.getApplicant1().getLanguagePreference(),
-            JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
+            JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME + caseId
         );
     }
 }

@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -31,6 +32,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.event.SubmitConditionalOrder.SUBMIT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -131,6 +133,30 @@ class SubmitConditionalOrderTest {
         submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, 1L);
+    }
+
+    @Test
+    void shouldSetIsSubmittedForApplicant1OnAboutToSubmit() {
+        setupMocks(clock);
+        final CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .application(Application.builder()
+                .solServiceMethod(SOLICITOR_SERVICE)
+                .solSignStatementOfTruth(YesOrNo.YES)
+                .build())
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YesOrNo.YES)
+                    .build())
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(State.ConditionalOrderDrafted).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted())
+            .isEqualTo(YesOrNo.YES);
     }
 
     private CaseData caseData() {

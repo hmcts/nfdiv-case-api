@@ -38,8 +38,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarific
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -150,7 +150,7 @@ class LegalAdvisorMakeDecisionTest {
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
             documentUrl,
-            REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME,
+            REFUSAL_ORDER_DOCUMENT_NAME,
             documentUrl + "/binary"
         );
 
@@ -158,9 +158,9 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID,
+                REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
-                REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME
+                REFUSAL_ORDER_DOCUMENT_NAME
             ))
             .thenReturn(refusalConditionalOrderDoc);
 
@@ -204,7 +204,7 @@ class LegalAdvisorMakeDecisionTest {
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
             documentUrl,
-            REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME,
+            REFUSAL_ORDER_DOCUMENT_NAME,
             documentUrl + "/binary"
         );
 
@@ -212,9 +212,9 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID,
+                REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
-                REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME
+                REFUSAL_ORDER_DOCUMENT_NAME
             ))
             .thenReturn(refusalConditionalOrderDoc);
 

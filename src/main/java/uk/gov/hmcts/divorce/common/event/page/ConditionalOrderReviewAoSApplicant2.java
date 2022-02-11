@@ -16,25 +16,25 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
+public class ConditionalOrderReviewAoSApplicant2 implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("ConditionalOrderReviewAoS", this::midEvent)
+            .page("ConditionalOrderReviewAoSApplicant2", this::midEvent)
             .pageLabel("Review Acknowledgement of Service - Draft Conditional Order Application")
             .complex(CaseData::getConditionalOrder)
                 .readonly(ConditionalOrder::getRespondentAnswersLink)
             .done()
             .complex(CaseData::getConditionalOrder)
-                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
+                .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
                 .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
                 .done()
                 .label(
                     "ConditionalOrderReviewAoSNo",
                     "You must select yes to apply for a conditional order",
-                    "coApplicant1ApplyForConditionalOrder=\"No\""
+                    "coApplicant2ApplyForConditionalOrder=\"No\""
                 )
             .done();
     }
@@ -43,13 +43,13 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
         CaseDetails<CaseData, State> details,
         CaseDetails<CaseData, State> detailsBefore
     ) {
-        log.info("Mid-event callback triggered for ConditionalOrderReviewAoS");
+        log.info("Mid-event callback triggered for ConditionalOrderReviewAoSApplicant2");
 
         CaseData data = details.getData();
         List<String> errors = new ArrayList<>();
         ConditionalOrder conditionalOrder = data.getConditionalOrder();
 
-        if (!conditionalOrder.getConditionalOrderApplicant1Questions().getApplyForConditionalOrder().toBoolean()) {
+        if (!conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrder().toBoolean()) {
             errors.add("Applicant must select yes to apply for a conditional order");
         }
 

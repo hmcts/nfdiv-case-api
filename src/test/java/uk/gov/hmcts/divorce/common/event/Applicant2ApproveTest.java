@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification;
@@ -21,7 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
+import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -42,10 +41,8 @@ import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_AP
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_2_ANSWERS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -65,7 +62,7 @@ class Applicant2ApproveTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
+    private DraftApplicationTemplateContent draftApplicationTemplateContent;
 
     @InjectMocks
     private Applicant2Approve applicant2Approve;
@@ -160,23 +157,9 @@ class Applicant2ApproveTest {
         final List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
         caseData.setDocumentsGenerated(documentsGenerated);
 
-        final Map<String, Object> expectedTemplateContent = new HashMap<>();
-        expectedTemplateContent.put(APPLICANT_1_POSTAL_ADDRESS, "App1 Sol Address");
-        expectedTemplateContent.put(APPLICANT_2_POSTAL_ADDRESS, "App2 Sol Address");
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(applicant2ApprovedNotification, caseData, caseDetails.getId());
-        verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
-                caseData,
-                APPLICATION,
-                expectedTemplateContent,
-                caseId,
-                DIVORCE_APPLICATION_JOINT,
-                caseData.getApplicant1().getLanguagePreference(),
-                JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
-            );
         assertThat(response.getState()).isEqualTo(State.Applicant2Approved);
     }
 
@@ -201,71 +184,7 @@ class Applicant2ApproveTest {
     }
 
     @Test
-    void shouldRenderDocumentWithSolicitorAddress() {
-        final long caseId = 2L;
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final Map<String, Object> templateContent = new HashMap<>();
-
-        CaseData caseData = CaseData.builder().build();
-        setValidCaseData(caseData);
-        caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
-        caseData.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
-        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
-        caseData.getApplicant1().setSolicitor(
-            Solicitor.builder()
-                .address("App1 Sol Address")
-                .build()
-        );
-        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
-        caseData.getApplicant2().setSolicitor(
-            Solicitor.builder()
-                .address("App2 Sol Address")
-                .build()
-        );
-
-        caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
-
-        final Document document = Document.builder()
-            .filename("test.pdf")
-            .url("testDocUrl.com")
-            .build();
-        final List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
-        documentsGenerated.add(
-            ListValue.<DivorceDocument>builder()
-                .value(
-                    DivorceDocument.builder()
-                        .documentType(APPLICATION)
-                        .documentLink(document)
-                        .build())
-                .build());
-        caseData.setDocumentsGenerated(documentsGenerated);
-
-        caseDetails.setState(State.AwaitingApplicant2Response);
-
-        when(divorceApplicationJointTemplateContent.apply(caseData, caseId)).thenReturn(templateContent);
-
-        final Map<String, Object> expectedTemplateContent = new HashMap<>();
-        expectedTemplateContent.put(APPLICANT_1_POSTAL_ADDRESS, "App1 Sol Address");
-        expectedTemplateContent.put(APPLICANT_2_POSTAL_ADDRESS, "App2 Sol Address");
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
-
-        verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
-                caseData,
-                APPLICATION,
-                expectedTemplateContent,
-                caseId,
-                DIVORCE_APPLICATION_JOINT,
-                caseData.getApplicant1().getLanguagePreference(),
-                JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
-            );
-        assertThat(response.getData().getApplication().getApplicant2SolicitorAnswersLink()).isEqualTo(document);
-    }
-
-    @Test
-    void shouldRenderDocumentWithoutSolicitorAddress() {
+    void shouldRenderDocument() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Map<String, Object> templateContent = new HashMap<>();
@@ -284,7 +203,7 @@ class Applicant2ApproveTest {
         caseDetails.setId(caseId);
         caseDetails.setState(State.AwaitingApplicant2Response);
 
-        when(divorceApplicationJointTemplateContent.apply(caseData, caseId)).thenReturn(templateContent);
+        when(draftApplicationTemplateContent.apply(caseData, caseId)).thenReturn(templateContent);
 
         applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
@@ -294,9 +213,9 @@ class Applicant2ApproveTest {
                 APPLICATION,
                 templateContent,
                 caseId,
-                DIVORCE_APPLICATION_JOINT,
+                DIVORCE_JOINT_APPLICANT_2_ANSWERS,
                 caseData.getApplicant1().getLanguagePreference(),
-                JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
+                JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME + caseId
             );
     }
 

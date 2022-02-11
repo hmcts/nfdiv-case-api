@@ -55,8 +55,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarific
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -276,15 +276,15 @@ public class LegalAdvisorMakeDecisionIT {
         when(caseDataDocumentService.renderDocument(
             templateContent,
             TEST_CASE_ID,
-            REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID,
+            REFUSAL_ORDER_TEMPLATE_ID,
             ENGLISH,
-            REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME)).thenReturn(document);
+            REFUSAL_ORDER_DOCUMENT_NAME)).thenReturn(document);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_Clarification.docx");
+        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order.docx");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

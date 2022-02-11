@@ -7,22 +7,22 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 
-public class ConditionalOrderReviewApplicant1 implements CcdPageConfiguration {
+public class ConditionalOrderReviewApplicant2 implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("ConditionalOrderReviewApplicant1")
+            .page("ConditionalOrderReviewApplicant2")
             .pageLabel("Review the applicant's application - Draft Conditional Order Application")
             .complex(CaseData::getApplication)
                 .readonly(Application::getMiniApplicationLink)
                 .done()
             .complex(CaseData::getConditionalOrder)
-                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
+                .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
             .mandatory(ConditionalOrderQuestions::getConfirmInformationStillCorrect)
             .mandatory(ConditionalOrderQuestions::getReasonInformationNotCorrect,
-                "coApplicant1ConfirmInformationStillCorrect=\"No\"")
+                "coApplicant2ConfirmInformationStillCorrect=\"No\"")
                 .done()
             .done();
     }

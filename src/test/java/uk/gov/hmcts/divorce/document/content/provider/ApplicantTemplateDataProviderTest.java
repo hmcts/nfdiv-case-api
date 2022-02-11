@@ -93,6 +93,29 @@ class ApplicantTemplateDataProviderTest {
     }
 
     @Test
+    void shouldReturnNullForJointIfEmptyFinancialOrderFor() {
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(emptySet())).isNull();
+    }
+
+    @Test
+    void shouldReturnCorrectStringIfFinancialOrderForContainsApplicantAndChildrenForJoint() {
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(Set.of(APPLICANT, CHILDREN)))
+            .isEqualTo("applicants, and for the children of both the applicants.");
+    }
+
+    @Test
+    void shouldReturnCorrectStringIfFinancialOrderForContainsApplicant() {
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(Set.of(APPLICANT)))
+            .isEqualTo("applicants.");
+    }
+
+    @Test
+    void shouldReturnCorrectStringIfFinancialOrderForContainsChildren() {
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(Set.of(CHILDREN)))
+            .isEqualTo("children of both the applicants.");
+    }
+
+    @Test
     void shouldReturnNullForSoleIfNoFinancialOrder() {
 
         final Applicant applicant = Applicant.builder().build();
