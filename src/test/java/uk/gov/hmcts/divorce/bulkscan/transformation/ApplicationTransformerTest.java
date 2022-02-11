@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.bulkscan.transformation;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,9 +34,14 @@ public class ApplicationTransformerTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    @BeforeEach
+    void setUp() {
+        setMockClock(clock);
+    }
+
     @Test
     void shouldSuccessfullyTransformApplicationWithoutWarnings() throws Exception {
-        setMockClock(clock);
+
         String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-application-ocr.json");
         List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
@@ -54,6 +60,43 @@ public class ApplicationTransformerTest {
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
+
+        assertThat(transformedOutput.getCaseData().getApplication())
+            .usingRecursiveComparison()
+            .ignoringFields("dateSubmitted")
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplication);
+
+        assertThat(transformedOutput.getCaseData().getApplication().getDateSubmitted()).isEqualTo(getExpectedLocalDateTime());
+    }
+
+    @Test
+    void shouldSuccessfullyTransformApplicationWithWarningsWhenOcrContainsInvalidData() throws Exception {
+        String invalidOcrJson = loadJson("src/test/resources/transformation/input/invalid-application-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(invalidOcrJson, new TypeReference<>() {
+        });
+
+        final var caseData = CaseData.builder().build();
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(transformOcrMapToObject(ocrDataFields))
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = applicationTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+            .containsExactlyInAnyOrder(
+                "Please verify jurisdiction connections(invalid domiciled who) in scanned form",
+                "Please verify jurisdiction connections(no options selected) in scanned form",
+                "Please review prayer in the scanned form",
+                "Please review HWF number for applicant1 in scanned form",
+                "Please review HWF number for applicant2 in scanned form"
+            );
+
+        final var expectedApplication =
+            jsonToObject("src/test/resources/transformation/output/application-transformed-warnings.json", Application.class);
 
         assertThat(transformedOutput.getCaseData().getApplication())
             .usingRecursiveComparison()

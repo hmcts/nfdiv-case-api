@@ -1,6 +1,10 @@
 [
   {
-    "name": "jurisdictionReasonsBothPartiesHabitual",
+    "name": "jurisdictionReasonsOnePartyDomiciledWho",
+    "value": ""
+  },
+  {
+    "name": "jurisdictionReasonsOnePartyDomiciled",
     "value": "true"
   },
   {
@@ -9,7 +13,7 @@
   },
   {
     "name": "soleOrApplicant1ConfirmationOfBreakdown",
-    "value": "true"
+    "value": "false"
   },
   {
     "name": "applicant2ConfirmationOfBreakdown",
@@ -45,7 +49,7 @@
   },
   {
     "name": "prayerMarriageDissolved",
-    "value": "true"
+    "value": "false"
   },
   {
     "name": "prayerCivilPartnershipDissolved",
@@ -61,7 +65,7 @@
   },
   {
     "name": "soleOrApplicant1HWFConfirmation",
-    "value": "HWF-123"
+    "value": "HWF-123456"
   },
   {
     "name": "soleOrApplicant1HWFApp",
@@ -84,8 +88,12 @@
     "value": "true"
   },
   {
+    "name": "soleOrApplicant1HWFNo",
+    "value": "HWF-456123"
+  },
+  {
     "name": "applicant2HWFNo",
-    "value": "HWF456"
+    "value": "HWF-456123"
   },
   {
     "name": "applicant2HWFApp",

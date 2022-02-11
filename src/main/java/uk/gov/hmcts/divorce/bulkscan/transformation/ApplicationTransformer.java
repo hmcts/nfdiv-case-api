@@ -64,11 +64,16 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         if (SOLE_APPLICATION.equals(caseData.getApplicationType())
             && (!toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown())
             || toBoolean(ocrDataFields.getApplicant2ConfirmationOfBreakdown()))) {
-            caseData.getTransformationAndOcrWarnings().add("Please review confirmation of breakdown in the scanned form");
-        } else if (JOINT_APPLICATION.equals(caseData.getApplicationType())
+            caseData.getTransformationAndOcrWarnings().add(
+                "Please review confirmation of breakdown for sole application in the scanned form"
+            );
+        }
+        if (JOINT_APPLICATION.equals(caseData.getApplicationType())
             && (!toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown())
             || !toBoolean(ocrDataFields.getApplicant2ConfirmationOfBreakdown()))) {
-            caseData.getTransformationAndOcrWarnings().add("Please review confirmation of breakdown in the scanned form");
+            caseData.getTransformationAndOcrWarnings().add(
+                "Please review confirmation of breakdown for joint application in the scanned form"
+            );
         }
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(
             from(toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown()))
@@ -101,7 +106,7 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
                 || RESPONDENT.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsOnePartyDomiciledWho())) {
                 connections.add(APP_2_DOMICILED);
             } else {
-                warnings.add("Please verify jurisdiction connections in scanned form");
+                warnings.add("Please verify jurisdiction connections(invalid domiciled who) in scanned form");
             }
         } else if (toBoolean(ocrDataFields.getJurisdictionReasonsSameSex())) {
             // only for civil partnership/same-sex
@@ -109,7 +114,7 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         }
 
         if (CollectionUtils.isEmpty(connections)) {
-            warnings.add("Please verify jurisdiction connections in scanned form");
+            warnings.add("Please verify jurisdiction connections(no options selected) in scanned form");
         }
         return connections;
     }
@@ -135,8 +140,8 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
             caseData.getTransformationAndOcrWarnings().add("Please review HWF number for applicant1 in scanned form");
         }
 
-        if (isNotEmpty(ocrDataFields.getApplicant2HWFConfirmationNo())
-            && ocrDataFields.getApplicant2HWFConfirmationNo().length() != HWF_NO_VALID_LENGTH) {
+        if (isNotEmpty(ocrDataFields.getApplicant2HWFNo())
+            && ocrDataFields.getApplicant2HWFNo().length() != HWF_NO_VALID_LENGTH) {
             caseData.getTransformationAndOcrWarnings().add("Please review HWF number for applicant2 in scanned form");
         }
 
@@ -152,7 +157,7 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
             HelpWithFees
                 .builder()
                 .appliedForFees(from(toBoolean(ocrDataFields.getApplicant2HWFConfirmation())))
-                .referenceNumber(ocrDataFields.getApplicant2HWFConfirmationNo())
+                .referenceNumber(ocrDataFields.getApplicant2HWFNo())
                 .needHelp(from(toBoolean(ocrDataFields.getApplicant2HWFApp())))
                 .build()
         );

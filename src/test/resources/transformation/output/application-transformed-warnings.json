@@ -1,5 +1,5 @@
 {
-  "applicant1ScreenHasMarriageBroken": "Yes",
+  "applicant1ScreenHasMarriageBroken": "No",
   "applicant2ScreenHasMarriageBroken": "No",
   "screenHasMarriageCert": null,
   "marriageApplicant1Name": null,
@@ -22,9 +22,7 @@
   "jurisdictionApp1HabituallyResLastSixMonths": null,
   "jurisdictionResidualEligible": null,
   "jurisdictionBothLastHabituallyResident": null,
-  "jurisdictionConnections": [
-    "A"
-  ],
+  "jurisdictionConnections": [],
   "solServiceDateOfService": null,
   "solServiceDocumentsServed": null,
   "solServiceOnWhomServed": null,
@@ -37,10 +35,10 @@
   "solServiceServiceSotName": null,
   "solServiceServiceSotFirm": null,
   "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-  "applicant1HWFReferenceNumber": null,
+  "applicant1HWFReferenceNumber": "HWF-456123",
   "applicant1HWFNeedHelp": "Yes",
   "applicant1HWFAppliedForFees": "No",
-  "applicant2HWFReferenceNumber": "HWF456",
+  "applicant2HWFReferenceNumber": "HWF-456123",
   "applicant2HWFNeedHelp": "Yes",
   "applicant2HWFAppliedForFees": "Yes",
   "divorceWho": null,
@@ -50,12 +48,8 @@
   "solServiceMethod": null,
   "solStatementOfReconciliationCertify": null,
   "solStatementOfReconciliationDiscussed": null,
-  "applicant1PrayerHasBeenGivenCheckbox": [
-    "Yes"
-  ],
-  "applicant2PrayerHasBeenGivenCheckbox": [
-    "Yes"
-  ],
+  "applicant1PrayerHasBeenGivenCheckbox": null,
+  "applicant2PrayerHasBeenGivenCheckbox": null,
   "applicant1StatementOfTruth": null,
   "applicant2StatementOfTruth": null,
   "solSignStatementOfTruth": null,
@@ -79,7 +73,7 @@
   "applicant2CannotUploadSupportingDocument": null,
   "documentUploadComplete": null,
   "miniApplicationLink": null,
-  "dateSubmitted": "2022-02-11T00:14:38.868",
+  "dateSubmitted": "2022-02-11T08:30:35.599",
   "applicant2ConfirmApplicant1Information": null,
   "applicant2ExplainsApplicant1IncorrectInformation": null,
   "issueDate": null,

@@ -155,6 +155,7 @@ public class OcrDataFields {
     private String applicant2HWFConfirmation;
     private String applicant2HWFNo;
     private String applicant2HWFApp;
+    private String applicant2HWFNo;
     private String applicant2PaymentOther;
     private String howToPayEmail;
     private String debitCreditCardPayment;
