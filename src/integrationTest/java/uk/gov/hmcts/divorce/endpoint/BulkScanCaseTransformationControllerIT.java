@@ -25,6 +25,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
@@ -54,7 +55,7 @@ public class BulkScanCaseTransformationControllerIT {
     }
 
     @Test
-    public void givenValidOcrDataThenValidationSuccess() throws Exception {
+    public void shouldSuccessfullyTransformD8FormWithoutWarnings() throws Exception {
         String validApplicationOcrJson = loadJson("src/integrationTest/resources/valid-ocr.json");
         List<OcrDataField> ocrDataFields = OBJECT_MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
@@ -77,8 +78,6 @@ public class BulkScanCaseTransformationControllerIT {
             .getResponse()
             .getContentAsString(UTF_8);
 
-
-        System.out.println("Response" + response);
         // dateSubmitted value is compared using ${json-unit.any-string}
         // assertion will fail if the above value is missing
         assertThatJson(response)
@@ -86,6 +85,39 @@ public class BulkScanCaseTransformationControllerIT {
             .isEqualTo(
                 json(
                     expectedResponse("classpath:transformation-success-response.json")
+                )
+            );
+    }
+
+    @Test
+    public void shouldThrowUnsupportedFormTypeExceptionWhenFormIsNotRecognised() throws Exception {
+        String validApplicationOcrJson = loadJson("src/integrationTest/resources/valid-ocr.json");
+        List<OcrDataField> ocrDataFields = OBJECT_MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        });
+
+        String response = mockMvc.perform(post("/transform-exception-record")
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(
+                    OBJECT_MAPPER.writeValueAsString(
+                        ExceptionRecord
+                            .builder()
+                            .formType("invalidFormType")
+                            .ocrDataFields(ocrDataFields)
+                            .build()
+                    )
+                )
+                .accept(APPLICATION_JSON_VALUE))
+            .andExpect(status().isUnprocessableEntity())
+            .andDo(print())
+            .andReturn()
+            .getResponse()
+            .getContentAsString(UTF_8);
+
+        assertThatJson(response)
+            .isEqualTo(
+                json(
+                    expectedResponse("classpath:invalid-form-response-transformation.json")
                 )
             );
     }
