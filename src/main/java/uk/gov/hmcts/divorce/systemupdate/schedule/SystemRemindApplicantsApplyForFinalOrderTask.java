@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-public class SystemRemindApplicantApplyForFinalOrderTask implements Runnable {
+public class SystemRemindApplicantsApplyForFinalOrderTask implements Runnable {
 
     private static final String NOTIFICATION_SENT_FLAG = "finalOrderReminderSentApplicant1";
 
