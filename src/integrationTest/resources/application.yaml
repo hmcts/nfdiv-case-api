@@ -121,6 +121,9 @@ submit_aos:
 submit_co:
   reminder_offset_days: ${SUBMIT_CO_REMINDER_OFFSET_DAYS:14}
 
+apply_for_final_order:
+  reminder_offset_days: ${APPLY_FOR_FINAL_ORDER_REMINDER_OFFSET_DAYS:14}
+
 court:
   locations:
     serviceCentre:
