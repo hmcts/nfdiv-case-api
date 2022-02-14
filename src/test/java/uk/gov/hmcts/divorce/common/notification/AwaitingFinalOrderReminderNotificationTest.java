@@ -46,7 +46,7 @@ class AwaitingFinalOrderReminderNotificationTest {
     private AwaitingFinalOrderReminderNotification awaitingFinalOrderReminderNotification;
 
     @Test
-    void shouldSendAwaitingFinalOrderEmailToApplicant1IfNotRepresentedAndSole() {
+    void shouldSendAwaitingFinalOrderReminderEmailToApplicant1IfNotRepresentedAndSole() {
 
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
@@ -73,7 +73,7 @@ class AwaitingFinalOrderReminderNotificationTest {
     }
 
     @Test
-    void shouldSendAwaitingFinalOrderEmailToApplicant1IfNotRepresentedAndJoint() {
+    void shouldSendAwaitingFinalOrderReminderEmailToApplicant1IfNotRepresentedAndJoint() {
 
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
@@ -101,7 +101,7 @@ class AwaitingFinalOrderReminderNotificationTest {
     }
 
     @Test
-    void shouldNotSendAwaitingFinalOrderEmailToApplicant2IfNotRepresentedAndSole() {
+    void shouldNotSendAwaitingFinalOrderReminderEmailToApplicant2IfNotRepresentedAndSole() {
 
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
@@ -114,7 +114,7 @@ class AwaitingFinalOrderReminderNotificationTest {
     }
 
     @Test
-    void shouldSendAwaitingFinalOrderEmailToApplicant2IfNotRepresentedAndJoint() {
+    void shouldSendAwaitingFinalOrderReminderEmailToApplicant2IfNotRepresentedAndJoint() {
 
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
@@ -142,7 +142,7 @@ class AwaitingFinalOrderReminderNotificationTest {
     }
 
     @Test
-    void shouldSendAwaitingFinalOrderEmailWithCorrectTemplateVars() {
+    void shouldSendAwaitingFinalOrderReminderEmailWithCorrectTemplateVars() {
 
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
