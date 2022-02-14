@@ -90,6 +90,18 @@ public class FinalOrder {
     private LocalDate dateFinalOrderEligibleToRespondent;
 
     @CCD(
+        label = "Final order late explanation",
+        access = {DefaultAccess.class}
+    )
+    private String applicant1FinalOrderLateExplanation;
+
+    @CCD(
+        label = "The applicant believes that the facts stated in this application are true.",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1FinalOrderStatementOfTruth;
+
+    @CCD(
         label = "Final date to apply for Final Order",
         access = {DefaultAccess.class}
     )

@@ -24,7 +24,7 @@ public class ApplicantTemplateDataProvider {
 
         if (null != financialOrder && financialOrder.toBoolean()) {
 
-            final Set<FinancialOrderFor> financialOrderFor = applicant.getFinancialOrderFor();
+            final Set<FinancialOrderFor> financialOrderFor = applicant.getFinancialOrdersFor();
 
             if (financialOrderFor.contains(APPLICANT) && financialOrderFor.contains(CHILDREN)) {
                 return "applicants, and for the children of both the applicants.";
@@ -67,7 +67,7 @@ public class ApplicantTemplateDataProvider {
 
         if (null != financialOrder && financialOrder.toBoolean()) {
 
-            final Set<FinancialOrderFor> financialOrderFor = applicant.getFinancialOrderFor();
+            final Set<FinancialOrderFor> financialOrderFor = applicant.getFinancialOrdersFor();
 
             if (financialOrderFor.contains(APPLICANT) && financialOrderFor.contains(CHILDREN)) {
                 return "applicant, and for the children of the applicant and the respondent.";
