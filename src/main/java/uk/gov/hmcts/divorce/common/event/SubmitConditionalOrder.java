@@ -7,16 +7,16 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -24,6 +24,7 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -43,7 +44,10 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     public static final String SUBMIT_CONDITIONAL_ORDER = "submit-conditional-order";
 
     @Autowired
-    private AppliedForConditionalOrderNotification appliedForConditionalOrderNotification;
+    private Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
+
+    @Autowired
+    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -55,7 +59,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     private HttpServletRequest request;
 
     @Autowired
-    private IdamService idamService;
+    private CcdAccessService ccdAccessService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -65,6 +69,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
             .endButtonLabel("Save Conditional Order")
+            .showCondition("coApplicant1IsSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
             .grant(READ, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
@@ -73,28 +78,33 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                 .mandatory(ConditionalOrderQuestions::getStatementOfTruth)
+                .mandatory(ConditionalOrderQuestions::getSolicitorName)
+                .mandatory(ConditionalOrderQuestions::getSolicitorFirm)
+                .optional(ConditionalOrderQuestions::getSolicitorAdditionalComments)
                 .done()
-            .done()
-            .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getSolicitorName)
-                .mandatory(ConditionalOrder::getSolicitorFirm)
-                .optional(ConditionalOrder::getSolicitorAdditionalComments)
-                .done();
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
-        CaseData data = details.getData();
+
+        final CaseData data = details.getData();
+        final boolean isSole = data.getApplicationType().isSole();
+
         setSubmittedDate(data.getConditionalOrder());
-        var state = details.getData().getApplicationType().isSole()
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(YES);
+
+        var state = isSole
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
-        User user = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
-        appliedForConditionalOrderNotification.setSubmittingUserId(user.getUserDetails().getId());
-        notificationDispatcher.send(appliedForConditionalOrderNotification, data, details.getId());
+        if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
+            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, data, details.getId());
+        } else {
+            notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

@@ -16,9 +16,12 @@ public class WorkBasketResultFields implements CCDConfig<CaseData, State, UserRo
         configBuilder
             .workBasketResultFields()
             .caseReferenceField()
-            .field("applicant1HomeAddress", "Applicant's Post Code", "PostCode")
+            .field("applicationType", "Application Type")
+            .field("applicant1FirstName", "Applicant's First Name")
             .field("applicant1LastName", "Applicant's Last Name")
+            .field("applicant2FirstName", "Respondent's First Name")
             .field("applicant2LastName", "Respondent's Last Name")
-            .field("evidenceHandled","Supplementary evidence handled");
+            .field("dueDate","Due Date")
+            .lastModifiedDate();
     }
 }

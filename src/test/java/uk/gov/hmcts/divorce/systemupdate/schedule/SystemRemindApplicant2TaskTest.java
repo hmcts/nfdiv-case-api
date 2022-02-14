@@ -79,7 +79,7 @@ public class SystemRemindApplicant2TaskTest {
     private static final BoolQueryBuilder query =
         boolQuery()
             .must(matchQuery(STATE, AwaitingApplicant2Response))
-            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().plusDays(4)))
             .must(existsQuery(ACCESS_CODE))
             .mustNot(matchQuery(String.format(DATA, FLAG), YesOrNo.YES));
 

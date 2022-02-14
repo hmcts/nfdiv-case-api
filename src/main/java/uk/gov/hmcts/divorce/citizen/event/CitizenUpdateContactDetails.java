@@ -10,8 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,7 +31,7 @@ public class CitizenUpdateContactDetails implements CCDConfig<CaseData, State, U
     private HttpServletRequest request;
 
     @Autowired
-    private IdamService idamService;
+    private CcdAccessService ccdAccessService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -52,20 +51,17 @@ public class CitizenUpdateContactDetails implements CCDConfig<CaseData, State, U
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("Citizen update contact details about to submit callback invoked");
-
-        User user = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
-
         CaseData updatedData = details.getData();
         CaseData data = beforeDetails.getData();
 
-        if (updatedData.getCaseInvite().isApplicant2(user.getUserDetails().getId())) {
-            data.getApplicant2().setHomeAddress(updatedData.getApplicant2().getHomeAddress());
-            data.getApplicant2().setPhoneNumber(updatedData.getApplicant2().getPhoneNumber());
-            data.getApplicant2().setContactDetailsType(updatedData.getApplicant2().getContactDetailsType());
-        } else {
+        if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
             data.getApplicant1().setHomeAddress(updatedData.getApplicant1().getHomeAddress());
             data.getApplicant1().setPhoneNumber(updatedData.getApplicant1().getPhoneNumber());
             data.getApplicant1().setContactDetailsType(updatedData.getApplicant1().getContactDetailsType());
+        } else {
+            data.getApplicant2().setHomeAddress(updatedData.getApplicant2().getHomeAddress());
+            data.getApplicant2().setPhoneNumber(updatedData.getApplicant2().getPhoneNumber());
+            data.getApplicant2().setContactDetailsType(updatedData.getApplicant2().getContactDetailsType());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

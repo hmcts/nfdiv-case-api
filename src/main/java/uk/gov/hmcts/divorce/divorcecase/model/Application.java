@@ -261,7 +261,7 @@ public class Application {
 
     @CCD(
         label = "The respondent agrees that the divorce service can send notifications by email.",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo applicant2AgreeToReceiveEmails;
 
@@ -390,7 +390,7 @@ public class Application {
 
     @CCD(
         label = "Reminder that applicant 2 needs to review joint application",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo applicant2ReminderSent;
 
@@ -414,6 +414,7 @@ public class Application {
     private YesOrNo applicant2NeedsHelpWithFees;
 
     @CCD(
+        label = "Does applicant 2 have a solicitor representing them?",
         access = {DefaultAccess.class}
     )
     private Applicant2Represented applicant1IsApplicant2Represented;

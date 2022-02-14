@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -86,14 +87,7 @@ public class CitizenSwitchToSoleApplicationIT {
     public void givenValidCaseDataWhenCallbackIsInvokedForApplicant1SwitchToSoleThenCaseIsWithdrawnAndNotificationsSent() throws Exception {
         CaseData data = validJointApplicant1CaseData();
         setValidCaseInviteData(data);
-
-        final var userDetails = UserDetails.builder()
-            .email("test@test.com")
-            .id("app1")
-            .build();
-
-        when(idamService.retrieveUser(anyString()))
-            .thenReturn(new User("token", userDetails));
+        setupMocks(true);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -124,14 +118,8 @@ public class CitizenSwitchToSoleApplicationIT {
     public void givenValidCaseDataWhenCallbackIsInvokedForApplicant2SwitchToSoleThenCaseIsWithdrawnAndNotificationsSent() throws Exception {
         CaseData data = validApplicant2CaseData();
         setValidCaseInviteData(data);
+        setupMocks(false);
 
-        final var userDetails = UserDetails.builder()
-            .email("test@test.com")
-            .id("app2")
-            .build();
-
-        when(idamService.retrieveUser(anyString()))
-            .thenReturn(new User("token", userDetails));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -163,14 +151,7 @@ public class CitizenSwitchToSoleApplicationIT {
         CaseData data = validJointApplicant1CaseData();
         data.setCaseInvite(new CaseInvite(null, ACCESS_CODE, null));
         setValidCaseInviteData(data);
-
-        final var userDetails = UserDetails.builder()
-            .email("test@test.com")
-            .id("app1")
-            .build();
-
-        when(idamService.retrieveUser(anyString()))
-            .thenReturn(new User("token", userDetails));
+        setupMocks(true);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -215,5 +196,11 @@ public class CitizenSwitchToSoleApplicationIT {
                 .build()
         );
         return caseData;
+    }
+
+    private void setupMocks(boolean isApplicant1) {
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(isApplicant1);
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
     }
 }

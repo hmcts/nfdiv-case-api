@@ -62,6 +62,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1Email", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
             .field("applicant1HomeAddress", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
             .field("applicant1CorrespondenceAddress", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
+            .field("applicant1IsApplicant2Represented")
 
             //Applicant 1 Solicitor
             .field("applicant1SolicitorRepresented", APPLICATION_TYPE_NEVER_SHOW)

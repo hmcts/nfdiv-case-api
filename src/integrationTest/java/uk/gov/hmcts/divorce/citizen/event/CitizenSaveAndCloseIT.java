@@ -15,10 +15,12 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import uk.gov.service.notify.NotificationClientException;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -64,6 +66,9 @@ public class CitizenSaveAndCloseIT {
     private IdamService idamService;
 
     @MockBean
+    private CcdAccessService ccdAccessService;
+
+    @MockBean
     private WebMvcConfig webMvcConfig;
 
     @BeforeEach
@@ -73,8 +78,9 @@ public class CitizenSaveAndCloseIT {
             .id("app1")
             .build();
 
-        when(idamService.retrieveUser(anyString()))
-            .thenReturn(new User("token", userDetails));
+        when(idamService.retrieveUser(eq(AUTH_HEADER_VALUE)))
+            .thenReturn(new User(AUTH_HEADER_VALUE, userDetails));
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
     }
 
     @Test

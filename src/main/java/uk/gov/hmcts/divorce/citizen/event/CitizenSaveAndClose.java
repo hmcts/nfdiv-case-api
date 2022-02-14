@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -9,9 +10,7 @@ import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandl
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
+@Slf4j
 public class CitizenSaveAndClose implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_SAVE_AND_CLOSE = "citizen-save-and-close";
@@ -30,9 +30,6 @@ public class CitizenSaveAndClose implements CCDConfig<CaseData, State, UserRole>
 
     @Autowired
     private HttpServletRequest request;
-
-    @Autowired
-    private IdamService idamService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -49,8 +46,9 @@ public class CitizenSaveAndClose implements CCDConfig<CaseData, State, UserRole>
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        User user = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
-        saveAndSignOutNotificationHandler.notifyApplicant(details.getData(), user.getUserDetails());
+        log.info("CitizenSaveAndClose submitted callback invoked for case id: {}", details.getId());
+
+        saveAndSignOutNotificationHandler.notifyApplicant(details.getData(), details.getId(), request.getHeader(AUTHORIZATION));
 
         return SubmittedCallbackResponse.builder().build();
     }
