@@ -66,10 +66,9 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             .forStates(AwaitingApplicant1Response, AwaitingApplicant2Response, Applicant2Approved, AwaitingPayment)
             .name("Application switched to sole")
             .description("Application type switched to sole")
-            .grant(CREATE_READ_UPDATE, CREATOR, SYSTEMUPDATE, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
             .retries(120, 120)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted);
+            .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -82,30 +81,24 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         } else {
             notificationDispatcher.send(applicant2SwitchToSoleNotification, data, details.getId());
         }
-
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         removeApplicant2AnswersFromCase(data);
+
+        CaseInvite caseInviteBefore = beforeDetails.getData().getCaseInvite();
+
+        if (isNull(caseInviteBefore.accessCode())) {
+            log.info("Unlinking Applicant 2 from Case");
+            ccdAccessService.unlinkUserFromApplication(
+                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
+                details.getId(),
+                caseInviteBefore.applicant2UserId()
+            );
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(Draft)
             .build();
-    }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen switched to sole submitted callback invoked");
-        CaseData data = beforeDetails.getData();
-
-        if (isNull(data.getCaseInvite().accessCode())) {
-            log.info("Unlinking Applicant 2 from Case");
-            ccdAccessService.unlinkUserFromApplication(
-                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
-                details.getId(),
-                data.getCaseInvite().applicant2UserId()
-            );
-        }
-        return SubmittedCallbackResponse.builder().build();
     }
 
     private CaseData removeApplicant2AnswersFromCase(CaseData caseData) {
