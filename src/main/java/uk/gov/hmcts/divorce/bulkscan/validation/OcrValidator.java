@@ -59,7 +59,7 @@ public class OcrValidator {
         validateJurisdiction(data, warnings, errors);
         validateStatementOfIrretrievableBreakdown(data, warnings, errors);
         validateExistingCourtCases(data, warnings, errors);
-        validateMoneyProperty(data, warnings, errors);
+        validateMoneyProperty(formType, data, warnings, errors);
         validatePrayer(formType, data, warnings, errors);
         validateSoT(data, warnings, errors);
 
@@ -271,49 +271,20 @@ public class OcrValidator {
             .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
     }
 
-    private void validateMoneyProperty(OcrDataFields data, List<String> warnings, List<String> errors) {
+    private void validateMoneyProperty(String formType, OcrDataFields data, List<String> warnings, List<String> errors) {
 
         Map<String, String> validateErrorFields = new HashMap<>();
+        Map<String, String> validateWarningFields = new HashMap<>();
 
         if (!isEmpty(data.getSoleOrApplicant1FinancialOrder())
             && data.getSoleOrApplicant1FinancialOrder().equalsIgnoreCase("yes")
         ) {
             validateErrorFields.put("soleOrApplicant1FinancialOrderFor", data.getSoleOrApplicant1FinancialOrderFor());
-        }
 
-        if (!isEmpty(data.getApplicant2FinancialOrder())
-            && data.getApplicant2FinancialOrder().equalsIgnoreCase("yes")
-        ) {
-            validateErrorFields.put("applicant2FinancialOrderFor", data.getApplicant2FinancialOrderFor());
-        }
-
-        validateErrorFields.entrySet().stream()
-            .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
-    }
-
-    private void validatePrayer(String formType, OcrDataFields data, List<String> warnings, List<String> errors) {
-
-        Map<String, String> validateWarningFields = new HashMap<>();
-        Map<String, String> validateErrorFields = new HashMap<>();
-
-        if (D8.getName().equals(formType)) {
-            if (isEmpty(data.getPrayerMarriageDissolved()) && isEmpty(data.getPrayerCivilPartnershipDissolved())) {
-                errors.add("One of prayerMarriageDissolved or prayerCivilPartnershipDissolved must be populated");
-            }
-        } else {
-            validateErrorFields.put("prayerApplicant1JudiciallySeparated", data.getPrayerApplicant1JudiciallySeparated());
-        }
-
-        if (!isEmpty(data.getSoleOrApplicant1FinancialOrder())
-            && data.getSoleOrApplicant1FinancialOrder().equalsIgnoreCase("yes")
-        ) {
             if (D8.getName().equals(formType)) {
                 validateWarningFields.put("soleOrApplicant1PrayerFinancialOrder", data.getSoleOrApplicant1prayerFinancialOrder());
-                validateWarningFields.put("applicant2PrayerFinancialOrder", data.getApplicant2PrayerFinancialOrder());
             }
             validateWarningFields.put("soleOrApplicant1PrayerFinancialOrderFor", data.getSoleOrApplicant1prayerFinancialOrderFor());
-            validateWarningFields.put("applicant2PrayerFinancialOrderFor", data.getApplicant2PrayerFinancialOrderFor());
         } else if (!isEmpty(data.getSoleOrApplicant1FinancialOrder())
             && data.getSoleOrApplicant1FinancialOrder().equalsIgnoreCase("no")
         ) {
@@ -323,6 +294,20 @@ public class OcrValidator {
             if (!isEmpty(data.getSoleOrApplicant1prayerFinancialOrderFor())) {
                 warnings.add(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "soleOrApplicant1prayerFinancialOrderFor"));
             }
+        }
+
+        if (!isEmpty(data.getApplicant2FinancialOrder())
+            && data.getApplicant2FinancialOrder().equalsIgnoreCase("yes")
+        ) {
+            validateErrorFields.put("applicant2FinancialOrderFor", data.getApplicant2FinancialOrderFor());
+
+            if (D8.getName().equals(formType)) {
+                validateWarningFields.put("applicant2PrayerFinancialOrder", data.getApplicant2PrayerFinancialOrder());
+            }
+            validateWarningFields.put("applicant2PrayerFinancialOrderFor", data.getApplicant2PrayerFinancialOrderFor());
+        } else if (!isEmpty(data.getApplicant2FinancialOrder())
+            && data.getApplicant2FinancialOrder().equalsIgnoreCase("no")
+        ) {
             if (D8.getName().equals(formType) && !isEmpty(data.getApplicant2PrayerFinancialOrder())) {
                 warnings.add(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "applicant2PrayerFinancialOrder"));
             }
@@ -331,9 +316,26 @@ public class OcrValidator {
             }
         }
 
+        validateErrorFields.entrySet().stream()
+            .filter(e -> isEmpty(e.getValue()))
+            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
+
         validateWarningFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
             .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_WARNING, e.getKey())));
+    }
+
+    private void validatePrayer(String formType, OcrDataFields data, List<String> warnings, List<String> errors) {
+
+        Map<String, String> validateErrorFields = new HashMap<>();
+
+        if (D8.getName().equals(formType)) {
+            if (isEmpty(data.getPrayerMarriageDissolved()) && isEmpty(data.getPrayerCivilPartnershipDissolved())) {
+                errors.add("One of prayerMarriageDissolved or prayerCivilPartnershipDissolved must be populated");
+            }
+        } else {
+            validateErrorFields.put("prayerApplicant1JudiciallySeparated", data.getPrayerApplicant1JudiciallySeparated());
+        }
 
         validateErrorFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))

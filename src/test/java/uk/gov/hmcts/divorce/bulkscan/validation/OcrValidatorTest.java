@@ -308,7 +308,7 @@ public class OcrValidatorTest {
             .ocrDataFields(
                 List.of(
                     populateKeyValue("soleOrApplicant1FinancialOrder", "No"),
-                    populateKeyValue("applicant2FinancialOrder", "Yes"),
+                    populateKeyValue("applicant2FinancialOrder", "No"),
                     populateKeyValue("soleOrApplicant1prayerFinancialOrder", "test"),
                     populateKeyValue("soleOrApplicant1prayerFinancialOrderFor", "test"),
                     populateKeyValue("applicant2PrayerFinancialOrder", "test"),
@@ -358,7 +358,7 @@ public class OcrValidatorTest {
             .ocrDataFields(
                 List.of(
                     populateKeyValue("soleOrApplicant1FinancialOrder", "No"),
-                    populateKeyValue("applicant2FinancialOrder", "Yes"),
+                    populateKeyValue("applicant2FinancialOrder", "No"),
                     populateKeyValue("soleOrApplicant1prayerFinancialOrderFor", "test"),
                     populateKeyValue("applicant2PrayerFinancialOrderFor", "test"))
             )
