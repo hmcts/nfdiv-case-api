@@ -29,7 +29,7 @@ public class AwaitingFinalOrderReminderNotification implements ApplicantNotifica
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        log.info("Notifying applicant 1 that they can apply for a final order: {}", id);
+        log.info("Sending reminder to applicant 1 that they can apply for a final order: {}", id);
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
 
@@ -47,7 +47,7 @@ public class AwaitingFinalOrderReminderNotification implements ApplicantNotifica
         final Applicant applicant2 = caseData.getApplicant2();
 
         if (!caseData.getApplicationType().isSole()) {
-            log.info("Notifying applicant 2 (joint application) that they can apply for a final order: {}", id);
+            log.info("Sending reminder to applicant 2 (joint application) that they can apply for a final order: {}", id);
 
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),

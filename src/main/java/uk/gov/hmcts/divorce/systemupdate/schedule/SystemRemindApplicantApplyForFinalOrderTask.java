@@ -58,7 +58,7 @@ public class SystemRemindApplicantApplyForFinalOrderTask implements Runnable {
 
     @Override
     public void run() {
-        log.info("Remind applicant 2 scheduled task started");
+        log.info("Remind applicant(s) apply for final order task started");
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();
