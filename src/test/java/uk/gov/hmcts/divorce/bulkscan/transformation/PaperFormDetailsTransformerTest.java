@@ -80,7 +80,7 @@ public class PaperFormDetailsTransformerTest {
                 "Please review statement of truth for applicant2 in scanned form",
                 "Please review statement of truth for applicant2 in scanned form",
                 "Please sole or applicant2/legal representative name in scanned form",
-                "Please review statement of truth date for applicant1 in scanned form"
+                "Please review statement of truth date for applicant2 in scanned form"
             );
 
         final var expectedPaperForm =

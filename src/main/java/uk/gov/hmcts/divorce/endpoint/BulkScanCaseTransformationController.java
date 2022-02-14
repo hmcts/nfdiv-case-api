@@ -36,7 +36,11 @@ public class BulkScanCaseTransformationController {
     @Autowired
     private BulkScanService bulkScanService;
 
-    @PostMapping(path = BulkScanEndpoints.TRANSFORM, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(
+        path = BulkScanEndpoints.TRANSFORM,
+        produces = APPLICATION_JSON_VALUE,
+        consumes = "application/json;charset=UTF-8"
+    )
     @Operation(summary = "Transform exception record into CCD case data")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Transformation of Exception Record into CCD Case Data has been successful",
@@ -55,8 +59,6 @@ public class BulkScanCaseTransformationController {
         String exceptionRecordId = exceptionRecord.getId();
         log.info("Transforming Exception Record to case with Case ID: {}", exceptionRecordId);
 
-        ResponseEntity<SuccessfulTransformationResponse> controllerResponse;
-
         Map<String, Object> transformedCaseData = bulkScanService.transformBulkScanForm(exceptionRecord);
 
         @SuppressWarnings("unchecked") final var warnings = (List<String>) transformedCaseData.get(TRANSFORMATION_AND_OCR_WARNINGS);
@@ -72,8 +74,6 @@ public class BulkScanCaseTransformationController {
             .warnings(warnings)
             .build();
 
-        controllerResponse = ok(callbackResponse);
-
-        return controllerResponse;
+        return ok().body(callbackResponse);
     }
 }

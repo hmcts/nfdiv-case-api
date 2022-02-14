@@ -1,31 +1,31 @@
 {
-  "serviceOutsideUK": "No",
-  "applicantWillServeApplication": "Yes",
-  "respondentDifferentServiceAddress": "No",
-  "summaryApplicant1FinancialOrdersFor": [
+  "ServiceOutsideUK": "No",
+  "ApplicantWillServeApplication": "Yes",
+  "RespondentDifferentServiceAddress": "No",
+  "SummaryApplicant1FinancialOrdersFor": [
     "children"
   ],
-  "summaryApplicant2FinancialOrdersFor": [
+  "SummaryApplicant2FinancialOrdersFor": [
     "children",
     "applicant"
   ],
-  "applicant1SigningSOT": "Yes",
-  "applicant1LegalRepSigningSOT": "No",
-  "applicant2SigningSOT": "Yes",
-  "applicant2LegalRepSigningSOT": "No",
-  "applicant1LegalRepPosition": "some position",
-  "applicant2LegalRepPosition": null,
-  "applicant1SOTSignedOn": "18 6 2022",
-  "applicant2SOTSignedOn": "18 6 2022",
-  "feeInPounds": "595£",
-  "applicant1NoPaymentIncluded": "Yes",
-  "applicant2NoPaymentIncluded": "No",
-  "soleOrApplicant1PaymentOther": "No",
-  "applicant2PaymentOther": "No",
-  "soleOrApplicant1PaymentOtherDetail": null,
-  "debitCreditCardPayment": null,
-  "debitCreditCardPaymentPhone": null,
-  "howToPayEmail": null,
-  "paymentDetailEmail": null,
-  "chequeOrPostalOrderPayment": null
+  "Applicant1SigningSOT": "Yes",
+  "Applicant1LegalRepSigningSOT": "No",
+  "Applicant2SigningSOT": "Yes",
+  "Applicant2LegalRepSigningSOT": "No",
+  "Applicant1LegalRepPosition": "some position",
+  "Applicant2LegalRepPosition": null,
+  "Applicant1SOTSignedOn": "18 6 2022",
+  "Applicant2SOTSignedOn": "18 6 2022",
+  "FeeInPounds": "595£",
+  "Applicant1NoPaymentIncluded": "Yes",
+  "Applicant2NoPaymentIncluded": "No",
+  "SoleOrApplicant1PaymentOther": "No",
+  "Applicant2PaymentOther": "No",
+  "SoleOrApplicant1PaymentOtherDetail": null,
+  "DebitCreditCardPayment": null,
+  "DebitCreditCardPaymentPhone": null,
+  "HowToPayEmail": null,
+  "PaymentDetailEmail": null,
+  "ChequeOrPostalOrderPayment": null
 }

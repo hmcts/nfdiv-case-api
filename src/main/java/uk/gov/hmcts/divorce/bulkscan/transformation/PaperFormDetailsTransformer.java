@@ -13,9 +13,6 @@ import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
@@ -43,27 +40,17 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
         caseData.getPaperFormDetails().setRespondentDifferentServiceAddress(
             from(toBoolean(ocrDataFields.getRespondentDifferentServiceAddress()))
         );
+        caseData.getPaperFormDetails().setSummaryApplicant1FinancialOrdersFor(
+            applicantSummaryFinancialOrderFor(ocrDataFields.getSoleOrApplicant1prayerFinancialOrderFor())
+        );
+        caseData.getPaperFormDetails().setSummaryApplicant2FinancialOrdersFor(
+            applicantSummaryFinancialOrderFor(ocrDataFields.getApplicant2PrayerFinancialOrderFor())
+        );
 
-        setApp1FinancialOrderSummary(ocrDataFields, caseData);
-        setApp2FinancialOrderSummary(ocrDataFields, caseData);
         applicant1StatementOfTruth(ocrDataFields, caseData);
         applicant2StatementOfTruth(ocrDataFields, caseData);
         setCourtFee(ocrDataFields, caseData);
         return transformationDetails;
-    }
-
-    private void setApp1FinancialOrderSummary(OcrDataFields ocrDataFields, CaseData caseData) {
-        if (YES.equals(caseData.getApplicant1().getFinancialOrder())
-            && isEmpty(ocrDataFields.getSoleOrApplicant1prayerFinancialOrderFor())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review financial order summary for applicant1 in scanned form");
-        } else if (NO.equals(caseData.getApplicant1().getFinancialOrder())
-            && isNotEmpty(ocrDataFields.getSoleOrApplicant1prayerFinancialOrderFor())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review financial order summary for applicant1 in scanned form");
-        }
-
-        caseData.getPaperFormDetails().setSummaryApplicant1FinancialOrdersFor(
-            applicantSummaryFinancialOrderFor(ocrDataFields.getSoleOrApplicant1prayerFinancialOrderFor())
-        );
     }
 
     private Set<FinancialOrderFor> applicantSummaryFinancialOrderFor(String applicantPrayerFinancialOrderFor) {
@@ -77,20 +64,6 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
             financialOrdersFor.add(FinancialOrderFor.CHILDREN);
         }
         return financialOrdersFor;
-    }
-
-    private void setApp2FinancialOrderSummary(OcrDataFields ocrDataFields, CaseData caseData) {
-        if (YES.equals(caseData.getApplicant2().getFinancialOrder())
-            && isEmpty(ocrDataFields.getApplicant2PrayerFinancialOrderFor())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review financial order summary for applicant2 in scanned form");
-        } else if (NO.equals(caseData.getApplicant2().getFinancialOrder())
-            && isNotEmpty(ocrDataFields.getApplicant2PrayerFinancialOrderFor())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review financial order summary for applicant2 in scanned form");
-        }
-
-        caseData.getPaperFormDetails().setSummaryApplicant2FinancialOrdersFor(
-            applicantSummaryFinancialOrderFor(ocrDataFields.getApplicant2PrayerFinancialOrderFor())
-        );
     }
 
     private void applicant1StatementOfTruth(OcrDataFields ocrDataFields, CaseData caseData) {
@@ -157,7 +130,7 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
         String month = ocrDataFields.getApplicant2StatementOfTruthDateMonth();
         String year = ocrDataFields.getApplicant2StatementOfTruthDateYear();
         if (isEmpty(day) || isEmpty(month) || isEmpty(year)) {
-            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth date for applicant1 in scanned form");
+            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth date for applicant2 in scanned form");
         }
         caseData.getPaperFormDetails().setApplicant1SOTSignedOn(
             deriveStatementOfTruthDate(day, month, year)

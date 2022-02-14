@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.bulkscan.transformation;
 
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
@@ -22,6 +21,7 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.join;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
@@ -182,14 +182,14 @@ public class Applicant1Transformer implements Function<TransformationDetails, Tr
             || OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(ocrDataFields.getSoleOrApplicant1FinancialOrder())) {
             caseData.getApplicant1().setFinancialOrder(YES);
 
-            if (CollectionUtils.isEmpty(app1FinancialOrderFor)) {
-                caseData.getTransformationAndOcrWarnings().add("Please review applicant1 financial for in scanned form");
+            if (isEmpty(app1FinancialOrderFor)) {
+                caseData.getTransformationAndOcrWarnings().add("Please review applicant1 financial order for in scanned form");
             }
 
         } else {
             caseData.getApplicant1().setFinancialOrder(NO);
-            if (!CollectionUtils.isEmpty(app1FinancialOrderFor)) {
-                caseData.getTransformationAndOcrWarnings().add("Please review applicant1 financial for in scanned form");
+            if (!isEmpty(app1FinancialOrderFor)) {
+                caseData.getTransformationAndOcrWarnings().add("Please review applicant1 financial order for in scanned form");
             }
         }
         caseData.getApplicant1().setFinancialOrdersFor(app1FinancialOrderFor);

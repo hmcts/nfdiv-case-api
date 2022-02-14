@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.bulkscan.transformation;
 
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
@@ -20,6 +19,7 @@ import java.util.stream.Stream;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
@@ -125,14 +125,13 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
         if (OCR_FIELD_VALUE_YES.equalsIgnoreCase(ocrDataFields.getApplicant2FinancialOrder())
             || OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(ocrDataFields.getApplicant2FinancialOrder())) {
             caseData.getApplicant2().setFinancialOrder(YES);
-            if (CollectionUtils.isEmpty(app2FinancialOrderFor)) {
-                caseData.getTransformationAndOcrWarnings().add("Please review applicant2 financial for in scanned form");
+            if (isEmpty(app2FinancialOrderFor)) {
+                caseData.getTransformationAndOcrWarnings().add("Please review applicant2 financial order for in scanned form");
             }
-
         } else {
             caseData.getApplicant2().setFinancialOrder(NO);
-            if (!CollectionUtils.isEmpty(app2FinancialOrderFor)) {
-                caseData.getTransformationAndOcrWarnings().add("Please review applicant2 financial for in scanned form");
+            if (!isEmpty(app2FinancialOrderFor)) {
+                caseData.getTransformationAndOcrWarnings().add("Please review applicant2 financial order for in scanned form");
             }
         }
         caseData.getApplicant2().setFinancialOrdersFor(app2FinancialOrderFor);

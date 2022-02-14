@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class PaperFormDetails {
     private String serviceOutsideUK;
 

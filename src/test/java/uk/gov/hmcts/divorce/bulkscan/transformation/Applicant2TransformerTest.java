@@ -74,7 +74,7 @@ public class Applicant2TransformerTest {
                 "Please review respondent/applicant2 first name",
                 "Please review respondent/applicant2 last name",
                 "Please review respondent/applicant2 name different to marriage certificate in the scanned form",
-                "Please review applicant2 financial for in scanned form"
+                "Please review applicant2 financial order for in scanned form"
             );
 
         final var expectedApplicant2 =

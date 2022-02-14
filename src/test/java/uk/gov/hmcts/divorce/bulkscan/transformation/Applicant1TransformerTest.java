@@ -72,7 +72,7 @@ public class Applicant1TransformerTest {
                 "Please review applicant1 name different to marriage certificate in the scanned form",
                 "Please review applicant1 solicitor name in the scanned form",
                 "Please review applicant1 solicitor firm in the scanned form",
-                "Please review applicant1 financial for in scanned form",
+                "Please review applicant1 financial order for in scanned form",
                 "Please review existing or previous court cases in the scanned form"
             );
 

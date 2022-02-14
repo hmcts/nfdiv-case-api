@@ -40,6 +40,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
     public static final String TRANSFORMATION_AND_OCR_WARNINGS = "transformationAndOcrWarnings";
     public static final String OCR_FIELD_VALUE_YES = "yes";
     public static final String OCR_FIELD_VALUE_NO = "no";
+
     @Autowired
     private ObjectMapper mapper;
 

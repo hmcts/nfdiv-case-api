@@ -75,11 +75,8 @@ public class MarriageDetailsTransformerTest {
                 "Please review marriage certificate/translation in the scanned form",
                 "Please review applicant1's full name as on marriage cert in the scanned form",
                 "Please review respondent/applicant2's full name as on marriage cert in the scanned form",
-                "Please review applicant1 name different to marriage certificate in the scanned form",
-                "Please review making an application with marriage certificate in the scanned form",
-                "Please review marriage date in the scanned form",
-                "Please review marriage certificate details is correct in the scanned form",
-                "Please review making an application without marriage certificate in the scanned form"
+                "Please review making an application without marriage certificate in the scanned form",
+                "Please review marriage certificate details is correct in the scanned form"
             );
 
         final var expectedMarriageDetails =
