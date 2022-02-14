@@ -35,7 +35,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class BulkScanTransformationControllerIT {
+public class BulkScanCaseTransformationControllerIT {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
