@@ -174,7 +174,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
         when(applicantTemplateDataProvider.deriveApplicant2PostalAddress(eq(caseData.getApplicant2()), any()))
             .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
-        when(applicantTemplateDataProvider.deriveJointFinancialOrder(eq(caseData.getApplicant1().getFinancialOrderFor())))
+        when(applicantTemplateDataProvider.deriveJointFinancialOrder(eq(caseData.getApplicant1().getFinancialOrdersFor())))
             .thenReturn(null);
         when(applicantTemplateDataProvider.deriveJointFinancialOrder(eq(caseData.getApplicant2().getFinancialOrdersFor())))
             .thenReturn("children of the applicant and the respondent.");
