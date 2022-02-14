@@ -87,7 +87,7 @@ public class DraftApplicationTemplateContent {
         } else {
             templateContent.put(
                 APPLICANT_1_FINANCIAL_ORDER,
-                applicantTemplateDataProvider.deriveJointFinancialOrder(applicant1.getFinancialOrderFor()));
+                applicantTemplateDataProvider.deriveJointFinancialOrder(applicant1.getFinancialOrdersFor()));
             if (!isNull(applicant2.getFinancialOrder())) {
                 templateContent.put(HAS_FINANCIAL_ORDER_APPLICANT_2, applicant2.getFinancialOrder().toBoolean());
                 templateContent.put(
