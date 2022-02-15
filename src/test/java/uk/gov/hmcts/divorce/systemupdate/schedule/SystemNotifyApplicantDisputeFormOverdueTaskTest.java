@@ -34,6 +34,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -123,7 +124,7 @@ class SystemNotifyApplicantDisputeFormOverdueTaskTest {
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
-        doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
