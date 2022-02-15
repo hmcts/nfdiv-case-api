@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -89,10 +88,8 @@ public class SystemRemindApplicantsApplyForFinalOrderTask implements Runnable {
 
     private void sendReminderToApplicantsIfEligible(CaseDetails caseDetails, User user, String serviceAuthorization) {
         try {
-            final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-            if (!caseData.getFinalOrder().hasFinalOrderReminderSentApplicant1()) {
-                ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, serviceAuthorization);
-            }
+            log.info("Submitting system-remind-applicants-final-order event...");
+            ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, serviceAuthorization);
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
         } catch (final IllegalArgumentException e) {
