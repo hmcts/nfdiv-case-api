@@ -25,7 +25,9 @@
   "jurisdictionConnections": [
     "A",
     "B",
-    "J"
+    "J",
+    "E",
+    "F"
   ],
   "solServiceDateOfService": null,
   "solServiceDocumentsServed": null,

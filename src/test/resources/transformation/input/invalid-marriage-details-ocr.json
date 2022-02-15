@@ -1,11 +1,11 @@
 [
   {
     "name": "marriageOrCivilPartnershipCertificate",
-    "value": "true"
+    "value": "false"
   },
   {
     "name": "translation",
-    "value": "true"
+    "value": "false"
   },
   {
     "name": "soleOrApplicant1FullNameAsOnCert",
@@ -17,7 +17,7 @@
   },
   {
     "name": "marriageOutsideOfUK",
-    "value": "Yes"
+    "value": "Both"
   },
   {
     "name": "makingAnApplicationWithoutCertificate",
@@ -37,7 +37,7 @@
   },
   {
     "name": "detailsOnCertCorrect",
-    "value": "Both"
+    "value": "No"
   },
   {
     "name": "reasonWhyCertNotCorrect",

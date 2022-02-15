@@ -12,6 +12,14 @@
     "value": "true"
   },
   {
+    "name": "jurisdictionReasons6MonthsHabitual",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsBothPartiesDomiciled",
+    "value": "true"
+  },
+  {
     "name": "jurisdictionReasonsSameSex",
     "value": "false"
   },

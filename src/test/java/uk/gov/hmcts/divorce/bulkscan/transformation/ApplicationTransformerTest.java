@@ -15,8 +15,11 @@ import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.Set;
 
+import static joptsimple.internal.Strings.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.jsonToObject;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
@@ -24,6 +27,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_DOMICILED;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_DOMICILED;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 
@@ -73,6 +78,86 @@ public class ApplicationTransformerTest {
     }
 
     @Test
+    void shouldSuccessfullyTransformSoleApplicationWithoutWarningsWhenApp1IsDomiciled() throws Exception {
+        String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-application-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        });
+
+        OcrDataFields dataFields = transformOcrMapToObject(ocrDataFields);
+        dataFields.setJurisdictionReasonsOnePartyDomiciled("true");
+        dataFields.setJurisdictionReasonsOnePartyDomiciledWho("applicant,applicant1");
+        dataFields.setJurisdictionReasonsBothPartiesHabitual(EMPTY);
+        dataFields.setJurisdictionReasonsBothPartiesLastHabitual(EMPTY);
+        dataFields.setJurisdictionReasons6MonthsHabitual(EMPTY);
+        dataFields.setJurisdictionReasonsBothPartiesDomiciled(EMPTY);
+        dataFields.setJurisdictionReasonsJointHabitual(EMPTY);
+
+        final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(dataFields)
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = applicationTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+
+        final var expectedApplication =
+            jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
+        expectedApplication.getJurisdiction().setConnections(Set.of(APP_1_DOMICILED));
+
+        assertThat(transformedOutput.getCaseData().getApplication())
+            .usingRecursiveComparison()
+            .ignoringFields("dateSubmitted")
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplication);
+
+        assertThat(transformedOutput.getCaseData().getApplication().getDateSubmitted()).isEqualTo(getExpectedLocalDateTime());
+    }
+
+    @Test
+    void shouldSuccessfullyTransformSoleApplicationWithoutWarningsWhenApp2IsDomiciled() throws Exception {
+        String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-application-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        });
+
+        OcrDataFields dataFields = transformOcrMapToObject(ocrDataFields);
+        dataFields.setJurisdictionReasonsOnePartyDomiciled("true");
+        dataFields.setJurisdictionReasonsOnePartyDomiciledWho("applicant2");
+        dataFields.setJurisdictionReasonsBothPartiesHabitual(EMPTY);
+        dataFields.setJurisdictionReasonsBothPartiesLastHabitual(EMPTY);
+        dataFields.setJurisdictionReasons6MonthsHabitual(EMPTY);
+        dataFields.setJurisdictionReasonsBothPartiesDomiciled(EMPTY);
+        dataFields.setJurisdictionReasonsJointHabitual(EMPTY);
+
+        final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(dataFields)
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = applicationTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+
+        final var expectedApplication =
+            jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
+        expectedApplication.getJurisdiction().setConnections(Set.of(APP_2_DOMICILED));
+
+        assertThat(transformedOutput.getCaseData().getApplication())
+            .usingRecursiveComparison()
+            .ignoringFields("dateSubmitted")
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplication);
+
+        assertThat(transformedOutput.getCaseData().getApplication().getDateSubmitted()).isEqualTo(getExpectedLocalDateTime());
+    }
+
+    @Test
     void shouldSuccessfullyTransformSoleApplicationWithWarningsWhenOcrContainsInvalidData() throws Exception {
         String invalidOcrJson = loadJson("src/test/resources/transformation/input/invalid-application-ocr.json");
         List<OcrDataField> ocrDataFields = MAPPER.readValue(invalidOcrJson, new TypeReference<>() {
@@ -81,6 +166,7 @@ public class ApplicationTransformerTest {
         final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
         OcrDataFields ocrData = transformOcrMapToObject(ocrDataFields);
         ocrData.setSoleOrApplicant1ConfirmationOfBreakdown("false");
+        ocrData.setApplicant2ConfirmationOfBreakdown("true");
         ocrData.setPrayerMarriageDissolved("false");
 
         final var transformationDetails =
@@ -104,6 +190,7 @@ public class ApplicationTransformerTest {
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed-warnings.json", Application.class);
+        expectedApplication.setApplicant2ScreenHasMarriageBroken(YES);
 
         assertThat(transformedOutput.getCaseData().getApplication())
             .usingRecursiveComparison()
@@ -123,6 +210,7 @@ public class ApplicationTransformerTest {
         final var caseData = CaseData.builder().applicationType(JOINT_APPLICATION).divorceOrDissolution(DISSOLUTION).build();
         OcrDataFields ocrData = transformOcrMapToObject(ocrDataFields);
         ocrData.setSoleOrApplicant1ConfirmationOfBreakdown("false");
+        ocrData.setApplicant2ConfirmationOfBreakdown("false");
         ocrData.setPrayerCivilPartnershipDissolved("false");
 
         final var transformationDetails =

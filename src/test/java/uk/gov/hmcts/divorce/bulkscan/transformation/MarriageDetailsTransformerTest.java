@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
@@ -75,7 +76,50 @@ public class MarriageDetailsTransformerTest {
                 "Please review marriage certificate/translation in the scanned form",
                 "Please review applicant1's full name as on marriage cert in the scanned form",
                 "Please review respondent/applicant2's full name as on marriage cert in the scanned form",
+                "Please review married outside UK in the scanned form",
                 "Please review making an application without marriage certificate in the scanned form",
+                "Please review reasons why cert not correct in the scanned form"
+            );
+
+        final var expectedMarriageDetails =
+            jsonToObject("src/test/resources/transformation/output/marriage-details-transformed-warnings.json", MarriageDetails.class);
+
+
+        assertThat(transformedOutput.getCaseData().getPaperFormDetails())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedMarriageDetails);
+    }
+
+    @Test
+    void shouldSuccessfullyTransformMarriageDetailsWithWarningsWhenOcrContainsInvalidMarriageDateAndIncorrectCert() throws Exception {
+        String invalidOcrJson = loadJson("src/test/resources/transformation/input/invalid-marriage-details-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(invalidOcrJson, new TypeReference<>() {
+        });
+
+        OcrDataFields dataFields = transformOcrMapToObject(ocrDataFields);
+        dataFields.setDetailsOnCertCorrect("Both");
+        dataFields.setMarriageOutsideOfUK("No");
+        dataFields.setDateOfMarriageOrCivilPartnershipMonth("invalid");
+
+        final var caseData = CaseData.builder().build();
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(dataFields)
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = marriageDetailsTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+            .containsExactlyInAnyOrder(
+                "Please review marriage certificate/translation in the scanned form",
+                "Please review applicant1's full name as on marriage cert in the scanned form",
+                "Please review respondent/applicant2's full name as on marriage cert in the scanned form",
+                "Please review making an application without marriage certificate in the scanned form",
+                "Please review marriage date in the scanned form",
+                "Please review place of marriage or civil partnership in scanned form",
                 "Please review marriage certificate details is correct in the scanned form"
             );
 
@@ -88,4 +132,5 @@ public class MarriageDetailsTransformerTest {
             .ignoringActualNullFields()
             .isEqualTo(expectedMarriageDetails);
     }
+
 }
