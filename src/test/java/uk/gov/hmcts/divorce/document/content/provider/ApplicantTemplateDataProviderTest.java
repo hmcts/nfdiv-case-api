@@ -40,7 +40,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .financialOrder(YES)
-            .financialOrderFor(emptySet())
+            .financialOrdersFor(emptySet())
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant)).isNull();
@@ -61,7 +61,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .financialOrder(YES)
-            .financialOrderFor(Set.of(APPLICANT, CHILDREN))
+            .financialOrdersFor(Set.of(APPLICANT, CHILDREN))
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant))
@@ -73,7 +73,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .financialOrder(YES)
-            .financialOrderFor(Set.of(APPLICANT))
+            .financialOrdersFor(Set.of(APPLICANT))
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant))
@@ -85,7 +85,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .financialOrder(YES)
-            .financialOrderFor(Set.of(CHILDREN))
+            .financialOrdersFor(Set.of(CHILDREN))
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant))
@@ -128,7 +128,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .financialOrder(YES)
-            .financialOrderFor(emptySet())
+            .financialOrdersFor(emptySet())
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant)).isNull();
@@ -149,7 +149,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .financialOrder(YES)
-            .financialOrderFor(Set.of(APPLICANT, CHILDREN))
+            .financialOrdersFor(Set.of(APPLICANT, CHILDREN))
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant))
@@ -161,7 +161,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .financialOrder(YES)
-            .financialOrderFor(Set.of(APPLICANT))
+            .financialOrdersFor(Set.of(APPLICANT))
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant))
@@ -173,7 +173,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .financialOrder(YES)
-            .financialOrderFor(Set.of(CHILDREN))
+            .financialOrdersFor(Set.of(CHILDREN))
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant))

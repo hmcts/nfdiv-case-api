@@ -7,6 +7,11 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 
@@ -25,16 +30,29 @@ public class PronounceCaseProvider implements BulkActionCaseTaskProvider {
         final BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
 
         return mainCaseDetails -> {
+            final LocalDateTime dateAndTimeOfHearing = bulkActionCaseData.getDateAndTimeOfHearing();
+
+            if (isNull(dateAndTimeOfHearing)) {
+                final String message = format(
+                    "Bulk Case has no dateAndTimeOfHearing set for Bulk Case Id: %s, while processing Case Id: %s, Event: %s",
+                    bulkCaseDetails.getId(),
+                    mainCaseDetails.getId(),
+                    getEventId());
+
+                log.error(message);
+                throw new BulkActionCaseTaskException(message);
+            }
+
             log.info("Updating case data for Case Id: {} Event: {}", mainCaseDetails.getId(), getEventId());
+
             final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
             final var finalOrder = mainCaseDetails.getData().getFinalOrder();
+            final LocalDate dateFinalOrderEligibleFrom = finalOrder.getDateFinalOrderEligibleFrom(dateAndTimeOfHearing);
 
-            mainCaseDetails.getData().setDueDate(
-                finalOrder.getDateFinalOrderEligibleFrom(bulkActionCaseData.getDateAndTimeOfHearing()));
+            mainCaseDetails.getData().setDueDate(dateFinalOrderEligibleFrom);
             conditionalOrder.setOutcomeCase(YES);
-            conditionalOrder.setGrantedDate(bulkActionCaseData.getDateAndTimeOfHearing().toLocalDate());
-            finalOrder.setDateFinalOrderEligibleFrom(
-                finalOrder.getDateFinalOrderEligibleFrom(bulkActionCaseData.getDateAndTimeOfHearing()));
+            conditionalOrder.setGrantedDate(dateAndTimeOfHearing.toLocalDate());
+            finalOrder.setDateFinalOrderEligibleFrom(dateFinalOrderEligibleFrom);
             finalOrder.setDateFinalOrderNoLongerEligible(
                 finalOrder.calculateDateFinalOrderNoLongerEligible(conditionalOrder.getGrantedDate()));
             finalOrder.setDateFinalOrderEligibleToRespondent(
