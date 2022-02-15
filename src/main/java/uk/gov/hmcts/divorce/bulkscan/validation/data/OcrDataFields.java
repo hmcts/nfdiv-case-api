@@ -115,6 +115,7 @@ public class OcrDataFields {
     private String applicant2FinancialOrderFor;
     private String prayerMarriageDissolved;
     private String prayerCivilPartnershipDissolved;
+    private String prayerApplicant1JudiciallySeparated;
     private String soleOrApplicant1prayerFinancialOrder;
     private String soleOrApplicant1prayerFinancialOrderFor;
     private String applicant2PrayerFinancialOrder;
@@ -149,7 +150,7 @@ public class OcrDataFields {
     private String soleOrApplicant1PaymentOtherDetail;
     private String applicant2NoPaymentIncluded;
     private String applicant2HWFConfirmation;
-    private String applicant2HWFConfirmationNo;
+    private String applicant2HWFNo;
     private String applicant2HWFApp;
     private String applicant2PaymentOther;
     private String debitCreditCardPayment;

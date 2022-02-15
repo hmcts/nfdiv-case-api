@@ -42,6 +42,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -451,7 +452,7 @@ public class SystemCreateBulkCaseListTaskTest {
         when(ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION))
             .thenReturn(searchResults);
 
-        doThrow(new CcdManagementException("some exception", mock(FeignException.class)))
+        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "some exception", mock(FeignException.class)))
             .when(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
 
         systemCreateBulkCaseListTask.run();
