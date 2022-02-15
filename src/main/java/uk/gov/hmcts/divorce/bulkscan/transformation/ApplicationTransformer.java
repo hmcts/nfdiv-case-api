@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.bulkscan.transformation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
@@ -17,6 +16,7 @@ import java.util.function.Function;
 
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -87,33 +87,41 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         Set<JurisdictionConnections> connections = new HashSet<>();
         if (toBoolean(ocrDataFields.getJurisdictionReasonsBothPartiesHabitual())) {
             connections.add(APP_1_APP_2_RESIDENT);
-        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsBothPartiesLastHabitual())) {
+        }
+        if (toBoolean(ocrDataFields.getJurisdictionReasonsBothPartiesLastHabitual())) {
             connections.add(APP_1_APP_2_LAST_RESIDENT);
-        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsRespHabitual())) {
+        }
+        if (toBoolean(ocrDataFields.getJurisdictionReasonsRespHabitual())) {
             connections.add(APP_2_RESIDENT);
-        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsJointHabitual())) {
+        }
+        if (toBoolean(ocrDataFields.getJurisdictionReasonsJointHabitual())) {
             connections.add(APP_1_RESIDENT_JOINT);
-        } else if (toBoolean(ocrDataFields.getJurisdictionReasons1YrHabitual())) {
+        }
+        if (toBoolean(ocrDataFields.getJurisdictionReasons1YrHabitual())) {
             connections.add(APP_1_RESIDENT_TWELVE_MONTHS);
-        } else if (toBoolean(ocrDataFields.getJurisdictionReasons6MonthsHabitual())) {
+        }
+        if (toBoolean(ocrDataFields.getJurisdictionReasons6MonthsHabitual())) {
             connections.add(APP_1_RESIDENT_SIX_MONTHS);
-        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsBothPartiesDomiciled())) {
+        }
+        if (toBoolean(ocrDataFields.getJurisdictionReasonsBothPartiesDomiciled())) {
             connections.add(APP_1_APP_2_DOMICILED);
-        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsOnePartyDomiciled())) {
+        }
+        if (toBoolean(ocrDataFields.getJurisdictionReasonsOnePartyDomiciled())) {
             if (APPLICANT_APPLICANT_1.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsOnePartyDomiciledWho())) {
                 connections.add(APP_1_DOMICILED);
             } else if (APPLICANT_2.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsOnePartyDomiciledWho())
                 || RESPONDENT.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsOnePartyDomiciledWho())) {
                 connections.add(APP_2_DOMICILED);
             } else {
-                warnings.add("Please verify jurisdiction connections(invalid domiciled who) in scanned form");
+                warnings.add("Please verify jurisdiction connections(missing/invalid domiciled who) in scanned form");
             }
-        } else if (toBoolean(ocrDataFields.getJurisdictionReasonsSameSex())) {
+        }
+        if (toBoolean(ocrDataFields.getJurisdictionReasonsSameSex())) {
             // only for civil partnership/same-sex
             connections.add(RESIDUAL_JURISDICTION);
         }
 
-        if (CollectionUtils.isEmpty(connections)) {
+        if (isEmpty(connections)) {
             warnings.add("Please verify jurisdiction connections(no options selected) in scanned form");
         }
         return connections;

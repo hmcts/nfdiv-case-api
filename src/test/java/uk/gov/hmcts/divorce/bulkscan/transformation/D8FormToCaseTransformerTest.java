@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
@@ -165,6 +166,25 @@ public class D8FormToCaseTransformerTest {
             .extracting("errors")
             .isEqualTo(List.of("some error"));
 
+    }
+
+    @Test
+    void shouldThrowInvalidDataExceptionWhenOcrTransformationThrowsException() throws Exception {
+        String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8-form-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        });
+
+        when(validator.validateOcrData(D8.getName(), transformOcrMapToObject(ocrDataFields)))
+            .thenReturn(OcrValidationResponse.builder().build());
+        var exceptionRecord = ExceptionRecord.builder().formType(D8.getName()).ocrDataFields(ocrDataFields).build();
+
+        doThrow(new RuntimeException("some exception")).when(applicant1Transformer).andThen(applicant2Transformer);
+
+        assertThatThrownBy(() -> d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord))
+            .isExactlyInstanceOf(InvalidDataException.class)
+            .hasMessageContaining("some exception")
+            .extracting("errors")
+            .isEqualTo(List.of("Some error occurred during D8 Form transformation."));
     }
 
 }

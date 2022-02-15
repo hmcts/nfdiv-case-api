@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.collections4.ListUtils.union;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -141,14 +142,12 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
         } catch (Exception exception) {
             //this will result in bulk scan service to create exception record if case creation is automatic case creation
-            // In case of caseworker triggering the event it will result into error/transformationWarnings shown on the UI
+            // In case of caseworker triggering the event it will result into error shown on the UI
             log.error("Exception occurred while transforming D8 form with error", exception);
             throw new InvalidDataException(
                 exception.getMessage(),
-                isEmpty(ocrValidationResponse.getWarnings())
-                    ? transformationWarnings
-                    : union(ocrValidationResponse.getWarnings(), transformationWarnings),
-                null
+                null,
+                singletonList("Some error occurred during D8 Form transformation.")
             );
         }
     }

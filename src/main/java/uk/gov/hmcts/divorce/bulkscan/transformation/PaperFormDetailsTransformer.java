@@ -82,9 +82,6 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
         caseData.getPaperFormDetails().setApplicant1SigningSOT(
             from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1Signing()))
         );
-        caseData.getPaperFormDetails().setApplicant1LegalRepSigningSOT(
-            from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1OrLegalRepSignature()))
-        );
         caseData.getPaperFormDetails().setApplicant1LegalRepPosition(ocrDataFields.getSoleApplicantOrApplicant1LegalRepPosition());
 
         String day = ocrDataFields.getStatementOfTruthDateDay();
@@ -117,9 +114,6 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
             caseData.getTransformationAndOcrWarnings().add("Please sole or applicant2/legal representative name in scanned form");
         }
 
-        caseData.getPaperFormDetails().setApplicant2SigningSOT(
-            from(toBoolean(ocrDataFields.getApplicant2Signing()))
-        );
         caseData.getPaperFormDetails().setApplicant2LegalRepSigningSOT(
             from(toBoolean(ocrDataFields.getApplicant2LegalRepSigning()))
         );

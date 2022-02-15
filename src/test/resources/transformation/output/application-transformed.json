@@ -23,7 +23,9 @@
   "jurisdictionResidualEligible": null,
   "jurisdictionBothLastHabituallyResident": null,
   "jurisdictionConnections": [
-    "A"
+    "A",
+    "B",
+    "J"
   ],
   "solServiceDateOfService": null,
   "solServiceDocumentsServed": null,

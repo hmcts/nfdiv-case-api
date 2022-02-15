@@ -4,6 +4,14 @@
     "value": "true"
   },
   {
+    "name": "jurisdictionReasonsBothPartiesLastHabitual",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsJointHabitual",
+    "value": "true"
+  },
+  {
     "name": "jurisdictionReasonsSameSex",
     "value": "false"
   },
