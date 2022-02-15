@@ -30,7 +30,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
@@ -65,7 +64,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             .forStates(AwaitingApplicant1Response, AwaitingApplicant2Response, Applicant2Approved, AwaitingPayment)
             .name("Application switched to sole")
             .description("Application type switched to sole")
-            .grant(CREATE_READ_UPDATE, CREATOR, SYSTEMUPDATE, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
@@ -75,26 +74,24 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         log.info("Citizen switched to sole about to submit callback invoked");
         CaseData data = details.getData();
 
-        if (isNull(data.getCaseInvite().accessCode())) {
-            log.info("Unlinking Applicant 2 from Case");
-            ccdAccessService.unlinkUserFromApplication(
-                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
-                details.getId(),
-                data.getCaseInvite().applicant2UserId()
-            );
-        } else {
-            log.info("Removing the case invite access code for Applicant 2");
-            data.setCaseInvite(data.getCaseInvite().useAccessCode());
-        }
-
         if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), details.getId())) {
             notificationDispatcher.send(applicant1SwitchToSoleNotification, data, details.getId());
         } else {
             notificationDispatcher.send(applicant2SwitchToSoleNotification, data, details.getId());
         }
-
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         removeApplicant2AnswersFromCase(data);
+
+        CaseInvite caseInviteBefore = beforeDetails.getData().getCaseInvite();
+
+        if (isNull(caseInviteBefore.accessCode())) {
+            log.info("Unlinking Applicant 2 from Case");
+            ccdAccessService.unlinkUserFromApplication(
+                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
+                details.getId(),
+                caseInviteBefore.applicant2UserId()
+            );
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
