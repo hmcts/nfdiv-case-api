@@ -54,7 +54,7 @@ public class LegalAdvisorMakeServiceDecisionFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldUpdateStateToAwaitingAoSAndSetApplicationDateAndGenerateOrderToDispenseRefusedDocIfApplicationIsNotGrantedAndTypeIsDispensed()
+    public void shouldUpdateStateToAwaitingAoSAndGenerateOrderToDispenseRefusedDocIfApplicationIsNotGrantedAndTypeIsDispensed()
         throws Exception {
         final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-make-service-decision.json");
         caseData.put("alternativeServiceType", "dispensed");

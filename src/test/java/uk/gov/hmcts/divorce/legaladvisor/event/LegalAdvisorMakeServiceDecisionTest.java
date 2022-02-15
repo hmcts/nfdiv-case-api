@@ -228,7 +228,7 @@ class LegalAdvisorMakeServiceDecisionTest {
     }
 
     @Test
-    void shouldUpdateStateToAwaitingAosAndSetApplicationDateAndGenerateDispensedServiceRefusalOrderDocIfApplicationIsNotGrantedAndTypeIsDispensed() {
+    void shouldUpdateStateToAwaitingAosAndGenerateDispensedServiceRefusalOrderDocIfApplicationIsNotGrantedAndTypeIsDispensed() {
 
         setMockClock(clock);
 
