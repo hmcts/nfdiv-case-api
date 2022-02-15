@@ -17,26 +17,26 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.common.event.DraftConditionalOrder.DRAFT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.common.event.DraftJointConditionalOrder.DRAFT_JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class DraftConditionalOrderTest {
+class DraftJointConditionalOrderTest {
 
     @InjectMocks
-    private DraftConditionalOrder draftConditionalOrder;
+    private DraftJointConditionalOrder draftJointConditionalOrder;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        draftConditionalOrder.configure(configBuilder);
+        draftJointConditionalOrder.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(DRAFT_CONDITIONAL_ORDER);
+            .contains(DRAFT_JOINT_CONDITIONAL_ORDER);
     }
 
     @Test
@@ -45,18 +45,18 @@ class DraftConditionalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.AwaitingConditionalOrder).id(1L).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = draftConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftJointConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(ConditionalOrderDrafted);
     }
 
     @Test
-    void shouldSetIsDraftedForApplicant1OnAboutToSubmit() {
+    void shouldSetIsDraftedForApplicant2OnAboutToSubmit() {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .conditionalOrder(ConditionalOrder.builder()
-                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YesOrNo.YES)
                     .build())
                 .build())
@@ -64,9 +64,9 @@ class DraftConditionalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.AwaitingConditionalOrder).id(1L).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = draftConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftJointConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted())
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted())
             .isEqualTo(YesOrNo.YES);
     }
 }

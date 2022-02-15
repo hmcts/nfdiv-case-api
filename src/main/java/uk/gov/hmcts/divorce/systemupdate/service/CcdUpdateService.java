@@ -95,7 +95,7 @@ public class CcdUpdateService {
         submitEvent(caseDetails, eventId, user, serviceAuth);
     }
 
-    @Retryable(value = {FeignException.class, RuntimeException.class})
+    @Retryable(value = {CcdManagementException.class})
     public void submitEventWithRetry(final String caseId,
                                      final String eventId,
                                      final CaseTask caseTask,

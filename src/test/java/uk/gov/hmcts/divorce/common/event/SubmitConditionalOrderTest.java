@@ -136,7 +136,7 @@ class SubmitConditionalOrderTest {
     }
 
     @Test
-    void shouldSetIsSubmittedForApplicant1OnAboutToSubmitIfJointSolicitorApplication() {
+    void shouldSetIsSubmittedForApplicant1OnAboutToSubmit() {
         setupMocks(clock);
         final CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)

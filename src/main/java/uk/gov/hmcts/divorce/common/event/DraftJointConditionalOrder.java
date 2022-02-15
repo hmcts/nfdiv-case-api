@@ -8,8 +8,8 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoS;
-import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant1;
+import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoSApplicant2;
+import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant2;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -20,8 +20,7 @@ import static java.util.Arrays.asList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -32,13 +31,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Slf4j
 @Component
-public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
+public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String DRAFT_CONDITIONAL_ORDER = "draft-conditional-order";
+    public static final String DRAFT_JOINT_CONDITIONAL_ORDER = "draft-joint-conditional-order";
 
     private final List<CcdPageConfiguration> pages = asList(
-        new ConditionalOrderReviewAoS(),
-        new ConditionalOrderReviewApplicant1()
+        new ConditionalOrderReviewAoSApplicant2(),
+        new ConditionalOrderReviewApplicant2()
     );
 
     @Override
@@ -49,15 +48,15 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(DRAFT_CONDITIONAL_ORDER)
+            .event(DRAFT_JOINT_CONDITIONAL_ORDER)
             .forStates(AwaitingConditionalOrder, ConditionalOrderDrafted)
             .name("Draft conditional order")
             .description("Draft conditional order")
             .showSummary()
             .endButtonLabel("Save conditional order")
-            .showCondition("coApplicant1IsDrafted=\"No\"")
+            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, CITIZEN, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, CREATOR, CITIZEN)
             .grant(READ,
                 CASE_WORKER,
                 SUPER_USER,
@@ -67,10 +66,10 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Draft conditional order about to submit callback invoked for case id: {}", details.getId());
+        log.info("Draft joint conditional order about to submit callback invoked for case id: {}", details.getId());
 
         final CaseData data = details.getData();
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(YES);
+        data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
