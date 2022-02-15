@@ -40,6 +40,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildDocumentsTab(configBuilder);
         buildConfidentialApplicantTab(configBuilder);
         buildConfidentialRespondentTab(configBuilder);
+        buildConfidentialApplicant2Tab(configBuilder);
         buildMarriageCertificateTab(configBuilder);
         buildNotesTab(configBuilder);
         buildGeneralReferralTab(configBuilder);
@@ -116,7 +117,17 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConfidentialRespondentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("ConfidentialRespondent", "Confidential Respondent")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_2_SOLICITOR, SUPER_USER)
-            .showCondition("applicant2ContactDetailsType=\"private\"")
+            .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"soleApplication\"")
+            .field("applicant2CorrespondenceAddress")
+            .field("applicant2PhoneNumber")
+            .field("applicant2Email")
+            .field("applicant2HomeAddress");
+    }
+
+    private void buildConfidentialApplicant2Tab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("ConfidentialApplicant2", "Confidential Applicant 2")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_2_SOLICITOR, SUPER_USER)
+            .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"jointApplication\"")
             .field("applicant2CorrespondenceAddress")
             .field("applicant2PhoneNumber")
             .field("applicant2Email")
@@ -277,6 +288,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 FinalOrderComplete))
             .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicantWantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicantWantToApplyForFinalOrder")
+            .field("applicant1FinalOrderLateExplanation")
+            .field("applicant1FinalOrderStatementOfTruth")
             .field("granted")
             .field("grantedDate")
             .field("dateFinalOrderNoLongerEligible")
