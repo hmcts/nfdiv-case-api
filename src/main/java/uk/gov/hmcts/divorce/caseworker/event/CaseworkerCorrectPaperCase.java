@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerCorrectPaperCase implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CORRECT_PAPER_CASE = "caseworker-correct-paper-case";
-     private final CcdPageConfiguration correctPaperCase = new CorrectPaperCase();
+    private final CcdPageConfiguration correctPaperCase = new CorrectPaperCase();
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
