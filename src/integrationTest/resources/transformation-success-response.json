@@ -38,7 +38,6 @@
       "marriageApplicant2Name": "resptest name",
       "divorceOrDissolution": "divorce",
       "paperFormApplicant1LegalRepPosition": "",
-      "paperFormApplicant1LegalRepSigningSOT": "No",
       "marriageCertificateInEnglish": "Yes",
       "applicant2SolicitorReference": "",
       "applicant2PrayerHasBeenGivenCheckbox": [
@@ -126,7 +125,6 @@
       "paperFormApplicant2LegalRepSigningSOT": "No",
       "applicant1SolicitorAddress": "some street\nsecond line of address\nUK",
       "screenHasMarriageCert": "Yes",
-      "paperFormApplicant2SigningSOT": "Yes",
       "labelContentDivorceOrLegallyEnd": "get a divorce",
       "applicant2Email": "app2test@dummy.com",
       "applicant1SolicitorRepresented": "Yes",
@@ -135,4 +133,3 @@
   },
   "warnings": []
 }
-
