@@ -34,8 +34,8 @@ public class CitizenFinalOrderRequested implements CCDConfig<CaseData, State, Us
         configBuilder
             .event(CITIZEN_FINAL_ORDER_REQUESTED)
             .forStates(AwaitingFinalOrder)
-            .name("Applicant final order requested")
-            .description("Applicant final order requested")
+            .name("Citizen FO requested")
+            .description("Citizen final order requested")
             .grant(CREATE_READ_UPDATE, CREATOR)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, CASE_WORKER)
             .aboutToSubmitCallback(this::aboutToSubmit);

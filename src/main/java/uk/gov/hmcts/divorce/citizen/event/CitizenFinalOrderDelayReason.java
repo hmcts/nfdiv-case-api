@@ -27,7 +27,7 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
         configBuilder
             .event(CITIZEN_FINAL_ORDER_DELAY_REASON)
             .forStateTransition(FinalOrderOverdue, FinalOrderRequested)
-            .name("Citizen final order delay reason")
+            .name("Citizen FO delay reason")
             .description("Citizen final order delay reason")
             .grant(CREATE_READ_UPDATE, CREATOR)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, CASE_WORKER);
