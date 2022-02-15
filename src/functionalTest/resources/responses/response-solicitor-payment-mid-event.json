@@ -27,6 +27,7 @@
       "valueLabel": "pbaNumber",
       "valueCode": "${json-unit.any-string}"
     },
-    "dataVersion": "${json-unit.any-number}"
+    "dataVersion": "${json-unit.any-number}",
+    "transformationAndOcrWarnings": []
   }
 }
