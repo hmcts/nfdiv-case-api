@@ -108,3 +108,4 @@ bulk-action:
   page-size: 50
 
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
+SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
