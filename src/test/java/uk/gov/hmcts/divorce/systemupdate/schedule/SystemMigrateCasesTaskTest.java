@@ -36,6 +36,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.cloud.contract.spec.internal.HttpStatus.NOT_FOUND;
+import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_MIGRATE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -121,7 +123,7 @@ class SystemMigrateCasesTaskTest {
         when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .doNothing()
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
@@ -164,12 +166,34 @@ class SystemMigrateCasesTaskTest {
         when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .doNothing()
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
         systemMigrateCasesTask.run();
 
         assertThat(caseDetails1.getData()).isEqualTo(Map.of("dataVersion", 0));
+    }
+
+    @Test
+    void shouldNotSetDataVersionToZeroIfExceptionIsThrownWhilstSubmittingCcdUpdateEventAndStatusIsNotFound() {
+        final CaseDetails caseDetails1 =
+            CaseDetails.builder()
+                .data(new HashMap<>())
+                .build();
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
+        final int latestVersion = RetiredFields.getVersion();
+
+        when(ccdSearchService.searchForCasesWithVersionLessThan(latestVersion, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+
+        doThrow(new CcdManagementException(NOT_FOUND, "Failed processing of case", mock(FeignException.class)))
+            .doNothing()
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+
+        systemMigrateCasesTask.run();
+
+        assertThat(caseDetails1.getData()).isEqualTo(Map.of("dataVersion", latestVersion));
     }
 }

@@ -33,6 +33,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -137,7 +138,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
