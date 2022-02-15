@@ -34,6 +34,10 @@ public class IdamTokenGenerator {
         return idamClient.getAccessToken(systemUpdateUsername, systemUpdatePassword);
     }
 
+    public String generateIdamTokenForUser(String username, String password) {
+        return idamClient.getAccessToken(username, password);
+    }
+
     public UserDetails getUserDetailsFor(final String token) {
         return idamClient.getUserDetails(token);
     }

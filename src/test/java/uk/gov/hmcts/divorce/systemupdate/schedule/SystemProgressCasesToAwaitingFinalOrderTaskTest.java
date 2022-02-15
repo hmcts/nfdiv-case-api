@@ -35,6 +35,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAwaitingFinalOrder.SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemProgressCasesToAwaitingFinalOrderTask.DATA_DATE_FINAL_ORDER_ELIGIBLE_FROM;
@@ -172,7 +173,7 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(ConditionalOrderPronounced, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         task.run();
