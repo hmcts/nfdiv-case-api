@@ -18,7 +18,7 @@ public class SolStatementOfTruthApplicant2 implements CcdPageConfiguration {
             .pageLabel("Statement of truth and reconciliation")
             .readonlyNoSummary(CaseData::getDivorceOrDissolution, ALWAYS_HIDE)
             .complex(CaseData::getApplication)
-                .label("LabelSolStatementOTruthPara-3", "## Statement of reconciliation")
+                .label("LabelSolStatementOTruth-Reconciliation", "## Statement of reconciliation")
                 .mandatory(Application::getSolStatementOfReconciliationCertify)
                 .mandatory(Application::getSolStatementOfReconciliationDiscussed)
             .done()
