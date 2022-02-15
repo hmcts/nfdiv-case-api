@@ -263,6 +263,11 @@ public class CaseData {
     )
     private String bulkScanCaseReference;
 
+    @JsonUnwrapped(prefix = "paperForm")
+    @Builder.Default
+    @CCD(access = {CaseworkerBulkScanAccess.class})
+    private PaperFormDetails paperFormDetails = new PaperFormDetails();
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
