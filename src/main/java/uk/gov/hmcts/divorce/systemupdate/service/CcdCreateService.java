@@ -70,7 +70,7 @@ public class CcdCreateService {
             return caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(bulkCaseDetails);
 
         } catch (final FeignException e) {
-            throw new CcdManagementException("Bulk case creation failed", e);
+            throw new CcdManagementException(e.status(), "Bulk case creation failed", e);
         }
     }
 }
