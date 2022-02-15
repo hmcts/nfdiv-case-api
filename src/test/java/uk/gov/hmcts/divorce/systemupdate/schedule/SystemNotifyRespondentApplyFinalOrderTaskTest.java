@@ -30,6 +30,8 @@ import java.util.Map;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -45,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-class SystemNotifyRespondentApplyFinalOrderTest {
+class SystemNotifyRespondentApplyFinalOrderTaskTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
@@ -226,4 +228,15 @@ class SystemNotifyRespondentApplyFinalOrderTest {
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
+    @Test
+    void shouldRunAppropriateQuery() {
+        final BoolQueryBuilder expectedQuery = boolQuery()
+            .must(matchQuery(STATE, AwaitingFinalOrder))
+            .must(matchQuery(String.format(DATA, APPLICATION_TYPE), "soleApplication"))
+            .must(boolQuery().must(dateFinalOrderEligibleToRespondentExists));
+
+        systemNotifyRespondentApplyFinalOrder.run();
+
+        verify(ccdSearchService).searchForAllCasesWithQuery(any(), eq(expectedQuery), any(), any());
+    }
 }
