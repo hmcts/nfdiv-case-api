@@ -11,6 +11,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 public class MarriageCertificateDetails implements CcdPageConfiguration {
 
+    private static final String UK = "UK";
+
     @Override
     public void addTo(final PageBuilder pageBuilder) {
 
@@ -36,7 +38,7 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
     ) {
         final CaseData data = details.getData();
         if (data.getApplication().getMarriageDetails().getMarriedInUk().toBoolean()) {
-            data.getApplication().getMarriageDetails().setPlaceOfMarriage("UK");
+            data.getApplication().getMarriageDetails().setPlaceOfMarriage(UK);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
