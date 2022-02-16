@@ -36,7 +36,8 @@
     },
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
-    "solServiceTruthStatement": "I believe that the facts stated in the application are true."
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "transformationAndOcrWarnings": []
   },
   "state": "Holding"
 }

@@ -25,6 +25,7 @@
         }
       }
     ],
-    "solServiceTruthStatement": "I believe that the facts stated in the application are true."
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "transformationAndOcrWarnings": []
   }
 }
