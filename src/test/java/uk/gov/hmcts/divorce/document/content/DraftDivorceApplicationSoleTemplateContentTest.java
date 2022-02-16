@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -99,6 +100,12 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setFinancialOrder(NO);
+        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder()
+            .addressLine1("line1")
+            .addressLine2("line2")
+            .postTown("city")
+            .postCode("postcode")
+            .build());
         caseData.getApplicant2().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
@@ -121,7 +128,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
         when(applicantTemplateDataProvider.deriveApplicantPostalAddress(eq(caseData.getApplicant1())))
             .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
-        when(applicantTemplateDataProvider.deriveApplicant2PostalAddress(eq(caseData.getApplicant2()), any()))
+        when(applicantTemplateDataProvider.deriveSoleApplicationApplicant2PostalAddress(eq(caseData.getApplicant2())))
             .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
 
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
@@ -154,7 +161,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
 
         verifyNoMoreInteractions(authTokenGenerator);
         verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
+        verify(applicantTemplateDataProvider).deriveSoleApplicationApplicant2PostalAddress(any(Applicant.class));
     }
 
     @Test
@@ -218,6 +225,12 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFinancialOrder(NO);
+        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder()
+            .addressLine1("line1")
+            .addressLine2("line2")
+            .postTown("city")
+            .postCode("postcode")
+            .build());
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(Solicitor.builder().build());
 
@@ -225,7 +238,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
         when(applicantTemplateDataProvider.deriveApplicantPostalAddress(eq(caseData.getApplicant1())))
             .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
-        when(applicantTemplateDataProvider.deriveApplicant2PostalAddress(eq(caseData.getApplicant2()), any()))
+        when(applicantTemplateDataProvider.deriveSoleApplicationApplicant2PostalAddress(eq(caseData.getApplicant2())))
             .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
 
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
@@ -258,7 +271,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
 
         verifyNoMoreInteractions(authTokenGenerator);
         verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
+        verify(applicantTemplateDataProvider).deriveSoleApplicationApplicant2PostalAddress(any(Applicant.class));
     }
 
     @Test

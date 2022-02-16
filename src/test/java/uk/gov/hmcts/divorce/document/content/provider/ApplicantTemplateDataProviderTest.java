@@ -372,4 +372,33 @@ class ApplicantTemplateDataProviderTest {
 
         assertThat(result).isNull();
     }
+
+    @Test
+    public void shouldReturnApplicant2HomeAddressIfSoleSolicitorApplication() {
+
+        final Applicant applicant = Applicant.builder()
+            .homeAddress(AddressGlobalUK.builder()
+                .addressLine1("Home Address")
+                .addressLine2("Line 2")
+                .addressLine3("")
+                .postTown("Post Town")
+                .postCode("Post Code")
+                .build())
+            .build();
+
+        final String result = applicantTemplateDataProvider.deriveSoleApplicationApplicant2PostalAddress(applicant);
+
+        assertThat(result).isEqualTo("Home Address\nLine 2\nPost Town\nPost Code");
+    }
+
+    @Test
+    public void shouldReturnNullIfApplicant2HomeAddressIsNotSetForSoleSolicitorApplication() {
+
+        final Applicant applicant = Applicant.builder()
+            .build();
+
+        final String result = applicantTemplateDataProvider.deriveSoleApplicationApplicant2PostalAddress(applicant);
+
+        assertThat(result).isNull();
+    }
 }
