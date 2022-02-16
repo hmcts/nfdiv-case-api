@@ -67,7 +67,8 @@ public class SystemRemindApplicantsApplyForFinalOrderTask implements Runnable {
             final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingFinalOrder))
-                    .filter(rangeQuery(FINAL_ORDER_ELIGIBLE_FROM_DATE).lte(LocalDate.now().minusDays(applyForFinalOrderReminderOffsetDays)))
+                    .filter(rangeQuery(FINAL_ORDER_ELIGIBLE_FROM_DATE)
+                        .lte(LocalDate.now().minusDays(applyForFinalOrderReminderOffsetDays)))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES))
                     .must(boolQuery().must(dateFinalOrderEligibleFromExists));
 
