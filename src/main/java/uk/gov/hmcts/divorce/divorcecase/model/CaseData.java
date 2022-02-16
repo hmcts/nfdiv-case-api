@@ -41,6 +41,10 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
+import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
@@ -263,6 +267,19 @@ public class CaseData {
     )
     private String bulkScanCaseReference;
 
+    @JsonUnwrapped(prefix = "paperForm")
+    @Builder.Default
+    @CCD(access = {CaseworkerBulkScanAccess.class})
+    private PaperFormDetails paperFormDetails = new PaperFormDetails();
+
+    @CCD(
+        label = "Transformation and OCR warnings",
+        typeOverride = Collection,
+        typeParameterOverride = "TextArea"
+    )
+    @Builder.Default
+    private List<String> transformationAndOcrWarnings = new ArrayList<>();
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
@@ -459,5 +476,29 @@ public class CaseData {
     @JsonIgnore
     public boolean isDivorce() {
         return divorceOrDissolution.isDivorce();
+    }
+
+    @JsonIgnore
+    public void deriveAndPopulateApplicantGenderDetails() {
+        Gender app1Gender;
+        Gender app2Gender;
+        WhoDivorcing whoDivorcing;
+        if (this.getDivorceOrDissolution().isDivorce()) {
+            // for a divorce we ask who is applicant1 divorcing to infer applicant2's gender, then use the marriage
+            // formation to infer applicant 1's gender
+            whoDivorcing = this.getApplication().getDivorceWho();
+            app2Gender = whoDivorcing == HUSBAND ? MALE : FEMALE;
+            app1Gender = this.getApplication().getMarriageDetails().getFormationType().getPartnerGender(app2Gender);
+        } else {
+            // for a dissolution we ask for applicant1's gender and use the marriage formation to infer applicant 2's
+            // gender and who they are divorcing
+            app1Gender = this.getApplicant1().getGender();
+            app2Gender = this.getApplication().getMarriageDetails().getFormationType().getPartnerGender(app1Gender);
+            whoDivorcing = app2Gender == MALE ? HUSBAND : WIFE;
+        }
+
+        this.getApplicant1().setGender(app1Gender);
+        this.getApplicant2().setGender(app2Gender);
+        this.getApplication().setDivorceWho(whoDivorcing);
     }
 }
