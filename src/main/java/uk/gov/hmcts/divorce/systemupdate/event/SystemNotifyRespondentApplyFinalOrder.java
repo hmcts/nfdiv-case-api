@@ -36,7 +36,7 @@ public class SystemNotifyRespondentApplyFinalOrder implements CCDConfig<CaseData
         configBuilder
             .event(SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER)
             .forState(AwaitingFinalOrder)
-            .name("Notify respondent to apply for final order")
+            .name("Notify respondent final order")
             .description("Notify respondent that they can make a Final Order application")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .retries(120, 120)
