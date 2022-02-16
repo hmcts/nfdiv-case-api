@@ -22,8 +22,8 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest
 public class SystemRemindApplicantsApplyForFinalOrderFT extends FunctionalTestSuite {
 
-    private static final String REQUEST
-        = "classpath:request/casedata/ccd-callback-casedata-system-remind-applicants-apply-for-final-order.json";
+    private static final String REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-system-remind-applicants-apply-for-final-order.json";
     private static final String RESPONSE = "classpath:responses/response-system-remind-applicants-apply-for-final-order.json";
 
 
