@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,13 +18,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
@@ -32,9 +33,6 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 
@@ -74,6 +72,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
@@ -167,9 +167,6 @@ public class CaseworkerIssueApplicationIT {
 
     @MockBean
     private CcdUpdateService ccdUpdateService;
-
-    @MockBean
-    private IdamService idamService;
 
     @MockBean
     private Clock clock;
@@ -541,37 +538,50 @@ public class CaseworkerIssueApplicationIT {
             caseData,
             CASEWORKER_ISSUE_APPLICATION);
 
-        callbackRequest.getCaseDetails().setState(State.AwaitingService.name());
+        callbackRequest.getCaseDetails().setState(AwaitingService.name());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
 
-        final String actualResponse = mockMvc.perform(post(SUBMITTED_URL)
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(callbackRequest))
                 .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(actualResponse)
-            .when(TREATING_NULL_AS_ABSENT)
-            .when(IGNORING_ARRAY_ORDER)
-            .isEqualTo(json("{}"));
+            .andExpect(status().isOk());
 
         verify(ccdUpdateService)
             .submitEvent(
-                any(CaseDetails.class),
+                Mockito.<CaseDetails<CaseData, State>>any(),
                 eq(SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK),
-                any(User.class),
-                any(String.class));
+                any(),
+                eq(TEST_SERVICE_AUTH_TOKEN));
+    }
 
-        //verifyNoMoreInteractions(ccdUpdateService);
+    @Test
+    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfStateIsHolding() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+
+        CallbackRequest callbackRequest = callbackRequest(
+            caseData,
+            CASEWORKER_ISSUE_APPLICATION);
+
+        callbackRequest.getCaseDetails().setState(Holding.name());
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verifyNoMoreInteractions(ccdUpdateService);
     }
 
     @Test
