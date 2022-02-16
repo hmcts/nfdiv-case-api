@@ -134,4 +134,23 @@ public class ApplicantTemplateDataProvider {
 
         return null;
     }
+
+    public String deriveSoleApplicationApplicant2PostalAddress(final Applicant applicant) {
+        final AddressGlobalUK applicantHomeAddress = applicant.getHomeAddress();
+
+        if (null != applicantHomeAddress) {
+            return Stream.of(
+                applicantHomeAddress.getAddressLine1(),
+                applicantHomeAddress.getAddressLine2(),
+                applicantHomeAddress.getAddressLine3(),
+                applicantHomeAddress.getPostTown(),
+                applicantHomeAddress.getCounty(),
+                applicantHomeAddress.getPostCode(),
+                applicantHomeAddress.getCountry()
+            )
+                .filter(value -> value != null && !value.isEmpty())
+                .collect(joining("\n"));
+        }
+        return null;
+    }
 }
