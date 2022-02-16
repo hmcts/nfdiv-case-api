@@ -39,8 +39,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_AS_SERVICE_GRANTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_REFUSED;
 
 @Component
 @Slf4j
@@ -107,18 +110,27 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     caseDataCopy,
                     details.getId(),
                     DISPENSED_AS_SERVICE_GRANTED,
-                    DISPENSE_WITH_SERVICE_GRANTED
-                );
+                    DISPENSE_WITH_SERVICE_GRANTED,
+                    SERVICE_ORDER_TEMPLATE_ID);
             } else if (DEEMED.equals(serviceApplication.getAlternativeServiceType())) {
                 generateAndSetOrderToDeemedOrDispenseDocument(
                     caseDataCopy,
                     details.getId(),
                     DEEMED_AS_SERVICE_GRANTED,
-                    DocumentType.DEEMED_AS_SERVICE_GRANTED
-                );
+                    DocumentType.DEEMED_AS_SERVICE_GRANTED,
+                    SERVICE_ORDER_TEMPLATE_ID);
             }
         } else {
-            // TODO - awaiting ticket to generate refusal document and notifcation
+            if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
+                generateAndSetOrderToDeemedOrDispenseDocument(
+                    caseDataCopy,
+                    details.getId(),
+                    DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
+                    DISPENSE_WITH_SERVICE_REFUSED,
+                    SERVICE_REFUSAL_TEMPLATE_ID);
+            }
+
+            // TODO - awaiting ticket to generate deemed refusal document and notifcation
 
             endState = AwaitingAos;
         }
@@ -135,13 +147,13 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
     private void generateAndSetOrderToDeemedOrDispenseDocument(final CaseData caseDataCopy,
                                                                final Long caseId,
                                                                final String fileName,
-                                                               final DocumentType documentType) {
-        log.info("Generating order to dispense document for templateId : {} caseId: {}", SERVICE_ORDER_TEMPLATE_ID, caseId);
+                                                               final DocumentType documentType, String templateId) {
+        log.info("Generating order to dispense document for templateId : {} caseId: {}", templateId, caseId);
 
         Document document = caseDataDocumentService.renderDocument(
             serviceOrderTemplateContent.apply(caseDataCopy, caseId),
             caseId,
-            SERVICE_ORDER_TEMPLATE_ID,
+            templateId,
             caseDataCopy.getApplicant1().getLanguagePreference(),
             fileName
         );
