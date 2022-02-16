@@ -125,20 +125,4 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
         verify(ccdUpdateService, never())
             .submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
-
-    @Test
-    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
-        CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
-        CaseDetails caseDetails2 = CaseDetails.builder().data(new HashMap<>()).id(2L).build();
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
-            .thenReturn(caseDetailsList);
-        doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
-
-        systemRemindApplicantsApplyForFinalOrderTask.run();
-
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
-    }
 }
