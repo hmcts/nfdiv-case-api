@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SOT_REQUIRED;
 
 public class CorrectPaperCase implements CcdPageConfiguration {
@@ -159,12 +158,6 @@ public class CorrectPaperCase implements CcdPageConfiguration {
 
         data.getLabelContent().setApplicationType(data.getApplicationType());
         data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
-        if (!data.getApplicationType().isSole()) {
-            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
-            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
-        }
 
         if (!application.getApplicant1ScreenHasMarriageBroken().toBoolean()) {
             errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");

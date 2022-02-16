@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
@@ -180,58 +179,6 @@ public class CorrectPaperCaseTest {
         assertEquals(
             response.getData().getLabelContent().getUnionType(),
             "dissolution"
-        );
-    }
-
-    @Test
-    public void shouldSetConditionalOrderFlagFieldsForSoleApplication() {
-        final CaseData caseData = validApplicant2CaseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
-        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
-
-        assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted(),
-            YesOrNo.NO
-        );
-        assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted(),
-            YesOrNo.NO
-        );
-    }
-
-    @Test
-    public void shouldSetConditionalOrderFlagFieldsForJointApplication() {
-        final CaseData caseData = validApplicant2CaseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
-        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
-
-        assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted(),
-            YesOrNo.NO
-        );
-        assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted(),
-            YesOrNo.NO
-        );
-        assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted(),
-            YesOrNo.NO
-        );
-        assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted(),
-            YesOrNo.NO
         );
     }
 }
