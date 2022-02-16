@@ -14,6 +14,8 @@
           "serviceApplicationOutcomeLabel":"${json-unit.any-string}"
         }
       }],
+    "dataVersion": "${json-unit.any-number}",
+    "transformationAndOcrWarnings": [],
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
@@ -28,8 +30,7 @@
         }
       }
     ],
-    "divorceOrDissolution": "divorce",
-    "dataVersion": "${json-unit.any-number}"
+    "divorceOrDissolution": "divorce"
   },
   "state": "AwaitingAos"
 }

@@ -1,0 +1,14 @@
+{
+  "Applicant1Name": "app1 fullname",
+  "Applicant2Name": "app2 fullname",
+  "MarriedInUk": "Yes",
+  "CertificateInEnglish": "Yes",
+  "CertifiedTranslation": null,
+  "CountryOfMarriage": null,
+  "PlaceOfMarriage": "London",
+  "Date": "1990-01-01",
+  "FormationType": "oppositeSexCouple",
+  "CertifyMarriageCertificateIsCorrect": "Yes",
+  "MarriageCertificateIsIncorrectDetails": "",
+  "IssueApplicationWithoutMarriageCertificate": "No"
+}

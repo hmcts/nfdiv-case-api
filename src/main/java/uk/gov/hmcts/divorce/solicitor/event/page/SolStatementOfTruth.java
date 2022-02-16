@@ -25,13 +25,13 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             .complex(CaseData::getApplicant1)
                 .readonlyNoSummary(Applicant::getFinancialOrder, ALWAYS_HIDE)
                 .done()
-            .label("LabelSolServiceMethod", "## Service method")
+            .label("LabelSolServiceMethod", "## Service method", "applicationType=\"soleApplication\"")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getSolServiceMethod)
+                .mandatory(Application::getSolServiceMethod, "applicationType=\"soleApplication\"")
                 .label("LabelSolicitorService",
                 "After service is complete you must notify the court by completing the ‘Confirm Service’ event in CCD. "
                     + "Refer to the notification that will be sent upon the issuing of the the case",
-                "solServiceMethod=\"solicitorService\"")
+                "solServiceMethod=\"solicitorService\" AND applicationType=\"soleApplication\"")
                 .label("LabelSolStatementOTruthPara-3", "## Statement of reconciliation")
                 .mandatory(Application::getSolStatementOfReconciliationCertify)
                 .mandatory(Application::getSolStatementOfReconciliationDiscussed)

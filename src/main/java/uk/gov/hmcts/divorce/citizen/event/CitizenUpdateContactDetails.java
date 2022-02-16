@@ -42,8 +42,7 @@ public class CitizenUpdateContactDetails implements CCDConfig<CaseData, State, U
             .name("Patch a case contact details")
             .description("Patch a case contact details for correct applicant")
             .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, CITIZEN)
-            .grant(CREATE_READ_UPDATE, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, CITIZEN, APPLICANT_2)
             .grant(READ, SUPER_USER)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }

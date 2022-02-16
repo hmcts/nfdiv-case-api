@@ -1,0 +1,53 @@
+[
+  {
+    "name": "applicationForDivorce",
+    "value": "true"
+  },
+  {
+    "name": "applicationForDissolution",
+    "value": "false"
+  },
+  {
+    "name": "aSoleApplication",
+    "value": "true"
+  },
+  {
+    "name": "aJointApplication",
+    "value": "false"
+  },
+  {
+    "name": "respondentOrApplicant2Email",
+    "value": "app2test@dummy.com"
+  },
+  {
+    "name": "respondentEmailAccess",
+    "value": "true"
+  },
+  {
+    "name": "serveOutOfUK",
+    "value": "No"
+  },
+  {
+    "name": "respondentServePostOnly",
+    "value": "false"
+  },
+  {
+    "name": "applicantWillServeApplication",
+    "value": "false"
+  },
+  {
+    "name": "respondentDifferentServiceAddress",
+    "value": "No"
+  }
+]
+
+
+
+
+
+
+
+
+
+]
+
