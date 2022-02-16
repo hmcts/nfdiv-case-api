@@ -34,9 +34,9 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOK
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerIssueApplicationTest {
@@ -132,17 +133,14 @@ class CaseworkerIssueApplicationTest {
     }
 
     @Test
-    void shouldSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorService() {
+    void shouldSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfStateIsAwaitingService() {
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
-        final var caseData = caseData();
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
-
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
+        caseDetails.setData(caseData());
+        caseDetails.setState(AwaitingService);
 
         caseworkerIssueApplication.submitted(caseDetails, null);
 
@@ -150,14 +148,11 @@ class CaseworkerIssueApplicationTest {
     }
 
     @Test
-    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfCourtService() {
-
-        final var caseData = caseData();
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfStateIsAwaitingAos() {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
+        caseDetails.setData(caseData());
+        caseDetails.setState(AwaitingAos);
 
         caseworkerIssueApplication.submitted(caseDetails, null);
 
@@ -165,12 +160,11 @@ class CaseworkerIssueApplicationTest {
     }
 
     @Test
-    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfNotSolicitorApplication() {
-
-        final var caseData = caseData();
+    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfStateIsHolding() {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
+        caseDetails.setData(jointCaseDataWithOrderSummary());
+        caseDetails.setState(Holding);
 
         caseworkerIssueApplication.submitted(caseDetails, null);
 
