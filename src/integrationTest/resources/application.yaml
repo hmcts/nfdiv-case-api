@@ -1,6 +1,8 @@
 spring:
   main:
     allow-bean-definition-overriding: true
+  messages:
+    encoding: ISO-8859-1
 
 springdoc:
   packagesToScan: uk.gov.hmcts.divorce,uk.gov.hmcts.ccd.sdk.runtime
@@ -162,3 +164,5 @@ payment:
 bulk-action:
   min-cases: 30
   page-size: 50
+
+SERVICE_AUTH_MICROSERVICE: nfdiv_case_api

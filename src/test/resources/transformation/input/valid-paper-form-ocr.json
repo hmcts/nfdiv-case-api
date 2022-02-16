@@ -1,0 +1,127 @@
+[
+  {
+    "name": "aSoleApplication",
+    "value": "true"
+  },
+  {
+    "name": "serveOutOfUK",
+    "value": "No"
+  },
+  {
+    "name": "applicantWillServeApplication",
+    "value": "true"
+  },
+  {
+    "name": "respondentDifferentServiceAddress",
+    "value": "false"
+  },
+  {
+    "name": "soleOrApplicant1prayerFinancialOrderFor",
+    "value": "theSoleApplicantOrApplicant1,forTheChildren"
+  },
+  {
+    "name": "applicant2PrayerFinancialOrderFor",
+    "value": "forTheChildren"
+  },
+  {
+    "name": "soleApplicantOrApplicant1StatementOfTruth",
+    "value": "true"
+  },
+  {
+    "name": "soleApplicantOrApplicant1LegalRepStatementOfTruth",
+    "value": "false"
+  },
+  {
+    "name": "soleApplicantOrApplicant1Signing",
+    "value": "true"
+  },
+  {
+    "name": "legalRepSigning",
+    "value": "false"
+  },
+  {
+    "name": "statementOfTruthDateDay",
+    "value": "18"
+  },
+  {
+    "name": "statementOfTruthDateMonth",
+    "value": "1"
+  },
+  {
+    "name": "statementOfTruthDateYear",
+    "value": "2022"
+  },
+  {
+    "name": "soleApplicantOrApplicant1OrLegalRepFullName",
+    "value": "test"
+  },
+  {
+    "name": "soleApplicantOrApplicant1LegalRepPosition",
+    "value": "some position"
+  },
+  {
+    "name": "soleApplicantOrApplicant1LegalRepFirm",
+    "value": ""
+  },
+  {
+    "name": "applicant2StatementOfTruth",
+    "value": "true"
+  },
+  {
+    "name": "applicant2LegalRepStatementOfTruth",
+    "value": "false"
+  },
+  {
+    "name": "applicant2OrLegalRepSignature",
+    "value": ""
+  },
+  {
+    "name": "applicant2Signing",
+    "value": "true"
+  },
+  {
+    "name": "applicant2LegalRepSigning",
+    "value": "false"
+  },
+  {
+    "name": "applicant2OrLegalRepFullName",
+    "value": "test"
+  },
+  {
+    "name": "applicant2StatementOfTruthDateDay",
+    "value": "18"
+  },
+  {
+    "name": "applicant2StatementOfTruthDateMonth",
+    "value": "6"
+  },
+  {
+    "name": "applicant2StatementOfTruthDateYear",
+    "value": "2022"
+  },
+  {
+    "name": "courtFee",
+    "value": "595£"
+  },
+  {
+    "name": "soleOrApplicant1NoPaymentIncluded",
+    "value": "Yes"
+  },
+  {
+    "name": "soleOrApplicant1HWFConfirmation",
+    "value": "HWF-123"
+  },
+  {
+    "name": "soleOrApplicant1HWFApp",
+    "value": "true"
+  },
+  {
+    "name": "soleOrApplicant1PaymentOther",
+    "value": "false"
+  },
+  {
+    "name": "soleOrApplicant1PaymentOtherDetail",
+    "value": ""
+  }
+]
+

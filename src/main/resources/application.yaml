@@ -256,3 +256,5 @@ payment:
 bulk-action:
   min-cases: ${BULK_ACTION_BATCH_SIZE_MIN:30}
   page-size: ${BULK_ACTION_BATCH_SIZE_MAX:50}
+
+SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
