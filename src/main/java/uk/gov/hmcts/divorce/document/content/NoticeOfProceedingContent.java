@@ -14,6 +14,8 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -39,7 +41,6 @@ public class NoticeOfProceedingContent {
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER = "divorceOrCivilPartnershipServiceHeader";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS = "divorceOrCivilPartnershipPapers";
     public static final String END_A_CIVIL_PARTNERSHIP_SERVICE = "End A Civil Partnership Service";
-    public static final String CONTACT_DIVORCE_JUSTICE_GOV_UK = "contactdivorce@justice.gov.uk";
     public static final String DIVORCE_PROCEEDINGS = "divorce proceedings";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String DIVORCE_PROCESS = "divorce process";
@@ -48,7 +49,6 @@ public class NoticeOfProceedingContent {
     public static final String DIVORCE_URL = "https://www.gov.uk/divorce";
     public static final String DIVORCE_SERVICE = "Divorce service";
     public static final String THE_DIVORCE_SERVICE = "The Divorce service";
-    public static final String CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK = "civilpartnership.case@justice.gov.uk";
     public static final String PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP = "proceedings to end your civil partnership";
     public static final String TO_END_YOUR_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String CIVIL_PARTNER = "civil partner";
