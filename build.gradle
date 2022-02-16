@@ -104,7 +104,7 @@ tasks.withType(Test) {
 }
 
 test {
-  failFast = false
+  failFast = true
   useJUnitPlatform()
 }
 
