@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 class FinalOrderTest {
 
@@ -38,5 +39,15 @@ class FinalOrderTest {
 
         assertThat(finalOrder.getDateFinalOrderEligibleFrom(dateTime))
             .isEqualTo(LocalDate.of(2022, 1, 19));
+    }
+
+    @Test
+    void shouldReturnTrueIfFinalOrderHasBeenSentToApplicant1() {
+
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .finalOrderReminderSentApplicant1(YES)
+            .build();
+
+        assertThat(finalOrder.hasFinalOrderReminderSentApplicant1()).isTrue();
     }
 }

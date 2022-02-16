@@ -17,6 +17,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -129,5 +131,10 @@ public class FinalOrder {
     @JsonIgnore
     public LocalDate calculateDateFinalOrderNoLongerEligible(final LocalDate date) {
         return date.plusMonths(MONTHS_UNTIL_CASE_IS_NO_LONGER_ELIGIBLE_FOR_FINAL_ORDER);
+    }
+
+    @JsonIgnore
+    public boolean hasFinalOrderReminderSentApplicant1() {
+        return YES.equals(finalOrderReminderSentApplicant1);
     }
 }
