@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -16,6 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
+@Component
 public class SystemRemindApplicantsApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER = "system-remind-applicants-final-order";
@@ -32,7 +34,7 @@ public class SystemRemindApplicantsApplyForFinalOrder implements CCDConfig<CaseD
         configBuilder
             .event(SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER)
             .forStates(AwaitingFinalOrder)
-            .name("Remind Applicants to apply for Final Order")
+            .name("Remind Applicants Final Order")
             .description("Remind Applicant(s) that they can apply for a Final Order")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .retries(120, 120)
