@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.PaperFormDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
 public class CorrectPaperCase implements CcdPageConfiguration {
@@ -29,7 +28,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getMiddleName)
                 .mandatory(Applicant::getLastName)
                 .mandatory(Applicant::getNameDifferentToMarriageCertificate)
-                .mandatory(Applicant::getNameChangedHowOtherDetails)
+                .mandatory(Applicant::getNameChangedHowOtherDetails,
+                    "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getContactDetailsType)
                 .mandatory(Applicant::getHomeAddress)
                 .mandatory(Applicant::getPhoneNumber)
@@ -38,21 +38,21 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .label("Label-CorrectApplicant1SolDetails",
                     "### ${labelContentApplicantsOrApplicant1s} solicitor details")
                 .complex(Applicant::getSolicitor)
-                .mandatory(Solicitor::getName)
-                .mandatory(Solicitor::getReference)
-                .mandatory(Solicitor::getFirmName)
-                .mandatory(Solicitor::getAddress)
-                .mandatory(Solicitor::getPhone)
-                .mandatory(Solicitor::getEmail)
+                    .mandatory(Solicitor::getName, "applicant1SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getReference, "applicant1SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getFirmName, "applicant1SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getAddress, "applicant1SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getPhone, "applicant1SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getEmail, "applicant1SolicitorRepresented=\"Yes\"")
                 .done()
                 .label("Label-CorrectApplicant1FODetails",
                     "### ${labelContentApplicantsOrApplicant1s} financial order details")
                 .mandatory(Applicant::getFinancialOrder)
-                .mandatory(Applicant::getFinancialOrdersFor)
+                .mandatory(Applicant::getFinancialOrdersFor, "applicant1FinancialOrder=\"Yes\"")
                 .label("Label-CorrectApplicant1LegalProceedingsDetails",
                     "### ${labelContentApplicantsOrApplicant1s} legal proceedings details")
                 .mandatory(Applicant::getLegalProceedings)
-                .mandatory(Applicant::getLegalProceedingsDetails)
+                .mandatory(Applicant::getLegalProceedingsDetails, "applicant1LegalProceedings=\"Yes\"")
             .done()
             .label("Label-CorrectApplicant1SOTDetails",
                 "### ${labelContentApplicantsOrApplicant1s} statement of truth details")
@@ -67,7 +67,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getMiddleName)
                 .mandatory(Applicant::getLastName)
                 .mandatory(Applicant::getNameDifferentToMarriageCertificate)
-                .mandatory(Applicant::getNameChangedHowOtherDetails)
+                .mandatory(Applicant::getNameChangedHowOtherDetails,
+                    "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getSolicitorRepresented)
                 .mandatory(Applicant::getHomeAddress)
                 .mandatory(Applicant::getPhoneNumber)
@@ -75,16 +76,16 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .label("Label-CorrectApplicant2SolDetails",
                     "### ${labelContentRespondentsOrApplicant2s} solicitor details")
                 .complex(Applicant::getSolicitor)
-                .mandatory(Solicitor::getName)
-                .mandatory(Solicitor::getReference)
-                .mandatory(Solicitor::getFirmName)
-                .mandatory(Solicitor::getAddress)
-                .mandatory(Solicitor::getPhone)
+                    .mandatory(Solicitor::getName, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getReference, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getFirmName, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getAddress, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getPhone, "applicant2SolicitorRepresented=\"Yes\"")
                 .done()
                 .label("Label-CorrectApplicant2FODetails",
                     "### ${labelContentRespondentsOrApplicant2s} financial order details")
                 .mandatory(Applicant::getFinancialOrder)
-                .mandatory(Applicant::getFinancialOrdersFor)
+                .mandatory(Applicant::getFinancialOrdersFor, "applicant2FinancialOrder=\"Yes\"")
             .done()
             .label("Label-CorrectApplicant2SOTDetails",
                 "### ${labelContentRespondentsOrApplicant2s} statement of truth details")
@@ -130,27 +131,6 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,
                         "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
                 .done()
-            .done()
-            .label("Label-CorrectPaperFormDetails", "### Paper form details")
-            .complex(CaseData::getPaperFormDetails)
-                .mandatory(PaperFormDetails::getServiceOutsideUK)
-                .mandatory(PaperFormDetails::getApplicantWillServeApplication)
-                .mandatory(PaperFormDetails::getRespondentDifferentServiceAddress)
-                .mandatory(PaperFormDetails::getSummaryApplicant1FinancialOrdersFor)
-                .mandatory(PaperFormDetails::getSummaryApplicant2FinancialOrdersFor)
-                .mandatory(PaperFormDetails::getApplicant1SigningSOT)
-                .mandatory(PaperFormDetails::getApplicant1LegalRepSigningSOT)
-                .mandatory(PaperFormDetails::getApplicant1LegalRepPosition)
-                .mandatory(PaperFormDetails::getApplicant1SOTSignedOn)
-                .mandatory(PaperFormDetails::getApplicant2SigningSOT)
-                .mandatory(PaperFormDetails::getApplicant2LegalRepSigningSOT)
-                .mandatory(PaperFormDetails::getApplicant2LegalRepPosition)
-                .mandatory(PaperFormDetails::getApplicant2SOTSignedOn)
-                .mandatory(PaperFormDetails::getFeeInPounds)
-                .mandatory(PaperFormDetails::getApplicant1NoPaymentIncluded)
-                .mandatory(PaperFormDetails::getApplicant2NoPaymentIncluded)
-                .mandatory(PaperFormDetails::getSoleOrApplicant1PaymentOther)
-                .mandatory(PaperFormDetails::getApplicant2PaymentOther)
             .done();
     }
 }
