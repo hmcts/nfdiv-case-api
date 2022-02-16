@@ -132,7 +132,10 @@ public class DraftApplicationTemplateContent {
         templateContent.put(APPLICANT_1_POSTAL_ADDRESS, applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant1));
         templateContent.put(APPLICANT_1_EMAIL, applicant1.getEmail());
         templateContent.put(APPLICANT_2_POSTAL_ADDRESS,
-            applicantTemplateDataProvider.deriveApplicant2PostalAddress(applicant2, application));
+            isSole
+                ? applicantTemplateDataProvider.deriveSoleApplicationApplicant2PostalAddress(applicant2)
+                : applicantTemplateDataProvider.deriveApplicant2PostalAddress(applicant2, application)
+        );
         templateContent.put(APPLICANT_2_EMAIL, applicant2.getEmail());
 
         if (isSole) {

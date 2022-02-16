@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -230,6 +231,12 @@ public class LegalAdvisorMakeServiceDecisionIT {
         throws Exception {
         setMockClock(clock);
 
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Refusal_Order_Deemed_Dispensed_Service.docx");
+
         final CaseData caseData = CaseData.builder()
             .alternativeService(
                 AlternativeService
@@ -241,6 +248,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
