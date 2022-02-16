@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -42,9 +41,6 @@ public class SystemRemindApplicantsApplyForFinalOrderTask implements Runnable {
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private IdamService idamService;
