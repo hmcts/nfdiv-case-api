@@ -38,7 +38,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsid
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_AS_SERVICE_GRANTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeServiceDecision.LEGAL_ADVISOR_SERVICE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -61,6 +63,8 @@ class LegalAdvisorMakeServiceDecisionTest {
 
     @InjectMocks
     private LegalAdvisorMakeServiceDecision makeServiceDecision;
+
+    private static final String DOCUMENT_URL = "http://localhost:8080/4567";
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -95,18 +99,17 @@ class LegalAdvisorMakeServiceDecisionTest {
         final Map<String, Object> templateContent = new HashMap<>();
         when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        String documentUrl = "http://localhost:8080/4567";
         var orderToDispensedDoc = new Document(
-            documentUrl,
-            "dispensedAsServedGranted",
-            documentUrl + "/binary"
+            DOCUMENT_URL,
+            DISPENSED_AS_SERVICE_GRANTED,
+            DOCUMENT_URL + "/binary"
         );
 
         when(
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                    SERVICE_ORDER_TEMPLATE_ID,
+                SERVICE_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 DISPENSED_AS_SERVICE_GRANTED
             ))
@@ -157,11 +160,10 @@ class LegalAdvisorMakeServiceDecisionTest {
         final Map<String, Object> templateContent = new HashMap<>();
         when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        String documentUrl = "http://localhost:8080/4567";
         var orderToDispensedDoc = new Document(
-            documentUrl,
-            "deemedAsServedGranted",
-            documentUrl + "/binary"
+            DOCUMENT_URL,
+            DEEMED_AS_SERVICE_GRANTED,
+            DOCUMENT_URL + "/binary"
         );
 
         when(
@@ -224,4 +226,65 @@ class LegalAdvisorMakeServiceDecisionTest {
         assertThat(listValue.getValue().getServiceApplicationDecisionDate()).isEqualTo(getExpectedLocalDate());
 
     }
+
+    @Test
+    void shouldUpdateStateToAwaitingAosAndGenerateDispensedServiceRefusalOrderDocIfApplicationIsNotGrantedAndTypeIsDispensed() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .receivedServiceApplicationDate(LocalDate.now(clock))
+                    .serviceApplicationGranted(NO)
+                    .alternativeServiceType(DISPENSED)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        var dispenseWithServiceRefusedDoc = new Document(
+            DOCUMENT_URL,
+            DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
+            DOCUMENT_URL + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                SERVICE_REFUSAL_TEMPLATE_ID,
+                ENGLISH,
+                DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME
+            ))
+            .thenReturn(dispenseWithServiceRefusedDoc);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
+        assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+            .isEqualTo(getExpectedLocalDate());
+
+        assertThat(response.getState()).isEqualTo(AwaitingAos);
+
+        var deemedOrDispensedDoc = DivorceDocument
+            .builder()
+            .documentLink(dispenseWithServiceRefusedDoc)
+            .documentFileName(dispenseWithServiceRefusedDoc.getFilename())
+            .documentType(DocumentType.DISPENSE_WITH_SERVICE_REFUSED)
+            .build();
+
+        assertThat(response.getData().getDocumentsGenerated())
+            .extracting("value")
+            .containsExactly(deemedOrDispensedDoc);
+    }
+
 }
