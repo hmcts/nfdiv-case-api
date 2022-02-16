@@ -27,6 +27,7 @@
         "document_binary_url": "d11.pdf/binary"
       }
     },
-    "dataVersion": "${json-unit.any-number}"
+    "dataVersion": "${json-unit.any-number}",
+    "transformationAndOcrWarnings": []
   }
 }

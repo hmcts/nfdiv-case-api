@@ -17,6 +17,7 @@
         "document_binary_url": "${json-unit.any-string}"
       }
     },
-    "dataVersion": "${json-unit.any-number}"
+    "dataVersion": "${json-unit.any-number}",
+    "transformationAndOcrWarnings": []
   }
 }

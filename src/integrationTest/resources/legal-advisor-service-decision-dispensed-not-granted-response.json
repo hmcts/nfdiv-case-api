@@ -14,7 +14,8 @@
           "serviceApplicationOutcomeLabel":"${json-unit.any-string}"
         }
       }],
-    "dataVersion": "${json-unit.any-number}"
+    "dataVersion": "${json-unit.any-number}",
+    "transformationAndOcrWarnings": []
   },
   "state": "AwaitingAos"
 }

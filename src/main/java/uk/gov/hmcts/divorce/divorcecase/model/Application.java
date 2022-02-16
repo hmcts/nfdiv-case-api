@@ -390,7 +390,7 @@ public class Application {
 
     @CCD(
         label = "Reminder that applicant 2 needs to review joint application",
-        access = {DefaultAccess.class, Applicant2Access.class}
+        access = {DefaultAccess.class}
     )
     private YesOrNo applicant2ReminderSent;
 

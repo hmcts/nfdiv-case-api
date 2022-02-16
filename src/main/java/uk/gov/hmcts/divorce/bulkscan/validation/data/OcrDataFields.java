@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.type.KeyValue;
+import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,7 @@ public class OcrDataFields {
     private String jurisdictionReasons6MonthsHabitual;
     private String jurisdictionReasonsBothPartiesDomiciled;
     private String jurisdictionReasonsOnePartyDomiciled;
+    private String jurisdictionReasonsOnePartyDomiciledWho;
     private String jurisdictionReasonsSameSex;
     private String soleOrApplicant1ConfirmationOfBreakdown;
     private String applicant2ConfirmationOfBreakdown;
@@ -141,6 +143,7 @@ public class OcrDataFields {
     private String applicant2StatementOfTruthDateYear;
     private String applicant2OrLegalRepFullName;
     private String applicant2LegalRepFirm;
+    private String applicant2LegalRepPosition;
     private String courtFee;
     private String soleOrApplicant1NoPaymentIncluded;
     private String soleOrApplicant1HWFConfirmation;
@@ -153,6 +156,7 @@ public class OcrDataFields {
     private String applicant2HWFNo;
     private String applicant2HWFApp;
     private String applicant2PaymentOther;
+    private String howToPayEmail;
     private String debitCreditCardPayment;
     private String debitCreditCardPaymentPhone;
     private String paymentDetailEmail;
@@ -162,6 +166,13 @@ public class OcrDataFields {
         final ObjectMapper mapper = new ObjectMapper();
         final Map<String, String> map = ocrDataFields.stream()
             .collect(Collectors.toMap(KeyValue::getKey, KeyValue::getValue));
+        return mapper.convertValue(map, OcrDataFields.class);
+    }
+
+    public static OcrDataFields transformOcrMapToObject(List<OcrDataField> ocrDataFields) {
+        final ObjectMapper mapper = new ObjectMapper();
+        final Map<String, String> map = ocrDataFields.stream()
+                .collect(Collectors.toMap(OcrDataField::getName, OcrDataField::getValue));
         return mapper.convertValue(map, OcrDataFields.class);
     }
 }
