@@ -5,6 +5,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.PaperFormDetails;
@@ -102,8 +103,16 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Application::getApplicant2ScreenHasMarriageBroken)
                 .mandatory(Application::getApplicant1PrayerHasBeenGivenCheckbox)
                 .mandatory(Application::getApplicant2PrayerHasBeenGivenCheckbox)
-                .mandatory(Application::getApplicant1HelpWithFees)
-                .mandatory(Application::getApplicant2HelpWithFees)
+                .complex(Application::getApplicant1HelpWithFees)
+                    .optional(HelpWithFees::getReferenceNumber)
+                    .mandatory(HelpWithFees::getAppliedForFees)
+                    .mandatory(HelpWithFees::getNeedHelp)
+                .done()
+                .complex(Application::getApplicant2HelpWithFees)
+                    .optional(HelpWithFees::getReferenceNumber)
+                    .mandatory(HelpWithFees::getAppliedForFees)
+                    .mandatory(HelpWithFees::getNeedHelp)
+                .done()
                 .mandatory(Application::getScreenHasMarriageCert)
                 .label("Label-CorrectMarriageDetails", "### Marriage details")
                 .complex(Application::getMarriageDetails)
