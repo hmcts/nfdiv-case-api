@@ -51,6 +51,9 @@ public final class DocumentConstants {
     public static final String DISPENSED_AS_SERVICE_GRANTED = "dispensedAsServedGranted";
     public static final String DEEMED_AS_SERVICE_GRANTED = "deemedAsServedGranted";
 
+    public static final String SERVICE_REFUSAL_TEMPLATE_ID = "SERVICE_REFUSAL";
+    public static final String DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME = "DispenseWithServiceRefused";
+
     private DocumentConstants() {
     }
 }

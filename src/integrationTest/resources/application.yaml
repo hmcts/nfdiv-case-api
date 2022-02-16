@@ -1,6 +1,8 @@
 spring:
   main:
     allow-bean-definition-overriding: true
+  messages:
+    encoding: ISO-8859-1
 
 springdoc:
   packagesToScan: uk.gov.hmcts.divorce,uk.gov.hmcts.ccd.sdk.runtime
@@ -80,6 +82,7 @@ docmosis:
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers.docx
+      SERVICE_REFUSAL: NFD_Refusal_Order_Deemed_Dispensed_Service.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -97,6 +100,7 @@ docmosis:
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers.docx #TODO: update content
+      SERVICE_REFUSAL: NFD_Refusal_Order_Deemed_Dispensed_Service.docx #TODO: update content
 
 document_management:
   url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store-aat.service.core-compute-aat.internal}
@@ -159,3 +163,5 @@ payment:
 bulk-action:
   min-cases: 30
   page-size: 50
+
+SERVICE_AUTH_MICROSERVICE: nfdiv_case_api

@@ -37,7 +37,7 @@ public class SolicitorUpdateApplicant2ContactDetails implements CCDConfig<CaseDa
             .event(APPLICANT_UPDATE_APPLICANT2_CONTACT_DETAILS)
             .forAllStates()
             .name("Update contact details")
-            .description("Update contact details")
+            .description("Update respondent contact details")
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)

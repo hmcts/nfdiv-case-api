@@ -36,7 +36,8 @@ public class OcrValidator {
 
     public OcrValidationResponse validateExceptionRecord(String formType, OcrDataValidationRequest ocrDataValidationRequest) {
         if (D8.getName().equals(formType) || D8S.getName().equals(formType)) {
-            return validateOcrData(formType, ocrDataValidationRequest);
+            OcrDataFields ocrDataFields = transformData(ocrDataValidationRequest.getOcrDataFields());
+            return validateOcrData(formType, ocrDataFields);
         }
 
         return OcrValidationResponse.builder()
@@ -46,11 +47,10 @@ public class OcrValidator {
             .build();
     }
 
-    private OcrValidationResponse validateOcrData(String formType, OcrDataValidationRequest ocrDataValidationRequest) {
+    public OcrValidationResponse validateOcrData(String formType, OcrDataFields data) {
 
         List<String> warnings = new ArrayList<>();
         List<String> errors = new ArrayList<>();
-        OcrDataFields data = transformData(ocrDataValidationRequest.getOcrDataFields());
 
         validateYourApplication(formType, data, warnings, errors);
         validateAboutYou(data, warnings, errors);
@@ -347,16 +347,16 @@ public class OcrValidator {
         Map<String, String> validateWarningFields = new HashMap<>();
         Map<String, String> validateErrorFields = new HashMap<>();
 
-        validateErrorFields.put("soleApplicantOrApplicant1StatementOfTruth",data.getSoleApplicantOrApplicant1StatementOfTruth());
+        validateErrorFields.put("soleApplicantOrApplicant1StatementOfTruth", data.getSoleApplicantOrApplicant1StatementOfTruth());
         validateErrorFields.put("soleApplicantOrApplicant1LegalRepStatementOfTruth",
             data.getSoleApplicantOrApplicant1LegalRepStatementOfTruth());
         validateWarningFields.put("soleApplicantOrApplicant1OrLegalRepSignature", data.getSoleApplicantOrApplicant1OrLegalRepSignature());
-        validateWarningFields.put("soleApplicantOrApplicant1Signing",data.getSoleApplicantOrApplicant1Signing());
-        validateWarningFields.put("legalRepSigning",data.getLegalRepSigning());
-        validateWarningFields.put("statementOfTruthDateDay",data.getStatementOfTruthDateDay());
-        validateWarningFields.put("statementOfTruthDateMonth",data.getStatementOfTruthDateMonth());
-        validateWarningFields.put("statementOfTruthDateYear",data.getStatementOfTruthDateYear());
-        validateWarningFields.put("soleApplicantOrApplicant1OrLegalRepFullName",data.getSoleApplicantOrApplicant1OrLegalRepFullName());
+        validateWarningFields.put("soleApplicantOrApplicant1Signing", data.getSoleApplicantOrApplicant1Signing());
+        validateWarningFields.put("legalRepSigning", data.getLegalRepSigning());
+        validateWarningFields.put("statementOfTruthDateDay", data.getStatementOfTruthDateDay());
+        validateWarningFields.put("statementOfTruthDateMonth", data.getStatementOfTruthDateMonth());
+        validateWarningFields.put("statementOfTruthDateYear", data.getStatementOfTruthDateYear());
+        validateWarningFields.put("soleApplicantOrApplicant1OrLegalRepFullName", data.getSoleApplicantOrApplicant1OrLegalRepFullName());
 
         if (!isEmpty(data.getJointApplication())
             && data.getJointApplication().equalsIgnoreCase("true")
