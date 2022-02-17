@@ -25,7 +25,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
     @SuppressWarnings("PMD.ExcessiveMethodLength")
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
-            .page("Correct paper case")
+            .page("Correct paper case", this::midEvent)
             .pageLabel("Correct paper case")
             .label("Label-CorrectYourApplication", "### Your application details")
             .mandatory(CaseData::getDivorceOrDissolution)
