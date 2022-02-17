@@ -1,8 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import lombok.extern.slf4j.Slf4j;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
@@ -10,10 +8,6 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 
@@ -74,18 +68,18 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                     "applicant2SolicitorRepresented=\"No\"")
 
                 .label("respondents-service-details-text1",
-                    "It’s important you provide the respondent’s email address so the court can serve documents to them online. " +
-                        "Otherwise the papers will be served by post, which will take longer",
+                    "It’s important you provide the respondent’s email address so the court can serve documents to them online. "
+                        + "Otherwise the papers will be served by post, which will take longer",
                     "applicant2SolicitorRepresented=\"No\" AND applicationType=\"soleApplication\"")
 
                 .label("respondents-service-details-text2",
-                    "You should also provide a postal address so that they can be sent a paper copy of the Notice Of Proceedings. " +
-                        "If you only provide the email address, you will need to apply to serve by email only",
+                    "You should also provide a postal address so that they can be sent a paper copy of the Notice Of Proceedings. "
+                        + "If you only provide the email address, you will need to apply to serve by email only",
                     "applicant2SolicitorRepresented=\"No\" AND applicationType=\"soleApplication\"")
 
                 .label("respondents-service-details-text3",
-                    "If you need to make any separate applications relating to service then you can do this after you have submitted" +
-                        " this application, using the ‘general application’ event.",
+                    "If you need to make any separate applications relating to service then you can do this after you have submitted"
+                        + " this application, using the ‘general application’ event.",
                     "applicant2SolicitorRepresented=\"No\" AND applicationType=\"soleApplication\"")
 
                 .optional(Applicant::getEmail,
