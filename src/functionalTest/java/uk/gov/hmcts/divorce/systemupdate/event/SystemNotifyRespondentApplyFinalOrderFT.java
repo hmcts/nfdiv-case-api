@@ -36,7 +36,6 @@ public class SystemNotifyRespondentApplyFinalOrderFT extends FunctionalTestSuite
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertThatJson(response.asString())
-            .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(RESPONSE)));
     }
