@@ -71,7 +71,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
                 .label("respondents-service-details-heading",
                     "# ${labelContentApplicant2UC} service details",
-                    "applicant2SolicitorRepresented=\"Yes\" OR applicant2SolicitorRepresented=\"No\"")
+                    "applicant2SolicitorRepresented=\"No\"")
 
                 .label("respondents-service-details-text1",
                     "It’s important you provide the respondent’s email address so the court can serve documents to them online. " +
