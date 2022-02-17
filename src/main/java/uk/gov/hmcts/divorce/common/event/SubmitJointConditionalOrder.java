@@ -21,7 +21,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -48,7 +47,7 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             .endButtonLabel("Save Conditional Order")
             .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grant(READ, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
             .page("JointConditionalOrderSoT")
             .pageLabel("Statement of Truth - submit joint conditional order")
