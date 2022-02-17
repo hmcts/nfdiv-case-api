@@ -13,7 +13,8 @@
           "receivedServiceAddedDate": "${json-unit.any-string}",
           "serviceApplicationOutcomeLabel": "${json-unit.any-string}",
           "serviceApplicationGranted": "No",
-          "serviceApplicationDecisionDate": "${json-unit.any-string}"
+          "serviceApplicationDecisionDate": "${json-unit.any-string}",
+          "serviceApplicationRefusalReason": "${json-unit.any-string}"
         }
       }
     ],

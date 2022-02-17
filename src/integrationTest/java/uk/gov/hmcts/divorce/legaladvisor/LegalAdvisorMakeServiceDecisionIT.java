@@ -62,6 +62,10 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 })
 public class LegalAdvisorMakeServiceDecisionIT {
 
+    private static final String UUID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
+    private static final String SERVICE_ORDER_TEMPLATE_FILE = "NFD_Service_Order.docx";
+    private static final String SERVICE_ORDER_REFUSAL_TEMPLATE_FILE = "NFD_Refusal_Order_Deemed_Dispensed_Service.docx";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -98,7 +102,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Service_Order.docx");
+        stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
 
         final CaseData caseData = CaseData.builder()
             .alternativeService(
@@ -145,7 +149,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Service_Order.docx");
+        stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
 
         final CaseData caseData = CaseData.builder()
             .alternativeService(
@@ -189,17 +193,23 @@ public class LegalAdvisorMakeServiceDecisionIT {
         throws Exception {
         setMockClock(clock);
 
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE);
+
         final CaseData caseData = CaseData.builder()
             .alternativeService(
                 AlternativeService
                     .builder()
-                    .deemedServiceDate(LocalDate.now(clock))
                     .alternativeServiceType(DEEMED)
                     .serviceApplicationGranted(NO)
-                    .deemedServiceDate(LocalDate.of(2021, 6, 20))
+                    .serviceApplicationRefusalReason("xxx yyyy")
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -235,16 +245,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Refusal_Order_Deemed_Dispensed_Service.docx");
+        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE);
 
         final CaseData caseData = CaseData.builder()
             .alternativeService(
                 AlternativeService
                     .builder()
-                    .deemedServiceDate(LocalDate.now(clock))
                     .alternativeServiceType(DISPENSED)
                     .serviceApplicationGranted(NO)
-                    .deemedServiceDate(LocalDate.of(2021, 6, 20))
+                    .serviceApplicationRefusalReason("xxx yyyy")
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
