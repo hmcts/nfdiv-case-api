@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -13,6 +14,7 @@ import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant2;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.util.List;
 
@@ -28,12 +30,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Slf4j
 @Component
 public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String DRAFT_JOINT_CONDITIONAL_ORDER = "draft-joint-conditional-order";
+
+    @Autowired
+    private AddMiniApplicationLink addMiniApplicationLink;
 
     private final List<CcdPageConfiguration> pages = asList(
         new ConditionalOrderReviewAoSApplicant2(),
@@ -74,6 +80,14 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(ConditionalOrderDrafted)
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseTasks(addMiniApplicationLink)
+                .run(details)
+                .getData())
             .build();
     }
 }

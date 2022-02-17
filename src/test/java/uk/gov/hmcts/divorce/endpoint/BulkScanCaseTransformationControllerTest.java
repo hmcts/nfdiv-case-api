@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.divorce.bulkscan.transformation.BulkScanService;
-import uk.gov.hmcts.reform.bsp.common.model.shared.in.ExceptionRecord;
+import uk.gov.hmcts.divorce.endpoint.model.ExceptionRecord;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.CaseCreationDetails;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.SuccessfulTransformationResponse;
 
