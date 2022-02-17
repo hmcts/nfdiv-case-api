@@ -10,8 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
+import uk.gov.hmcts.divorce.endpoint.model.ExceptionRecord;
 import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
-import uk.gov.hmcts.reform.bsp.common.model.shared.in.ExceptionRecord;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
 import java.util.HashMap;
