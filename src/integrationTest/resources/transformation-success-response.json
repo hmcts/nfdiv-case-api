@@ -128,7 +128,9 @@
       "labelContentDivorceOrLegallyEnd": "get a divorce",
       "applicant2Email": "app2test@dummy.com",
       "applicant1SolicitorRepresented": "Yes",
-      "marriageIssueApplicationWithoutMarriageCertificate": "No"
+      "marriageIssueApplicationWithoutMarriageCertificate": "No",
+      "coApplicant1IsDrafted": "No",
+      "coApplicant1IsSubmitted": "No"
     }
   },
   "warnings": []

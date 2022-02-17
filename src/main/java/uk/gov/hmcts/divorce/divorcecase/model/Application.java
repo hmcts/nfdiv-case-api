@@ -473,8 +473,23 @@ public class Application {
     }
 
     @JsonIgnore
+    public boolean applicant2HasStatementOfTruth() {
+        return YES.equals(applicant2StatementOfTruth);
+    }
+
+    @JsonIgnore
+    public boolean hasApplicant2SolSignStatementOfTruth() {
+        return YES.equals(applicant2SolSignStatementOfTruth);
+    }
+
+    @JsonIgnore
     public boolean hasStatementOfTruth() {
         return applicant1HasStatementOfTruth() || hasSolSignStatementOfTruth();
+    }
+
+    @JsonIgnore
+    public boolean hasApplicant2StatementOfTruth() {
+        return applicant2HasStatementOfTruth() || hasApplicant2SolSignStatementOfTruth();
     }
 
     @JsonIgnore
