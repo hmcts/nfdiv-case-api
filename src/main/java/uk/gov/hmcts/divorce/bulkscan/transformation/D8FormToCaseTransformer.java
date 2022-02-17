@@ -25,6 +25,7 @@ import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -128,6 +129,13 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
             caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
             caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
+
+            caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
+            caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
+            if (!caseData.getApplicationType().isSole()) {
+                caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
+                caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
+            }
 
             Map<String, Object> transformedCaseData = mapper.convertValue(caseData, new TypeReference<>() {
             });
