@@ -22,7 +22,6 @@ import static java.util.Arrays.asList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -57,7 +56,7 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(DRAFT_CONDITIONAL_ORDER)
-            .forStates(Draft, AwaitingConditionalOrder, ConditionalOrderDrafted)
+            .forStates(AwaitingConditionalOrder, ConditionalOrderDrafted)
             .name("Draft conditional order")
             .description("Draft conditional order")
             .showSummary()
