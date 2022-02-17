@@ -60,7 +60,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @InjectMocks
-    private SystemNotifyRespondentApplyFinalOrderTask systemNotifyRespondentApplyFinalOrder;
+    private SystemNotifyRespondentApplyFinalOrderTask systemNotifyRespondentApplyFinalOrderTask;
 
     private User user;
 
@@ -92,7 +92,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        systemNotifyRespondentApplyFinalOrder.run();
+        systemNotifyRespondentApplyFinalOrderTask.run();
 
         verifyNoInteractions(ccdUpdateService);
     }
@@ -111,7 +111,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        systemNotifyRespondentApplyFinalOrder.run();
+        systemNotifyRespondentApplyFinalOrderTask.run();
 
         verifyNoInteractions(ccdUpdateService);
     }
@@ -122,7 +122,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(Collections.emptyList());
 
-        systemNotifyRespondentApplyFinalOrder.run();
+        systemNotifyRespondentApplyFinalOrderTask.run();
 
         verifyNoInteractions(ccdUpdateService);
     }
@@ -141,7 +141,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        systemNotifyRespondentApplyFinalOrder.run();
+        systemNotifyRespondentApplyFinalOrderTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
@@ -160,7 +160,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        systemNotifyRespondentApplyFinalOrder.run();
+        systemNotifyRespondentApplyFinalOrderTask.run();
 
         verifyNoInteractions(ccdUpdateService);
     }
@@ -170,7 +170,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        systemNotifyRespondentApplyFinalOrder.run();
+        systemNotifyRespondentApplyFinalOrderTask.run();
 
         verifyNoInteractions(ccdUpdateService);
     }
@@ -192,7 +192,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
-        systemNotifyRespondentApplyFinalOrder.run();
+        systemNotifyRespondentApplyFinalOrderTask.run();
 
         verify(ccdUpdateService)
             .submitEvent(caseDetails1, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
@@ -223,7 +223,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
-        systemNotifyRespondentApplyFinalOrder.run();
+        systemNotifyRespondentApplyFinalOrderTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
@@ -236,7 +236,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
             .must(matchQuery(String.format(DATA, APPLICATION_TYPE), "soleApplication"))
             .must(boolQuery().must(dateFinalOrderEligibleToRespondentExists));
 
-        systemNotifyRespondentApplyFinalOrder.run();
+        systemNotifyRespondentApplyFinalOrderTask.run();
 
         verify(ccdSearchService).searchForAllCasesWithQuery(any(), eq(expectedQuery), any(), any());
     }
