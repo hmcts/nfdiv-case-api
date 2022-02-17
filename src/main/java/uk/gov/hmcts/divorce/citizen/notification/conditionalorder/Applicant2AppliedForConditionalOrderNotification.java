@@ -33,13 +33,13 @@ public class Applicant2AppliedForConditionalOrderNotification
     }
 
     @Override
-    public void sendToApplicant2(final CaseData data, final Long id) {
+    public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Notifying applicant 2 that their conditional order application has been submitted: {}", id);
         notificationService.sendEmail(
-            data.getApplicant2().getEmail(),
+            caseData.getApplicant2EmailAddress(),
             JOINT_APPLIED_FOR_CONDITIONAL_ORDER,
-            templateVars(data, id, data.getApplicant2(), data.getApplicant1(), APPLICANT2),
-            data.getApplicant2().getLanguagePreference()
+            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), APPLICANT2),
+            caseData.getApplicant2().getLanguagePreference()
         );
     }
 }
