@@ -1,22 +1,32 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import lombok.extern.slf4j.Slf4j;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 
+@Slf4j
 public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("Applicant2ServiceDetails")
+            .page("Applicant2ServiceDetails", this::midEvent)
             .pageLabel("Service details")
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is ${labelContentTheApplicant2} represented by a solicitor?")
@@ -61,21 +71,59 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                         .done()
                     .done()
 
-                .mandatory(Applicant::getHomeAddress,
-                    "applicant2SolicitorRepresented=\"Yes\"",
-                    null,
-                    "${labelContentApplicant2UC} postal address",
-                    "This address will be used to notify them about the application")
+                .label("respondents-service-details-heading",
+                    "# ${labelContentApplicant2UC} service details",
+                    "applicant2SolicitorRepresented=\"Yes\" OR applicant2SolicitorRepresented=\"No\"")
 
-                .mandatory(Applicant::getEmail,
-                    "applicant2SolicitorRepresented=\"Yes\"",
-                    null,
-                    "${labelContentApplicant2UC} email address")
+                .label("respondents-service-details-text1",
+                    "It’s important you provide the respondent’s email address so the court can serve documents to them online. " +
+                        "Otherwise the papers will be served by post, which will take longer",
+                    "applicant2SolicitorRepresented=\"No\" AND applicationType=\"soleApplication\"")
+
+                .label("respondents-service-details-text2",
+                    "You should also provide a postal address so that they can be sent a paper copy of the Notice Of Proceedings. " +
+                        "If you only provide the email address, you will need to apply to serve by email only",
+                    "applicant2SolicitorRepresented=\"No\" AND applicationType=\"soleApplication\"")
+
+                .label("respondents-service-details-text3",
+                    "If you need to make any separate applications relating to service then you can do this after you have submitted" +
+                        " this application, using the ‘general application’ event.",
+                    "applicant2SolicitorRepresented=\"No\" AND applicationType=\"soleApplication\"")
 
                 .optional(Applicant::getEmail,
-                    "applicant2SolicitorRepresented=\"No\"",
+                    "applicant2SolicitorRepresented=\"Yes\" OR applicant2SolicitorRepresented=\"No\"",
+                        null,
+                        "${labelContentApplicant2UC} email address",
+                        "Enter the email address which they actively use for personal emails")
+
+                .optional(Applicant::getHomeAddress,
+                    "applicant2SolicitorRepresented=\"Yes\" OR applicant2SolicitorRepresented=\"No\"",
                     null,
-                    "Enter the email address which they actively use for personal emails")
+                    "${labelContentApplicant2UC} postal address",
+                    "This will be used for service if you have not provided an email address, " +
+                        "or to notify them if you have")
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        CaseDetails<CaseData, State> details,
+        CaseDetails<CaseData, State> detailsBefore
+    ) {
+        log.info("Mid-event callback triggered for Applicant2ServiceDetails");
+
+        CaseData data = details.getData();
+        List<String> errors = new ArrayList<>();
+        Applicant applicant = data.getApplicant2();
+
+        if (!applicant.getSolicitorRepresented().toBoolean()
+            && data.getApplicationType().isSole()
+            &&(applicant.getEmail() == null && applicant.getHomeAddress() == null)) {
+            String labelContent = data.getLabelContent().getRespondentsOrApplicant2s();
+            errors.add("You must provide " + labelContent + " email or a postal address");
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .errors(errors)
+            .build();
     }
 }
