@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
-import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
@@ -11,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 
-@Slf4j
 public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
     @Override
