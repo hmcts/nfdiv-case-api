@@ -24,7 +24,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("Applicant2ServiceDetails", this::midEvent)
+            .page("Applicant2ServiceDetails")
             .pageLabel("Service details")
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is ${labelContentTheApplicant2} represented by a solicitor?")
@@ -94,34 +94,11 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                         "${labelContentApplicant2UC} email address",
                         "Enter the email address which they actively use for personal emails")
 
-                .optional(Applicant::getHomeAddress,
+                .mandatory(Applicant::getHomeAddress,
                     "applicant2SolicitorRepresented=\"Yes\" OR applicant2SolicitorRepresented=\"No\"",
                     null,
                     "${labelContentApplicant2UC} postal address",
-                    "This will be used for service if you have not provided an email address, " +
-                        "or to notify them if you have")
+                    "This address will be used to notify them about the application")
             .done();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
-        CaseDetails<CaseData, State> details,
-        CaseDetails<CaseData, State> detailsBefore
-    ) {
-        log.info("Mid-event callback triggered for Applicant2ServiceDetails");
-
-        CaseData data = details.getData();
-        List<String> errors = new ArrayList<>();
-        Applicant applicant = data.getApplicant2();
-
-        if (!applicant.getSolicitorRepresented().toBoolean()
-            && data.getApplicationType().isSole()
-            &&(applicant.getEmail() == null && applicant.getHomeAddress() == null)) {
-            String labelContent = data.getLabelContent().getRespondentsOrApplicant2s();
-            errors.add("You must provide " + labelContent + " email or a postal address");
-        }
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .errors(errors)
-            .build();
     }
 }
