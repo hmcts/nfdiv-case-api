@@ -32,7 +32,6 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
     public static final String CASEWORKER_AMEND_CASE = "caseworker-amend-case";
     private final CcdPageConfiguration amendCase = new AmendCase();
 
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         var pageBuilder = addEventConfig(configBuilder);
