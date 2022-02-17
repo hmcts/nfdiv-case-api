@@ -11,10 +11,10 @@
           "receivedServiceApplicationDate": "2021-06-18",
           "alternativeServiceType": "deemed",
           "receivedServiceAddedDate": "${json-unit.any-string}",
-          "serviceApplicationOutcomeLabel": "${json-unit.any-string}",
+          "serviceApplicationOutcomeLabel": " ",
           "serviceApplicationDecisionDate": "${json-unit.any-string}",
           "serviceApplicationGranted": "No",
-          "serviceApplicationRefusalReason": "${json-unit.any-string}"
+          "serviceApplicationRefusalReason": "refusal reasons"
         }
       }
     ],
