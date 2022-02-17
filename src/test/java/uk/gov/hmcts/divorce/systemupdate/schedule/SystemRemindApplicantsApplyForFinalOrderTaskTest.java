@@ -30,6 +30,8 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -141,5 +143,19 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldRunAppropriateQuery() {
+        final BoolQueryBuilder expectedQuery = boolQuery()
+            .must(matchQuery(STATE, AwaitingFinalOrder))
+            .filter(rangeQuery(FINAL_ORDER_ELIGIBLE_FROM_DATE)
+                .lte(LocalDate.now().minusDays(applyForFinalOrderReminderOffsetDays)))
+            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES))
+            .must(boolQuery().must(dateFinalOrderEligibleFromExists));
+
+        systemRemindApplicantsApplyForFinalOrderTask.run();
+
+        verify(ccdSearchService).searchForAllCasesWithQuery(any(), eq(expectedQuery), any(), any());
     }
 }
