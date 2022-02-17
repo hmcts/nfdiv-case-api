@@ -2,8 +2,7 @@ package uk.gov.hmcts.divorce.bulkscan.transformation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.bsp.common.model.shared.in.ExceptionRecord;
-import uk.gov.hmcts.reform.bsp.common.service.transformation.BulkScanFormTransformer;
+import uk.gov.hmcts.divorce.endpoint.model.ExceptionRecord;
 
 import java.util.Map;
 

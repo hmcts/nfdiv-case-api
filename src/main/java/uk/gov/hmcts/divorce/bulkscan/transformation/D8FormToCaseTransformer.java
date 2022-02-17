@@ -13,9 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
-import uk.gov.hmcts.reform.bsp.common.service.transformation.BulkScanFormTransformer;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -63,11 +61,6 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
     @Autowired
     private PaperFormDetailsTransformer paperFormDetailsTransformer;
-
-    @Override
-    protected Map<String, String> getOcrToCCDMapping() {
-        return Collections.emptyMap();
-    }
 
     @Override
     protected Map<String, Object> runFormSpecificTransformation(List<OcrDataField> ocrDataFieldList) {
