@@ -11,7 +11,9 @@ public class RunWithCFT {
 
     public static void main(final String[] args) {
         LibRunner.run(CaseApiApplication.class, Set.of(), Map.of(
-            "ccd.s2s-authorised.services.case_user_roles", "nfdiv_case_api"
+            "ccd.s2s-authorised.services.case_user_roles", "nfdiv_case_api",
+            // TODO - remove
+            "idam.s2s-auth.url", "${IDAM_S2S_URL}"
         ));
     }
 }
