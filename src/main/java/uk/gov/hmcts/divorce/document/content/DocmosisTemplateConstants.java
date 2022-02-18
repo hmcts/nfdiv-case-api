@@ -23,10 +23,14 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_1_POSTAL_ADDRESS = "applicant1PostalAddress";
     public static final String APPLICANT_2_POSTAL_ADDRESS = "applicant2PostalAddress";
     public static final String DIVORCE_APPLICATION = "divorce application";
+    public static final String END_CIVIL_PARTNERSHIP = "application to end the civil partnership";
     public static final String FOR_A_DIVORCE = "for a divorce";
     public static final String MARRIAGE = "marriage";
+    public static final String THE_APPLICATION = "theApplication";
+    public static final String THE_DIVORCE = "the divorce";
     public static final String OF_THE_DIVORCE = "of the divorce";
     public static final String TO_END_A_CIVIL_PARTNERSHIP = "application to end a civil partnership";
+    public static final String ENDING_CIVIL_PARTNERSHIP = "ending the civil partnership";
     public static final String RELATIONSHIP = "relationship";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
     public static final String TO_END_THE_CIVIL_PARTNERSHIP = "to end the civil partnership";
@@ -77,6 +81,7 @@ public final class DocmosisTemplateConstants {
 
     public static final String PRONOUNCEMENT_JUDGE = "pronouncementJudge";
     public static final String COURT_NAME = "courtName";
+    public static final String DATE = "date";
     public static final String DATE_OF_HEARING = "dateOfHearing";
     public static final String TIME_OF_HEARING = "timeOfHearing";
     public static final String BULK_LIST = "bulkList";
