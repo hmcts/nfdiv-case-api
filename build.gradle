@@ -269,7 +269,7 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.17.1'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.58'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '9.0.58'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.16'
   implementation group: 'org.elasticsearch', name: 'elasticsearch'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.6'
