@@ -275,7 +275,8 @@ public class CaseData {
     @CCD(
         label = "Transformation and OCR warnings",
         typeOverride = Collection,
-        typeParameterOverride = "TextArea"
+        typeParameterOverride = "TextArea",
+        access = {CaseworkerBulkScanAccess.class}
     )
     @Builder.Default
     private List<String> transformationAndOcrWarnings = new ArrayList<>();
