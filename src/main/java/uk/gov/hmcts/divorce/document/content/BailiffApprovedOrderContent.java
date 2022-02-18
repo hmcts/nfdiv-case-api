@@ -46,9 +46,6 @@ public class BailiffApprovedOrderContent {
         templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
 
-        // TODO: add address entered when bailiff service applied for
-        // TODO: [residential / work  / HM Prison Service]
-
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
         templateContent.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
         templateContent.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
