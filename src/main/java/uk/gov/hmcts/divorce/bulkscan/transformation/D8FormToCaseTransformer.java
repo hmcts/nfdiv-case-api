@@ -137,8 +137,10 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                 ? transformationWarnings
                 : union(ocrValidationResponse.getWarnings(), transformationWarnings);
 
+            // Temporarily logging case data to see which fields are sent to bulk scan
             transformedCaseData.put(TRANSFORMATION_AND_OCR_WARNINGS, combinedWarnings);
 
+            log.info("Transformed case data map {} ", transformedCaseData);
             return transformedCaseData;
 
         } catch (Exception exception) {
