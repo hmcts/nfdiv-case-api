@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueBailiffPack.CASEWORKER_ISSUE_BAILIFF_PACK;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
@@ -86,6 +87,7 @@ public class CaseworkerIssueBailiffIT {
 
     @Test
     public void shouldGenerateCertificateOfServiceDocumentAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
+        setMockClock(clock);
         final CaseData caseData = caseData();
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -114,6 +116,7 @@ public class CaseworkerIssueBailiffIT {
 
     @Test
     void shouldReturn401UnauthorizedWhenAboutToSubmitCallbackIsInvokedAndAuthorizationFailsForDocAssembly() throws Exception {
+        setMockClock(clock);
         final CaseData caseData = caseData();
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
