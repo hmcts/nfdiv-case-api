@@ -10,8 +10,8 @@
           "receivedServiceAddedDate": "${json-unit.any-string}",
           "serviceApplicationGranted": "No",
           "serviceApplicationDecisionDate": "${json-unit.any-string}",
-          "deemedServiceDate": "${json-unit.any-string}",
-          "serviceApplicationOutcomeLabel":"${json-unit.any-string}"
+          "serviceApplicationRefusalReason": "refusal reasons",
+          "serviceApplicationOutcomeLabel":" "
         }
       }],
     "dataVersion": "${json-unit.any-number}",

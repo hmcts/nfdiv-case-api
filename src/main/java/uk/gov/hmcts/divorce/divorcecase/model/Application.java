@@ -138,7 +138,9 @@ public class Application {
     private YesOrNo solStatementOfReconciliationDiscussed;
 
     @CCD(
-        label = "This confirms what you are asking the court to do on behalf of the applicant. It’s known as ‘the prayer’.",
+        label = "The applicant has given their \"prayer\".",
+        hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
+            + " and have decided how money and property will be split (\"financial order\").",
         access = {DefaultAccess.class}
     )
     private Set<ThePrayer> applicant1PrayerHasBeenGivenCheckbox;
@@ -148,7 +150,7 @@ public class Application {
     public enum ThePrayer implements HasLabel {
 
         @JsonProperty("Yes")
-        I_CONFIRM("I confirm the applicant is applying to the court to:");
+        I_CONFIRM("Yes");
 
         private final String label;
     }
@@ -414,7 +416,7 @@ public class Application {
     private YesOrNo applicant2NeedsHelpWithFees;
 
     @CCD(
-        label = "Does applicant 2 have a solicitor representing them?",
+        label = "Does ${labelContentTheApplicant2} have a solicitor representing them?",
         access = {DefaultAccess.class}
     )
     private Applicant2Represented applicant1IsApplicant2Represented;
