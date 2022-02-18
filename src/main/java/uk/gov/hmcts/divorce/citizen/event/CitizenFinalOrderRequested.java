@@ -33,7 +33,7 @@ public class CitizenFinalOrderRequested implements CCDConfig<CaseData, State, Us
 
         configBuilder
             .event(CITIZEN_FINAL_ORDER_REQUESTED)
-            .forStates(AwaitingFinalOrder)
+            .forStates(AwaitingFinalOrder, FinalOrderOverdue)
             .name("Citizen FO requested")
             .description("Citizen final order requested")
             .grant(CREATE_READ_UPDATE, CREATOR)
