@@ -1,5 +1,8 @@
 {
   "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "alternativeServiceOutcomes": [
       {
@@ -8,14 +11,13 @@
           "receivedServiceApplicationDate": "2021-06-18",
           "alternativeServiceType": "deemed",
           "receivedServiceAddedDate": "${json-unit.any-string}",
-          "serviceApplicationGranted": "No",
+          "serviceApplicationOutcomeLabel": " ",
           "serviceApplicationDecisionDate": "${json-unit.any-string}",
-          "serviceApplicationRefusalReason": "refusal reasons",
-          "serviceApplicationOutcomeLabel":" "
+          "serviceApplicationGranted": "No",
+          "serviceApplicationRefusalReason": "refusal reasons"
         }
-      }],
-    "dataVersion": "${json-unit.any-number}",
-    "transformationAndOcrWarnings": [],
+      }
+    ],
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
@@ -23,14 +25,15 @@
           "documentFileName": "DeemedServiceRefused.pdf",
           "documentType": "deemedServiceRefused",
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_url": "${json-unit.any-string}",
             "document_filename": "DeemedServiceRefused.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+            "document_binary_url": "${json-unit.any-string}"
           }
         }
       }
     ],
-    "divorceOrDissolution": "divorce"
+    "dataVersion": "${json-unit.any-number}",
+    "transformationAndOcrWarnings":[]
   },
   "state": "AwaitingAos"
 }

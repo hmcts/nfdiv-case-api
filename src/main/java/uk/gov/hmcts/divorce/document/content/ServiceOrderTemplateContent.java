@@ -83,8 +83,12 @@ public class ServiceOrderTemplateContent {
             alternativeService.getServiceApplicationDecisionDate().format(DATE_TIME_FORMATTER));
         templateContent.put(SERVICE_APPLICATION_RECEIVED_DATE,
             alternativeService.getReceivedServiceApplicationDate().format(DATE_TIME_FORMATTER));
-        templateContent.put(SERVICE_APPLICATION_DECISION_DATE,
-            serviceApplicationDecisionDate.format(DATE_TIME_FORMATTER));
+
+        if (serviceApplicationDecisionDate != null) {
+            templateContent.put(SERVICE_APPLICATION_DECISION_DATE,
+                serviceApplicationDecisionDate.format(DATE_TIME_FORMATTER));
+        }
+
         templateContent.put(IS_SERVICE_ORDER_TYPE_DEEMED, isServiceOrderTypeDeemed);
 
         var ctscContactDetails = CtscContactDetails

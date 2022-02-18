@@ -56,9 +56,9 @@ public class LegalAdvisorMakeServiceDecisionFT extends FunctionalTestSuite {
     @Test
     public void shouldUpdateStateToAwaitingAoSAndGenerateOrderToDispenseRefusedDocIfApplicationIsNotGrantedAndTypeIsDispensed()
         throws Exception {
-        final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-make-service-decision.json");
+        final Map<String, Object> caseData = caseData(
+            "classpath:request/casedata/ccd-callback-make-service-decision-not-granted.json");
         caseData.put("alternativeServiceType", "dispensed");
-        caseData.put("serviceApplicationGranted", "No");
 
         final Response aboutToSubmitResponse = triggerCallback(caseData, LEGAL_ADVISOR_SERVICE_DECISION, ABOUT_TO_SUBMIT_URL);
         assertThat(aboutToSubmitResponse.getStatusCode()).isEqualTo(OK.value());
@@ -67,6 +67,23 @@ public class LegalAdvisorMakeServiceDecisionFT extends FunctionalTestSuite {
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedResponse(
                 "classpath:responses/response-la-make-service-decision-dispensed-with-refused.json"
+            )));
+    }
+
+    @Test
+    public void shouldUpdateStateToAwaitingAoSAndGenerateDeemedRefusedDocIfApplicationIsNotGrantedAndTypeIsDeemed()
+        throws Exception {
+        final Map<String, Object> caseData = caseData(
+            "classpath:request/casedata/ccd-callback-make-service-decision-not-granted.json");
+        caseData.put("alternativeServiceType", "deemed");
+
+        final Response aboutToSubmitResponse = triggerCallback(caseData, LEGAL_ADVISOR_SERVICE_DECISION, ABOUT_TO_SUBMIT_URL);
+        assertThat(aboutToSubmitResponse.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(aboutToSubmitResponse.asString())
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(json(expectedResponse(
+                "classpath:responses/response-la-make-service-decision-deemed-refused.json"
             )));
     }
 }
