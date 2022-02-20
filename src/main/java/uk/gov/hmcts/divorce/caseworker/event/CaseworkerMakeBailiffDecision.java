@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.BailiffApprovedOrderContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -25,11 +27,21 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_FILE_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE;
 
 @Component
 @Slf4j
 public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State, UserRole> {
+
     public static final String CASEWORKER_BAILIFF_DECISION = "caseworker-bailiff-decision";
+
+    @Autowired
+    private CaseDataDocumentService caseDataDocumentService;
+
+    @Autowired
+    private BailiffApprovedOrderContent templateContent;
 
     @Autowired
     private Clock clock;
@@ -74,6 +86,17 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
         if (serviceApplication.getServiceApplicationGranted().toBoolean()) {
             endState = AwaitingBailiffService;
             // ServiceApplication is archived after BailiffReturn if ServiceGranted is set to Yes
+
+            var caseId = details.getId();
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseDataCopy,
+                BAILIFF_SERVICE,
+                templateContent.apply(caseDataCopy, caseId),
+                caseId,
+                BAILIFF_APPLICATION_APPROVED_ID,
+                caseDataCopy.getApplicant1().getLanguagePreference(),
+                BAILIFF_APPLICATION_APPROVED_FILE_NAME
+            );
         } else {
             endState = AwaitingAos;
             caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
