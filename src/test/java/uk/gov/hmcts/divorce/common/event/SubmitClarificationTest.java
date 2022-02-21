@@ -91,7 +91,8 @@ class SubmitClarificationTest {
     @Test
     void shouldSetStateOnAboutToSubmit() {
         CaseData caseData = validApplicant1CaseData();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).state(AwaitingClarification).id(1L).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(AwaitingClarification).id(1L).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToSubmit(caseDetails, caseDetails);
 
