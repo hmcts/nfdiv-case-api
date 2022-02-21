@@ -97,6 +97,7 @@ uk:
             APPLICANT_SWITCH_TO_SOLE: '29c1cdb1-bf0c-4f27-bb52-b99f040e8f53'
             JOINT_APPLICATION_ENDED: 'f7929730-decd-41fd-b596-de71699f6c7e'
             APPLICANT_APPLY_FOR_FINAL_ORDER: '700d4e14-7eae-4219-b2e6-be01c31e071f'
+            POST_INFORMATION_TO_COURT: '03d15445-c91d-44b0-a8b0-a7755864381e'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: '1bc9ce05-557b-4cf6-9e20-87d57d55e89c'
