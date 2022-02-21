@@ -85,6 +85,7 @@ docmosis:
       SERVICE_REFUSAL: NFD_Refusal_Order_Deemed_Dispensed_Service.docx
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx
+      CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -105,6 +106,8 @@ docmosis:
       SERVICE_REFUSAL: NFD_Refusal_Order_Deemed_Dispensed_Service.docx #TODO: update content
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx #TODO: update content
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx #TODO: update content
+      CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx #TODO: update content
+
 document_management:
   url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store-aat.service.core-compute-aat.internal}
 

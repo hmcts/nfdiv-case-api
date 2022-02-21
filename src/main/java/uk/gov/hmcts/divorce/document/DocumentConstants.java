@@ -61,6 +61,9 @@ public final class DocumentConstants {
     public static final String BAILIFF_APPLICATION_NOT_APPROVED_ID = "BAILIFF_APPLICATION_NOT_APPROVED";
     public static final String BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME = "BailiffApplicationNotApproved";
 
+    public static final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID = "CONDITIONAL_ORDER_ANSWERS";
+    public static final String CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME = "conditionalOrderAnswers";
+
     private DocumentConstants() {
     }
 }

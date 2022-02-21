@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -61,6 +62,9 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     @Autowired
     private CcdAccessService ccdAccessService;
 
+    @Autowired
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -104,6 +108,10 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             notificationDispatcher.send(app1AppliedForConditionalOrderNotification, data, details.getId());
         } else {
             notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
+        }
+
+        if (state == AwaitingLegalAdvisorReferral) {
+            generateConditionalOrderAnswersDocument.apply(details);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
