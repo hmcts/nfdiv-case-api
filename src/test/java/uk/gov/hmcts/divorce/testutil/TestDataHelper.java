@@ -18,6 +18,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
@@ -48,11 +49,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
+import uk.gov.hmcts.divorce.endpoint.model.InputScannedDoc;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
+import uk.gov.hmcts.reform.bsp.common.model.shared.in.InputScannedDocUrl;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
@@ -72,6 +75,7 @@ import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
@@ -88,6 +92,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOINT;
@@ -127,6 +132,11 @@ public class TestDataHelper {
 
     public static final LocalDate LOCAL_DATE = LocalDate.of(2021, 4, 28);
     public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 4, 28, 1, 0);
+    private static final String DOC_CONTROL_NUMBER = "61347040100200003";
+    private static final LocalDateTime DOC_SCANNED_DATE_META_INFO = LocalDateTime.of(2022, 1, 1, 12, 12, 00);
+    private static final String DOCUMENT_URL = "http://localhost:8080/documents/640055da-9330-11ec-b909-0242ac120002";
+    private static final String DOCUMENT_BINARY_URL = "http://localhost:8080/documents/640055da-9330-11ec-b909-0242ac120002/binary";
+    private static final String FILE_NAME = "61347040100200003.pdf";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final TypeReference<HashMap<String, Object>> TYPE_REFERENCE = new TypeReference<>() {
     };
@@ -870,5 +880,52 @@ public class TestDataHelper {
             .key(key)
             .value(value)
             .build();
+    }
+
+    public static List<ListValue<ScannedDocument>> scannedDocuments() {
+        var scannedDocListValue = ListValue.<ScannedDocument>builder()
+            .value(ScannedDocument
+                .builder()
+                .controlNumber(DOC_CONTROL_NUMBER)
+                .deliveryDate(DOC_SCANNED_DATE_META_INFO)
+                .scannedDate(DOC_SCANNED_DATE_META_INFO)
+                .type(FORM)
+                .subtype(D8.getName())
+                .fileName(FILE_NAME)
+                .url(
+                    Document
+                        .builder()
+                        .binaryUrl(DOCUMENT_BINARY_URL)
+                        .url(DOCUMENT_URL)
+                        .filename(FILE_NAME)
+                        .build()
+                )
+                .build()
+            )
+            .id(UUID.randomUUID().toString())
+            .build();
+
+        return singletonList(scannedDocListValue);
+    }
+
+    public static List<InputScannedDoc> inputScannedDocuments() {
+        var inputScannedDoc = InputScannedDoc
+            .builder()
+            .controlNumber(DOC_CONTROL_NUMBER)
+            .scannedDate(DOC_SCANNED_DATE_META_INFO)
+            .deliveryDate(DOC_SCANNED_DATE_META_INFO)
+            .fileName(FILE_NAME)
+            .type("Form")
+            .subtype(D8.getName())
+            .document(
+                InputScannedDocUrl
+                    .builder()
+                    .url(DOCUMENT_URL)
+                    .binaryUrl(DOCUMENT_BINARY_URL)
+                    .filename(FILE_NAME)
+                    .build()
+            )
+            .build();
+        return singletonList(inputScannedDoc);
     }
 }
