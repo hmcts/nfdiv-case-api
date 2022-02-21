@@ -65,7 +65,7 @@ class SubmitClarificationTest {
     }
 
     @Test
-    void doNotSendNotificationIfCannotUploadDocumentsSetAsNo() {
+    void shouldNotSendNotificationIfCannotUploadDocumentsSetAsNo() {
         CaseData caseData = validApplicant1CaseData();
         caseData.getConditionalOrder().setCannotUploadClarificationDocuments(NO);
 
@@ -78,7 +78,7 @@ class SubmitClarificationTest {
 
 
     @Test
-    void doNotSendNotificationIfNoConditionalOrder() {
+    void shouldNotSendNotificationIfNoConditionalOrder() {
         CaseData caseData = validApplicant1CaseData();
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
