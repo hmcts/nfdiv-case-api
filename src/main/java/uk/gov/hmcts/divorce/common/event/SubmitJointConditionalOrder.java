@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -36,6 +37,9 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -73,6 +77,10 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
         var state = beforeDetails.getState() == ConditionalOrderDrafted
             ? ConditionalOrderPending
             : AwaitingLegalAdvisorReferral;
+
+        if (state == AwaitingLegalAdvisorReferral) {
+            generateConditionalOrderAnswersDocument.apply(details);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

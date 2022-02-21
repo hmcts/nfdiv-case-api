@@ -58,6 +58,9 @@ public final class DocumentConstants {
     public static final String BAILIFF_APPLICATION_APPROVED_ID = "BAILIFF_APPLICATION_APPROVED";
     public static final String BAILIFF_APPLICATION_APPROVED_FILE_NAME = "BailiffApplicationApproved";
 
+    public static final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID = "CONDITIONAL_ORDER_ANSWERS";
+    public static final String CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME = "conditionalOrderAnswers";
+
     private DocumentConstants() {
     }
 }

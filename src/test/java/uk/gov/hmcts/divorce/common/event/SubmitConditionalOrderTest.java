@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -30,9 +31,11 @@ import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.event.SubmitConditionalOrder.SUBMIT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -61,6 +64,9 @@ class SubmitConditionalOrderTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @InjectMocks
     private SubmitConditionalOrder submitConditionalOrder;
@@ -101,7 +107,7 @@ class SubmitConditionalOrderTest {
     }
 
     @Test
-    void shouldSetStateOnAboutToSubmit() {
+    void shouldSetStateToConditionalOrderPendingOnAboutToSubmit() {
         setupMocks(null);
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -110,6 +116,36 @@ class SubmitConditionalOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
+
+        verifyNoInteractions(generateConditionalOrderAnswersDocument);
+    }
+
+    @Test
+    void shouldSetStateToAwaitingLegalAdvisorReferralIfJointApplicationOnAboutToSubmit() {
+        setupMocks(null);
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(State.ConditionalOrderPending).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
+
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
+    }
+
+    @Test
+    void shouldSetStateToAwaitingLegalAdvisorReferralIfSoleApplicationAndOnAboutToSubmit() {
+        setupMocks(null);
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.SOLE_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(State.AwaitingConditionalOrder).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
+
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
     }
 
     @Test
