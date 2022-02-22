@@ -276,7 +276,7 @@ public class CaseData {
         label = "Is case judicial separation?",
         access = {DefaultAccess.class}
     )
-    private boolean isJudicialSeparation;
+    private YesOrNo isJudicialSeparation;
 
     @CCD(
         label = "Transformation and OCR warnings",
@@ -301,11 +301,6 @@ public class CaseData {
     @JsonIgnore
     public boolean isAmendedCase() {
         return null != previousCaseId;
-    }
-
-    @JsonIgnore
-    public void setIsJudicialSeparation(boolean value) {
-        this.isJudicialSeparation = value;
     }
 
     @JsonIgnore
