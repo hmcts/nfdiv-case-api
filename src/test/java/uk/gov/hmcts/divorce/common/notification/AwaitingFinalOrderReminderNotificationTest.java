@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTe
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAwaitingFinalOrder;
 
 @ExtendWith(MockitoExtension.class)
-class AwaitingFinalOrderNotificationTest {
+class AwaitingFinalOrderReminderNotificationTest {
 
     @Mock
     private CommonContent commonContent;
@@ -43,10 +43,10 @@ class AwaitingFinalOrderNotificationTest {
     private NotificationService notificationService;
 
     @InjectMocks
-    private AwaitingFinalOrderNotification awaitingFinalOrderNotification;
+    private AwaitingFinalOrderReminderNotification awaitingFinalOrderReminderNotification;
 
     @Test
-    void shouldSendAwaitingFinalOrderEmailToApplicant1IfNotRepresentedAndSole() {
+    void shouldSendAwaitingFinalOrderReminderEmailToApplicant1IfNotRepresentedAndSole() {
 
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
@@ -56,7 +56,7 @@ class AwaitingFinalOrderNotificationTest {
         when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
 
-        awaitingFinalOrderNotification.sendToApplicant1(data, 1234567890123456L);
+        awaitingFinalOrderReminderNotification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -64,7 +64,7 @@ class AwaitingFinalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
-                hasEntry(IS_REMINDER, CommonContent.NO)
+                hasEntry(IS_REMINDER, CommonContent.YES)
             )),
             eq(ENGLISH)
         );
@@ -73,7 +73,7 @@ class AwaitingFinalOrderNotificationTest {
     }
 
     @Test
-    void shouldSendAwaitingFinalOrderEmailToApplicant1IfNotRepresentedAndJoint() {
+    void shouldSendAwaitingFinalOrderReminderEmailToApplicant1IfNotRepresentedAndJoint() {
 
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
@@ -83,7 +83,7 @@ class AwaitingFinalOrderNotificationTest {
         when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
-        awaitingFinalOrderNotification.sendToApplicant1(data, 1234567890123456L);
+        awaitingFinalOrderReminderNotification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -91,7 +91,7 @@ class AwaitingFinalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
-                hasEntry(IS_REMINDER, CommonContent.NO),
+                hasEntry(IS_REMINDER, CommonContent.YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH)
@@ -101,20 +101,20 @@ class AwaitingFinalOrderNotificationTest {
     }
 
     @Test
-    void shouldNotSendAwaitingFinalOrderEmailToApplicant2IfNotRepresentedAndSole() {
+    void shouldNotSendAwaitingFinalOrderReminderEmailToApplicant2IfNotRepresentedAndSole() {
 
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
         data.setApplicant2(applicant2);
         data.setApplicationType(SOLE_APPLICATION);
 
-        awaitingFinalOrderNotification.sendToApplicant2(data, 1234567890123456L);
+        awaitingFinalOrderReminderNotification.sendToApplicant2(data, 1234567890123456L);
 
         verifyNoInteractions(notificationService);
     }
 
     @Test
-    void shouldSendAwaitingFinalOrderEmailToApplicant2IfNotRepresentedAndJoint() {
+    void shouldSendAwaitingFinalOrderReminderEmailToApplicant2IfNotRepresentedAndJoint() {
 
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
@@ -124,7 +124,7 @@ class AwaitingFinalOrderNotificationTest {
         when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
-        awaitingFinalOrderNotification.sendToApplicant2(data, 1234567890123456L);
+        awaitingFinalOrderReminderNotification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -132,7 +132,7 @@ class AwaitingFinalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
-                hasEntry(IS_REMINDER, CommonContent.NO),
+                hasEntry(IS_REMINDER, CommonContent.YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH)
@@ -142,7 +142,7 @@ class AwaitingFinalOrderNotificationTest {
     }
 
     @Test
-    void shouldSendAwaitingFinalOrderEmailWithCorrectTemplateVars() {
+    void shouldSendAwaitingFinalOrderReminderEmailWithCorrectTemplateVars() {
 
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
@@ -151,7 +151,7 @@ class AwaitingFinalOrderNotificationTest {
         when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
 
-        awaitingFinalOrderNotification.sendToApplicant1(data, 1234567890123456L);
+        awaitingFinalOrderReminderNotification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -159,7 +159,7 @@ class AwaitingFinalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
-                hasEntry(IS_REMINDER, CommonContent.NO),
+                hasEntry(IS_REMINDER, CommonContent.YES),
                 hasEntry(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS, "21 March 2022")
             )),
             eq(ENGLISH)
