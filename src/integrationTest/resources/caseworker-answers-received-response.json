@@ -28,6 +28,7 @@
       }
     },
     "dataVersion": "${json-unit.any-number}",
+    "transformationAndOcrCombinedWarnings": [],
     "transformationAndOcrWarnings": []
   }
 }

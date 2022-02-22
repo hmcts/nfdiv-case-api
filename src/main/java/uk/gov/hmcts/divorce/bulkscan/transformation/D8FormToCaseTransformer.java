@@ -105,16 +105,16 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                     .ocrDataFields(ocrDataFields)
                     .build();
 
+            List<String> transformationWarnings = transformationDetails.getTransformationWarnings();
+            caseData.setDivorceOrDissolution(getDivorceType(ocrDataFields, transformationWarnings));
+            caseData.setApplicationType(getApplicationType(ocrDataFields, transformationWarnings));
+
             applicant1Transformer
                 .andThen(applicant2Transformer)
                 .andThen(applicationTransformer)
                 .andThen(marriageDetailsTransformer)
                 .andThen(paperFormDetailsTransformer)
                 .apply(transformationDetails);
-
-            List<String> transformationWarnings = transformationDetails.getTransformationWarnings();
-            caseData.setDivorceOrDissolution(getDivorceType(ocrDataFields, transformationWarnings));
-            caseData.setApplicationType(getApplicationType(ocrDataFields, transformationWarnings));
 
             caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
             caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
