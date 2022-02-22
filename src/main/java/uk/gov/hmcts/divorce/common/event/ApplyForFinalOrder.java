@@ -59,15 +59,4 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
                 SUPER_USER,
                 LEGAL_ADVISOR));
     }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
-                                                                       final CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("Apply for final order about to submit callback invoked for case id: {}", details.getId());
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(FinalOrderRequested)
-            .build();
-    }
 }
