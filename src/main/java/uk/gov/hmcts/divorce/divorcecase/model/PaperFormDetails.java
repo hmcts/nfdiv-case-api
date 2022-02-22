@@ -16,6 +16,7 @@ import java.util.Set;
 @Builder
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class PaperFormDetails {
+
     private String serviceOutsideUK;
 
     private YesOrNo applicantWillServeApplication;

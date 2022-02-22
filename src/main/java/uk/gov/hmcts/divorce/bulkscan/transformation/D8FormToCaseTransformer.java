@@ -13,9 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
-import uk.gov.hmcts.reform.bsp.common.service.transformation.BulkScanFormTransformer;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +23,7 @@ import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -62,11 +61,6 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
     @Autowired
     private PaperFormDetailsTransformer paperFormDetailsTransformer;
-
-    @Override
-    protected Map<String, String> getOcrToCCDMapping() {
-        return Collections.emptyMap();
-    }
 
     @Override
     protected Map<String, Object> runFormSpecificTransformation(List<OcrDataField> ocrDataFieldList) {
@@ -129,6 +123,13 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
             caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
             caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
 
+            caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
+            caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
+            if (!caseData.getApplicationType().isSole()) {
+                caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
+                caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
+            }
+
             Map<String, Object> transformedCaseData = mapper.convertValue(caseData, new TypeReference<>() {
             });
 
@@ -136,8 +137,10 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                 ? transformationWarnings
                 : union(ocrValidationResponse.getWarnings(), transformationWarnings);
 
+            // Temporarily logging case data to see which fields are sent to bulk scan
             transformedCaseData.put(TRANSFORMATION_AND_OCR_WARNINGS, combinedWarnings);
 
+            log.info("Transformed case data map {} ", transformedCaseData);
             return transformedCaseData;
 
         } catch (Exception exception) {

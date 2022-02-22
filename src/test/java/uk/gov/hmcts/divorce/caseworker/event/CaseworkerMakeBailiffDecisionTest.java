@@ -14,16 +14,28 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceOutcome;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.BailiffApprovedOrderContent;
 
 import java.time.Clock;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.CASEWORKER_BAILIFF_DECISION;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_FILE_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -36,6 +48,12 @@ class CaseworkerMakeBailiffDecisionTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private CaseDataDocumentService caseDataDocumentService;
+
+    @Mock
+    private BailiffApprovedOrderContent bailiffApprovedOrderContent;
 
     @InjectMocks
     private CaseworkerMakeBailiffDecision makeBailiffDecision;
@@ -89,5 +107,69 @@ class CaseworkerMakeBailiffDecisionTest {
 
         ListValue<AlternativeServiceOutcome> listValue = aboutToStartOrSubmitResponse.getData().getAlternativeServiceOutcomes().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate()).isEqualTo(getExpectedLocalDate());
+        verifyNoInteractions(caseDataDocumentService);
+    }
+
+    @Test
+    void shouldGenerateBailiffApprovalWithDivorceContent() {
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        Map<String, Object> templateContent = new HashMap<>();
+
+        when(bailiffApprovedOrderContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            makeBailiffDecision.aboutToSubmit(details, details);
+
+        verify(caseDataDocumentService)
+            .renderDocumentAndUpdateCaseData(
+                caseData,
+                BAILIFF_SERVICE,
+                templateContent,
+                TEST_CASE_ID,
+                BAILIFF_APPLICATION_APPROVED_ID,
+                ENGLISH,
+                BAILIFF_APPLICATION_APPROVED_FILE_NAME
+            );
+    }
+
+    @Test
+    void shouldGenerateBailiffApprovalWithDissolutionContent() {
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        Map<String, Object> templateContent = new HashMap<>();
+
+        when(bailiffApprovedOrderContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            makeBailiffDecision.aboutToSubmit(details, details);
+
+        verify(caseDataDocumentService)
+            .renderDocumentAndUpdateCaseData(
+                caseData,
+                BAILIFF_SERVICE,
+                templateContent,
+                TEST_CASE_ID,
+                BAILIFF_APPLICATION_APPROVED_ID,
+                ENGLISH,
+                BAILIFF_APPLICATION_APPROVED_FILE_NAME
+            );
     }
 }

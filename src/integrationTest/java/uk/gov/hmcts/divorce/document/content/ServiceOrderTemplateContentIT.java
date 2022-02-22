@@ -130,6 +130,55 @@ public class ServiceOrderTemplateContentIT {
         );
     }
 
+    @Test
+    public void shouldSuccessfullyApplyContentFromDivorceCaseDataForGeneratingDeemedServiceRefusalDocument() {
+        CaseData caseData = buildCaseData(NO, DEEMED);
+        caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+
+        var ctscContactDetails = buildCtscContactDetails();
+        ctscContactDetails.setEmailAddress("contactdivorce@justice.gov.uk");
+
+        assertThat(templateContent).contains(
+            entry(CASE_REFERENCE, 1616591401473378L),
+            entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
+            entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
+            entry(PETITIONER_FULL_NAME, "pet full name"),
+            entry(RESPONDENT_FULL_NAME, "resp full name"),
+            entry(IS_SERVICE_ORDER_TYPE_DEEMED, "Yes"),
+            entry(REFUSAL_REASON, "refusal reasons"),
+            entry(PARTNER, "wife"),
+            entry(IS_DIVORCE, "Yes"),
+            entry("ctscContactDetails", ctscContactDetails)
+        );
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyContentFromDissolutionCaseDataForGeneratingDeemedServiceRefusalDocument() {
+        CaseData caseData = buildCaseData(NO, DEEMED);
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+
+        var ctscContactDetails = buildCtscContactDetails();
+        ctscContactDetails.setEmailAddress("civilpartnership.case@justice.gov.uk");
+
+        assertThat(templateContent).contains(
+            entry(CASE_REFERENCE, 1616591401473378L),
+            entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
+            entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
+            entry(PETITIONER_FULL_NAME, "pet full name"),
+            entry(RESPONDENT_FULL_NAME, "resp full name"),
+            entry(IS_SERVICE_ORDER_TYPE_DEEMED, "Yes"),
+            entry(REFUSAL_REASON, "refusal reasons"),
+            entry(PARTNER, "civil partner"),
+            entry(IS_DIVORCE, "No"),
+            entry("ctscContactDetails", ctscContactDetails)
+        );
+    }
+
     private CaseData buildCaseData(final YesOrNo serviceApplicationGranted,
                                    final AlternativeServiceType serviceType) {
 

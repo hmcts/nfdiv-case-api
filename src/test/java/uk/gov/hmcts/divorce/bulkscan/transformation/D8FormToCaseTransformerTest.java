@@ -10,8 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
+import uk.gov.hmcts.divorce.endpoint.model.ExceptionRecord;
 import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
-import uk.gov.hmcts.reform.bsp.common.model.shared.in.ExceptionRecord;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
 import java.util.HashMap;
@@ -32,9 +32,13 @@ import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transf
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.inputScannedDocuments;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.scannedDocuments;
 
 @ExtendWith(MockitoExtension.class)
 public class D8FormToCaseTransformerTest {
+
+
     @InjectMocks
     private D8FormToCaseTransformer d8FormToCaseTransformer;
 
@@ -63,7 +67,7 @@ public class D8FormToCaseTransformerTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void shouldSuccessfullyTransformD8FormWithoutWarnings() throws Exception {
+    void shouldSuccessfullyTransformD8FormWithScannedDocumentsWithoutWarnings() throws Exception {
 
         String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8-form-ocr.json");
         List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
@@ -94,10 +98,14 @@ public class D8FormToCaseTransformerTest {
         Map<String, Object> transformedCaseData = new HashMap<>();
         when(mapper.convertValue(any(CaseData.class), any(TypeReference.class))).thenReturn(transformedCaseData);
 
-        var exceptionRecord = ExceptionRecord.builder().formType(D8.getName()).ocrDataFields(ocrDataFields).build();
+        ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
         final var transformedOutput = d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord);
 
         assertThat(transformedOutput).contains(entry("transformationAndOcrWarnings", emptyList()));
+        assertThat(transformedOutput.get("scannedDocuments"))
+            .usingRecursiveComparison()
+            .ignoringFields("id")
+            .isEqualTo(scannedDocuments());
     }
 
     @Test
@@ -133,7 +141,7 @@ public class D8FormToCaseTransformerTest {
         Map<String, Object> transformedCaseData = new HashMap<>();
         when(mapper.convertValue(any(CaseData.class), any(TypeReference.class))).thenReturn(transformedCaseData);
 
-        var exceptionRecord = ExceptionRecord.builder().formType(D8.getName()).ocrDataFields(ocrDataFields).build();
+        var exceptionRecord = exceptionRecord(ocrDataFields);
         final var transformedOutput = d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord);
 
         assertThat(transformedOutput).contains(
@@ -158,7 +166,7 @@ public class D8FormToCaseTransformerTest {
         when(validator.validateOcrData(D8.getName(), transformOcrMapToObject(ocrDataFields)))
             .thenReturn(OcrValidationResponse.builder().errors(List.of("some error")).build());
 
-        var exceptionRecord = ExceptionRecord.builder().formType(D8.getName()).ocrDataFields(ocrDataFields).build();
+        ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
 
         assertThatThrownBy(() -> d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord))
             .isExactlyInstanceOf(InvalidDataException.class)
@@ -176,7 +184,8 @@ public class D8FormToCaseTransformerTest {
 
         when(validator.validateOcrData(D8.getName(), transformOcrMapToObject(ocrDataFields)))
             .thenReturn(OcrValidationResponse.builder().build());
-        var exceptionRecord = ExceptionRecord.builder().formType(D8.getName()).ocrDataFields(ocrDataFields).build();
+
+        ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
 
         doThrow(new RuntimeException("some exception")).when(applicant1Transformer).andThen(applicant2Transformer);
 
@@ -187,4 +196,12 @@ public class D8FormToCaseTransformerTest {
             .isEqualTo(List.of("Some error occurred during D8 Form transformation."));
     }
 
+    private ExceptionRecord exceptionRecord(List<OcrDataField> ocrDataFields) {
+        return ExceptionRecord
+            .builder()
+            .formType(D8.getName())
+            .ocrDataFields(ocrDataFields)
+            .scannedDocuments(inputScannedDocuments())
+            .build();
+    }
 }

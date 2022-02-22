@@ -38,10 +38,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DEEMED_SERVICE_REFUSED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_REFUSED;
 
@@ -128,9 +130,14 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
                     DISPENSE_WITH_SERVICE_REFUSED,
                     SERVICE_REFUSAL_TEMPLATE_ID);
+            } else if (DEEMED.equals(serviceApplication.getAlternativeServiceType())) {
+                generateAndSetOrderToDeemedOrDispenseDocument(
+                    caseDataCopy,
+                    details.getId(),
+                    DEEMED_SERVICE_REFUSED_FILE_NAME,
+                    DEEMED_SERVICE_REFUSED,
+                    SERVICE_REFUSAL_TEMPLATE_ID);
             }
-
-            // TODO - awaiting ticket to generate deemed refusal document and notifcation
 
             endState = AwaitingAos;
         }

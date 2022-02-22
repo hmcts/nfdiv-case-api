@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 public final class ClockTestUtil {
 
@@ -35,5 +36,9 @@ public final class ClockTestUtil {
 
     public static String getFormattedExpectedDateTime() {
         return getExpectedLocalDateTime().format(CCD_DATE_TIME_FORMAT);
+    }
+
+    public static String getTemplateFormatDate() {
+        return getExpectedLocalDate().format(DATE_TIME_FORMATTER);
     }
 }
