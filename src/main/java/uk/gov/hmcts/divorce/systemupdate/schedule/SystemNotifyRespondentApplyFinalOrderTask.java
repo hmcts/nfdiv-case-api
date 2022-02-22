@@ -72,7 +72,7 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, serviceAuth);
 
             for (final CaseDetails caseDetails : validCasesInAwaitingFinalOrderState) {
-                sendReminderToRespondentIfEligible(user, serviceAuth, caseDetails);
+                sendNotificationToRespondentIfEligible(user, serviceAuth, caseDetails);
             }
 
             log.info("SystemNotifyRespondentApplyFinalOrder scheduled task complete.");
@@ -86,7 +86,7 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
         }
     }
 
-    private void sendReminderToRespondentIfEligible(User user, String serviceAuth, CaseDetails caseDetails) {
+    private void sendNotificationToRespondentIfEligible(User user, String serviceAuth, CaseDetails caseDetails) {
         try {
 
             Map<String, Object> caseDataMap = caseDetails.getData();
@@ -102,10 +102,10 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
                 finalOrderReminderSentApplicant2);
 
             LocalDate parsedRespondentEligibleDate = LocalDate.parse(respondentCanApplyFromDate);
-            if (finalOrderReminderSentApplicant2 == YesOrNo.NO && LocalDate.now().isAfter(parsedRespondentEligibleDate)) {
-                log.info("Need to send reminder to respondent for Case {}", caseDetails.getId());
-                ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
 
+            if (finalOrderReminderSentApplicant2 == YesOrNo.NO && LocalDate.now().isAfter(parsedRespondentEligibleDate)) {
+                log.info("Need to send notification to respondent to let them know to apply to final order: case {}", caseDetails.getId());
+                ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
             }
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());

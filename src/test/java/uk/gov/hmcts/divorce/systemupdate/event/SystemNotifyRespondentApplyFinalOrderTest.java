@@ -10,13 +10,16 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.notification.RespondentApplyForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentApplyFinalOrder.SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER;
@@ -34,6 +37,12 @@ class SystemNotifyRespondentApplyFinalOrderTest {
     @InjectMocks
     private SystemNotifyRespondentApplyFinalOrder systemNotifyRespondentApplyFinalOrder;
 
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private RespondentApplyForFinalOrderNotification respondentApplyForFinalOrderNotification;
+
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
@@ -46,7 +55,7 @@ class SystemNotifyRespondentApplyFinalOrderTest {
     }
 
     @Test
-    void aboutToSubmit() {
+    void shouldSetFinalOrderReminderSentApplicant2ToYes() {
         final CaseData caseData = caseData();
         caseData.setApplicant2(respondent());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -60,6 +69,21 @@ class SystemNotifyRespondentApplyFinalOrderTest {
             systemNotifyRespondentApplyFinalOrder.aboutToSubmit(details, details);
 
         assertThat(response.getData().getFinalOrder().getFinalOrderReminderSentApplicant2()).isEqualTo(YesOrNo.YES);
+    }
 
+    @Test
+    void shouldSendNotification() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant2(respondent());
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setData(caseData);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn("auth header");
+
+        systemNotifyRespondentApplyFinalOrder.aboutToSubmit(details, details);
+
+        verify(notificationDispatcher).send(respondentApplyForFinalOrderNotification, caseData, details.getId());
     }
 }
