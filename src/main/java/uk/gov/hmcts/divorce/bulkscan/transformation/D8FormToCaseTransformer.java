@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
     public static final String OCR_FIELD_VALUE_BOTH = "both";
-    public static final String TRANSFORMATION_AND_OCR_WARNINGS = "transformationAndOcrCombinedWarnings";
+    public static final String TRANSFORMATION_AND_OCR_WARNINGS = "warnings";
     public static final String OCR_FIELD_VALUE_YES = "yes";
     public static final String OCR_FIELD_VALUE_NO = "no";
 
@@ -140,17 +140,17 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                 ? transformationWarnings
                 : union(ocrValidationResponse.getWarnings(), transformationWarnings);
 
-            List<ListValue<String>> transformationAndOcrCombinedWarnings = new ArrayList<>();
+            List<ListValue<String>> warnings = new ArrayList<>();
 
             if (!isEmpty(combinedWarnings)) {
                 combinedWarnings.forEach(
                     warning -> {
                         var listValueWarning = ListValue.<String>builder().id(UUID.randomUUID().toString()).value(warning).build();
-                        transformationAndOcrCombinedWarnings.add(listValueWarning);
+                        warnings.add(listValueWarning);
                     }
                 );
             }
-            transformedCaseData.put(TRANSFORMATION_AND_OCR_WARNINGS, transformationAndOcrCombinedWarnings);
+            transformedCaseData.put(TRANSFORMATION_AND_OCR_WARNINGS, warnings);
 
             return transformedCaseData;
 

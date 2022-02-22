@@ -28,6 +28,6 @@
       "valueCode": "${json-unit.any-string}"
     },
     "dataVersion": "${json-unit.any-number}",
-    "transformationAndOcrCombinedWarnings": []
+    "warnings": []
   }
 }

@@ -29,7 +29,7 @@
       }
     ],
     "dataVersion": "${json-unit.any-number}",
-    "transformationAndOcrCombinedWarnings": [],
+    "warnings": [],
     "transformationAndOcrWarnings": []
   },
   "state": "Holding"

@@ -54,7 +54,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildWarningsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("transformationAndOcrWarningsTab", "Warnings")
-            .field("transformationAndOcrCombinedWarnings");
+            .field("warnings");
     }
 
     private void buildStateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

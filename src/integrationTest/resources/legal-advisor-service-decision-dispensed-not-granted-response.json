@@ -15,7 +15,7 @@
         }
       }],
     "dataVersion": "${json-unit.any-number}",
-    "transformationAndOcrCombinedWarnings": [],
+    "warnings": [],
     "transformationAndOcrWarnings": [],
     "documentsGenerated": [
       {
