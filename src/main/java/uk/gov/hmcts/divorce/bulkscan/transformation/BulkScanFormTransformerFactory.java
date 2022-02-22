@@ -18,7 +18,7 @@ public class BulkScanFormTransformerFactory {
     private D8FormToCaseTransformer d8FormToCaseTransformer;
 
     @Autowired
-    private D8SFormToCaseTransformer d8SFormToCaseTransformer;
+    private D8sFormToCaseTransformer d8SFormToCaseTransformer;
 
     private static final Map<String, BulkScanFormTransformer> bulkScanFormTransformerMap = new HashMap<>();
 

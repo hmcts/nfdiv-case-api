@@ -3,13 +3,13 @@ package uk.gov.hmcts.divorce.bulkscan.transformation;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
@@ -20,7 +20,6 @@ import java.util.Map;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.collections4.ListUtils.union;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -28,13 +27,11 @@ import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transf
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
+import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
 
 @Component
 @Slf4j
-@SuppressWarnings({"PMD.PreserveStackTrace"})
-public class D8FormToCaseTransformer extends BulkScanFormTransformer {
+public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
 
     public static final String OCR_FIELD_VALUE_BOTH = "both";
     public static final String TRANSFORMATION_AND_OCR_WARNINGS = "transformationAndOcrWarnings";
@@ -54,7 +51,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
     private Applicant2Transformer applicant2Transformer;
 
     @Autowired
-    private ApplicationTransformer applicationTransformer;
+    private D8sApplicationTransformer d8sApplicationTransformer;
 
     @Autowired
     private MarriageDetailsTransformer marriageDetailsTransformer;
@@ -66,7 +63,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
     protected Map<String, Object> runFormSpecificTransformation(List<OcrDataField> ocrDataFieldList) {
         OcrDataFields ocrDataFields = transformOcrMapToObject(ocrDataFieldList);
 
-        OcrValidationResponse ocrValidationResponse = validator.validateOcrData(D8.getName(), ocrDataFields);
+        OcrValidationResponse ocrValidationResponse = validator.validateOcrData(D8S.getName(), ocrDataFields);
 
         if (!isEmpty(ocrValidationResponse.getErrors())) {
             throw new InvalidDataException(
@@ -96,7 +93,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
              Set gender
              Set application submitted date
              */
-            caseData.setDivorceOrDissolution(getDivorceType(ocrDataFields, transformationWarnings));
+            caseData.setDivorceOrDissolution(DISSOLUTION);
             caseData.setApplicationType(getApplicationType(ocrDataFields, transformationWarnings));
 
             var transformationDetails =
@@ -108,7 +105,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
             applicant1Transformer
                 .andThen(applicant2Transformer)
-                .andThen(applicationTransformer)
+                .andThen(d8sApplicationTransformer)
                 .andThen(marriageDetailsTransformer)
                 .andThen(paperFormDetailsTransformer)
                 .apply(transformationDetails);
@@ -154,10 +151,11 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
     private void verifyHowApplicationIsServed(ApplicationType applicationType, OcrDataFields ocrDataFields, List<String> warnings) {
         if (SOLE_APPLICATION.equals(applicationType)) {
-            if (isEmpty(ocrDataFields.getRespondentServePostOnly()) || isEmpty(ocrDataFields.getApplicantWillServeApplication())) {
+            if (StringUtils.isEmpty(ocrDataFields.getRespondentServePostOnly())
+                || StringUtils.isEmpty(ocrDataFields.getApplicantWillServeApplication())) {
                 warnings.add("Please review respondent by post and applicant will serve application in the scanned form");
             }
-            if (isEmpty(ocrDataFields.getRespondentDifferentServiceAddress())) {
+            if (StringUtils.isEmpty(ocrDataFields.getRespondentDifferentServiceAddress())) {
                 warnings.add("Please review respondent address different to service address in the scanned form");
             }
         }
@@ -165,13 +163,14 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
     private void verifyServeOutOfUK(ApplicationType applicationType, OcrDataFields ocrDataFields, List<String> warnings) {
         if (SOLE_APPLICATION.equals(applicationType)
-            && (OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(ocrDataFields.getServeOutOfUK()) || isEmpty(ocrDataFields.getServeOutOfUK()))) {
+            && (OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(ocrDataFields.getServeOutOfUK())
+            || StringUtils.isEmpty(ocrDataFields.getServeOutOfUK()))) {
             warnings.add("Please review serve out of UK in the scanned form");
         }
     }
 
     private void verifyRespondentEmailAccess(OcrDataFields ocrDataFields, List<String> warnings) {
-        if (isNotEmpty(ocrDataFields.getRespondentOrApplicant2Email()) && isEmpty(ocrDataFields.getRespondentEmailAccess())) {
+        if (isNotEmpty(ocrDataFields.getRespondentOrApplicant2Email()) && StringUtils.isEmpty(ocrDataFields.getRespondentEmailAccess())) {
             warnings.add("Please verify respondent email access in scanned form");
         }
     }
@@ -186,20 +185,6 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
         } else {
             warnings.add("Please review application type in the scanned form");
             return SOLE_APPLICATION;
-        }
-    }
-
-    private DivorceOrDissolution getDivorceType(OcrDataFields ocrDataFields, List<String> warnings) {
-        boolean isApplicationForDivorce = toBoolean(ocrDataFields.getApplicationForDivorce());
-        boolean isApplicationForDissolution = toBoolean(ocrDataFields.getApplicationForDissolution());
-
-        if (isApplicationForDissolution && !isApplicationForDivorce) {
-            return DISSOLUTION;
-        } else if (isApplicationForDivorce && !isApplicationForDissolution) {
-            return DIVORCE;
-        } else {
-            warnings.add("Please review divorce type in the scanned form");
-            return DIVORCE;
         }
     }
 }
