@@ -4,9 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
@@ -32,10 +31,7 @@ public class ReIssueApplicationService {
     private GenerateDivorceApplication generateMiniApplication;
 
     @Autowired
-    private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
-
-    @Autowired
-    private GenerateCitizenRespondentAosInvitation generateCitizenRespondentAosInvitation;
+    private GenerateRespondentAosInvitation generateRespondentAosInvitation;
 
     @Autowired
     private SendAosPack sendAosPack;
@@ -63,8 +59,7 @@ public class ReIssueApplicationService {
         if (DIGITAL_AOS.equals(reissueOption)) {
             log.info("For case id {} processing reissue for digital aos ", caseDetails.getId());
             return caseTasks(
-                generateRespondentSolicitorAosInvitation,
-                generateCitizenRespondentAosInvitation,
+                generateRespondentAosInvitation,
                 setReIssueAndDueDate,
                 setPostIssueState,
                 sendApplicationIssueNotifications
@@ -72,8 +67,7 @@ public class ReIssueApplicationService {
         } else if (OFFLINE_AOS.equals(reissueOption)) {
             log.info("For case id {} processing reissue for offline aos ", caseDetails.getId());
             return caseTasks(
-                generateRespondentSolicitorAosInvitation,
-                generateCitizenRespondentAosInvitation,
+                generateRespondentAosInvitation,
                 sendAosPack,
                 setReIssueAndDueDate,
                 setPostIssueState,
@@ -83,8 +77,7 @@ public class ReIssueApplicationService {
             log.info("For case id {} processing complete reissue ", caseDetails.getId());
             return caseTasks(
                 generateMiniApplication,
-                generateRespondentSolicitorAosInvitation,
-                generateCitizenRespondentAosInvitation,
+                generateRespondentAosInvitation,
                 sendAosPack,
                 setReIssueAndDueDate,
                 setPostIssueState,

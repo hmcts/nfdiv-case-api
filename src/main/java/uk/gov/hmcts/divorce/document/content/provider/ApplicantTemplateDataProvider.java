@@ -89,6 +89,7 @@ public class ApplicantTemplateDataProvider {
 
         final AddressGlobalUK applicantHomeAddress = applicant.getHomeAddress();
 
+        // todo use new getCorrespondenceAddress
         if (applicant.isRepresented()) {
             return applicant.getSolicitor().getAddress();
         } else if (null != applicantHomeAddress && !applicant.isConfidentialContactDetails()) {
@@ -110,13 +111,15 @@ public class ApplicantTemplateDataProvider {
 
     public String deriveApplicant2PostalAddress(final Applicant applicant, final Application application) {
 
+        // todo remove this if statement, see next comment
         if (applicant.isRepresented()) {
             return applicant.getSolicitor().getAddress();
         } else if (!applicant.isConfidentialContactDetails()) {
-
+            // todo wrong, don't use isSolicitorApplication, just use new getCorrespondenceAddress method
             final AddressGlobalUK applicantHomeAddress =
                 application.isSolicitorApplication() ? applicant.getCorrespondenceAddress() : applicant.getHomeAddress();
 
+            // todo move to method to Address in ccd-config-lib
             if (null != applicantHomeAddress) {
                 return Stream.of(
                         applicantHomeAddress.getAddressLine1(),
@@ -135,6 +138,7 @@ public class ApplicantTemplateDataProvider {
         return null;
     }
 
+    // todo kill this why is this different for sole applications???
     public String deriveSoleApplicationApplicant2PostalAddress(final Applicant applicant) {
         final AddressGlobalUK applicantHomeAddress = applicant.getHomeAddress();
 

@@ -116,6 +116,7 @@ public final class ValidationUtil {
     }
 
     public static List<String> validateJurisdictionConnections(CaseData caseData) {
+        // todo just rely app1.isRep
         if (caseData.getApplication().isSolicitorApplication() || caseData.getApplicant1().isRepresented()) {
             if (isEmpty(caseData.getApplication().getJurisdiction().getConnections())) {
                 return List.of("JurisdictionConnections" + EMPTY);

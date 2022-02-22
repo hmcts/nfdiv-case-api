@@ -62,6 +62,7 @@ public class AcknowledgementOfService {
         label = "Digital Notice of Proceedings?",
         access = {CaseworkerAndSuperUserAccess.class}
     )
+    // todo kill, will be set to isAoSOffline in another user story
     private YesOrNo digitalNoticeOfProceedings;
 
     @CCD(
@@ -133,10 +134,12 @@ public class AcknowledgementOfService {
     private FeeDetails disputingFee = new FeeDetails();
 
     @JsonIgnore
-    public void setNoticeOfProceedings(final Solicitor solicitor) {
-        digitalNoticeOfProceedings = YES;
-        noticeOfProceedingsEmail = solicitor.getEmail();
-        noticeOfProceedingsSolicitorFirm = solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName();
+    public void setNoticeOfProceedings(final Applicant applicant) {
+        noticeOfProceedingsEmail = applicant.getCorrespondenceEmail();
+
+        if (applicant.isRepresented()) {
+            noticeOfProceedingsSolicitorFirm = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationName();
+        }
     }
 
     @JsonIgnore

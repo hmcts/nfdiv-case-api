@@ -97,10 +97,9 @@ class SendAosPackTest {
 
         assertThat(result.getData().getAcknowledgementOfService())
             .extracting(
-                AcknowledgementOfService::getDigitalNoticeOfProceedings,
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
                 AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
-            .contains(YES, TEST_SOLICITOR_EMAIL, TEST_ORG_NAME);
+            .contains(TEST_SOLICITOR_EMAIL, TEST_ORG_NAME);
         verify(aosPackPrinter).print(caseData, TEST_CASE_ID);
     }
 }

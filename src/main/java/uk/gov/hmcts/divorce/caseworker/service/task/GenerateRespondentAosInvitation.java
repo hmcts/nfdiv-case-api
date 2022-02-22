@@ -12,16 +12,17 @@ import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTem
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
+import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 
 @Component
 @Slf4j
-public class GenerateRespondentSolicitorAosInvitation implements CaseTask {
+public class GenerateRespondentAosInvitation implements CaseTask {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -40,22 +41,28 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
-        log.info("Executing handler for generating respondent aos invitation for case id {} ", caseId);
+        log.info("Generating access code to allow the respondent to access the application");
+        caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
 
-        if (caseDetails.getData().getApplication().isSolicitorApplication() && caseData.getApplicant2().isRepresented()) {
+        final String templateId;
 
-            caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
-
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                RESPONDENT_INVITATION,
-                templateContent.apply(caseData, caseId, createdDate),
-                caseId,
-                RESP_SOLICITOR_AOS_INVITATION,
-                caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
-            );
+        if (caseData.getApplicant2().isRepresented()) {
+            log.info("Generating solicitor respondent AoS invitation for case id {} ", caseId);
+            templateId = RESP_SOLICITOR_AOS_INVITATION;
+        } else {
+            log.info("Generating citizen respondent AoS invitation for case id {} ", caseId);
+            templateId = CITIZEN_RESP_AOS_INVITATION;
         }
+
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            RESPONDENT_INVITATION,
+            templateContent.apply(caseData, caseId, createdDate),
+            caseId,
+            templateId,
+            caseData.getApplicant1().getLanguagePreference(),
+            formatDocumentName(caseId, RESP_AOS_INVITATION_DOCUMENT_NAME, now(clock))
+        );
 
         return caseDetails;
     }
