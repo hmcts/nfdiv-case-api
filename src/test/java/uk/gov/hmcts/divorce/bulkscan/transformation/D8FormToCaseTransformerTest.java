@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
@@ -27,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransformer.TRANSFORMATION_AND_OCR_WARNINGS;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -101,7 +103,7 @@ public class D8FormToCaseTransformerTest {
         ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
         final var transformedOutput = d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord);
 
-        assertThat(transformedOutput).contains(entry("transformationAndOcrWarnings", emptyList()));
+        assertThat(transformedOutput).contains(entry(TRANSFORMATION_AND_OCR_WARNINGS, emptyList()));
         assertThat(transformedOutput.get("scannedDocuments"))
             .usingRecursiveComparison()
             .ignoringFields("id")
@@ -143,9 +145,11 @@ public class D8FormToCaseTransformerTest {
 
         var exceptionRecord = exceptionRecord(ocrDataFields);
         final var transformedOutput = d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord);
+        final List<ListValue<String>> warnings = (List<ListValue<String>>) transformedOutput.get(TRANSFORMATION_AND_OCR_WARNINGS);
 
-        assertThat(transformedOutput).contains(
-            entry("transformationAndOcrWarnings",
+        assertThat(warnings)
+            .extracting("value")
+            .isEqualTo(
                 List.of(
                     "Please review divorce type in the scanned form",
                     "Please review application type in the scanned form",
@@ -153,8 +157,7 @@ public class D8FormToCaseTransformerTest {
                     "Please review respondent by post and applicant will serve application in the scanned form",
                     "Please review respondent address different to service address in the scanned form"
                 )
-            )
-        );
+            );
     }
 
     @Test

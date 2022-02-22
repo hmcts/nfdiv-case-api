@@ -63,7 +63,7 @@ public class ApplicationTransformerTest {
 
         final var transformedOutput = applicationTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
@@ -102,7 +102,7 @@ public class ApplicationTransformerTest {
 
         final var transformedOutput = applicationTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
@@ -142,7 +142,7 @@ public class ApplicationTransformerTest {
 
         final var transformedOutput = applicationTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
@@ -178,7 +178,7 @@ public class ApplicationTransformerTest {
 
         final var transformedOutput = applicationTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+        assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please verify jurisdiction connections(missing/invalid domiciled who) in scanned form",
                 "Please verify jurisdiction connections(no options selected) in scanned form",
@@ -222,7 +222,7 @@ public class ApplicationTransformerTest {
 
         final var transformedOutput = applicationTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+        assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please verify jurisdiction connections(missing/invalid domiciled who) in scanned form",
                 "Please verify jurisdiction connections(no options selected) in scanned form",
