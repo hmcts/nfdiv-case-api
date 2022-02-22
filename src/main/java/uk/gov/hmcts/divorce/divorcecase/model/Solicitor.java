@@ -37,13 +37,15 @@ public class Solicitor {
 
     @CCD(
         label = "Solicitor’s reference number",
-        hint = "This is your internal reference that your firm uses to identify the case."
+        hint = "This is your internal reference that your firm uses to identify the case.",
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private String reference;
 
     @CCD(
         label = "Solicitor’s Phone number",
-        regex = "^[0-9 +().-]{9,}$"
+        regex = "^[0-9 +().-]{9,}$",
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private String phone;
 
@@ -68,7 +70,8 @@ public class Solicitor {
     private String address;
 
     @CCD(
-        label = "Service by email"
+        label = "Service by email",
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private Set<Prayer> agreeToReceiveEmailsCheckbox;
 

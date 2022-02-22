@@ -25,12 +25,6 @@ public class SolStatementOfTruthApplicant2 implements CcdPageConfiguration {
             .complex(CaseData::getApplication)
                 .label("LabelPrayer", "## The prayer ##")
                 .mandatory(Application::getApplicant2PrayerHasBeenGivenCheckbox)
-                .label("LabelSolStatementOTruth-PrayerDivorceBullet",
-                "- dissolve their marriage (get a divorce)",
-                "divorceOrDissolution=\"divorce\"")
-                .label("LabelSolStatementOTruth-PrayerCivilBullet",
-                "- end their civil partnership",
-                "divorceOrDissolution=\"dissolution\"")
                 .label("LabelApp2SolStatementOfTruth-SOT", "## Statement of truth ##")
                 .mandatory(Application::getApplicant2StatementOfTruth)
                 .mandatory(Application::getApplicant2SolSignStatementOfTruth)

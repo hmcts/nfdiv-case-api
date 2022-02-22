@@ -33,6 +33,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        buildWarningsTab(configBuilder);
         buildStateTab(configBuilder);
         buildAosTab(configBuilder);
         buildPaymentTab(configBuilder);
@@ -49,6 +50,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConditionalOrderTab(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
         buildFinalOrderTab(configBuilder);
+    }
+
+    private void buildWarningsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("transformationAndOcrWarningsTab", "Warnings")
+            .field("transformationAndOcrWarnings");
     }
 
     private void buildStateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -286,6 +292,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 FinalOrderPending,
                 FinalOrderOverdue,
                 FinalOrderComplete))
+            .label("labelFinalOrderDetails-SoleApplicant",
+                "applicationType=\"soleApplication\" AND doesApplicantWantToApplyForFinalOrder=\"*\"",
+                "### Applicant")
             .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicantWantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicantWantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")

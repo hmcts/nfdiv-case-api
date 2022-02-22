@@ -6,15 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -31,25 +35,16 @@ public class CertificateOfServiceContentIT {
         CaseData caseData = caseData();
         caseData.getApplication().getMarriageDetails().setApplicant1Name("pet full name");
         caseData.getApplication().getMarriageDetails().setApplicant2Name("resp full name");
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
 
         Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, TEST_CASE_ID);
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .emailAddress("divorcecase@justice.gov.uk")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 12706")
-            .town("Harlow")
-            .postcode("CM20 9QT")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, 1616591401473378L),
+            entry(CCD_CASE_REFERENCE, 1616591401473378L),
             entry(PETITIONER_FULL_NAME, "pet full name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry("ctscContactDetails", ctscContactDetails)
+            entry(IS_DIVORCE, "Yes"),
+            entry(DOCUMENTS_ISSUED_ON, LocalDate.now().format(DATE_TIME_FORMATTER))
         );
     }
 }

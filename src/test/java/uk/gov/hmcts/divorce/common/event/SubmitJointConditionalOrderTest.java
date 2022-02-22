@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -20,6 +21,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.common.event.SubmitJointConditionalOrder.SUBMIT_JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -33,6 +36,9 @@ public class SubmitJointConditionalOrderTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @InjectMocks
     private SubmitJointConditionalOrder submitJointConditionalOrder;
@@ -85,10 +91,12 @@ public class SubmitJointConditionalOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitJointConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
+
+        verifyNoInteractions(generateConditionalOrderAnswersDocument);
     }
 
     @Test
-    void shouldSetStateToLegalAdvisorReferralOnAboutToSubmit() {
+    void shouldSetStateToLegalAdvisorReferralAndGenerateConditionalOrderAnswersDocumentOnAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
@@ -98,5 +106,7 @@ public class SubmitJointConditionalOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitJointConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
+
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
     }
 }
