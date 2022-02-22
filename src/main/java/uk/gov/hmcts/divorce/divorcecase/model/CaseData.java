@@ -267,10 +267,14 @@ public class CaseData {
     )
     private String bulkScanCaseReference;
 
-    @JsonUnwrapped(prefix = "paperForm")
-    @Builder.Default
     @CCD(access = {CaseworkerBulkScanAccess.class})
     private PaperFormDetails paperFormDetails = new PaperFormDetails();
+
+    @CCD(
+        label = "Is case judicial separation?",
+        access = {DefaultAccess.class}
+    )
+    private boolean isJudicialSeparation;
 
     @CCD(
         label = "Transformation and OCR warnings",
@@ -295,6 +299,11 @@ public class CaseData {
     @JsonIgnore
     public boolean isAmendedCase() {
         return null != previousCaseId;
+    }
+
+    @JsonIgnore
+    public void setIsJudicialSeparation(boolean value) {
+        this.isJudicialSeparation = value;
     }
 
     @JsonIgnore
