@@ -132,7 +132,33 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         caseAccessService.removeUsersWithRole(details.getId(), roles);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
+            .data(correctRepresentationDetails(data, beforeDetails.getData()))
             .build();
+    }
+
+    /** On NOC event, CCD is somehow removing solicitor details for the applicant other than the one selected for NOC.
+    * Hence, putting the solicitor details back to the new case details using the before details.
+    * */
+    private CaseData correctRepresentationDetails(final CaseData data,
+                                                  final CaseData beforeData) {
+        Applicant applicantToBeCorrected;
+
+        if (data.getNoticeOfChange().getWhichApplicant()
+            .equals(APPLICANT_1)) {
+
+            applicantToBeCorrected = data.getApplicant2();
+
+            if (applicantToBeCorrected.isRepresented()) {
+                applicantToBeCorrected.setSolicitor(beforeData.getApplicant2().getSolicitor());
+            }
+        } else {
+            applicantToBeCorrected = data.getApplicant1();
+
+            if (applicantToBeCorrected.isRepresented()) {
+                applicantToBeCorrected.setSolicitor(beforeData.getApplicant1().getSolicitor());
+            }
+        }
+
+        return data;
     }
 }
