@@ -1,14 +1,10 @@
 package uk.gov.hmcts.divorce.bulkscan.transformation;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
@@ -18,28 +14,14 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.collections4.ListUtils.union;
-import static org.apache.commons.lang3.BooleanUtils.toBoolean;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
 
 @Component
 @Slf4j
 public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
-
-    public static final String OCR_FIELD_VALUE_BOTH = "both";
-    public static final String TRANSFORMATION_AND_OCR_WARNINGS = "transformationAndOcrWarnings";
-    public static final String OCR_FIELD_VALUE_YES = "yes";
-    public static final String OCR_FIELD_VALUE_NO = "no";
-
-    @Autowired
-    private ObjectMapper mapper;
 
     @Autowired
     private OcrValidator validator;
@@ -51,7 +33,13 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
     private Applicant2Transformer applicant2Transformer;
 
     @Autowired
-    private D8sApplicationTransformer d8sApplicationTransformer;
+    private ApplicationTransformer applicationTransformer;
+
+    @Autowired
+    private D8SPrayerTransformer d8SPrayerTransformer;
+
+    @Autowired
+    private CommonTransformer commonTransformer;
 
     @Autowired
     private MarriageDetailsTransformer marriageDetailsTransformer;
@@ -93,8 +81,8 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
              Set gender
              Set application submitted date
              */
-            caseData.setDivorceOrDissolution(DISSOLUTION);
-            caseData.setApplicationType(getApplicationType(ocrDataFields, transformationWarnings));
+            caseData.setDivorceOrDissolution(DIVORCE);
+            caseData.setApplicationType(commonTransformer.getApplicationType(ocrDataFields, transformationWarnings));
 
             var transformationDetails =
                 TransformationDetails
@@ -105,86 +93,26 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
 
             applicant1Transformer
                 .andThen(applicant2Transformer)
-                .andThen(d8sApplicationTransformer)
+                .andThen(applicationTransformer)
+                .andThen(d8SPrayerTransformer)
                 .andThen(marriageDetailsTransformer)
                 .andThen(paperFormDetailsTransformer)
                 .apply(transformationDetails);
 
-            verifyRespondentEmailAccess(ocrDataFields, transformationWarnings);
-            verifyServeOutOfUK(caseData.getApplicationType(), ocrDataFields, transformationWarnings);
-            verifyHowApplicationIsServed(caseData.getApplicationType(), ocrDataFields, transformationWarnings);
+            caseData = commonTransformer.setLabelContentAndDefaultValues(caseData);
+            transformationWarnings = commonTransformer.verifyFields(transformationDetails, transformationWarnings);
 
-            caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
-            caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
-
-            caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
-            caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
-            if (!caseData.getApplicationType().isSole()) {
-                caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
-                caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
-            }
-
-            Map<String, Object> transformedCaseData = mapper.convertValue(caseData, new TypeReference<>() {
-            });
-
-            List<String> combinedWarnings = isEmpty(ocrValidationResponse.getWarnings())
-                ? transformationWarnings
-                : union(ocrValidationResponse.getWarnings(), transformationWarnings);
-
-            // Temporarily logging case data to see which fields are sent to bulk scan
-            transformedCaseData.put(TRANSFORMATION_AND_OCR_WARNINGS, combinedWarnings);
-
-            log.info("Transformed case data map {} ", transformedCaseData);
-            return transformedCaseData;
+            return commonTransformer.transformCaseData(caseData, transformationWarnings, ocrValidationResponse);
 
         } catch (Exception exception) {
             //this will result in bulk scan service to create exception record if case creation is automatic case creation
             // In case of caseworker triggering the event it will result into error shown on the UI
-            log.error("Exception occurred while transforming D8 form with error", exception);
+            log.error("Exception occurred while transforming D8S form with error", exception);
             throw new InvalidDataException(
                 exception.getMessage(),
                 null,
-                singletonList("Some error occurred during D8 Form transformation.")
+                singletonList("Some error occurred during D8S Form transformation.")
             );
-        }
-    }
-
-    private void verifyHowApplicationIsServed(ApplicationType applicationType, OcrDataFields ocrDataFields, List<String> warnings) {
-        if (SOLE_APPLICATION.equals(applicationType)) {
-            if (StringUtils.isEmpty(ocrDataFields.getRespondentServePostOnly())
-                || StringUtils.isEmpty(ocrDataFields.getApplicantWillServeApplication())) {
-                warnings.add("Please review respondent by post and applicant will serve application in the scanned form");
-            }
-            if (StringUtils.isEmpty(ocrDataFields.getRespondentDifferentServiceAddress())) {
-                warnings.add("Please review respondent address different to service address in the scanned form");
-            }
-        }
-    }
-
-    private void verifyServeOutOfUK(ApplicationType applicationType, OcrDataFields ocrDataFields, List<String> warnings) {
-        if (SOLE_APPLICATION.equals(applicationType)
-            && (OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(ocrDataFields.getServeOutOfUK())
-            || StringUtils.isEmpty(ocrDataFields.getServeOutOfUK()))) {
-            warnings.add("Please review serve out of UK in the scanned form");
-        }
-    }
-
-    private void verifyRespondentEmailAccess(OcrDataFields ocrDataFields, List<String> warnings) {
-        if (isNotEmpty(ocrDataFields.getRespondentOrApplicant2Email()) && StringUtils.isEmpty(ocrDataFields.getRespondentEmailAccess())) {
-            warnings.add("Please verify respondent email access in scanned form");
-        }
-    }
-
-    private ApplicationType getApplicationType(OcrDataFields ocrDataFields, List<String> warnings) {
-        boolean isSole = toBoolean(ocrDataFields.getSoleApplication());
-        boolean isJoint = toBoolean(ocrDataFields.getJointApplication());
-        if (isJoint && !isSole) {
-            return JOINT_APPLICATION;
-        } else if (isSole && !isJoint) {
-            return SOLE_APPLICATION;
-        } else {
-            warnings.add("Please review application type in the scanned form");
-            return SOLE_APPLICATION;
         }
     }
 }
