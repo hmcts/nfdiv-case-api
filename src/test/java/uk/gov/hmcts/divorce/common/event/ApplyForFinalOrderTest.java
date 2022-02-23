@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,24 +11,24 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenFinalOrderRequested.CITIZEN_FINAL_ORDER_REQUESTED;
+import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class CitizenFinalOrderRequestedTest {
+class ApplyForFinalOrderTest {
 
     @InjectMocks
-    private CitizenFinalOrderRequested citizenFinalOrderRequested;
+    private ApplyForFinalOrder applyForFinalOrder;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        citizenFinalOrderRequested.configure(configBuilder);
+        applyForFinalOrder.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CITIZEN_FINAL_ORDER_REQUESTED);
+            .contains(FINAL_ORDER_REQUESTED);
     }
 }

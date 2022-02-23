@@ -84,6 +84,7 @@
     ],
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
+    "warnings": [],
     "transformationAndOcrWarnings": []
   },
   "state": "AwaitingAos"

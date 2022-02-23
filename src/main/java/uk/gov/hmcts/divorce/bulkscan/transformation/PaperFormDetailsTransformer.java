@@ -30,7 +30,7 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
         OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
 
         if (SOLE_APPLICATION.equals(caseData.getApplicationType()) && isEmpty(ocrDataFields.getServeOutOfUK())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review serve respondent outside UK in scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review serve respondent outside UK in scanned form");
         }
 
         caseData.getPaperFormDetails().setServiceOutsideUK(ocrDataFields.getServeOutOfUK());
@@ -47,8 +47,8 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
             applicantSummaryFinancialOrderFor(ocrDataFields.getApplicant2PrayerFinancialOrderFor())
         );
 
-        applicant1StatementOfTruth(ocrDataFields, caseData);
-        applicant2StatementOfTruth(ocrDataFields, caseData);
+        applicant1StatementOfTruth(transformationDetails);
+        applicant2StatementOfTruth(transformationDetails);
         setCourtFee(ocrDataFields, caseData);
         return transformationDetails;
     }
@@ -66,18 +66,25 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
         return financialOrdersFor;
     }
 
-    private void applicant1StatementOfTruth(OcrDataFields ocrDataFields, CaseData caseData) {
+    private void applicant1StatementOfTruth(TransformationDetails transformationDetails) {
+        OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
         if (!toBoolean(ocrDataFields.getSoleApplicantOrApplicant1StatementOfTruth())
             && !toBoolean(ocrDataFields.getSoleApplicantOrApplicant1LegalRepStatementOfTruth())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth for applicant1 in scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review statement of truth for applicant1 in scanned form");
         }
         if (!toBoolean(ocrDataFields.getSoleApplicantOrApplicant1Signing())
             && !toBoolean(ocrDataFields.getSoleApplicantOrApplicant1OrLegalRepSignature())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth signing for applicant1 in scanned form");
+            transformationDetails.getTransformationWarnings().add(
+                "Please review statement of truth signing for applicant1 in scanned form"
+            );
         }
         if (isEmpty(ocrDataFields.getSoleApplicantOrApplicant1OrLegalRepFullName())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review sole or applicant1/legal representative name in scanned form");
+            transformationDetails.getTransformationWarnings().add(
+                "Please review sole or applicant1/legal representative name in scanned form"
+            );
         }
+
+        CaseData caseData = transformationDetails.getCaseData();
 
         caseData.getPaperFormDetails().setApplicant1SigningSOT(
             from(toBoolean(ocrDataFields.getSoleApplicantOrApplicant1Signing()))
@@ -88,7 +95,7 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
         String month = ocrDataFields.getStatementOfTruthDateMonth();
         String year = ocrDataFields.getStatementOfTruthDateYear();
         if (isEmpty(day) || isEmpty(month) || isEmpty(year)) {
-            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth date for applicant1 in scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review statement of truth date for applicant1 in scanned form");
         }
         caseData.getPaperFormDetails().setApplicant1SOTSignedOn(
             deriveStatementOfTruthDate(day, month, year)
@@ -101,18 +108,22 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
             .collect(Collectors.joining(" "));
     }
 
-    private void applicant2StatementOfTruth(OcrDataFields ocrDataFields, CaseData caseData) {
+    private void applicant2StatementOfTruth(TransformationDetails transformationDetails) {
+        OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
+
         if (!toBoolean(ocrDataFields.getApplicant2StatementOfTruth())
             && !toBoolean(ocrDataFields.getApplicant2LegalRepStatementOfTruth())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth for applicant2 in scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review statement of truth for applicant2 in scanned form");
         }
         if (!toBoolean(ocrDataFields.getApplicant2Signing())
             && !toBoolean(ocrDataFields.getApplicant2LegalRepSigning())) {
-            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth for applicant2 in scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review statement of truth for applicant2 in scanned form");
         }
         if (isEmpty(ocrDataFields.getApplicant2OrLegalRepFullName())) {
-            caseData.getTransformationAndOcrWarnings().add("Please sole or applicant2/legal representative name in scanned form");
+            transformationDetails.getTransformationWarnings().add("Please sole or applicant2/legal representative name in scanned form");
         }
+
+        CaseData caseData = transformationDetails.getCaseData();
 
         caseData.getPaperFormDetails().setApplicant2LegalRepSigningSOT(
             from(toBoolean(ocrDataFields.getApplicant2LegalRepSigning()))
@@ -124,7 +135,7 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
         String month = ocrDataFields.getApplicant2StatementOfTruthDateMonth();
         String year = ocrDataFields.getApplicant2StatementOfTruthDateYear();
         if (isEmpty(day) || isEmpty(month) || isEmpty(year)) {
-            caseData.getTransformationAndOcrWarnings().add("Please review statement of truth date for applicant2 in scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review statement of truth date for applicant2 in scanned form");
         }
         caseData.getPaperFormDetails().setApplicant1SOTSignedOn(
             deriveStatementOfTruthDate(day, month, year)

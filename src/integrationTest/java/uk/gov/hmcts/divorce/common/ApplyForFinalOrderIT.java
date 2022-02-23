@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor;
+package uk.gov.hmcts.divorce.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorApplyForFinalOrder.SOLICITOR_FINAL_ORDER_REQUESTED;
+import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class SolicitorApplyForFinalOrderIT {
+public class ApplyForFinalOrderIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,7 +55,7 @@ public class SolicitorApplyForFinalOrderIT {
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SOLICITOR_FINAL_ORDER_REQUESTED)))
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, FINAL_ORDER_REQUESTED)))
                 .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
@@ -74,7 +74,7 @@ public class SolicitorApplyForFinalOrderIT {
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SOLICITOR_FINAL_ORDER_REQUESTED)))
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, FINAL_ORDER_REQUESTED)))
                 .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(

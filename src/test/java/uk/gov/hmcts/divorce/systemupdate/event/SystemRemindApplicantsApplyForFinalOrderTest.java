@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.notification.RespondentApplyForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.AwaitingFinalOrderReminderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -22,42 +22,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentApplyFinalOrder.SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForFinalOrder.SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 
 @ExtendWith(SpringExtension.class)
-class SystemNotifyRespondentApplyFinalOrderTest {
+class SystemRemindApplicantsApplyForFinalOrderTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
 
-    @InjectMocks
-    private SystemNotifyRespondentApplyFinalOrder systemNotifyRespondentApplyFinalOrder;
+    @Mock
+    private AwaitingFinalOrderReminderNotification awaitingFinalOrderReminderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
 
-    @Mock
-    private RespondentApplyForFinalOrderNotification respondentApplyForFinalOrderNotification;
+    @InjectMocks
+    private SystemRemindApplicantsApplyForFinalOrder systemRemindApplicantsApplyForFinalOrder;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        systemNotifyRespondentApplyFinalOrder.configure(configBuilder);
+        systemRemindApplicantsApplyForFinalOrder.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER);
+            .contains(SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER);
     }
 
     @Test
-    void shouldSetFinalOrderReminderSentApplicant2ToYes() {
+    void shouldSetReminderNotificationSentToYes() {
         final CaseData caseData = caseData();
-        caseData.setApplicant2(respondent());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
@@ -66,24 +64,9 @@ class SystemNotifyRespondentApplyFinalOrderTest {
             .thenReturn("auth header");
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            systemNotifyRespondentApplyFinalOrder.aboutToSubmit(details, details);
+            systemRemindApplicantsApplyForFinalOrder.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getFinalOrder().getFinalOrderReminderSentApplicant2()).isEqualTo(YesOrNo.YES);
-    }
-
-    @Test
-    void shouldSendNotification() {
-        final CaseData caseData = caseData();
-        caseData.setApplicant2(respondent());
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
-        details.setData(caseData);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION))
-            .thenReturn("auth header");
-
-        systemNotifyRespondentApplyFinalOrder.aboutToSubmit(details, details);
-
-        verify(notificationDispatcher).send(respondentApplyForFinalOrderNotification, caseData, details.getId());
+        verify(notificationDispatcher).send(awaitingFinalOrderReminderNotification, caseData, details.getId());
+        assertThat(response.getData().getFinalOrder().getFinalOrderReminderSentApplicant1()).isEqualTo(YesOrNo.YES);
     }
 }
