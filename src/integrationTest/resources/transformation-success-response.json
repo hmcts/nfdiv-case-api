@@ -88,7 +88,7 @@
         "PostCode": "",
         "Country": ""
       },
-      "transformationAndOcrWarnings": [],
+      "warnings": [],
       "applicant2FirstName": "respFname",
       "marriageCertifyMarriageCertificateIsCorrect": "Yes",
       "applicant1FinancialOrdersFor": [
@@ -130,7 +130,25 @@
       "applicant1SolicitorRepresented": "Yes",
       "marriageIssueApplicationWithoutMarriageCertificate": "No",
       "coApplicant1IsDrafted": "No",
-      "coApplicant1IsSubmitted": "No"
+      "coApplicant1IsSubmitted": "No",
+      "scannedDocuments": [
+        {
+          "id": "${json-unit.any-string}",
+          "value": {
+            "type": "form",
+            "subtype": "D8",
+            "url": {
+              "document_url": "http://localhost:8080/documents/640055da-9330-11ec-b909-0242ac120002",
+              "document_filename": "61347040100200003.pdf",
+              "document_binary_url": "http://localhost:8080/documents/640055da-9330-11ec-b909-0242ac120002/binary"
+            },
+            "controlNumber": "61347040100200003",
+            "fileName": "61347040100200003.pdf",
+            "scannedDate": "2022-01-01T12:12:00.000Z",
+            "deliveryDate": "2022-01-01T12:12:00.000Z"
+          }
+        }
+      ]
     }
   },
   "warnings": []

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -14,8 +15,10 @@ import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.collections4.ListUtils.union;
@@ -37,7 +40,7 @@ import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
     public static final String OCR_FIELD_VALUE_BOTH = "both";
-    public static final String TRANSFORMATION_AND_OCR_WARNINGS = "transformationAndOcrWarnings";
+    public static final String TRANSFORMATION_AND_OCR_WARNINGS = "warnings";
     public static final String OCR_FIELD_VALUE_YES = "yes";
     public static final String OCR_FIELD_VALUE_NO = "no";
 
@@ -77,8 +80,6 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
         }
         var caseData = CaseData.builder().build();
 
-        List<String> transformationWarnings = caseData.getTransformationAndOcrWarnings();
-
         try {
             /*
              Section 1 – Your application
@@ -96,8 +97,6 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
              Set gender
              Set application submitted date
              */
-            caseData.setDivorceOrDissolution(getDivorceType(ocrDataFields, transformationWarnings));
-            caseData.setApplicationType(getApplicationType(ocrDataFields, transformationWarnings));
 
             var transformationDetails =
                 TransformationDetails
@@ -105,6 +104,10 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                     .caseData(caseData)
                     .ocrDataFields(ocrDataFields)
                     .build();
+
+            List<String> transformationWarnings = transformationDetails.getTransformationWarnings();
+            caseData.setDivorceOrDissolution(getDivorceType(ocrDataFields, transformationWarnings));
+            caseData.setApplicationType(getApplicationType(ocrDataFields, transformationWarnings));
 
             applicant1Transformer
                 .andThen(applicant2Transformer)
@@ -134,10 +137,18 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                 ? transformationWarnings
                 : union(ocrValidationResponse.getWarnings(), transformationWarnings);
 
-            // Temporarily logging case data to see which fields are sent to bulk scan
-            transformedCaseData.put(TRANSFORMATION_AND_OCR_WARNINGS, combinedWarnings);
+            List<ListValue<String>> warnings = new ArrayList<>();
 
-            log.info("Transformed case data map {} ", transformedCaseData);
+            if (!isEmpty(combinedWarnings)) {
+                combinedWarnings.forEach(
+                    warning -> {
+                        var listValueWarning = ListValue.<String>builder().id(UUID.randomUUID().toString()).value(warning).build();
+                        warnings.add(listValueWarning);
+                    }
+                );
+            }
+            transformedCaseData.put(TRANSFORMATION_AND_OCR_WARNINGS, warnings);
+
             return transformedCaseData;
 
         } catch (Exception exception) {

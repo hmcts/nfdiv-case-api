@@ -285,7 +285,7 @@ public class CaseData {
         access = {CaseworkerBulkScanAccess.class}
     )
     @Builder.Default
-    private List<String> transformationAndOcrWarnings = new ArrayList<>();
+    private List<ListValue<String>> warnings = new ArrayList<>();
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {

@@ -32,7 +32,8 @@
       }
     ],
     "dataVersion": "${json-unit.any-number}",
-    "transformationAndOcrWarnings":[]
+    "warnings":[],
+    "transformationAndOcrWarnings": []
   },
   "state": "Holding"
 }
