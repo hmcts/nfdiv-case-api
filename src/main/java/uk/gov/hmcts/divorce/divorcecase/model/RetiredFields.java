@@ -349,6 +349,13 @@ public class RetiredFields {
     )
     private String coSolicitorAdditionalComments;
 
+    @CCD(
+        label = "Retired transformation and OCR warnings",
+        typeOverride = Collection,
+        typeParameterOverride = "TextArea"
+    )
+    private List<String> transformationAndOcrWarnings = new ArrayList<>();
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };

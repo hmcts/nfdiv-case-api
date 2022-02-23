@@ -44,7 +44,7 @@ public class MarriageDetailsTransformerTest {
 
         final var transformedOutput = marriageDetailsTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
 
         final var expectedMarriageDetails =
             jsonToObject("src/test/resources/transformation/output/marriage-details-transformed.json", MarriageDetails.class);
@@ -71,7 +71,7 @@ public class MarriageDetailsTransformerTest {
 
         final var transformedOutput = marriageDetailsTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+        assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please review marriage certificate/translation in the scanned form",
                 "Please review applicant1's full name as on marriage cert in the scanned form",
@@ -112,7 +112,7 @@ public class MarriageDetailsTransformerTest {
 
         final var transformedOutput = marriageDetailsTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+        assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please review marriage certificate/translation in the scanned form",
                 "Please review applicant1's full name as on marriage cert in the scanned form",
