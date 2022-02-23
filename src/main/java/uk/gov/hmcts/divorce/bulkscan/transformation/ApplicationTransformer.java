@@ -49,29 +49,31 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         CaseData caseData = transformationDetails.getCaseData();
         OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
         caseData.getApplication().getJurisdiction().setConnections(
-            deriveJurisdictionConnections(ocrDataFields, caseData.getTransformationAndOcrWarnings())
+            deriveJurisdictionConnections(ocrDataFields, transformationDetails.getTransformationWarnings())
         );
 
         caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
-        setMarriageBrokenDetails(ocrDataFields, caseData);
-        setPrayer(ocrDataFields, caseData);
-        setCourtFee(ocrDataFields, caseData);
+        setMarriageBrokenDetails(transformationDetails);
+        setPrayer(transformationDetails);
+        setCourtFee(transformationDetails);
         return transformationDetails;
     }
 
-    private void setMarriageBrokenDetails(OcrDataFields ocrDataFields, CaseData caseData) {
+    private void setMarriageBrokenDetails(TransformationDetails transformationDetails) {
+        CaseData caseData = transformationDetails.getCaseData();
+        OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
 
         if (SOLE_APPLICATION.equals(caseData.getApplicationType())
             && (!toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown())
             || toBoolean(ocrDataFields.getApplicant2ConfirmationOfBreakdown()))) {
-            caseData.getTransformationAndOcrWarnings().add(
+            transformationDetails.getTransformationWarnings().add(
                 "Please review confirmation of breakdown for sole application in the scanned form"
             );
         }
         if (JOINT_APPLICATION.equals(caseData.getApplicationType())
             && (!toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown())
             || !toBoolean(ocrDataFields.getApplicant2ConfirmationOfBreakdown()))) {
-            caseData.getTransformationAndOcrWarnings().add(
+            transformationDetails.getTransformationWarnings().add(
                 "Please review confirmation of breakdown for joint application in the scanned form"
             );
         }
@@ -127,7 +129,10 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         return connections;
     }
 
-    private void setPrayer(OcrDataFields ocrDataFields, CaseData caseData) {
+    private void setPrayer(TransformationDetails transformationDetails) {
+        CaseData caseData = transformationDetails.getCaseData();
+        OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
+
         final var isMarriageDissolved = toBoolean(ocrDataFields.getPrayerMarriageDissolved());
         final var isCivilPartnershipDissolved = toBoolean(ocrDataFields.getPrayerCivilPartnershipDissolved());
 
@@ -138,19 +143,22 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
             caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
             caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         } else {
-            caseData.getTransformationAndOcrWarnings().add("Please review prayer in the scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review prayer in the scanned form");
         }
     }
 
-    private void setCourtFee(OcrDataFields ocrDataFields, CaseData caseData) {
+    private void setCourtFee(TransformationDetails transformationDetails) {
+        CaseData caseData = transformationDetails.getCaseData();
+        OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
+
         if (isNotEmpty(ocrDataFields.getSoleOrApplicant1HWFNo())
             && ocrDataFields.getSoleOrApplicant1HWFNo().length() != HWF_NO_VALID_LENGTH) {
-            caseData.getTransformationAndOcrWarnings().add("Please review HWF number for applicant1 in scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review HWF number for applicant1 in scanned form");
         }
 
         if (isNotEmpty(ocrDataFields.getApplicant2HWFNo())
             && ocrDataFields.getApplicant2HWFNo().length() != HWF_NO_VALID_LENGTH) {
-            caseData.getTransformationAndOcrWarnings().add("Please review HWF number for applicant2 in scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review HWF number for applicant2 in scanned form");
         }
 
         caseData.getApplication().setApplicant1HelpWithFees(
@@ -169,6 +177,5 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
                 .needHelp(from(toBoolean(ocrDataFields.getApplicant2HWFApp())))
                 .build()
         );
-
     }
 }

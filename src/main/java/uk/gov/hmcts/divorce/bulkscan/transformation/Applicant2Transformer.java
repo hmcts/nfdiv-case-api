@@ -39,8 +39,8 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
     public TransformationDetails apply(TransformationDetails transformationDetails) {
         CaseData caseData = transformationDetails.getCaseData();
         OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
-        caseData.setApplicant2(applicant2(ocrDataFields, caseData.getTransformationAndOcrWarnings()));
-        setApp2FinancialOrders(ocrDataFields, caseData);
+        caseData.setApplicant2(applicant2(ocrDataFields, transformationDetails.getTransformationWarnings()));
+        setApp2FinancialOrders(transformationDetails);
         applicant2StatementOfTruth(ocrDataFields, caseData);
         return transformationDetails;
     }
@@ -118,7 +118,9 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
             .build();
     }
 
-    private void setApp2FinancialOrders(OcrDataFields ocrDataFields, CaseData caseData) {
+    private void setApp2FinancialOrders(TransformationDetails transformationDetails) {
+        CaseData caseData = transformationDetails.getCaseData();
+        OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
         Set<FinancialOrderFor> app2FinancialOrderFor =
             deriveFinancialOrderFor(ocrDataFields.getApplicant2FinancialOrderFor());
 
@@ -126,12 +128,12 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
             || OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(ocrDataFields.getApplicant2FinancialOrder())) {
             caseData.getApplicant2().setFinancialOrder(YES);
             if (isEmpty(app2FinancialOrderFor)) {
-                caseData.getTransformationAndOcrWarnings().add("Please review applicant2 financial order for in scanned form");
+                transformationDetails.getTransformationWarnings().add("Please review applicant2 financial order for in scanned form");
             }
         } else {
             caseData.getApplicant2().setFinancialOrder(NO);
             if (!isEmpty(app2FinancialOrderFor)) {
-                caseData.getTransformationAndOcrWarnings().add("Please review applicant2 financial order for in scanned form");
+                transformationDetails.getTransformationWarnings().add("Please review applicant2 financial order for in scanned form");
             }
         }
         caseData.getApplicant2().setFinancialOrdersFor(app2FinancialOrderFor);
