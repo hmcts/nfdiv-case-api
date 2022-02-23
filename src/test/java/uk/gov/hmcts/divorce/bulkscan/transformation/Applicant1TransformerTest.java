@@ -44,7 +44,7 @@ public class Applicant1TransformerTest {
 
         final var transformedOutput = applicant1Transformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
 
         final var expectedApplicant1 =
             jsonToObject("src/test/resources/transformation/output/applicant1-transformed.json", Applicant.class);
@@ -71,7 +71,7 @@ public class Applicant1TransformerTest {
 
         final var transformedOutput = applicant1Transformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+        assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please review applicant1 name different to marriage certificate in the scanned form",
                 "Please review applicant1 solicitor name in the scanned form",
@@ -114,7 +114,7 @@ public class Applicant1TransformerTest {
 
         final var transformedOutput = applicant1Transformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+        assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please review applicant1 solicitor name in the scanned form",
                 "Please review applicant1 solicitor firm in the scanned form",
@@ -159,7 +159,7 @@ public class Applicant1TransformerTest {
 
         final var transformedOutput = applicant1Transformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+        assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please review applicant1 solicitor details in the scanned form"
             );

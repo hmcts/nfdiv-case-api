@@ -43,7 +43,7 @@ public class PaperFormDetailsTransformerTest {
 
         final var transformedOutput = paperFormDetailsTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
 
         final var expectedPaperFormDetails =
             jsonToObject("src/test/resources/transformation/output/paper-form-transformed.json", PaperFormDetails.class);
@@ -70,7 +70,7 @@ public class PaperFormDetailsTransformerTest {
 
         final var transformedOutput = paperFormDetailsTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+        assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please review serve respondent outside UK in scanned form",
                 "Please review statement of truth for applicant1 in scanned form",
