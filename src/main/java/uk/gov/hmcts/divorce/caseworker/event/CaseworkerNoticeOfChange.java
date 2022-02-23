@@ -141,22 +141,11 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     * */
     private CaseData correctRepresentationDetails(final CaseData data,
                                                   final CaseData beforeData) {
-        Applicant applicantToBeCorrected;
 
-        if (data.getNoticeOfChange().getWhichApplicant()
-            .equals(APPLICANT_1)) {
-
-            applicantToBeCorrected = data.getApplicant2();
-
-            if (applicantToBeCorrected.isRepresented()) {
-                applicantToBeCorrected.setSolicitor(beforeData.getApplicant2().getSolicitor());
-            }
+        if (data.getNoticeOfChange().getWhichApplicant().equals(APPLICANT_1)) {
+            data.getApplicant2().setSolicitor(beforeData.getApplicant2().getSolicitor());
         } else {
-            applicantToBeCorrected = data.getApplicant1();
-
-            if (applicantToBeCorrected.isRepresented()) {
-                applicantToBeCorrected.setSolicitor(beforeData.getApplicant1().getSolicitor());
-            }
+            data.getApplicant1().setSolicitor(beforeData.getApplicant1().getSolicitor());
         }
 
         return data;
