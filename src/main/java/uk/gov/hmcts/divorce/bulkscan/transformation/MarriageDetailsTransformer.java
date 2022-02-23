@@ -38,10 +38,10 @@ public class MarriageDetailsTransformer implements Function<TransformationDetail
         } else if (!marriageOrCivilPartnershipCert && translation) {
             caseData.getApplication().getMarriageDetails().setCertifiedTranslation(YES);
         } else {
-            caseData.getTransformationAndOcrWarnings().add("Please review marriage certificate/translation in the scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review marriage certificate/translation in the scanned form");
         }
 
-        setMarriageOrCivilPartnershipDetails(ocrDataFields, caseData, caseData.getTransformationAndOcrWarnings());
+        setMarriageOrCivilPartnershipDetails(ocrDataFields, caseData, transformationDetails.getTransformationWarnings());
 
         return transformationDetails;
     }

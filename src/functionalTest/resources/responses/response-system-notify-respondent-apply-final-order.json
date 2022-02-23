@@ -47,6 +47,7 @@
     "marriageDate": "1990-06-10",
     "marriagePlaceOfMarriage": "Somewhere",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "warnings": [],
     "transformationAndOcrWarnings": [],
     "finalOrderReminderSentApplicant2": "Yes"
   }

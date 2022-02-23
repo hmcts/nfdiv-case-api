@@ -41,7 +41,7 @@ public class Applicant2TransformerTest {
 
         final var transformedOutput = applicant2Transformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
 
         final var expectedApplicant2 =
             jsonToObject("src/test/resources/transformation/output/applicant2-transformed.json", Applicant.class);
@@ -69,7 +69,7 @@ public class Applicant2TransformerTest {
 
         final var transformedOutput = applicant2Transformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+        assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please review respondent/applicant2 first name",
                 "Please review respondent/applicant2 last name",
