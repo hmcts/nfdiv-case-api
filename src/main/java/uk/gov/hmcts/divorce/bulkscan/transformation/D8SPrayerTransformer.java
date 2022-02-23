@@ -24,7 +24,7 @@ public class D8SPrayerTransformer implements Function<TransformationDetails, Tra
             caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
             caseData.setIsJudicialSeparation(YES);
         } else {
-            caseData.getTransformationAndOcrWarnings().add("Please review prayer in the scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review prayer in the scanned form");
         }
 
         return transformationDetails;

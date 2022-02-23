@@ -6,13 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.apache.commons.collections4.ListUtils.union;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
@@ -82,7 +85,18 @@ public class CommonTransformer {
             ? transformationWarnings
             : union(ocrValidationResponse.getWarnings(), transformationWarnings);
 
-        transformedCaseData.put(TRANSFORMATION_AND_OCR_WARNINGS, combinedWarnings);
+        List<ListValue<String>> warnings = new ArrayList<>();
+
+        if (!isEmpty(combinedWarnings)) {
+            combinedWarnings.forEach(
+                warning -> {
+                    var listValueWarning = ListValue.<String>builder().id(UUID.randomUUID().toString()).value(warning).build();
+                    warnings.add(listValueWarning);
+                }
+            );
+        }
+
+        transformedCaseData.put(TRANSFORMATION_AND_OCR_WARNINGS, warnings);
 
         log.info("Transformed case data map {} ", transformedCaseData);
 

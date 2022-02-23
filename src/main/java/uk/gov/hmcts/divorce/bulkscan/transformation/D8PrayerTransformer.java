@@ -31,7 +31,7 @@ public class D8PrayerTransformer implements Function<TransformationDetails, Tran
             caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
             caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         } else {
-            caseData.getTransformationAndOcrWarnings().add("Please review prayer in the scanned form");
+            transformationDetails.getTransformationWarnings().add("Please review prayer in the scanned form");
         }
 
         return transformationDetails;

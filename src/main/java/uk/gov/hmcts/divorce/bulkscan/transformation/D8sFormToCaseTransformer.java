@@ -62,8 +62,6 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
         }
         var caseData = CaseData.builder().build();
 
-        List<String> transformationWarnings = caseData.getTransformationAndOcrWarnings();
-
         try {
             /*
              Section 1 – Your application
@@ -81,8 +79,6 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
              Set gender
              Set application submitted date
              */
-            caseData.setDivorceOrDissolution(DIVORCE);
-            caseData.setApplicationType(commonTransformer.getApplicationType(ocrDataFields, transformationWarnings));
 
             var transformationDetails =
                 TransformationDetails
@@ -90,6 +86,10 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
                     .caseData(caseData)
                     .ocrDataFields(ocrDataFields)
                     .build();
+
+            List<String> transformationWarnings = transformationDetails.getTransformationWarnings();
+            caseData.setDivorceOrDissolution(DIVORCE);
+            caseData.setApplicationType(commonTransformer.getApplicationType(ocrDataFields, transformationWarnings));
 
             applicant1Transformer
                 .andThen(applicant2Transformer)

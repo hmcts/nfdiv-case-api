@@ -54,7 +54,6 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
 
         caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
         setMarriageBrokenDetails(transformationDetails);
-        setPrayer(transformationDetails);
         setCourtFee(transformationDetails);
         return transformationDetails;
     }
@@ -127,24 +126,6 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
             warnings.add("Please verify jurisdiction connections(no options selected) in scanned form");
         }
         return connections;
-    }
-
-    private void setPrayer(TransformationDetails transformationDetails) {
-        CaseData caseData = transformationDetails.getCaseData();
-        OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
-
-        final var isMarriageDissolved = toBoolean(ocrDataFields.getPrayerMarriageDissolved());
-        final var isCivilPartnershipDissolved = toBoolean(ocrDataFields.getPrayerCivilPartnershipDissolved());
-
-        if (DIVORCE.equals(caseData.getDivorceOrDissolution()) && isMarriageDissolved) {
-            caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
-            caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
-        } else if (DISSOLUTION.equals(caseData.getDivorceOrDissolution()) && isCivilPartnershipDissolved) {
-            caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
-            caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
-        } else {
-            transformationDetails.getTransformationWarnings().add("Please review prayer in the scanned form");
-        }
     }
 
     private void setCourtFee(TransformationDetails transformationDetails) {
