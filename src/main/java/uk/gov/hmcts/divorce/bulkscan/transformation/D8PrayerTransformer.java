@@ -24,10 +24,8 @@ public class D8PrayerTransformer implements Function<TransformationDetails, Tran
         final var isMarriageDissolved = toBoolean(ocrDataFields.getPrayerMarriageDissolved());
         final var isCivilPartnershipDissolved = toBoolean(ocrDataFields.getPrayerCivilPartnershipDissolved());
 
-        if (DIVORCE.equals(caseData.getDivorceOrDissolution()) && isMarriageDissolved) {
-            caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
-            caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
-        } else if (DISSOLUTION.equals(caseData.getDivorceOrDissolution()) && isCivilPartnershipDissolved) {
+        if ((DIVORCE.equals(caseData.getDivorceOrDissolution()) && isMarriageDissolved) ||
+            (DISSOLUTION.equals(caseData.getDivorceOrDissolution()) && isCivilPartnershipDissolved)) {
             caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
             caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         } else {
