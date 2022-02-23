@@ -62,6 +62,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
     @Override
     protected Map<String, Object> runFormSpecificTransformation(List<OcrDataField> ocrDataFieldList) {
+
         OcrDataFields ocrDataFields = transformOcrMapToObject(ocrDataFieldList);
 
         OcrValidationResponse ocrValidationResponse = validator.validateOcrData(D8.getName(), ocrDataFields);
@@ -112,8 +113,8 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                 .andThen(paperFormDetailsTransformer)
                 .apply(transformationDetails);
 
-           caseData = commonTransformer.setLabelContentAndDefaultValues(caseData);
-           transformationWarnings = commonTransformer.verifyFields(transformationDetails, transformationWarnings);
+            caseData = commonTransformer.setLabelContentAndDefaultValues(caseData);
+            transformationWarnings = commonTransformer.verifyFields(transformationDetails, transformationWarnings);
 
             return commonTransformer.transformCaseData(caseData, transformationWarnings, ocrValidationResponse);
 
