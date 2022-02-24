@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
 
 @Component
 @Slf4j
+@SuppressWarnings({"PMD.PreserveStackTrace"})
 public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
 
     @Autowired
