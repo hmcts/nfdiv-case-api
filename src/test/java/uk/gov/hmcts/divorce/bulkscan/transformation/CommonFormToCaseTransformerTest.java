@@ -5,18 +5,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static java.util.Collections.emptyList;
+import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.divorce.bulkscan.transformation.CommonFormToCaseTransformer.TRANSFORMATION_AND_OCR_WARNINGS;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -29,6 +38,9 @@ public class CommonFormToCaseTransformerTest {
 
     @InjectMocks
     private CommonFormToCaseTransformer commonFormToCaseTransformer;
+
+    @Mock
+    private ObjectMapper mockObjectMapper;
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -147,5 +159,23 @@ public class CommonFormToCaseTransformerTest {
         var applicationType = commonFormToCaseTransformer.getApplicationType(ocrDataFields, warnings);
 
         assertThat(applicationType).isEqualTo(JOINT_APPLICATION);
+    }
+
+    @Test
+    void transformCaseDataReturnsSuccessfullyTransformedCaseDataWhenValidDataGiven() {
+
+        final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
+        List<String> transformationWarnings = new ArrayList<>();
+        final OcrValidationResponse ocrValidationResponse = OcrValidationResponse.builder().build();
+
+        Map<String, Object> expectedTransformedCaseData = new HashMap<>();
+        when(mockObjectMapper.convertValue(any(CaseData.class), any(TypeReference.class))).thenReturn(expectedTransformedCaseData);
+
+        var transformedCaseData = commonFormToCaseTransformer.transformCaseData(
+            caseData,
+            transformationWarnings,
+            ocrValidationResponse);
+
+        assertThat(transformedCaseData).contains(entry(TRANSFORMATION_AND_OCR_WARNINGS, emptyList()));
     }
 }

@@ -80,8 +80,7 @@ public class CommonFormToCaseTransformer {
     public Map<String, Object> transformCaseData(CaseData caseData, List<String> transformationWarnings,
                                                  OcrValidationResponse ocrValidationResponse) {
 
-        Map<String, Object> transformedCaseData = mapper.convertValue(caseData, new TypeReference<>() {
-        });
+        Map<String, Object> transformedCaseData = mapper.convertValue(caseData, new TypeReference<>() {});
 
         List<String> combinedWarnings = isEmpty(ocrValidationResponse.getWarnings())
             ? transformationWarnings
