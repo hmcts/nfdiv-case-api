@@ -39,7 +39,7 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
     private D8SPrayerTransformer d8SPrayerTransformer;
 
     @Autowired
-    private CommonTransformer commonTransformer;
+    private CommonFormToCaseTransformer commonFormToCaseTransformer;
 
     @Autowired
     private MarriageDetailsTransformer marriageDetailsTransformer;
@@ -89,7 +89,7 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
 
             List<String> transformationWarnings = transformationDetails.getTransformationWarnings();
             caseData.setDivorceOrDissolution(DIVORCE);
-            caseData.setApplicationType(commonTransformer.getApplicationType(ocrDataFields, transformationWarnings));
+            caseData.setApplicationType(commonFormToCaseTransformer.getApplicationType(ocrDataFields, transformationWarnings));
 
             applicant1Transformer
                 .andThen(applicant2Transformer)
@@ -99,10 +99,10 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
                 .andThen(paperFormDetailsTransformer)
                 .apply(transformationDetails);
 
-            caseData = commonTransformer.setLabelContentAndDefaultValues(caseData);
-            transformationWarnings = commonTransformer.verifyFields(transformationDetails, transformationWarnings);
+            caseData = commonFormToCaseTransformer.setLabelContentAndDefaultValues(caseData);
+            transformationWarnings = commonFormToCaseTransformer.verifyFields(transformationDetails, transformationWarnings);
 
-            return commonTransformer.transformCaseData(caseData, transformationWarnings, ocrValidationResponse);
+            return commonFormToCaseTransformer.transformCaseData(caseData, transformationWarnings, ocrValidationResponse);
 
         } catch (Exception exception) {
             //this will result in bulk scan service to create exception record if case creation is automatic case creation

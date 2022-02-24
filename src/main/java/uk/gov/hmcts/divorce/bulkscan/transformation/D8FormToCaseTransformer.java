@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.bulkscan.transformation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,14 +27,6 @@ import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 @SuppressWarnings({"PMD.PreserveStackTrace"})
 public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
-    public static final String OCR_FIELD_VALUE_BOTH = "both";
-    public static final String TRANSFORMATION_AND_OCR_WARNINGS = "warnings";
-    public static final String OCR_FIELD_VALUE_YES = "yes";
-    public static final String OCR_FIELD_VALUE_NO = "no";
-
-    @Autowired
-    private ObjectMapper mapper;
-
     @Autowired
     private OcrValidator validator;
 
@@ -52,7 +43,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
     private D8PrayerTransformer d8PrayerTransformer;
 
     @Autowired
-    private CommonTransformer commonTransformer;
+    private CommonFormToCaseTransformer commonFormToCaseTransformer;
 
     @Autowired
     private MarriageDetailsTransformer marriageDetailsTransformer;
@@ -103,7 +94,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
             List<String> transformationWarnings = transformationDetails.getTransformationWarnings();
             caseData.setDivorceOrDissolution(getDivorceType(ocrDataFields, transformationWarnings));
-            caseData.setApplicationType(commonTransformer.getApplicationType(ocrDataFields, transformationWarnings));
+            caseData.setApplicationType(commonFormToCaseTransformer.getApplicationType(ocrDataFields, transformationWarnings));
 
             applicant1Transformer
                 .andThen(applicant2Transformer)
@@ -113,10 +104,10 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                 .andThen(paperFormDetailsTransformer)
                 .apply(transformationDetails);
 
-            caseData = commonTransformer.setLabelContentAndDefaultValues(caseData);
-            transformationWarnings = commonTransformer.verifyFields(transformationDetails, transformationWarnings);
+            caseData = commonFormToCaseTransformer.setLabelContentAndDefaultValues(caseData);
+            transformationWarnings = commonFormToCaseTransformer.verifyFields(transformationDetails, transformationWarnings);
 
-            return commonTransformer.transformCaseData(caseData, transformationWarnings, ocrValidationResponse);
+            return commonFormToCaseTransformer.transformCaseData(caseData, transformationWarnings, ocrValidationResponse);
 
         } catch (Exception exception) {
             //this will result in bulk scan service to create exception record if case creation is automatic case creation

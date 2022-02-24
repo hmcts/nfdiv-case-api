@@ -24,7 +24,6 @@ import javax.validation.Valid;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
-import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransformer.TRANSFORMATION_AND_OCR_WARNINGS;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
@@ -32,6 +31,8 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 @RestController
 @Slf4j
 public class BulkScanCaseTransformationController {
+
+    public static final String TRANSFORMATION_AND_OCR_WARNINGS = "warnings";
 
     @Autowired
     private BulkScanService bulkScanService;

@@ -27,13 +27,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 
 @Component
 @Slf4j
-public class CommonTransformer {
+public class CommonFormToCaseTransformer {
+
+    public static final String OCR_FIELD_VALUE_BOTH = "both";
+    public static final String TRANSFORMATION_AND_OCR_WARNINGS = "warnings";
+    public static final String OCR_FIELD_VALUE_YES = "yes";
+    public static final String OCR_FIELD_VALUE_NO = "no";
 
     @Autowired
     private ObjectMapper mapper;
-
-    public static final String OCR_FIELD_VALUE_BOTH = "both";
-    public static final String TRANSFORMATION_AND_OCR_WARNINGS = "transformationAndOcrWarnings";
 
     public List<String> verifyFields(TransformationDetails transformationDetails, List<String> transformationWarnings) {
 
