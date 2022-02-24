@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
@@ -15,15 +16,11 @@ import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Collections.emptyList;
 import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.bulkscan.transformation.CommonFormToCaseTransformer.TRANSFORMATION_AND_OCR_WARNINGS;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
@@ -36,13 +33,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 @ExtendWith(MockitoExtension.class)
 public class CommonFormToCaseTransformerTest {
 
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    @Spy
+    private ObjectMapper mockObjectMapper = MAPPER;
+
     @InjectMocks
     private CommonFormToCaseTransformer commonFormToCaseTransformer;
-
-    @Mock
-    private ObjectMapper mockObjectMapper;
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     void verifyFieldsShouldReturnNoTransformationWarningsWhenValidDataIsGiven() throws Exception {
@@ -168,14 +165,42 @@ public class CommonFormToCaseTransformerTest {
         List<String> transformationWarnings = new ArrayList<>();
         final OcrValidationResponse ocrValidationResponse = OcrValidationResponse.builder().build();
 
-        Map<String, Object> expectedTransformedCaseData = new HashMap<>();
-        when(mockObjectMapper.convertValue(any(CaseData.class), any(TypeReference.class))).thenReturn(expectedTransformedCaseData);
-
         var transformedCaseData = commonFormToCaseTransformer.transformCaseData(
             caseData,
             transformationWarnings,
             ocrValidationResponse);
 
         assertThat(transformedCaseData).contains(entry(TRANSFORMATION_AND_OCR_WARNINGS, emptyList()));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void transformCaseDataReturnsWarningsWhenInvalidDataGiven() {
+
+        final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
+        List<String> transformationWarnings = new ArrayList<>();
+        final OcrValidationResponse ocrValidationResponse = OcrValidationResponse.builder().warnings(
+            Arrays.asList("Please review serve out of UK in the scanned form",
+                "Please review respondent by post and applicant will serve application in the scanned form",
+                "Please review respondent address different to service address in the scanned form"
+            )
+        ).build();
+
+        var transformedCaseData = commonFormToCaseTransformer.transformCaseData(
+            caseData,
+            transformationWarnings,
+            ocrValidationResponse);
+
+        final List<ListValue<String>> extractedWarnings = (List<ListValue<String>>) transformedCaseData.get(TRANSFORMATION_AND_OCR_WARNINGS);
+
+        assertThat(extractedWarnings)
+            .extracting("value")
+            .isEqualTo(
+                List.of(
+                    "Please review serve out of UK in the scanned form",
+                    "Please review respondent by post and applicant will serve application in the scanned form",
+                    "Please review respondent address different to service address in the scanned form"
+                )
+            );
     }
 }
