@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -148,6 +149,7 @@ public class ApplyForFinalOrderIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+        verifyNoMoreInteractions(notificationService);
     }
 
     @Test
@@ -181,5 +183,6 @@ public class ApplyForFinalOrderIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+        verifyNoMoreInteractions(notificationService);
     }
 }
