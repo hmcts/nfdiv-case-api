@@ -154,7 +154,12 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
         caseData.getPaperFormDetails().setApplicant2NoPaymentIncluded(
             from(toBoolean(ocrDataFields.getApplicant2NoPaymentIncluded()))
         );
-
+        caseData.getPaperFormDetails().setSoleOrApplicant1PaymentOtherDetail(
+            ocrDataFields.getSoleOrApplicant1PaymentOtherDetail()
+        );
+        caseData.getPaperFormDetails().setApplicant2PaymentOtherDetail(
+            ocrDataFields.getApplicant2PaymentOtherDetail()
+        );
         caseData.getPaperFormDetails().setSoleOrApplicant1PaymentOther(
             from(toBoolean(ocrDataFields.getSoleOrApplicant1PaymentOther()))
         );

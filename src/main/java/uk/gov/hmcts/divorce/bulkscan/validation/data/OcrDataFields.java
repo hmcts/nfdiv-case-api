@@ -1,3 +1,4 @@
+
 package uk.gov.hmcts.divorce.bulkscan.validation.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,7 +13,9 @@ import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
@@ -144,6 +147,7 @@ public class OcrDataFields {
     private String applicant2OrLegalRepFullName;
     private String applicant2LegalRepFirm;
     private String applicant2LegalRepPosition;
+    private String applicant2PaymentOtherDetail;
     private String courtFee;
     private String soleOrApplicant1NoPaymentIncluded;
     private String soleOrApplicant1HWFConfirmation;
@@ -164,15 +168,27 @@ public class OcrDataFields {
 
     public static OcrDataFields transformData(List<KeyValue> ocrDataFields) {
         final ObjectMapper mapper = new ObjectMapper();
-        final Map<String, String> map = ocrDataFields.stream()
-            .collect(Collectors.toMap(KeyValue::getKey, KeyValue::getValue));
+        final Map<String, String> map = ocrDataFields
+            .stream()
+            .collect(
+                toMap(
+                    entry -> entry.getKey(),
+                    entry -> Optional.ofNullable(entry.getValue()).orElse("")
+                )
+            );
         return mapper.convertValue(map, OcrDataFields.class);
     }
 
     public static OcrDataFields transformOcrMapToObject(List<OcrDataField> ocrDataFields) {
         final ObjectMapper mapper = new ObjectMapper();
-        final Map<String, String> map = ocrDataFields.stream()
-                .collect(Collectors.toMap(OcrDataField::getName, OcrDataField::getValue));
+        final Map<String, String> map = ocrDataFields
+            .stream()
+            .collect(
+                toMap(
+                    entry -> entry.getName(),
+                    entry -> Optional.ofNullable(entry.getValue()).orElse("")
+                )
+            );
         return mapper.convertValue(map, OcrDataFields.class);
     }
 }

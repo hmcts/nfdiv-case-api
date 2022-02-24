@@ -80,7 +80,7 @@ public class BulkScanCaseTransformationControllerIT {
             .getResponse()
             .getContentAsString(UTF_8);
 
-        // dateSubmitted value is compared using ${json-unit.any-string}
+        // dateSubmitted and document ids are compared using ${json-unit.any-string}
         // assertion will fail if the above value is missing
         assertThatJson(response)
             .when(IGNORING_ARRAY_ORDER)
