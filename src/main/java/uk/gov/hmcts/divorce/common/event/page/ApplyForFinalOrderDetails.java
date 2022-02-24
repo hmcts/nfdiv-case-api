@@ -41,7 +41,7 @@ public class ApplyForFinalOrderDetails implements CcdPageConfiguration {
                     + " and the ${labelContentDivorceOrCivilPartnership} between ${marriageApplicant1Name} and "
                     + " ${marriageApplicant2Name} will be ended.")
             .complex(CaseData::getFinalOrder)
-            .mandatory(FinalOrder::getDoesApplicantWantToApplyForFinalOrder)
+            .mandatory(FinalOrder::getDoesApplicant1WantToApplyForFinalOrder)
             .done();
     }
 
@@ -53,7 +53,7 @@ public class ApplyForFinalOrderDetails implements CcdPageConfiguration {
 
         final CaseData data = details.getData();
 
-        if (!data.getFinalOrder().getDoesApplicantWantToApplyForFinalOrder().toBoolean()) {
+        if (!data.getFinalOrder().getDoesApplicant1WantToApplyForFinalOrder().toBoolean()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
                 .errors(singletonList("You must select 'Yes' to apply for Final Order"))

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDate;
@@ -80,7 +81,19 @@ public class FinalOrder {
         label = "Does the applicant want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo doesApplicantWantToApplyForFinalOrder;
+    private YesOrNo doesApplicant1WantToApplyForFinalOrder;
+
+    @CCD(
+        label = "Does ${labelContentTheApplicant2} want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
+        access = {Applicant2Access.class}
+    )
+    private YesOrNo doesApplicant2WantToApplyForFinalOrder;
+
+    @CCD(
+        label = "${labelContentTheApplicant2UC} final order explanation",
+        access = {Applicant2Access.class}
+    )
+    private String applicant2FinalOrderExplanation;
 
     @CCD(
         label = "Date from which ${labelContentTheApplicant2} can apply for Final Order",
