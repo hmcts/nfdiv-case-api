@@ -356,6 +356,12 @@ public class RetiredFields {
     )
     private List<String> transformationAndOcrWarnings = new ArrayList<>();
 
+    @CCD(
+        label = "Does the applicant want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo doesApplicantWantToApplyForFinalOrder;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
