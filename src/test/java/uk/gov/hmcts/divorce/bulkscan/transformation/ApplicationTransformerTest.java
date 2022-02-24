@@ -63,7 +63,37 @@ public class ApplicationTransformerTest {
 
         final var transformedOutput = applicationTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
+
+        final var expectedApplication =
+            jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
+
+        assertThat(transformedOutput.getCaseData().getApplication())
+            .usingRecursiveComparison()
+            .ignoringFields("dateSubmitted")
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplication);
+
+        assertThat(transformedOutput.getCaseData().getApplication().getDateSubmitted()).isEqualTo(getExpectedLocalDateTime());
+    }
+
+    @Test
+    void shouldSuccessfullyTransformSoleApplicationWithoutWarningsWhenOcrFieldValuesAreNull() throws Exception {
+        String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-application-ocr-with-null-values.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        });
+
+        final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(transformOcrMapToObject(ocrDataFields))
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = applicationTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
@@ -102,7 +132,7 @@ public class ApplicationTransformerTest {
 
         final var transformedOutput = applicationTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
@@ -142,7 +172,7 @@ public class ApplicationTransformerTest {
 
         final var transformedOutput = applicationTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings()).isEmpty();
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
@@ -178,7 +208,7 @@ public class ApplicationTransformerTest {
 
         final var transformedOutput = applicationTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+        assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please verify jurisdiction connections(missing/invalid domiciled who) in scanned form",
                 "Please verify jurisdiction connections(no options selected) in scanned form",
@@ -222,7 +252,7 @@ public class ApplicationTransformerTest {
 
         final var transformedOutput = applicationTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getTransformationAndOcrWarnings())
+        assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please verify jurisdiction connections(missing/invalid domiciled who) in scanned form",
                 "Please verify jurisdiction connections(no options selected) in scanned form",

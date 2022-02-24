@@ -14,7 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
-import uk.gov.hmcts.reform.bsp.common.model.shared.in.ExceptionRecord;
+import uk.gov.hmcts.divorce.endpoint.model.ExceptionRecord;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
 import java.util.List;
@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.inputScannedDocuments;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -69,6 +70,7 @@ public class BulkScanCaseTransformationControllerIT {
                             .builder()
                             .formType(D8.getName())
                             .ocrDataFields(ocrDataFields)
+                            .scannedDocuments(inputScannedDocuments())
                             .build()
                     )
                 )
@@ -78,7 +80,7 @@ public class BulkScanCaseTransformationControllerIT {
             .getResponse()
             .getContentAsString(UTF_8);
 
-        // dateSubmitted value is compared using ${json-unit.any-string}
+        // dateSubmitted and document ids are compared using ${json-unit.any-string}
         // assertion will fail if the above value is missing
         assertThatJson(response)
             .when(IGNORING_ARRAY_ORDER)

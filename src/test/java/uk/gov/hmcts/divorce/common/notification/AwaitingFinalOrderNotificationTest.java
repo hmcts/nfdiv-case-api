@@ -63,7 +63,8 @@ class AwaitingFinalOrderNotificationTest {
             eq(APPLICANT_APPLY_FOR_FINAL_ORDER),
             argThat(allOf(
                 hasEntry(IS_DIVORCE, CommonContent.YES),
-                hasEntry(IS_DISSOLUTION, CommonContent.NO)
+                hasEntry(IS_DISSOLUTION, CommonContent.NO),
+                hasEntry(IS_REMINDER, CommonContent.NO)
             )),
             eq(ENGLISH)
         );
@@ -90,6 +91,7 @@ class AwaitingFinalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
+                hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH)
@@ -130,6 +132,7 @@ class AwaitingFinalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
+                hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH)

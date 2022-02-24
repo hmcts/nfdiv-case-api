@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.KeyValue;
 import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 
@@ -40,6 +41,24 @@ public class OcrValidatorTest {
         assertThat(response.getWarnings()).hasSize(0);
         assertThat(response.getStatus()).isEqualTo(SUCCESS);
     }
+
+    @Test
+    void shouldValidateOcrDataSuccessfullyWhenOcrDataFieldValuesAreNull() {
+        List<KeyValue> ocrDataFields = populateD8OcrDataFields();
+        ocrDataFields.add(populateKeyValue("howToPayEmail", "null"));
+        ocrDataFields.add(populateKeyValue("debitCreditCardPayment", "null"));
+
+        final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
+            .ocrDataFields(ocrDataFields)
+            .build();
+
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
+
+        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getWarnings()).isEmpty();
+        assertThat(response.getStatus()).isEqualTo(SUCCESS);
+    }
+
 
     @Test
     void shouldReturnErrorsAndWarningsWhenNoOcrDataPassed() {

@@ -22,10 +22,11 @@
   "Applicant2NoPaymentIncluded": "No",
   "SoleOrApplicant1PaymentOther": "No",
   "Applicant2PaymentOther": "No",
-  "SoleOrApplicant1PaymentOtherDetail": null,
   "DebitCreditCardPayment": null,
   "DebitCreditCardPaymentPhone": null,
   "HowToPayEmail": null,
   "PaymentDetailEmail": null,
-  "ChequeOrPostalOrderPayment": null
+  "ChequeOrPostalOrderPayment": null,
+  "Applicant2PaymentOtherDetail": "pay details app2",
+  "SoleOrApplicant1PaymentOtherDetail": "pay details app1"
 }
