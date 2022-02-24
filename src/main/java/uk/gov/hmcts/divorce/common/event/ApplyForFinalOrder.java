@@ -1,15 +1,20 @@
 package uk.gov.hmcts.divorce.common.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ApplyForFinalOrderDetails;
+import uk.gov.hmcts.divorce.common.notification.SoleAppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -33,7 +38,13 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
     public static final String APPLY_FOR_FINAL_ORDER = "Apply for final order";
 
-    private static final List<CcdPageConfiguration> pages = List.of(
+    @Autowired
+    private SoleAppliedForFinalOrderNotification soleAppliedForFinalOrderNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    private final List<CcdPageConfiguration> pages = List.of(
         new ApplyForFinalOrderDetails()
     );
 
@@ -51,10 +62,28 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             .description(APPLY_FOR_FINAL_ORDER)
             .showSummary()
             .showEventNotes()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR)
             .grant(READ,
                 CASE_WORKER,
                 SUPER_USER,
                 LEGAL_ADVISOR));
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
+                                                                       CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Apply for Final Order about to submit callback invoked");
+
+        CaseData data = details.getData();
+
+        if (data.getApplicationType().isSole()) {
+            notificationDispatcher.send(soleAppliedForFinalOrderNotification, data, details.getId());
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .state(FinalOrderRequested)
+            .build();
     }
 }
