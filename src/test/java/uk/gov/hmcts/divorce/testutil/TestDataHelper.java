@@ -837,9 +837,8 @@ public class TestDataHelper {
             .build();
     }
 
-    public static List<KeyValue> populateD8OcrDataFields() {
+    public static List<KeyValue> populateCommonOcrDataFields() {
         List<KeyValue> kv = new ArrayList<>();
-        kv.add(populateKeyValue("applicationForDivorce", "true"));
         kv.add(populateKeyValue("aSoleApplication", "true"));
         kv.add(populateKeyValue("marriageOrCivilPartnershipCertificate", "true"));
         kv.add(populateKeyValue("translation", "false"));
@@ -862,7 +861,6 @@ public class TestDataHelper {
         kv.add(populateKeyValue("existingOrPreviousCourtCases", "No"));
         kv.add(populateKeyValue("soleOrApplicant1FinancialOrder", "No"));
         kv.add(populateKeyValue("soleOrApplicant1ConfirmationOfBreakdown", "true"));
-        kv.add(populateKeyValue("prayerMarriageDissolved", "true"));
         kv.add(populateKeyValue("soleApplicantOrApplicant1StatementOfTruth", "true"));
         kv.add(populateKeyValue("soleApplicantOrApplicant1LegalRepStatementOfTruth", "true"));
         kv.add(populateKeyValue("soleApplicantOrApplicant1OrLegalRepSignature", "signed"));
@@ -875,6 +873,25 @@ public class TestDataHelper {
         kv.add(populateKeyValue("soleOrApplicant1HWFNo", "HWF123"));
         return kv;
     }
+
+
+    public static List<KeyValue> populateD8OcrDataFields() {
+        List<KeyValue> kv = new ArrayList<>(populateCommonOcrDataFields());
+
+        kv.add(populateKeyValue("applicationForDivorce", "true"));
+        kv.add(populateKeyValue("prayerMarriageDissolved", "true"));
+
+        return kv;
+    }
+
+    public static List<KeyValue> populateD8SOcrDataFields() {
+        List<KeyValue> kv = new ArrayList<>(populateCommonOcrDataFields());
+
+        kv.add(populateKeyValue("prayerApplicant1JudiciallySeparated", "true"));
+
+        return kv;
+    }
+
 
     public static KeyValue populateKeyValue(String key, String value) {
         return KeyValue.builder()
