@@ -137,7 +137,7 @@ class D8sFormToCaseTransformerTest {
         assertThat(transformedOutput.get("scannedDocuments"))
             .usingRecursiveComparison()
             .ignoringFields("id")
-            .isEqualTo(scannedDocuments());
+            .isEqualTo(scannedDocuments(D8S));
     }
 
     @Test
@@ -255,7 +255,7 @@ class D8sFormToCaseTransformerTest {
             .builder()
             .formType(D8.getName())
             .ocrDataFields(ocrDataFields)
-            .scannedDocuments(inputScannedDocuments())
+            .scannedDocuments(inputScannedDocuments(D8S))
             .build();
     }
 }

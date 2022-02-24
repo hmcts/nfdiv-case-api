@@ -48,6 +48,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.endpoint.data.FormType;
 import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
 import uk.gov.hmcts.divorce.endpoint.model.InputScannedDoc;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -882,7 +883,7 @@ public class TestDataHelper {
             .build();
     }
 
-    public static List<ListValue<ScannedDocument>> scannedDocuments() {
+    public static List<ListValue<ScannedDocument>> scannedDocuments(FormType formType) {
         var scannedDocListValue = ListValue.<ScannedDocument>builder()
             .value(ScannedDocument
                 .builder()
@@ -890,7 +891,7 @@ public class TestDataHelper {
                 .deliveryDate(DOC_SCANNED_DATE_META_INFO)
                 .scannedDate(DOC_SCANNED_DATE_META_INFO)
                 .type(FORM)
-                .subtype(D8.getName())
+                .subtype(formType.getName())
                 .fileName(FILE_NAME)
                 .url(
                     Document
@@ -908,7 +909,7 @@ public class TestDataHelper {
         return singletonList(scannedDocListValue);
     }
 
-    public static List<InputScannedDoc> inputScannedDocuments() {
+    public static List<InputScannedDoc> inputScannedDocuments(FormType formType) {
         var inputScannedDoc = InputScannedDoc
             .builder()
             .controlNumber(DOC_CONTROL_NUMBER)
@@ -916,7 +917,7 @@ public class TestDataHelper {
             .deliveryDate(DOC_SCANNED_DATE_META_INFO)
             .fileName(FILE_NAME)
             .type("Form")
-            .subtype(D8.getName())
+            .subtype(formType.getName())
             .document(
                 InputScannedDocUrl
                     .builder()
