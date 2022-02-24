@@ -44,7 +44,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
-    private final List<CcdPageConfiguration> pages = List.of(
+    private static final List<CcdPageConfiguration> pages = List.of(
         new ApplyForFinalOrderDetails()
     );
 
