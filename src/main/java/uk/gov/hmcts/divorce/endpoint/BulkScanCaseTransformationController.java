@@ -18,11 +18,10 @@ import uk.gov.hmcts.reform.bsp.common.config.BulkScanEndpoints;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.CaseCreationDetails;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.SuccessfulTransformationResponse;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
-import javax.validation.Valid;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransformer.TRANSFORMATION_AND_OCR_WARNINGS;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
@@ -36,11 +35,7 @@ public class BulkScanCaseTransformationController {
     @Autowired
     private BulkScanService bulkScanService;
 
-    @PostMapping(
-        path = BulkScanEndpoints.TRANSFORM,
-        produces = APPLICATION_JSON_VALUE,
-        consumes = "application/json;charset=UTF-8"
-    )
+    @PostMapping(path = BulkScanEndpoints.TRANSFORM)
     @Operation(summary = "Transform exception record into CCD case data")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Transformation of Exception Record into CCD Case Data has been successful",
