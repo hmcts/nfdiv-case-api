@@ -55,6 +55,8 @@ public class PaperFormDetails {
 
     private String soleOrApplicant1PaymentOtherDetail;
 
+    private String applicant2PaymentOtherDetail;
+
     private YesOrNo debitCreditCardPayment;
 
     private YesOrNo debitCreditCardPaymentPhone;
