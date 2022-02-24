@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 
 @Component
@@ -22,7 +21,6 @@ public class D8SPrayerTransformer implements Function<TransformationDetails, Tra
 
         if (toBoolean(ocrDataFields.getPrayerApplicant1JudiciallySeparated())) {
             caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
-            caseData.setIsJudicialSeparation(YES);
         } else {
             transformationDetails.getTransformationWarnings().add("Please review prayer in the scanned form");
         }

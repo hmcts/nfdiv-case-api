@@ -191,7 +191,8 @@ public class CommonFormToCaseTransformerTest {
             transformationWarnings,
             ocrValidationResponse);
 
-        final List<ListValue<String>> extractedWarnings = (List<ListValue<String>>) transformedCaseData.get(TRANSFORMATION_AND_OCR_WARNINGS);
+        final List<ListValue<String>> extractedWarnings =
+            (List<ListValue<String>>) transformedCaseData.get(TRANSFORMATION_AND_OCR_WARNINGS);
 
         assertThat(extractedWarnings)
             .extracting("value")
