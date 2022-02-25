@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 
@@ -33,8 +33,13 @@ public class RequestInterceptor implements HandlerInterceptor {
     ) {
 
         String serviceAuthToken = request.getHeader(SERVICE_AUTHORIZATION);
+        String serviceName;
+        if (null != serviceAuthToken && !serviceAuthToken.contains("Bearer")) {
+            serviceName = tokenValidator.getServiceName("Bearer " + serviceAuthToken);
+        } else {
+            serviceName = tokenValidator.getServiceName(serviceAuthToken);
+        }
 
-        String serviceName = tokenValidator.getServiceName(serviceAuthToken);
         if (!authorisedServices.contains(serviceName)) {
             log.error("Service {} not allowed to trigger save and sign out callback ", serviceName);
             throw new UnAuthorisedServiceException("Service " + serviceName + " not in configured list for accessing callback");
