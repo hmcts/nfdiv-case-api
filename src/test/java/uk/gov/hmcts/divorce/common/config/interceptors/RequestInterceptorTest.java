@@ -23,7 +23,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOK
 @ExtendWith(MockitoExtension.class)
 public class RequestInterceptorTest {
 
-    public static final String AUTH_TOKEN_WITH_BEARER_PREFIX = "Bearer " + TEST_AUTHORIZATION_TOKEN;
+    private static final String AUTH_TOKEN_WITH_BEARER_PREFIX = "Bearer " + TEST_AUTHORIZATION_TOKEN;
+    
     @Mock
     private AuthTokenValidator validator;
 
