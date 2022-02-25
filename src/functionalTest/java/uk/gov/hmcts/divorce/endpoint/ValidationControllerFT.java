@@ -34,9 +34,10 @@ public class ValidationControllerFT {
     @Autowired
     protected ServiceAuthenticationGenerator serviceAuthenticationGenerator;
 
-    private static final String RESPONSE_SUCCESS = "classpath:responses/response-bulk-scan-d8-validation-success.json";
-    private static final String RESPONSE_WARNINGS = "classpath:responses/response-bulk-scan-d8-validation-warning.json";
-    private static final String RESPONSE_ERRORS = "classpath:responses/response-bulk-scan-d8-validation-error.json";
+    private static final String RESPONSE_SUCCESS = "classpath:responses/response-bulk-scan-validation-success.json";
+    private static final String RESPONSE_D8_WARNINGS = "classpath:responses/response-bulk-scan-d8-validation-warning.json";
+    private static final String RESPONSE_D8S_WARNINGS = "classpath:responses/response-bulk-scan-d8s-validation-warning.json";
+    private static final String RESPONSE_ERRORS = "classpath:responses/response-bulk-scan-validation-error.json";
 
     @Test
     public void shouldPassValidationGivenValidD8OcrDataProvided() throws IOException {
@@ -109,7 +110,7 @@ public class ValidationControllerFT {
 
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
-            .isEqualTo(json(expectedResponse(RESPONSE_WARNINGS)));
+            .isEqualTo(json(expectedResponse(RESPONSE_D8_WARNINGS)));
     }
 
     @Test
@@ -137,7 +138,7 @@ public class ValidationControllerFT {
 
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
-            .isEqualTo(json(expectedResponse(RESPONSE_WARNINGS)));
+            .isEqualTo(json(expectedResponse(RESPONSE_D8S_WARNINGS)));
     }
 
     @Test
