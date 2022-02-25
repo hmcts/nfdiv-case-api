@@ -6,17 +6,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 
@@ -32,7 +32,7 @@ public class RequestInterceptorTest {
 
     @BeforeEach
     public void setUp() {
-        ReflectionTestUtils.setField(requestInterceptor, "authorisedServices", List.of("ccd_data", "bulk_scan_processor", "bulk_scan_orchestrator"));
+        setField(requestInterceptor, "authorisedServices", List.of("ccd_data", "bulk_scan_processor", "bulk_scan_orchestrator"));
     }
 
     @Test
