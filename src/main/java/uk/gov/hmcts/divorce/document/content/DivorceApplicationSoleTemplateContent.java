@@ -159,7 +159,7 @@ public class DivorceApplicationSoleTemplateContent {
         if (!isNullOrEmpty(solicitorFirmName)) {
             templateContent.put(APPLICANT_2_SOLICITOR_FIRM_NAME, solicitorFirmName);
         }
-        if (!isNullOrEmpty(solicitorAddress)) {
+        if (!isNullOrEmpty(solicitorAddress.trim())) {
             String addressCleanUp =
                 join("\n", Arrays.stream(solicitorAddress.split("\n"))
                     .filter(value -> !Objects.equals(value, ""))
