@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
 import java.util.Map;
@@ -25,6 +26,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DISSOLUTION_COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
@@ -48,17 +51,35 @@ class CommonContentTest {
     private CommonContent commonContent;
 
     @Test
-    void shouldSetCommonTemplateVarsForNotifications() {
+    void shouldSetCommonTemplateVarsForDivorceNotifications() {
 
         final CaseData caseData = caseData();
         caseData.setApplicant2(respondent());
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of("divorceCourtEmail", "divorce.court@email.com"));
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID);
 
         assertThat(templateVars).isNotEmpty().hasSize(4)
             .contains(
                 entry(COURT_EMAIL, "divorce.court@email.com"),
+                entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
+                entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
+                entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)));
+    }
+
+    @Test
+    void shouldSetCommonTemplateVarsForDissolutionNotifications() {
+
+        final CaseData caseData = caseData();
+        caseData.setApplicant2(respondent());
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DISSOLUTION_COURT_EMAIL, "dissolution.court@email.com"));
+
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID);
+
+        assertThat(templateVars).isNotEmpty().hasSize(4)
+            .contains(
+                entry(COURT_EMAIL, "dissolution.court@email.com"),
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
                 entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)));
