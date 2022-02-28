@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 
 import java.time.LocalDate;
@@ -23,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CONNECTION;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
@@ -42,60 +42,60 @@ public class CaseValidationTest {
 
     @Test
     public void shouldValidateBasicCase() {
-        CaseData caseData = new CaseData();
-        List<String> errors = validateBasicCase(caseData);
+        final CaseData caseData = new CaseData();
+        final List<String> errors = validateBasicCase(caseData);
         assertThat(errors).hasSize(13);
     }
 
     @Test
     public void shouldReturnErrorWhenStringIsNull() {
-        List<String> response = notNull(null, "field");
+        final List<String> response = notNull(null, "field");
 
         assertThat(response).isEqualTo(List.of("field" + EMPTY));
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsInTheFuture() {
-        List<String> response = validateMarriageDate(LocalDate.now().plus(2, YEARS), "field");
+        final List<String> response = validateMarriageDate(LocalDate.now().plus(2, YEARS), "field");
 
         assertThat(response).isEqualTo(List.of("field" + IN_THE_FUTURE));
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsOverOneHundredYearsAgo() {
-        LocalDate oneHundredYearsAndOneDayAgo = LocalDate.now()
+        final LocalDate oneHundredYearsAndOneDayAgo = LocalDate.now()
             .minus(100, YEARS)
             .minus(1, DAYS);
 
-        List<String> response = validateMarriageDate(oneHundredYearsAndOneDayAgo, "field");
+        final List<String> response = validateMarriageDate(oneHundredYearsAndOneDayAgo, "field");
 
         assertThat(response).isEqualTo(List.of("field" + MORE_THAN_ONE_HUNDRED_YEARS_AGO));
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsLessThanOneYearAgo() {
-        List<String> response = validateMarriageDate(LocalDate.now().minus(360, DAYS), "field");
+        final List<String> response = validateMarriageDate(LocalDate.now().minus(360, DAYS), "field");
 
         assertThat(response).isEqualTo(List.of("field" + LESS_THAN_ONE_YEAR_AGO));
     }
 
     @Test
     public void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
-        CaseData caseData = new CaseData();
+        final CaseData caseData = new CaseData();
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         assertTrue(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
 
     @Test
     public void shouldReturnFalseWhenCaseDoesNotHaveAwaitingDocuments() {
-        CaseData caseData = new CaseData();
+        final CaseData caseData = new CaseData();
         assertFalse(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
 
     @Test
     public void shouldReturnErrorWhenApp2MarriageCertNameAndPlaceOfMarriageAreMissing() {
-        CaseData caseData = new CaseData();
-        List<String> errors = validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails());
+        final CaseData caseData = new CaseData();
+        final List<String> errors = validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails());
 
         assertThat(errors).containsExactlyInAnyOrder(
             "MarriageApplicant2Name cannot be empty or null",
@@ -105,9 +105,9 @@ public class CaseValidationTest {
 
     @Test
     public void shouldReturnErrorWhenApp2MarriageCertNameIsMissing() {
-        MarriageDetails marriageDetails = new MarriageDetails();
+        final MarriageDetails marriageDetails = new MarriageDetails();
         marriageDetails.setPlaceOfMarriage("London");
-        List<String> errors = validateCaseFieldsForIssueApplication(marriageDetails);
+        final List<String> errors = validateCaseFieldsForIssueApplication(marriageDetails);
 
         assertThat(errors).containsExactlyInAnyOrder(
             "MarriageApplicant2Name cannot be empty or null"
@@ -116,38 +116,10 @@ public class CaseValidationTest {
 
     @Test
     public void shouldNotReturnErrorWhenBothWhenApp2MarriageCertNameAndPlaceOfMarriageArePresent() {
-        MarriageDetails marriageDetails = new MarriageDetails();
+        final MarriageDetails marriageDetails = new MarriageDetails();
         marriageDetails.setPlaceOfMarriage("London");
         marriageDetails.setApplicant2Name("TestFname TestMname  TestLname");
-        List<String> errors = validateCaseFieldsForIssueApplication(marriageDetails);
-
-        assertThat(errors).isEmpty();
-    }
-
-    @Test
-    public void shouldOnlyValidateEmptyJurisdictionConnectionsForSolicitorApplication() {
-        final CaseData caseData = caseData();
-        caseData.setApplication(Application.builder()
-            .solSignStatementOfTruth(YES)
-            .build());
-
-        caseData.getApplication().getJurisdiction().setConnections(Collections.emptySet());
-
-        List<String> errors = validateJurisdictionConnections(caseData);
-
-        assertThat(errors).containsOnly("JurisdictionConnections" + ValidationUtil.EMPTY);
-    }
-
-    @Test
-    public void shouldReturnEmptyListForNonEmptyJurisdictionConnectionsForSolicitorApplication() {
-        final CaseData caseData = caseData();
-        caseData.setApplication(Application.builder()
-            .solSignStatementOfTruth(YES)
-            .build());
-
-        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
-
-        List<String> errors = validateJurisdictionConnections(caseData);
+        final List<String> errors = validateCaseFieldsForIssueApplication(marriageDetails);
 
         assertThat(errors).isEmpty();
     }
@@ -159,11 +131,11 @@ public class CaseValidationTest {
             .solSignStatementOfTruth(NO)
             .build());
 
-        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_APP_2_RESIDENT));
 
-        List<String> errors = validateJurisdictionConnections(caseData);
+        final List<String> errors = validateJurisdictionConnections(caseData);
 
-        assertThat(errors).contains(CONNECTION + JurisdictionConnections.APP_1_APP_2_RESIDENT + CANNOT_EXIST);
+        assertThat(errors).contains(CONNECTION + APP_1_APP_2_RESIDENT + CANNOT_EXIST);
     }
 
     @Test
@@ -175,7 +147,7 @@ public class CaseValidationTest {
 
         caseData.getApplication().getJurisdiction().setConnections(Collections.emptySet());
 
-        List<String> errors = validateJurisdictionConnections(caseData);
+        final List<String> errors = validateJurisdictionConnections(caseData);
 
         assertThat(errors).containsOnly("JurisdictionConnections" + ValidationUtil.EMPTY);
     }
@@ -187,9 +159,9 @@ public class CaseValidationTest {
             .solicitorRepresented(YES)
             .build());
 
-        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_APP_2_RESIDENT));
 
-        List<String> errors = validateJurisdictionConnections(caseData);
+        final List<String> errors = validateJurisdictionConnections(caseData);
 
         assertThat(errors).isEmpty();
     }
@@ -201,11 +173,11 @@ public class CaseValidationTest {
             .solicitorRepresented(NO)
             .build());
 
-        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_APP_2_RESIDENT));
 
-        List<String> errors = validateJurisdictionConnections(caseData);
+        final List<String> errors = validateJurisdictionConnections(caseData);
 
-        assertThat(errors).contains(CONNECTION + JurisdictionConnections.APP_1_APP_2_RESIDENT + CANNOT_EXIST);
+        assertThat(errors).contains(CONNECTION + APP_1_APP_2_RESIDENT + CANNOT_EXIST);
     }
 
     @Test
@@ -235,7 +207,7 @@ public class CaseValidationTest {
         caseData.setCasesAcceptedToListForHearing(
             List.of(caseLinkListValue1, caseLinkListValue2, caseLinkListValue3));
 
-        List<String> errors = validateCasesAcceptedToListForHearing(caseData);
+        final List<String> errors = validateCasesAcceptedToListForHearing(caseData);
 
         assertThat(errors).contains("You can only remove cases from the list of cases accepted to list for hearing.");
     }
@@ -259,7 +231,7 @@ public class CaseValidationTest {
                 .build();
         caseData.setCasesAcceptedToListForHearing(List.of(caseLinkListValue1, caseLinkListValue2));
 
-        List<String> errors = validateCasesAcceptedToListForHearing(caseData);
+        final List<String> errors = validateCasesAcceptedToListForHearing(caseData);
 
         assertThat(errors).contains("You can only remove cases from the list of cases accepted to list for hearing.");
     }
