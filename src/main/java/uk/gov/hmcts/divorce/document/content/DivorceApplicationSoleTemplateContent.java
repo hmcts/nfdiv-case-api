@@ -10,10 +10,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicantTemplateDataProvider;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataProvider;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-import static java.util.Objects.nonNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.lang.String.join;
 import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
@@ -21,7 +24,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
@@ -110,12 +112,9 @@ public class DivorceApplicationSoleTemplateContent {
             templateContent.put(HAS_OTHER_COURT_CASES_APPLICANT_1, applicant1.getLegalProceedings().toBoolean());
             templateContent.put(APPLICANT_1_COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
         }
-        if (null != application.getApplicant1IsApplicant2Represented()) {
-            boolean applicant1IsApplicant2Represented = application.getApplicant1IsApplicant2Represented() == Applicant2Represented.YES;
-            templateContent.put(APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS, applicant1IsApplicant2Represented);
-            if (applicant1IsApplicant2Represented) {
-                setSolicitorDetails(templateContent, applicant2);
-            }
+        if (null != application.getApplicant1IsApplicant2Represented()
+            && application.getApplicant1IsApplicant2Represented() == Applicant2Represented.YES) {
+            setSolicitorDetails(templateContent, applicant2);
         }
 
         templateContent.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
@@ -146,11 +145,26 @@ public class DivorceApplicationSoleTemplateContent {
         String solicitorFirmName = applicant.getSolicitor().getFirmName();
         String solicitorAddress = applicant.getSolicitor().getAddress();
         boolean hasEnteredSolicitorDetails =
-            nonNull(solicitorName) || nonNull(solicitorEmail) || nonNull(solicitorFirmName) || nonNull(solicitorAddress);
+            !isNullOrEmpty(solicitorName)
+            || !isNullOrEmpty(solicitorEmail)
+            || !isNullOrEmpty(solicitorFirmName)
+            || !isNullOrEmpty(solicitorAddress.trim());
         templateContent.put(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, hasEnteredSolicitorDetails);
-        templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName);
-        templateContent.put(APPLICANT_2_SOLICITOR_EMAIL, solicitorEmail);
-        templateContent.put(APPLICANT_2_SOLICITOR_FIRM_NAME, solicitorFirmName);
-        templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, solicitorAddress);
+        if (!isNullOrEmpty(solicitorName)) {
+            templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName);
+        }
+        if (!isNullOrEmpty(solicitorEmail)) {
+            templateContent.put(APPLICANT_2_SOLICITOR_EMAIL, solicitorEmail);
+        }
+        if (!isNullOrEmpty(solicitorFirmName)) {
+            templateContent.put(APPLICANT_2_SOLICITOR_FIRM_NAME, solicitorFirmName);
+        }
+        if (!isNullOrEmpty(solicitorAddress)) {
+            String addressCleanUp =
+                join("\n", Arrays.stream(solicitorAddress.split("\n"))
+                    .filter(value -> !Objects.equals(value, ""))
+                    .toArray(String[]::new));
+            templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, addressCleanUp);
+        }
     }
 }

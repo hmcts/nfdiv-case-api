@@ -32,7 +32,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
@@ -66,7 +65,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -144,8 +142,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_POSTAL_ADDRESS, null),
             entry(APPLICANT_2_EMAIL, TEST_USER_EMAIL),
             entry(PLACE_OF_MARRIAGE, null),
-            entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS, false)
+            entry(MARRIAGE_DATE, null)
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
@@ -156,6 +153,8 @@ public class DivorceApplicationSoleTemplateContentTest {
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithTypeDissolution() {
+        final String solAddressWithNewLine = "10 Solicitor Road\ntown\n\npostcode\n";
+        final String solAddressWithCleanUp = "10 Solicitor Road\ntown\npostcode";
 
         final Applicant applicant1 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
@@ -176,7 +175,7 @@ public class DivorceApplicationSoleTemplateContentTest {
                 .name(TEST_SOLICITOR_NAME)
                 .email(TEST_SOLICITOR_EMAIL)
                 .firmName(TEST_SOLICITOR_NAME)
-                .address(TEST_SOLICITOR_ADDRESS)
+                .address(solAddressWithNewLine)
                 .build())
             .build();
 
@@ -222,12 +221,11 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_EMAIL, TEST_USER_EMAIL),
             entry(PLACE_OF_MARRIAGE, null),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS, true),
             entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, true),
             entry(APPLICANT_2_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
             entry(APPLICANT_2_SOLICITOR_EMAIL, TEST_SOLICITOR_EMAIL),
             entry(APPLICANT_2_SOLICITOR_FIRM_NAME, TEST_SOLICITOR_NAME),
-            entry(APPLICANT_2_SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS)
+            entry(APPLICANT_2_SOLICITOR_ADDRESS, solAddressWithCleanUp)
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
