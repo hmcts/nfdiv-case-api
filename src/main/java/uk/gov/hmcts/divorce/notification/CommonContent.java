@@ -90,6 +90,8 @@ public class CommonContent {
         templateVars.put(APPLICANT_NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
         templateVars.put(RESPONDENT_NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
+        templateVars.put(COURT_EMAIL,
+            config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
 
         return templateVars;
     }
