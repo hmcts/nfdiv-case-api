@@ -73,6 +73,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.LINE_1_LINE_2_CITY_POSTCODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -140,7 +141,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce from"),
-            entry(CCD_CASE_REFERENCE, 1616591401473378L),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, DIVORCE_APPLICATION),
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
@@ -196,7 +197,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_1_EMAIL, "test@test.com"),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce"),
-            entry(CCD_CASE_REFERENCE, 1616591401473378L),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, DIVORCE_APPLICATION),
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
@@ -251,7 +252,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_1_EMAIL, "test@test.com"),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of the civil partnership with"),
-            entry(CCD_CASE_REFERENCE, 1616591401473378L),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, TO_END_A_CIVIL_PARTNERSHIP),
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership"),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
@@ -301,7 +302,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_1_EMAIL, "test@test.com"),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of their civil partnership"),
-            entry(CCD_CASE_REFERENCE, 1616591401473378L),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP),
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership"),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
