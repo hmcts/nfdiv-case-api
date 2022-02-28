@@ -11,6 +11,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
+import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,6 +36,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_OTHER_PARTY;
@@ -80,12 +84,16 @@ public class CaseworkerGeneralEmailIT {
     @MockBean
     private NotificationService notificationService;
 
+    @MockBean
+    private EmailTemplatesConfig emailTemplatesConfig;
+
     @Test
     void shouldSendEmailNotificationToApplicantWhenGeneralEmailPartyIsPetitionerAndIsNotSolicitorRepresented() throws Exception {
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
+
         final var caseData = caseData();
         final var applicant1 = getApplicant();
         caseData.setApplicant1(applicant1);
-
         caseData.setGeneralEmail(GeneralEmail
             .builder()
             .generalEmailDetails("some details")
@@ -112,6 +120,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, "null null");
+        templateVars.put(COURT_EMAIL, "divorce.court@email.com");
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
@@ -123,6 +132,7 @@ public class CaseworkerGeneralEmailIT {
 
     @Test
     void shouldSendEmailNotificationToApplicantSolicitorWhenGeneralEmailPartyIsPetitionerAndIsSolicitorRepresented() throws Exception {
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
         final var caseData = caseData();
 
         final var applicant1 = getApplicant();
@@ -158,6 +168,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
+        templateVars.put(COURT_EMAIL, "divorce.court@email.com");
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
@@ -169,6 +180,7 @@ public class CaseworkerGeneralEmailIT {
 
     @Test
     void shouldSendEmailNotificationToRespondentWhenGeneralEmailPartyIsRespondentAndIsNotSolicitorRepresented() throws Exception {
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
         final var caseData = caseData();
         final var applicant2 = getApplicant();
         caseData.setApplicant2(applicant2);
@@ -199,6 +211,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        templateVars.put(COURT_EMAIL, "divorce.court@email.com");
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
@@ -210,6 +223,7 @@ public class CaseworkerGeneralEmailIT {
 
     @Test
     void shouldSendEmailNotificationToRespondentSolicitorWhenGeneralEmailPartyIsRespondentAndIsSolicitorRepresented() throws Exception {
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
         final var caseData = caseData();
         final var applicant2 = getApplicant();
         applicant2.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
@@ -246,6 +260,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
+        templateVars.put(COURT_EMAIL, "divorce.court@email.com");
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
@@ -257,6 +272,7 @@ public class CaseworkerGeneralEmailIT {
 
     @Test
     void shouldSendEmailNotificationToOtherPartyWhenGeneralEmailPartyIsOther() throws Exception {
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
         final var caseData = caseData();
         caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).build());
         caseData.setApplicant2(Applicant.builder().firstName(APPLICANT_2_FIRST_NAME).lastName(APPLICANT_2_LAST_NAME).build());
@@ -289,6 +305,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
+        templateVars.put(COURT_EMAIL, "divorce.court@email.com");
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
