@@ -211,4 +211,9 @@ public class ConditionalOrder {
     public boolean isConditionalOrderPending() {
         return isNull(conditionalOrderApplicant1Questions.getSubmittedDate());
     }
+
+    @JsonIgnore
+    public boolean cannotUploadClarificationDocumentsBoolean() {
+        return nonNull(cannotUploadClarificationDocuments) && cannotUploadClarificationDocuments.toBoolean();
+    }
 }
