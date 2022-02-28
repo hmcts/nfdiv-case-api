@@ -13,8 +13,8 @@ import uk.gov.hmcts.reform.bsp.common.model.transformation.output.CaseCreationDe
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.SuccessfulTransformationResponse;
 
 import java.util.Map;
-import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
@@ -47,19 +47,9 @@ public class BulkScanCaseTransformationControllerTest {
         ResponseEntity<SuccessfulTransformationResponse> response =
             controller.transformExceptionRecordIntoCase(TEST_SERVICE_AUTH_TOKEN, exceptionRecord);
 
-        SuccessfulTransformationResponse successfulTransformationResponse = SuccessfulTransformationResponse.builder()
-            .caseCreationDetails(
-                new CaseCreationDetails(
-                    CASE_TYPE,
-                    CREATE_PAPER_CASE,
-                    transformedData
-                )
-            )
-            .build();
-
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
 
-        CaseCreationDetails caseCreationDetails = Objects.requireNonNull(response.getBody()).getCaseCreationDetails();
+        CaseCreationDetails caseCreationDetails = requireNonNull(response.getBody()).getCaseCreationDetails();
         assertThat(caseCreationDetails.getCaseData()).isEqualTo(transformedData);
         assertThat(caseCreationDetails.getCaseTypeId()).isEqualTo(CASE_TYPE);
         assertThat(caseCreationDetails.getEventId()).isEqualTo(CREATE_PAPER_CASE);
