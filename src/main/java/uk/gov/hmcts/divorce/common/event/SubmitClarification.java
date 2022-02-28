@@ -1,13 +1,19 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.PostInformationToCourtNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
@@ -21,8 +27,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
+@Slf4j
 public class SubmitClarification implements CCDConfig<CaseData, State, UserRole> {
+
     public static final String SUBMIT_CLARIFICATION = "submit-clarification";
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private PostInformationToCourtNotification postInformationToCourtNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -33,6 +47,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             .description("Submit clarification for conditional order")
             .showSummary()
             .showEventNotes()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
             .grant(READ,
                 CASE_WORKER,
@@ -48,6 +63,24 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 .mandatory(ConditionalOrder::getCannotUploadClarificationDocuments)
                 .optional(ConditionalOrder::getClarificationUploadDocuments)
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Submit Clarification about to submit callback invoked for case id: {}", details.getId());
+
+        final CaseData data = details.getData();
+        final boolean cannotUploadDocuments = data.getConditionalOrder().cannotUploadClarificationDocumentsBoolean();
+
+        if (cannotUploadDocuments) {
+            notificationDispatcher.send(postInformationToCourtNotification, data, details.getId());
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .state(ClarificationSubmitted)
+            .build();
     }
 
 }

@@ -1,0 +1,491 @@
+[
+  {
+    "name": "applicationForDivorce",
+    "value": "true"
+  },
+  {
+    "name": "applicationForDissolution",
+    "value": "true"
+  },
+  {
+    "name": "aSoleApplication",
+    "value": "true"
+  },
+  {
+    "name": "aJointApplication",
+    "value": "false"
+  },
+  {
+    "name": "marriageOrCivilPartnershipCertificate",
+    "value": "true"
+  },
+  {
+    "name": "translation",
+    "value": "false"
+  },
+  {
+    "name": "soleApplicantOrApplicant1FirstName",
+    "value": "app1Fname"
+  },
+  {
+    "name": "soleApplicantOrApplicant1MiddleName",
+    "value": ""
+  },
+  {
+    "name": "soleApplicantOrApplicant1LastName",
+    "value": "app1Lname"
+  },
+  {
+    "name": "soleOrApplicant1MarriedName",
+    "value": "Yes"
+  },
+  {
+    "name": "soleOrApplicant1MarriedNameReason",
+    "value": "some reason"
+  },
+  {
+    "name": "confidentialDetailsSpouseOrCivilPartner",
+    "value": "Yes"
+  },
+  {
+    "name": "soleOrApplicant1BuildingAndStreet",
+    "value": "some street"
+  },
+  {
+    "name": "soleOrApplicant1SecondLineOfAddress",
+    "value": "second line address"
+  },
+  {
+    "name": "soleOrApplicant1TownOrCity",
+    "value": "city"
+  },
+  {
+    "name": "soleOrApplicant1County",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1Postcode",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1Country",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1PhoneNo",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1Email",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1Solicitor",
+    "value": "Yes"
+  },
+  {
+    "name": "soleOrApplicant1SolicitorName",
+    "value": "testsolicitor"
+  },
+  {
+    "name": "soleorApplicant1SolicitorRefNo",
+    "value": "testref"
+  },
+  {
+    "name": "soleOrApplicant1SolicitorFirm",
+    "value": "some firm"
+  },
+  {
+    "name": "soleOrApplicant1SolicitorBuildingAndStreet",
+    "value": "some street"
+  },
+  {
+    "name": "soleOrApplicant1SolicitorSecondLineOfAddress",
+    "value": "second line of address"
+  },
+  {
+    "name": "soleOrApplicant1SolicitorCounty",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1SolicitorCountry",
+    "value": "UK"
+  },
+  {
+    "name": "soleOrApplicant1SolicitorPostcode",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1SolicitorDX",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1SolicitorEmail",
+    "value": "testsol@dummy.com"
+  },
+  {
+    "name": "respondentOrApplicant2FirstName",
+    "value": "respFname"
+  },
+  {
+    "name": "respondentOrApplicant2MiddleName",
+    "value": "respMname"
+  },
+  {
+    "name": "respondentOrApplicant2LastName",
+    "value": "respLname"
+  },
+  {
+    "name": "respondentOrApplicant2MarriedName",
+    "value": "No"
+  },
+  {
+    "name": "respondentOrApplicant2WhyMarriedNameChanged",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2BuildingAndStreet",
+    "value": "some street"
+  },
+  {
+    "name": "respondentOrApplicant2SecondLineOfAddress",
+    "value": "second line of address"
+  },
+  {
+    "name": "respondentOrApplicant2TownOrCity",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2Country",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2Postcode",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2PhoneNo",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2Email",
+    "value": "app2test@dummy.com"
+  },
+  {
+    "name": "respondentEmailAccess",
+    "value": "true"
+  },
+  {
+    "name": "serveOutOfUK",
+    "value": "No"
+  },
+  {
+    "name": "respondentServePostOnly",
+    "value": "false"
+  },
+  {
+    "name": "applicantWillServeApplication",
+    "value": "false"
+  },
+  {
+    "name": "respondentDifferentServiceAddress",
+    "value": "No"
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorName",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorRefNo",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorFirm",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorBuildingAndStreet",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorSecondLineOfAddress",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorTownOrCity",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorCounty",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorCountry",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorPostcode",
+    "value": ""
+  },
+  {
+    "name": "respondentOrApplicant2SolicitorDX",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1SolicitorPhoneNo",
+    "value": ""
+  },
+  {
+    "name": "marriageOutsideOfUK",
+    "value": "No"
+  },
+  {
+    "name": "makingAnApplicationWithoutCertificate",
+    "value": "No"
+  },
+  {
+    "name": "placeOfMarriageOrCivilPartnership",
+    "value": "London"
+  },
+  {
+    "name": "dateOfMarriageOrCivilPartnershipDay",
+    "value": "01"
+  },
+  {
+    "name": "dateOfMarriageOrCivilPartnershipMonth",
+    "value": "01"
+  },
+  {
+    "name": "dateOfMarriageOrCivilPartnershipYear",
+    "value": "1990"
+  },
+  {
+    "name": "soleOrApplicant1FullNameAsOnCert",
+    "value": "app1 fullname"
+  },
+  {
+    "name": "respondentOrApplicant2FullNameAsOnCert",
+    "value": "resptest name"
+  },
+  {
+    "name": "detailsOnCertCorrect",
+    "value": "Yes"
+  },
+  {
+    "name": "reasonWhyCertNotCorrect",
+    "value": ""
+  },
+  {
+    "name": "jurisdictionReasonsBothPartiesHabitual",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsSameSex",
+    "value": "false"
+  },
+  {
+    "name": "soleOrApplicant1ConfirmationOfBreakdown",
+    "value": "true"
+  },
+  {
+    "name": "soleApplicantOrApplicant1LegalRepStatementOfTruth",
+    "value": "true"
+  },
+  {
+    "name": "applicant2ConfirmationOfBreakdown",
+    "value": ""
+  },
+  {
+    "name": "existingOrPreviousCourtCases",
+    "value": "No"
+  },
+  {
+    "name": "existingOrPreviousCourtCaseNumbers",
+    "value": ""
+  },
+  {
+    "name": "summaryOfExistingOrPreviousCourtCases",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1FinancialOrder",
+    "value": "Yes"
+  },
+  {
+    "name": "soleOrApplicant1FinancialOrderFor",
+    "value": "myself,children"
+  },
+  {
+    "name": "applicant2FinancialOrder",
+    "value": "Yes"
+  },
+  {
+    "name": "applicant2FinancialOrderFor",
+    "value": "myself"
+  },
+  {
+    "name": "prayerMarriageDissolved",
+    "value": "true"
+  },
+  {
+    "name": "prayerCivilPartnershipDissolved",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1prayerFinancialOrder",
+    "value": "true"
+  },
+  {
+    "name": "soleOrApplicant1prayerFinancialOrderFor",
+    "value": "theSoleApplicantOrApplicant1,forTheChildren"
+  },
+  {
+    "name": "applicant2PrayerFinancialOrder",
+    "value": "Yes"
+  },
+  {
+    "name": "applicant2PrayerFinancialOrderFor",
+    "value": "applicant2"
+  },
+  {
+    "name": "soleApplicantOrApplicant1StatementOfTruth",
+    "value": "true"
+  },
+  {
+    "name": "soleApplicantOrApplicant1Signing",
+    "value": "true"
+  },
+  {
+    "name": "legalRepSigning",
+    "value": "false"
+  },
+  {
+    "name": "statementOfTruthDateDay",
+    "value": "18"
+  },
+  {
+    "name": "statementOfTruthDateMonth",
+    "value": "1"
+  },
+  {
+    "name": "statementOfTruthDateYear",
+    "value": "2022"
+  },
+  {
+    "name": "soleApplicantOrApplicant1OrLegalRepFullName",
+    "value": "test name"
+  },
+  {
+    "name": "soleApplicantOrApplicant1OrLegalRepSignature",
+    "value": "signed"
+  },
+  {
+    "name": "soleApplicantOrApplicant1LegalRepPosition",
+    "value": ""
+  },
+  {
+    "name": "applicant2StatementOfTruth",
+    "value": "true"
+  },
+  {
+    "name": "applicant2LegalRepStatementOfTruth",
+    "value": "false"
+  },
+  {
+    "name": "applicant2OrLegalRepSignature",
+    "value": ""
+  },
+  {
+    "name": "applicant2Signing",
+    "value": "true"
+  },
+  {
+    "name": "applicant2LegalRepSigning",
+    "value": "false"
+  },
+  {
+    "name": "applicant2StatementOfTruthDateDay",
+    "value": "18"
+  },
+  {
+    "name": "applicant2StatementOfTruthDateMonth",
+    "value": "01"
+  },
+  {
+    "name": "applicant2StatementOfTruthDateYear",
+    "value": "2022"
+  },
+  {
+    "name": "applicant2OrLegalRepFullName",
+    "value": "some name"
+  },
+  {
+    "name": "applicant2LegalRepFirm",
+    "value": ""
+  },
+  {
+    "name": "soleApplicantOrApplicant1LegalRepFirm",
+    "value": ""
+  },
+  {
+    "name": "courtFee",
+    "value": "595£"
+  },
+  {
+    "name": "soleOrApplicant1NoPaymentIncluded",
+    "value": "Yes"
+  },
+  {
+    "name": "soleOrApplicant1HWFConfirmation",
+    "value": "HWF123"
+  },
+  {
+    "name": "soleOrApplicant1HWFApp",
+    "value": "true"
+  },
+  {
+    "name": "soleOrApplicant1PaymentOther",
+    "value": "false"
+  },
+  {
+    "name": "soleOrApplicant1PaymentOtherDetail",
+    "value": ""
+  },
+  {
+    "name": "applicant2NoPaymentIncluded",
+    "value": "true"
+  },
+  {
+    "name": "applicant2HWFConfirmation",
+    "value": "true"
+  },
+  {
+    "name": "applicant2HWFNo",
+    "value": "HWF456"
+  },
+  {
+    "name": "applicant2HWFApp",
+    "value": "true"
+  },
+  {
+    "name": "applicant2PaymentOther",
+    "value": "false"
+  },
+  {
+    "name": "debitCreditCardPayment",
+    "value": "false"
+  },
+  {
+    "name": "debitCreditCardPaymentPhone",
+    "value": "false"
+  },
+  {
+    "name": "paymentDetailEmail",
+    "value": ""
+  },
+  {
+    "name": "chequeOrPostalOrderPayment",
+    "value": "false"
+  }
+]
+
