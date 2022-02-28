@@ -62,7 +62,6 @@ public class RespondentSolicitorAosInvitationTemplateContent {
         String applicant2PostalAddress;
         AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2().getHomeAddress();
 
-        // todo use getCorrespondenceAddress and new Address method
         if (applicant2HomeAddress == null) {
             applicant2PostalAddress = caseData.getApplicant2().getSolicitor().getAddress();
         } else {

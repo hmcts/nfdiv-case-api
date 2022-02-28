@@ -42,60 +42,60 @@ public class CaseValidationTest {
 
     @Test
     public void shouldValidateBasicCase() {
-        final CaseData caseData = new CaseData();
-        final List<String> errors = validateBasicCase(caseData);
+        CaseData caseData = new CaseData();
+        List<String> errors = validateBasicCase(caseData);
         assertThat(errors).hasSize(13);
     }
 
     @Test
     public void shouldReturnErrorWhenStringIsNull() {
-        final List<String> response = notNull(null, "field");
+        List<String> response = notNull(null, "field");
 
         assertThat(response).isEqualTo(List.of("field" + EMPTY));
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsInTheFuture() {
-        final List<String> response = validateMarriageDate(LocalDate.now().plus(2, YEARS), "field");
+        List<String> response = validateMarriageDate(LocalDate.now().plus(2, YEARS), "field");
 
         assertThat(response).isEqualTo(List.of("field" + IN_THE_FUTURE));
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsOverOneHundredYearsAgo() {
-        final LocalDate oneHundredYearsAndOneDayAgo = LocalDate.now()
+        LocalDate oneHundredYearsAndOneDayAgo = LocalDate.now()
             .minus(100, YEARS)
             .minus(1, DAYS);
 
-        final List<String> response = validateMarriageDate(oneHundredYearsAndOneDayAgo, "field");
+        List<String> response = validateMarriageDate(oneHundredYearsAndOneDayAgo, "field");
 
         assertThat(response).isEqualTo(List.of("field" + MORE_THAN_ONE_HUNDRED_YEARS_AGO));
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsLessThanOneYearAgo() {
-        final List<String> response = validateMarriageDate(LocalDate.now().minus(360, DAYS), "field");
+        List<String> response = validateMarriageDate(LocalDate.now().minus(360, DAYS), "field");
 
         assertThat(response).isEqualTo(List.of("field" + LESS_THAN_ONE_YEAR_AGO));
     }
 
     @Test
     public void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
-        final CaseData caseData = new CaseData();
+        CaseData caseData = new CaseData();
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         assertTrue(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
 
     @Test
     public void shouldReturnFalseWhenCaseDoesNotHaveAwaitingDocuments() {
-        final CaseData caseData = new CaseData();
+        CaseData caseData = new CaseData();
         assertFalse(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
 
     @Test
     public void shouldReturnErrorWhenApp2MarriageCertNameAndPlaceOfMarriageAreMissing() {
-        final CaseData caseData = new CaseData();
-        final List<String> errors = validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails());
+        CaseData caseData = new CaseData();
+        List<String> errors = validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails());
 
         assertThat(errors).containsExactlyInAnyOrder(
             "MarriageApplicant2Name cannot be empty or null",
@@ -105,9 +105,9 @@ public class CaseValidationTest {
 
     @Test
     public void shouldReturnErrorWhenApp2MarriageCertNameIsMissing() {
-        final MarriageDetails marriageDetails = new MarriageDetails();
+        MarriageDetails marriageDetails = new MarriageDetails();
         marriageDetails.setPlaceOfMarriage("London");
-        final List<String> errors = validateCaseFieldsForIssueApplication(marriageDetails);
+        List<String> errors = validateCaseFieldsForIssueApplication(marriageDetails);
 
         assertThat(errors).containsExactlyInAnyOrder(
             "MarriageApplicant2Name cannot be empty or null"
@@ -116,10 +116,10 @@ public class CaseValidationTest {
 
     @Test
     public void shouldNotReturnErrorWhenBothWhenApp2MarriageCertNameAndPlaceOfMarriageArePresent() {
-        final MarriageDetails marriageDetails = new MarriageDetails();
+        MarriageDetails marriageDetails = new MarriageDetails();
         marriageDetails.setPlaceOfMarriage("London");
         marriageDetails.setApplicant2Name("TestFname TestMname  TestLname");
-        final List<String> errors = validateCaseFieldsForIssueApplication(marriageDetails);
+        List<String> errors = validateCaseFieldsForIssueApplication(marriageDetails);
 
         assertThat(errors).isEmpty();
     }
@@ -147,7 +147,7 @@ public class CaseValidationTest {
 
         caseData.getApplication().getJurisdiction().setConnections(Collections.emptySet());
 
-        final List<String> errors = validateJurisdictionConnections(caseData);
+        List<String> errors = validateJurisdictionConnections(caseData);
 
         assertThat(errors).containsOnly("JurisdictionConnections" + ValidationUtil.EMPTY);
     }
@@ -161,7 +161,7 @@ public class CaseValidationTest {
 
         caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_APP_2_RESIDENT));
 
-        final List<String> errors = validateJurisdictionConnections(caseData);
+        List<String> errors = validateJurisdictionConnections(caseData);
 
         assertThat(errors).isEmpty();
     }
@@ -175,7 +175,7 @@ public class CaseValidationTest {
 
         caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_APP_2_RESIDENT));
 
-        final List<String> errors = validateJurisdictionConnections(caseData);
+        List<String> errors = validateJurisdictionConnections(caseData);
 
         assertThat(errors).contains(CONNECTION + APP_1_APP_2_RESIDENT + CANNOT_EXIST);
     }
@@ -207,7 +207,7 @@ public class CaseValidationTest {
         caseData.setCasesAcceptedToListForHearing(
             List.of(caseLinkListValue1, caseLinkListValue2, caseLinkListValue3));
 
-        final List<String> errors = validateCasesAcceptedToListForHearing(caseData);
+        List<String> errors = validateCasesAcceptedToListForHearing(caseData);
 
         assertThat(errors).contains("You can only remove cases from the list of cases accepted to list for hearing.");
     }
@@ -231,7 +231,7 @@ public class CaseValidationTest {
                 .build();
         caseData.setCasesAcceptedToListForHearing(List.of(caseLinkListValue1, caseLinkListValue2));
 
-        final List<String> errors = validateCasesAcceptedToListForHearing(caseData);
+        List<String> errors = validateCasesAcceptedToListForHearing(caseData);
 
         assertThat(errors).contains("You can only remove cases from the list of cases accepted to list for hearing.");
     }

@@ -8,10 +8,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTemplateContent;
 import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Map;
 
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
@@ -29,7 +31,10 @@ public class GenerateRespondentAosInvitation implements CaseTask {
 
     //TODO: Use correct template content when application template requirements are known.
     @Autowired
-    private RespondentSolicitorAosInvitationTemplateContent templateContent;
+    private RespondentSolicitorAosInvitationTemplateContent respondentSolicitorAosInvitationTemplateContent;
+
+    @Autowired
+    private CitizenRespondentAosInvitationTemplateContent citizenRespondentAosInvitationTemplateContent;
 
     @Autowired
     private Clock clock;
@@ -45,19 +50,22 @@ public class GenerateRespondentAosInvitation implements CaseTask {
         caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
 
         final String templateId;
+        final Map<String, Object> templateContent;
 
         if (caseData.getApplicant2().isRepresented()) {
             log.info("Generating solicitor respondent AoS invitation for case id {} ", caseId);
             templateId = RESP_SOLICITOR_AOS_INVITATION;
+            templateContent = respondentSolicitorAosInvitationTemplateContent.apply(caseData, caseId, createdDate);
         } else {
             log.info("Generating citizen respondent AoS invitation for case id {} ", caseId);
             templateId = CITIZEN_RESP_AOS_INVITATION;
+            templateContent = citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId, createdDate);
         }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             RESPONDENT_INVITATION,
-            templateContent.apply(caseData, caseId, createdDate),
+            templateContent,
             caseId,
             templateId,
             caseData.getApplicant1().getLanguagePreference(),

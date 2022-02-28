@@ -84,7 +84,6 @@ public class Applicant {
     private String nameChangedHowOtherDetails;
 
     @CCD(label = "Home address")
-    // todo rename to address (and update the frontend... maybe a migration?)
     private AddressGlobalUK homeAddress;
 
     @CCD(
@@ -113,7 +112,6 @@ public class Applicant {
         hint = "If they are to be served at their home address, enter the home address here and as the service "
             + "address below"
     )
-    // todo kill
     private AddressGlobalUK correspondenceAddress;
 
     @CCD(label = "Is represented by a solicitor?")
@@ -178,7 +176,6 @@ public class Applicant {
     }
 
     @JsonIgnore
-    // todo use getCorrespondenceAddress
     public boolean isBasedOverseas() {
         return nonNull(homeAddress)
             && !isBlank(homeAddress.getCountry())
@@ -194,9 +191,6 @@ public class Applicant {
             return getEmail();
         }
     }
-
-    // todo add getCorrespondenceAddress (JsonIgnore!) that first returns solicitor address, then returns homeAddress unless confidential
-    // todo add getPostalAddress (JsonIgnore!) that first returns solicitor address, then returns homeAddress even if confidential
 
     @JsonIgnore
     public boolean appliedForFinancialOrder() {

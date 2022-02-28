@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTemplateContent;
 import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
 
 import java.time.Clock;
@@ -46,6 +47,9 @@ public class GenerateRespondentAosInvitationTest {
 
     @Mock
     private RespondentSolicitorAosInvitationTemplateContent respondentSolicitorAosInvitationTemplateContent;
+
+    @Mock
+    private CitizenRespondentAosInvitationTemplateContent citizenRespondentAosInvitationTemplateContent;
 
     @Mock
     private Clock clock;
@@ -108,7 +112,7 @@ public class GenerateRespondentAosInvitationTest {
         final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
-        when(respondentSolicitorAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
+        when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
 
         final var result = generateRespondentAosInvitation.apply(caseDetails);
 
