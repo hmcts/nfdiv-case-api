@@ -19,6 +19,9 @@ import uk.gov.service.notify.NotificationClientException;
 
 import java.util.Collections;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.ResponseEntity.status;
+
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -37,7 +40,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<Object> handleInvalidTokenException() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @ExceptionHandler(UnAuthorisedServiceException.class)
@@ -54,7 +57,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ResponseEntity<Object> handleFeignException(FeignException exception) {
         log.error(exception.getMessage(), exception);
 
-        return ResponseEntity.status(exception.status()).body(
+        return status(exception.status()).body(
             String.format("%s - %s", exception.getMessage(), exception.contentUTF8())
         );
     }
@@ -62,16 +65,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidResourceException.class)
     public ResponseEntity<Object> handleInvalidResourceException() {
         return new ResponseEntity<>(
-            HttpStatus.INTERNAL_SERVER_ERROR
+            INTERNAL_SERVER_ERROR
         );
     }
 
     @ExceptionHandler(InvalidDataException.class)
-    ResponseEntity<Object> handleInvalidDataException(InvalidDataException exception) {
+    public ResponseEntity<Object> handleInvalidDataException(InvalidDataException exception) {
         log.warn(exception.getMessage(), exception);
 
-        return ResponseEntity
-            .status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(
                 BspErrorResponse.builder()
                     .errors(exception.getErrors())
@@ -81,11 +83,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UnsupportedFormTypeException.class)
-    ResponseEntity<Object> handleUnsupportedFormTypeException(UnsupportedFormTypeException exception) {
+    public ResponseEntity<Object> handleUnsupportedFormTypeException(UnsupportedFormTypeException exception) {
         log.warn(exception.getMessage(), exception);
 
-        return ResponseEntity
-            .status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(
                 BspErrorResponse.builder()
                     .errors(Collections.singletonList(exception.getMessage()))
