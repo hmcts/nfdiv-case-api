@@ -92,6 +92,40 @@ public class BulkScanCaseTransformationControllerIT {
     }
 
     @Test
+    public void shouldSuccessfullyTransformD8FormWithWarnings() throws Exception {
+        String validApplicationOcrJson = loadJson("src/integrationTest/resources/valid-ocr-with-warnings.json");
+        List<OcrDataField> ocrDataFields = OBJECT_MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        });
+
+        String response = mockMvc.perform(post("/transform-exception-record")
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(
+                    OBJECT_MAPPER.writeValueAsString(
+                        ExceptionRecord
+                            .builder()
+                            .formType(D8.getName())
+                            .ocrDataFields(ocrDataFields)
+                            .scannedDocuments(inputScannedDocuments())
+                            .build()
+                    )
+                )
+                .accept(APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString(UTF_8);
+
+        assertThatJson(response)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(
+                json(
+                    expectedResponse("classpath:transformation-success-warning-response.json")
+                )
+            );
+    }
+
+    @Test
     public void shouldThrowUnsupportedFormTypeExceptionWhenFormIsNotRecognised() throws Exception {
         String validApplicationOcrJson = loadJson("src/integrationTest/resources/valid-ocr.json");
         List<OcrDataField> ocrDataFields = OBJECT_MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
