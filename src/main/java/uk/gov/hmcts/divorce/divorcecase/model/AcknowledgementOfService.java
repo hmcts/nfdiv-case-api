@@ -59,13 +59,6 @@ public class AcknowledgementOfService {
     private LocalDateTime dateAosSubmitted;
 
     @CCD(
-        label = "Digital Notice of Proceedings?",
-        access = {CaseworkerAndSuperUserAccess.class}
-    )
-    // todo kill, will be set to isAoSOffline in another user story
-    private YesOrNo digitalNoticeOfProceedings;
-
-    @CCD(
         label = "Notice of Proceedings email address",
         typeOverride = Email,
         access = {CaseworkerAndSuperUserAccess.class}

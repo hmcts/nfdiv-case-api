@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -355,6 +356,12 @@ public class RetiredFields {
         typeParameterOverride = "TextArea"
     )
     private List<String> transformationAndOcrWarnings = new ArrayList<>();
+
+    @CCD(
+        label = "Retired Digital Notice of Proceedings?",
+        access = {CaseworkerAndSuperUserAccess.class}
+    )
+    private YesOrNo digitalNoticeOfProceedings;
 
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {

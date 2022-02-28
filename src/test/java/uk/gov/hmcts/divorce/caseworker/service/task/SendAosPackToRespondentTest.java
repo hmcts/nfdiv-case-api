@@ -49,7 +49,6 @@ class SendAosPackToRespondentTest {
 
         assertThat(result.getData().getAcknowledgementOfService())
             .extracting(
-                AcknowledgementOfService::getDigitalNoticeOfProceedings,
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
                 AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
             .contains(null, null, null);
@@ -73,7 +72,6 @@ class SendAosPackToRespondentTest {
 
         assertThat(result.getData().getAcknowledgementOfService())
             .extracting(
-                AcknowledgementOfService::getDigitalNoticeOfProceedings,
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
                 AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
             .contains(null, null, null);
