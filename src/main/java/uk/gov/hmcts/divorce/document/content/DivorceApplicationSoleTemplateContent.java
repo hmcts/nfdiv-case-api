@@ -143,12 +143,12 @@ public class DivorceApplicationSoleTemplateContent {
         String solicitorName = applicant.getSolicitor().getName();
         String solicitorEmail = applicant.getSolicitor().getEmail();
         String solicitorFirmName = applicant.getSolicitor().getFirmName();
-        String solicitorAddress = applicant.getSolicitor().getAddress();
+        String solicitorAddress = applicant.getSolicitor().getAddress().replace("\n", "");
         boolean hasEnteredSolicitorDetails =
             !isNullOrEmpty(solicitorName)
             || !isNullOrEmpty(solicitorEmail)
             || !isNullOrEmpty(solicitorFirmName)
-            || !isNullOrEmpty(solicitorAddress.trim());
+            || !isNullOrEmpty(solicitorAddress);
         templateContent.put(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, hasEnteredSolicitorDetails);
         if (!isNullOrEmpty(solicitorName)) {
             templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName);
@@ -159,7 +159,7 @@ public class DivorceApplicationSoleTemplateContent {
         if (!isNullOrEmpty(solicitorFirmName)) {
             templateContent.put(APPLICANT_2_SOLICITOR_FIRM_NAME, solicitorFirmName);
         }
-        if (!isNullOrEmpty(solicitorAddress.trim())) {
+        if (!isNullOrEmpty(solicitorAddress)) {
             String addressCleanUp =
                 join("\n", Arrays.stream(solicitorAddress.split("\n"))
                     .filter(value -> !Objects.equals(value, ""))
