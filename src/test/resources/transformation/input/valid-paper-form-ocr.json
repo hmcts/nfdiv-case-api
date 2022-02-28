@@ -121,7 +121,11 @@
   },
   {
     "name": "soleOrApplicant1PaymentOtherDetail",
-    "value": ""
+    "value": "pay details app1"
+  },
+  {
+    "name": "applicant2PaymentOtherDetail",
+    "value": "pay details app2"
   }
 ]
 
