@@ -9,7 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
@@ -48,7 +48,7 @@ class CaseworkerIssueApplicationServiceTest {
     private GenerateNoticeOfProceeding generateNoticeOfProceeding;
 
     @Mock
-    private SendAosPack sendAosPack;
+    private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Mock
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
@@ -79,7 +79,7 @@ class CaseworkerIssueApplicationServiceTest {
         when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(divorceApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
 
@@ -117,7 +117,7 @@ class CaseworkerIssueApplicationServiceTest {
         when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(divorceApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
 

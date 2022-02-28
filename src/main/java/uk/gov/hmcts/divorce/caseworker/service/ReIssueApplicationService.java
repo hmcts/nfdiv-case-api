@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
@@ -34,7 +34,7 @@ public class ReIssueApplicationService {
     private GenerateRespondentAosInvitation generateRespondentAosInvitation;
 
     @Autowired
-    private SendAosPack sendAosPack;
+    private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Autowired
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
@@ -68,7 +68,7 @@ public class ReIssueApplicationService {
             log.info("For case id {} processing reissue for offline aos ", caseDetails.getId());
             return caseTasks(
                 generateRespondentAosInvitation,
-                sendAosPack,
+                sendAosPackToRespondent,
                 setReIssueAndDueDate,
                 setPostIssueState,
                 sendApplicationIssueNotifications
@@ -78,7 +78,7 @@ public class ReIssueApplicationService {
             return caseTasks(
                 generateMiniApplication,
                 generateRespondentAosInvitation,
-                sendAosPack,
+                sendAosPackToRespondent,
                 setReIssueAndDueDate,
                 setPostIssueState,
                 sendApplicationIssueNotifications

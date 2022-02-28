@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 @Component
 @Slf4j
-public class SendAosPack implements CaseTask {
+public class SendAosPackToRespondent implements CaseTask {
 
     @Autowired
     private AosPackPrinter aosPackPrinter;

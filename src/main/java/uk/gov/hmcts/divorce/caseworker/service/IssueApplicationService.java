@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
@@ -40,7 +40,7 @@ public class IssueApplicationService {
     private GenerateNoticeOfProceeding generateNoticeOfProceeding;
 
     @Autowired
-    private SendAosPack sendAosPack;
+    private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Autowired
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
@@ -63,8 +63,7 @@ public class IssueApplicationService {
             generateRespondentAosInvitation,
             divorceApplicationRemover,
             generateDivorceApplication,
-            // TODO rename to sendAosPackToRespondent
-            sendAosPack,
+            sendAosPackToRespondent,
             // TODO add sendNoticeOfProceedings (and application) to applicant
             sendApplicationIssueNotifications
         ).run(caseDetails);
