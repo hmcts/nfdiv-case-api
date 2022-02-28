@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.systemupdate.event;
 
 import io.restassured.response.Response;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,7 +41,6 @@ public class SystemProgressHeldCasesFT extends FunctionalTestSuite {
 
     @Test
     @EnabledIfEnvironmentVariable(named = "ELASTIC_SEARCH_ENABLED", matches = "true")
-    @Disabled("Ccd has limitation of 10K cases and currently it is returning >10K")
     public void shouldSearchForCasesWhereHoldingPeriodHasEnded() {
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery(STATE, Holding))
