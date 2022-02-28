@@ -116,15 +116,9 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                 .andThen(paperFormDetailsTransformer)
                 .apply(transformationDetails);
 
-            caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
-            caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
-
             verifyRespondentEmailAccess(ocrDataFields, transformationWarnings);
             verifyServeOutOfUK(caseData.getApplicationType(), ocrDataFields, transformationWarnings);
             verifyHowApplicationIsServed(caseData.getApplicationType(), ocrDataFields, transformationWarnings);
-
-            caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
-            caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
 
             caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
             caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
