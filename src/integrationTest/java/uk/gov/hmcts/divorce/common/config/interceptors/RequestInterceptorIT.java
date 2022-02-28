@@ -35,6 +35,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 )
 public class RequestInterceptorIT {
 
+    private static final String INVALID_AUTH_WITH_BEARER = "Bearer " + INVALID_AUTH_TOKEN;
+    private static final String AUTH_HEADER_WITH_BEARER = "Bearer " + AUTH_HEADER_VALUE;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -46,7 +49,7 @@ public class RequestInterceptorIT {
 
     @Test
     public void shouldReturn401WhenAuthTokenIsInvalid() throws Exception {
-        when(validator.getServiceName(INVALID_AUTH_TOKEN))
+        when(validator.getServiceName(INVALID_AUTH_WITH_BEARER))
             .thenThrow(InvalidTokenException.class);
 
         mockMvc.perform(
@@ -57,13 +60,13 @@ public class RequestInterceptorIT {
             status().isUnauthorized()
         );
 
-        verify(validator).getServiceName(INVALID_AUTH_TOKEN);
+        verify(validator).getServiceName(INVALID_AUTH_WITH_BEARER);
         verifyNoMoreInteractions(validator);
     }
 
     @Test
     public void shouldReturn403WhenServiceIsNotAllowedToInvokeCallback() throws Exception {
-        when(validator.getServiceName(AUTH_HEADER_VALUE)).thenReturn("some_service");
+        when(validator.getServiceName(AUTH_HEADER_WITH_BEARER)).thenReturn("some_service");
         mockMvc.perform(
             post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -74,7 +77,7 @@ public class RequestInterceptorIT {
             content().string("Service some_service not in configured list for accessing callback")
         );
 
-        verify(validator).getServiceName(AUTH_HEADER_VALUE);
+        verify(validator).getServiceName(AUTH_HEADER_WITH_BEARER);
         verifyNoMoreInteractions(validator);
     }
 }

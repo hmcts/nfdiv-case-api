@@ -20,7 +20,9 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
@@ -47,11 +49,11 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         configBuilder
             .event(CITIZEN_SUBMIT)
             .forStates(Draft, AwaitingPayment, Applicant2Approved)
-            .name("Applicant Statement of Truth")
-            .description("The applicant confirms SOT")
+            .name("Apply: divorce or dissolution")
+            .description("Apply: divorce or dissolution")
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN)
-            .grant(READ, SUPER_USER)
+            .grant(READ, CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 

@@ -50,6 +50,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
@@ -96,7 +97,7 @@ public class DraftApplicationTemplateContent {
             }
         }
 
-        templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);
+        templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
 
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
         templateContent.put(APPLICANT_1_MIDDLE_NAME, applicant1.getMiddleName());
