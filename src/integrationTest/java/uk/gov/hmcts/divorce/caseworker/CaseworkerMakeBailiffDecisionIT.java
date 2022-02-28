@@ -124,7 +124,8 @@ public class CaseworkerMakeBailiffDecisionIT {
     }
 
     @Test
-    public void shouldChangeCaseStateToAwaitingAosAndSetDecisionDateWhenServiceApplicationIsNotGranted() throws Exception {
+    public void shouldChangeCaseStateToAwaitingAosAndSetDecisionDateWhenServiceApplicationIsNotGrantedAndServiceTypeIsBailiff()
+        throws Exception {
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
