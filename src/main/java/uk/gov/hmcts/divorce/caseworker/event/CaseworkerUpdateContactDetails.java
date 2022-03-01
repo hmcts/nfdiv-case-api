@@ -40,8 +40,8 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
         return new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_CONTACT_DETAILS)
             .forAllStates()
-            .name("CW Update contact details")
-            .description("CW Update contact details")
+            .name("Update contact details")
+            .description("Update contact details")
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)

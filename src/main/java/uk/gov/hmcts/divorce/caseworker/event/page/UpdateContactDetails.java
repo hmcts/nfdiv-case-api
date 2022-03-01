@@ -23,7 +23,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder
             = pageBuilder
                 .page("CaseworkerUpdateContactDetails")
-                .pageLabel("CW Update contact details");
+                .pageLabel("Update contact details");
 
         buildApplicant1Fields(fieldCollectionBuilder);
 
@@ -78,6 +78,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
             .optionalWithLabel(Applicant::getHomeAddress,
                 "${labelContentRespondentsOrApplicant2s} home address")
             .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentRespondentsOrApplicant2s} phone number")
+            .label("LabelHorizontalLine2", "<hr>")
             .done();
     }
 
@@ -86,7 +87,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
 
         fieldCollectionBuilder
             .label("LabelMarriageCertNames",
-                "Only update Marriage Certificate Names to make them match the marriage certificate exactly")
+                "### Only update Marriage Certificate Names to make them match the marriage certificate exactly")
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
                     .optionalWithLabel(MarriageDetails::getApplicant1Name,
