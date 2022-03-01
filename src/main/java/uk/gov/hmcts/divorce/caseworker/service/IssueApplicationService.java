@@ -4,11 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
@@ -35,16 +34,13 @@ public class IssueApplicationService {
     private GenerateDivorceApplication generateDivorceApplication;
 
     @Autowired
-    private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
-
-    @Autowired
-    private GenerateCitizenRespondentAosInvitation generateCitizenRespondentAosInvitation;
+    private GenerateRespondentAosInvitation generateRespondentAosInvitation;
 
     @Autowired
     private GenerateNoticeOfProceeding generateNoticeOfProceeding;
 
     @Autowired
-    private SendAosPack sendAosPack;
+    private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Autowired
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
@@ -63,12 +59,12 @@ public class IssueApplicationService {
                 details.getData().getApplication().setIssueDate(LocalDate.now(clock));
                 return details;
             },
-            generateRespondentSolicitorAosInvitation,
-            generateCitizenRespondentAosInvitation,
+            generateNoticeOfProceeding,
+            generateRespondentAosInvitation,
             divorceApplicationRemover,
             generateDivorceApplication,
-            generateNoticeOfProceeding,
-            sendAosPack,
+            sendAosPackToRespondent,
+            // TODO add sendNoticeOfProceedings (and application) to applicant
             sendApplicationIssueNotifications
         ).run(caseDetails);
     }

@@ -116,7 +116,7 @@ public final class ValidationUtil {
     }
 
     public static List<String> validateJurisdictionConnections(CaseData caseData) {
-        if (caseData.getApplication().isSolicitorApplication() || caseData.getApplicant1().isRepresented()) {
+        if (caseData.getApplicant1().isRepresented()) {
             if (isEmpty(caseData.getApplication().getJurisdiction().getConnections())) {
                 return List.of("JurisdictionConnections" + EMPTY);
             }

@@ -184,6 +184,11 @@ public class Applicant {
     }
 
     @JsonIgnore
+    public String getCorrespondenceEmail() {
+        return isRepresented() ? solicitor.getEmail() : getEmail();
+    }
+
+    @JsonIgnore
     public boolean appliedForFinancialOrder() {
         return nonNull(financialOrder) && financialOrder.toBoolean();
     }
