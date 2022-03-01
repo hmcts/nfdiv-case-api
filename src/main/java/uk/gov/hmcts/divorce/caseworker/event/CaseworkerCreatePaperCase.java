@@ -46,6 +46,8 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
         data.getApplicant1().setOffline(YES);
         data.getApplicant2().setOffline(YES);
         data.setHyphenatedCaseRef(data.formatCaseRef(details.getId()));
+        data.getLabelContent().setApplicationType(data.getApplicationType());
+        data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
