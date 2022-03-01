@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAIL
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
@@ -123,11 +124,18 @@ public class CaseworkerMakeBailiffDecisionIT {
     }
 
     @Test
-    public void shouldChangeCaseStateToAwaitingAosAndSetDecisionDateWhenServiceApplicationIsNotGranted() throws Exception {
+    public void shouldChangeCaseStateToAwaitingAosAndSetDecisionDateWhenServiceApplicationIsNotGrantedAndServiceTypeIsBailiff()
+        throws Exception {
         setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved.docx");
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(NO);
+        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
