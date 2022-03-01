@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.BailiffApprovedOrderContent;
+import uk.gov.hmcts.divorce.document.content.BailiffNotApprovedOrderContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -29,7 +30,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE_REFUSED;
 
 @Component
 @Slf4j
@@ -42,6 +46,9 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
 
     @Autowired
     private BailiffApprovedOrderContent templateContent;
+
+    @Autowired
+    private BailiffNotApprovedOrderContent templateContentNotApproved;
 
     @Autowired
     private Clock clock;
@@ -83,11 +90,11 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
         State endState;
         serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
 
+        var caseId = details.getId();
         if (serviceApplication.getServiceApplicationGranted().toBoolean()) {
             endState = AwaitingBailiffService;
             // ServiceApplication is archived after BailiffReturn if ServiceGranted is set to Yes
 
-            var caseId = details.getId();
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseDataCopy,
                 BAILIFF_SERVICE,
@@ -99,6 +106,15 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
             );
         } else {
             endState = AwaitingAos;
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseDataCopy,
+                BAILIFF_SERVICE_REFUSED,
+                templateContentNotApproved.apply(caseDataCopy, caseId),
+                caseId,
+                BAILIFF_APPLICATION_NOT_APPROVED_ID,
+                caseDataCopy.getApplicant1().getLanguagePreference(),
+                BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME
+            );
             caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
         }
 
