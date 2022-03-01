@@ -28,6 +28,8 @@ public class CommonContent {
     public static final String YES = "yes";
     public static final String NO = "no";
 
+    public static final String IS_PAID = "isPaid";
+
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL = "signin url";
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
