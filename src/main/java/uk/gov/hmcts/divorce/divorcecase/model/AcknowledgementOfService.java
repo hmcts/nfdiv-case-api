@@ -59,12 +59,6 @@ public class AcknowledgementOfService {
     private LocalDateTime dateAosSubmitted;
 
     @CCD(
-        label = "Digital Notice of Proceedings?",
-        access = {CaseworkerAndSuperUserAccess.class}
-    )
-    private YesOrNo digitalNoticeOfProceedings;
-
-    @CCD(
         label = "Notice of Proceedings email address",
         typeOverride = Email,
         access = {CaseworkerAndSuperUserAccess.class}
@@ -133,10 +127,12 @@ public class AcknowledgementOfService {
     private FeeDetails disputingFee = new FeeDetails();
 
     @JsonIgnore
-    public void setNoticeOfProceedings(final Solicitor solicitor) {
-        digitalNoticeOfProceedings = YES;
-        noticeOfProceedingsEmail = solicitor.getEmail();
-        noticeOfProceedingsSolicitorFirm = solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName();
+    public void setNoticeOfProceedings(final Applicant applicant) {
+        noticeOfProceedingsEmail = applicant.getCorrespondenceEmail();
+
+        if (applicant.isRepresented()) {
+            noticeOfProceedingsSolicitorFirm = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationName();
+        }
     }
 
     @JsonIgnore
