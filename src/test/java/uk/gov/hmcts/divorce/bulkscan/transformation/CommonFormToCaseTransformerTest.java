@@ -96,20 +96,20 @@ public class CommonFormToCaseTransformerTest {
     }
 
     @Test
-    void setLabelContentAndDefaultValuesShouldReturnCaseDataCorrectlyPopulatedWhenValidDataGivenSole() {
+    void setDefaultValuesShouldReturnCaseDataCorrectlyPopulatedWhenValidDataGivenSole() {
         var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
 
-        caseData = commonFormToCaseTransformer.setLabelContentAndDefaultValues(caseData);
+        caseData = commonFormToCaseTransformer.setDefaultValues(caseData);
 
         assertThat(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
         assertThat(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
     }
 
     @Test
-    void setLabelContentAndDefaultValuesShouldReturnCaseDataCorrectlyPopulatedWhenValidDataGivenJoint() {
+    void setDefaultValuesShouldReturnCaseDataCorrectlyPopulatedWhenValidDataGivenJoint() {
         var caseData = CaseData.builder().applicationType(JOINT_APPLICATION).divorceOrDissolution(DISSOLUTION).build();
 
-        caseData = commonFormToCaseTransformer.setLabelContentAndDefaultValues(caseData);
+        caseData = commonFormToCaseTransformer.setDefaultValues(caseData);
 
         assertThat(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
         assertThat(caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isEqualTo(NO);

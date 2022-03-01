@@ -49,7 +49,7 @@ public class CommonFormToCaseTransformer {
         return transformationWarnings;
     }
 
-    public CaseData setLabelContentAndDefaultValues(CaseData caseData) {
+    public CaseData setDefaultValues(CaseData caseData) {
 
         caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
         caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);

@@ -116,7 +116,7 @@ class D8sFormToCaseTransformerTest {
 
         when(validator.validateOcrData(D8S.getName(), transformOcrMapToObject(ocrDataFields)))
             .thenReturn(ocrValidationResponse);
-        when(commonFormToCaseTransformer.setLabelContentAndDefaultValues(any(CaseData.class)))
+        when(commonFormToCaseTransformer.setDefaultValues(any(CaseData.class)))
             .thenReturn(caseData);
         when(commonFormToCaseTransformer.verifyFields(any(TransformationDetails.class), any(List.class)))
             .thenReturn(emptyList());
@@ -183,7 +183,7 @@ class D8sFormToCaseTransformerTest {
 
         when(validator.validateOcrData(D8S.getName(), transformOcrMapToObject(ocrDataFields)))
             .thenReturn(ocrValidationResponse);
-        when(commonFormToCaseTransformer.setLabelContentAndDefaultValues(any(CaseData.class)))
+        when(commonFormToCaseTransformer.setDefaultValues(any(CaseData.class)))
             .thenReturn(caseData);
         when(commonFormToCaseTransformer.verifyFields(any(TransformationDetails.class), any(List.class)))
             .thenReturn(emptyList());

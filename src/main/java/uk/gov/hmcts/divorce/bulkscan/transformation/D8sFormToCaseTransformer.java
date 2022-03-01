@@ -102,7 +102,7 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
                 .andThen(paperFormDetailsTransformer)
                 .apply(transformationDetails);
 
-            caseData = commonFormToCaseTransformer.setLabelContentAndDefaultValues(caseData);
+            caseData = commonFormToCaseTransformer.setDefaultValues(caseData);
             transformationWarnings = commonFormToCaseTransformer.verifyFields(transformationDetails, transformationWarnings);
 
             return commonFormToCaseTransformer.transformCaseData(caseData, transformationWarnings, ocrValidationResponse);
