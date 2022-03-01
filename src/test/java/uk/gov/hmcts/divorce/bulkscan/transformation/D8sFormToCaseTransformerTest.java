@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,20 +31,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkscan.transformation.CommonFormToCaseTransformer.TRANSFORMATION_AND_OCR_WARNINGS;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
+import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.inputScannedDocuments;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.scannedDocuments;
 
 @ExtendWith(MockitoExtension.class)
-public class D8FormToCaseTransformerTest {
+class D8sFormToCaseTransformerTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    @Captor
+    ArgumentCaptor<TransformationDetails> transformationDetailsCaptor;
 
     @Mock
     private OcrValidator validator;
@@ -57,7 +65,7 @@ public class D8FormToCaseTransformerTest {
     private ApplicationTransformer applicationTransformer;
 
     @Mock
-    private D8PrayerTransformer d8PrayerTransformer;
+    private D8SPrayerTransformer d8SPrayerTransformer;
 
     @Mock
     private CommonFormToCaseTransformer commonFormToCaseTransformer;
@@ -69,17 +77,21 @@ public class D8FormToCaseTransformerTest {
     private PaperFormDetailsTransformer paperFormDetailsTransformer;
 
     @InjectMocks
-    private D8FormToCaseTransformer d8FormToCaseTransformer;
+    private D8sFormToCaseTransformer d8sFormToCaseTransformer;
 
     @Test
     @SuppressWarnings("unchecked")
     void shouldSuccessfullyTransformD8FormWithScannedDocumentsWithoutWarnings() throws Exception {
 
-        String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8-form-ocr.json");
-        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        final String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8s-form-ocr.json");
+        final List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
 
-        final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
+        final var caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .isJudicialSeparation(YES)
+            .build();
         final var transformationDetails =
             TransformationDetails
                 .builder()
@@ -89,20 +101,20 @@ public class D8FormToCaseTransformerTest {
         final OcrValidationResponse ocrValidationResponse = OcrValidationResponse.builder().build();
         final Map<String, Object> expectedResult = emptyMap();
 
-        Function<TransformationDetails, TransformationDetails> app1App2 = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2Application = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayer = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriage = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriagePaper = mock(Function.class);
+        final Function<TransformationDetails, TransformationDetails> app1App2 = mock(Function.class);
+        final Function<TransformationDetails, TransformationDetails> app1App2Application = mock(Function.class);
+        final Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayer = mock(Function.class);
+        final Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriage = mock(Function.class);
+        final Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriagePaper = mock(Function.class);
 
         when(applicant1Transformer.andThen(applicant2Transformer)).thenReturn(app1App2);
         when(app1App2.andThen(applicationTransformer)).thenReturn(app1App2Application);
-        when(app1App2Application.andThen(d8PrayerTransformer)).thenReturn(app1App2ApplicationPrayer);
+        when(app1App2Application.andThen(d8SPrayerTransformer)).thenReturn(app1App2ApplicationPrayer);
         when(app1App2ApplicationPrayer.andThen(marriageDetailsTransformer)).thenReturn(app1App2ApplicationPrayerMarriage);
         when(app1App2ApplicationPrayerMarriage.andThen(paperFormDetailsTransformer)).thenReturn(app1App2ApplicationPrayerMarriagePaper);
         when(app1App2ApplicationPrayerMarriagePaper.apply(any(TransformationDetails.class))).thenReturn(transformationDetails);
 
-        when(validator.validateOcrData(D8.getName(), transformOcrMapToObject(ocrDataFields)))
+        when(validator.validateOcrData(D8S.getName(), transformOcrMapToObject(ocrDataFields)))
             .thenReturn(ocrValidationResponse);
         when(commonFormToCaseTransformer.setDefaultValues(any(CaseData.class)))
             .thenReturn(caseData);
@@ -111,24 +123,36 @@ public class D8FormToCaseTransformerTest {
         when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList(), ocrValidationResponse))
             .thenReturn(expectedResult);
 
-        ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
-        final var transformedOutput = d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord);
+        final ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
+        final var transformedOutput = d8sFormToCaseTransformer.transformIntoCaseData(exceptionRecord);
+
+        verify(app1App2ApplicationPrayerMarriagePaper).apply(transformationDetailsCaptor.capture());
+
+        final TransformationDetails transformationDetailsCaptorValue = transformationDetailsCaptor.getValue();
+        final CaseData captorValueCaseData = transformationDetailsCaptorValue.getCaseData();
+
+        assertThat(captorValueCaseData.getDivorceOrDissolution()).isEqualTo(DIVORCE);
+        assertThat(captorValueCaseData.getIsJudicialSeparation()).isEqualTo(YES);
 
         assertThat(transformedOutput.get("scannedDocuments"))
             .usingRecursiveComparison()
             .ignoringFields("id")
-            .isEqualTo(scannedDocuments(D8));
+            .isEqualTo(scannedDocuments(D8S));
     }
 
     @Test
     @SuppressWarnings("unchecked")
     void shouldSuccessfullyTransformD8FormWithWarnings() throws Exception {
 
-        String invalidApplicationOcrJson = loadJson("src/test/resources/transformation/input/invalid-d8-form-ocr.json");
-        List<OcrDataField> ocrDataFields = MAPPER.readValue(invalidApplicationOcrJson, new TypeReference<>() {
+        final String invalidApplicationOcrJson = loadJson("src/test/resources/transformation/input/invalid-d8s-form-ocr.json");
+        final List<OcrDataField> ocrDataFields = MAPPER.readValue(invalidApplicationOcrJson, new TypeReference<>() {
         });
 
-        final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
+        final var caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .build();
+
         final var transformationDetails =
             TransformationDetails
                 .builder()
@@ -144,20 +168,20 @@ public class D8FormToCaseTransformerTest {
         final Map<String, Object> expectedResult = new HashMap<>();
         expectedResult.put(TRANSFORMATION_AND_OCR_WARNINGS, expectedWarnings);
 
-        Function<TransformationDetails, TransformationDetails> app1App2 = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2Application = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayer = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriage = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriagePaper = mock(Function.class);
+        final Function<TransformationDetails, TransformationDetails> app1App2 = mock(Function.class);
+        final Function<TransformationDetails, TransformationDetails> app1App2Application = mock(Function.class);
+        final Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayer = mock(Function.class);
+        final Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriage = mock(Function.class);
+        final Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriagePaper = mock(Function.class);
 
         when(applicant1Transformer.andThen(applicant2Transformer)).thenReturn(app1App2);
         when(app1App2.andThen(applicationTransformer)).thenReturn(app1App2Application);
-        when(app1App2Application.andThen(d8PrayerTransformer)).thenReturn(app1App2ApplicationPrayer);
+        when(app1App2Application.andThen(d8SPrayerTransformer)).thenReturn(app1App2ApplicationPrayer);
         when(app1App2ApplicationPrayer.andThen(marriageDetailsTransformer)).thenReturn(app1App2ApplicationPrayerMarriage);
         when(app1App2ApplicationPrayerMarriage.andThen(paperFormDetailsTransformer)).thenReturn(app1App2ApplicationPrayerMarriagePaper);
         when(app1App2ApplicationPrayerMarriagePaper.apply(any(TransformationDetails.class))).thenReturn(transformationDetails);
 
-        when(validator.validateOcrData(D8.getName(), transformOcrMapToObject(ocrDataFields)))
+        when(validator.validateOcrData(D8S.getName(), transformOcrMapToObject(ocrDataFields)))
             .thenReturn(ocrValidationResponse);
         when(commonFormToCaseTransformer.setDefaultValues(any(CaseData.class)))
             .thenReturn(caseData);
@@ -166,9 +190,17 @@ public class D8FormToCaseTransformerTest {
         when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList(), ocrValidationResponse))
             .thenReturn(expectedResult);
 
-        var exceptionRecord = exceptionRecord(ocrDataFields);
-        final var transformedOutput = d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord);
+        final var exceptionRecord = exceptionRecord(ocrDataFields);
+        final var transformedOutput = d8sFormToCaseTransformer.transformIntoCaseData(exceptionRecord);
         final List<ListValue<String>> warnings = (List<ListValue<String>>) transformedOutput.get(TRANSFORMATION_AND_OCR_WARNINGS);
+
+        verify(app1App2ApplicationPrayerMarriagePaper).apply(transformationDetailsCaptor.capture());
+
+        final TransformationDetails transformationDetailsCaptorValue = transformationDetailsCaptor.getValue();
+        final CaseData captorValueCaseData = transformationDetailsCaptorValue.getCaseData();
+
+        assertThat(captorValueCaseData.getDivorceOrDissolution()).isEqualTo(DIVORCE);
+        assertThat(captorValueCaseData.getIsJudicialSeparation()).isEqualTo(YES);
 
         assertThat(warnings)
             .extracting("value")
@@ -181,16 +213,16 @@ public class D8FormToCaseTransformerTest {
 
     @Test
     void shouldThrowInvalidDataExceptionWhenOcrValidationContainsErrors() throws Exception {
-        String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8-form-ocr.json");
-        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        final String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8s-form-ocr.json");
+        final List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
 
-        when(validator.validateOcrData(D8.getName(), transformOcrMapToObject(ocrDataFields)))
+        when(validator.validateOcrData(D8S.getName(), transformOcrMapToObject(ocrDataFields)))
             .thenReturn(OcrValidationResponse.builder().errors(List.of("some error")).build());
 
-        ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
+        final ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
 
-        assertThatThrownBy(() -> d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord))
+        assertThatThrownBy(() -> d8sFormToCaseTransformer.transformIntoCaseData(exceptionRecord))
             .isExactlyInstanceOf(InvalidDataException.class)
             .hasMessageContaining("OCR validation errors")
             .extracting("errors")
@@ -200,22 +232,22 @@ public class D8FormToCaseTransformerTest {
 
     @Test
     void shouldThrowInvalidDataExceptionWhenOcrTransformationThrowsException() throws Exception {
-        String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8-form-ocr.json");
-        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        final String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8s-form-ocr.json");
+        final List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
 
-        when(validator.validateOcrData(D8.getName(), transformOcrMapToObject(ocrDataFields)))
+        when(validator.validateOcrData(D8S.getName(), transformOcrMapToObject(ocrDataFields)))
             .thenReturn(OcrValidationResponse.builder().build());
 
-        ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
+        final ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
 
         doThrow(new RuntimeException("some exception")).when(applicant1Transformer).andThen(applicant2Transformer);
 
-        assertThatThrownBy(() -> d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord))
+        assertThatThrownBy(() -> d8sFormToCaseTransformer.transformIntoCaseData(exceptionRecord))
             .isExactlyInstanceOf(InvalidDataException.class)
             .hasMessageContaining("some exception")
             .extracting("errors")
-            .isEqualTo(List.of("Some error occurred during D8 Form transformation."));
+            .isEqualTo(List.of("Some error occurred during D8S Form transformation."));
     }
 
     private ExceptionRecord exceptionRecord(List<OcrDataField> ocrDataFields) {
@@ -223,7 +255,7 @@ public class D8FormToCaseTransformerTest {
             .builder()
             .formType(D8.getName())
             .ocrDataFields(ocrDataFields)
-            .scannedDocuments(inputScannedDocuments(D8))
+            .scannedDocuments(inputScannedDocuments(D8S))
             .build();
     }
 }
