@@ -60,18 +60,6 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentFileName": "noticeOfProceedings.pdf",
-          "documentType": "noticeOfProceedings",
-          "documentLink": {
-            "document_url": "${json-unit.any-string}",
-            "document_filename": "noticeOfProceedings.pdf",
-            "document_binary_url": "${json-unit.any-string}"
-          }
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
           "documentFileName": "${json-unit.any-string}",
           "documentType": "application",
           "documentLink": {
@@ -90,6 +78,18 @@
             "document_binary_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",
             "document_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "noticeOfProceedings.pdf",
+          "documentType": "noticeOfProceedings",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "noticeOfProceedings.pdf",
+            "document_binary_url": "${json-unit.any-string}"
           }
         }
       }
