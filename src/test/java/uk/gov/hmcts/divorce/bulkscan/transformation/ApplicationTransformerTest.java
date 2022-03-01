@@ -197,7 +197,6 @@ public class ApplicationTransformerTest {
         OcrDataFields ocrData = transformOcrMapToObject(ocrDataFields);
         ocrData.setSoleOrApplicant1ConfirmationOfBreakdown("false");
         ocrData.setApplicant2ConfirmationOfBreakdown("true");
-        ocrData.setPrayerMarriageDissolved("false");
 
         final var transformationDetails =
             TransformationDetails
@@ -213,7 +212,6 @@ public class ApplicationTransformerTest {
                 "Please verify jurisdiction connections(missing/invalid domiciled who) in scanned form",
                 "Please verify jurisdiction connections(no options selected) in scanned form",
                 "Please review confirmation of breakdown for sole application in the scanned form",
-                "Please review prayer in the scanned form",
                 "Please review HWF number for applicant1 in scanned form",
                 "Please review HWF number for applicant2 in scanned form"
             );
@@ -241,7 +239,6 @@ public class ApplicationTransformerTest {
         OcrDataFields ocrData = transformOcrMapToObject(ocrDataFields);
         ocrData.setSoleOrApplicant1ConfirmationOfBreakdown("false");
         ocrData.setApplicant2ConfirmationOfBreakdown("false");
-        ocrData.setPrayerCivilPartnershipDissolved("false");
 
         final var transformationDetails =
             TransformationDetails
@@ -257,7 +254,6 @@ public class ApplicationTransformerTest {
                 "Please verify jurisdiction connections(missing/invalid domiciled who) in scanned form",
                 "Please verify jurisdiction connections(no options selected) in scanned form",
                 "Please review confirmation of breakdown for joint application in the scanned form",
-                "Please review prayer in the scanned form",
                 "Please review HWF number for applicant1 in scanned form",
                 "Please review HWF number for applicant2 in scanned form"
             );
