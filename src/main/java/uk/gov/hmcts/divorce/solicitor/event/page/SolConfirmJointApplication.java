@@ -12,7 +12,7 @@ public class SolConfirmJointApplication implements CcdPageConfiguration {
         pageBuilder
             .page("ConfirmJointApplication")
             .pageLabel("Confirm Joint Application")
-            .showCondition("applicationType=\"jointApplication\"")
+            .showCondition("applicationType=\"jointApplication\" AND applicant2SolicitorRepresented=\"Yes\"")
             .complex(CaseData::getApplication)
             .readonly(Application::getApplicant2SolicitorAnswersLink)
             .done();
