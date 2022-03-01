@@ -7,18 +7,20 @@ public final class CaseFieldsConstants {
     public static final String APPLICANT_2_FIRST_NAME = "applicant2FirstName";
     public static final String APPLICANT_2_LAST_NAME = "applicant2LastName";
     public static final String APPLICANT_1_EMAIL = "applicant1Email";
-    public static final String APPLICANT_1_SOLICITOR_EMAIL = "applicant1SolicitorEmail";
-    public static final String FIRSTNAME = "FirstName";
-    public static final String LASTNAME = "LastName";
-    public static final String EMAIL = "Email";
-    public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
+    public static final String APPLICANT_2_EMAIL = "applicant2Email";
     public static final String FINANCIAL_ORDER = "applicant1FinancialOrder";
     public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1SolicitorOrganisationPolicy";
-    public static final String APPLICANT_1_STATEMENT_OF_TRUTH = "applicant1StatementOfTruth";
-    public static final String APPLICANT_1_SOLICITOR_NAME = "applicant1SolicitorName";
-    public static final String APPLICANT_1_LANGUAGE_PREFERENCE_WELSH = "applicant1LanguagePreferenceWelsh";
-
-    public static final String SOL_STATEMENT_OF_TRUTH = "solSignStatementOfTruth";
+    public static final String MARRIAGE_DATE = "marriageDate";
+    public static final String APPLICANT_1_HWF = "applicant1HWFReferenceNumber";
+    public static final String URGENT_CASE = "solUrgentCase";
+    public static final String GENERAL_REFERRAL_URGENT_CASE = "generalReferralUrgentCase";
+    public static final String APPLICANT_1_FIRM_NAME = "applicant1SolicitorFirmName";
+    public static final String EVIDENCE_HANDLED = "evidenceHandled";
+    public static final String ALTERNATIVE_SERVICE_TYPE = "alternativeServiceType";
+    public static final String APPLICANT_1_ADDRESS = "applicant1HomeAddress";
+    public static final String APPLICANT_2_ADDRESS = "applicant2HomeAddress";
+    public static final String CCD_REFERENCE = "[CASE_REFERENCE]";
+    public static final String CASE_STATE = "[STATE]";
 
     // required for Checkstyle
     private CaseFieldsConstants() {
