@@ -356,6 +356,11 @@ public class RetiredFields {
     )
     private List<String> transformationAndOcrWarnings = new ArrayList<>();
 
+    @CCD(
+        label = "Retired Digital Notice of Proceedings?"
+    )
+    private YesOrNo digitalNoticeOfProceedings;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };

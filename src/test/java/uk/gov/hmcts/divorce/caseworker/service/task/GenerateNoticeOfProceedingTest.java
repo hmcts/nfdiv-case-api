@@ -20,7 +20,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -79,14 +78,20 @@ class GenerateNoticeOfProceedingTest {
     }
 
     @Test
-    void shouldNotCallDocAssemblyServiceAndReturnCaseDataWithJointApplicationDocumentForJointApplicationWhenRespondentIsNotOverseas() {
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointApplicationDocumentForJointApplicationWhenRespondentIsNotOverseas() {
 
         final CaseData caseData = caseData(JOINT_APPLICATION);
         caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().addressLine1("line1").country("UK").build());
 
-        generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final Map<String, Object> templateContent = new HashMap<>();
 
-        verifyNoInteractions(noticeOfProceedingContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_TEMPLATE_ID);
+
+        assertThat(result.getData()).isEqualTo(caseData);
     }
 
     @Test
@@ -95,9 +100,15 @@ class GenerateNoticeOfProceedingTest {
         final CaseData caseData = caseData(JOINT_APPLICATION);
         caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
 
-        generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final Map<String, Object> templateContent = new HashMap<>();
 
-        verifyNoInteractions(noticeOfProceedingContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID);
+
+        assertThat(result.getData()).isEqualTo(caseData);
     }
 
     private void verifyInteractions(CaseData caseData, Map<String, Object> templateContent, String templateId) {
