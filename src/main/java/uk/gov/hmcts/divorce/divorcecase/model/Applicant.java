@@ -185,11 +185,7 @@ public class Applicant {
 
     @JsonIgnore
     public String getCorrespondenceEmail() {
-        if (isRepresented()) {
-            return solicitor.getEmail();
-        } else {
-            return getEmail();
-        }
+        return isRepresented() ? solicitor.getEmail() : getEmail();
     }
 
     @JsonIgnore

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosPackPrinter;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -24,13 +23,12 @@ public class SendAosPackToRespondent implements CaseTask {
         final CaseData caseData = caseDetails.getData();
 
         if (!caseData.getApplication().isSolicitorServiceMethod()) {
-            final Applicant respondent = caseData.getApplicant2();
 
             log.info("Sending respondent AoS pack to bulk print.  Case ID: {}:", caseId);
             aosPackPrinter.print(caseData, caseId);
 
             log.info("Setting Notice Of Proceedings information. CaseID: {}", caseId);
-            caseData.getAcknowledgementOfService().setNoticeOfProceedings(respondent);
+            caseData.getAcknowledgementOfService().setNoticeOfProceedings(caseData.getApplicant2());
         }
 
         return caseDetails;
