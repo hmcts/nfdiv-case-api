@@ -83,8 +83,8 @@ public class Applicant {
     )
     private String nameChangedHowOtherDetails;
 
-    @CCD(label = "Home address")
-    private AddressGlobalUK homeAddress;
+    @CCD(label = "Aaddress")
+    private AddressGlobalUK address;
 
     @CCD(
         label = "Phone number",
@@ -112,6 +112,7 @@ public class Applicant {
         hint = "If they are to be served at their home address, enter the home address here and as the service "
             + "address below"
     )
+    // todo kill
     private AddressGlobalUK correspondenceAddress;
 
     @CCD(label = "Is represented by a solicitor?")
@@ -176,12 +177,16 @@ public class Applicant {
     }
 
     @JsonIgnore
+    // todo use getCorrespondenceAddress
     public boolean isBasedOverseas() {
-        return nonNull(homeAddress)
-            && !isBlank(homeAddress.getCountry())
-            && !("UK").equalsIgnoreCase(homeAddress.getCountry())
-            && !("United Kingdom").equalsIgnoreCase(homeAddress.getCountry());
+        return nonNull(address)
+            && !isBlank(address.getCountry())
+            && !("UK").equalsIgnoreCase(address.getCountry())
+            && !("United Kingdom").equalsIgnoreCase(address.getCountry());
     }
+
+    // todo add getCorrespondenceAddress (JsonIgnore!) that first returns solicitor address, then returns homeAddress unless confidential
+    // todo add getPostalAddress (JsonIgnore!) that first returns solicitor address, then returns homeAddress even if confidential
 
     @JsonIgnore
     public String getCorrespondenceEmail() {

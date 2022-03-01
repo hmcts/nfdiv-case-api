@@ -540,6 +540,7 @@ public class Application {
     }
 
     @JsonIgnore
+    // todo kill
     public boolean isSolicitorApplication() {
         return hasSolSignStatementOfTruth();
     }

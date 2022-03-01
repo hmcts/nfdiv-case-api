@@ -41,7 +41,7 @@ class SendApplicationIssueNotificationsTest {
     void shouldSendAllNotifications() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().country("Spain").build());
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("Spain").build());
         caseData.setCaseInvite(new CaseInvite("applicant2Invite@email.com", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setState(AwaitingAos);
@@ -56,7 +56,7 @@ class SendApplicationIssueNotificationsTest {
     void shouldNotSendOverseasNotificationIfNotAwaitingAosState() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().country("Spain").build());
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("Spain").build());
         caseData.setCaseInvite(new CaseInvite("", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setState(AwaitingService);
@@ -71,7 +71,7 @@ class SendApplicationIssueNotificationsTest {
     void shouldNotSendOverseasNotificationIfNotOverseas() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().country("UK").build());
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
         caseData.setCaseInvite(new CaseInvite("", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setState(AwaitingAos);
@@ -86,7 +86,7 @@ class SendApplicationIssueNotificationsTest {
     void shouldNotSendOverseasNotificationIfJointApplication() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().country("Spain").build());
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("Spain").build());
         caseData.setCaseInvite(new CaseInvite("", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setState(AwaitingAos);

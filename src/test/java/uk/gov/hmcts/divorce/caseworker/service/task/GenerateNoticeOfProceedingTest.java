@@ -47,7 +47,7 @@ class GenerateNoticeOfProceedingTest {
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplicationWhenRespondentIsNotOverseas() {
 
         final CaseData caseData = caseData(SOLE_APPLICATION);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().addressLine1("line1").country("UK").build());
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("UK").build());
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -64,7 +64,7 @@ class GenerateNoticeOfProceedingTest {
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplicationWhenRespondentIsOverseas() {
 
         final CaseData caseData = caseData(SOLE_APPLICATION);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -81,7 +81,7 @@ class GenerateNoticeOfProceedingTest {
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointApplicationDocumentForJointApplicationWhenRespondentIsNotOverseas() {
 
         final CaseData caseData = caseData(JOINT_APPLICATION);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().addressLine1("line1").country("UK").build());
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("UK").build());
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -98,7 +98,7 @@ class GenerateNoticeOfProceedingTest {
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointApplicationDocumentForJointApplicationWhenRespondentIsOverseas() {
 
         final CaseData caseData = caseData(JOINT_APPLICATION);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
 
         final Map<String, Object> templateContent = new HashMap<>();
 

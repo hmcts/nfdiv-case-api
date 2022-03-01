@@ -87,20 +87,21 @@ public class ApplicantTemplateDataProvider {
 
     public String deriveApplicantPostalAddress(final Applicant applicant) {
 
-        final AddressGlobalUK applicantHomeAddress = applicant.getHomeAddress();
+        final AddressGlobalUK applicantAddress = applicant.getAddress();
 
+        // todo use new getCorrespondenceAddress
         if (applicant.isRepresented()) {
             return applicant.getSolicitor().getAddress();
-        } else if (null != applicantHomeAddress && !applicant.isConfidentialContactDetails()) {
+        } else if (null != applicantAddress && !applicant.isConfidentialContactDetails()) {
 
             return Stream.of(
-                    applicantHomeAddress.getAddressLine1(),
-                    applicantHomeAddress.getAddressLine2(),
-                    applicantHomeAddress.getAddressLine3(),
-                    applicantHomeAddress.getPostTown(),
-                    applicantHomeAddress.getCounty(),
-                    applicantHomeAddress.getPostCode(),
-                    applicantHomeAddress.getCountry())
+                    applicantAddress.getAddressLine1(),
+                    applicantAddress.getAddressLine2(),
+                    applicantAddress.getAddressLine3(),
+                    applicantAddress.getPostTown(),
+                    applicantAddress.getCounty(),
+                    applicantAddress.getPostCode(),
+                    applicantAddress.getCountry())
                 .filter(value -> null != value && !value.isEmpty())
                 .collect(joining("\n"));
         }
@@ -110,22 +111,24 @@ public class ApplicantTemplateDataProvider {
 
     public String deriveApplicant2PostalAddress(final Applicant applicant, final Application application) {
 
+        // todo remove this if statement, see next comment
         if (applicant.isRepresented()) {
             return applicant.getSolicitor().getAddress();
         } else if (!applicant.isConfidentialContactDetails()) {
+            // todo wrong, don't use isSolicitorApplication, just use new getCorrespondenceAddress method
+            final AddressGlobalUK applicantAddress =
+                application.isSolicitorApplication() ? applicant.getCorrespondenceAddress() : applicant.getAddress();
 
-            final AddressGlobalUK applicantHomeAddress =
-                application.isSolicitorApplication() ? applicant.getCorrespondenceAddress() : applicant.getHomeAddress();
-
-            if (null != applicantHomeAddress) {
+            // todo move to method to Address in ccd-config-lib
+            if (null != applicantAddress) {
                 return Stream.of(
-                        applicantHomeAddress.getAddressLine1(),
-                        applicantHomeAddress.getAddressLine2(),
-                        applicantHomeAddress.getAddressLine3(),
-                        applicantHomeAddress.getPostTown(),
-                        applicantHomeAddress.getCounty(),
-                        applicantHomeAddress.getPostCode(),
-                        applicantHomeAddress.getCountry()
+                        applicantAddress.getAddressLine1(),
+                        applicantAddress.getAddressLine2(),
+                        applicantAddress.getAddressLine3(),
+                        applicantAddress.getPostTown(),
+                        applicantAddress.getCounty(),
+                        applicantAddress.getPostCode(),
+                        applicantAddress.getCountry()
                     )
                     .filter(value -> value != null && !value.isEmpty())
                     .collect(joining("\n"));
@@ -135,18 +138,19 @@ public class ApplicantTemplateDataProvider {
         return null;
     }
 
+    // todo kill this why is this different for sole applications???
     public String deriveSoleApplicationApplicant2PostalAddress(final Applicant applicant) {
-        final AddressGlobalUK applicantHomeAddress = applicant.getHomeAddress();
+        final AddressGlobalUK applicantAddress = applicant.getAddress();
 
-        if (null != applicantHomeAddress) {
+        if (null != applicantAddress) {
             return Stream.of(
-                applicantHomeAddress.getAddressLine1(),
-                applicantHomeAddress.getAddressLine2(),
-                applicantHomeAddress.getAddressLine3(),
-                applicantHomeAddress.getPostTown(),
-                applicantHomeAddress.getCounty(),
-                applicantHomeAddress.getPostCode(),
-                applicantHomeAddress.getCountry()
+                applicantAddress.getAddressLine1(),
+                applicantAddress.getAddressLine2(),
+                applicantAddress.getAddressLine3(),
+                applicantAddress.getPostTown(),
+                applicantAddress.getCounty(),
+                applicantAddress.getPostCode(),
+                applicantAddress.getCountry()
             )
                 .filter(value -> value != null && !value.isEmpty())
                 .collect(joining("\n"));

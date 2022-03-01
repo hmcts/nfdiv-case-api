@@ -200,7 +200,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplicant1().setSolicitorRepresented(NO);
-        caseData.getApplicant2().getHomeAddress().setCountry("UK");
+        caseData.getApplicant2().getAddress().setCountry("UK");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -258,7 +258,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplicant1().setSolicitorRepresented(NO);
-        caseData.getApplicant2().getHomeAddress().setCountry("France");
+        caseData.getApplicant2().getAddress().setCountry("France");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -289,7 +289,7 @@ public class CaseworkerIssueApplicationIT {
             .getContentAsString();
 
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT));
-        jsonDocument.set("data.applicant2HomeAddress.Country", "France");
+        jsonDocument.set("data.applicant2Address.Country", "France");
 
         assertThatJson(response).isEqualTo(jsonDocument.json());
 
@@ -480,7 +480,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplicant2().setSolicitorRepresented(YES);
-        caseData.getApplicant2().setHomeAddress(null);
+        caseData.getApplicant2().setAddress(null);
         caseData.getApplicant2().setSolicitor(
             Solicitor
                 .builder()
