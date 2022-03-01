@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
@@ -15,17 +14,16 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
+import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
 
 @Component
 @Slf4j
 @SuppressWarnings({"PMD.PreserveStackTrace"})
-public class D8FormToCaseTransformer extends BulkScanFormTransformer {
+public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
 
     @Autowired
     private OcrValidator validator;
@@ -40,7 +38,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
     private ApplicationTransformer applicationTransformer;
 
     @Autowired
-    private D8PrayerTransformer d8PrayerTransformer;
+    private D8SPrayerTransformer d8SPrayerTransformer;
 
     @Autowired
     private CommonFormToCaseTransformer commonFormToCaseTransformer;
@@ -53,10 +51,9 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
 
     @Override
     protected Map<String, Object> runFormSpecificTransformation(List<OcrDataField> ocrDataFieldList) {
-
         OcrDataFields ocrDataFields = transformOcrMapToObject(ocrDataFieldList);
 
-        OcrValidationResponse ocrValidationResponse = validator.validateOcrData(D8.getName(), ocrDataFields);
+        OcrValidationResponse ocrValidationResponse = validator.validateOcrData(D8S.getName(), ocrDataFields);
 
         if (!isEmpty(ocrValidationResponse.getErrors())) {
             throw new InvalidDataException(
@@ -93,13 +90,14 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
                     .build();
 
             List<String> transformationWarnings = transformationDetails.getTransformationWarnings();
-            caseData.setDivorceOrDissolution(getDivorceType(ocrDataFields, transformationWarnings));
+            caseData.setDivorceOrDissolution(DIVORCE);
+            caseData.setIsJudicialSeparation(YES);
             caseData.setApplicationType(commonFormToCaseTransformer.getApplicationType(ocrDataFields, transformationWarnings));
 
             applicant1Transformer
                 .andThen(applicant2Transformer)
                 .andThen(applicationTransformer)
-                .andThen(d8PrayerTransformer)
+                .andThen(d8SPrayerTransformer)
                 .andThen(marriageDetailsTransformer)
                 .andThen(paperFormDetailsTransformer)
                 .apply(transformationDetails);
@@ -112,26 +110,12 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
         } catch (Exception exception) {
             //this will result in bulk scan service to create exception record if case creation is automatic case creation
             // In case of caseworker triggering the event it will result into error shown on the UI
-            log.error("Exception occurred while transforming D8 form with error", exception);
+            log.error("Exception occurred while transforming D8S form with error", exception);
             throw new InvalidDataException(
                 exception.getMessage(),
                 null,
-                singletonList("Some error occurred during D8 Form transformation.")
+                singletonList("Some error occurred during D8S Form transformation.")
             );
-        }
-    }
-
-    private DivorceOrDissolution getDivorceType(OcrDataFields ocrDataFields, List<String> warnings) {
-        boolean isApplicationForDivorce = toBoolean(ocrDataFields.getApplicationForDivorce());
-        boolean isApplicationForDissolution = toBoolean(ocrDataFields.getApplicationForDissolution());
-
-        if (isApplicationForDissolution && !isApplicationForDivorce) {
-            return DISSOLUTION;
-        } else if (isApplicationForDivorce && !isApplicationForDissolution) {
-            return DIVORCE;
-        } else {
-            warnings.add("Please review divorce type in the scanned form");
-            return DIVORCE;
         }
     }
 }
