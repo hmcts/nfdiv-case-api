@@ -70,7 +70,7 @@ public class BailiffNotApprovedOrderContentTest {
             entry(DATE, LocalDate.now().format(DATE_TIME_FORMATTER)),
             entry(PETITIONER_FULL_NAME, FULL_NAME),
             entry(RESPONDENT_FULL_NAME, FULL_NAME),
-            entry(SERVICE_APPLICATION_RECEIVED_DATE, SERVICE_APPLICATION_DATE),
+            entry(SERVICE_APPLICATION_RECEIVED_DATE, SERVICE_APPLICATION_DATE.format(DATE_TIME_FORMATTER)),
             entry(REFUSAL_REASON, "refusal reason"),
             entry(THE_APPLICATION, DIVORCE_APPLICATION),
             entry(PARTNER, "wife")
@@ -97,7 +97,7 @@ public class BailiffNotApprovedOrderContentTest {
             entry(DATE, LocalDate.now().format(DATE_TIME_FORMATTER)),
             entry(PETITIONER_FULL_NAME, FULL_NAME),
             entry(RESPONDENT_FULL_NAME, FULL_NAME),
-            entry(SERVICE_APPLICATION_RECEIVED_DATE, SERVICE_APPLICATION_DATE),
+            entry(SERVICE_APPLICATION_RECEIVED_DATE, SERVICE_APPLICATION_DATE.format(DATE_TIME_FORMATTER)),
             entry(REFUSAL_REASON, "refusal reason"),
             entry(THE_APPLICATION, APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP),
             entry(PARTNER, "civil partner")

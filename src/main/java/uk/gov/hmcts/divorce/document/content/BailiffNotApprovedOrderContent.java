@@ -60,7 +60,8 @@ public class BailiffNotApprovedOrderContent {
 
         var alternativeService = caseData.getAlternativeService();
         templateContent.put(REFUSAL_REASON, alternativeService.getServiceApplicationRefusalReason());
-        templateContent.put(SERVICE_APPLICATION_RECEIVED_DATE, alternativeService.getReceivedServiceApplicationDate());
+        templateContent.put(SERVICE_APPLICATION_RECEIVED_DATE,
+            alternativeService.getReceivedServiceApplicationDate().format(DATE_TIME_FORMATTER));
         templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
 
         var ctscContactDetails = CtscContactDetails
