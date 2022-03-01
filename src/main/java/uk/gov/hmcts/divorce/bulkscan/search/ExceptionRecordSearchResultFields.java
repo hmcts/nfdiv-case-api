@@ -17,12 +17,12 @@ public class ExceptionRecordSearchResultFields implements CCDConfig<ExceptionRec
 
     @Override
     public void configure(final ConfigBuilder<ExceptionRecord, ExceptionRecordState, UserRole> configBuilder) {
-        final List<SearchField> searchFieldList = of(
-            SearchField.builder().label("Exception created date").id("[CREATED_DATE]").build(),
-            SearchField.builder().label("Delivery date").id("deliveryDate").build(),
-            SearchField.builder().label("New case reference").id("caseReference").build(),
-            SearchField.builder().label("Attach to case reference").id("attachToCaseReference").build(),
-            SearchField.builder().label("Form type").id("formType").build()
+        final List<SearchField<UserRole>> searchFieldList = of(
+            SearchField.<UserRole>builder().label("Exception created date").id("[CREATED_DATE]").build(),
+            SearchField.<UserRole>builder().label("Delivery date").id("deliveryDate").build(),
+            SearchField.<UserRole>builder().label("New case reference").id("caseReference").build(),
+            SearchField.<UserRole>builder().label("Attach to case reference").id("attachToCaseReference").build(),
+            SearchField.<UserRole>builder().label("Form type").id("formType").build()
         );
 
         configBuilder.searchResultFields().fields(searchFieldList);

@@ -17,16 +17,16 @@ public class ExceptionRecordSearchInputFields implements CCDConfig<ExceptionReco
 
     @Override
     public void configure(final ConfigBuilder<ExceptionRecord, ExceptionRecordState, UserRole> configBuilder) {
-        final List<SearchField> searchFieldList = of(
-            SearchField.builder().label("Delivery date").id("deliveryDate").build(),
-            SearchField.builder().label("Opening date").id("openingDate").build(),
-            SearchField.builder().label("PO Box").id("poBox").build(),
-            SearchField.builder().label("PO Box jurisdiction").id("poBoxJurisdiction").build(),
-            SearchField.builder().label("New case reference").id("caseReference").build(),
-            SearchField.builder().label("Attach to case reference").id("attachToCaseReference").build(),
-            SearchField.builder().label("Journey classification").id("journeyClassification").build(),
-            SearchField.builder().label("Form type").id("formType").build(),
-            SearchField.builder().label("Contains payments").id("containsPayments").build()
+        final List<SearchField<UserRole>> searchFieldList = of(
+            SearchField.<UserRole>builder().label("Delivery date").id("deliveryDate").build(),
+            SearchField.<UserRole>builder().label("Opening date").id("openingDate").build(),
+            SearchField.<UserRole>builder().label("PO Box").id("poBox").build(),
+            SearchField.<UserRole>builder().label("PO Box jurisdiction").id("poBoxJurisdiction").build(),
+            SearchField.<UserRole>builder().label("New case reference").id("caseReference").build(),
+            SearchField.<UserRole>builder().label("Attach to case reference").id("attachToCaseReference").build(),
+            SearchField.<UserRole>builder().label("Journey classification").id("journeyClassification").build(),
+            SearchField.<UserRole>builder().label("Form type").id("formType").build(),
+            SearchField.<UserRole>builder().label("Contains payments").id("containsPayments").build()
         );
 
         configBuilder.searchInputFields().fields(searchFieldList);
