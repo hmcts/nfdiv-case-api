@@ -128,7 +128,6 @@ public class CaseworkerReIssueApplicationIT {
         "classpath:caseworker-issue-joint-citizen-application-about-to-submit-response.json";
     private static final String MINI_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
     private static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
-    private static final String SOLE_APPLICATION_DOC_NAME = "NFD_CP_Application_Sole.docx";
 
     @Autowired
     private MockMvc mockMvc;
@@ -167,6 +166,14 @@ public class CaseworkerReIssueApplicationIT {
         SendLetterWireMock.stopAndReset();
     }
 
+    private static Stream<Arguments> reissueOptions() {
+        return Stream.of(
+            Arguments.of(DIGITAL_AOS),
+            Arguments.of(OFFLINE_AOS),
+            Arguments.of(REISSUE_CASE)
+        );
+    }
+
     @BeforeEach
     void setClock() {
         when(clock.instant()).thenReturn(Instant.parse("2021-06-17T12:00:00.000Z"));
@@ -186,11 +193,13 @@ public class CaseworkerReIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
 
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetter();
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -237,11 +246,13 @@ public class CaseworkerReIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, SOLE_APPLICATION_DOC_NAME);
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Joint.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetter();
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -598,7 +609,6 @@ public class CaseworkerReIssueApplicationIT {
         verifyNoMoreInteractions(notificationService);
     }
 
-
     @Test
     void givenInvalidCaseDataWhenAboutToSubmitCallbackIsInvokedThenResponseContainsErrors() throws Exception {
         final CaseData caseData = invalidCaseData();
@@ -675,14 +685,6 @@ public class CaseworkerReIssueApplicationIT {
 
     private byte[] loadPdfAsBytes() throws IOException {
         return resourceAsBytes("classpath:Test.pdf");
-    }
-
-    private static Stream<Arguments> reissueOptions() {
-        return Stream.of(
-            Arguments.of(DIGITAL_AOS),
-            Arguments.of(OFFLINE_AOS),
-            Arguments.of(REISSUE_CASE)
-        );
     }
 
 }
