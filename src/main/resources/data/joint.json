@@ -97,5 +97,6 @@
   "coApplicant1IsSubmitted": "No",
   "coApplicant2IsSubmitted": "No",
   "coApplicant1IsDrafted": "No",
-  "coApplicant2IsDrafted": "No"
+  "coApplicant2IsDrafted": "No",
+  "isJudicialSeparation": "No"
 }

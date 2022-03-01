@@ -18,17 +18,19 @@ import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransformer.TRANSFORMATION_AND_OCR_WARNINGS;
+import static uk.gov.hmcts.divorce.bulkscan.transformation.CommonFormToCaseTransformer.TRANSFORMATION_AND_OCR_WARNINGS;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -40,9 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.scannedDocuments;
 @ExtendWith(MockitoExtension.class)
 public class D8FormToCaseTransformerTest {
 
-
-    @InjectMocks
-    private D8FormToCaseTransformer d8FormToCaseTransformer;
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Mock
     private OcrValidator validator;
@@ -57,15 +57,19 @@ public class D8FormToCaseTransformerTest {
     private ApplicationTransformer applicationTransformer;
 
     @Mock
+    private D8PrayerTransformer d8PrayerTransformer;
+
+    @Mock
+    private CommonFormToCaseTransformer commonFormToCaseTransformer;
+
+    @Mock
     private MarriageDetailsTransformer marriageDetailsTransformer;
 
     @Mock
     private PaperFormDetailsTransformer paperFormDetailsTransformer;
 
-    @Mock
-    private ObjectMapper mapper;
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    @InjectMocks
+    private D8FormToCaseTransformer d8FormToCaseTransformer;
 
     @Test
     @SuppressWarnings("unchecked")
@@ -82,32 +86,38 @@ public class D8FormToCaseTransformerTest {
                 .ocrDataFields(transformOcrMapToObject(ocrDataFields))
                 .caseData(caseData)
                 .build();
+        final OcrValidationResponse ocrValidationResponse = OcrValidationResponse.builder().build();
+        final Map<String, Object> expectedResult = emptyMap();
 
         Function<TransformationDetails, TransformationDetails> app1App2 = mock(Function.class);
         Function<TransformationDetails, TransformationDetails> app1App2Application = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2ApplicationMarriage = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2ApplicationMarriagePaper = mock(Function.class);
+        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayer = mock(Function.class);
+        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriage = mock(Function.class);
+        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriagePaper = mock(Function.class);
 
         when(applicant1Transformer.andThen(applicant2Transformer)).thenReturn(app1App2);
         when(app1App2.andThen(applicationTransformer)).thenReturn(app1App2Application);
-        when(app1App2Application.andThen(marriageDetailsTransformer)).thenReturn(app1App2ApplicationMarriage);
-        when(app1App2ApplicationMarriage.andThen(paperFormDetailsTransformer)).thenReturn(app1App2ApplicationMarriagePaper);
-        when(app1App2ApplicationMarriagePaper.apply(any(TransformationDetails.class))).thenReturn(transformationDetails);
+        when(app1App2Application.andThen(d8PrayerTransformer)).thenReturn(app1App2ApplicationPrayer);
+        when(app1App2ApplicationPrayer.andThen(marriageDetailsTransformer)).thenReturn(app1App2ApplicationPrayerMarriage);
+        when(app1App2ApplicationPrayerMarriage.andThen(paperFormDetailsTransformer)).thenReturn(app1App2ApplicationPrayerMarriagePaper);
+        when(app1App2ApplicationPrayerMarriagePaper.apply(any(TransformationDetails.class))).thenReturn(transformationDetails);
 
         when(validator.validateOcrData(D8.getName(), transformOcrMapToObject(ocrDataFields)))
-            .thenReturn(OcrValidationResponse.builder().build());
-
-        Map<String, Object> transformedCaseData = new HashMap<>();
-        when(mapper.convertValue(any(CaseData.class), any(TypeReference.class))).thenReturn(transformedCaseData);
+            .thenReturn(ocrValidationResponse);
+        when(commonFormToCaseTransformer.setDefaultValues(any(CaseData.class)))
+            .thenReturn(caseData);
+        when(commonFormToCaseTransformer.verifyFields(any(TransformationDetails.class), any(List.class)))
+            .thenReturn(emptyList());
+        when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList(), ocrValidationResponse))
+            .thenReturn(expectedResult);
 
         ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
         final var transformedOutput = d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord);
 
-        assertThat(transformedOutput).contains(entry(TRANSFORMATION_AND_OCR_WARNINGS, emptyList()));
         assertThat(transformedOutput.get("scannedDocuments"))
             .usingRecursiveComparison()
             .ignoringFields("id")
-            .isEqualTo(scannedDocuments());
+            .isEqualTo(scannedDocuments(D8));
     }
 
     @Test
@@ -125,23 +135,36 @@ public class D8FormToCaseTransformerTest {
                 .ocrDataFields(transformOcrMapToObject(ocrDataFields))
                 .caseData(caseData)
                 .build();
+        final var ocrValidationResponse = OcrValidationResponse.builder().build();
+        final List<ListValue<String>> expectedWarnings = singletonList(ListValue.<String>builder()
+            .id(UUID.randomUUID().toString())
+            .value("warning")
+            .build());
+
+        final Map<String, Object> expectedResult = new HashMap<>();
+        expectedResult.put(TRANSFORMATION_AND_OCR_WARNINGS, expectedWarnings);
 
         Function<TransformationDetails, TransformationDetails> app1App2 = mock(Function.class);
         Function<TransformationDetails, TransformationDetails> app1App2Application = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2ApplicationMarriage = mock(Function.class);
-        Function<TransformationDetails, TransformationDetails> app1App2ApplicationMarriagePaper = mock(Function.class);
+        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayer = mock(Function.class);
+        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriage = mock(Function.class);
+        Function<TransformationDetails, TransformationDetails> app1App2ApplicationPrayerMarriagePaper = mock(Function.class);
 
         when(applicant1Transformer.andThen(applicant2Transformer)).thenReturn(app1App2);
         when(app1App2.andThen(applicationTransformer)).thenReturn(app1App2Application);
-        when(app1App2Application.andThen(marriageDetailsTransformer)).thenReturn(app1App2ApplicationMarriage);
-        when(app1App2ApplicationMarriage.andThen(paperFormDetailsTransformer)).thenReturn(app1App2ApplicationMarriagePaper);
-        when(app1App2ApplicationMarriagePaper.apply(any(TransformationDetails.class))).thenReturn(transformationDetails);
+        when(app1App2Application.andThen(d8PrayerTransformer)).thenReturn(app1App2ApplicationPrayer);
+        when(app1App2ApplicationPrayer.andThen(marriageDetailsTransformer)).thenReturn(app1App2ApplicationPrayerMarriage);
+        when(app1App2ApplicationPrayerMarriage.andThen(paperFormDetailsTransformer)).thenReturn(app1App2ApplicationPrayerMarriagePaper);
+        when(app1App2ApplicationPrayerMarriagePaper.apply(any(TransformationDetails.class))).thenReturn(transformationDetails);
 
         when(validator.validateOcrData(D8.getName(), transformOcrMapToObject(ocrDataFields)))
-            .thenReturn(OcrValidationResponse.builder().build());
-
-        Map<String, Object> transformedCaseData = new HashMap<>();
-        when(mapper.convertValue(any(CaseData.class), any(TypeReference.class))).thenReturn(transformedCaseData);
+            .thenReturn(ocrValidationResponse);
+        when(commonFormToCaseTransformer.setDefaultValues(any(CaseData.class)))
+            .thenReturn(caseData);
+        when(commonFormToCaseTransformer.verifyFields(any(TransformationDetails.class), any(List.class)))
+            .thenReturn(emptyList());
+        when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList(), ocrValidationResponse))
+            .thenReturn(expectedResult);
 
         var exceptionRecord = exceptionRecord(ocrDataFields);
         final var transformedOutput = d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord);
@@ -151,11 +174,7 @@ public class D8FormToCaseTransformerTest {
             .extracting("value")
             .isEqualTo(
                 List.of(
-                    "Please review divorce type in the scanned form",
-                    "Please review application type in the scanned form",
-                    "Please review serve out of UK in the scanned form",
-                    "Please review respondent by post and applicant will serve application in the scanned form",
-                    "Please review respondent address different to service address in the scanned form"
+                    "warning"
                 )
             );
     }
@@ -204,7 +223,7 @@ public class D8FormToCaseTransformerTest {
             .builder()
             .formType(D8.getName())
             .ocrDataFields(ocrDataFields)
-            .scannedDocuments(inputScannedDocuments())
+            .scannedDocuments(inputScannedDocuments(D8))
             .build();
     }
 }
