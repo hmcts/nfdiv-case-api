@@ -42,6 +42,7 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
                 .readonly(LabelContent::getRespondentsOrApplicant2s, NEVER_SHOW)
                 .readonly(LabelContent::getTheApplicantOrApplicant1, NEVER_SHOW)
             .done()
+            .readonly(CaseData::getIsJudicialSeparation, NEVER_SHOW)
             .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                     .readonly(ConditionalOrderQuestions::getIsDrafted, NEVER_SHOW)
@@ -77,6 +78,7 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
         data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
         data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
         data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
+        data.setIsJudicialSeparation(NO);
         if (!data.getApplicationType().isSole()) {
             data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
             data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
