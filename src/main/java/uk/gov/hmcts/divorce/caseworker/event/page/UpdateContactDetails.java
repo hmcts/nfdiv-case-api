@@ -27,8 +27,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String LAST_NAME_LABEL = "${%s} last name";
     private static final String WARNING_LABEL = "### WARNING: Changing the ${%s} gender here means you need "
         + "to Re-Issue the case to update all case documents";
-    private static final String GENDER_LABEL = "What is ${%s} gender?";
-    private static final String GENDER_HINT_LABEL = "${%s} gender is collected for statistical purposes only";
+    private static final String GENDER_LABEL = "What is the ${%s} gender?";
+    private static final String GENDER_HINT_LABEL = "The ${%s} gender is collected for statistical purposes only";
     private static final String CONTACT_TYPE_LABEL = "Keep the ${%s} contact details private from ${%s}?";
     private static final String ADDRESS_LABEL = "${%s} home address";
     private static final String PHONE_LABEL = "${%s} phone number";
@@ -37,7 +37,9 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String MARRIAGE_CERT_NAME_HINT_LABEL =
         "Enter the ${%s} name exactly as it appears on the certificate. Include any extra text such as 'formally known as'.";
     private static final String APPLICANTS_OR_APPLICANT1S = "labelContentApplicantsOrApplicant1s";
+    private static final String THE_APPLICANT_OR_APPLICANT1 = "labelContentTheApplicantOrApplicant1";
     private static final String RESPONDENTS_OR_APPLICANT2S = "labelContentRespondentsOrApplicant2s";
+    private static final String THE_RESPONDENT_OR_APPLICANT2 = "labelContentTheApplicant2";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -47,7 +49,9 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 .pageLabel(TITLE)
                 .complex(CaseData::getLabelContent)
                     .readonlyNoSummary(LabelContent::getApplicantsOrApplicant1s, ALWAYS_HIDE)
+                    .readonlyNoSummary(LabelContent::getTheApplicantOrApplicant1, ALWAYS_HIDE)
                     .readonlyNoSummary(LabelContent::getRespondentsOrApplicant2s, ALWAYS_HIDE)
+                    .readonlyNoSummary(LabelContent::getTheApplicant2, ALWAYS_HIDE)
                 .done();
 
         buildApplicant1Fields(fieldCollectionBuilder);
@@ -69,7 +73,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 .optional(Applicant::getGender, null, null, getLabel(GENDER_LABEL, APPLICANTS_OR_APPLICANT1S),
                     getLabel(GENDER_HINT_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
-                    getLabel(CONTACT_TYPE_LABEL, APPLICANTS_OR_APPLICANT1S, RESPONDENTS_OR_APPLICANT2S))
+                    getLabel(CONTACT_TYPE_LABEL, APPLICANTS_OR_APPLICANT1S, THE_RESPONDENT_OR_APPLICANT2))
                 .optionalWithLabel(Applicant::getHomeAddress, getLabel(ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .label("LabelHorizontalLine1", HORIZONTAL_RULE)
@@ -88,7 +92,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
             .optional(Applicant::getGender, null, null, getLabel(GENDER_LABEL, RESPONDENTS_OR_APPLICANT2S),
                 getLabel(GENDER_HINT_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
-                    getLabel(CONTACT_TYPE_LABEL, RESPONDENTS_OR_APPLICANT2S, APPLICANTS_OR_APPLICANT1S))
+                    getLabel(CONTACT_TYPE_LABEL, RESPONDENTS_OR_APPLICANT2S, THE_APPLICANT_OR_APPLICANT1))
                 .optionalWithLabel(Applicant::getHomeAddress, getLabel(ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .label("LabelHorizontalLine2", HORIZONTAL_RULE)
