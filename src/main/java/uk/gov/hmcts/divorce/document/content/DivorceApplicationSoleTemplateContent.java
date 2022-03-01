@@ -161,7 +161,8 @@ public class DivorceApplicationSoleTemplateContent {
         }
         if (!isNullOrEmpty(solicitorAddress)) {
             String addressCleanUp =
-                join("\n", Arrays.stream(solicitorAddress.split("\n"))
+                join("\n",
+                    Arrays.stream(applicant.getSolicitor().getAddress().split("\n"))
                     .filter(value -> !Objects.equals(value, ""))
                     .toArray(String[]::new));
             templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, addressCleanUp);
