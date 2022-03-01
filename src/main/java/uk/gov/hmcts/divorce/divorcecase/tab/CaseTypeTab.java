@@ -81,7 +81,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("dueDate")
             .label("LabelAosTabOnlineResponse-RespondentRepresent", null, "### Respondent")
             .field("applicant2SolicitorRepresented")
-            .field("digitalNoticeOfProceedings")
             .field("noticeOfProceedingsEmail")
             .field("noticeOfProceedingsSolicitorFirm");
     }

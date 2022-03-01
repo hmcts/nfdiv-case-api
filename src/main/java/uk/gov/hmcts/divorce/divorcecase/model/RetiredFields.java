@@ -357,6 +357,11 @@ public class RetiredFields {
     private List<String> transformationAndOcrWarnings = new ArrayList<>();
 
     @CCD(
+        label = "Retired Digital Notice of Proceedings?"
+    )
+    private YesOrNo digitalNoticeOfProceedings;
+
+    @CCD(
         label = "Does the applicant want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
         access = {DefaultAccess.class}
     )
