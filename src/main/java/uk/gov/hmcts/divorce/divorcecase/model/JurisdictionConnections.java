@@ -10,11 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum JurisdictionConnections implements HasLabel {
 
-
-    @JsonProperty("J")
-    @JsonPropertyDescription("APP_1_RESIDENT_JOINT")
-    APP_1_RESIDENT_JOINT("The applicant habitually resides in England and Wales (Joint Application Only)"),
-
     @JsonProperty("A")
     @JsonPropertyDescription("APP_1_APP_2_RESIDENT")
     APP_1_APP_2_RESIDENT("The applicant and the respondent are habitually resident in England and Wales"),
@@ -55,8 +50,21 @@ public enum JurisdictionConnections implements HasLabel {
     RESIDUAL_JURISDICTION("The Applicant and Respondent registered as civil partners of each other in "
         + "England or Wales or, in the case of a same sex couple, married each other under "
         + "the law of England and Wales and it would be in the interests of justice for "
-        + "the court to assume jurisdiction in this case (same sex married couples only)");
+        + "the court to assume jurisdiction in this case (same sex married couples only)"),
 
+    @JsonProperty("J")
+    @JsonPropertyDescription("APP_1_RESIDENT_JOINT")
+    APP_1_RESIDENT_JOINT("The applicant habitually resides in England and Wales (Joint Application Only)"),
+
+    @JsonProperty("K")
+    @JsonPropertyDescription("APP_2_RESIDENT_TWELVE_MONTHS")
+    APP_2_RESIDENT_TWELVE_MONTHS("Applicant 2 is habitually resident in England and Wales and has resided there "
+                                     + "for at least one year immediately before the application was made."),
+
+    @JsonProperty("L")
+    @JsonPropertyDescription("APP_2_RESIDENT_SIX_MONTHS")
+    APP_2_RESIDENT_SIX_MONTHS("Applicant 2 is domiciled and habitually resident in England and Wales and has "
+                                  + "resided there for at least six months immediately before the application was made");
 
     private final String label;
 }
