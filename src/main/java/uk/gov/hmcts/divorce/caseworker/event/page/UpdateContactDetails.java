@@ -28,11 +28,14 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String WARNING_LABEL = "### WARNING: Changing the ${%s} gender here means you need "
         + "to Re-Issue the case to update all case documents";
     private static final String GENDER_LABEL = "What is ${%s} gender?";
-    private static final String CONTACT_TYPE_LABEL = "Keep ${%s} contact details private from ${%s}?";
+    private static final String GENDER_HINT_LABEL = "${%s} gender is collected for statistical purposes only";
+    private static final String CONTACT_TYPE_LABEL = "Keep the ${%s} contact details private from ${%s}?";
     private static final String ADDRESS_LABEL = "${%s} home address";
     private static final String PHONE_LABEL = "${%s} phone number";
     private static final String HORIZONTAL_RULE = "<hr>";
     private static final String MARRIAGE_CERT_NAME_LABEL = "${%s} full name as on marriage certificate";
+    private static final String MARRIAGE_CERT_NAME_HINT_LABEL =
+        "Enter the ${%s} name exactly as it appears on the certificate. Include any extra text such as 'formally known as'.";
     private static final String APPLICANTS_OR_APPLICANT1S = "labelContentApplicantsOrApplicant1s";
     private static final String RESPONDENTS_OR_APPLICANT2S = "labelContentRespondentsOrApplicant2s";
 
@@ -59,16 +62,17 @@ public class UpdateContactDetails implements CcdPageConfiguration {
 
         fieldCollectionBuilder
             .complex(CaseData::getApplicant1)
-            .mandatoryWithLabel(Applicant::getFirstName, getLabel(FIRST_NAME_LABEL, APPLICANTS_OR_APPLICANT1S))
-            .optionalWithLabel(Applicant::getMiddleName, getLabel(MIDDLE_NAME_LABEL, APPLICANTS_OR_APPLICANT1S))
-            .mandatoryWithLabel(Applicant::getLastName, getLabel(LAST_NAME_LABEL, APPLICANTS_OR_APPLICANT1S))
-            .label("LabelPetitionerWarning", getLabel(WARNING_LABEL, APPLICANTS_OR_APPLICANT1S))
-            .optionalWithLabel(Applicant::getGender, getLabel(GENDER_LABEL, APPLICANTS_OR_APPLICANT1S))
-            .optionalWithLabel(Applicant::getContactDetailsType,
-                getLabel(CONTACT_TYPE_LABEL, APPLICANTS_OR_APPLICANT1S, RESPONDENTS_OR_APPLICANT2S))
-            .optionalWithLabel(Applicant::getHomeAddress, getLabel(ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
-            .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, APPLICANTS_OR_APPLICANT1S))
-            .label("LabelHorizontalLine1", HORIZONTAL_RULE)
+                .mandatoryWithLabel(Applicant::getFirstName, getLabel(FIRST_NAME_LABEL, APPLICANTS_OR_APPLICANT1S))
+                .optionalWithLabel(Applicant::getMiddleName, getLabel(MIDDLE_NAME_LABEL, APPLICANTS_OR_APPLICANT1S))
+                .mandatoryWithLabel(Applicant::getLastName, getLabel(LAST_NAME_LABEL, APPLICANTS_OR_APPLICANT1S))
+                .label("LabelPetitionerWarning", getLabel(WARNING_LABEL, APPLICANTS_OR_APPLICANT1S))
+                .optional(Applicant::getGender, null, null, getLabel(GENDER_LABEL, APPLICANTS_OR_APPLICANT1S),
+                    getLabel(GENDER_HINT_LABEL, APPLICANTS_OR_APPLICANT1S))
+                .optionalWithLabel(Applicant::getContactDetailsType,
+                    getLabel(CONTACT_TYPE_LABEL, APPLICANTS_OR_APPLICANT1S, RESPONDENTS_OR_APPLICANT2S))
+                .optionalWithLabel(Applicant::getHomeAddress, getLabel(ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
+                .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, APPLICANTS_OR_APPLICANT1S))
+                .label("LabelHorizontalLine1", HORIZONTAL_RULE)
             .done();
     }
 
@@ -77,16 +81,17 @@ public class UpdateContactDetails implements CcdPageConfiguration {
 
         fieldCollectionBuilder
             .complex(CaseData::getApplicant2)
-            .mandatoryWithLabel(Applicant::getFirstName, getLabel(FIRST_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S))
-            .optionalWithLabel(Applicant::getMiddleName, getLabel(MIDDLE_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S))
-            .mandatoryWithLabel(Applicant::getLastName, getLabel(LAST_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S))
-            .label("LabelRespondentWarning", getLabel(WARNING_LABEL, RESPONDENTS_OR_APPLICANT2S))
-            .optionalWithLabel(Applicant::getGender, getLabel(GENDER_LABEL, RESPONDENTS_OR_APPLICANT2S))
-            .optionalWithLabel(Applicant::getContactDetailsType,
-                getLabel(CONTACT_TYPE_LABEL, RESPONDENTS_OR_APPLICANT2S, APPLICANTS_OR_APPLICANT1S))
-            .optionalWithLabel(Applicant::getHomeAddress, getLabel(ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
-            .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, RESPONDENTS_OR_APPLICANT2S))
-            .label("LabelHorizontalLine2", HORIZONTAL_RULE)
+                .mandatoryWithLabel(Applicant::getFirstName, getLabel(FIRST_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                .optionalWithLabel(Applicant::getMiddleName, getLabel(MIDDLE_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                .mandatoryWithLabel(Applicant::getLastName, getLabel(LAST_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                .label("LabelRespondentWarning", getLabel(WARNING_LABEL, RESPONDENTS_OR_APPLICANT2S))
+            .optional(Applicant::getGender, null, null, getLabel(GENDER_LABEL, RESPONDENTS_OR_APPLICANT2S),
+                getLabel(GENDER_HINT_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                .optionalWithLabel(Applicant::getContactDetailsType,
+                    getLabel(CONTACT_TYPE_LABEL, RESPONDENTS_OR_APPLICANT2S, APPLICANTS_OR_APPLICANT1S))
+                .optionalWithLabel(Applicant::getHomeAddress, getLabel(ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                .label("LabelHorizontalLine2", HORIZONTAL_RULE)
             .done();
     }
 
@@ -98,8 +103,12 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 "### Only update Marriage Certificate Names to make them match the marriage certificate exactly")
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
-                    .optionalWithLabel(MarriageDetails::getApplicant1Name, getLabel(MARRIAGE_CERT_NAME_LABEL, APPLICANTS_OR_APPLICANT1S))
-                    .optionalWithLabel(MarriageDetails::getApplicant2Name, getLabel(MARRIAGE_CERT_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                    .optional(MarriageDetails::getApplicant1Name, null, null,
+                        getLabel(MARRIAGE_CERT_NAME_LABEL, APPLICANTS_OR_APPLICANT1S),
+                        getLabel(MARRIAGE_CERT_NAME_HINT_LABEL, APPLICANTS_OR_APPLICANT1S))
+                    .optional(MarriageDetails::getApplicant2Name, null, null,
+                        getLabel(MARRIAGE_CERT_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S),
+                        getLabel(MARRIAGE_CERT_NAME_HINT_LABEL, RESPONDENTS_OR_APPLICANT2S))
             .done();
     }
 
