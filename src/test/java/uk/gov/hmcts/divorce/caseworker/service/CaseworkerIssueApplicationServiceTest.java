@@ -6,11 +6,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
@@ -43,16 +42,13 @@ class CaseworkerIssueApplicationServiceTest {
     private GenerateDivorceApplication generateDivorceApplication;
 
     @Mock
-    private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
-
-    @Mock
-    private GenerateCitizenRespondentAosInvitation generateCitizenRespondentAosInvitation;
+    private GenerateRespondentAosInvitation generateRespondentAosInvitation;
 
     @Mock
     private GenerateNoticeOfProceeding generateNoticeOfProceeding;
 
     @Mock
-    private SendAosPack sendAosPack;
+    private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Mock
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
@@ -79,12 +75,11 @@ class CaseworkerIssueApplicationServiceTest {
         setMockClock(clock);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(divorceApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
 
@@ -118,12 +113,11 @@ class CaseworkerIssueApplicationServiceTest {
         setMockClock(clock);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(divorceApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
 

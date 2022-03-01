@@ -6,10 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
@@ -43,13 +42,10 @@ class ReIssueApplicationServiceTest {
     private GenerateDivorceApplication generateMiniApplication;
 
     @Mock
-    private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
+    private GenerateRespondentAosInvitation generateRespondentAosInvitation;
 
     @Mock
-    private GenerateCitizenRespondentAosInvitation generateCitizenRespondentAosInvitation;
-
-    @Mock
-    private SendAosPack sendAosPack;
+    private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Mock
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
@@ -72,8 +68,7 @@ class ReIssueApplicationServiceTest {
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
@@ -96,9 +91,8 @@ class ReIssueApplicationServiceTest {
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
@@ -121,9 +115,8 @@ class ReIssueApplicationServiceTest {
         caseData.getApplication().setReissueOption(REISSUE_CASE);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(generateMiniApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
@@ -156,8 +149,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
@@ -192,9 +184,8 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
@@ -229,10 +220,9 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateMiniApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
