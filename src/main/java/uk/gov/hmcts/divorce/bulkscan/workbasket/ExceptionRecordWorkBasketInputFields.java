@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.bulkscan.workbasket;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.api.WorkBasketField;
+import uk.gov.hmcts.ccd.sdk.api.SearchField;
 import uk.gov.hmcts.ccd.sdk.type.ExceptionRecord;
 import uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -17,9 +17,9 @@ public class ExceptionRecordWorkBasketInputFields implements CCDConfig<Exception
 
     @Override
     public void configure(final ConfigBuilder<ExceptionRecord, ExceptionRecordState, UserRole> configBuilder) {
-        final List<WorkBasketField> workBasketFieldList = of(
-            WorkBasketField.builder().label("Form type").id("formType").build(),
-            WorkBasketField.builder().label("Contains payments").id("containsPayments").build()
+        final List<SearchField<UserRole>> workBasketFieldList = of(
+            SearchField.<UserRole>builder().label("Form type").id("formType").build(),
+            SearchField.<UserRole>builder().label("Contains payments").id("containsPayments").build()
         );
 
         configBuilder.workBasketInputFields().fields(workBasketFieldList);
