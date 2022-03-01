@@ -33,8 +33,13 @@ public class RequestInterceptor implements HandlerInterceptor {
     ) {
 
         String serviceAuthToken = request.getHeader(SERVICE_AUTHORIZATION);
+        String serviceName;
+        if (serviceAuthToken != null && !serviceAuthToken.contains("Bearer")) {
+            serviceName = tokenValidator.getServiceName("Bearer " + serviceAuthToken);
+        } else {
+            serviceName = tokenValidator.getServiceName(serviceAuthToken);
+        }
 
-        String serviceName = tokenValidator.getServiceName(serviceAuthToken);
         if (!authorisedServices.contains(serviceName)) {
             log.error("Service {} not allowed to trigger save and sign out callback ", serviceName);
             throw new UnAuthorisedServiceException("Service " + serviceName + " not in configured list for accessing callback");

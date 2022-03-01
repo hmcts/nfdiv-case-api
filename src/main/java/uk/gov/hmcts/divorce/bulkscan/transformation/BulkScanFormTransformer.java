@@ -34,8 +34,6 @@ public abstract class BulkScanFormTransformer {
         Map<String, Object> formSpecificMap = runFormSpecificTransformation(ocrDataFields);
         caseData.putAll(formSpecificMap);
 
-        // Temporarily logging case data to see which fields are sent to bulk scan
-        log.info("Transformed case data map {} ", caseData);
         return caseData;
     }
 

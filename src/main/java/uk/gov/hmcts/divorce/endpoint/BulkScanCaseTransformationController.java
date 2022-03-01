@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkscan.transformation.BulkScanService;
 import uk.gov.hmcts.divorce.endpoint.model.ExceptionRecord;
 import uk.gov.hmcts.reform.bsp.common.config.BulkScanEndpoints;
@@ -22,8 +23,11 @@ import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
@@ -37,11 +41,7 @@ public class BulkScanCaseTransformationController {
     @Autowired
     private BulkScanService bulkScanService;
 
-    @PostMapping(
-        path = BulkScanEndpoints.TRANSFORM,
-        produces = APPLICATION_JSON_VALUE,
-        consumes = "application/json;charset=UTF-8"
-    )
+    @PostMapping(path = BulkScanEndpoints.TRANSFORM, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     @Operation(summary = "Transform exception record into CCD case data")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Transformation of Exception Record into CCD Case Data has been successful",
@@ -58,11 +58,10 @@ public class BulkScanCaseTransformationController {
         @Valid @RequestBody ExceptionRecord exceptionRecord
     ) {
         String exceptionRecordId = exceptionRecord.getId();
+
         log.info("Transforming Exception Record to case with Case ID: {}", exceptionRecordId);
 
         Map<String, Object> transformedCaseData = bulkScanService.transformBulkScanForm(exceptionRecord);
-
-        @SuppressWarnings("unchecked") final var warnings = (List<String>) transformedCaseData.get(TRANSFORMATION_AND_OCR_WARNINGS);
 
         SuccessfulTransformationResponse callbackResponse = SuccessfulTransformationResponse.builder()
             .caseCreationDetails(
@@ -72,9 +71,23 @@ public class BulkScanCaseTransformationController {
                     transformedCaseData
                 )
             )
-            .warnings(warnings)
+            .warnings(deriveWarnings(transformedCaseData))
             .build();
 
         return ok().body(callbackResponse);
+    }
+
+    private List<String> deriveWarnings(Map<String, Object> transformedCaseData) {
+        @SuppressWarnings("unchecked")
+        final var warnings = (List<ListValue<String>>) transformedCaseData.get(TRANSFORMATION_AND_OCR_WARNINGS);
+
+        if (isEmpty(warnings)) {
+            return emptyList();
+        }
+
+        return warnings
+            .stream()
+            .map(listValue -> listValue.getValue())
+            .collect(toList());
     }
 }

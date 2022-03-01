@@ -101,9 +101,6 @@ public class CommonFormToCaseTransformerTest {
 
         caseData = commonFormToCaseTransformer.setLabelContentAndDefaultValues(caseData);
 
-        assertThat(caseData.getLabelContent().getApplicant2()).isEqualTo("respondent");
-        assertThat(caseData.getLabelContent().getUnionType()).isEqualTo("divorce");
-
         assertThat(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
         assertThat(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
     }
@@ -113,9 +110,6 @@ public class CommonFormToCaseTransformerTest {
         var caseData = CaseData.builder().applicationType(JOINT_APPLICATION).divorceOrDissolution(DISSOLUTION).build();
 
         caseData = commonFormToCaseTransformer.setLabelContentAndDefaultValues(caseData);
-
-        assertThat(caseData.getLabelContent().getApplicant2()).isEqualTo("applicant 2");
-        assertThat(caseData.getLabelContent().getUnionType()).isEqualTo("dissolution");
 
         assertThat(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
         assertThat(caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isEqualTo(NO);

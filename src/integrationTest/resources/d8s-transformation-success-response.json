@@ -4,11 +4,8 @@
     "event_id": "create-paper-case",
     "case_data": {
       "applicationType": "soleApplication",
-      "labelContentApplicantsOrApplicant1s": "Applicant’s",
-      "labelContentTheApplicant2UC": "The respondent",
       "paperFormApplicantWillServeApplication": "No",
       "paperFormApplicant1SigningSOT": "Yes",
-      "labelContentGotMarriedOrFormedCivilPartnership": "got married",
       "applicant1HWFAppliedForFees": "No",
       "scannedDocuments": [
         {
@@ -42,15 +39,12 @@
       "applicant1LegalProceedings": "No",
       "applicant1Email": "",
       "paperFormApplicant2PaymentOther": "No",
-      "labelContentUnionType": "divorce",
       "applicant2NameDifferentToMarriageCertificate": "No",
       "paperFormRespondentDifferentServiceAddress": "No",
       "solSignStatementOfTruth": "Yes",
-      "labelContentTheApplicant2": "the respondent",
       "applicant2SolicitorAddress": "some street\nsecond line of address",
       "paperFormSummaryApplicant2FinancialOrdersFor": [],
       "applicant2ScreenHasMarriageBroken": "No",
-      "labelContentApplicant2UC": "Respondent",
       "applicant1SolicitorPhone": "",
       "applicant2HWFReferenceNumber": "HWF456",
       "solStatementOfReconciliationName": "test name",
@@ -71,22 +65,16 @@
       "applicant2SolSignStatementOfTruth": "No",
       "applicant1PhoneNumber": "",
       "applicant2HWFNeedHelp": "Yes",
-      "labelContentDivorceOrCivilPartnershipApplication": "divorce application",
       "applicant1ScreenHasMarriageBroken": "Yes",
       "applicant1PrayerHasBeenGivenCheckbox": [
         "Yes"
       ],
-      "labelContentDivorceOrCivilPartnership": "divorce",
       "jurisdictionConnections": [
         "A"
       ],
       "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
       "applicant1NameChangedHowOtherDetails": "some reason",
-      "labelContentMarriageOrCivilPartnership": "marriage",
-      "labelContentRespondentsOrApplicant2s": "Respondent's",
-      "labelContentFinaliseDivorceOrEndCivilPartnership": "finalise the divorce",
       "applicant2FinancialOrder": "Yes",
-      "labelContentApplicant2": "respondent",
       "applicant1HWFNeedHelp": "Yes",
       "applicant2PhoneNumber": "",
       "applicant2NameChangedHowOtherDetails": "",
@@ -94,7 +82,6 @@
       "applicant1ContactDetailsType": "private",
       "solStatementOfReconciliationFirm": "",
       "paperFormApplicant2NoPaymentIncluded": "Yes",
-      "labelContentDivorceOrEndCivilPartnership": "for divorce",
       "paperFormSoleOrApplicant1PaymentOther": "No",
       "applicant1SolicitorEmail": "testsol@dummy.com",
       "applicant1HomeAddress": {
@@ -111,8 +98,6 @@
         "applicant",
         "children"
       ],
-      "labelContentUnionTypeUC": "Divorce",
-      "labelContentTheApplicantOrApplicant1": "the applicant",
       "applicant2SolicitorFirmName": "",
       "applicant1FirstName": "app1Fname",
       "isJudicialSeparation": "Yes",
@@ -130,7 +115,6 @@
       "paperFormSummaryApplicant1FinancialOrdersFor": [
         "children"
       ],
-      "labelContentApplicantOrApplicant1": "the applicant’s",
       "applicant2SolicitorRepresented": "Yes",
       "applicant1StatementOfTruth": "Yes",
       "applicant2HomeAddress": {
@@ -144,7 +128,6 @@
       "warnings": [],
       "applicant1SolicitorAddress": "some street\nsecond line of address\nUK",
       "screenHasMarriageCert": "Yes",
-      "labelContentDivorceOrLegallyEnd": "get a divorce",
       "applicant2Email": "app2test@dummy.com",
       "applicant1SolicitorRepresented": "Yes",
       "marriageIssueApplicationWithoutMarriageCertificate": "No"

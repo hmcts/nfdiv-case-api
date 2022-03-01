@@ -51,9 +51,6 @@ public class CommonFormToCaseTransformer {
 
     public CaseData setLabelContentAndDefaultValues(CaseData caseData) {
 
-        caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
-        caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
-
         caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
         caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
         if (!caseData.getApplicationType().isSole()) {

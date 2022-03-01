@@ -114,7 +114,12 @@
       },
       "applicant1ScreenHasMarriageBroken": "Yes",
       "paperFormApplicant2LegalRepSigningSOT": "No",
-      "warnings": [],
+      "warnings": [
+        {
+          "id": "${json-unit.any-string}",
+          "value": "Please review divorce type in the scanned form"
+        }
+      ],
       "applicant1PrayerHasBeenGivenCheckbox": [
         "Yes"
       ],
@@ -135,5 +140,7 @@
       "marriageMarriageCertificateIsIncorrectDetails": ""
     }
   },
-  "warnings": []
+  "warnings": [
+    "Please review divorce type in the scanned form"
+  ]
 }
