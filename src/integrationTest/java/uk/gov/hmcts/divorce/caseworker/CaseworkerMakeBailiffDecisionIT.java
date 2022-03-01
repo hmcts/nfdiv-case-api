@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -134,6 +135,7 @@ public class CaseworkerMakeBailiffDecisionIT {
         stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved.docx");
 
         final CaseData caseData = caseData();
+        caseData.getAlternativeService().setReceivedServiceApplicationDate(LocalDate.of(2022, 1, 1));
         caseData.getAlternativeService().setServiceApplicationGranted(NO);
         caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
 

@@ -52,7 +52,7 @@ public class BailiffNotApprovedOrderContent {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);
+        templateContent.put(CCD_CASE_REFERENCE, caseData.formatCaseRef(ccdCaseReference));
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
 
         templateContent.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
