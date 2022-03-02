@@ -17,7 +17,7 @@
     "applicant2FinancialOrder": "No",
     "applicant2FirstName": "test_first_name",
     "applicant2Gender": "male",
-    "applicant2HomeAddress": {
+    "applicant2Address": {
       "AddressLine1": "line 1",
       "PostCode": "postcode",
       "PostTown": "town",

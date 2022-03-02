@@ -200,7 +200,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
-            .homeAddress(AddressGlobalUK.builder()
+            .address(AddressGlobalUK.builder()
                 .addressLine1("Line 1")
                 .addressLine2("Line 2")
                 .addressLine3("")
@@ -219,7 +219,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
-            .homeAddress(AddressGlobalUK.builder()
+            .address(AddressGlobalUK.builder()
                 .addressLine1("Line 1")
                 .addressLine2("Line 2")
                 .addressLine3("Line 3")
@@ -252,7 +252,7 @@ class ApplicantTemplateDataProviderTest {
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(YES)
             .contactDetailsType(PUBLIC)
-            .homeAddress(AddressGlobalUK.builder()
+            .address(AddressGlobalUK.builder()
                 .addressLine1("Home Address")
                 .addressLine2("Line 2")
                 .addressLine3("Line 3")
@@ -309,12 +309,12 @@ class ApplicantTemplateDataProviderTest {
     }
 
     @Test
-    public void shouldReturnHomeAddressIfApplicant2IsNotSolicitorRepresentedAndIsCitizenApplication() {
+    public void shouldReturnAddressIfApplicant2IsNotSolicitorRepresentedAndIsCitizenApplication() {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
             .contactDetailsType(PUBLIC)
-            .homeAddress(AddressGlobalUK.builder()
+            .address(AddressGlobalUK.builder()
                 .addressLine1("Home Address")
                 .addressLine2("Line 2")
                 .addressLine3("")
@@ -374,10 +374,10 @@ class ApplicantTemplateDataProviderTest {
     }
 
     @Test
-    public void shouldReturnApplicant2HomeAddressIfSoleSolicitorApplication() {
+    public void shouldReturnApplicant2AddressIfSoleSolicitorApplication() {
 
         final Applicant applicant = Applicant.builder()
-            .homeAddress(AddressGlobalUK.builder()
+            .address(AddressGlobalUK.builder()
                 .addressLine1("Home Address")
                 .addressLine2("Line 2")
                 .addressLine3("")
@@ -392,7 +392,7 @@ class ApplicantTemplateDataProviderTest {
     }
 
     @Test
-    public void shouldReturnNullIfApplicant2HomeAddressIsNotSetForSoleSolicitorApplication() {
+    public void shouldReturnNullIfApplicant2AddressIsNotSetForSoleSolicitorApplication() {
 
         final Applicant applicant = Applicant.builder()
             .build();

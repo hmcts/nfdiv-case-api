@@ -22,7 +22,9 @@ public final class DocmosisTemplateConstants {
     public static final String FINANCIAL_ORDER_CHILD = "financialOrderChild";
     public static final String APPLICANT_1_POSTAL_ADDRESS = "applicant1PostalAddress";
     public static final String APPLICANT_2_POSTAL_ADDRESS = "applicant2PostalAddress";
+    public static final String A_DIVORCE_APPLICATION = "a divorce application";
     public static final String DIVORCE_APPLICATION = "divorce application";
+    public static final String END_A_CIVIL_PARTNERSHIP = "an application to end a civil partnership";
     public static final String END_CIVIL_PARTNERSHIP = "application to end the civil partnership";
     public static final String FOR_A_DIVORCE = "for a divorce";
     public static final String MARRIAGE = "marriage";
@@ -89,6 +91,13 @@ public final class DocmosisTemplateConstants {
     public static final String RESPONDENT_HEADING = "respondent";
     public static final String COSTS_GRANTED = "costsGranted";
     public static final String CTSC_CONTACT_DETAILS = "ctscContactDetails";
+
+    public static final String IS_DISPUTING = "isDisputing";
+    public static final String DISPUTING_DIVORCE = "dispute the divorce application";
+    public static final String WITHOUT_DISPUTING_DIVORCE = "continue without disputing the divorce";
+    public static final String DISPUTING_CIVIL_PARTNERSHIP = "dispute the application to end the civil partnership";
+    public static final String WITHOUT_DISPUTING_CIVIL_PARTNERSHIP =
+        "continue without disputing the application to end the civil partnership";
 
     private DocmosisTemplateConstants() {
     }

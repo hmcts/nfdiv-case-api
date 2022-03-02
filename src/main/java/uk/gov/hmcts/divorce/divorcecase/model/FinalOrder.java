@@ -122,12 +122,14 @@ public class FinalOrder {
     private LocalDate dateFinalOrderNoLongerEligible;
 
     @CCD(
-        label = "Has the applicant been sent a reminder to apply for the Final Order?"
+        label = "Has the applicant been sent a reminder to apply for the Final Order?",
+        access = {DefaultAccess.class}
     )
     private YesOrNo finalOrderReminderSentApplicant1;
 
     @CCD(
-        label = "Has the respondent been sent a reminder to apply for the Final Order?"
+        label = "Has the respondent been sent a reminder to apply for the Final Order?",
+        access = {DefaultAccess.class}
     )
     private YesOrNo finalOrderReminderSentApplicant2;
 

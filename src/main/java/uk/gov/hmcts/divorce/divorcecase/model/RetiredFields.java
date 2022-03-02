@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.map.HashedMap;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -361,6 +362,12 @@ public class RetiredFields {
     )
     private YesOrNo digitalNoticeOfProceedings;
 
+    @CCD(label = "Retired applicant 1 home address")
+    private AddressGlobalUK applicant1HomeAddress;
+
+    @CCD(label = "Retired applicant 2 home address")
+    private AddressGlobalUK applicant2HomeAddress;
+
     @CCD(
         label = "Does the applicant want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
         access = {DefaultAccess.class}
@@ -496,6 +503,10 @@ public class RetiredFields {
             data -> data.put("coApplicant1SolicitorFirm", data.get("coSolicitorFirm")));
         init.put("coSolicitorAdditionalComments",
             data -> data.put("coApplicant1SolicitorAdditionalComments", data.get("coSolicitorAdditionalComments")));
+        init.put("applicant1HomeAddress",
+            data -> data.put("applicant1Address", data.get("applicant1HomeAddress")));
+        init.put("applicant2HomeAddress",
+            data -> data.put("applicant2Address", data.get("applicant2HomeAddress")));
 
         migrations = unmodifiableMap(init);
     }
