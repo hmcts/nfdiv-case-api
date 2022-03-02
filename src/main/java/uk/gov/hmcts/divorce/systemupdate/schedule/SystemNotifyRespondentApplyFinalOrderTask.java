@@ -55,7 +55,7 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
 
     @Override
     public void run() {
-        log.info("Final Order overdue scheduled task started");
+        log.info("SystemNotifyRespondentApplyFinalOrder scheduled task started");
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
