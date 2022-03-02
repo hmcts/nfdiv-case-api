@@ -7,7 +7,7 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1HomeAddress": {},
+    "applicant1Address": {},
     "applicant1ContactDetailsType": "private",
     "applicant1Gender": "male",
     "applicant1FinancialOrder": "No",
@@ -17,7 +17,7 @@
     "applicant2LastName": "test_last_name",
     "applicant2Email": "applicant2@example.com",
     "applicant2LanguagePreferenceWelsh": "No",
-    "applicant2HomeAddress": {},
+    "applicant2Address": {},
     "applicant2ContactDetailsType": "public",
     "applicant2Gender": "female",
     "applicant1IsApplicant2Represented": "notSure",
@@ -60,18 +60,6 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentFileName": "noticeOfProceedings.pdf",
-          "documentType": "noticeOfProceedings",
-          "documentLink": {
-            "document_url": "${json-unit.any-string}",
-            "document_filename": "noticeOfProceedings.pdf",
-            "document_binary_url": "${json-unit.any-string}"
-          }
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
           "documentFileName": "${json-unit.any-string}",
           "documentType": "application",
           "documentLink": {
@@ -80,8 +68,33 @@
             "document_binary_url": "${json-unit.any-string}"
           }
         }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "aos",
+          "documentLink": {
+            "document_binary_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "noticeOfProceedings.pdf",
+          "documentType": "noticeOfProceedings",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "noticeOfProceedings.pdf",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
       }
     ],
+    "noticeOfProceedingsEmail": "applicant2@example.com",
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
     "warnings": [],

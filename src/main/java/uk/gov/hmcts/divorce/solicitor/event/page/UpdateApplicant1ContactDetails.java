@@ -15,7 +15,7 @@ public class UpdateApplicant1ContactDetails implements CcdPageConfiguration {
             .complex(CaseData::getApplicant1)
                 .mandatory(Applicant::getEmail)
                 .mandatory(Applicant::getPhoneNumber)
-                .mandatory(Applicant::getHomeAddress)
+                .mandatory(Applicant::getAddress)
                 .label("LabelHorizontalLine1", "<hr>")
                 .mandatory(Applicant::getContactDetailsType)
                 .done();

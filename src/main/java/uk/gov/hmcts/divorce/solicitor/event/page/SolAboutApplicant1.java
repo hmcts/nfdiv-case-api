@@ -50,7 +50,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                     "${labelContentApplicantsOrApplicant1s} email address")
                 .optionalWithLabel(Applicant::getPhoneNumber,
                     "${labelContentApplicantsOrApplicant1s} phone number")
-                .mandatoryWithLabel(Applicant::getHomeAddress,
+                .mandatoryWithLabel(Applicant::getAddress,
                     "${labelContentApplicantsOrApplicant1s} home address")
                 .label("LabelHorizontalLine1-SolAboutApplicant1", DARK_HORIZONTAL_RULE)
                 .mandatory(Applicant::getContactDetailsType)

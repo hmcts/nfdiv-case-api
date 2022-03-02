@@ -17,7 +17,7 @@ public class UpdateApplicant2ContactDetails implements CcdPageConfiguration {
                     "${labelContentTheApplicant2UC} email address")
                 .mandatoryWithLabel(Applicant::getPhoneNumber,
                     "${labelContentTheApplicant2UC} phone number")
-                .mandatoryWithLabel(Applicant::getHomeAddress,
+                .mandatoryWithLabel(Applicant::getAddress,
                     "${labelContentTheApplicant2UC} home address")
                 .label("LabelHorizontalLine1App2", "<hr>")
                 .mandatoryWithLabel(Applicant::getContactDetailsType,

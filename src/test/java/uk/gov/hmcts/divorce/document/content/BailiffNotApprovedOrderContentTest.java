@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TH
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -66,11 +67,11 @@ public class BailiffNotApprovedOrderContentTest {
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
-            entry(CCD_CASE_REFERENCE, TEST_CASE_ID),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DATE, LocalDate.now().format(DATE_TIME_FORMATTER)),
             entry(PETITIONER_FULL_NAME, FULL_NAME),
             entry(RESPONDENT_FULL_NAME, FULL_NAME),
-            entry(SERVICE_APPLICATION_RECEIVED_DATE, SERVICE_APPLICATION_DATE),
+            entry(SERVICE_APPLICATION_RECEIVED_DATE, SERVICE_APPLICATION_DATE.format(DATE_TIME_FORMATTER)),
             entry(REFUSAL_REASON, "refusal reason"),
             entry(THE_APPLICATION, DIVORCE_APPLICATION),
             entry(PARTNER, "wife")
@@ -93,11 +94,11 @@ public class BailiffNotApprovedOrderContentTest {
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
-            entry(CCD_CASE_REFERENCE, TEST_CASE_ID),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DATE, LocalDate.now().format(DATE_TIME_FORMATTER)),
             entry(PETITIONER_FULL_NAME, FULL_NAME),
             entry(RESPONDENT_FULL_NAME, FULL_NAME),
-            entry(SERVICE_APPLICATION_RECEIVED_DATE, SERVICE_APPLICATION_DATE),
+            entry(SERVICE_APPLICATION_RECEIVED_DATE, SERVICE_APPLICATION_DATE.format(DATE_TIME_FORMATTER)),
             entry(REFUSAL_REASON, "refusal reason"),
             entry(THE_APPLICATION, APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP),
             entry(PARTNER, "civil partner")

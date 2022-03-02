@@ -6,7 +6,7 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1HomeAddress": {
+    "applicant1Address": {
       "AddressLine1": "line 1",
       "PostTown": "town",
       "PostCode": "postcode"

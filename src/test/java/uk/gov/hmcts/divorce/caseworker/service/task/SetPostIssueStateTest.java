@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -29,7 +28,6 @@ class SetPostIssueStateTest {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder()
-                .solSignStatementOfTruth(YES)
                 .solServiceMethod(SOLICITOR_SERVICE)
                 .build())
             .applicationType(ApplicationType.SOLE_APPLICATION)
@@ -48,7 +46,6 @@ class SetPostIssueStateTest {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder()
-                .solSignStatementOfTruth(YES)
                 .solServiceMethod(COURT_SERVICE)
                 .build())
             .applicationType(ApplicationType.SOLE_APPLICATION)
