@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import feign.FeignException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -42,6 +41,9 @@ import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUES
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentApplyFinalOrder.SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyRespondentApplyFinalOrderTask.APPLICATION_TYPE;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyRespondentApplyFinalOrderTask.NOTIFICATION_FLAG;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyRespondentApplyFinalOrderTask.RESP_ELIGIBLE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyRespondentApplyFinalOrderTask.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -64,12 +66,12 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
 
     private User user;
 
-    private static final QueryBuilder dateFinalOrderEligibleToRespondentExists = existsQuery("data.dateFinalOrderEligibleToRespondent");
     private static final BoolQueryBuilder query =
         boolQuery()
             .must(matchQuery(STATE, AwaitingFinalOrder))
-            .must(matchQuery(String.format(DATA, APPLICATION_TYPE), "soleApplication"))
-            .must(boolQuery().must(dateFinalOrderEligibleToRespondentExists));
+            .filter(rangeQuery(String.format(DATA, RESP_ELIGIBLE_DATE)).lte(LocalDate.now()))
+            .must(matchQuery(String.format(DATA, APPLICATION_TYPE), SOLE_APPLICATION))
+            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
     @BeforeEach
     void setUp() {
@@ -79,64 +81,16 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
     }
 
     @Test
-    void shouldNotTriggerNotifyRespondentTaskWhenDateFinalOrderEligibleToRespondentNotReached() {
+    void shouldTriggerNotifyRespondentEventWhenSearchReturnsNonEmptyList() {
+
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
-
-        Map<String, Object> data1 = new HashMap<>();
-        data1.put("dateFinalOrderEligibleToRespondent", LocalDate.now().plusMonths(3).toString());
-        data1.put("finalOrderReminderSentApplicant2", YesOrNo.NO);
-        when(caseDetails1.getData()).thenReturn(data1);
-
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
-
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
-            .thenReturn(caseDetailsList);
-
-        systemNotifyRespondentApplyFinalOrderTask.run();
-
-        verifyNoInteractions(ccdUpdateService);
-    }
-
-    @Test
-    void shouldNotTriggerNotifyRespondentTaskWhenAlreadyNotified() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-
-        Map<String, Object> data1 = new HashMap<>();
-        data1.put("dateFinalOrderEligibleToRespondent", LocalDate.now().minusMonths(1).toString());
-        data1.put("finalOrderReminderSentApplicant2", YesOrNo.YES);
-        when(caseDetails1.getData()).thenReturn(data1);
-
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
-
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
-            .thenReturn(caseDetailsList);
-
-        systemNotifyRespondentApplyFinalOrderTask.run();
-
-        verifyNoInteractions(ccdUpdateService);
-    }
-
-    @Test
-    void shouldNotTriggerNotifyRespondentTaskWhenSearchReturnsEmptyList() {
-
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
-            .thenReturn(Collections.emptyList());
-
-        systemNotifyRespondentApplyFinalOrderTask.run();
-
-        verifyNoInteractions(ccdUpdateService);
-    }
-
-    @Test
-    void shouldTriggerNotifyRespondentTaskWhenDateFinalOrderEligibleToRespondentAndNotNotified() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
         Map<String, Object> data1 = new HashMap<>();
         data1.put("dateFinalOrderEligibleToRespondent", LocalDate.now().minusMonths(1).toString());
         data1.put("finalOrderReminderSentApplicant2", YesOrNo.NO);
         when(caseDetails1.getData()).thenReturn(data1);
-
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
 
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
@@ -144,21 +98,14 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         systemNotifyRespondentApplyFinalOrderTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
-    void shouldNotTriggerNotifyRespondentTaskWhenDateFinalOrderEligibleToRespondentButAlreadyNotified() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-
-        Map<String, Object> data1 = new HashMap<>();
-        data1.put("dateFinalOrderEligibleToRespondent", LocalDate.now().minusMonths(1).toString());
-        data1.put("finalOrderReminderSentApplicant2", YesOrNo.YES);
-        when(caseDetails1.getData()).thenReturn(data1);
-
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
+    void shouldNotTriggerNotifyRespondentEventWhenSearchReturnsEmptyList() {
 
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
-            .thenReturn(caseDetailsList);
+            .thenReturn(Collections.emptyList());
 
         systemNotifyRespondentApplyFinalOrderTask.run();
 
@@ -233,8 +180,9 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
     void shouldRunAppropriateQuery() {
         final BoolQueryBuilder expectedQuery = boolQuery()
             .must(matchQuery(STATE, AwaitingFinalOrder))
-            .must(matchQuery(String.format(DATA, APPLICATION_TYPE), "soleApplication"))
-            .must(boolQuery().must(dateFinalOrderEligibleToRespondentExists));
+            .filter(rangeQuery(String.format(DATA, RESP_ELIGIBLE_DATE)).lte(LocalDate.now()))
+            .must(matchQuery(String.format(DATA, APPLICATION_TYPE), SOLE_APPLICATION))
+            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
         systemNotifyRespondentApplyFinalOrderTask.run();
 
