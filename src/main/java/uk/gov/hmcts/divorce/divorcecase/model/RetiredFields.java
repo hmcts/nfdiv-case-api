@@ -507,6 +507,8 @@ public class RetiredFields {
             data -> data.put("applicant1Address", data.get("applicant1HomeAddress")));
         init.put("applicant2HomeAddress",
             data -> data.put("applicant2Address", data.get("applicant2HomeAddress")));
+        init.put("doesApplicantWantToApplyForFinalOrder",
+            data -> data.put("doesApplicant1WantToApplyForFinalOrder", data.get("doesApplicantWantToApplyForFinalOrder")));
 
         migrations = unmodifiableMap(init);
     }
