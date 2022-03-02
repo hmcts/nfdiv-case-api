@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -25,9 +26,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServiceApplication.CASEWORKER_SERVICE_RECEIVED;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerAlternativeServiceApplicationTest {
@@ -95,5 +98,23 @@ class CaseworkerAlternativeServiceApplicationTest {
         }
         when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
         when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(true);
+    }
+
+    @Test
+    void shouldSetReceivedServiceAddedDateToCurrentDateWhenAboutToSubmitCallbackIsInvoked() {
+
+        setMockClock(clock);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getWarnings()).isNull();
+
+        assertThat(response.getData().getAlternativeService().getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
     }
 }
