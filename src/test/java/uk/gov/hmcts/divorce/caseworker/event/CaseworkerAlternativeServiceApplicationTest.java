@@ -110,7 +110,8 @@ class CaseworkerAlternativeServiceApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getWarnings()).isNull();
