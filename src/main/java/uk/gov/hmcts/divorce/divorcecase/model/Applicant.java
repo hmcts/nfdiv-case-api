@@ -83,7 +83,7 @@ public class Applicant {
     )
     private String nameChangedHowOtherDetails;
 
-    @CCD(label = "Aaddress")
+    @CCD(label = "Address")
     private AddressGlobalUK address;
 
     @CCD(
