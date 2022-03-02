@@ -828,7 +828,7 @@ public class CaseworkerIssueApplicationIT {
 
     private DocumentContext expectedResponse() throws IOException {
         DocumentContext jsonDocument = JsonPath.parse(TestResourceUtil.expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT));
-        jsonDocument.set("data.applicant2HomeAddress.Country", "France");
+        jsonDocument.set("data.applicant2Address.Country", "France");
         jsonDocument.delete("data.solServiceMethod");
         jsonDocument.delete("data.noticeOfProceedingsEmail");
         return jsonDocument;
