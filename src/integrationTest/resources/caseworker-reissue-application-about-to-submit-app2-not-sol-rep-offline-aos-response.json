@@ -17,7 +17,7 @@
     "applicant2LastName": "test_last_name",
     "applicant2Email": "test@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
-    "applicant2HomeAddress": {
+    "applicant2Address": {
       "AddressLine1": "line 1",
       "PostTown": "town",
       "PostCode": "postcode"

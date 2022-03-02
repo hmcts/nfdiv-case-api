@@ -62,7 +62,7 @@ public class CitizenUpdateContactDetailsTest {
             .country("England")
             .postCode("POSTCODE")
             .build();
-        updatedData.getApplicant1().setHomeAddress(address);
+        updatedData.getApplicant1().setAddress(address);
         updatedData.getApplicant1().setContactDetailsType(PUBLIC);
         updatedCaseDetails.setData(updatedData);
         updatedCaseDetails.setId(123456789L);
@@ -74,7 +74,7 @@ public class CitizenUpdateContactDetailsTest {
             citizenUpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         assertThat(response.getData().getApplicant1().getPhoneNumber()).isEqualTo("01234567890");
-        assertThat(response.getData().getApplicant1().getHomeAddress()).isEqualTo(address);
+        assertThat(response.getData().getApplicant1().getAddress()).isEqualTo(address);
         assertThat(response.getData().getApplicant1().getContactDetailsType()).isEqualTo(PUBLIC);
     }
 
@@ -92,7 +92,7 @@ public class CitizenUpdateContactDetailsTest {
             .country("England")
             .postCode("POSTCODE")
             .build();
-        updatedData.getApplicant2().setHomeAddress(address);
+        updatedData.getApplicant2().setAddress(address);
         updatedData.getApplicant2().setContactDetailsType(PUBLIC);
         updatedData.setCaseInvite(
             CaseInvite.builder()
@@ -109,7 +109,7 @@ public class CitizenUpdateContactDetailsTest {
             citizenUpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         assertThat(response.getData().getApplicant2().getPhoneNumber()).isEqualTo("01234567890");
-        assertThat(response.getData().getApplicant2().getHomeAddress()).isEqualTo(address);
+        assertThat(response.getData().getApplicant2().getAddress()).isEqualTo(address);
         assertThat(response.getData().getApplicant2().getContactDetailsType()).isEqualTo(PUBLIC);
     }
 }

@@ -10,7 +10,7 @@
   "NameDifferentToMarriageCertificate": null,
   "NameChangedHow": null,
   "NameChangedHowOtherDetails": "",
-  "HomeAddress": {
+  "Address": {
     "AddressLine1": "some street",
     "AddressLine2": "second line of address",
     "AddressLine3": null,

@@ -106,7 +106,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             .middleName(applicant2Existing.getMiddleName())
             .lastName(applicant2Existing.getLastName())
             .gender(applicant2Existing.getGender())
-            .homeAddress(applicant2Existing.isConfidentialContactDetails() ? null : applicant2Existing.getHomeAddress())
+            .address(applicant2Existing.isConfidentialContactDetails() ? null : applicant2Existing.getAddress())
             .build();
         caseData.setApplicant2(applicant2);
 

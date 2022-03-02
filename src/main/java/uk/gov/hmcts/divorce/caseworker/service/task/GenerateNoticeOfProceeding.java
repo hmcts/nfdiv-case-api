@@ -32,7 +32,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (!caseDetails.getData().getApplication().isSolicitorApplication() && caseDetails.getData().getApplicationType().isSole()) {
+        if (!caseDetails.getData().getApplicant1().isRepresented()) {
 
             log.info("Generating notice of proceedings(sole) for case id {} ", caseId);
 

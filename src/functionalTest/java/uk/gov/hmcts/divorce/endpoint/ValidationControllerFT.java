@@ -21,6 +21,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8OcrDataFields;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8SOcrDataFields;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateKeyValue;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
@@ -33,12 +34,13 @@ public class ValidationControllerFT {
     @Autowired
     protected ServiceAuthenticationGenerator serviceAuthenticationGenerator;
 
-    private static final String RESPONSE_SUCCESS = "classpath:responses/response-bulk-scan-d8-validation-success.json";
-    private static final String RESPONSE_WARNINGS = "classpath:responses/response-bulk-scan-d8-validation-warning.json";
-    private static final String RESPONSE_ERRORS = "classpath:responses/response-bulk-scan-d8-validation-error.json";
+    private static final String RESPONSE_SUCCESS = "classpath:responses/response-bulk-scan-validation-success.json";
+    private static final String RESPONSE_D8_WARNINGS = "classpath:responses/response-bulk-scan-d8-validation-warning.json";
+    private static final String RESPONSE_D8S_WARNINGS = "classpath:responses/response-bulk-scan-d8s-validation-warning.json";
+    private static final String RESPONSE_ERRORS = "classpath:responses/response-bulk-scan-validation-error.json";
 
     @Test
-    public void shouldPassValidationGivenValidOcrDataProvided() throws IOException {
+    public void shouldPassValidationGivenValidD8OcrDataProvided() throws IOException {
         OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(populateD8OcrDataFields())
             .build();
@@ -61,7 +63,30 @@ public class ValidationControllerFT {
     }
 
     @Test
-    public void shouldReturnWarningsGivenIncompleteOcrDataProvided() throws IOException {
+    public void shouldPassValidationGivenValidD8SOcrDataProvided() throws IOException {
+        OcrDataValidationRequest request = OcrDataValidationRequest.builder()
+            .ocrDataFields(populateD8SOcrDataFields())
+            .build();
+
+        Response response = RestAssured
+            .given()
+            .relaxedHTTPSValidation()
+            .baseUri(testUrl)
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .header(SERVICE_AUTHORIZATION, serviceAuthenticationGenerator.generate())
+            .body(request)
+            .when()
+            .post("/forms/D8S/validate-ocr");
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(json(expectedResponse(RESPONSE_SUCCESS)));
+    }
+
+    @Test
+    public void shouldReturnWarningsGivenIncompleteD8OcrDataProvided() throws IOException {
         OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(
                 List.of(
@@ -85,7 +110,35 @@ public class ValidationControllerFT {
 
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
-            .isEqualTo(json(expectedResponse(RESPONSE_WARNINGS)));
+            .isEqualTo(json(expectedResponse(RESPONSE_D8_WARNINGS)));
+    }
+
+    @Test
+    public void shouldReturnWarningsGivenIncompleteD8SOcrDataProvided() throws IOException {
+        OcrDataValidationRequest request = OcrDataValidationRequest.builder()
+            .ocrDataFields(
+                List.of(
+                    populateKeyValue("applicationForDivorce", "true"),
+                    populateKeyValue("aSoleApplication", "true")
+                )
+            )
+            .build();
+
+        Response response = RestAssured
+            .given()
+            .relaxedHTTPSValidation()
+            .baseUri(testUrl)
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .header(SERVICE_AUTHORIZATION, serviceAuthenticationGenerator.generate())
+            .body(request)
+            .when()
+            .post("/forms/D8S/validate-ocr");
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(json(expectedResponse(RESPONSE_D8S_WARNINGS)));
     }
 
     @Test

@@ -10,9 +10,21 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.A_DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISPUTING_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISPUTING_DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_DISPUTING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.THE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WITHOUT_DISPUTING_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WITHOUT_DISPUTING_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
@@ -32,7 +44,7 @@ public class RespondentAnswersTemplateContent {
 
         Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
-        templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);
+        templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
 
         var application = caseData.getApplication();
         templateContent.put(APPLICANT_1_FULL_NAME, application.getMarriageDetails().getApplicant1Name());
@@ -47,6 +59,26 @@ public class RespondentAnswersTemplateContent {
         templateContent.put(IN_WHICH_COUNTRY_IS_YOUR_LIFE_MAINLY_BASED, acknowledgementOfService.getInWhichCountryIsYourLifeMainlyBased());
         templateContent.put(RESP_LEGAL_PROCEEDINGS_EXIST, caseData.getApplicant2().getLegalProceedings().getValue());
         templateContent.put(RESP_LEGAL_PROCEEDINGS_DESCRIPTION, caseData.getApplicant2().getLegalProceedingsDetails());
+
+        if (caseData.isDivorce()) {
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
+            templateContent.put(THE_APPLICATION, A_DIVORCE_APPLICATION);
+
+            if (caseData.getAcknowledgementOfService().isDisputed()) {
+                templateContent.put(IS_DISPUTING, DISPUTING_DIVORCE);
+            } else {
+                templateContent.put(IS_DISPUTING, WITHOUT_DISPUTING_DIVORCE);
+            }
+        } else {
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
+            templateContent.put(THE_APPLICATION, END_A_CIVIL_PARTNERSHIP);
+
+            if (caseData.getAcknowledgementOfService().isDisputed()) {
+                templateContent.put(IS_DISPUTING, DISPUTING_CIVIL_PARTNERSHIP);
+            } else {
+                templateContent.put(IS_DISPUTING, WITHOUT_DISPUTING_CIVIL_PARTNERSHIP);
+            }
+        }
 
         return templateContent;
     }

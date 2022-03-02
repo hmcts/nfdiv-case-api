@@ -14,14 +14,14 @@
   "applicant2Email": "applicant2@example.com",
   "applicant1KnowsApplicant2EmailAddress": "Yes",
   "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
-  "applicant1HomeAddress": {
+  "applicant1Address": {
     "addressLine1": "221a Baker Street",
     "postTown": "London",
     "county": "Greater London",
     "postCode": "NW1 6XE",
     "country": "United Kingdom"
   },
-  "applicant2HomeAddress": {
+  "applicant2Address": {
     "addressLine1": "221a Baker Street",
     "postTown": "London",
     "county": "Greater London",

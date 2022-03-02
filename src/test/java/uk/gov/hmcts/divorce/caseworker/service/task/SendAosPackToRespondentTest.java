@@ -26,13 +26,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
 
 @ExtendWith(MockitoExtension.class)
-class SendAosPackTest {
+class SendAosPackToRespondentTest {
 
     @Mock
     private AosPackPrinter aosPackPrinter;
 
     @InjectMocks
-    private SendAosPack sendAosPack;
+    private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Test
     void shouldNotPrintAosIfApplicationIsPersonalServiceMethodWhenAboutToSubmit() {
@@ -45,11 +45,10 @@ class SendAosPackTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final CaseDetails<CaseData, State> result = sendAosPack.apply(caseDetails);
+        final CaseDetails<CaseData, State> result = sendAosPackToRespondent.apply(caseDetails);
 
         assertThat(result.getData().getAcknowledgementOfService())
             .extracting(
-                AcknowledgementOfService::getDigitalNoticeOfProceedings,
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
                 AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
             .contains(null, null, null);
@@ -69,11 +68,10 @@ class SendAosPackTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final CaseDetails<CaseData, State> result = sendAosPack.apply(caseDetails);
+        final CaseDetails<CaseData, State> result = sendAosPackToRespondent.apply(caseDetails);
 
         assertThat(result.getData().getAcknowledgementOfService())
             .extracting(
-                AcknowledgementOfService::getDigitalNoticeOfProceedings,
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
                 AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
             .contains(null, null, null);
@@ -93,14 +91,13 @@ class SendAosPackTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final CaseDetails<CaseData, State> result = sendAosPack.apply(caseDetails);
+        final CaseDetails<CaseData, State> result = sendAosPackToRespondent.apply(caseDetails);
 
         assertThat(result.getData().getAcknowledgementOfService())
             .extracting(
-                AcknowledgementOfService::getDigitalNoticeOfProceedings,
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
                 AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
-            .contains(YES, TEST_SOLICITOR_EMAIL, TEST_ORG_NAME);
+            .contains(TEST_SOLICITOR_EMAIL, TEST_ORG_NAME);
         verify(aosPackPrinter).print(caseData, TEST_CASE_ID);
     }
 }

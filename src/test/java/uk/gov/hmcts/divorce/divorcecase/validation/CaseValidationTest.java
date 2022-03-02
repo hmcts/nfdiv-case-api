@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 
 import java.time.LocalDate;
@@ -23,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CONNECTION;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
@@ -125,45 +125,17 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldOnlyValidateEmptyJurisdictionConnectionsForSolicitorApplication() {
-        final CaseData caseData = caseData();
-        caseData.setApplication(Application.builder()
-            .solSignStatementOfTruth(YES)
-            .build());
-
-        caseData.getApplication().getJurisdiction().setConnections(Collections.emptySet());
-
-        List<String> errors = validateJurisdictionConnections(caseData);
-
-        assertThat(errors).containsOnly("JurisdictionConnections" + ValidationUtil.EMPTY);
-    }
-
-    @Test
-    public void shouldReturnEmptyListForNonEmptyJurisdictionConnectionsForSolicitorApplication() {
-        final CaseData caseData = caseData();
-        caseData.setApplication(Application.builder()
-            .solSignStatementOfTruth(YES)
-            .build());
-
-        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
-
-        List<String> errors = validateJurisdictionConnections(caseData);
-
-        assertThat(errors).isEmpty();
-    }
-
-    @Test
     public void shouldValidateJurisdictionConnectionsForCitizenApplication() {
         final CaseData caseData = caseData();
         caseData.setApplication(Application.builder()
             .solSignStatementOfTruth(NO)
             .build());
 
-        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_APP_2_RESIDENT));
 
-        List<String> errors = validateJurisdictionConnections(caseData);
+        final List<String> errors = validateJurisdictionConnections(caseData);
 
-        assertThat(errors).contains(CONNECTION + JurisdictionConnections.APP_1_APP_2_RESIDENT + CANNOT_EXIST);
+        assertThat(errors).contains(CONNECTION + APP_1_APP_2_RESIDENT + CANNOT_EXIST);
     }
 
     @Test
@@ -187,7 +159,7 @@ public class CaseValidationTest {
             .solicitorRepresented(YES)
             .build());
 
-        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_APP_2_RESIDENT));
 
         List<String> errors = validateJurisdictionConnections(caseData);
 
@@ -201,11 +173,11 @@ public class CaseValidationTest {
             .solicitorRepresented(NO)
             .build());
 
-        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_APP_2_RESIDENT));
 
         List<String> errors = validateJurisdictionConnections(caseData);
 
-        assertThat(errors).contains(CONNECTION + JurisdictionConnections.APP_1_APP_2_RESIDENT + CANNOT_EXIST);
+        assertThat(errors).contains(CONNECTION + APP_1_APP_2_RESIDENT + CANNOT_EXIST);
     }
 
     @Test
