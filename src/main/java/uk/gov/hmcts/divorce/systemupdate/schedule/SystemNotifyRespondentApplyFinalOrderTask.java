@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -21,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentApplyFinalOrder.SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
@@ -49,24 +48,25 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     public static final String APPLICATION_TYPE = "applicationType";
-    public static final String NOT_NOTIFIED_FLAG = "finalOrderReminderSentApplicant2";
+    public static final String SOLE_APPLICATION = "soleApplication";
+    public static final String NOTIFICATION_FLAG = "finalOrderReminderSentApplicant2";
     public static final String APP_ELIGIBLE_DATE = "dateFinalOrderEligibleFrom";
     public static final String RESP_ELIGIBLE_DATE = "dateFinalOrderEligibleToRespondent";
 
     @Override
     public void run() {
-        log.info("Final Order overdue scheduled task started");
+        log.info("SystemNotifyRespondentApplyFinalOrder scheduled task started");
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
-            final QueryBuilder dateFinalOrderEligibleToRespondentExists = existsQuery("data.dateFinalOrderEligibleToRespondent");
             final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingFinalOrder))
-                    .must(matchQuery(String.format(DATA, APPLICATION_TYPE), "soleApplication"))
-                    .must(boolQuery().must(dateFinalOrderEligibleToRespondentExists));
+                    .filter(rangeQuery(String.format(DATA, RESP_ELIGIBLE_DATE)).lte(LocalDate.now()))
+                    .must(matchQuery(String.format(DATA, APPLICATION_TYPE), SOLE_APPLICATION))
+                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
             final List<CaseDetails> validCasesInAwaitingFinalOrderState =
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, serviceAuth);
@@ -90,23 +90,17 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
         try {
 
             Map<String, Object> caseDataMap = caseDetails.getData();
-            YesOrNo finalOrderReminderSentApplicant2 = (YesOrNo) caseDataMap.getOrDefault(NOT_NOTIFIED_FLAG, YesOrNo.NO);
-            String respondentCanApplyFromDate = (String) caseDataMap.getOrDefault(RESP_ELIGIBLE_DATE, null);
             String applicantCanApplyFromDate = (String) caseDataMap.getOrDefault(APP_ELIGIBLE_DATE, null);
             String applicationType = (String) caseDataMap.get(APPLICATION_TYPE);
 
-            log.info("Found Case Id {} Application Type {} Eligible From {} Reminder Sent? {}",
+            log.info("Found Case Id: {}, application type: {}, applicant eligible from: {}",
                 caseDetails.getId(),
                 applicationType,
-                applicantCanApplyFromDate,
-                finalOrderReminderSentApplicant2);
+                applicantCanApplyFromDate);
 
-            LocalDate parsedRespondentEligibleDate = LocalDate.parse(respondentCanApplyFromDate);
+            log.info("Sending notification to respondent to let them know to apply to final order. Case ID: {}", caseDetails.getId());
+            ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
 
-            if (finalOrderReminderSentApplicant2 == YesOrNo.NO && LocalDate.now().isAfter(parsedRespondentEligibleDate)) {
-                log.info("Need to send notification to respondent to let them know to apply to final order: case {}", caseDetails.getId());
-                ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
-            }
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
         } catch (final IllegalArgumentException e) {
