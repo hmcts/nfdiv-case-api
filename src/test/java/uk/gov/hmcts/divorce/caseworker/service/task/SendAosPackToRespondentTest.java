@@ -63,7 +63,7 @@ class SendAosPackToRespondentTest {
         final var caseData = caseData();
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
         Applicant applicant2 = respondent();
-        applicant2.setHomeAddress(
+        applicant2.setAddress(
             AddressGlobalUK
                 .builder()
                 .country("France")
@@ -96,7 +96,7 @@ class SendAosPackToRespondentTest {
         caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         Applicant applicant2 = respondent();
-        applicant2.setHomeAddress(
+        applicant2.setAddress(
             AddressGlobalUK
                 .builder()
                 .country("UK")
