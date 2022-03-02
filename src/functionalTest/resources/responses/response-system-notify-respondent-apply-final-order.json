@@ -30,7 +30,7 @@
     ],
     "applicant2StatementOfTruth": "Yes",
     "applicationType": "soleApplication",
-    "dataVersion": 46,
+    "dataVersion": "${json-unit.any-number}",
     "dateFinalOrderEligibleFrom": "2022-03-10",
     "dateFinalOrderEligibleToRespondent": "2022-06-10",
     "divorceOrDissolution": "dissolution",
