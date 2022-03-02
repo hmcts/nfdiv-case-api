@@ -6,8 +6,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosPackPrinter;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
@@ -56,12 +58,53 @@ class SendAosPackToRespondentTest {
     }
 
     @Test
-    void shouldPrintAosAndSetDueDateIfNotPersonalServiceAndRespondentIsNotRepresented() {
+    void shouldNotPrintAosIfApplicationIsCourtServiceAndApplicant2IsOverseasWhenAboutToSubmit() {
+
+        final var caseData = caseData();
+        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        Applicant applicant2 = respondent();
+        applicant2.setAddress(
+            AddressGlobalUK
+                .builder()
+                .country("France")
+                .postTown("Paris")
+                .addressLine1("Line 1")
+                .build()
+        );
+        caseData.setApplicant2(applicant2);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        final CaseDetails<CaseData, State> result = sendAosPackToRespondent.apply(caseDetails);
+
+        assertThat(result.getData().getAcknowledgementOfService())
+            .extracting(
+                AcknowledgementOfService::getNoticeOfProceedingsEmail,
+                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
+            .contains(null, null, null);
+        verifyNoInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldPrintAosAndSetDueDateIfNotPersonalServiceAndRespondentIsNotRepresentedAndIsNotOverseas() {
 
         final var caseData = caseData();
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.setApplicant2(respondent());
+
+        Applicant applicant2 = respondent();
+        applicant2.setAddress(
+            AddressGlobalUK
+                .builder()
+                .country("UK")
+                .postTown("London")
+                .addressLine1("Line 1")
+                .build()
+        );
+        caseData.setApplicant2(applicant2);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
