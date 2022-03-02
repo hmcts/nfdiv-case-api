@@ -70,17 +70,15 @@ public class GeneralApplicationReceivedNotification implements ApplicantNotifica
 
         AlternativeServiceType alternativeServiceType = caseData.getAlternativeService().getAlternativeServiceType();
 
+        templateVars.put(IS_DEEMED_SERVICE, NO);
+        templateVars.put(IS_DISPENSE_SERVICE, NO);
+        templateVars.put(IS_BAILIFF_SERVICE, NO);
+
         if (alternativeServiceType.equals(DEEMED)) {
             templateVars.put(IS_DEEMED_SERVICE, YES);
-            templateVars.put(IS_DISPENSE_SERVICE, NO);
-            templateVars.put(IS_BAILIFF_SERVICE, NO);
         } else if (alternativeServiceType.equals(DISPENSED)) {
-            templateVars.put(IS_DEEMED_SERVICE, NO);
             templateVars.put(IS_DISPENSE_SERVICE, YES);
-            templateVars.put(IS_BAILIFF_SERVICE, NO);
         } else if (alternativeServiceType.equals(BAILIFF)) {
-            templateVars.put(IS_DEEMED_SERVICE, NO);
-            templateVars.put(IS_DISPENSE_SERVICE, NO);
             templateVars.put(IS_BAILIFF_SERVICE, YES);
         }
     }
