@@ -83,8 +83,8 @@ public class Applicant {
     )
     private String nameChangedHowOtherDetails;
 
-    @CCD(label = "Home address")
-    private AddressGlobalUK homeAddress;
+    @CCD(label = "Address")
+    private AddressGlobalUK address;
 
     @CCD(
         label = "Phone number",
@@ -177,10 +177,10 @@ public class Applicant {
 
     @JsonIgnore
     public boolean isBasedOverseas() {
-        return nonNull(homeAddress)
-            && !isBlank(homeAddress.getCountry())
-            && !("UK").equalsIgnoreCase(homeAddress.getCountry())
-            && !("United Kingdom").equalsIgnoreCase(homeAddress.getCountry());
+        return nonNull(address)
+            && !isBlank(address.getCountry())
+            && !("UK").equalsIgnoreCase(address.getCountry())
+            && !("United Kingdom").equalsIgnoreCase(address.getCountry());
     }
 
     @JsonIgnore

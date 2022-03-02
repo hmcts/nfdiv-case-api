@@ -60,20 +60,20 @@ public class RespondentSolicitorAosInvitationTemplateContent {
 
 
         String applicant2PostalAddress;
-        AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2().getHomeAddress();
+        AddressGlobalUK applicant2Address = caseData.getApplicant2().getAddress();
 
-        if (applicant2HomeAddress == null) {
+        if (applicant2Address == null) {
             applicant2PostalAddress = caseData.getApplicant2().getSolicitor().getAddress();
         } else {
             applicant2PostalAddress =
                 Stream.of(
-                        applicant2HomeAddress.getAddressLine1(),
-                        applicant2HomeAddress.getAddressLine2(),
-                        applicant2HomeAddress.getAddressLine3(),
-                        applicant2HomeAddress.getPostTown(),
-                        applicant2HomeAddress.getCounty(),
-                        applicant2HomeAddress.getPostCode(),
-                        applicant2HomeAddress.getCountry()
+                        applicant2Address.getAddressLine1(),
+                        applicant2Address.getAddressLine2(),
+                        applicant2Address.getAddressLine3(),
+                        applicant2Address.getPostTown(),
+                        applicant2Address.getCounty(),
+                        applicant2Address.getPostCode(),
+                        applicant2Address.getCountry()
                     )
                     .filter(value -> value != null && !value.isEmpty())
                     .collect(Collectors.joining("\n"));
