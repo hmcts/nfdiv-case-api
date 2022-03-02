@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
+import java.time.LocalDate;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -134,6 +135,7 @@ public class CaseworkerMakeBailiffDecisionIT {
         stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved.docx");
 
         final CaseData caseData = caseData();
+        caseData.getAlternativeService().setReceivedServiceApplicationDate(LocalDate.of(2022, 1, 1));
         caseData.getAlternativeService().setServiceApplicationGranted(NO);
         caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
 
