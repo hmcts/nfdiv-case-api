@@ -68,11 +68,11 @@ public class GeneralApplicationReceivedNotification implements ApplicantNotifica
 
     private void setApplicationReceivedVars(CaseData caseData, Map<String, String> templateVars) {
 
-        AlternativeServiceType alternativeServiceType = caseData.getAlternativeService().getAlternativeServiceType();
-
         templateVars.put(IS_DEEMED_SERVICE, NO);
         templateVars.put(IS_DISPENSE_SERVICE, NO);
         templateVars.put(IS_BAILIFF_SERVICE, NO);
+
+        AlternativeServiceType alternativeServiceType = caseData.getAlternativeService().getAlternativeServiceType();
 
         if (alternativeServiceType.equals(DEEMED)) {
             templateVars.put(IS_DEEMED_SERVICE, YES);
