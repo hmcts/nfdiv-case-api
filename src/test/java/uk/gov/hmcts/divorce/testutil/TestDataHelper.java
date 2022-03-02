@@ -170,7 +170,7 @@ public class TestDataHelper {
             .email(TEST_USER_EMAIL)
             .gender(MALE)
             .languagePreferenceWelsh(NO)
-            .homeAddress(AddressGlobalUK.builder()
+            .address(AddressGlobalUK.builder()
                 .addressLine1("line 1")
                 .postTown("town")
                 .postCode("postcode")

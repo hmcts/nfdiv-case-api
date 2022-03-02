@@ -86,7 +86,7 @@ public class Applicant1Transformer implements Function<TransformationDetails, Tr
             .nameDifferentToMarriageCertificate(nameDifferentToMarriageCertificate)
             .nameChangedHowOtherDetails(ocrDataFields.getSoleOrApplicant1MarriedNameReason())
             .contactDetailsType(contactDetailsType)
-            .homeAddress(
+            .address(
                 AddressGlobalUK
                     .builder()
                     .addressLine1(ocrDataFields.getSoleOrApplicant1BuildingAndStreet())
