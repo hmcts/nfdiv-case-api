@@ -135,7 +135,7 @@ public class Applicant1TransformerTest {
         expectedApplicant1.getSolicitor().setFirmName(EMPTY);
         expectedApplicant1.getSolicitor().setName(EMPTY);
         expectedApplicant1.getSolicitor().setPhone(EMPTY);
-        expectedApplicant1.getHomeAddress().setAddressLine1(EMPTY);
+        expectedApplicant1.getAddress().setAddressLine1(EMPTY);
 
         assertThat(transformedOutput.getCaseData().getApplicant1())
             .usingRecursiveComparison()

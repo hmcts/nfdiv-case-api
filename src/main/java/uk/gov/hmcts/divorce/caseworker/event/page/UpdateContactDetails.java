@@ -74,7 +74,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                     getLabel(GENDER_HINT_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
                     getLabel(CONTACT_TYPE_LABEL, APPLICANTS_OR_APPLICANT1S, THE_RESPONDENT_OR_APPLICANT2))
-                .optionalWithLabel(Applicant::getHomeAddress, getLabel(ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
+                .optionalWithLabel(Applicant::getAddress, getLabel(ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .label("LabelHorizontalLine1", HORIZONTAL_RULE)
             .done();
@@ -93,7 +93,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 getLabel(GENDER_HINT_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
                     getLabel(CONTACT_TYPE_LABEL, RESPONDENTS_OR_APPLICANT2S, THE_APPLICANT_OR_APPLICANT1))
-                .optionalWithLabel(Applicant::getHomeAddress, getLabel(ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                .optionalWithLabel(Applicant::getAddress, getLabel(ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .label("LabelHorizontalLine2", HORIZONTAL_RULE)
             .done();

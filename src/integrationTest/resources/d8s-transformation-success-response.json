@@ -84,7 +84,7 @@
       "paperFormApplicant2NoPaymentIncluded": "Yes",
       "paperFormSoleOrApplicant1PaymentOther": "No",
       "applicant1SolicitorEmail": "testsol@dummy.com",
-      "applicant1HomeAddress": {
+      "applicant1Address": {
         "AddressLine1": "some street",
         "AddressLine2": "second line address",
         "PostTown": "city",
@@ -117,7 +117,7 @@
       ],
       "applicant2SolicitorRepresented": "Yes",
       "applicant1StatementOfTruth": "Yes",
-      "applicant2HomeAddress": {
+      "applicant2Address": {
         "AddressLine1": "some street",
         "AddressLine2": "second line of address",
         "PostTown": "",

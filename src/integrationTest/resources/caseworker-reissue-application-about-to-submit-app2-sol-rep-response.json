@@ -21,7 +21,7 @@
 
     "applicant2LanguagePreferenceWelsh": "No",
 
-    "applicant2HomeAddress": {
+    "applicant2Address": {
       "AddressLine1": "line 1",
       "PostTown": "town",
       "PostCode": "postcode"

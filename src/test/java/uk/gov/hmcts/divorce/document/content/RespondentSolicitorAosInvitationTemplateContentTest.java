@@ -126,7 +126,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2HomeAddressNotNull() {
+    public void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2AddressNotNull() {
         AddressGlobalUK address = AddressGlobalUK.builder()
             .addressLine1("221b")
             .addressLine2("Baker Street")
@@ -138,7 +138,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
 
         CaseData caseData = caseData();
         caseData.setApplicant2(getApplicant());
-        caseData.getApplicant2().setHomeAddress(address);
+        caseData.getApplicant2().setAddress(address);
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFinancialOrder(NO);
 
