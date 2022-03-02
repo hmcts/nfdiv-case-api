@@ -1,0 +1,137 @@
+{
+  "case_creation_details": {
+    "case_type_id": "NFD",
+    "event_id": "create-paper-case",
+    "case_data": {
+      "applicationType": "soleApplication",
+      "paperFormApplicantWillServeApplication": "No",
+      "paperFormApplicant1SigningSOT": "Yes",
+      "applicant1HWFAppliedForFees": "No",
+      "scannedDocuments": [
+        {
+          "id": "${json-unit.any-string}",
+          "value": {
+            "type": "form",
+            "subtype": "D8S",
+            "url": {
+              "document_url": "http://localhost:8080/documents/640055da-9330-11ec-b909-0242ac120002",
+              "document_filename": "61347040100200003.pdf",
+              "document_binary_url": "http://localhost:8080/documents/640055da-9330-11ec-b909-0242ac120002/binary"
+            },
+            "controlNumber": "61347040100200003",
+            "fileName": "61347040100200003.pdf",
+            "scannedDate": "2022-01-01T12:12:00.000Z",
+            "deliveryDate": "2022-01-01T12:12:00.000Z"
+          }
+        }
+      ],
+      "marriageMarriedInUk": "Yes",
+      "applicant1SolicitorFirmName": "some firm",
+      "paperFormApplicant1SOTSignedOn": "18 01 2022",
+      "paperFormApplicant1NoPaymentIncluded": "Yes",
+      "marriageDate": "1990-01-01",
+      "applicant2SolStatementOfReconciliationName": "some name",
+      "marriageFormationType": "oppositeSexCouple",
+      "applicant1MiddleName": "",
+      "applicant2StatementOfTruth": "Yes",
+      "paperFormSoleOrApplicant1PaymentOtherDetail": "",
+      "coApplicant1IsDrafted": "No",
+      "applicant1LegalProceedings": "No",
+      "applicant1Email": "",
+      "paperFormApplicant2PaymentOther": "No",
+      "applicant2NameDifferentToMarriageCertificate": "No",
+      "paperFormRespondentDifferentServiceAddress": "No",
+      "solSignStatementOfTruth": "Yes",
+      "applicant2SolicitorAddress": "some street\nsecond line of address",
+      "paperFormSummaryApplicant2FinancialOrdersFor": [],
+      "applicant2ScreenHasMarriageBroken": "No",
+      "applicant1SolicitorPhone": "",
+      "applicant2HWFReferenceNumber": "HWF456",
+      "solStatementOfReconciliationName": "test name",
+      "paperFormApplicant2SOTSignedOn": "18 01 2022",
+      "marriageApplicant2Name": "resptest name",
+      "divorceOrDissolution": "divorce",
+      "paperFormApplicant1LegalRepPosition": "",
+      "marriageCertificateInEnglish": "Yes",
+      "applicant2SolicitorReference": "",
+      "applicant1NameDifferentToMarriageCertificate": "Yes",
+      "applicant1LegalProceedingsDetails": "Case Number(s):",
+      "marriagePlaceOfMarriage": "London",
+      "applicant1FinancialOrder": "Yes",
+      "applicant2FinancialOrdersFor": [
+        "applicant"
+      ],
+      "applicant2LastName": "respLname",
+      "applicant2SolSignStatementOfTruth": "No",
+      "applicant1PhoneNumber": "",
+      "applicant2HWFNeedHelp": "Yes",
+      "applicant1ScreenHasMarriageBroken": "Yes",
+      "applicant1PrayerHasBeenGivenCheckbox": [
+        "Yes"
+      ],
+      "jurisdictionConnections": [
+        "A"
+      ],
+      "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+      "applicant1NameChangedHowOtherDetails": "some reason",
+      "applicant2FinancialOrder": "Yes",
+      "applicant1HWFNeedHelp": "Yes",
+      "applicant2PhoneNumber": "",
+      "applicant2NameChangedHowOtherDetails": "",
+      "marriageMarriageCertificateIsIncorrectDetails": "",
+      "applicant1ContactDetailsType": "private",
+      "solStatementOfReconciliationFirm": "",
+      "paperFormApplicant2NoPaymentIncluded": "Yes",
+      "paperFormSoleOrApplicant1PaymentOther": "No",
+      "applicant1SolicitorEmail": "testsol@dummy.com",
+      "applicant1Address": {
+        "AddressLine1": "some street",
+        "AddressLine2": "second line address",
+        "PostTown": "city",
+        "County": "",
+        "PostCode": "",
+        "Country": ""
+      },
+      "applicant2FirstName": "respFname",
+      "marriageCertifyMarriageCertificateIsCorrect": "Yes",
+      "applicant1FinancialOrdersFor": [
+        "applicant",
+        "children"
+      ],
+      "applicant2SolicitorFirmName": "",
+      "applicant1FirstName": "app1Fname",
+      "isJudicialSeparation": "Yes",
+      "applicant1SolicitorName": "testsolicitor",
+      "applicant2SolicitorName": "",
+      "applicant1LastName": "app1Lname",
+      "dateSubmitted": "${json-unit.any-string}",
+      "applicant2HWFAppliedForFees": "Yes",
+      "applicant2MiddleName": "respMname",
+      "marriageApplicant1Name": "app1 fullname",
+      "paperFormServiceOutsideUK": "No",
+      "paperFormFeeInPounds": "595£",
+      "applicant2SolStatementOfReconciliationFirm": "",
+      "coApplicant1IsSubmitted": "No",
+      "paperFormSummaryApplicant1FinancialOrdersFor": [
+        "children"
+      ],
+      "applicant2SolicitorRepresented": "Yes",
+      "applicant1StatementOfTruth": "Yes",
+      "applicant2Address": {
+        "AddressLine1": "some street",
+        "AddressLine2": "second line of address",
+        "PostTown": "",
+        "PostCode": "",
+        "Country": ""
+      },
+      "paperFormApplicant2LegalRepSigningSOT": "No",
+      "warnings": [],
+      "applicant1SolicitorAddress": "some street\nsecond line of address\nUK",
+      "screenHasMarriageCert": "Yes",
+      "applicant2Email": "app2test@dummy.com",
+      "applicant1SolicitorRepresented": "Yes",
+      "marriageIssueApplicationWithoutMarriageCertificate": "No"
+    }
+  },
+  "warnings": []
+}

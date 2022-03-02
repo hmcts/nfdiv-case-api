@@ -70,7 +70,6 @@
     ],
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "accessCode": "${json-unit.any-string}",
-    "digitalNoticeOfProceedings": "Yes",
     "noticeOfProceedingsEmail": "applicant2.solicitor@example.com",
     "noticeOfProceedingsSolicitorFirm": "Test 2 Organisation",
     "documentsGenerated": [

@@ -273,6 +273,12 @@ public class CaseData {
     private PaperFormDetails paperFormDetails = new PaperFormDetails();
 
     @CCD(
+        label = "Is case judicial separation?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo isJudicialSeparation;
+
+    @CCD(
         label = "Transformation and OCR warnings",
         typeOverride = Collection,
         typeParameterOverride = "TextArea",

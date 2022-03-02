@@ -48,6 +48,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.endpoint.data.FormType;
 import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
 import uk.gov.hmcts.divorce.endpoint.model.InputScannedDoc;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -92,7 +93,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOINT;
@@ -170,7 +170,7 @@ public class TestDataHelper {
             .email(TEST_USER_EMAIL)
             .gender(MALE)
             .languagePreferenceWelsh(NO)
-            .homeAddress(AddressGlobalUK.builder()
+            .address(AddressGlobalUK.builder()
                 .addressLine1("line 1")
                 .postTown("town")
                 .postCode("postcode")
@@ -836,9 +836,8 @@ public class TestDataHelper {
             .build();
     }
 
-    public static List<KeyValue> populateD8OcrDataFields() {
+    public static List<KeyValue> populateCommonOcrDataFields() {
         List<KeyValue> kv = new ArrayList<>();
-        kv.add(populateKeyValue("applicationForDivorce", "true"));
         kv.add(populateKeyValue("aSoleApplication", "true"));
         kv.add(populateKeyValue("marriageOrCivilPartnershipCertificate", "true"));
         kv.add(populateKeyValue("translation", "false"));
@@ -861,7 +860,6 @@ public class TestDataHelper {
         kv.add(populateKeyValue("existingOrPreviousCourtCases", "No"));
         kv.add(populateKeyValue("soleOrApplicant1FinancialOrder", "No"));
         kv.add(populateKeyValue("soleOrApplicant1ConfirmationOfBreakdown", "true"));
-        kv.add(populateKeyValue("prayerMarriageDissolved", "true"));
         kv.add(populateKeyValue("soleApplicantOrApplicant1StatementOfTruth", "true"));
         kv.add(populateKeyValue("soleApplicantOrApplicant1LegalRepStatementOfTruth", "true"));
         kv.add(populateKeyValue("soleApplicantOrApplicant1OrLegalRepSignature", "signed"));
@@ -875,6 +873,25 @@ public class TestDataHelper {
         return kv;
     }
 
+
+    public static List<KeyValue> populateD8OcrDataFields() {
+        List<KeyValue> kv = new ArrayList<>(populateCommonOcrDataFields());
+
+        kv.add(populateKeyValue("applicationForDivorce", "true"));
+        kv.add(populateKeyValue("prayerMarriageDissolved", "true"));
+
+        return kv;
+    }
+
+    public static List<KeyValue> populateD8SOcrDataFields() {
+        List<KeyValue> kv = new ArrayList<>(populateCommonOcrDataFields());
+
+        kv.add(populateKeyValue("prayerApplicant1JudiciallySeparated", "true"));
+
+        return kv;
+    }
+
+
     public static KeyValue populateKeyValue(String key, String value) {
         return KeyValue.builder()
             .key(key)
@@ -882,7 +899,7 @@ public class TestDataHelper {
             .build();
     }
 
-    public static List<ListValue<ScannedDocument>> scannedDocuments() {
+    public static List<ListValue<ScannedDocument>> scannedDocuments(FormType formType) {
         var scannedDocListValue = ListValue.<ScannedDocument>builder()
             .value(ScannedDocument
                 .builder()
@@ -890,7 +907,7 @@ public class TestDataHelper {
                 .deliveryDate(DOC_SCANNED_DATE_META_INFO)
                 .scannedDate(DOC_SCANNED_DATE_META_INFO)
                 .type(FORM)
-                .subtype(D8.getName())
+                .subtype(formType.getName())
                 .fileName(FILE_NAME)
                 .url(
                     Document
@@ -908,7 +925,7 @@ public class TestDataHelper {
         return singletonList(scannedDocListValue);
     }
 
-    public static List<InputScannedDoc> inputScannedDocuments() {
+    public static List<InputScannedDoc> inputScannedDocuments(FormType formType) {
         var inputScannedDoc = InputScannedDoc
             .builder()
             .controlNumber(DOC_CONTROL_NUMBER)
@@ -916,7 +933,7 @@ public class TestDataHelper {
             .deliveryDate(DOC_SCANNED_DATE_META_INFO)
             .fileName(FILE_NAME)
             .type("Form")
-            .subtype(D8.getName())
+            .subtype(formType.getName())
             .document(
                 InputScannedDocUrl
                     .builder()

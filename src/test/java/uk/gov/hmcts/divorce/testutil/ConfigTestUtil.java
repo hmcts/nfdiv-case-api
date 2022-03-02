@@ -7,8 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.HasRole;
 import uk.gov.hmcts.ccd.sdk.api.Search;
 import uk.gov.hmcts.ccd.sdk.api.Search.SearchBuilder;
-import uk.gov.hmcts.ccd.sdk.api.WorkBasket;
-import uk.gov.hmcts.ccd.sdk.api.WorkBasket.WorkBasketBuilder;
 import uk.gov.hmcts.ccd.sdk.type.ExceptionRecord;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -73,28 +71,28 @@ public final class ConfigTestUtil {
             .orElseThrow(() -> new AssertionError("Unable to find ConfigBuilderImpl.class method getEvents"));
     }
 
-    public static <T, S, R extends HasRole> Search getSearchInputFields(
+    public static <T, S, R extends HasRole> Search<T, R> getSearchInputFields(
         final ConfigBuilderImpl<T, S, R> configBuilder) throws IllegalAccessException {
         return getSearchFor("searchInputFields", configBuilder);
     }
 
-    public static <T, S, R extends HasRole> Search getSearchResultFields(
+    public static <T, S, R extends HasRole> Search<T, R> getSearchResultFields(
         final ConfigBuilderImpl<T, S, R> configBuilder) throws IllegalAccessException {
         return getSearchFor("searchResultFields", configBuilder);
     }
 
-    public static <T, S, R extends HasRole> WorkBasket getWorkBasketInputFields(
+    public static <T, S, R extends HasRole> Search<T, R> getWorkBasketInputFields(
         final ConfigBuilderImpl<T, S, R> configBuilder) throws IllegalAccessException {
         return getWorkBasketFor("workBasketInputFields", configBuilder);
     }
 
-    public static <T, S, R extends HasRole> WorkBasket getWorkBasketResultFields(
+    public static <T, S, R extends HasRole> Search<T, R> getWorkBasketResultFields(
         final ConfigBuilderImpl<T, S, R> configBuilder) throws IllegalAccessException {
         return getWorkBasketFor("workBasketResultFields", configBuilder);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static <T, S, R extends HasRole> Search getSearchFor(
+    private static <T, S, R extends HasRole> Search<T, R> getSearchFor(
         final String fieldName,
         final ConfigBuilderImpl<T, S, R> configBuilder) throws IllegalAccessException {
         final List<SearchBuilder> searchInputFields =
@@ -104,12 +102,12 @@ public final class ConfigTestUtil {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static <T, S, R extends HasRole> WorkBasket getWorkBasketFor(
+    private static <T, S, R extends HasRole> Search<T, R> getWorkBasketFor(
         final String fieldName,
         final ConfigBuilderImpl<T, S, R> configBuilder) throws IllegalAccessException {
 
-        final List<WorkBasketBuilder> workBasketInputFields =
-            (List<WorkBasketBuilder>) getValueIncludingSuperclasses(fieldName, configBuilder);
+        final List<SearchBuilder> workBasketInputFields =
+            (List<SearchBuilder>) getValueIncludingSuperclasses(fieldName, configBuilder);
         final var workBasketBuilder = workBasketInputFields.get(0);
         return workBasketBuilder.build();
     }

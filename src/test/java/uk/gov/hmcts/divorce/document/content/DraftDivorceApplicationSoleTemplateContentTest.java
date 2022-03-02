@@ -101,7 +101,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder()
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder()
             .addressLine1("line1")
             .addressLine2("line2")
             .postTown("city")
@@ -226,7 +226,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder()
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder()
             .addressLine1("line1")
             .addressLine2("line2")
             .postTown("city")

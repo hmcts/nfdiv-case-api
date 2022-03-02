@@ -23,9 +23,9 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
-import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransformer.OCR_FIELD_VALUE_BOTH;
-import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransformer.OCR_FIELD_VALUE_NO;
-import static uk.gov.hmcts.divorce.bulkscan.transformation.D8FormToCaseTransformer.OCR_FIELD_VALUE_YES;
+import static uk.gov.hmcts.divorce.bulkscan.transformation.CommonFormToCaseTransformer.OCR_FIELD_VALUE_BOTH;
+import static uk.gov.hmcts.divorce.bulkscan.transformation.CommonFormToCaseTransformer.OCR_FIELD_VALUE_NO;
+import static uk.gov.hmcts.divorce.bulkscan.transformation.CommonFormToCaseTransformer.OCR_FIELD_VALUE_YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
 
 @Component
@@ -73,7 +73,7 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
             .nameDifferentToMarriageCertificate(nameDifferentToMarriageCertificate)
             .nameChangedHowOtherDetails(ocrDataFields.getRespondentOrApplicant2WhyMarriedNameChanged())
             .solicitorRepresented(from(!isNull(ocrDataFields.getRespondentOrApplicant2SolicitorName())))
-            .homeAddress(
+            .address(
                 AddressGlobalUK
                     .builder()
                     .addressLine1(ocrDataFields.getRespondentOrApplicant2BuildingAndStreet())
