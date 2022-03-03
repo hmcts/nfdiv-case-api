@@ -172,4 +172,126 @@ class ApplicantTest {
             .isOffline()).isFalse();
     }
 
+    @Test
+    void shouldReturnSolicitorAddressIfRepresentedWhenRequestingCorrespondenceAddress() {
+        final Applicant applicant = Applicant.builder()
+            .solicitorRepresented(YES)
+            .solicitor(Solicitor.builder()
+                .address("solicitor address")
+                .build())
+            .build();
+
+        assertThat(applicant.getCorrespondenceAddress()).isEqualTo("solicitor address");
+    }
+
+    @Test
+    void shouldReturnApplicantAddressIfNotRepresentedWhenRequestingCorrespondenceAddress() {
+        final Applicant applicant = Applicant.builder()
+            .solicitorRepresented(NO)
+            .contactDetailsType(PUBLIC)
+            .address(AddressGlobalUK.builder()
+                .addressLine1("Correspondence Address")
+                .addressLine2("Line 2")
+                .addressLine3("Line 3")
+                .postTown("Post Town")
+                .county("County")
+                .postCode("Post Code")
+                .country("UK")
+                .build())
+            .build();
+
+        assertThat(applicant.getCorrespondenceAddress())
+            .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nPost Code\nUK");
+    }
+
+    @Test
+    void shouldReturnNullIfNotRepresentedAndAddressIsNullWhenRequestingCorrespondenceAddress() {
+        final Applicant applicant = Applicant.builder()
+            .solicitorRepresented(NO)
+            .contactDetailsType(PUBLIC)
+            .build();
+
+        assertThat(applicant.getCorrespondenceAddress()).isNull();
+    }
+
+    @Test
+    void shouldReturnNullIfNotRepresentedAndPrivateContactDetailsWhenRequestingCorrespondenceAddress() {
+        final Applicant applicant = Applicant.builder()
+            .solicitorRepresented(NO)
+            .contactDetailsType(PRIVATE)
+            .address(AddressGlobalUK.builder()
+                .addressLine1("Correspondence Address")
+                .addressLine2("Line 2")
+                .addressLine3("Line 3")
+                .postTown("Post Town")
+                .county("County")
+                .postCode("Post Code")
+                .country("UK")
+                .build())
+            .build();
+
+        assertThat(applicant.getCorrespondenceAddress()).isNull();
+    }
+
+    @Test
+    void shouldReturnSolicitorAddressIfRepresentedWhenRequestingPostalAddress() {
+        final Applicant applicant = Applicant.builder()
+            .solicitorRepresented(YES)
+            .solicitor(Solicitor.builder()
+                .address("solicitor address")
+                .build())
+            .build();
+
+        assertThat(applicant.getPostalAddress()).isEqualTo("solicitor address");
+    }
+
+    @Test
+    void shouldReturnApplicantAddressIfNotRepresentedWhenRequestingPostalAddress() {
+        final Applicant applicant = Applicant.builder()
+            .solicitorRepresented(NO)
+            .contactDetailsType(PUBLIC)
+            .address(AddressGlobalUK.builder()
+                .addressLine1("Correspondence Address")
+                .addressLine2("Line 2")
+                .addressLine3("Line 3")
+                .postTown("Post Town")
+                .county("County")
+                .postCode("Post Code")
+                .country("UK")
+                .build())
+            .build();
+
+        assertThat(applicant.getPostalAddress())
+            .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nPost Code");
+    }
+
+    @Test
+    void shouldReturnNullIfNotRepresentedAndAddressIsNullWhenRequestingPostalAddress() {
+        final Applicant applicant = Applicant.builder()
+            .solicitorRepresented(NO)
+            .contactDetailsType(PUBLIC)
+            .build();
+
+        assertThat(applicant.getPostalAddress()).isNull();
+    }
+
+    @Test
+    void shouldReturnApplicantAddressIfNotRepresentedAndPrivateContactDetailsWhenRequestingCorrespondenceAddress() {
+        final Applicant applicant = Applicant.builder()
+            .solicitorRepresented(NO)
+            .contactDetailsType(PRIVATE)
+            .address(AddressGlobalUK.builder()
+                .addressLine1("Correspondence Address")
+                .addressLine2("Line 2")
+                .addressLine3("Line 3")
+                .postTown("Post Town")
+                .county("County")
+                .postCode("Post Code")
+                .country("UK")
+                .build())
+            .build();
+
+        assertThat(applicant.getPostalAddress())
+            .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nPost Code");
+    }
 }

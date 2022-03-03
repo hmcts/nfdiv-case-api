@@ -79,7 +79,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
                         .done()
                     .done()
-                .mandatory(Applicant::getCorrespondenceAddress, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"")
+                .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"")
                 .done()
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
@@ -97,7 +97,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
                         .done()
                     .done()
-                .mandatory(Applicant::getCorrespondenceAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"")
+                .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"")
                 .done();
     }
 
