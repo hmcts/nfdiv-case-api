@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
@@ -36,7 +37,7 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(SYSTEM_LINK_APPLICANT_2)
-            .forStates(AwaitingApplicant2Response, AwaitingAos)
+            .forStates(AwaitingApplicant2Response, AwaitingAos, AosOverdue)
             .name("Link Applicant 2 to case")
             .description("Link Applicant 2 to case to enable completion of joint application")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
