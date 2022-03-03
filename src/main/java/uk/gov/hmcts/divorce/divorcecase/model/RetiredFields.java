@@ -375,7 +375,7 @@ public class RetiredFields {
     private AddressGlobalUK applicant2CorrespondenceAddress;
 
     @CCD(
-        label = "Does the applicant want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
+        label = "Retired Does Applicant Want To Apply For Final Order",
         access = {DefaultAccess.class}
     )
     private YesOrNo doesApplicantWantToApplyForFinalOrder;
