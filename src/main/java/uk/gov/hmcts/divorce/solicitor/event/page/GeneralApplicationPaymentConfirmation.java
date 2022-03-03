@@ -1,0 +1,27 @@
+package uk.gov.hmcts.divorce.solicitor.event.page;
+
+import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
+
+public class GeneralApplicationPaymentConfirmation implements CcdPageConfiguration {
+
+    @Override
+    public void addTo(final PageBuilder pageBuilder) {
+        pageBuilder.page("generalApplicationPayment")
+            .pageLabel("Payment - general application payment")
+            .complex(CaseData::getGeneralReferral)
+                .complex(GeneralReferral::getGeneralApplicationFee)
+                .mandatory(FeeDetails::getPaymentMethod)
+                .mandatory(FeeDetails::getAccountNumber,
+                    "generalApplicationFeePaymentMethod = \"feePayByAccount\"")
+                .optional(FeeDetails::getAccountReferenceNumber,
+                    "generalApplicationFeePaymentMethod = \"feePayByAccount\"")
+                .mandatory(FeeDetails::getHelpWithFeesReferenceNumber,
+                    "generalApplicationFeePaymentMethod = \"feePayByHelp\"")
+                .done()
+            .done();
+    }
+}
