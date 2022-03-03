@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosPackPrinter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.mockito.Mockito.doNothing;
@@ -29,10 +30,17 @@ class SendAosPackToApplicantTest {
     private SendAosPackToApplicant sendAosPackToApplicant;
 
     @Test
-    void shouldNotSendAosPackToApplicantIfApplicantIsDigital() {
+    void shouldNotSendAosPackToApplicantIfApplicantIsRepresented() {
         final var caseData = caseData();
-        caseData.getApplicant1().setOffline(NO);
-
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant1().setSolicitor(
+            Solicitor
+                .builder()
+                .name("test sol")
+                .email("testsol@test.com")
+                .build()
+        );
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
@@ -43,9 +51,9 @@ class SendAosPackToApplicantTest {
     }
 
     @Test
-    void shouldSendAosPackToApplicantIfApplicantIsOffline() {
+    void shouldSendAosPackToApplicantIfApplicantIsNotRepresented() {
         final var caseData = caseData();
-        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

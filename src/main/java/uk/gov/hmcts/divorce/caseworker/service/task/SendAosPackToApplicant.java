@@ -21,11 +21,11 @@ public class SendAosPackToApplicant implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplicant1().isOffline()) {
-            log.info("Sending NOP and application pack to bulk print as applicant 1 is offline.  Case id: {}:", caseId);
+        if (!caseData.getApplicant1().isRepresented()) {
+            log.info("Sending NOP and application pack to bulk print as applicant 1 is not represented. Case id: {}:", caseId);
             aosPackPrinter.sendAosLetterToApplicant(caseData, caseId);
         } else {
-            log.info("Not sending NOP and application pack to bulk print as applicant 1 is not offline.  Case id: {}:", caseId);
+            log.info("Not sending NOP and application pack to bulk print as applicant 1 is represented. Case id: {}:", caseId);
         }
         return caseDetails;
     }
