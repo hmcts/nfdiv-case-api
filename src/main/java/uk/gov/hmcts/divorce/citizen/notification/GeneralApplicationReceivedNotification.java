@@ -49,23 +49,6 @@ public class GeneralApplicationReceivedNotification implements ApplicantNotifica
         );
     }
 
-    @Override
-    public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Sending general application received notification to applicant 2 for case : {}", id);
-
-        Map<String, String> templateVars =
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-
-        setApplicationReceivedVars(caseData, templateVars);
-
-        notificationService.sendEmail(
-            caseData.getApplicant2().getEmail(),
-            GENERAL_APPLICATION_RECEIVED,
-            templateVars,
-            caseData.getApplicant2().getLanguagePreference()
-        );
-    }
-
     private void setApplicationReceivedVars(CaseData caseData, Map<String, String> templateVars) {
 
         templateVars.put(IS_DEEMED_SERVICE, NO);
