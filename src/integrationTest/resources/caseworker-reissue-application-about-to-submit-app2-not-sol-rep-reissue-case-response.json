@@ -18,12 +18,6 @@
     "applicant2Email": "test@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
     "applicant2Address": {
-      "AddressLine1": "line 1",
-      "PostTown": "town",
-      "PostCode": "postcode"
-    },
-    "applicant2Gender": "male",
-    "applicant2CorrespondenceAddress": {
       "AddressLine1": "223b",
       "AddressLine2": "Baker Street",
       "PostTown": "London",
@@ -31,6 +25,7 @@
       "PostCode": "NW1 6XE",
       "Country": "United Kingdom"
     },
+    "applicant2Gender": "male",
     "applicant2SolicitorRepresented": "No",
     "applicant2FinancialOrder": "No",
     "marriageApplicant1Name": "test_first_name test_last_name",

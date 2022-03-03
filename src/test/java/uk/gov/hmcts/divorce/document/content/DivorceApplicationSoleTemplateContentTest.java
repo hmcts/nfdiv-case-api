@@ -147,8 +147,6 @@ public class DivorceApplicationSoleTemplateContentTest {
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
         verify(applicationTemplateDataProvider).deriveSoleJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
 
@@ -227,8 +225,6 @@ public class DivorceApplicationSoleTemplateContentTest {
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
         verify(applicationTemplateDataProvider).deriveSoleJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
 

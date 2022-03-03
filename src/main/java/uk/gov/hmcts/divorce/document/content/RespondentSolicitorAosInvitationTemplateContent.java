@@ -2,14 +2,11 @@ package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ACCESS_CODE;
@@ -58,27 +55,7 @@ public class RespondentSolicitorAosInvitationTemplateContent {
                 .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
                 .orElse(null));
 
-
-        String applicant2PostalAddress;
-        AddressGlobalUK applicant2Address = caseData.getApplicant2().getAddress();
-
-        if (applicant2Address == null) {
-            applicant2PostalAddress = caseData.getApplicant2().getSolicitor().getAddress();
-        } else {
-            applicant2PostalAddress =
-                Stream.of(
-                        applicant2Address.getAddressLine1(),
-                        applicant2Address.getAddressLine2(),
-                        applicant2Address.getAddressLine3(),
-                        applicant2Address.getPostTown(),
-                        applicant2Address.getCounty(),
-                        applicant2Address.getPostCode(),
-                        applicant2Address.getCountry()
-                    )
-                    .filter(value -> value != null && !value.isEmpty())
-                    .collect(Collectors.joining("\n"));
-        }
-        templateContent.put(APPLICANT_2_POSTAL_ADDRESS, applicant2PostalAddress);
+        templateContent.put(APPLICANT_2_POSTAL_ADDRESS, caseData.getApplicant2().getPostalAddress());
 
         templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         return templateContent;
