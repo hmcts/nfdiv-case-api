@@ -99,7 +99,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2PhoneNumber", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
             .field("applicant2Email", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
             .field("applicant2Address", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
-            .field("applicant2CorrespondenceAddress", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
             .field("applicant2AgreedToReceiveEmails")
 
             //Applicant 2 Solicitor
