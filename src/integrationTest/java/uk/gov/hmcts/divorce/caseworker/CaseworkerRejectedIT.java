@@ -120,7 +120,7 @@ public class CaseworkerRejectedIT {
             .lastName(TEST_LAST_NAME)
             .email(TEST_USER_EMAIL)
             .languagePreferenceWelsh(NO)
-            .homeAddress(AddressGlobalUK.builder()
+            .address(AddressGlobalUK.builder()
                 .addressLine1("line 1")
                 .postTown("town")
                 .postCode("postcode")

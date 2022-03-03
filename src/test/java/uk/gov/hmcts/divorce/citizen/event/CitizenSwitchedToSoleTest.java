@@ -167,7 +167,7 @@ class CitizenSwitchedToSoleTest {
         setValidCaseInviteData(caseDataBefore);
         caseData.setApplicant2(
             Applicant.builder()
-                .homeAddress(
+                .address(
                     AddressGlobalUK.builder()
                         .addressLine1("123 The Street")
                         .postTown("The town")
@@ -188,7 +188,7 @@ class CitizenSwitchedToSoleTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetailsBefore);
 
-        assertThat(response.getData().getApplicant2().getHomeAddress()).isNull();
+        assertThat(response.getData().getApplicant2().getAddress()).isNull();
         verify(ccdAccessService)
             .unlinkUserFromApplication(eq("system-user-token"), eq(caseId), eq("app2-user-id"));
     }
@@ -200,7 +200,7 @@ class CitizenSwitchedToSoleTest {
         setValidCaseInviteData(caseData);
         caseData.setApplicant2(
             Applicant.builder()
-                .homeAddress(
+                .address(
                     AddressGlobalUK.builder()
                         .addressLine1("123 The Street")
                         .postTown("The town")
@@ -223,7 +223,7 @@ class CitizenSwitchedToSoleTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetailsBefore);
 
-        assertThat(response.getData().getApplicant2().getHomeAddress())
+        assertThat(response.getData().getApplicant2().getAddress())
             .isEqualTo(
                 AddressGlobalUK.builder()
                     .addressLine1("123 The Street")
@@ -252,7 +252,7 @@ class CitizenSwitchedToSoleTest {
                 .gender(MALE)
                 .financialOrder(YES)
                 .lastNameChangedWhenMarried(YES)
-                .homeAddress(
+                .address(
                     AddressGlobalUK.builder()
                         .addressLine1("123 The Street")
                         .postTown("The town")

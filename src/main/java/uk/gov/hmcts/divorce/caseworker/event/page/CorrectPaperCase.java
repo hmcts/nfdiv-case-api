@@ -40,7 +40,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getNameChangedHowOtherDetails,
                     "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getContactDetailsType)
-                .mandatory(Applicant::getHomeAddress)
+                .mandatory(Applicant::getAddress)
                 .mandatory(Applicant::getPhoneNumber)
                 .mandatory(Applicant::getEmail)
                 .mandatory(Applicant::getSolicitorRepresented)
@@ -79,7 +79,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getNameChangedHowOtherDetails,
                     "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getSolicitorRepresented)
-                .mandatory(Applicant::getHomeAddress)
+                .mandatory(Applicant::getAddress)
                 .mandatory(Applicant::getPhoneNumber)
                 .mandatory(Applicant::getEmail)
                 .label("Label-CorrectApplicant2SolDetails",

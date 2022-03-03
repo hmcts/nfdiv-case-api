@@ -112,10 +112,10 @@ class ApplicantTest {
     void shouldReturnFalseIfAppliedForFinancialOrderIsSetToNull() {
 
         final Applicant applicant1 = Applicant.builder()
-            .homeAddress(AddressGlobalUK.builder().country("UK").build())
+            .address(AddressGlobalUK.builder().country("UK").build())
             .build();
         final Applicant applicant2 = Applicant.builder()
-            .homeAddress(AddressGlobalUK.builder().country("United Kingdom").build())
+            .address(AddressGlobalUK.builder().country("United Kingdom").build())
             .build();
 
         assertThat(applicant1.appliedForFinancialOrder()).isFalse();
@@ -125,7 +125,7 @@ class ApplicantTest {
     @Test
     void shouldReturnTrueIfNotUkOrUnitedKingdom() {
         final Applicant applicant = Applicant.builder()
-            .homeAddress(AddressGlobalUK.builder().country("France").build())
+            .address(AddressGlobalUK.builder().country("France").build())
             .build();
 
         assertThat(applicant.isBasedOverseas()).isTrue();
@@ -134,10 +134,10 @@ class ApplicantTest {
     @Test
     void shouldReturnFalseIfUkOrUnitedKingdom() {
         final Applicant applicant1 = Applicant.builder()
-            .homeAddress(AddressGlobalUK.builder().country("UK").build())
+            .address(AddressGlobalUK.builder().country("UK").build())
             .build();
         final Applicant applicant2 = Applicant.builder()
-            .homeAddress(AddressGlobalUK.builder().country("United Kingdom").build())
+            .address(AddressGlobalUK.builder().country("United Kingdom").build())
             .build();
 
         assertThat(applicant1.isBasedOverseas()).isFalse();
@@ -145,7 +145,7 @@ class ApplicantTest {
     }
 
     @Test
-    void shouldReturnFalseIfHomeAddressNotSet() {
+    void shouldReturnFalseIfAddressNotSet() {
         final Applicant applicant = Applicant.builder().build();
 
         assertThat(applicant.isBasedOverseas()).isFalse();
@@ -154,7 +154,7 @@ class ApplicantTest {
     @Test
     void shouldReturnFalseIfCountryIsBlank() {
         final Applicant applicant = Applicant.builder()
-            .homeAddress(AddressGlobalUK.builder().build())
+            .address(AddressGlobalUK.builder().build())
             .build();
 
         assertThat(applicant.isBasedOverseas()).isFalse();
