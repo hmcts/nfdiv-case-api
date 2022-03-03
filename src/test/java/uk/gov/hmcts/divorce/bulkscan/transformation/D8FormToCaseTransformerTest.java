@@ -187,15 +187,15 @@ public class D8FormToCaseTransformerTest {
         });
 
         when(validator.validateOcrData(D8.getName(), transformOcrMapToObject(ocrDataFields)))
-            .thenReturn(OcrValidationResponse.builder().errors(List.of("some error")).build());
+            .thenReturn(OcrValidationResponse.builder().errors(List.of("some error")).warnings(List.of("some warning")).build());
 
         ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
 
         assertThatThrownBy(() -> d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord))
             .isExactlyInstanceOf(InvalidOcrDataException.class)
             .hasMessageContaining("OCR validation errors")
-            .extracting("errors")
-            .isEqualTo(List.of("some error"));
+            .extracting("errors", "warnings")
+            .contains(List.of("some error"), List.of("some warning"));
 
     }
 
