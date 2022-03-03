@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -70,7 +71,6 @@ public class NoticeOfProceedingContent {
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
     public static final String APPLICANT_1_ADDRESS = "applicant1Address";
     public static final String DISPLAY_EMAIL_CONFIRMATION = "displayEmailConfirmation";
-    private static final int HOLDING_DUE_DATE_OFFSET_DAYS = 141;
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
 
     @Autowired
@@ -94,6 +94,9 @@ public class NoticeOfProceedingContent {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
+    @Autowired
+    private HoldingPeriodService holdingPeriodService;
+
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -107,7 +110,7 @@ public class NoticeOfProceedingContent {
         templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(
             SUBMISSION_RESPONSE_DATE,
-            caseData.getApplication().getIssueDate().plusDays(HOLDING_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
         );
 
         templateContent.put(
