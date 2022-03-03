@@ -229,7 +229,7 @@ public class DivorceApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithFormatedSolicitorAddress() {
+    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithFormattedSolicitorAddress() {
         final String solAddressWithNewLine = "10 Solicitor Road\ntown\n\npostcode\n";
         final String solAddressWithCleanUp = "10 Solicitor Road\ntown\npostcode";
 
