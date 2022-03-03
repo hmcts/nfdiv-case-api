@@ -58,19 +58,15 @@ public class RespondentAnswersTemplateContentTest {
             Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build()
         );
         caseData.getApplicant2().setSolicitorRepresented(YES);
-
-        final var marriageDetails = new MarriageDetails();
-        marriageDetails.setApplicant1Name("app1fname app1lname");
-        marriageDetails.setApplicant2Name("app2fname app2lname");
-
-        caseData.getApplication().setMarriageDetails(marriageDetails);
+        caseData.getApplicant2().setFirstName("app2fname");
+        caseData.getApplicant2().setLastName("app2lname");
 
         final Map<String, Object> templateContent = respondentAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(ISSUE_DATE, "28 April 2021"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
-            entry(APPLICANT_1_FULL_NAME, "app1fname app1lname"),
+            entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
             entry(APPLICANT_2_FULL_NAME, "app2fname app2lname"),
             entry("respJurisdictionAgree", YES.getValue()),
             entry("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "jurisdiction reason"),

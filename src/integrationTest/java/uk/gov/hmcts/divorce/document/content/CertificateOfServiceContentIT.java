@@ -33,15 +33,17 @@ public class CertificateOfServiceContentIT {
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingCertificateOfServiceDocument() {
         CaseData caseData = caseData();
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("pet full name");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("resp full name");
+        caseData.getApplicant1().setFirstName("pet full");
+        caseData.getApplicant1().setLastName("name");
+        caseData.getApplicant2().setFirstName("resp full");
+        caseData.getApplicant2().setLastName("name");
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
 
         Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, 1616591401473378L),
-            entry(PETITIONER_FULL_NAME, "pet full name"),
+            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry(IS_DIVORCE, "Yes"),
             entry(DOCUMENTS_ISSUED_ON, LocalDate.now().format(DATE_TIME_FORMATTER))
