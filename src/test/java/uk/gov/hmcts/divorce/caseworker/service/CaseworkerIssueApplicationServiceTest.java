@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -57,6 +58,9 @@ class CaseworkerIssueApplicationServiceTest {
     private SetDueDateAfterIssue setDueDateAfterIssue;
 
     @Mock
+    private SendAosPackToApplicant sendAosPackToApplicant;
+
+    @Mock
     private Clock clock;
 
     @InjectMocks
@@ -81,7 +85,8 @@ class CaseworkerIssueApplicationServiceTest {
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
+        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
 
@@ -120,6 +125,7 @@ class CaseworkerIssueApplicationServiceTest {
         when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
+        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
 
