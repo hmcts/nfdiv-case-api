@@ -95,6 +95,7 @@ uk:
             SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED: '98960794-a1a9-4761-a495-2eca16f4c81e'
             SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED: '3f42a757-f635-4f58-be27-d65af450a2ee'
             DISPUTE_FORM_OVERDUE: '325a1603-499c-4a96-af50-92931d4b68ff'
+            BAILIFF_SERVICE_UNSUCCESSFUL: 'c40abaaf-dc6a-4dc0-815c-a411822d988b'
             APPLICANT_SWITCH_TO_SOLE: '29c1cdb1-bf0c-4f27-bb52-b99f040e8f53'
             JOINT_APPLICATION_ENDED: 'f7929730-decd-41fd-b596-de71699f6c7e'
             APPLICANT_APPLY_FOR_FINAL_ORDER: '700d4e14-7eae-4219-b2e6-be01c31e071f'
@@ -220,11 +221,10 @@ aos_pack:
   due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:16}
 
 case_progression:
-  holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}
+  holding_offset_days: ${HOLDING_DUE_DATE_OFFSET_DAYS:141}
 
 submit_aos:
   dispute_offset_days: ${DISPUTE_DUE_DATE_OFFSET_DAYS:37}
-  holding_offset_days: ${HOLDING_DUE_DATE_OFFSET_DAYS:141}
 
 submit_co:
   reminder_offset_days: ${SUBMIT_CO_REMINDER_OFFSET_DAYS:14}

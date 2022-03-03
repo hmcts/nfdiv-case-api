@@ -11,11 +11,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceUnsuccessfulNotification;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Bailiff;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
@@ -52,6 +54,12 @@ public class CaseworkerAddBailiffReturnIT {
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
+
+    @MockBean
+    private NotificationDispatcher notificationDispatcher;
+
+    @MockBean
+    private BailiffServiceUnsuccessfulNotification notification;
 
     @MockBean
     private WebMvcConfig webMvcConfig;

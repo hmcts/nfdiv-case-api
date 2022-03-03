@@ -122,11 +122,10 @@ aos_pack:
   due_date_offset_days: 16
 
 case_progression:
-  holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}
+  holding_offset_days: ${HOLDING_DUE_DATE_OFFSET_DAYS:141}
 
 submit_aos:
   dispute_offset_days: ${DISPUTE_DUE_DATE_OFFSET_DAYS:37}
-  holding_offset_days: ${HOLDING_DUE_DATE_OFFSET_DAYS:141}
 
 submit_co:
   reminder_offset_days: ${SUBMIT_CO_REMINDER_OFFSET_DAYS:14}

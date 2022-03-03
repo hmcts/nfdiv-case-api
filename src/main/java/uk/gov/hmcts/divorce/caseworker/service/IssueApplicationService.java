@@ -54,11 +54,11 @@ public class IssueApplicationService {
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setPostIssueState,
-            setDueDateAfterIssue,
             details -> {
                 details.getData().getApplication().setIssueDate(LocalDate.now(clock));
                 return details;
             },
+            setDueDateAfterIssue,
             generateNoticeOfProceeding,
             generateRespondentAosInvitation,
             divorceApplicationRemover,
