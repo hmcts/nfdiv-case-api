@@ -341,25 +341,6 @@ class ApplicationTest {
         assertThat(application.isHelpWithFeesApplication()).isFalse();
     }
 
-    @Test
-    void shouldReturnTrueIfSolicitorApplication() {
-        final Application application = Application.builder()
-            .solSignStatementOfTruth(YES)
-            .build();
-
-        assertThat(application.isSolicitorApplication()).isTrue();
-    }
-
-    @Test
-    void shouldReturnFalseIfNotSolicitorApplication() {
-
-        assertThat(Application.builder().solSignStatementOfTruth(NO).build()
-            .isSolicitorApplication()).isFalse();
-
-        assertThat(Application.builder().build()
-            .isSolicitorApplication()).isFalse();
-    }
-
     private ListValue<Payment> paymentValue(final Payment payment) {
         return ListValue.<Payment>builder()
             .value(payment)
