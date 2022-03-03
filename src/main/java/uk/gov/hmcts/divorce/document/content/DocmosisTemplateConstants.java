@@ -19,7 +19,6 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_FULL_NAME = "applicant2FullName";
     public static final String MARRIAGE_DATE = "marriageDate";
     public static final String PLACE_OF_MARRIAGE = "placeOfMarriage";
-    public static final String FINANCIAL_ORDER_CHILD = "financialOrderChild";
     public static final String APPLICANT_1_POSTAL_ADDRESS = "applicant1PostalAddress";
     public static final String APPLICANT_2_POSTAL_ADDRESS = "applicant2PostalAddress";
     public static final String A_DIVORCE_APPLICATION = "a divorce application";
@@ -30,12 +29,10 @@ public final class DocmosisTemplateConstants {
     public static final String MARRIAGE = "marriage";
     public static final String THE_APPLICATION = "theApplication";
     public static final String THE_DIVORCE = "the divorce";
-    public static final String OF_THE_DIVORCE = "of the divorce";
     public static final String TO_END_A_CIVIL_PARTNERSHIP = "application to end a civil partnership";
     public static final String ENDING_CIVIL_PARTNERSHIP = "ending the civil partnership";
     public static final String RELATIONSHIP = "relationship";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
-    public static final String TO_END_THE_CIVIL_PARTNERSHIP = "to end the civil partnership";
     public static final String APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP = "application to end your civil partnership";
     public static final String DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH = "for the dissolution of the civil partnership with";
     public static final String ACCESS_CODE = "accessCode";
@@ -47,7 +44,6 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_1_FINANCIAL_ORDER = "applicant1FinancialOrder";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_2 = "hasFinancialOrderApplicant2";
     public static final String APPLICANT_2_FINANCIAL_ORDER = "applicant2FinancialOrder";
-    public static final String HAS_FINANCIAL_ORDERS_FOR_CHILD = "hasFinancialOrdersForChild";
     public static final String GENERAL_ORDER_DATE = "generalOrderDate";
     public static final String GENERAL_ORDER_DETAILS = "generalOrderDetails";
     public static final String GENERAL_ORDER_RECITALS = "generalOrderRecitals";
