@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -14,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -24,12 +26,14 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_TO;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DISPLAY_EMAIL_CONFIRMATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP;
@@ -91,6 +95,14 @@ public class NoticeOfProceedingContentIT {
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
         caseData.getApplicant1().setGender(MALE);
         caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .build()
+        );
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 19));
 
@@ -130,6 +142,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
+        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID);
 
@@ -144,6 +158,14 @@ public class NoticeOfProceedingContentIT {
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
         caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .build()
+        );
         caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 19));
@@ -183,7 +205,9 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
-
+        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
+        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
+        
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
