@@ -38,8 +38,10 @@ public class GeneralOrderTemplateContentIT {
     public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingGeneralOrderDocument() {
         CaseData caseData = caseData();
         caseData.setGeneralOrder(getGeneralOrder());
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("pet full name");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("resp full name");
+        caseData.getApplicant1().setFirstName("pet full");
+        caseData.getApplicant1().setLastName("name");
+        caseData.getApplicant2().setFirstName("resp full");
+        caseData.getApplicant2().setLastName("name");
 
         Map<String, Object> templateContent = generalOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -61,7 +63,7 @@ public class GeneralOrderTemplateContentIT {
             entry(GENERAL_ORDER_RECITALS, "test recitals"),
             entry(JUDGE_NAME, "some name"),
             entry(JUDGE_TYPE, "District Judge"),
-            entry(PETITIONER_FULL_NAME, "pet full name"),
+            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry("ctscContactDetails", ctscContactDetails)
         );

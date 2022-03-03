@@ -47,8 +47,8 @@ public class RespondentSolicitorAosInvitationTemplateContent {
         templateContent.put(APPLICANT_2_MIDDLE_NAME, caseData.getApplicant2().getMiddleName());
         templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
 
-        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
-        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
+        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
+        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
 
         templateContent.put(MARRIAGE_DATE,
             ofNullable(caseData.getApplication().getMarriageDetails().getDate())
