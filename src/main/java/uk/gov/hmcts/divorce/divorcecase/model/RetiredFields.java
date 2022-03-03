@@ -374,6 +374,12 @@ public class RetiredFields {
     @CCD(label = "Retired applicant 2 service address")
     private AddressGlobalUK applicant2CorrespondenceAddress;
 
+    @CCD(
+        label = "Retired Does Applicant Want To Apply For Final Order",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo doesApplicantWantToApplyForFinalOrder;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -507,6 +513,8 @@ public class RetiredFields {
             data -> data.put("applicant1Address", data.get("applicant1HomeAddress")));
         init.put("applicant2HomeAddress",
             data -> data.put("applicant2Address", data.get("applicant2HomeAddress")));
+        init.put("doesApplicantWantToApplyForFinalOrder",
+            data -> data.put("doesApplicant1WantToApplyForFinalOrder", data.get("doesApplicantWantToApplyForFinalOrder")));
 
         migrations = unmodifiableMap(init);
     }
