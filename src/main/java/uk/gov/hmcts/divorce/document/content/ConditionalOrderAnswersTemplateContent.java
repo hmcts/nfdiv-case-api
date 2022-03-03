@@ -47,11 +47,11 @@ public class ConditionalOrderAnswersTemplateContent {
 
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
         templateContent.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
-        templateContent.put(APPLICANT_1_FULL_NAME, application.getMarriageDetails().getApplicant1Name());
+        templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
 
         templateContent.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
         templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
-        templateContent.put(APPLICANT_2_FULL_NAME, application.getMarriageDetails().getApplicant2Name());
+        templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
 
         return templateContent;
     }

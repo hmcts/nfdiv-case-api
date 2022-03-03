@@ -33,8 +33,8 @@ public class CertificateOfServiceContent {
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
         templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);
-        templateContent.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
-        templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
+        templateContent.put(PETITIONER_FULL_NAME, caseData.getApplicant1().getFullName());
+        templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(DOCUMENTS_ISSUED_ON, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_DIVORCE, caseData.isDivorce() ? YES.getValue() : NO.getValue());
 
