@@ -34,7 +34,6 @@ public class ConditionalOrderAnswersTemplateContent {
         final var isSole = caseData.getApplicationType().isSole();
         final var isDivorce = caseData.getDivorceOrDissolution().isDivorce();
 
-        final var application = caseData.getApplication();
         final var applicant1 = caseData.getApplicant1();
         final var applicant2 = caseData.getApplicant2();
 
