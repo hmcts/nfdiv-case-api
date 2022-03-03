@@ -124,7 +124,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("ConfidentialRespondent", "Confidential Respondent")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_2_SOLICITOR, SUPER_USER)
             .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"soleApplication\"")
-            .field("applicant2CorrespondenceAddress")
             .field("applicant2PhoneNumber")
             .field("applicant2Email")
             .field("applicant2Address");
@@ -134,7 +133,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("ConfidentialApplicant2", "Confidential Applicant 2")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_2_SOLICITOR, SUPER_USER)
             .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"jointApplication\"")
-            .field("applicant2CorrespondenceAddress")
             .field("applicant2PhoneNumber")
             .field("applicant2Email")
             .field("applicant2Address");
