@@ -15,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -207,7 +206,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
-        
+
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
