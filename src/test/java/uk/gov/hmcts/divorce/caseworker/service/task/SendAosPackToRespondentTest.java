@@ -118,7 +118,7 @@ class SendAosPackToRespondentTest {
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
                 AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
             .contains(null, null, null);
-        verify(aosPackPrinter).print(caseData, TEST_CASE_ID);
+        verify(aosPackPrinter).sendAosLetterToRespondent(caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -141,6 +141,6 @@ class SendAosPackToRespondentTest {
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
                 AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
             .contains(TEST_SOLICITOR_EMAIL, TEST_ORG_NAME);
-        verify(aosPackPrinter).print(caseData, TEST_CASE_ID);
+        verify(aosPackPrinter).sendAosLetterToRespondent(caseData, TEST_CASE_ID);
     }
 }

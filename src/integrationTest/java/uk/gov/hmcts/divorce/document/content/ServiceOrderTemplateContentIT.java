@@ -53,7 +53,7 @@ public class ServiceOrderTemplateContentIT {
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full name"),
+            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry(IS_SERVICE_ORDER_TYPE_DEEMED, "No"),
             entry("ctscContactDetails", buildCtscContactDetails())
@@ -72,7 +72,7 @@ public class ServiceOrderTemplateContentIT {
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(SERVICE_APPLICATION_DECISION_DATE, "20 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full name"),
+            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry(IS_SERVICE_ORDER_TYPE_DEEMED, "Yes"),
             entry("ctscContactDetails", buildCtscContactDetails())
@@ -94,7 +94,7 @@ public class ServiceOrderTemplateContentIT {
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full name"),
+            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry(IS_SERVICE_ORDER_TYPE_DEEMED, "No"),
             entry(REFUSAL_REASON, "refusal reasons"),
@@ -120,7 +120,7 @@ public class ServiceOrderTemplateContentIT {
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full name"),
+            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry(IS_SERVICE_ORDER_TYPE_DEEMED, "No"),
             entry(REFUSAL_REASON, "refusal reasons"),
@@ -144,7 +144,7 @@ public class ServiceOrderTemplateContentIT {
             entry(CASE_REFERENCE, 1616591401473378L),
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full name"),
+            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry(IS_SERVICE_ORDER_TYPE_DEEMED, "Yes"),
             entry(REFUSAL_REASON, "refusal reasons"),
@@ -169,7 +169,7 @@ public class ServiceOrderTemplateContentIT {
             entry(CASE_REFERENCE, 1616591401473378L),
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full name"),
+            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry(IS_SERVICE_ORDER_TYPE_DEEMED, "Yes"),
             entry(REFUSAL_REASON, "refusal reasons"),
@@ -192,8 +192,10 @@ public class ServiceOrderTemplateContentIT {
                 .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                 .build()
         );
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("pet full name");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("resp full name");
+        caseData.getApplicant1().setFirstName("pet full");
+        caseData.getApplicant1().setLastName("name");
+        caseData.getApplicant2().setFirstName("resp full");
+        caseData.getApplicant2().setLastName("name");
         return caseData;
     }
 

@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +47,7 @@ public class BailiffNotApprovedOrderContentTest {
     @InjectMocks
     private BailiffNotApprovedOrderContent templateContent;
 
-    private static final String FULL_NAME = String.format("%s %s", TEST_FIRST_NAME, TEST_LAST_NAME);
+    private static final String FULL_NAME = String.format("%s %s %s", TEST_FIRST_NAME, TEST_MIDDLE_NAME, TEST_LAST_NAME);
     private static final LocalDate SERVICE_APPLICATION_DATE = LocalDate.of(2021, 12, 25);
 
     @Test
