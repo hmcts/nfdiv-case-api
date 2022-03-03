@@ -255,7 +255,7 @@ public class DivorceApplicationSoleTemplateContentTest {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
-            .divorceOrDissolution(DISSOLUTION)
+            .divorceOrDissolution(DIVORCE)
             .application(Application.builder()
                 .issueDate(LocalDate.of(2021, 4, 28))
                 .applicant1IsApplicant2Represented(Applicant2Represented.YES)
@@ -270,17 +270,17 @@ public class DivorceApplicationSoleTemplateContentTest {
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
-            entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH),
-            entry(DIVORCE_OR_DISSOLUTION, "application to end your civil partnership"),
-            entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
-            entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
-            entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership"),
+            entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce from"),
+            entry(DIVORCE_OR_DISSOLUTION, "divorce application"),
+            entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
+            entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
+            entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(ISSUE_DATE, "28 April 2021"),
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
-            entry(APPLICANT_1_FULL_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_1_FULL_NAME, applicant1.getFullName()),
             entry(APPLICANT_1_POSTAL_ADDRESS, null),
             entry(APPLICANT_1_EMAIL, TEST_USER_EMAIL),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
@@ -290,7 +290,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_2_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME),
-            entry(APPLICANT_2_FULL_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
             entry(APPLICANT_2_POSTAL_ADDRESS, null),
             entry(APPLICANT_2_EMAIL, TEST_USER_EMAIL),
             entry(PLACE_OF_MARRIAGE, null),
