@@ -15,7 +15,7 @@
     "applicant2Email": "test@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
     "applicant2Gender": "male",
-    "applicant2CorrespondenceAddress": {
+    "applicant2Address": {
       "AddressLine1": "223b",
       "AddressLine2": "Baker Street",
       "PostTown": "London",

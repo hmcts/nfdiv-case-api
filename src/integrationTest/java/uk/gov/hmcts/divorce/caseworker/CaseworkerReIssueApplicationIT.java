@@ -464,7 +464,7 @@ public class CaseworkerReIssueApplicationIT {
         throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(correspondenceAddress());
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
 
@@ -513,7 +513,7 @@ public class CaseworkerReIssueApplicationIT {
         throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(correspondenceAddress());
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
 
@@ -563,7 +563,7 @@ public class CaseworkerReIssueApplicationIT {
         throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(correspondenceAddress());
         caseData.getApplication().setReissueOption(REISSUE_CASE);
         caseData.getApplication().setIssueDate(LocalDate.now());
 

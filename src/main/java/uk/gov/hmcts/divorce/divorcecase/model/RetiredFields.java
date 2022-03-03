@@ -368,6 +368,12 @@ public class RetiredFields {
     @CCD(label = "Retired applicant 2 home address")
     private AddressGlobalUK applicant2HomeAddress;
 
+    @CCD(label = "Retired applicant 1 service address")
+    private AddressGlobalUK applicant1CorrespondenceAddress;
+
+    @CCD(label = "Retired applicant 2 service address")
+    private AddressGlobalUK applicant2CorrespondenceAddress;
+
     @CCD(
         label = "Does the applicant want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
         access = {DefaultAccess.class}

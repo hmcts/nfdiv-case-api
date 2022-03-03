@@ -130,13 +130,9 @@ public class DraftApplicationTemplateContent {
             templateContent.put(APPLICANT_1_COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
         }
 
-        templateContent.put(APPLICANT_1_POSTAL_ADDRESS, applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant1));
+        templateContent.put(APPLICANT_1_POSTAL_ADDRESS, applicant1.getCorrespondenceAddress());
         templateContent.put(APPLICANT_1_EMAIL, applicant1.getEmail());
-        templateContent.put(APPLICANT_2_POSTAL_ADDRESS,
-            isSole
-                ? applicantTemplateDataProvider.deriveSoleApplicationApplicant2PostalAddress(applicant2)
-                : applicantTemplateDataProvider.deriveApplicant2PostalAddress(applicant2, application)
-        );
+        templateContent.put(APPLICANT_2_POSTAL_ADDRESS, applicant2.getCorrespondenceAddress());
         templateContent.put(APPLICANT_2_EMAIL, applicant2.getEmail());
 
         if (isSole) {
