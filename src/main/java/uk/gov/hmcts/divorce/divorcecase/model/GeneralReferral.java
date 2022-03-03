@@ -114,7 +114,9 @@ public class GeneralReferral {
     private String generalApplicationTypeOtherComments;
 
     @CCD(
-        label = "Choose General Application Fee Type"
+        label = "Choose General Application Fee Type",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "GeneralApplicationFee"
     )
     private GeneralApplicationFee generalApplicationFeeType;
 
