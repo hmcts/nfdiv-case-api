@@ -13,9 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.LocalDate;
 
@@ -43,12 +41,6 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
     @Autowired
     private GeneralApplicationReceivedNotification generalApplicationReceivedNotification;
-
-    @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private CcdAccessService ccdAccessService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
