@@ -42,15 +42,16 @@ class AosPackPrinterTest {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
+                .documentType(RESPONDENT_INVITATION)
                 .build())
             .build();
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(RESPONDENT_INVITATION)
+                .documentType(APPLICATION)
                 .build())
             .build();
+
 
         final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()

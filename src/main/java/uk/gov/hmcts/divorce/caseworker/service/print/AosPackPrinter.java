@@ -51,13 +51,12 @@ public class AosPackPrinter {
 
         final List<Letter> currentAosLetters = new ArrayList<>();
 
-        if (null != divorceApplicationLetter) {
-            currentAosLetters.add(divorceApplicationLetter);
-        }
         if (null != respondentInvitationLetter) {
             currentAosLetters.add(respondentInvitationLetter);
         }
-
+        if (null != divorceApplicationLetter) {
+            currentAosLetters.add(divorceApplicationLetter);
+        }
         if (!isEmpty(currentAosLetters)) {
 
             final String caseIdString = caseId.toString();

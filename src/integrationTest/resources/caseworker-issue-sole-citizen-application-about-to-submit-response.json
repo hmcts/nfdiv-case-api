@@ -46,6 +46,8 @@
     },
     "documentUploadComplete": "Yes",
     "issueDate": "2021-06-17",
+    "noticeOfProceedingsEmail": "applicant2@test.com",
+    "solServiceMethod": "courtService",
     "applicationPayments": [
       {
         "value": {
@@ -98,7 +100,6 @@
         }
       }
     ],
-    "noticeOfProceedingsEmail":"applicant2@test.com",
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
     "warnings": [],
