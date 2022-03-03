@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 @ExtendWith(MockitoExtension.class)
 class HoldingPeriodServiceTest {
 
-    private static final int HOLDING_PERIOD_WEEKS = 20;
+    private static final int HOLDING_PERIOD_DAYS = 141;
 
     @Mock
     private Clock clock;
@@ -28,12 +28,12 @@ class HoldingPeriodServiceTest {
 
     @BeforeEach
     public void setUp() {
-        setField(holdingPeriodService, "holdingPeriodInWeeks", HOLDING_PERIOD_WEEKS);
+        setField(holdingPeriodService, "holdingPeriodInDays", HOLDING_PERIOD_DAYS);
     }
 
     @Test
-    void shouldReturnHoldingPeriodInWeeks() {
-        assertThat(holdingPeriodService.getHoldingPeriodInWeeks()).isEqualTo(HOLDING_PERIOD_WEEKS);
+    void shouldReturnHoldingPeriodInDays() {
+        assertThat(holdingPeriodService.getHoldingPeriodInDays()).isEqualTo(HOLDING_PERIOD_DAYS);
     }
 
     @Test
@@ -42,36 +42,36 @@ class HoldingPeriodServiceTest {
         final LocalDate issueDate = getExpectedLocalDate();
 
         assertThat(holdingPeriodService.getDueDateFor(issueDate))
-            .isEqualTo(issueDate.plusWeeks(HOLDING_PERIOD_WEEKS));
+            .isEqualTo(issueDate.plusDays(HOLDING_PERIOD_DAYS));
     }
 
     @Test
-    void shouldReturnTrueIfWeeksBetweenIssueDateAndCurrentDateIsEqualToHoldingPeriod() {
+    void shouldReturnTrueIfDaysBetweenIssueDateAndCurrentDateIsEqualToHoldingPeriod() {
 
         setMockClock(clock);
 
-        final LocalDate issueDate = getExpectedLocalDate().minusWeeks(HOLDING_PERIOD_WEEKS);
+        final LocalDate issueDate = getExpectedLocalDate().minusDays(HOLDING_PERIOD_DAYS);
 
         assertThat(holdingPeriodService.isHoldingPeriodFinished(issueDate)).isTrue();
     }
 
     @Test
-    void shouldReturnTrueIfWeeksBetweenIssueDateAndCurrentDateIsGreaterThanHoldingPeriod() {
+    void shouldReturnTrueIfDaysBetweenIssueDateAndCurrentDateIsGreaterThanHoldingPeriod() {
 
         setMockClock(clock);
 
-        final LocalDate issueDate = getExpectedLocalDate().minusWeeks(HOLDING_PERIOD_WEEKS);
+        final LocalDate issueDate = getExpectedLocalDate().minusDays(HOLDING_PERIOD_DAYS);
 
         assertThat(holdingPeriodService.isHoldingPeriodFinished(issueDate.minusDays(1))).isTrue();
         assertThat(holdingPeriodService.isHoldingPeriodFinished(issueDate.minusWeeks(1))).isTrue();
     }
 
     @Test
-    void shouldReturnFalseIfWeeksBetweenIssueDateAndCurrentDateIsLessThanHoldingPeriod() {
+    void shouldReturnFalseIfDaysBetweenIssueDateAndCurrentDateIsLessThanHoldingPeriod() {
 
         setMockClock(clock);
 
-        final LocalDate issueDate = getExpectedLocalDate().minusWeeks(HOLDING_PERIOD_WEEKS).plusDays(1);
+        final LocalDate issueDate = getExpectedLocalDate().minusDays(HOLDING_PERIOD_DAYS).plusDays(1);
 
         assertThat(holdingPeriodService.isHoldingPeriodFinished(issueDate.plusDays(1))).isFalse();
         assertThat(holdingPeriodService.isHoldingPeriodFinished(issueDate.plusWeeks(1))).isFalse();
