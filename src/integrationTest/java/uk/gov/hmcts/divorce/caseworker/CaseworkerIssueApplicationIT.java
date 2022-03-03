@@ -320,6 +320,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
         caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(YES);
+        caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
