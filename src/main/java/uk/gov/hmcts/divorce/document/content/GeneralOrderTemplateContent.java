@@ -54,8 +54,8 @@ public class GeneralOrderTemplateContent {
         var generalOrder = caseData.getGeneralOrder();
         templateContent.put(GENERAL_ORDER_DATE, generalOrder.getGeneralOrderDate().format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, ccdCaseReference);
-        templateContent.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
-        templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
+        templateContent.put(PETITIONER_FULL_NAME, caseData.getApplicant1().getFullName());
+        templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(GENERAL_ORDER_RECITALS, generalOrder.getGeneralOrderRecitals());
         templateContent.put(JUDGE_TYPE, generalOrder.getGeneralOrderJudgeOrLegalAdvisorType().getLabel());
         templateContent.put(JUDGE_NAME, generalOrder.getGeneralOrderJudgeOrLegalAdvisorName());

@@ -191,6 +191,9 @@ public class TestDataHelper {
     public static Applicant getJointApplicant2(Gender gender) {
         return Applicant.builder()
             .gender(gender)
+            .firstName(TEST_FIRST_NAME)
+            .middleName(TEST_MIDDLE_NAME)
+            .lastName(TEST_LAST_NAME)
             .build();
     }
 
@@ -281,6 +284,8 @@ public class TestDataHelper {
         applicant1.setContactDetailsType(PRIVATE);
         applicant1.setFinancialOrder(NO);
         applicant1.setLegalProceedings(NO);
+        applicant1.setFirstName(TEST_FIRST_NAME);
+        applicant1.setLastName(TEST_LAST_NAME);
 
         var application = Application.builder()
             .marriageDetails(marriageDetails)
