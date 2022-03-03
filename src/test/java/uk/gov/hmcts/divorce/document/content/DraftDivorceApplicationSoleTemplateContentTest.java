@@ -5,11 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
@@ -28,7 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -73,6 +69,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.LINE_1_LINE_2_CITY_POSTCODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -101,12 +98,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder()
-            .addressLine1("line1")
-            .addressLine2("line2")
-            .postTown("city")
-            .postCode("postcode")
-            .build());
+        caseData.getApplicant1().setAddress(APPLICANT_ADDRESS);
         caseData.getApplicant2().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
@@ -127,16 +119,12 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
 
         when(applicationTemplateDataProvider.deriveSoleJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
-        when(applicantTemplateDataProvider.deriveApplicantPostalAddress(eq(caseData.getApplicant1())))
-            .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
-        when(applicantTemplateDataProvider.deriveSoleApplicationApplicant2PostalAddress(eq(caseData.getApplicant2())))
-            .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
 
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
@@ -151,7 +139,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null),
             entry(RESPONDENT_IS_REPRESENTED, true),
             entry(RESPONDENT_SOLICITOR_NAME, "Mr Sol"),
@@ -161,8 +149,6 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         );
 
         verifyNoMoreInteractions(authTokenGenerator);
-        verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveSoleApplicationApplicant2PostalAddress(any(Applicant.class));
     }
 
     @Test
@@ -170,18 +156,16 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant1().setFinancialOrder(NO);
+        caseData.getApplicant1().setAddress(APPLICANT_ADDRESS);
         caseData.getApplicant2().setFinancialOrder(YES);
         caseData.getApplicant2().setFinancialOrdersFor(Set.of(FinancialOrderFor.CHILDREN));
+        caseData.getApplicant2().setAddress(APPLICANT_ADDRESS);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
 
         when(applicationTemplateDataProvider.deriveJointJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
-        when(applicantTemplateDataProvider.deriveApplicantPostalAddress(eq(caseData.getApplicant1())))
-            .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
-        when(applicantTemplateDataProvider.deriveApplicant2PostalAddress(eq(caseData.getApplicant2()), any()))
-            .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
         when(applicantTemplateDataProvider.deriveJointFinancialOrder(eq(caseData.getApplicant1().getFinancialOrdersFor())))
             .thenReturn(null);
         when(applicantTemplateDataProvider.deriveJointFinancialOrder(eq(caseData.getApplicant2().getFinancialOrdersFor())))
@@ -191,7 +175,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
@@ -210,14 +194,12 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_MIDDLE_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null),
             entry(APPLICANT_2_EMAIL, null)
         );
 
         verifyNoMoreInteractions(authTokenGenerator);
-        verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
     }
 
     @Test
@@ -226,27 +208,19 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder()
-            .addressLine1("line1")
-            .addressLine2("line2")
-            .postTown("city")
-            .postCode("postcode")
-            .build());
+        caseData.getApplicant1().setAddress(APPLICANT_ADDRESS);
+        caseData.getApplicant2().setAddress(APPLICANT_ADDRESS);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(Solicitor.builder().build());
 
         when(applicationTemplateDataProvider.deriveSoleJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
-        when(applicantTemplateDataProvider.deriveApplicantPostalAddress(eq(caseData.getApplicant1())))
-            .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
-        when(applicantTemplateDataProvider.deriveSoleApplicationApplicant2PostalAddress(eq(caseData.getApplicant2())))
-            .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
 
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
@@ -258,9 +232,9 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
+            entry(APPLICANT_2_POSTAL_ADDRESS, null),
             entry(APPLICANT_2_FIRST_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null),
             entry(APPLICANT_2_EMAIL, null),
             entry(RESPONDENT_IS_REPRESENTED, true),
@@ -271,8 +245,6 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         );
 
         verifyNoMoreInteractions(authTokenGenerator);
-        verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveSoleApplicationApplicant2PostalAddress(any(Applicant.class));
     }
 
     @Test
@@ -281,22 +253,20 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFinancialOrder(NO);
+        caseData.getApplicant1().setAddress(APPLICANT_ADDRESS);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
 
         when(applicationTemplateDataProvider.deriveJointJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
-        when(applicantTemplateDataProvider.deriveApplicantPostalAddress(eq(caseData.getApplicant1())))
-            .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
-        when(applicantTemplateDataProvider.deriveApplicant2PostalAddress(eq(caseData.getApplicant2()), any()))
-            .thenReturn(LINE_1_LINE_2_CITY_POSTCODE);
 
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
@@ -310,14 +280,12 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null),
             entry(APPLICANT_2_EMAIL, null)
         );
 
         verifyNoMoreInteractions(authTokenGenerator);
-        verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
     }
 
     @Test

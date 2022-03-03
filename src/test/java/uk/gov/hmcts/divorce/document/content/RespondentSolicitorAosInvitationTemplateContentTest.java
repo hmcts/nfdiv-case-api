@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -52,6 +53,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     public void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setFinancialOrder(NO);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
@@ -60,7 +62,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(CCD_CASE_REFERENCE, 1616591401473378L),
@@ -68,7 +70,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null)
         );
 
@@ -80,6 +82,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFinancialOrder(NO);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
@@ -88,7 +91,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(CCD_CASE_REFERENCE, 1616591401473378L),
@@ -96,7 +99,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null)
         );
 
@@ -126,7 +129,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2HomeAddressNotNull() {
+    public void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2AddressNotNull() {
         AddressGlobalUK address = AddressGlobalUK.builder()
             .addressLine1("221b")
             .addressLine2("Baker Street")
@@ -138,14 +141,14 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
 
         CaseData caseData = caseData();
         caseData.setApplicant2(getApplicant());
-        caseData.getApplicant2().setHomeAddress(address);
+        caseData.getApplicant2().setAddress(address);
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFinancialOrder(NO);
 
         Map<String, Object> templateContent = respondentSolicitorAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(templateContent).contains(
-            entry(APPLICANT_2_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom")
+            entry(APPLICANT_2_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE")
         );
     }
 }

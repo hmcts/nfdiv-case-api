@@ -54,6 +54,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildWarningsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("transformationAndOcrWarningsTab", "Warnings")
+            .showCondition("warnings!=\"\"")
             .field("warnings");
     }
 
@@ -116,27 +117,25 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1CorrespondenceAddress")
             .field("applicant1PhoneNumber")
             .field("applicant1Email")
-            .field("applicant1HomeAddress");
+            .field("applicant1Address");
     }
 
     private void buildConfidentialRespondentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("ConfidentialRespondent", "Confidential Respondent")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_2_SOLICITOR, SUPER_USER)
             .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"soleApplication\"")
-            .field("applicant2CorrespondenceAddress")
             .field("applicant2PhoneNumber")
             .field("applicant2Email")
-            .field("applicant2HomeAddress");
+            .field("applicant2Address");
     }
 
     private void buildConfidentialApplicant2Tab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("ConfidentialApplicant2", "Confidential Applicant 2")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_2_SOLICITOR, SUPER_USER)
             .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"jointApplication\"")
-            .field("applicant2CorrespondenceAddress")
             .field("applicant2PhoneNumber")
             .field("applicant2Email")
-            .field("applicant2HomeAddress");
+            .field("applicant2Address");
     }
 
     private void buildMarriageCertificateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -292,10 +291,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 FinalOrderOverdue,
                 FinalOrderComplete))
             .label("labelFinalOrderDetails-SoleApplicant",
-                "applicationType=\"soleApplication\" AND doesApplicantWantToApplyForFinalOrder=\"*\"",
+                "applicationType=\"soleApplication\" AND doesApplicant1WantToApplyForFinalOrder=\"*\"",
                 "### Applicant")
-            .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicantWantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("doesApplicantWantToApplyForFinalOrder")
+            .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
             .field("applicant1FinalOrderStatementOfTruth")
             .field("granted")

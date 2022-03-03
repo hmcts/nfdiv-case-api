@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.Arrays.asList;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 
 
@@ -26,37 +26,14 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITA
 public class AosPackPrinter {
 
     private static final String LETTER_TYPE_RESPONDENT_PACK = "respondent-aos-pack";
-    private static final List<DocumentType> AOS_DOCUMENT_TYPES = asList(
-        APPLICATION,
-        RESPONDENT_INVITATION);
+    private static final String LETTER_TYPE_APPLICANT_PACK = "applicant-aos-pack";
 
     @Autowired
     private BulkPrintService bulkPrintService;
 
-    public void print(final CaseData caseData, final Long caseId) {
+    public void sendAosLetterToRespondent(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(),
-            APPLICATION);
-
-        final List<Letter> respondentInvitationLetters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(),
-            RESPONDENT_INVITATION);
-
-        //Always get document on top of list as new document is added to top after generation
-        final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
-
-        //Always get document on top of list as new document is added to top after generation
-        final Letter respondentInvitationLetter = firstElement(respondentInvitationLetters);
-
-        final List<Letter> currentAosLetters = new ArrayList<>();
-
-        if (null != divorceApplicationLetter) {
-            currentAosLetters.add(divorceApplicationLetter);
-        }
-        if (null != respondentInvitationLetter) {
-            currentAosLetters.add(respondentInvitationLetter);
-        }
+        final List<Letter> currentAosLetters = aosLetters(caseData, RESPONDENT_INVITATION);
 
         if (!isEmpty(currentAosLetters)) {
 
@@ -67,9 +44,55 @@ public class AosPackPrinter {
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             log.warn(
-                "AoS Pack print has missing documents. Expected documents with type {} , for Case ID: {}",
-                AOS_DOCUMENT_TYPES,
+                "AoS Pack print for respondent has missing documents. Expected documents with type {} , for Case ID: {}",
+                List.of(APPLICATION, RESPONDENT_INVITATION),
                 caseId);
         }
+    }
+
+    public void sendAosLetterToApplicant(final CaseData caseData, final Long caseId) {
+
+        final List<Letter> currentAosLetters = aosLetters(caseData, NOTICE_OF_PROCEEDINGS);
+
+        if (!isEmpty(currentAosLetters)) {
+
+            final String caseIdString = caseId.toString();
+            final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_APPLICANT_PACK);
+            final UUID letterId = bulkPrintService.print(print);
+
+            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+        } else {
+            log.warn(
+                "AoS Pack for print applicant has missing documents. Expected documents with type {} , for Case ID: {}",
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS),
+                caseId
+            );
+        }
+    }
+
+    private List<Letter> aosLetters(CaseData caseData, DocumentType documentType) {
+        final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
+            caseData.getDocumentsGenerated(),
+            APPLICATION);
+
+        final List<Letter> notificationLetters = lettersWithDocumentType(
+            caseData.getDocumentsGenerated(),
+            documentType);
+
+        //Always get document on top of list as new document is added to top after generation
+        final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
+
+        //Always get document on top of list as new document is added to top after generation
+        final Letter notificationLetter = firstElement(notificationLetters);
+
+        final List<Letter> currentAosLetters = new ArrayList<>();
+
+        if (null != notificationLetter) {
+            currentAosLetters.add(notificationLetter);
+        }
+        if (null != divorceApplicationLetter) {
+            currentAosLetters.add(divorceApplicationLetter);
+        }
+        return currentAosLetters;
     }
 }

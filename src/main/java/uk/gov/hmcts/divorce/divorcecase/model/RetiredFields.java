@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.map.HashedMap;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -361,6 +362,24 @@ public class RetiredFields {
     )
     private YesOrNo digitalNoticeOfProceedings;
 
+    @CCD(label = "Retired applicant 1 home address")
+    private AddressGlobalUK applicant1HomeAddress;
+
+    @CCD(label = "Retired applicant 2 home address")
+    private AddressGlobalUK applicant2HomeAddress;
+
+    @CCD(label = "Retired applicant 1 service address")
+    private AddressGlobalUK applicant1CorrespondenceAddress;
+
+    @CCD(label = "Retired applicant 2 service address")
+    private AddressGlobalUK applicant2CorrespondenceAddress;
+
+    @CCD(
+        label = "Retired Does Applicant Want To Apply For Final Order",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo doesApplicantWantToApplyForFinalOrder;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -490,6 +509,12 @@ public class RetiredFields {
             data -> data.put("coApplicant1SolicitorFirm", data.get("coSolicitorFirm")));
         init.put("coSolicitorAdditionalComments",
             data -> data.put("coApplicant1SolicitorAdditionalComments", data.get("coSolicitorAdditionalComments")));
+        init.put("applicant1HomeAddress",
+            data -> data.put("applicant1Address", data.get("applicant1HomeAddress")));
+        init.put("applicant2HomeAddress",
+            data -> data.put("applicant2Address", data.get("applicant2HomeAddress")));
+        init.put("doesApplicantWantToApplyForFinalOrder",
+            data -> data.put("doesApplicant1WantToApplyForFinalOrder", data.get("doesApplicantWantToApplyForFinalOrder")));
 
         migrations = unmodifiableMap(init);
     }

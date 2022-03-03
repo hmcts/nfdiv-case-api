@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
@@ -49,22 +50,25 @@ public class IssueApplicationService {
     private SetDueDateAfterIssue setDueDateAfterIssue;
 
     @Autowired
+    private SendAosPackToApplicant sendAosPackToApplicant;
+
+    @Autowired
     private Clock clock;
 
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setPostIssueState,
-            setDueDateAfterIssue,
             details -> {
                 details.getData().getApplication().setIssueDate(LocalDate.now(clock));
                 return details;
             },
+            setDueDateAfterIssue,
             generateNoticeOfProceeding,
             generateRespondentAosInvitation,
             divorceApplicationRemover,
             generateDivorceApplication,
             sendAosPackToRespondent,
-            // TODO add sendNoticeOfProceedings (and application) to applicant
+            sendAosPackToApplicant,
             sendApplicationIssueNotifications
         ).run(caseDetails);
     }

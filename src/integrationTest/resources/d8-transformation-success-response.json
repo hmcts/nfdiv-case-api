@@ -33,7 +33,7 @@
       "applicant1SolicitorEmail": "testsol@dummy.com",
       "applicant1SolicitorFirmName": "some firm",
       "paperFormApplicant1SOTSignedOn": "18 01 2022",
-      "applicant1HomeAddress": {
+      "applicant1Address": {
         "AddressLine1": "some street",
         "AddressLine2": "second line address",
         "PostTown": "city",
@@ -105,7 +105,7 @@
       "applicant2SolSignStatementOfTruth": "No",
       "applicant1PhoneNumber": "",
       "applicant2HWFNeedHelp": "Yes",
-      "applicant2HomeAddress": {
+      "applicant2Address": {
         "AddressLine1": "some street",
         "AddressLine2": "second line of address",
         "PostTown": "",

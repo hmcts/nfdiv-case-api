@@ -31,6 +31,7 @@ import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
+import uk.gov.hmcts.divorce.testutil.TestResourceUtil;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
@@ -76,6 +77,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
@@ -116,7 +118,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
 
 
@@ -198,9 +199,10 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
         caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplicant1().setSolicitorRepresented(NO);
-        caseData.getApplicant2().getHomeAddress().setCountry("UK");
+        caseData.getApplicant2().getAddress().setCountry("UK");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -231,7 +233,7 @@ public class CaseworkerIssueApplicationIT {
             .getContentAsString();
 
         assertThatJson(response)
-            .isEqualTo(json(expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT)));
+            .isEqualTo(json(TestResourceUtil.expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT)));
 
         verify(notificationService)
             .sendEmail(
@@ -258,7 +260,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplicant1().setSolicitorRepresented(NO);
-        caseData.getApplicant2().getHomeAddress().setCountry("France");
+        caseData.getApplicant2().getAddress().setCountry("France");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -271,7 +273,6 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubAosPackSendLetter();
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -288,10 +289,7 @@ public class CaseworkerIssueApplicationIT {
             .getResponse()
             .getContentAsString();
 
-        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT));
-        jsonDocument.set("data.applicant2HomeAddress.Country", "France");
-
-        assertThatJson(response).isEqualTo(jsonDocument.json());
+        assertThatJson(response).isEqualTo(expectedResponse().json());
 
         verify(notificationService)
             .sendEmail(
@@ -323,6 +321,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
         caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(YES);
+        caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -330,6 +329,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_ID, "NFD_CP_Application_Joint.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -348,7 +348,7 @@ public class CaseworkerIssueApplicationIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                content().json(expectedResponse(JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT))
+                content().json(TestResourceUtil.expectedResponse(JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT))
             );
 
         verify(notificationService)
@@ -406,7 +406,7 @@ public class CaseworkerIssueApplicationIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                content().json(expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP))
+                content().json(TestResourceUtil.expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP))
             );
 
         verify(notificationService)
@@ -429,7 +429,7 @@ public class CaseworkerIssueApplicationIT {
     void shouldGenerateOnlyDivorceApplicationAndSetIssueDateAndSendEmailWhenRespondentIsNotSolicitorRepresented() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -454,7 +454,7 @@ public class CaseworkerIssueApplicationIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                content().json(expectedResponse(ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
+                content().json(TestResourceUtil.expectedResponse(ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
             );
 
         verify(notificationService)
@@ -480,7 +480,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplicant2().setSolicitorRepresented(YES);
-        caseData.getApplicant2().setHomeAddress(null);
+        caseData.getApplicant2().setAddress(null);
         caseData.getApplicant2().setSolicitor(
             Solicitor
                 .builder()
@@ -520,7 +520,7 @@ public class CaseworkerIssueApplicationIT {
         assertThatJson(actualResponse)
             .when(TREATING_NULL_AS_ABSENT)
             .when(IGNORING_ARRAY_ORDER)
-            .isEqualTo(json(expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_SOLICITOR_SERVICE)));
+            .isEqualTo(json(TestResourceUtil.expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_SOLICITOR_SERVICE)));
 
         verify(notificationService)
             .sendEmail(
@@ -611,7 +611,7 @@ public class CaseworkerIssueApplicationIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                content().json(expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR))
+                content().json(TestResourceUtil.expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR))
             );
     }
 
@@ -620,7 +620,7 @@ public class CaseworkerIssueApplicationIT {
 
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -649,7 +649,7 @@ public class CaseworkerIssueApplicationIT {
 
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
         stubDeleteFromDocumentManagementForSystem(documentUuid, OK);
@@ -677,7 +677,7 @@ public class CaseworkerIssueApplicationIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                content().json(expectedResponse(ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
+                content().json(TestResourceUtil.expectedResponse(ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
             );
 
         verify(notificationService)
@@ -703,7 +703,7 @@ public class CaseworkerIssueApplicationIT {
 
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
         stubDeleteFromDocumentManagementForSystem(documentUuid, FORBIDDEN);
@@ -737,7 +737,7 @@ public class CaseworkerIssueApplicationIT {
 
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
         stubDeleteFromDocumentManagementForSystem(documentUuid, UNAUTHORIZED);
@@ -766,7 +766,7 @@ public class CaseworkerIssueApplicationIT {
         verifyNoInteractions(notificationService);
     }
 
-    private AddressGlobalUK correspondenceAddress() {
+    private AddressGlobalUK applicantAddress() {
         return AddressGlobalUK.builder()
             .addressLine1("223b")
             .addressLine2("Baker Street")
@@ -786,9 +786,14 @@ public class CaseworkerIssueApplicationIT {
             RESPONDENT_INVITATION,
             AOS_COVER_LETTER_ID);
 
+        final var documentListValue3 = documentWithType(
+            NOTICE_OF_PROCEEDINGS,
+            NOTICE_OF_PROCEEDING_ID);
+
         final List<String> documentIds = asList(
             FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
-            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()));
+            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl()));
 
         final byte[] pdfAsBytes = loadPdfAsBytes();
 
@@ -827,5 +832,13 @@ public class CaseworkerIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         return FilenameUtils.getName(documentListValue.getValue().getDocumentLink().getUrl());
+    }
+
+    private DocumentContext expectedResponse() throws IOException {
+        DocumentContext jsonDocument = JsonPath.parse(TestResourceUtil.expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT));
+        jsonDocument.set("data.applicant2Address.Country", "France");
+        jsonDocument.delete("data.solServiceMethod");
+        jsonDocument.delete("data.noticeOfProceedingsEmail");
+        return jsonDocument;
     }
 }

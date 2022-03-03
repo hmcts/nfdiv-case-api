@@ -130,7 +130,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
-            entry(APPLICANT_1_FULL_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_1_FULL_NAME, applicant1.getFullName()),
             entry(APPLICANT_1_POSTAL_ADDRESS, null),
             entry(APPLICANT_1_EMAIL, TEST_USER_EMAIL),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
@@ -140,7 +140,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_2_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME),
-            entry(APPLICANT_2_FULL_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
             entry(APPLICANT_2_POSTAL_ADDRESS, null),
             entry(APPLICANT_2_EMAIL, TEST_USER_EMAIL),
             entry(PLACE_OF_MARRIAGE, null),
@@ -149,8 +149,6 @@ public class DivorceApplicationSoleTemplateContentTest {
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
         verify(applicationTemplateDataProvider).deriveSoleJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
 
@@ -207,7 +205,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
-            entry(APPLICANT_1_FULL_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_1_FULL_NAME, applicant1.getFullName()),
             entry(APPLICANT_1_POSTAL_ADDRESS, null),
             entry(APPLICANT_1_EMAIL, TEST_USER_EMAIL),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
@@ -217,7 +215,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_2_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME),
-            entry(APPLICANT_2_FULL_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
             entry(APPLICANT_2_POSTAL_ADDRESS, null),
             entry(APPLICANT_2_EMAIL, TEST_USER_EMAIL),
             entry(PLACE_OF_MARRIAGE, null),
@@ -231,8 +229,6 @@ public class DivorceApplicationSoleTemplateContentTest {
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
         verify(applicationTemplateDataProvider).deriveSoleJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
 }

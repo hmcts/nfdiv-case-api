@@ -86,7 +86,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                         "${labelContentApplicant2UC} email address",
                         "Enter the email address which they actively use for personal emails")
 
-                .mandatory(Applicant::getHomeAddress,
+                .mandatory(Applicant::getAddress,
                     "applicant2SolicitorRepresented=\"Yes\" OR applicant2SolicitorRepresented=\"No\"",
                     null,
                     "${labelContentApplicant2UC} postal address",

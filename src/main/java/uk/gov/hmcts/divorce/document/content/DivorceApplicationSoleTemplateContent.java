@@ -97,8 +97,8 @@ public class DivorceApplicationSoleTemplateContent {
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
         templateContent.put(APPLICANT_1_MIDDLE_NAME, applicant1.getMiddleName());
         templateContent.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
-        templateContent.put(APPLICANT_1_FULL_NAME, application.getMarriageDetails().getApplicant1Name());
-        templateContent.put(APPLICANT_1_POSTAL_ADDRESS, applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant1));
+        templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
+        templateContent.put(APPLICANT_1_POSTAL_ADDRESS, applicant1.getCorrespondenceAddress());
         if (!applicant1.isConfidentialContactDetails()) {
             templateContent.put(APPLICANT_1_EMAIL, applicant1.getEmail());
         }
@@ -121,10 +121,8 @@ public class DivorceApplicationSoleTemplateContent {
         templateContent.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
         templateContent.put(APPLICANT_2_MIDDLE_NAME, applicant2.getMiddleName());
         templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
-        templateContent.put(APPLICANT_2_FULL_NAME, application.getMarriageDetails().getApplicant2Name());
-        templateContent.put(
-            APPLICANT_2_POSTAL_ADDRESS,
-            applicantTemplateDataProvider.deriveApplicant2PostalAddress(applicant2, application));
+        templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
+        templateContent.put(APPLICANT_2_POSTAL_ADDRESS, applicant2.getCorrespondenceAddress());
         if (!applicant2.isConfidentialContactDetails()) {
             templateContent.put(APPLICANT_2_EMAIL, applicant2.getEmail());
         }

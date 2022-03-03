@@ -107,8 +107,8 @@ public class DraftApplicationTemplateContent {
         templateContent.put(APPLICANT_2_MIDDLE_NAME, applicant2.getMiddleName());
         templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
 
-        templateContent.put(APPLICANT_1_FULL_NAME, application.getMarriageDetails().getApplicant1Name());
-        templateContent.put(APPLICANT_2_FULL_NAME, application.getMarriageDetails().getApplicant2Name());
+        templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
+        templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
 
         templateContent.put(PLACE_OF_MARRIAGE, application.getMarriageDetails().getPlaceOfMarriage());
 
@@ -130,13 +130,9 @@ public class DraftApplicationTemplateContent {
             templateContent.put(APPLICANT_1_COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
         }
 
-        templateContent.put(APPLICANT_1_POSTAL_ADDRESS, applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant1));
+        templateContent.put(APPLICANT_1_POSTAL_ADDRESS, applicant1.getCorrespondenceAddress());
         templateContent.put(APPLICANT_1_EMAIL, applicant1.getEmail());
-        templateContent.put(APPLICANT_2_POSTAL_ADDRESS,
-            isSole
-                ? applicantTemplateDataProvider.deriveSoleApplicationApplicant2PostalAddress(applicant2)
-                : applicantTemplateDataProvider.deriveApplicant2PostalAddress(applicant2, application)
-        );
+        templateContent.put(APPLICANT_2_POSTAL_ADDRESS, applicant2.getCorrespondenceAddress());
         templateContent.put(APPLICANT_2_EMAIL, applicant2.getEmail());
 
         if (isSole) {

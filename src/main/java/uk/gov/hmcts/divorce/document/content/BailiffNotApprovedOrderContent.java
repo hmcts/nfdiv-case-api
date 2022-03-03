@@ -14,8 +14,6 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
@@ -30,14 +28,8 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Component
 public class BailiffNotApprovedOrderContent {
 
-    @Value("${court.locations.serviceCentre.poBox}")
-    private String poBox;
-
-    @Value("${court.locations.serviceCentre.town}")
-    private String town;
-
-    @Value("${court.locations.serviceCentre.postCode}")
-    private String postcode;
+    @Value("${court.locations.serviceCentre.email}")
+    private String email;
 
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
@@ -52,33 +44,24 @@ public class BailiffNotApprovedOrderContent {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        templateContent.put(CCD_CASE_REFERENCE, caseData.formatCaseRef(ccdCaseReference));
-        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
-
-        templateContent.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
-        templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
-
         var alternativeService = caseData.getAlternativeService();
+
         templateContent.put(REFUSAL_REASON, alternativeService.getServiceApplicationRefusalReason());
         templateContent.put(SERVICE_APPLICATION_RECEIVED_DATE,
             alternativeService.getReceivedServiceApplicationDate().format(DATE_TIME_FORMATTER));
+        templateContent.put(CCD_CASE_REFERENCE, caseData.formatCaseRef(ccdCaseReference));
+        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
+        templateContent.put(PETITIONER_FULL_NAME, caseData.getApplicant1().getFullName());
+        templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
+        templateContent.put(THE_APPLICATION, caseData.getDivorceOrDissolution().isDivorce()
+            ? DIVORCE_APPLICATION : APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP);
 
         var ctscContactDetails = CtscContactDetails
             .builder()
-            .poBox(poBox)
-            .town(town)
-            .postcode(postcode)
+            .emailAddress(email)
             .phoneNumber(phoneNumber)
             .build();
-
-        if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateContent.put(THE_APPLICATION, DIVORCE_APPLICATION);
-            ctscContactDetails.setEmailAddress(CONTACT_DIVORCE_JUSTICE_GOV_UK);
-        } else {
-            templateContent.put(THE_APPLICATION, APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP);
-            ctscContactDetails.setEmailAddress(CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
-        }
 
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 

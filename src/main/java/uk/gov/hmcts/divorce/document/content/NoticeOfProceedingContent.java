@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -68,8 +69,8 @@ public class NoticeOfProceedingContent {
     public static final String MARRIAGE_OR_CIVIL_PARTNER = "marriageOrCivilPartner";
     public static final String MARRIAGE = "marriage";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
-
-    private static final int HOLDING_DUE_DATE_OFFSET_DAYS = 141;
+    public static final String APPLICANT_1_ADDRESS = "applicant1Address";
+    public static final String DISPLAY_EMAIL_CONFIRMATION = "displayEmailConfirmation";
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
 
     @Autowired
@@ -93,6 +94,9 @@ public class NoticeOfProceedingContent {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
+    @Autowired
+    private HoldingPeriodService holdingPeriodService;
+
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -106,13 +110,18 @@ public class NoticeOfProceedingContent {
         templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(
             SUBMISSION_RESPONSE_DATE,
-            caseData.getApplication().getIssueDate().plusDays(HOLDING_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
         );
 
         templateContent.put(
             SERVE_PAPERS_BEFORE_DATE,
             caseData.getApplication().getIssueDate().plusDays(PAPER_SERVE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
         );
+
+        templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());
+
+        boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline() || caseData.getApplicant1().getEmail() != null;
+        templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);

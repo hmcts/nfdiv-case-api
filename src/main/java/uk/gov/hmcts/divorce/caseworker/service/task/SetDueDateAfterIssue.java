@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -19,8 +20,8 @@ public class SetDueDateAfterIssue implements CaseTask {
     @Value("${aos_pack.due_date_offset_days}")
     private long dueDateOffsetDays;
 
-    @Value("${case_progression.holding_period_in_weeks}")
-    private long holdingPeriodInWeeks;
+    @Autowired
+    private HoldingPeriodService holdingPeriodService;
 
     @Autowired
     private Clock clock;
@@ -36,7 +37,7 @@ public class SetDueDateAfterIssue implements CaseTask {
         log.info("Setting due date.  Case ID: {}", caseDetails.getId());
 
         if (!caseDetails.getData().getApplicationType().isSole()) {
-            caseDetails.getData().setDueDate(LocalDate.now(clock).plusWeeks(holdingPeriodInWeeks).plusDays(1));
+            caseDetails.getData().setDueDate(holdingPeriodService.getDueDateFor(caseDetails.getData().getApplication().getIssueDate()));
         } else if (caseDetails.getData().getApplication().isSolicitorServiceMethod()) {
             caseDetails.getData().setDueDate(null);
         } else {

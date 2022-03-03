@@ -41,8 +41,6 @@ class RetiredFieldsTest {
         data.put("applicant2ContactDetailsConfidential", "share");
         data.put("applicant1FinancialOrderForRemoved", "value");
         data.put("applicant2FinancialOrderForRemoved", "value");
-        data.put("dateConditionalOrderSubmitted", "2021-11-11");
-        data.put("coDateSubmitted", "2021-11-13");
         data.put("legalProceedingsExist", "YES");
         data.put("legalProceedingsDescription", "value");
         data.put("doYouAgreeCourtHasJurisdiction", "YES");
@@ -68,6 +66,7 @@ class RetiredFieldsTest {
         data.put("applicant2ContinueApplication", "YES");
         data.put("coChangeOrAddToApplication", "YES");
         data.put("coApplyForConditionalOrder", "YES");
+        data.put("doesApplicantWantToApplyForFinalOrder", "YES");
 
         final var result = RetiredFields.migrate(data);
 
@@ -79,8 +78,6 @@ class RetiredFieldsTest {
             entry("applicant2ContactDetailsConfidential", null),
             entry("applicant1FinancialOrderForRemoved", null),
             entry("applicant2FinancialOrderForRemoved", null),
-            entry("dateConditionalOrderSubmitted", null),
-            entry("coApplicant1SubmittedDate", "2021-11-13"),
             entry("legalProceedingsExist", null),
             entry("applicant2LegalProceedings", "YES"),
             entry("legalProceedingsDescription", null),
@@ -111,7 +108,34 @@ class RetiredFieldsTest {
             entry("coApplicant1IsEverythingInApplicationTrue", "YES"),
             entry("coApplicant1ChangeOrAddToApplication", "YES"),
             entry("coApplicant1ApplyForConditionalOrder", "YES"),
-            entry("applicantsRemindedCanApplyForConditionalOrder", "Yes")
+            entry("applicantsRemindedCanApplyForConditionalOrder", "Yes"),
+            entry("doesApplicant1WantToApplyForFinalOrder", "YES")
+        );
+    }
+
+    @Test
+    void shouldMigrateCoDateSubmitted() {
+        final var data = new HashMap<String, Object>();
+        data.put("coDateSubmitted", "2021-11-13");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("coDateSubmitted", null),
+            entry("coApplicant1SubmittedDate", "2021-11-13")
+        );
+    }
+
+    @Test
+    void shouldMigrateDateConditionalOrderSubmitted() {
+        final var data = new HashMap<String, Object>();
+        data.put("dateConditionalOrderSubmitted", "2021-11-11");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("dateConditionalOrderSubmitted", null),
+            entry("coApplicant1SubmittedDate", "2021-11-11")
         );
     }
 
@@ -322,7 +346,7 @@ class RetiredFieldsTest {
         onlyJudgeMap.put("generalReferralLegalAdvisorDetails", null);
 
         return Stream.of(
-            Arguments.of(judgeAndLaDataMap, "judge la"),
+            Arguments.of(judgeAndLaDataMap, "la judge"),
             Arguments.of(onlyLaMap, "la"),
             Arguments.of(onlyJudgeMap, "judge")
         );
@@ -341,6 +365,22 @@ class RetiredFieldsTest {
             entry("coApplicant1SolicitorName", "Mr Solicitor"),
             entry("coApplicant1SolicitorFirm", "Solicitor Bros"),
             entry("coApplicant1SolicitorAdditionalComments", "Some comments")
+        );
+    }
+
+    @Test
+    void shouldMigrateApplicantAddressFields() {
+        final Map<String, Object> address1 = new HashMap<>();
+        final Map<String, Object> address2 = new HashMap<>();
+        final var data = new TreeMap<String, Object>();
+        data.put("applicant1HomeAddress", address1);
+        data.put("applicant2HomeAddress", address2);
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("applicant1Address", address1),
+            entry("applicant2Address", address2)
         );
     }
 }

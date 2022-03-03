@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -38,6 +39,9 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
     @Autowired
     private Clock clock;
 
+    @Autowired
+    private GeneralApplicationReceivedNotification generalApplicationReceivedNotification;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -67,6 +71,8 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
         var caseData = details.getData();
 
         caseData.getAlternativeService().setReceivedServiceAddedDate(LocalDate.now(clock));
+
+        generalApplicationReceivedNotification.sendToApplicant1(caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

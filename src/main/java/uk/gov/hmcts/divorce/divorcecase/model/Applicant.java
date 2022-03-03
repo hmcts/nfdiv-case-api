@@ -12,9 +12,12 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
@@ -83,8 +86,8 @@ public class Applicant {
     )
     private String nameChangedHowOtherDetails;
 
-    @CCD(label = "Home address")
-    private AddressGlobalUK homeAddress;
+    @CCD(label = "Address")
+    private AddressGlobalUK address;
 
     @CCD(
         label = "Phone number",
@@ -106,13 +109,6 @@ public class Applicant {
         typeParameterOverride = "ContactDetailsType"
     )
     private ContactDetailsType contactDetailsType;
-
-    @CCD(
-        label = "Service address",
-        hint = "If they are to be served at their home address, enter the home address here and as the service "
-            + "address below"
-    )
-    private AddressGlobalUK correspondenceAddress;
 
     @CCD(label = "Is represented by a solicitor?")
     private YesOrNo solicitorRepresented;
@@ -176,16 +172,60 @@ public class Applicant {
     }
 
     @JsonIgnore
+    // TODO: use getCorrespondenceAddress
     public boolean isBasedOverseas() {
-        return nonNull(homeAddress)
-            && !isBlank(homeAddress.getCountry())
-            && !("UK").equalsIgnoreCase(homeAddress.getCountry())
-            && !("United Kingdom").equalsIgnoreCase(homeAddress.getCountry());
+        return nonNull(address)
+            && !isBlank(address.getCountry())
+            && !("UK").equalsIgnoreCase(address.getCountry())
+            && !("United Kingdom").equalsIgnoreCase(address.getCountry());
     }
 
     @JsonIgnore
     public String getCorrespondenceEmail() {
         return isRepresented() ? solicitor.getEmail() : getEmail();
+    }
+
+    @JsonIgnore
+    public String getCorrespondenceAddress() {
+        if (isRepresented()) {
+            return solicitor.getAddress();
+        } else if (!isConfidentialContactDetails() && null != address) {
+            return Stream.of(
+                    address.getAddressLine1(),
+                    address.getAddressLine2(),
+                    address.getAddressLine3(),
+                    address.getPostTown(),
+                    address.getCounty(),
+                    address.getPostCode(),
+                    address.getCountry()
+                )
+                .filter(value -> value != null && !value.isEmpty())
+                .collect(joining("\n"));
+        }
+
+        return null;
+    }
+
+    @JsonIgnore
+    public String getPostalAddress() {
+        if (isRepresented()) {
+            return solicitor.getAddress();
+        }
+
+        if (null != address) {
+            return Stream.of(
+                    address.getAddressLine1(),
+                    address.getAddressLine2(),
+                    address.getAddressLine3(),
+                    address.getPostTown(),
+                    address.getCounty(),
+                    address.getPostCode()
+                )
+                .filter(value -> value != null && !value.isEmpty())
+                .collect(joining("\n"));
+        }
+
+        return null;
     }
 
     @JsonIgnore
@@ -196,5 +236,10 @@ public class Applicant {
     @JsonIgnore
     public boolean isOffline() {
         return offline != null && offline.toBoolean();
+    }
+
+    @JsonIgnore
+    public String getFullName() {
+        return Stream.of(firstName, middleName, lastName).filter(Objects::nonNull).collect(joining(" "));
     }
 }

@@ -60,7 +60,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
                 "#### The applicant's contact details are confidential")
             .field("applicant1PhoneNumber", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
             .field("applicant1Email", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
-            .field("applicant1HomeAddress", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
+            .field("applicant1Address", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
             .field("applicant1CorrespondenceAddress", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
             .field("applicant1IsApplicant2Represented")
 
@@ -98,8 +98,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
                 "#### ${labelContentTheApplicant2UC}'s contact details may be shared")
             .field("applicant2PhoneNumber", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
             .field("applicant2Email", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
-            .field("applicant2HomeAddress", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
-            .field("applicant2CorrespondenceAddress", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
+            .field("applicant2Address", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
             .field("applicant2AgreedToReceiveEmails")
 
             //Applicant 2 Solicitor
