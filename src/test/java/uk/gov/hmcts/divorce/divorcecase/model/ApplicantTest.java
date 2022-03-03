@@ -145,6 +145,19 @@ class ApplicantTest {
     }
 
     @Test
+    void shouldReturnFalseIfApplicantIsRepresentedWhenCheckingIsBasedOverseas() {
+        final Applicant applicant = Applicant.builder()
+            .address(AddressGlobalUK.builder().country("France").build())
+            .solicitorRepresented(YES)
+            .solicitor(Solicitor.builder()
+                .address("solicitor address")
+                .build())
+            .build();
+
+        assertThat(applicant.isBasedOverseas()).isFalse();
+    }
+
+    @Test
     void shouldReturnFalseIfAddressNotSet() {
         final Applicant applicant = Applicant.builder().build();
 
