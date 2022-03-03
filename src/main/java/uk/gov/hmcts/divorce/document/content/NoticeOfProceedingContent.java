@@ -68,7 +68,8 @@ public class NoticeOfProceedingContent {
     public static final String MARRIAGE_OR_CIVIL_PARTNER = "marriageOrCivilPartner";
     public static final String MARRIAGE = "marriage";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
-
+    public static final String APPLICANT_1_ADDRESS = "applicant1Address";
+    public static final String DISPLAY_EMAIL_CONFIRMATION = "displayEmailConfirmation";
     private static final int HOLDING_DUE_DATE_OFFSET_DAYS = 141;
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
 
@@ -113,6 +114,11 @@ public class NoticeOfProceedingContent {
             SERVE_PAPERS_BEFORE_DATE,
             caseData.getApplication().getIssueDate().plusDays(PAPER_SERVE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
         );
+
+        templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());
+
+        boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline() || caseData.getApplicant1().getEmail() != null;
+        templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);

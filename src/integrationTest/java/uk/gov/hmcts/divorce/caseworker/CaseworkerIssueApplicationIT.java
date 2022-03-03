@@ -426,7 +426,7 @@ public class CaseworkerIssueApplicationIT {
     void shouldGenerateOnlyDivorceApplicationAndSetIssueDateAndSendEmailWhenRespondentIsNotSolicitorRepresented() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -617,7 +617,7 @@ public class CaseworkerIssueApplicationIT {
 
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -646,7 +646,7 @@ public class CaseworkerIssueApplicationIT {
 
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
         stubDeleteFromDocumentManagementForSystem(documentUuid, OK);
@@ -700,7 +700,7 @@ public class CaseworkerIssueApplicationIT {
 
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
         stubDeleteFromDocumentManagementForSystem(documentUuid, FORBIDDEN);
@@ -734,7 +734,7 @@ public class CaseworkerIssueApplicationIT {
 
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
         stubDeleteFromDocumentManagementForSystem(documentUuid, UNAUTHORIZED);
@@ -763,7 +763,7 @@ public class CaseworkerIssueApplicationIT {
         verifyNoInteractions(notificationService);
     }
 
-    private AddressGlobalUK correspondenceAddress() {
+    private AddressGlobalUK applicantAddress() {
         return AddressGlobalUK.builder()
             .addressLine1("223b")
             .addressLine2("Baker Street")
