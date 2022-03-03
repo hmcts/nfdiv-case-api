@@ -51,10 +51,8 @@ public class BailiffNotApprovedOrderContent {
             alternativeService.getReceivedServiceApplicationDate().format(DATE_TIME_FORMATTER));
         templateContent.put(CCD_CASE_REFERENCE, caseData.formatCaseRef(ccdCaseReference));
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
-        templateContent.put(PETITIONER_FULL_NAME,
-            String.format("%s %s", caseData.getApplicant1().getFirstName(), caseData.getApplicant1().getLastName()));
-        templateContent.put(RESPONDENT_FULL_NAME,
-            String.format("%s %s", caseData.getApplicant2().getFirstName(), caseData.getApplicant2().getLastName()));
+        templateContent.put(PETITIONER_FULL_NAME, caseData.getApplicant1().getFullName());
+        templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
         templateContent.put(THE_APPLICATION, caseData.getDivorceOrDissolution().isDivorce()
             ? DIVORCE_APPLICATION : APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP);

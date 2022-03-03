@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import uk.gov.hmcts.divorce.bulkscan.exception.InvalidOcrDataException;
 import uk.gov.hmcts.divorce.common.config.interceptors.UnAuthorisedServiceException;
 import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
@@ -20,6 +21,8 @@ import uk.gov.service.notify.NotificationClientException;
 import java.util.Collections;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.ResponseEntity.status;
 
 @Slf4j
@@ -73,7 +76,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleInvalidDataException(InvalidDataException exception) {
         log.warn(exception.getMessage(), exception);
 
-        return status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return status(UNPROCESSABLE_ENTITY)
+            .body(
+                BspErrorResponse.builder()
+                    .errors(exception.getErrors())
+                    .warnings(exception.getWarnings())
+                    .build()
+            );
+    }
+
+    @ExceptionHandler(InvalidOcrDataException.class)
+    public ResponseEntity<Object> handleInvalidOcrDataException(InvalidOcrDataException exception) {
+        log.warn(exception.getMessage(), exception);
+
+        return status(OK)
             .body(
                 BspErrorResponse.builder()
                     .errors(exception.getErrors())
@@ -86,7 +102,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUnsupportedFormTypeException(UnsupportedFormTypeException exception) {
         log.warn(exception.getMessage(), exception);
 
-        return status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return status(UNPROCESSABLE_ENTITY)
             .body(
                 BspErrorResponse.builder()
                     .errors(Collections.singletonList(exception.getMessage()))

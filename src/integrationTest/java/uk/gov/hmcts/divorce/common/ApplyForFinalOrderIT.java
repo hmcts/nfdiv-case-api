@@ -85,7 +85,7 @@ public class ApplyForFinalOrderIT {
     void shouldReturnErrorWhenApplyForFinalOrderIsNoAndMidEventIsInvoked() throws Exception {
 
         final CaseData caseData = caseData();
-        caseData.getFinalOrder().setDoesApplicantWantToApplyForFinalOrder(NO);
+        caseData.getFinalOrder().setDoesApplicant1WantToApplyForFinalOrder(NO);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/mid-event?page=SolicitorApplyForFinalOrder")
                 .contentType(APPLICATION_JSON)
@@ -104,7 +104,7 @@ public class ApplyForFinalOrderIT {
     void shouldNotReturnErrorWhenApplyForFinalOrderIsYesAndMidEventIsInvoked() throws Exception {
 
         final CaseData caseData = caseData();
-        caseData.getFinalOrder().setDoesApplicantWantToApplyForFinalOrder(YES);
+        caseData.getFinalOrder().setDoesApplicant1WantToApplyForFinalOrder(YES);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/mid-event?page=SolicitorApplyForFinalOrder")
                 .contentType(APPLICATION_JSON)

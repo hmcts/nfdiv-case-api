@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.bulkscan.exception.InvalidOcrDataException;
 import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
@@ -212,7 +213,7 @@ class D8sFormToCaseTransformerTest {
     }
 
     @Test
-    void shouldThrowInvalidDataExceptionWhenOcrValidationContainsErrors() throws Exception {
+    void shouldThrowInvalidOcrDataExceptionWhenOcrValidationContainsErrors() throws Exception {
         final String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8s-form-ocr.json");
         final List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
@@ -223,7 +224,7 @@ class D8sFormToCaseTransformerTest {
         final ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
 
         assertThatThrownBy(() -> d8sFormToCaseTransformer.transformIntoCaseData(exceptionRecord))
-            .isExactlyInstanceOf(InvalidDataException.class)
+            .isExactlyInstanceOf(InvalidOcrDataException.class)
             .hasMessageContaining("OCR validation errors")
             .extracting("errors")
             .isEqualTo(List.of("some error"));
