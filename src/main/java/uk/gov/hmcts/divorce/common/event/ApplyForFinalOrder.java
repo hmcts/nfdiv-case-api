@@ -18,6 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -51,7 +52,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             .description(APPLY_FOR_FINAL_ORDER)
             .showSummary()
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR)
+            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
             .grant(READ,
                 CASE_WORKER,
                 SUPER_USER,
