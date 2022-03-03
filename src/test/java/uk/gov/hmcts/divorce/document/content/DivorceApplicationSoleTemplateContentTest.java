@@ -229,7 +229,7 @@ public class DivorceApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithSolicitorAddressRepresented() {
+    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithFormatedSolicitorAddress() {
         final String solAddressWithNewLine = "10 Solicitor Road\ntown\n\npostcode\n";
         final String solAddressWithCleanUp = "10 Solicitor Road\ntown\npostcode";
 
@@ -300,8 +300,6 @@ public class DivorceApplicationSoleTemplateContentTest {
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
-        verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
         verify(applicationTemplateDataProvider).deriveSoleJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
 }
