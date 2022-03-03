@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
@@ -16,13 +15,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
@@ -37,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
 
 @ExtendWith(MockitoExtension.class)
 public class BailiffNotApprovedOrderContentTest {
@@ -58,7 +53,7 @@ public class BailiffNotApprovedOrderContentTest {
     public void shouldSuccessfullyApplyDivorceContent() {
         setMockClock(clock);
 
-        final CaseData caseData = validJointApplicant1CaseData();
+        final CaseData caseData = jointCaseDataWithOrderSummary();
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reason");
         caseData.getAlternativeService().setReceivedServiceApplicationDate(SERVICE_APPLICATION_DATE);
 
@@ -76,16 +71,13 @@ public class BailiffNotApprovedOrderContentTest {
             entry(THE_APPLICATION, DIVORCE_APPLICATION),
             entry(PARTNER, "wife")
         );
-
-        CtscContactDetails ctscContactDetails = (CtscContactDetails) result.get(CTSC_CONTACT_DETAILS);
-        assertEquals(CONTACT_DIVORCE_JUSTICE_GOV_UK, ctscContactDetails.getEmailAddress());
     }
 
     @Test
     public void shouldSuccessfullyApplyDissolutionContent() {
         setMockClock(clock);
 
-        final CaseData caseData = validJointApplicant1CaseData();
+        final CaseData caseData = jointCaseDataWithOrderSummary();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reason");
         caseData.getAlternativeService().setReceivedServiceApplicationDate(SERVICE_APPLICATION_DATE);
@@ -103,8 +95,5 @@ public class BailiffNotApprovedOrderContentTest {
             entry(THE_APPLICATION, APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP),
             entry(PARTNER, "civil partner")
         );
-
-        CtscContactDetails ctscContactDetails = (CtscContactDetails) result.get(CTSC_CONTACT_DETAILS);
-        assertEquals(CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK, ctscContactDetails.getEmailAddress());
     }
 }
