@@ -13,13 +13,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -44,12 +41,6 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
     @Autowired
     private GeneralApplicationReceivedNotification generalApplicationReceivedNotification;
-
-    @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private CcdAccessService ccdAccessService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -81,11 +72,7 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
         caseData.getAlternativeService().setReceivedServiceAddedDate(LocalDate.now(clock));
 
-        if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
-            generalApplicationReceivedNotification.sendToApplicant1(caseData, details.getId());
-        } else {
-            generalApplicationReceivedNotification.sendToApplicant2(caseData, details.getId());
-        }
+        generalApplicationReceivedNotification.sendToApplicant1(caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

@@ -80,7 +80,7 @@ class SystemProgressHeldCasesTaskTest {
     void shouldTriggerAwaitingConditionalOrderOnEachCaseAndSendNotificationWhenCaseHasFinishedHoldingPeriod() {
         final CaseDetails caseDetails = CaseDetails.builder().data(new HashMap<>()).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails);
-        when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
+        when(holdingPeriodService.getHoldingPeriodInDays()).thenReturn(14);
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
         underTest.run();
@@ -104,7 +104,7 @@ class SystemProgressHeldCasesTaskTest {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
-        when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
+        when(holdingPeriodService.getHoldingPeriodInDays()).thenReturn(14);
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
@@ -120,7 +120,7 @@ class SystemProgressHeldCasesTaskTest {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
-        when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
+        when(holdingPeriodService.getHoldingPeriodInDays()).thenReturn(14);
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);

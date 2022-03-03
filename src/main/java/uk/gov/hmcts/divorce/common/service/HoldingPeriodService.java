@@ -8,26 +8,26 @@ import java.time.Clock;
 import java.time.LocalDate;
 
 import static java.time.LocalDate.now;
-import static java.time.temporal.ChronoUnit.WEEKS;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class HoldingPeriodService {
 
-    @Value("${case_progression.holding_period_in_weeks}")
-    private int holdingPeriodInWeeks;
+    @Value("${case_progression.holding_offset_days}")
+    private int holdingPeriodInDays;
 
     @Autowired
     private Clock clock;
 
     public boolean isHoldingPeriodFinished(final LocalDate issueDate) {
-        return WEEKS.between(issueDate, now(clock)) >= holdingPeriodInWeeks;
+        return DAYS.between(issueDate, now(clock)) >= holdingPeriodInDays;
     }
 
-    public int getHoldingPeriodInWeeks() {
-        return holdingPeriodInWeeks;
+    public int getHoldingPeriodInDays() {
+        return holdingPeriodInDays;
     }
 
     public LocalDate getDueDateFor(final LocalDate issueDate) {
-        return issueDate.plusWeeks(holdingPeriodInWeeks);
+        return issueDate.plusDays(holdingPeriodInDays);
     }
 }
