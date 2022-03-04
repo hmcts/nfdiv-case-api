@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -42,6 +43,32 @@ class SetStateAfterSubmissionTest {
             .build();
 
         final CaseData caseData = caseData();
+        caseData.setApplication(application);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        caseDetails.setState(Draft);
+
+        final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(AwaitingHWFDecision);
+    }
+
+    @Test
+    void shouldSetAwaitingHwfDecisionStateIfCitizenNeedsHelpWithFeesForJoint() {
+
+        final Application application = Application.builder()
+            .applicant1HelpWithFees(HelpWithFees.builder()
+                .needHelp(YES)
+                .build())
+            .applicant2HelpWithFees(HelpWithFees.builder()
+                .needHelp(YES)
+                .build())
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setApplication(application);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
