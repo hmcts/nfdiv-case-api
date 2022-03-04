@@ -124,7 +124,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
@@ -139,7 +139,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null),
             entry(RESPONDENT_IS_REPRESENTED, true),
             entry(RESPONDENT_SOLICITOR_NAME, "Mr Sol"),
@@ -175,7 +175,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
@@ -194,7 +194,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_MIDDLE_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null),
             entry(APPLICANT_2_EMAIL, null)
         );
@@ -220,7 +220,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
@@ -234,7 +234,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_2_POSTAL_ADDRESS, null),
             entry(APPLICANT_2_FIRST_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null),
             entry(APPLICANT_2_EMAIL, null),
             entry(RESPONDENT_IS_REPRESENTED, true),
@@ -266,7 +266,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
@@ -280,7 +280,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null),
             entry(APPLICANT_2_EMAIL, null)
         );

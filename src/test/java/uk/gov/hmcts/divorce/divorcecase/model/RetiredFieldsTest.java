@@ -66,6 +66,7 @@ class RetiredFieldsTest {
         data.put("applicant2ContinueApplication", "YES");
         data.put("coChangeOrAddToApplication", "YES");
         data.put("coApplyForConditionalOrder", "YES");
+        data.put("doesApplicantWantToApplyForFinalOrder", "YES");
 
         final var result = RetiredFields.migrate(data);
 
@@ -107,7 +108,8 @@ class RetiredFieldsTest {
             entry("coApplicant1IsEverythingInApplicationTrue", "YES"),
             entry("coApplicant1ChangeOrAddToApplication", "YES"),
             entry("coApplicant1ApplyForConditionalOrder", "YES"),
-            entry("applicantsRemindedCanApplyForConditionalOrder", "Yes")
+            entry("applicantsRemindedCanApplyForConditionalOrder", "Yes"),
+            entry("doesApplicant1WantToApplyForFinalOrder", "YES")
         );
     }
 

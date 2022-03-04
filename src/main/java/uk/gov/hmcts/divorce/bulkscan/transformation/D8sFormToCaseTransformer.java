@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.bulkscan.transformation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.bulkscan.exception.InvalidOcrDataException;
 import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -56,7 +57,7 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
         OcrValidationResponse ocrValidationResponse = validator.validateOcrData(D8S.getName(), ocrDataFields);
 
         if (!isEmpty(ocrValidationResponse.getErrors())) {
-            throw new InvalidDataException(
+            throw new InvalidOcrDataException(
                 "OCR validation errors",
                 ocrValidationResponse.getWarnings(),
                 ocrValidationResponse.getErrors()
