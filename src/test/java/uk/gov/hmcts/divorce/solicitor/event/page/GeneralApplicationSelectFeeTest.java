@@ -9,7 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 
@@ -36,8 +36,8 @@ public class GeneralApplicationSelectFeeTest {
     @Test
     void shouldSetGeneralApplicationOrderSummaryIfWithNoticeFeeIsChosen() {
         final CaseData caseData = caseData();
-        caseData.setGeneralReferral(GeneralReferral.builder()
-            .generalApplicationFeeType(FEE0227)
+        caseData.setGeneralApplication(GeneralApplication.builder()
+            .feeType(FEE0227)
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -52,7 +52,7 @@ public class GeneralApplicationSelectFeeTest {
 
         verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
         assertEquals(
-            response.getData().getGeneralReferral().getGeneralApplicationFee().getOrderSummary(),
+            response.getData().getGeneralApplication().getFee().getOrderSummary(),
             orderSummary
         );
     }
@@ -60,8 +60,8 @@ public class GeneralApplicationSelectFeeTest {
     @Test
     void shouldSetGeneralApplicationOrderSummaryIfWithoutNoticeFeeIsChosen() {
         final CaseData caseData = caseData();
-        caseData.setGeneralReferral(GeneralReferral.builder()
-            .generalApplicationFeeType(FEE0228)
+        caseData.setGeneralApplication(GeneralApplication.builder()
+            .feeType(FEE0228)
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -76,7 +76,7 @@ public class GeneralApplicationSelectFeeTest {
 
         verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
         assertEquals(
-            response.getData().getGeneralReferral().getGeneralApplicationFee().getOrderSummary(),
+            response.getData().getGeneralApplication().getFee().getOrderSummary(),
             orderSummary
         );
     }

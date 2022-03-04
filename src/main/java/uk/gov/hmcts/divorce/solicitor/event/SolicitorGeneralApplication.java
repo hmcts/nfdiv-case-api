@@ -80,7 +80,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         ListValue<DivorceDocument> generalApplicationDocument =
             ListValue.<DivorceDocument>builder()
                 .id(String.valueOf(UUID.randomUUID()))
-                .value(caseData.getGeneralReferral().getGeneralApplicationDocument())
+                .value(caseData.getGeneralApplication().getDocument())
                 .build();
 
         caseData.addToDocumentsUploaded(generalApplicationDocument);

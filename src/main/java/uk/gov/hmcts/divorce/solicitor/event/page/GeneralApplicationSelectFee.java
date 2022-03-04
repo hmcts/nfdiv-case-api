@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 
@@ -27,8 +27,8 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder.page("generalApplicationSelectType", this::midEvent)
-            .complex(CaseData::getGeneralReferral)
-                .mandatory(GeneralReferral::getGeneralApplicationFeeType)
+            .complex(CaseData::getGeneralApplication)
+                .mandatory(GeneralApplication::getFeeType)
                 .done()
             .done();
     }
@@ -41,12 +41,12 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
         final CaseData caseData = details.getData();
 
         final String keyword =
-            FEE0227.getLabel().equals(caseData.getGeneralReferral().getGeneralApplicationFeeType().getLabel())
+            FEE0227.getLabel().equals(caseData.getGeneralApplication().getFeeType().getLabel())
                 ? KEYWORD_NOTICE
                 : KEYWORD_WITHOUT_NOTICE;
 
         OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, keyword);
-        caseData.getGeneralReferral().getGeneralApplicationFee().setOrderSummary(orderSummary);
+        caseData.getGeneralApplication().getFee().setOrderSummary(orderSummary);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

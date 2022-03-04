@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 
@@ -101,37 +100,4 @@ public class GeneralReferral {
         label = "Urgent general referral case?"
     )
     private YesOrNo generalReferralUrgentCase;
-
-    @CCD(
-        label = "Choose General Application Type"
-    )
-    private GeneralApplicationType generalApplicationType;
-
-    @CCD(
-        label = "Please provide more information about general application type",
-        typeOverride = TextArea
-    )
-    private String generalApplicationTypeOtherComments;
-
-    @CCD(
-        label = "Choose General Application Fee Type",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "GeneralApplicationFee"
-    )
-    private GeneralApplicationFee generalApplicationFeeType;
-
-    @CCD(
-        label = "General Application Document"
-    )
-    private DivorceDocument generalApplicationDocument;
-
-    @CCD(
-        label = "Additional comments about the supporting document",
-        typeOverride = TextArea
-    )
-    private String generalApplicationDocumentComments;
-
-    @JsonUnwrapped(prefix = "generalApplicationFee")
-    @Builder.Default
-    private FeeDetails generalApplicationFee = new FeeDetails();
 }

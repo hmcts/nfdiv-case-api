@@ -4,7 +4,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 
 public class GeneralApplicationPaymentConfirmation implements CcdPageConfiguration {
 
@@ -12,8 +12,8 @@ public class GeneralApplicationPaymentConfirmation implements CcdPageConfigurati
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder.page("generalApplicationPayment")
             .pageLabel("Payment - general application payment")
-            .complex(CaseData::getGeneralReferral)
-                .complex(GeneralReferral::getGeneralApplicationFee)
+            .complex(CaseData::getGeneralApplication)
+                .complex(GeneralApplication::getFee)
                 .mandatory(FeeDetails::getPaymentMethod)
                 .mandatory(FeeDetails::getAccountNumber,
                     "generalApplicationFeePaymentMethod = \"feePayByAccount\"")

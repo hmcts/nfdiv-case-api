@@ -44,7 +44,7 @@ public class SolicitorGeneralApplicationTest {
     void shouldAddGeneralApplicationDocumentToListOfCaseDocumentsAndUpdateState() {
         final DivorceDocument document = mock(DivorceDocument.class);
         final CaseData caseData = caseData();
-        caseData.getGeneralReferral().setGeneralApplicationDocument(document);
+        caseData.getGeneralApplication().setDocument(document);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
