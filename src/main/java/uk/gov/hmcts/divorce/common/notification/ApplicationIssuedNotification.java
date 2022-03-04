@@ -108,7 +108,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
 
         if (caseData.getApplicationType().isSole()) {
-            if (isNotBlank(email)) {
+            if (isNotBlank(email) && !caseData.getApplication().isSolicitorServiceMethod()) {
                 log.info("Sending sole application issued notification to respondent for case : {}", caseId);
 
                 notificationService.sendEmail(
