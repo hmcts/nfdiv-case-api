@@ -12,9 +12,8 @@ public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
         pageBuilder.page("generalApplicationUploadDocument")
             .pageLabel("Upload document")
             .complex(CaseData::getGeneralApplication)
-                .mandatory(GeneralApplication::getDocument)
-                .optional(GeneralApplication::getDocumentComments)
-                .done()
+            .mandatory(GeneralApplication::getGeneralApplicationDocument)
+            .optional(GeneralApplication::getGeneralApplicationDocumentComments)
             .done();
     }
 }

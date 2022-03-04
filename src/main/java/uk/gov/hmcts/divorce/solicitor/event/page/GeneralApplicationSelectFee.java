@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -18,7 +17,6 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_WITHOUT_NOTICE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
-@Component
 public class GeneralApplicationSelectFee implements CcdPageConfiguration {
 
     @Autowired
@@ -26,11 +24,12 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
-        pageBuilder.page("generalApplicationSelectType", this::midEvent)
+        pageBuilder
+            .page("generalApplicationSelectFeeType", this::midEvent)
+            .pageLabel("Select Fee Type")
             .complex(CaseData::getGeneralApplication)
-                .mandatory(GeneralApplication::getFeeType)
-                .done()
-            .done();
+                .mandatory(GeneralApplication::getGeneralApplicationFeeType)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
@@ -41,12 +40,12 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
         final CaseData caseData = details.getData();
 
         final String keyword =
-            FEE0227.getLabel().equals(caseData.getGeneralApplication().getFeeType().getLabel())
+            FEE0227.getLabel().equals(caseData.getGeneralApplication().getGeneralApplicationFeeType().getLabel())
                 ? KEYWORD_NOTICE
                 : KEYWORD_WITHOUT_NOTICE;
 
         OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, keyword);
-        caseData.getGeneralApplication().getFee().setOrderSummary(orderSummary);
+        caseData.getGeneralApplication().getGeneralApplicationFee().setOrderSummary(orderSummary);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

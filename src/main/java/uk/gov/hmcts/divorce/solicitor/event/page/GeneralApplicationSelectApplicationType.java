@@ -10,11 +10,11 @@ public class GeneralApplicationSelectApplicationType implements CcdPageConfigura
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder.page("generalApplicationSelectType")
+            .pageLabel("Select Application Type")
             .complex(CaseData::getGeneralApplication)
-                .mandatory(GeneralApplication::getType)
-                .mandatory(GeneralApplication::getTypeOtherComments,
-                    "generalApplicationType=\"Other\"")
-                .done()
-            .done();
+                .mandatory(GeneralApplication::getGeneralApplicationType)
+                .mandatory(GeneralApplication::getGeneralApplicationTypeOtherComments,
+                    "generalApplicationType=\"other\"")
+                .done();
     }
 }

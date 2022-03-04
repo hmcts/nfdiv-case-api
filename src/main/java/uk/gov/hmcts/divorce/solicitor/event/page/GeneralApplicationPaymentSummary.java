@@ -15,8 +15,8 @@ public class GeneralApplicationPaymentSummary implements CcdPageConfiguration {
         pageBuilder
             .page("generalApplicationPaymentSummary")
             .complex(CaseData::getGeneralApplication)
-                .complex(GeneralApplication::getFee)
-                .mandatoryNoSummary(FeeDetails::getOrderSummary)
+                .complex(GeneralApplication::getGeneralApplicationFee)
+                    .mandatoryNoSummary(FeeDetails::getOrderSummary)
                 .done()
             .done()
             .label(

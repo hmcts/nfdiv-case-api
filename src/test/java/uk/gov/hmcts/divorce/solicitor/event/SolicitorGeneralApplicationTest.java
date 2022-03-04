@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -25,6 +27,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class SolicitorGeneralApplicationTest {
+
+    @Mock
+    private GeneralApplicationSelectFee generalApplicationSelectFee;
 
     @InjectMocks
     private SolicitorGeneralApplication solicitorGeneralApplication;
@@ -44,7 +49,7 @@ public class SolicitorGeneralApplicationTest {
     void shouldAddGeneralApplicationDocumentToListOfCaseDocumentsAndUpdateState() {
         final DivorceDocument document = mock(DivorceDocument.class);
         final CaseData caseData = caseData();
-        caseData.getGeneralApplication().setDocument(document);
+        caseData.getGeneralApplication().setGeneralApplicationDocument(document);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);

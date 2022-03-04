@@ -37,7 +37,7 @@ public class GeneralApplicationSelectFeeTest {
     void shouldSetGeneralApplicationOrderSummaryIfWithNoticeFeeIsChosen() {
         final CaseData caseData = caseData();
         caseData.setGeneralApplication(GeneralApplication.builder()
-            .feeType(FEE0227)
+            .generalApplicationFeeType(FEE0227)
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -52,7 +52,7 @@ public class GeneralApplicationSelectFeeTest {
 
         verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
         assertEquals(
-            response.getData().getGeneralApplication().getFee().getOrderSummary(),
+            response.getData().getGeneralApplication().getGeneralApplicationFee().getOrderSummary(),
             orderSummary
         );
     }
@@ -61,7 +61,7 @@ public class GeneralApplicationSelectFeeTest {
     void shouldSetGeneralApplicationOrderSummaryIfWithoutNoticeFeeIsChosen() {
         final CaseData caseData = caseData();
         caseData.setGeneralApplication(GeneralApplication.builder()
-            .feeType(FEE0228)
+            .generalApplicationFeeType(FEE0228)
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -76,7 +76,7 @@ public class GeneralApplicationSelectFeeTest {
 
         verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
         assertEquals(
-            response.getData().getGeneralApplication().getFee().getOrderSummary(),
+            response.getData().getGeneralApplication().getGeneralApplicationFee().getOrderSummary(),
             orderSummary
         );
     }

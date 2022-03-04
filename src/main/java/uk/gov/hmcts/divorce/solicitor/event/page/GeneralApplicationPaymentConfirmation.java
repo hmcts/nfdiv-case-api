@@ -13,7 +13,7 @@ public class GeneralApplicationPaymentConfirmation implements CcdPageConfigurati
         pageBuilder.page("generalApplicationPayment")
             .pageLabel("Payment - general application payment")
             .complex(CaseData::getGeneralApplication)
-                .complex(GeneralApplication::getFee)
+                .complex(GeneralApplication::getGeneralApplicationFee)
                 .mandatory(FeeDetails::getPaymentMethod)
                 .mandatory(FeeDetails::getAccountNumber,
                     "generalApplicationFeePaymentMethod = \"feePayByAccount\"")

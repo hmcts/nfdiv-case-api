@@ -117,7 +117,7 @@ public class CaseData {
     @Builder.Default
     private GeneralReferral generalReferral = new GeneralReferral();
 
-    @JsonUnwrapped(prefix = "generalApplication")
+    @JsonUnwrapped
     @Builder.Default
     private GeneralApplication generalApplication = new GeneralApplication();
 
