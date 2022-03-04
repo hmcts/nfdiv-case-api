@@ -19,7 +19,7 @@ class ApplyForFinalOrderDetailsTest {
     @Test
     void shouldReturnErrorWhenApplyForFinalOrderIsNoAndMidEventIsInvoked() {
         final CaseData caseData = caseData();
-        caseData.getFinalOrder().setDoesApplicantWantToApplyForFinalOrder(NO);
+        caseData.getFinalOrder().setDoesApplicant1WantToApplyForFinalOrder(NO);
 
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -34,7 +34,7 @@ class ApplyForFinalOrderDetailsTest {
     @Test
     void shouldNotReturnErrorWhenApplyForFinalOrderIsYesAndMidEventIsInvoked() {
         final CaseData caseData = caseData();
-        caseData.getFinalOrder().setDoesApplicantWantToApplyForFinalOrder(YES);
+        caseData.getFinalOrder().setDoesApplicant1WantToApplyForFinalOrder(YES);
 
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

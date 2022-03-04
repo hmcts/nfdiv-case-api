@@ -59,9 +59,6 @@ class ConditionalOrderAnswersTemplateContentTest {
             .applicant2(applicant2)
             .build();
 
-        caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
-        caseData.getApplication().getMarriageDetails().setApplicant2Name(APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
-
         final Map<String, Object> result = conditionalOrderAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(

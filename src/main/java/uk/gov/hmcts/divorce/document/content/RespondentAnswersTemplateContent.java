@@ -46,9 +46,8 @@ public class RespondentAnswersTemplateContent {
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
 
-        var application = caseData.getApplication();
-        templateContent.put(APPLICANT_1_FULL_NAME, application.getMarriageDetails().getApplicant1Name());
-        templateContent.put(APPLICANT_2_FULL_NAME, application.getMarriageDetails().getApplicant2Name());
+        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
+        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
 
         String respSolicitorRepresented = YesOrNo.from(caseData.getApplicant2().isRepresented()).getValue();
         templateContent.put(RESP_SOLICITOR_REPRESENTED, respSolicitorRepresented);

@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -171,9 +172,9 @@ public class Applicant {
     }
 
     @JsonIgnore
-    // TODO: use getCorrespondenceAddress
     public boolean isBasedOverseas() {
-        return nonNull(address)
+        return !isRepresented()
+            && nonNull(address)
             && !isBlank(address.getCountry())
             && !("UK").equalsIgnoreCase(address.getCountry())
             && !("United Kingdom").equalsIgnoreCase(address.getCountry());
@@ -235,5 +236,10 @@ public class Applicant {
     @JsonIgnore
     public boolean isOffline() {
         return offline != null && offline.toBoolean();
+    }
+
+    @JsonIgnore
+    public String getFullName() {
+        return Stream.of(firstName, middleName, lastName).filter(Objects::nonNull).collect(joining(" "));
     }
 }

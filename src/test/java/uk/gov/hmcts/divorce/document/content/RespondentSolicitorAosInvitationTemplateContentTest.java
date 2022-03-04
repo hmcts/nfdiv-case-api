@@ -62,7 +62,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(CCD_CASE_REFERENCE, 1616591401473378L),
@@ -70,7 +70,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null)
         );
 
@@ -91,7 +91,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_FULL_NAME, null),
+            entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(CCD_CASE_REFERENCE, 1616591401473378L),
@@ -99,7 +99,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
-            entry(APPLICANT_2_FULL_NAME, null),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null)
         );
 
