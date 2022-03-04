@@ -153,6 +153,28 @@ public class SubmitConditionalOrderIT {
     }
 
     @Test
+    void shouldReturnAnErrorIfSoTNotCompleted() throws Exception {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                .statementOfTruth(YesOrNo.NO).submittedDate(getExpectedLocalDateTime()).build())
+            .build());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=SolConfirmService")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CONDITIONAL_ORDER)))
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(jsonPath("$.errors[0]").value("The applicant must agree that the facts stated in the application are true"));
+    }
+
+    @Test
     void shouldSendEmailToApplicant2() throws Exception {
 
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
