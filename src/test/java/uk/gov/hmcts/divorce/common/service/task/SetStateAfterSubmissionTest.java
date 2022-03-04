@@ -43,6 +43,7 @@ class SetStateAfterSubmissionTest {
             .build();
 
         final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setApplication(application);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -89,6 +90,7 @@ class SetStateAfterSubmissionTest {
             .build();
 
         final var caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setApplication(application);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
