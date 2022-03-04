@@ -21,9 +21,12 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
+import static java.util.Collections.emptyList;
+import static java.util.List.of;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -95,6 +98,15 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
 
         final CaseData data = details.getData();
+        final List<String> validationErrors = validate(data);
+
+        if (!validationErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .errors(validationErrors)
+                .build();
+        }
+
         final boolean isSole = data.getApplicationType().isSole();
 
         setSubmittedDate(data.getConditionalOrder());
@@ -118,6 +130,13 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .data(details.getData())
             .state(state)
             .build();
+    }
+
+    private List<String> validate(CaseData data) {
+        return data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth() == null
+            || data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth().toBoolean()
+                ? emptyList()
+                : of("The applicant must agree that the facts stated in the application are true");
     }
 
     private void setSubmittedDate(ConditionalOrder conditionalOrder) {
