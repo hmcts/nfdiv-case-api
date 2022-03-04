@@ -55,12 +55,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.NOTICE_OF_PROCEEDING_ID;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
@@ -128,6 +130,7 @@ public class CaseworkerReIssueApplicationIT {
         "classpath:caseworker-issue-joint-citizen-application-about-to-submit-response.json";
     private static final String MINI_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
     private static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
+    private static final String NOTICE_OF_PROCEEDING_ID = "c56b053e-4184-11ec-81d3-0242ac130003";
 
     @Autowired
     private MockMvc mockMvc;
@@ -195,6 +198,7 @@ public class CaseworkerReIssueApplicationIT {
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -248,6 +252,7 @@ public class CaseworkerReIssueApplicationIT {
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Joint.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -654,10 +659,15 @@ public class CaseworkerReIssueApplicationIT {
         final var documentListValue2 = documentWithType(
             RESPONDENT_INVITATION,
             AOS_COVER_LETTER_ID);
+        final var documentListValue3 = documentWithType(
+            NOTICE_OF_PROCEEDINGS,
+            NOTICE_OF_PROCEEDING_ID);
 
         final List<String> documentIds = asList(
             FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
-            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()));
+            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl())
+            );
 
         final byte[] pdfAsBytes = loadPdfAsBytes();
 

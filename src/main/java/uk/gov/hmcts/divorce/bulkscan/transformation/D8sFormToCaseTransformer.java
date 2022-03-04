@@ -3,10 +3,8 @@ package uk.gov.hmcts.divorce.bulkscan.transformation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
@@ -14,19 +12,14 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
 
 @Component
 @Slf4j
 @SuppressWarnings({"PMD.PreserveStackTrace"})
 public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
-
-    @Autowired
-    private OcrValidator validator;
 
     @Autowired
     private Applicant1Transformer applicant1Transformer;
@@ -50,18 +43,13 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
     private PaperFormDetailsTransformer paperFormDetailsTransformer;
 
     @Override
-    protected Map<String, Object> runFormSpecificTransformation(List<OcrDataField> ocrDataFieldList) {
+    protected Map<String, Object> runFormSpecificTransformation(
+        List<OcrDataField> ocrDataFieldList,
+        boolean automatedProcessCreation,
+        String envelopeId
+    ) {
         OcrDataFields ocrDataFields = transformOcrMapToObject(ocrDataFieldList);
 
-        OcrValidationResponse ocrValidationResponse = validator.validateOcrData(D8S.getName(), ocrDataFields);
-
-        if (!isEmpty(ocrValidationResponse.getErrors())) {
-            throw new InvalidDataException(
-                "OCR validation errors",
-                ocrValidationResponse.getWarnings(),
-                ocrValidationResponse.getErrors()
-            );
-        }
         var caseData = CaseData.builder().build();
 
         try {
@@ -105,7 +93,7 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
             caseData = commonFormToCaseTransformer.setDefaultValues(caseData);
             transformationWarnings = commonFormToCaseTransformer.verifyFields(transformationDetails, transformationWarnings);
 
-            return commonFormToCaseTransformer.transformCaseData(caseData, transformationWarnings, ocrValidationResponse);
+            return commonFormToCaseTransformer.transformCaseData(caseData, transformationWarnings);
 
         } catch (Exception exception) {
             //this will result in bulk scan service to create exception record if case creation is automatic case creation

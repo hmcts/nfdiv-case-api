@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.divorce.endpoint.model.ExceptionRecord;
@@ -51,9 +50,6 @@ class D8sFormToCaseTransformerTest {
 
     @Captor
     ArgumentCaptor<TransformationDetails> transformationDetailsCaptor;
-
-    @Mock
-    private OcrValidator validator;
 
     @Mock
     private Applicant1Transformer applicant1Transformer;
@@ -114,13 +110,11 @@ class D8sFormToCaseTransformerTest {
         when(app1App2ApplicationPrayerMarriage.andThen(paperFormDetailsTransformer)).thenReturn(app1App2ApplicationPrayerMarriagePaper);
         when(app1App2ApplicationPrayerMarriagePaper.apply(any(TransformationDetails.class))).thenReturn(transformationDetails);
 
-        when(validator.validateOcrData(D8S.getName(), transformOcrMapToObject(ocrDataFields)))
-            .thenReturn(ocrValidationResponse);
         when(commonFormToCaseTransformer.setDefaultValues(any(CaseData.class)))
             .thenReturn(caseData);
         when(commonFormToCaseTransformer.verifyFields(any(TransformationDetails.class), any(List.class)))
             .thenReturn(emptyList());
-        when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList(), ocrValidationResponse))
+        when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList()))
             .thenReturn(expectedResult);
 
         final ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
@@ -181,13 +175,11 @@ class D8sFormToCaseTransformerTest {
         when(app1App2ApplicationPrayerMarriage.andThen(paperFormDetailsTransformer)).thenReturn(app1App2ApplicationPrayerMarriagePaper);
         when(app1App2ApplicationPrayerMarriagePaper.apply(any(TransformationDetails.class))).thenReturn(transformationDetails);
 
-        when(validator.validateOcrData(D8S.getName(), transformOcrMapToObject(ocrDataFields)))
-            .thenReturn(ocrValidationResponse);
         when(commonFormToCaseTransformer.setDefaultValues(any(CaseData.class)))
             .thenReturn(caseData);
         when(commonFormToCaseTransformer.verifyFields(any(TransformationDetails.class), any(List.class)))
             .thenReturn(emptyList());
-        when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList(), ocrValidationResponse))
+        when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList()))
             .thenReturn(expectedResult);
 
         final var exceptionRecord = exceptionRecord(ocrDataFields);
@@ -212,32 +204,10 @@ class D8sFormToCaseTransformerTest {
     }
 
     @Test
-    void shouldThrowInvalidDataExceptionWhenOcrValidationContainsErrors() throws Exception {
-        final String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8s-form-ocr.json");
-        final List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
-        });
-
-        when(validator.validateOcrData(D8S.getName(), transformOcrMapToObject(ocrDataFields)))
-            .thenReturn(OcrValidationResponse.builder().errors(List.of("some error")).build());
-
-        final ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
-
-        assertThatThrownBy(() -> d8sFormToCaseTransformer.transformIntoCaseData(exceptionRecord))
-            .isExactlyInstanceOf(InvalidDataException.class)
-            .hasMessageContaining("OCR validation errors")
-            .extracting("errors")
-            .isEqualTo(List.of("some error"));
-
-    }
-
-    @Test
     void shouldThrowInvalidDataExceptionWhenOcrTransformationThrowsException() throws Exception {
         final String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8s-form-ocr.json");
         final List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
-
-        when(validator.validateOcrData(D8S.getName(), transformOcrMapToObject(ocrDataFields)))
-            .thenReturn(OcrValidationResponse.builder().build());
 
         final ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
 

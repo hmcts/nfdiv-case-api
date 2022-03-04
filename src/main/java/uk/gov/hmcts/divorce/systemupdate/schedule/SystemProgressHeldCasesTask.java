@@ -76,7 +76,7 @@ public class SystemProgressHeldCasesTask implements Runnable {
     private void submitEvent(CaseDetails caseDetails, User user, String serviceAuth) {
         try {
             log.info("Case id {} has been in holding state for > {} weeks hence moving state to AwaitingConditionalOrder",
-                caseDetails.getId(), holdingPeriodService.getHoldingPeriodInWeeks());
+                caseDetails.getId(), holdingPeriodService.getHoldingPeriodInDays());
             caseDetails.getData().put(DUE_DATE, null);
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, serviceAuth);
         } catch (final CcdManagementException e) {

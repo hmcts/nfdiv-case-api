@@ -20,6 +20,7 @@ import uk.gov.service.notify.NotificationClientException;
 import java.util.Collections;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.ResponseEntity.status;
 
 @Slf4j
@@ -73,7 +74,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleInvalidDataException(InvalidDataException exception) {
         log.warn(exception.getMessage(), exception);
 
-        return status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return status(UNPROCESSABLE_ENTITY)
             .body(
                 BspErrorResponse.builder()
                     .errors(exception.getErrors())
@@ -86,7 +87,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUnsupportedFormTypeException(UnsupportedFormTypeException exception) {
         log.warn(exception.getMessage(), exception);
 
-        return status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return status(UNPROCESSABLE_ENTITY)
             .body(
                 BspErrorResponse.builder()
                     .errors(Collections.singletonList(exception.getMessage()))
