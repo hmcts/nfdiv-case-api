@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -47,13 +48,16 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
     public static final String SOLICITOR_GENERAL_APPLICATION = "solicitor-general-application";
 
+    @Autowired
+    private GeneralApplicationSelectFee generalApplicationSelectFee;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
 
         final List<CcdPageConfiguration> pages = asList(
             new GeneralApplicationSelectApplicationType(),
-            new GeneralApplicationSelectFee(),
+            generalApplicationSelectFee,
             new GeneralApplicationUploadDocument(),
             new GeneralApplicationPaymentConfirmation(),
             new GeneralApplicationPaymentSummary()

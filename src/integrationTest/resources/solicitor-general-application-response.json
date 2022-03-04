@@ -1,0 +1,30 @@
+{
+  "data": {
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "generalApplicationDocument": {
+      "documentLink": {
+        "document_url": "http://localhost:4200/assets/d11",
+        "document_filename": "GA.pdf",
+        "document_binary_url": "GA.pdf/binary"
+      },
+      "documentDateAdded": "${json-unit.any-string}",
+      "documentType": "d11"
+    },
+    "documentsUploaded": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "http://localhost:4200/assets/d11",
+          "document_filename": "GA.pdf",
+          "document_binary_url": "GA.pdf/binary"
+        },
+        "documentDateAdded": "${json-unit.any-string}",
+        "documentType": "d11"
+      }
+    }],
+    "dataVersion": 49,
+    "transformationAndOcrWarnings": [],
+    "warnings": []
+  },
+  "state": "GeneralApplicationReceived"
+}

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -17,6 +18,7 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_WITHOUT_NOTICE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
+@Component
 public class GeneralApplicationSelectFee implements CcdPageConfiguration {
 
     @Autowired
