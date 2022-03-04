@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
@@ -28,10 +30,13 @@ public class ReIssueApplicationService {
     private SetPostIssueState setPostIssueState;
 
     @Autowired
-    private GenerateDivorceApplication generateMiniApplication;
+    private GenerateDivorceApplication generateDivorceApplication;
 
     @Autowired
     private GenerateRespondentAosInvitation generateRespondentAosInvitation;
+
+    @Autowired
+    private GenerateNoticeOfProceeding generateNoticeOfProceeding;
 
     @Autowired
     private SendAosPackToRespondent sendAosPackToRespondent;
@@ -41,6 +46,9 @@ public class ReIssueApplicationService {
 
     @Autowired
     private SetReIssueAndDueDate setReIssueAndDueDate;
+
+    @Autowired
+    private SendAosPackToApplicant sendAosPackToApplicant;
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
         ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
@@ -59,28 +67,32 @@ public class ReIssueApplicationService {
         if (DIGITAL_AOS.equals(reissueOption)) {
             log.info("For case id {} processing reissue for digital aos ", caseDetails.getId());
             return caseTasks(
-                generateRespondentAosInvitation,
-                setReIssueAndDueDate,
                 setPostIssueState,
+                setReIssueAndDueDate,
+                generateRespondentAosInvitation,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else if (OFFLINE_AOS.equals(reissueOption)) {
             log.info("For case id {} processing reissue for offline aos ", caseDetails.getId());
             return caseTasks(
+                setPostIssueState,
+                setReIssueAndDueDate,
+                generateNoticeOfProceeding,
                 generateRespondentAosInvitation,
                 sendAosPackToRespondent,
-                setReIssueAndDueDate,
-                setPostIssueState,
+                sendAosPackToApplicant,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else if (REISSUE_CASE.equals(reissueOption)) {
             log.info("For case id {} processing complete reissue ", caseDetails.getId());
             return caseTasks(
-                generateMiniApplication,
-                generateRespondentAosInvitation,
-                sendAosPackToRespondent,
-                setReIssueAndDueDate,
                 setPostIssueState,
+                setReIssueAndDueDate,
+                generateNoticeOfProceeding,
+                generateRespondentAosInvitation,
+                generateDivorceApplication,
+                sendAosPackToRespondent,
+                sendAosPackToApplicant,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else {

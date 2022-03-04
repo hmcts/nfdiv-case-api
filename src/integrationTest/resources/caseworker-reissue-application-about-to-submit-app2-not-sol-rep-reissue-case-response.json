@@ -59,7 +59,7 @@
     ],
     "documentsGenerated": [
       {
-        "id": "Divorce application",
+        "id": "Respondent Invitation",
         "value": {
           "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "aos",
@@ -71,7 +71,7 @@
         }
       },
       {
-        "id": "Respondent Invitation",
+        "id": "Divorce application",
         "value": {
           "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "application",
