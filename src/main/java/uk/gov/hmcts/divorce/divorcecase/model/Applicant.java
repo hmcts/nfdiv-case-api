@@ -172,9 +172,9 @@ public class Applicant {
     }
 
     @JsonIgnore
-    // TODO: use getCorrespondenceAddress
     public boolean isBasedOverseas() {
-        return nonNull(address)
+        return !isRepresented()
+            && nonNull(address)
             && !isBlank(address.getCountry())
             && !("UK").equalsIgnoreCase(address.getCountry())
             && !("United Kingdom").equalsIgnoreCase(address.getCountry());
