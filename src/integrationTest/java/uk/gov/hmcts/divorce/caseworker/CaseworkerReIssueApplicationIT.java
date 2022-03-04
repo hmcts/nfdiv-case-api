@@ -55,7 +55,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.NOTICE_OF_PROCEEDING_ID;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
@@ -469,7 +468,7 @@ public class CaseworkerReIssueApplicationIT {
         throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
 
@@ -518,7 +517,7 @@ public class CaseworkerReIssueApplicationIT {
         throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
 
@@ -568,7 +567,7 @@ public class CaseworkerReIssueApplicationIT {
         throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setAddress(correspondenceAddress());
+        caseData.getApplicant2().setAddress(applicantAddress());
         caseData.getApplication().setReissueOption(REISSUE_CASE);
         caseData.getApplication().setIssueDate(LocalDate.now());
 
@@ -640,7 +639,7 @@ public class CaseworkerReIssueApplicationIT {
             );
     }
 
-    private AddressGlobalUK correspondenceAddress() {
+    private AddressGlobalUK applicantAddress() {
         return AddressGlobalUK.builder()
             .addressLine1("223b")
             .addressLine2("Baker Street")

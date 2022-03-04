@@ -22,7 +22,6 @@
   "PhoneNumber": "",
   "Gender": null,
   "ContactDetailsType": "public",
-  "CorrespondenceAddress": null,
   "SolicitorRepresented": "Yes",
   "SolicitorName": "testsolicitor",
   "SolicitorReference": null,
