@@ -77,6 +77,7 @@ class JointApplicationApprovedReminderTest {
         data.setApplicant2(getApplicant(Gender.FEMALE));
         HelpWithFees hwf = HelpWithFees.builder().needHelp(YesOrNo.YES).build();
         data.getApplication().setApplicant1HelpWithFees(hwf);
+        data.getApplication().setApplicant2HelpWithFees(hwf);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -125,6 +126,7 @@ class JointApplicationApprovedReminderTest {
         data.setApplicant2(getApplicant(Gender.MALE));
         HelpWithFees hwf = HelpWithFees.builder().needHelp(YesOrNo.YES).build();
         data.getApplication().setApplicant1HelpWithFees(hwf);
+        data.getApplication().setApplicant2HelpWithFees(hwf);
         final HashMap<String, String> templateVars = new HashMap<>();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
