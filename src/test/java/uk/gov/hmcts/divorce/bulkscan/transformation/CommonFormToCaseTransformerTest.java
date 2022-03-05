@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
 import java.io.IOException;
@@ -157,12 +156,10 @@ public class CommonFormToCaseTransformerTest {
 
         final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
         List<String> transformationWarnings = new ArrayList<>();
-        final OcrValidationResponse ocrValidationResponse = OcrValidationResponse.builder().build();
 
         var transformedCaseData = commonFormToCaseTransformer.transformCaseData(
             caseData,
-            transformationWarnings,
-            ocrValidationResponse);
+            transformationWarnings);
 
         assertThat(transformedCaseData).contains(entry(TRANSFORMATION_AND_OCR_WARNINGS, emptyList()));
     }
@@ -172,18 +169,15 @@ public class CommonFormToCaseTransformerTest {
     void transformCaseDataReturnsWarningsWhenInvalidDataGiven() {
 
         final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
-        List<String> transformationWarnings = new ArrayList<>();
-        final OcrValidationResponse ocrValidationResponse = OcrValidationResponse.builder().warnings(
-            Arrays.asList("Please review serve out of UK in the scanned form",
-                "Please review respondent by post and applicant will serve application in the scanned form",
-                "Please review respondent address different to service address in the scanned form"
-            )
-        ).build();
+        List<String> transformationWarnings = List.of(
+            "Please review serve out of UK in the scanned form",
+            "Please review respondent by post and applicant will serve application in the scanned form",
+            "Please review respondent address different to service address in the scanned form"
+        );
 
         var transformedCaseData = commonFormToCaseTransformer.transformCaseData(
             caseData,
-            transformationWarnings,
-            ocrValidationResponse);
+            transformationWarnings);
 
         final List<ListValue<String>> extractedWarnings =
             (List<ListValue<String>>) transformedCaseData.get(TRANSFORMATION_AND_OCR_WARNINGS);

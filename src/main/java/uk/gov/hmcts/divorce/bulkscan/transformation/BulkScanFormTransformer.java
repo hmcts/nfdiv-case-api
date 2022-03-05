@@ -22,16 +22,27 @@ import static uk.gov.hmcts.reform.bsp.common.config.BspCommonFields.BULK_SCAN_CA
 public abstract class BulkScanFormTransformer {
 
     public Map<String, Object> transformIntoCaseData(ExceptionRecord exceptionRecord) {
+        log.info(
+            "Processing transformation request with envelope id {}, exception record id {} and isAutomatedProcess flag {}",
+            exceptionRecord.getEnvelopeId(),
+            exceptionRecord.getExceptionRecordId(),
+            exceptionRecord.isAutomatedProcessCreation()
+        );
+
         List<OcrDataField> ocrDataFields = exceptionRecord.getOcrDataFields();
 
         Map<String, Object> caseData = new HashMap<>();
 
-        // Need to store the Exception Record ID as part of the CCD data
+        // Need to store the Exception Record id as part of the CCD data
         caseData.put(BULK_SCAN_CASE_REFERENCE, exceptionRecord.getId());
 
         caseData.put("scannedDocuments", transformScannedDocuments(exceptionRecord));
 
-        Map<String, Object> formSpecificMap = runFormSpecificTransformation(ocrDataFields);
+        Map<String, Object> formSpecificMap = runFormSpecificTransformation(
+            ocrDataFields,
+            exceptionRecord.isAutomatedProcessCreation(),
+            exceptionRecord.getEnvelopeId()
+        );
         caseData.putAll(formSpecificMap);
 
         return caseData;
@@ -69,5 +80,9 @@ public abstract class BulkScanFormTransformer {
         return scannedDocuments;
     }
 
-    abstract Map<String, Object> runFormSpecificTransformation(List<OcrDataField> ocrDataFields);
+    abstract Map<String, Object> runFormSpecificTransformation(
+        List<OcrDataField> ocrDataFields,
+        boolean automatedProcessCreation,
+        String envelopeId
+    );
 }
