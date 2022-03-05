@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceOutcome;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -27,6 +28,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -61,6 +67,9 @@ class LegalAdvisorMakeServiceDecisionTest {
 
     @Mock
     private ServiceOrderTemplateContent serviceOrderTemplateContent;
+
+    @Mock
+    private ServiceApplicationNotification serviceApplicationNotification;
 
     @InjectMocks
     private LegalAdvisorMakeServiceDecision makeServiceDecision;
@@ -136,6 +145,8 @@ class LegalAdvisorMakeServiceDecisionTest {
         assertThat(response.getData().getDocumentsGenerated())
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
+
+        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
     }
 
     @Test
@@ -197,6 +208,8 @@ class LegalAdvisorMakeServiceDecisionTest {
         assertThat(response.getData().getDocumentsGenerated())
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
+
+        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
     }
 
     @Test
@@ -215,6 +228,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setState(AwaitingServiceConsideration);
         caseDetails.setData(caseData);
 
@@ -226,6 +240,7 @@ class LegalAdvisorMakeServiceDecisionTest {
         ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate()).isEqualTo(getExpectedLocalDate());
 
+        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
     }
 
     @Test
@@ -286,6 +301,8 @@ class LegalAdvisorMakeServiceDecisionTest {
         assertThat(response.getData().getDocumentsGenerated())
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
+
+        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
     }
 
     @Test
@@ -346,5 +363,7 @@ class LegalAdvisorMakeServiceDecisionTest {
         assertThat(response.getData().getDocumentsGenerated())
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
+
+        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
     }
 }

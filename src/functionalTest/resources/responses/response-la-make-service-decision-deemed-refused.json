@@ -3,6 +3,7 @@
     "divorceOrDissolution": "divorce",
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
+    "applicant1Email": "test@test.com",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "alternativeServiceOutcomes": [
       {
