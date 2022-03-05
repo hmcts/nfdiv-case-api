@@ -13,7 +13,7 @@ public enum HowToRespondApplication implements HasLabel {
     WITHOUT_DISPUTE_DIVORCE("withoutDisputeDivorce", "Continue without disputing the divorce"),
 
     @JsonProperty("disputeDivorce")
-    DISPUTE_DIVORCE("disputeDivorce", "The applicant wants to dispute the divorce");
+    DISPUTE_DIVORCE("disputeDivorce", "The respondent wants to dispute the divorce");
 
     private String type;
     private String label;
