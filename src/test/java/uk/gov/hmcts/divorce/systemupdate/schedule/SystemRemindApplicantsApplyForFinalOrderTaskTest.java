@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import feign.FeignException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,8 +40,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForFinalOrder.SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemRemindApplicantsApplyForFinalOrderTask.NOTIFICATION_SENT_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.FINAL_ORDER_ELIGIBLE_FROM_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.FINAL_ORDER_ELIGIBLE_TO_RESPONDENT_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -70,15 +71,13 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
 
     private User user;
 
-    private static final String NOTIFICATION_SENT_FLAG = "finalOrderReminderSentApplicant1";
-    private static final QueryBuilder dateFinalOrderEligibleFromExists = existsQuery("data.dateFinalOrderEligibleFrom");
-
-    final BoolQueryBuilder query =
-        boolQuery()
-            .must(matchQuery(STATE, AwaitingFinalOrder))
-            .filter(rangeQuery(FINAL_ORDER_ELIGIBLE_FROM_DATE).lte(LocalDate.now().minusDays(applyForFinalOrderReminderOffsetDays)))
-            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES))
-            .must(boolQuery().must(dateFinalOrderEligibleFromExists));
+    final BoolQueryBuilder query = boolQuery()
+        .must(matchQuery(STATE, AwaitingFinalOrder))
+        .must(existsQuery(FINAL_ORDER_ELIGIBLE_FROM_DATE))
+        .must(existsQuery(FINAL_ORDER_ELIGIBLE_TO_RESPONDENT_DATE))
+        .filter(rangeQuery(FINAL_ORDER_ELIGIBLE_FROM_DATE)
+            .lte(LocalDate.now().minusDays(applyForFinalOrderReminderOffsetDays)))
+        .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
     @BeforeEach
     void setUp() {
@@ -147,15 +146,8 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
 
     @Test
     void shouldRunAppropriateQuery() {
-        final BoolQueryBuilder expectedQuery = boolQuery()
-            .must(matchQuery(STATE, AwaitingFinalOrder))
-            .filter(rangeQuery(FINAL_ORDER_ELIGIBLE_FROM_DATE)
-                .lte(LocalDate.now().minusDays(applyForFinalOrderReminderOffsetDays)))
-            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES))
-            .must(boolQuery().must(dateFinalOrderEligibleFromExists));
-
         systemRemindApplicantsApplyForFinalOrderTask.run();
 
-        verify(ccdSearchService).searchForAllCasesWithQuery(any(), eq(expectedQuery), any(), any());
+        verify(ccdSearchService).searchForAllCasesWithQuery(any(), eq(query), any(), any());
     }
 }
