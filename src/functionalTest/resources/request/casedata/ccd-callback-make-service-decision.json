@@ -4,5 +4,6 @@
   "applicant1LastName": "Smith",
   "receivedServiceApplicationDate": "2021-06-18",
   "serviceApplicationGranted": "Yes",
-  "serviceApplicationDecisionDate": "2021-06-18"
+  "serviceApplicationDecisionDate": "2021-06-18",
+  "issueDate": "2021-06-18"
 }
