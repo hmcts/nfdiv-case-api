@@ -33,8 +33,7 @@
     ],
     "dataVersion": "${json-unit.any-number}",
     "issueDate": "${json-unit.any-string}",
-    "warnings":[],
-    "transformationAndOcrWarnings": []
+    "warnings":[]
   },
   "state": "Holding"
 }

@@ -97,8 +97,7 @@
     "noticeOfProceedingsEmail": "applicant2@example.com",
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
-    "warnings": [],
-    "transformationAndOcrWarnings": []
+    "warnings": []
   },
   "state": "AwaitingAos"
 }
