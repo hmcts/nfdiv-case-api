@@ -3,13 +3,10 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.collections4.map.HashedMap;
 import org.elasticsearch.common.TriConsumer;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 
 import java.util.Map;
-
-import static java.util.Collections.unmodifiableMap;
 
 @Data
 @NoArgsConstructor
@@ -22,19 +19,9 @@ public class RetiredFields {
     private String exampleRetiredField;
 
     @JsonIgnore
-    private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {
-    };
-
-    @JsonIgnore
-    private static final Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations;
-
-    static {
-        final Map<String, TriConsumer<Map<String, Object>, String, Object>> init = new HashedMap<>();
-
-        init.put("exampleRetiredField", (data, key, val) -> data.put("applicant1FirstName", val));
-
-        migrations = unmodifiableMap(init);
-    }
+    private static final Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = Map.of(
+        "exampleRetiredField", moveTo("applicant1FirstName")
+    );
 
     /**
      * This function will iterate over the properties in the given map and check for a migration. If one is found
@@ -61,4 +48,13 @@ public class RetiredFields {
     public static int getVersion() {
         return migrations.size();
     }
+
+    private static TriConsumer<Map<String, Object>, String, Object> moveTo(String newFieldName) {
+        return (data, key, val) -> data.put(newFieldName, val);
+    }
+
+    @JsonIgnore
+    private static final TriConsumer<Map<String, Object>, String, Object> doNothing = (data, key, val) -> {
+    };
+
 }
