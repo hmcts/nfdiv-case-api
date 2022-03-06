@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_AS_SERVICE_GRANTED;
@@ -101,6 +102,8 @@ class LegalAdvisorMakeServiceDecisionTest {
                     .build()
             )
             .build();
+
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -165,6 +168,8 @@ class LegalAdvisorMakeServiceDecisionTest {
             )
             .build();
 
+        caseData.getApplication().setIssueDate(LocalDate.now());
+
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
@@ -196,6 +201,69 @@ class LegalAdvisorMakeServiceDecisionTest {
             .isEqualTo(getExpectedLocalDate());
 
         assertThat(response.getState()).isEqualTo(Holding);
+
+        var deemedOrDispensedDoc = DivorceDocument
+            .builder()
+            .documentLink(orderToDispensedDoc)
+            .documentFileName(orderToDispensedDoc.getFilename())
+            .documentType(DocumentType.DEEMED_AS_SERVICE_GRANTED)
+            .build();
+
+
+        assertThat(response.getData().getDocumentsGenerated())
+            .extracting("value")
+            .containsExactly(deemedOrDispensedDoc);
+
+        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
+    }
+
+    @Test
+    void shouldUpdateStateToSubmittedIfApplicationIsSuccessfulButTheCaseHasNotBeenIssued() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .deemedServiceDate(LocalDate.now(clock))
+                    .serviceApplicationGranted(YES)
+                    .alternativeServiceType(DEEMED)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        var orderToDispensedDoc = new Document(
+            DOCUMENT_URL,
+            DEEMED_AS_SERVICE_GRANTED,
+            DOCUMENT_URL + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                SERVICE_ORDER_TEMPLATE_ID,
+                ENGLISH,
+                DEEMED_AS_SERVICE_GRANTED
+            ))
+            .thenReturn(orderToDispensedDoc);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
+        assertThat(listValue.getValue().getServiceApplicationDecisionDate())
+            .isEqualTo(getExpectedLocalDate());
+
+        assertThat(response.getState()).isEqualTo(Submitted);
 
         var deemedOrDispensedDoc = DivorceDocument
             .builder()

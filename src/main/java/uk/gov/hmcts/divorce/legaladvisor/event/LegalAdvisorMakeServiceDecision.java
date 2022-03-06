@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -101,6 +102,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
         var caseDataCopy = details.getData().toBuilder().build();
         var serviceApplication = caseDataCopy.getAlternativeService();
+        var application = caseDataCopy.getApplication();
 
         State endState = details.getState();
 
@@ -109,7 +111,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
         serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
         if (serviceApplication.getServiceApplicationGranted().toBoolean()) {
             log.info("Service application granted for case id {}", details.getId());
-            endState = Holding;
+            endState = application.getIssueDate() == null ? Submitted : Holding;
 
             if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
                 generateAndSetOrderToDeemedOrDispenseDocument(

@@ -130,6 +130,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .build()
             )
             .build();
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -180,6 +181,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .build()
             )
             .build();
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
