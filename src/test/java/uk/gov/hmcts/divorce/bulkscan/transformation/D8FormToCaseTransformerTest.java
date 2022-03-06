@@ -105,7 +105,7 @@ public class D8FormToCaseTransformerTest {
         when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList()))
             .thenReturn(expectedResult);
 
-        TransformationInput transformationInput = exceptionRecord(ocrDataFields);
+        TransformationInput transformationInput = transformationRequest(ocrDataFields);
         final var transformedOutput = d8FormToCaseTransformer.transformIntoCaseData(transformationInput);
 
         assertThat(transformedOutput.get("scannedDocuments"))
@@ -158,7 +158,7 @@ public class D8FormToCaseTransformerTest {
         when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList()))
             .thenReturn(expectedResult);
 
-        var exceptionRecord = exceptionRecord(ocrDataFields);
+        var exceptionRecord = transformationRequest(ocrDataFields);
         final var transformedOutput = d8FormToCaseTransformer.transformIntoCaseData(exceptionRecord);
         final List<ListValue<String>> warnings = (List<ListValue<String>>) transformedOutput.get(TRANSFORMATION_AND_OCR_WARNINGS);
 
@@ -177,7 +177,7 @@ public class D8FormToCaseTransformerTest {
         List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
 
-        TransformationInput transformationInput = exceptionRecord(ocrDataFields);
+        TransformationInput transformationInput = transformationRequest(ocrDataFields);
 
         doThrow(new RuntimeException("some exception")).when(applicant1Transformer).andThen(applicant2Transformer);
 
@@ -188,7 +188,7 @@ public class D8FormToCaseTransformerTest {
             .isEqualTo(List.of("Some error occurred during D8 Form transformation."));
     }
 
-    private TransformationInput exceptionRecord(List<OcrDataField> ocrDataFields) {
+    private TransformationInput transformationRequest(List<OcrDataField> ocrDataFields) {
         return TransformationInput
             .builder()
             .formType(D8.getName())

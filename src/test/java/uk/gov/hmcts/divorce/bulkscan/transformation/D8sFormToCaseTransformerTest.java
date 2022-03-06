@@ -117,7 +117,7 @@ class D8sFormToCaseTransformerTest {
         when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList()))
             .thenReturn(expectedResult);
 
-        final TransformationInput transformationInput = exceptionRecord(ocrDataFields);
+        final TransformationInput transformationInput = transformationRequest(ocrDataFields);
         final var transformedOutput = d8sFormToCaseTransformer.transformIntoCaseData(transformationInput);
 
         verify(app1App2ApplicationPrayerMarriagePaper).apply(transformationDetailsCaptor.capture());
@@ -182,7 +182,7 @@ class D8sFormToCaseTransformerTest {
         when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList()))
             .thenReturn(expectedResult);
 
-        final var exceptionRecord = exceptionRecord(ocrDataFields);
+        final var exceptionRecord = transformationRequest(ocrDataFields);
         final var transformedOutput = d8sFormToCaseTransformer.transformIntoCaseData(exceptionRecord);
         final List<ListValue<String>> warnings = (List<ListValue<String>>) transformedOutput.get(TRANSFORMATION_AND_OCR_WARNINGS);
 
@@ -209,7 +209,7 @@ class D8sFormToCaseTransformerTest {
         final List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
 
-        final TransformationInput transformationInput = exceptionRecord(ocrDataFields);
+        final TransformationInput transformationInput = transformationRequest(ocrDataFields);
 
         doThrow(new RuntimeException("some exception")).when(applicant1Transformer).andThen(applicant2Transformer);
 
@@ -220,7 +220,7 @@ class D8sFormToCaseTransformerTest {
             .isEqualTo(List.of("Some error occurred during D8S Form transformation."));
     }
 
-    private TransformationInput exceptionRecord(List<OcrDataField> ocrDataFields) {
+    private TransformationInput transformationRequest(List<OcrDataField> ocrDataFields) {
         return TransformationInput
             .builder()
             .formType(D8.getName())
