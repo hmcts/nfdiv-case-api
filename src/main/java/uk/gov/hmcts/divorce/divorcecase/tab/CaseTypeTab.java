@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private static final String CO_GRANTED_NO = "coGranted=\"No\"";
+    private static final String IS_JOINT = "applicationType=\"jointApplication\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -88,7 +89,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildPaymentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
-            .field("applicant1HWFReferenceNumber");
+            .field("applicant1HWFReferenceNumber")
+            .field("applicant2HWFReferenceNumber", IS_JOINT);
     }
 
     private void buildLanguageTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
