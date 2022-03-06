@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExceptionRecord {
+public class TransformationInput {
 
     @JsonProperty("case_type_id")
     private String caseTypeId;
