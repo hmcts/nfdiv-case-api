@@ -24,7 +24,6 @@
       }],
     "dataVersion": "${json-unit.any-number}",
     "warnings": [],
-    "transformationAndOcrWarnings": [],
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",

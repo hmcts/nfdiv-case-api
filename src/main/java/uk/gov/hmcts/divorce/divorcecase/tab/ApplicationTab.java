@@ -75,7 +75,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1SolicitorPhone", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorEmail", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"Yes\"")
-            .field("applicant1SolicitorAgreeToReceiveEmails", "applicant1SolicitorRepresented=\"Yes\"");
+            .field("applicant1SolicitorAgreeToReceiveEmailsCheckbox", "applicant1SolicitorRepresented=\"Yes\"");
     }
 
     private void addApplicant2(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
