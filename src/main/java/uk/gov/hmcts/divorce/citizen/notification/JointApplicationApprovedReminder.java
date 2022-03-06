@@ -32,7 +32,8 @@ public class JointApplicationApprovedReminder implements ApplicantNotification {
 
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.put(PAYS_FEES, caseData.getApplication().isHelpWithFeesApplication() ? NO : YES);
+        templateVars.put(PAYS_FEES, caseData.isSoleApplicationOrApplicant2HasAgreedHwf()
+            && caseData.getApplication().isHelpWithFeesApplication() ? NO : YES);
         templateVars.put(IS_REMINDER, YES);
 
         notificationService.sendEmail(

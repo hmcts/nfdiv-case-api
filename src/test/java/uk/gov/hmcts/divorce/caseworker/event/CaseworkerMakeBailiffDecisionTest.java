@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceOutcome;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -24,7 +25,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -63,6 +66,9 @@ class CaseworkerMakeBailiffDecisionTest {
     @Mock
     private BailiffNotApprovedOrderContent bailiffNotApprovedOrderContent;
 
+    @Mock
+    private ServiceApplicationNotification serviceApplicationNotification;
+
     @InjectMocks
     private CaseworkerMakeBailiffDecision makeBailiffDecision;
 
@@ -95,6 +101,8 @@ class CaseworkerMakeBailiffDecisionTest {
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingBailiffService);
         assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServiceApplicationDecisionDate())
             .isEqualTo(getExpectedLocalDate());
+
+        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
     }
 
     @Test
@@ -115,6 +123,8 @@ class CaseworkerMakeBailiffDecisionTest {
 
         ListValue<AlternativeServiceOutcome> listValue = aboutToStartOrSubmitResponse.getData().getAlternativeServiceOutcomes().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate()).isEqualTo(getExpectedLocalDate());
+
+        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
     }
 
     @Test
@@ -145,6 +155,8 @@ class CaseworkerMakeBailiffDecisionTest {
                 ENGLISH,
                 BAILIFF_APPLICATION_APPROVED_FILE_NAME
             );
+
+        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
     }
 
     @Test
@@ -176,6 +188,8 @@ class CaseworkerMakeBailiffDecisionTest {
                 ENGLISH,
                 BAILIFF_APPLICATION_APPROVED_FILE_NAME
             );
+
+        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
     }
 
     @Test
@@ -206,6 +220,8 @@ class CaseworkerMakeBailiffDecisionTest {
                 eq(ENGLISH),
                 eq(BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME)
             );
+
+        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
     }
 
     @Test
@@ -237,5 +253,7 @@ class CaseworkerMakeBailiffDecisionTest {
                 eq(ENGLISH),
                 eq(BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME)
             );
+
+        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
     }
 }

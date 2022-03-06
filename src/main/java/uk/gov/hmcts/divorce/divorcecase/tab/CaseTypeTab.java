@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private static final String CO_GRANTED_NO = "coGranted=\"No\"";
+    private static final String IS_JOINT = "applicationType=\"jointApplication\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -88,7 +89,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildPaymentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
-            .field("applicant1HWFReferenceNumber");
+            .field("applicant1HWFReferenceNumber")
+            .field("applicant2HWFReferenceNumber", IS_JOINT);
     }
 
     private void buildLanguageTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -114,7 +116,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("ConfidentialApplicant", "Confidential Applicant")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_1_SOLICITOR, SUPER_USER)
             .showCondition("applicant1ContactDetailsType=\"private\"")
-            .field("applicant1CorrespondenceAddress")
             .field("applicant1PhoneNumber")
             .field("applicant1Email")
             .field("applicant1Address");
@@ -187,11 +188,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("receivedServiceApplicationDate")
             .field("receivedServiceAddedDate")
             .field("alternativeServiceType")
-            .field("paymentMethod")
-            .field("dateOfPayment", "paymentMethod=\"*\"")
-            .field("feeAccountNumber", "paymentMethod=\"feePayByAccount\"")
-            .field("feeAccountReferenceNumber", "paymentMethod=\"feePayByAccount\"")
-            .field("helpWithFeesReferenceNumber", "paymentMethod=\"feePayByHelp\"")
+            .field("servicePaymentFeePaymentMethod")
+            .field("dateOfPayment", "servicePaymentFeePaymentMethod=\"*\"")
+            .field("servicePaymentFeeAccountNumber", "servicePaymentFeePaymentMethod=\"feePayByAccount\"")
+            .field("servicePaymentFeeAccountReferenceNumber", "servicePaymentFeePaymentMethod=\"feePayByAccount\"")
+            .field("servicePaymentFeeHelpWithFeesReferenceNumber", "servicePaymentFeePaymentMethod=\"feePayByHelp\"")
             .label("bailiffLocalCourtDetailsLabel",
                 "localCourtName=\"*\" OR localCourtEmail=\"*\"", "### Bailiff local court details")
             .field("localCourtName")
@@ -224,6 +225,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplicant1SubmittedDate")
             .field("coApplicant1ChangeOrAddToApplication")
             .field("coApplicant1StatementOfTruth")
+            .field("coApplicant1SolicitorName")
+            .field("coApplicant1SolicitorFirm")
+            .field("coApplicant1SolicitorAdditionalComments")
             .label("labelConditionalOrderDetails-Applicant2",
                 "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
                 "### Applicant 2")
@@ -232,10 +236,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplicant2SubmittedDate")
             .field("coApplicant2ChangeOrAddToApplication")
             .field("coApplicant2StatementOfTruth")
-            .field("coSolicitorName")
-            .field("coSolicitorFirm")
-            .field("coSolicitorAdditionalComments")
-            .field("coCourtName")
+            .field("coApplicant2SolicitorName")
+            .field("coApplicant2SolicitorFirm")
+            .field("coApplicant2SolicitorAdditionalComments")
+            .field("coCourt")
             .field("coDateAndTimeOfHearing")
             .field("coPronouncementJudge");
     }

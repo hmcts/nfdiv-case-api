@@ -13,7 +13,6 @@ import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.jsonToObject;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
@@ -45,7 +44,6 @@ public class Applicant2TransformerTest {
 
         final var expectedApplicant2 =
             jsonToObject("src/test/resources/transformation/output/applicant2-transformed.json", Applicant.class);
-        expectedApplicant2.setOffline(NO);
 
         assertThat(transformedOutput.getCaseData().getApplicant2())
             .usingRecursiveComparison()
@@ -79,7 +77,6 @@ public class Applicant2TransformerTest {
 
         final var expectedApplicant2 =
             jsonToObject("src/test/resources/transformation/output/applicant2-transformed-warnings.json", Applicant.class);
-        expectedApplicant2.setOffline(NO);
 
         assertThat(transformedOutput.getCaseData().getApplicant2())
             .usingRecursiveComparison()

@@ -1,5 +1,13 @@
 {
   "data": {
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1ContactDetailsType": "public",
+    "applicant1Gender": "female",
+    "applicant1FinancialOrder": "No",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "alternativeServiceOutcomes": [
       {
@@ -16,7 +24,6 @@
       }],
     "dataVersion": "${json-unit.any-number}",
     "warnings": [],
-    "transformationAndOcrWarnings": [],
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",

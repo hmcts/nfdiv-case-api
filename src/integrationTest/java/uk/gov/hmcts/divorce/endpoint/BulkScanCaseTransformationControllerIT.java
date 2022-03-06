@@ -14,7 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
-import uk.gov.hmcts.divorce.endpoint.model.ExceptionRecord;
+import uk.gov.hmcts.divorce.endpoint.model.TransformationInput;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
 import java.util.List;
@@ -67,7 +67,7 @@ public class BulkScanCaseTransformationControllerIT {
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(
                     OBJECT_MAPPER.writeValueAsString(
-                        ExceptionRecord
+                        TransformationInput
                             .builder()
                             .formType(D8.getName())
                             .ocrDataFields(ocrDataFields)
@@ -103,7 +103,7 @@ public class BulkScanCaseTransformationControllerIT {
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(
                     OBJECT_MAPPER.writeValueAsString(
-                        ExceptionRecord
+                        TransformationInput
                             .builder()
                             .formType(D8S.getName())
                             .ocrDataFields(ocrDataFields)
@@ -139,7 +139,7 @@ public class BulkScanCaseTransformationControllerIT {
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(
                     OBJECT_MAPPER.writeValueAsString(
-                        ExceptionRecord
+                        TransformationInput
                             .builder()
                             .formType(D8.getName())
                             .ocrDataFields(ocrDataFields)
@@ -173,7 +173,7 @@ public class BulkScanCaseTransformationControllerIT {
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(
                     OBJECT_MAPPER.writeValueAsString(
-                        ExceptionRecord
+                        TransformationInput
                             .builder()
                             .formType("invalidFormType")
                             .ocrDataFields(ocrDataFields)
