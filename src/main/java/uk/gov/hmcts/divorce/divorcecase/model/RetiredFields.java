@@ -19,6 +19,10 @@ public class RetiredFields {
     private String exampleRetiredField;
 
     @JsonIgnore
+    private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {
+    };
+
+    @JsonIgnore
     private static final Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = Map.of(
         "exampleRetiredField", moveTo("applicant1FirstName")
     );
@@ -52,9 +56,5 @@ public class RetiredFields {
     private static TriConsumer<Map<String, Object>, String, Object> moveTo(String newFieldName) {
         return (data, key, val) -> data.put(newFieldName, val);
     }
-
-    @JsonIgnore
-    private static final TriConsumer<Map<String, Object>, String, Object> doNothing = (data, key, val) -> {
-    };
 
 }
