@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+import uk.gov.hmcts.reform.idam.client.IdamClient;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -47,6 +48,9 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private CcdAccessService ccdAccessService;
+
+    @Autowired
+    private IdamClient idamClient;
 
     @Autowired
     private HttpServletRequest httpServletRequest;

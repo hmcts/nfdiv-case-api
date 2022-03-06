@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -149,9 +150,8 @@ public class Applicant {
     )
     private YesOrNo continueApplication;
 
-    @CCD(
-        label = "The applicant is offline."
-    )
+    @CCD(label = "Offline")
+    @JsonProperty("Offline") // required because isOffline() confuses Jackson
     private YesOrNo offline;
 
     @JsonIgnore
