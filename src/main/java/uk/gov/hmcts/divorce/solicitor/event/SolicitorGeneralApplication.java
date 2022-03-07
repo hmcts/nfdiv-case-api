@@ -71,7 +71,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
         final CaseData caseData = details.getData();
 
-        if (AwaitingPronouncement.getName().equals(details.getState().getName())
+        if (AwaitingPronouncement == details.getState()
             && !isEmpty(caseData.getBulkListCaseReference())) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
