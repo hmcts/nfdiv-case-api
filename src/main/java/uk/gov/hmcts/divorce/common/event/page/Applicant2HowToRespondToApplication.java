@@ -11,8 +11,8 @@ public class Applicant2HowToRespondToApplication implements CcdPageConfiguration
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
             .page("applicant2HowToResponseToApplication")
-            .pageLabel("How does the applicant want to respond to the application?")
-            .label("label-ApplicantDispute", "The applicant can only dispute the application if: (one or more of the following)\n\n")
+            .pageLabel("How does the respondent want to respond to the application?")
+            .label("label-ApplicantDispute", "The respondent can only dispute the application if: (one or more of the following)\n\n")
             .label("label-HaveLegalPowerBullet",
                 "- they do not think the courts of England and Wales have the legal power (jurisdiction) to grant the application")
             .label("label-DoNotBelieveMarriageValidBullet",
