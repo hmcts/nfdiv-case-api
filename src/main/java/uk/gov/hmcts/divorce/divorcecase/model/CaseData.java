@@ -117,6 +117,10 @@ public class CaseData {
     @Builder.Default
     private GeneralReferral generalReferral = new GeneralReferral();
 
+    @JsonUnwrapped
+    @Builder.Default
+    private GeneralApplication generalApplication = new GeneralApplication();
+
     @CCD(
         label = "General Referrals",
         typeOverride = Collection,
