@@ -30,7 +30,7 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplicant1().isOffline() && caseData.getApplicant2().isOffline()) {
+        if (caseData.getApplicant1().isOffline()) {
             log.info("Generating aos response letter pdf for case id: {}", caseDetails.getId());
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(

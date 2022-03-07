@@ -21,11 +21,11 @@ public class SendAosResponseLetterPackToApplicant implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplicant1().isOffline() && caseData.getApplicant2().isOffline()) {
-            log.info("Sending aos response letter pack to bulk print as both applicant1 and applicant2 are offline. Case id: {}:", caseId);
+        if (caseData.getApplicant1().isOffline()) {
+            log.info("Sending aos response letter pack to bulk print as applicant1 is offline. Case id: {}", caseId);
             aosPackPrinter.sendAosResponseLetterToApplicant(caseData, caseId);
         } else {
-            log.info("Not sending aos response letter pack to bulk print as both applicant1 and applicant2 are not offline. Case id: {}:", caseId);
+            log.info("Not sending aos response letter pack to bulk print as applicant1 is not offline. Case id: {}", caseId);
         }
         return caseDetails;
     }

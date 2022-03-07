@@ -105,7 +105,7 @@ public class AosPackPrinter {
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             log.warn(
-                "Aos response letter for print applicant has missing documents. Expected documents with type {} , for case id: {}",
+                "Aos response letter for applicant has missing documents. Expected documents with type {} , for case id: {}",
                 List.of(AOS_RESPONSE_LETTER, ACKNOWLEDGEMENT_OF_SERVICE),
                 caseId
             );
