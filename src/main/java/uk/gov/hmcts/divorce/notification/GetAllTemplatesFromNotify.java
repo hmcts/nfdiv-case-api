@@ -21,7 +21,7 @@ public final class GetAllTemplatesFromNotify {
     private static final String searchCriteria = "PO Box";
     private static final String notificationType = "email";
 
-    private static final String apiKey = "aatlive-56f68e5c-b51f-4bdf-a0ac-d70af335e1d1-2f1af021-4025-4ef4-acad-4c301d2e4a43";
+    private static final String apiKey = "";
 
     private GetAllTemplatesFromNotify() {
     }
