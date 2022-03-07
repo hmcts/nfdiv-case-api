@@ -127,7 +127,7 @@ public class Applicant {
     private Set<FinancialOrderFor> financialOrdersFor;
 
     @CCD(
-        label = "Are there any existing or previous court proceedings relating to the ${labelContentMarriageOrCivilPartnership}?"
+        label = "Are there any other legal proceedings relating to the ${labelContentMarriageOrCivilPartnership}?"
     )
     private YesOrNo legalProceedings;
 

@@ -17,7 +17,7 @@ public class Applicant2SolAosJurisdiction implements CcdPageConfiguration {
             .complex(CaseData::getApplication)
             .complex(Application::getJurisdiction)
                 .readonlyWithLabel(Jurisdiction::getConnections,
-                    "The applicant indicated that the reason the courts have jurisdiction is because:")
+                    "The applicant indicated the courts of England and Wales have jurisdiction because:")
             .done()
             .done()
             .complex(CaseData::getAcknowledgementOfService)
