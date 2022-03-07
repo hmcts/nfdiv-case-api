@@ -40,7 +40,7 @@ public class AosResponseLetterTemplateContent {
 
         Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
-        templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant2().getLastName());
+        templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));

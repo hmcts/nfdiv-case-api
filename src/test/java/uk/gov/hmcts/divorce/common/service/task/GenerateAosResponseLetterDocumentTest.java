@@ -9,7 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.RespondentAnswersTemplateContent;
+import uk.gov.hmcts.divorce.document.content.AosResponseLetterTemplateContent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,10 +17,13 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -30,15 +33,16 @@ class GenerateAosResponseLetterDocumentTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private RespondentAnswersTemplateContent respondentAnswersTemplateContent;
+    private AosResponseLetterTemplateContent aosResponseLetterTemplateContent;
 
     @InjectMocks
-    private GenerateRespondentAnswersDoc generateRespondentAnswersDoc;
+    private GenerateAosResponseLetterDocument generateAosResponseLetterDocument;
 
     @Test
-    void shouldGenerateRespondentAnswerDocWhenTaskIsExecuted() {
+    void shouldGenerateRespondentAnswerDocWhenApplicant1IsOffline() {
 
         final CaseData caseData = caseData();
+        caseData.getApplicant1().setOffline(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -46,33 +50,48 @@ class GenerateAosResponseLetterDocumentTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(respondentAnswersTemplateContent.apply(caseData, TEST_CASE_ID))
+        when(aosResponseLetterTemplateContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
 
         doNothing()
             .when(caseDataDocumentService).renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_ANSWERS,
+                AOS_RESPONSE_LETTER,
                 templateContent,
                 TEST_CASE_ID,
-                RESPONDENT_ANSWERS_TEMPLATE_ID,
+                RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID,
                 caseData.getApplicant1().getLanguagePreference(),
-                RESPONDENT_ANSWERS_DOCUMENT_NAME
+                AOS_RESPONSE_LETTER_DOCUMENT_NAME
             );
 
-        final CaseDetails<CaseData, State> result = generateRespondentAnswersDoc.apply(caseDetails);
+        final CaseDetails<CaseData, State> result = generateAosResponseLetterDocument.apply(caseDetails);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_ANSWERS,
+                AOS_RESPONSE_LETTER,
                 templateContent,
                 TEST_CASE_ID,
-                RESPONDENT_ANSWERS_TEMPLATE_ID,
+                RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID,
                 caseData.getApplicant1().getLanguagePreference(),
-                RESPONDENT_ANSWERS_DOCUMENT_NAME
+                AOS_RESPONSE_LETTER_DOCUMENT_NAME
             );
 
         assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldNotGenerateRespondentAnswerDocWhenApplicant1IsNotOffline() {
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setOffline(NO);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        generateAosResponseLetterDocument.apply(caseDetails);
+
+        verifyNoInteractions(caseDataDocumentService, aosResponseLetterTemplateContent);
     }
 }

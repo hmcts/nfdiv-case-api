@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithAosScannedDocument;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.ACKNOWLEDGEMENT_OF_SERVICE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
@@ -79,9 +80,7 @@ public class AosPackPrinter {
             caseData.getDocumentsGenerated(),
             AOS_RESPONSE_LETTER);
 
-        final List<Letter> aosLetters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(),
-            ACKNOWLEDGEMENT_OF_SERVICE);
+        final List<Letter> aosLetters = lettersWithAosScannedDocument(caseData.getScannedDocuments());
 
         final Letter aosResponseLetter = firstElement(aosResponseLetters);
 
