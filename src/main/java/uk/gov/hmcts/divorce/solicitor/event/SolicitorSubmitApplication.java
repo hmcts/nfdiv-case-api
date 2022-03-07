@@ -96,6 +96,9 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             )
         );
 
+        caseData.getApplication().setSolStatementOfReconciliationCertify(null);
+        caseData.getApplication().setSolStatementOfReconciliationDiscussed(null);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .errors(null)
