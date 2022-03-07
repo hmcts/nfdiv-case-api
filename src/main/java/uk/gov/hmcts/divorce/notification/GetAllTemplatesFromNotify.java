@@ -5,8 +5,6 @@ import uk.gov.service.notify.NotificationClientException;
 import uk.gov.service.notify.Template;
 import uk.gov.service.notify.TemplateList;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
