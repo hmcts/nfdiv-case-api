@@ -205,9 +205,9 @@ public class ServiceOrderTemplateContentIT {
             .centreName("HMCTS Digital Divorce and Dissolution")
             .emailAddress("divorcecase@justice.gov.uk")
             .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 12706")
+            .poBox("PO Box 13226")
             .town("Harlow")
-            .postcode("CM20 9QT")
+            .postcode("CM20 9UG")
             .phoneNumber("0300 303 0642")
             .build();
     }
