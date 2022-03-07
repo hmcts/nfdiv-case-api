@@ -222,7 +222,7 @@ dependencyManagement {
   }
   // TODO - fix in the CFT lib by publishing platform information.
   imports {
-    mavenBom 'com.fasterxml.jackson:jackson-bom:2.13.1'
+    mavenBom 'com.fasterxml.jackson:jackson-bom:2.13.2'
   }
 }
 

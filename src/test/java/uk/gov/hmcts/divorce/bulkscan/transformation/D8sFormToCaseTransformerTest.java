@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
-import uk.gov.hmcts.divorce.endpoint.model.ExceptionRecord;
+import uk.gov.hmcts.divorce.endpoint.model.TransformationInput;
 import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
 import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
 
@@ -117,8 +117,8 @@ class D8sFormToCaseTransformerTest {
         when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList()))
             .thenReturn(expectedResult);
 
-        final ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
-        final var transformedOutput = d8sFormToCaseTransformer.transformIntoCaseData(exceptionRecord);
+        final TransformationInput transformationInput = transformationRequest(ocrDataFields);
+        final var transformedOutput = d8sFormToCaseTransformer.transformIntoCaseData(transformationInput);
 
         verify(app1App2ApplicationPrayerMarriagePaper).apply(transformationDetailsCaptor.capture());
 
@@ -182,7 +182,7 @@ class D8sFormToCaseTransformerTest {
         when(commonFormToCaseTransformer.transformCaseData(caseData, emptyList()))
             .thenReturn(expectedResult);
 
-        final var exceptionRecord = exceptionRecord(ocrDataFields);
+        final var exceptionRecord = transformationRequest(ocrDataFields);
         final var transformedOutput = d8sFormToCaseTransformer.transformIntoCaseData(exceptionRecord);
         final List<ListValue<String>> warnings = (List<ListValue<String>>) transformedOutput.get(TRANSFORMATION_AND_OCR_WARNINGS);
 
@@ -209,19 +209,19 @@ class D8sFormToCaseTransformerTest {
         final List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
 
-        final ExceptionRecord exceptionRecord = exceptionRecord(ocrDataFields);
+        final TransformationInput transformationInput = transformationRequest(ocrDataFields);
 
         doThrow(new RuntimeException("some exception")).when(applicant1Transformer).andThen(applicant2Transformer);
 
-        assertThatThrownBy(() -> d8sFormToCaseTransformer.transformIntoCaseData(exceptionRecord))
+        assertThatThrownBy(() -> d8sFormToCaseTransformer.transformIntoCaseData(transformationInput))
             .isExactlyInstanceOf(InvalidDataException.class)
             .hasMessageContaining("some exception")
             .extracting("errors")
             .isEqualTo(List.of("Some error occurred during D8S Form transformation."));
     }
 
-    private ExceptionRecord exceptionRecord(List<OcrDataField> ocrDataFields) {
-        return ExceptionRecord
+    private TransformationInput transformationRequest(List<OcrDataField> ocrDataFields) {
+        return TransformationInput
             .builder()
             .formType(D8.getName())
             .ocrDataFields(ocrDataFields)

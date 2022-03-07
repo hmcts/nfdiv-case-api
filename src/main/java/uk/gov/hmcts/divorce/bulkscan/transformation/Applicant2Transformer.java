@@ -87,7 +87,6 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
             )
             .phoneNumber(ocrDataFields.getRespondentOrApplicant2PhoneNo())
             .email(ocrDataFields.getRespondentOrApplicant2Email())
-            .offline(from(toBoolean(ocrDataFields.getRespondentServePostOnly())))
             .build();
 
         applicant2.setSolicitor(solicitor2(ocrDataFields));

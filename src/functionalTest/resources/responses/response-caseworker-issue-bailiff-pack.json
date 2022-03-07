@@ -18,7 +18,6 @@
       }
     },
     "dataVersion": "${json-unit.any-number}",
-    "warnings": [],
-    "transformationAndOcrWarnings": []
+    "warnings": []
   }
 }

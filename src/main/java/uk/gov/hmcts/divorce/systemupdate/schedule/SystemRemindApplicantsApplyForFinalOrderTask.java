@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -28,13 +27,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForFinalOrder.SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.FINAL_ORDER_ELIGIBLE_FROM_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.FINAL_ORDER_ELIGIBLE_TO_RESPONDENT_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
 public class SystemRemindApplicantsApplyForFinalOrderTask implements Runnable {
 
-    private static final String NOTIFICATION_SENT_FLAG = "finalOrderReminderSentApplicant1";
+    public static final String NOTIFICATION_SENT_FLAG = "finalOrderReminderSentApplicant1";
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -59,14 +59,13 @@ public class SystemRemindApplicantsApplyForFinalOrderTask implements Runnable {
         final String serviceAuthorization = authTokenGenerator.generate();
 
         try {
-            final QueryBuilder dateFinalOrderEligibleFromExists = existsQuery("data.dateFinalOrderEligibleFrom");
-            final BoolQueryBuilder query =
-                boolQuery()
-                    .must(matchQuery(STATE, AwaitingFinalOrder))
-                    .filter(rangeQuery(FINAL_ORDER_ELIGIBLE_FROM_DATE)
-                        .lte(LocalDate.now().minusDays(applyForFinalOrderReminderOffsetDays)))
-                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES))
-                    .must(boolQuery().must(dateFinalOrderEligibleFromExists));
+            final BoolQueryBuilder query = boolQuery()
+                .must(matchQuery(STATE, AwaitingFinalOrder))
+                .must(existsQuery(FINAL_ORDER_ELIGIBLE_FROM_DATE))
+                .must(existsQuery(FINAL_ORDER_ELIGIBLE_TO_RESPONDENT_DATE))
+                .filter(rangeQuery(FINAL_ORDER_ELIGIBLE_FROM_DATE)
+                    .lte(LocalDate.now().minusDays(applyForFinalOrderReminderOffsetDays)))
+                .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
             final List<CaseDetails> casesInAwaitingFinalOrderNeedingReminder =
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, serviceAuthorization);

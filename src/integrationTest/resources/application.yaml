@@ -20,7 +20,7 @@ uk:
           applicant2SignInDivorceUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2}
           signInDissolutionUrl: ${NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net}
           applicant2SignInDissolutionUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2}
-          divorceCourtEmail: contactdivorce@justice.gov.uk
+          divorceCourtEmail: divorcecase@justice.gov.uk
           dissolutionCourtEmail: endcivilpartnership@justice.gov.uk
         templates:
           english:
@@ -139,8 +139,8 @@ court:
       serviceCentreName: 'Courts and Tribunals Service Centre'
       centreName: 'HMCTS Digital Divorce and Dissolution'
       town: 'Harlow'
-      poBox: 'PO Box 12706'
-      postCode: 'CM20 9QT'
+      poBox: 'PO Box 13226'
+      postCode: 'CM20 9UG'
       email: 'divorcecase@justice.gov.uk'
       phoneNumber: '0300 303 0642'
 
