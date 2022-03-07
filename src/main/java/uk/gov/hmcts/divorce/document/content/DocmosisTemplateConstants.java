@@ -73,8 +73,8 @@ public final class DocmosisTemplateConstants {
     public static final String RESPONDENT_SOLICITOR_ADDRESS = "respondentSolicitorAddress";
     public static final String NOT_GIVEN = "not given";
     public static final String REFUSAL_REASON = "refusalReasons";
-    public static final String CONTACT_DIVORCE_JUSTICE_GOV_UK = "contactdivorce@justice.gov.uk";
-    public static final String CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK = "civilpartnership.case@justice.gov.uk";
+    public static final String CONTACT_DIVORCE_JUSTICE_GOV_UK = "divorcecase@justice.gov.uk";
+    public static final String CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK = "divorcecase@justice.gov.uk";
 
     public static final String PRONOUNCEMENT_JUDGE = "pronouncementJudge";
     public static final String COURT_NAME = "courtName";
