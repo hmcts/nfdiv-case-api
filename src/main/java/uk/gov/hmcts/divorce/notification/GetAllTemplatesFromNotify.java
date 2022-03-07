@@ -5,12 +5,17 @@ import uk.gov.service.notify.NotificationClientException;
 import uk.gov.service.notify.Template;
 import uk.gov.service.notify.TemplateList;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // GetAllTemplatesFromNotify is a standalone util class which allows you to get all templates from Notify
 // which contain a given search criteria.
 public final class GetAllTemplatesFromNotify {
+
+    private static final List<String> exclusions = List.of("OLD", "NOT_USED");
 
     private static final String searchCriteria = "Enter search criteria here";
     private static final String notificationType = "email";
@@ -55,8 +60,8 @@ public final class GetAllTemplatesFromNotify {
             if (personalisation.containsKey(searchCriteria)) {
                 System.out.println("************************************************************");
 
-                if (template.getName().contains("COR") || template.getName().contains("NOT USED") || template.getName().contains("OLD")) {
-                    System.out.println("Excluding: " + template.getName());
+                if (isRetiredTemplate(template.getName())) {
+                    System.out.println("Excluding retired template: " + template.getName());
                     continue;
                 }
                 printFoundTemplate(template);
@@ -78,8 +83,8 @@ public final class GetAllTemplatesFromNotify {
             if (body.contains(searchCriteria)) {
                 System.out.println("************************************************************");
 
-                if (template.getName().contains("COR") || template.getName().contains("NOT USED") || template.getName().contains("OLD")) {
-                    System.out.println("Excluding: " + template.getName());
+                if (isRetiredTemplate(template.getName())) {
+                    System.out.println("Excluding retired template: " + template.getName());
                     continue;
                 }
                 printFoundTemplate(template);
@@ -99,5 +104,9 @@ public final class GetAllTemplatesFromNotify {
 //        Optional<String> subject = template.getSubject();
 //        subject.ifPresent(s -> System.out.println("Subject: " + s));
 //        System.out.println("Body is: " + template.getBody());
+    }
+
+    private static boolean isRetiredTemplate(String str) {
+        return exclusions.stream().anyMatch(str::contains);
     }
 }
