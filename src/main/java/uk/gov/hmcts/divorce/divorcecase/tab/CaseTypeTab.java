@@ -89,7 +89,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildPaymentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
+            .label("LabelApplicant1-PaymentHeading", IS_JOINT, "### The applicant")
             .field("applicant1HWFReferenceNumber")
+            .label("LabelApplicant2-PaymentHeading", IS_JOINT, "### ${labelContentTheApplicant2UC}")
             .field("applicant2HWFReferenceNumber", IS_JOINT);
     }
 
