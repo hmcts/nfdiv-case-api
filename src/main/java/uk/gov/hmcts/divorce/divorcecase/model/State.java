@@ -282,6 +282,13 @@ public enum State {
     FinalOrderRequested("FinalOrderRequested"),
 
     @CCD(
+        name = "General Application Received",
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    GeneralApplicationReceived("GeneralApplicationReceived"),
+
+    @CCD(
         name = "General consideration complete",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {CaseAccessAdministrator.class}
