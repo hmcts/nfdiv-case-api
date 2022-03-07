@@ -33,10 +33,10 @@ public final class GetAllTemplatesFromNotify {
             System.out.println("Found " + templates.getTemplates().size() + " templates in total");
 
             // Uncomment if searching template values.
-//            searchTemplateValues(templates);
+            // searchTemplateValues(templates);
 
             // uncomment if searching template body contents.
-//            searchTemplateBody(templates);
+            // searchTemplateBody(templates);
 
         } catch (NotificationClientException e) {
             e.printStackTrace(System.out);
@@ -99,9 +99,9 @@ public final class GetAllTemplatesFromNotify {
         System.out.println("ID: " + template.getId());
         System.out.println("Type: " + template.getTemplateType());
 
-//        Optional<String> subject = template.getSubject();
-//        subject.ifPresent(s -> System.out.println("Subject: " + s));
-//        System.out.println("Body is: " + template.getBody());
+        // Optional<String> subject = template.getSubject();
+        // subject.ifPresent(s -> System.out.println("Subject: " + s));
+        // System.out.println("Body is: " + template.getBody());
     }
 
     private static boolean isRetiredTemplate(String str) {
