@@ -18,7 +18,7 @@ public final class GetAllTemplatesFromNotify {
 
     private static final List<String> exclusions = List.of("OLD", "NOT_USED");
 
-    private static final String searchCriteria = "PO Box";
+    private static final String searchCriteria = "Enter search criteria here";
     private static final String notificationType = "email";
 
     private static final String apiKey = "";
