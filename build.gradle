@@ -413,8 +413,3 @@ bootWithCCD {
         }
     }
 }
-
-//println buildscript.configurations.classpath.resolvedConfiguration.firstLevelModuleDependencies.moduleVersion
-//buildscript.configurations.classpath.dependencies.each {
-//    println it.name + it.version
-//}
