@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 public class Applicant2SolConfirmContactDetails implements CcdPageConfiguration {
 
     private static final String ALWAYS_HIDE = "applicant2SolicitorName=\"ALWAYS_HIDE\"";
+    private static final String BLANK_LABEL = "";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -33,7 +34,7 @@ public class Applicant2SolConfirmContactDetails implements CcdPageConfiguration 
                     .label("LabelRespSol-EmailHeader", "### Email updates and service")
                     .label("LabelRespSol-Email", "Updates on the case will be sent to this email address")
                     .mandatoryNoSummary(Solicitor::getEmail, null, "${labelContentApplicant2UC}'s solicitor's email")
-                    .mandatoryNoSummary(Solicitor::getAgreeToReceiveEmailsCheckbox, null, " ")
+                    .mandatoryNoSummary(Solicitor::getAgreeToReceiveEmailsCheckbox, null, BLANK_LABEL)
                     .done()
                 .done();
     }
