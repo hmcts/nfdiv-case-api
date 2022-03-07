@@ -61,7 +61,8 @@ class SoleApplicationDisputedNotificationTest {
             eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getAcknowledgementOfService().getDateAosSubmitted().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE,
+                    data.getAcknowledgementOfService().getDateAosSubmitted().plusDays(37).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
@@ -86,7 +87,8 @@ class SoleApplicationDisputedNotificationTest {
             eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getAcknowledgementOfService().getDateAosSubmitted().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE,
+                    data.getAcknowledgementOfService().getDateAosSubmitted().plusDays(37).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
@@ -111,7 +113,8 @@ class SoleApplicationDisputedNotificationTest {
             eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getAcknowledgementOfService().getDateAosSubmitted().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE,
+                    data.getAcknowledgementOfService().getDateAosSubmitted().plusDays(37).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
@@ -138,7 +141,8 @@ class SoleApplicationDisputedNotificationTest {
             eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getAcknowledgementOfService().getDateAosSubmitted().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE,
+                    data.getAcknowledgementOfService().getDateAosSubmitted().plusDays(37).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
