@@ -7,6 +7,7 @@ public final class DocumentConstants {
     public static final String DIVORCE_APPLICATION_DOCUMENT_NAME = "divorce-application";
     public static final String RESPONDENT_ANSWERS_DOCUMENT_NAME = "respondentAnswers";
     public static final String RESPONDENT_ANSWERS_TEMPLATE_ID = "RESPONDENT_ANSWERS";
+    public static final String RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID = "NFD_RESP_RESPONDED_DISPUTED";
 
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
     public static final String PRONOUNCEMENT_LIST_DOCUMENT_NAME = "NFD_Pronouncement_List";
@@ -63,6 +64,8 @@ public final class DocumentConstants {
 
     public static final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID = "CONDITIONAL_ORDER_ANSWERS";
     public static final String CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME = "conditionalOrderAnswers";
+
+    public static final String AOS_RESPONSE_LETTER_DOCUMENT_NAME = "aosResponseLetter";
 
     private DocumentConstants() {
     }
