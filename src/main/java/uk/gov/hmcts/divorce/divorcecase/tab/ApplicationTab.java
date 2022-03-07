@@ -121,6 +121,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelMarriage-Heading", null, "### Marriage and certificate")
             .field("labelContentTheApplicant2UC", APPLICATION_TYPE_NEVER_SHOW)
             .field("labelContentTheApplicant2", APPLICATION_TYPE_NEVER_SHOW)
+            .field("labelContentTheApplicantOrApplicant1", APPLICATION_TYPE_NEVER_SHOW)
+            .field("labelContentGotMarriedOrFormedCivilPartnership", APPLICATION_TYPE_NEVER_SHOW)
             .field("marriageDate")
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
