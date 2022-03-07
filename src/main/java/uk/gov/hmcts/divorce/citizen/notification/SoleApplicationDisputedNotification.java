@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.citizen.notification;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -25,6 +26,9 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
     @Autowired
     private CommonContent commonContent;
+
+    @Value("${submit_aos.dispute_offset_days}")
+    private int disputeDueDateOffsetDays;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -53,7 +57,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     private Map<String, String> disputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(SUBMISSION_RESPONSE_DATE,
-            caseData.getAcknowledgementOfService().getDateAosSubmitted().plusDays(37).format(DATE_TIME_FORMATTER));
+            caseData.getAcknowledgementOfService().getDateAosSubmitted().plusDays(disputeDueDateOffsetDays).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 }
