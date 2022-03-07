@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.util.Map;
@@ -55,6 +56,7 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     @Test
     public void shouldUpdateCaseDataAndSendEmailWhenAboutToSubmitCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
+
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
