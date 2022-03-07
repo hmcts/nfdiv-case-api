@@ -27,6 +27,7 @@ plugins {
   id 'org.springframework.boot' version '2.6.4'
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'hmcts.ccd.sdk' version '0.27.0'
+  id 'com.github.hmcts.rse-cft-lib' version 'jitpack-SNAPSHOT'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -55,10 +56,6 @@ sourceSets {
       srcDir file('src/integrationTest/java')
     }
   }
-  cftlib {
-    compileClasspath += sourceSets.main.output
-    runtimeClasspath += sourceSets.main.output
-  }
 }
 
 
@@ -82,8 +79,6 @@ configurations {
   functionalTestRuntime.extendsFrom testRuntime
   integrationTestImplementation.extendsFrom testImplementation
   integrationTestRuntime.extendsFrom testRuntime
-  cftlibImplementation.extendsFrom implementation
-  cftlibRuntimeOnly.extendsFrom runtimeOnly
 }
 
 tasks.withType(JavaCompile) {
@@ -220,10 +215,6 @@ dependencyManagement {
       entry 'guava'
     }
   }
-  // TODO - fix in the CFT lib by publishing platform information.
-  imports {
-    mavenBom 'com.fasterxml.jackson:jackson-bom:2.13.1'
-  }
 }
 
 repositories {
@@ -319,7 +310,7 @@ dependencies {
   functionalTestImplementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
 
-  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.10.2'
+  cftlibImplementation 'com.github.hmcts.rse-cft-lib:rse-cft-lib:DEV-SNAPSHOT'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
@@ -406,24 +397,24 @@ ccd {
   configDir = file('build/definitions')
 }
 
-task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: [loadEnvSecrets, buildCCDXlsx], group: 'ccd tasks') {
-    classpath sourceSets.cftlib.runtimeClasspath
-    mainClass = 'uk.gov.hmcts.divorce.cftlib.RunWithCFT'
-    doFirst() {
-      // Required by Access Management for Java 17.
-      // https://github.com/x-stream/xstream/issues/101
-      ['java.lang', 'java.util', 'java.lang.reflect', 'java.text', 'java.awt.font'].each {
-        jvmArgs('--add-opens', "java.base/${it}=ALL-UNNAMED")
-      }
-      jvmArgs('--add-opens', 'java.desktop/java.awt.font=ALL-UNNAMED')
-      jvmArgs('-XX:ReservedCodeCacheSize=64m')
+bootWithCCD {
+    dependsOn(loadEnvSecrets, buildCCDXlsx)
+    environment 'IDAM_S2S-AUTH_URL', '${IDAM_S2S_URL}'
+    environment 'CCD_DOCUMENT_URL_PATTERN', '.*'
+    environment 'ROLE_ASSIGNMENT_S2S_AUTHORISED_SERVICES', 'ccd_gw,am_role_assignment_service,am_org_role_mapping_service,xui_webapp,aac_manage_case_assignment,ccd_data,nfdiv_case_api'
+    environment 'DATA_STORE_S2S_AUTHORISED_SERVICES', 'ccd_gw,fpl_case_service,ccd_data,ccd_ps,divorce_frontend,payment-api,xui_webapp,nfdiv_case_api,ccd_case_document_am_api,am_role_assignment_service'
 
-      project.file('./.aat-env').readLines().each() {
-        def index = it.indexOf("=")
-        def key = it.substring(0, index)
-        def value = it.substring(index + 1)
-        environment key, value
-      }
+    doFirst() {
+        project.file('./.aat-env').readLines().each() {
+            def index = it.indexOf("=")
+            def key = it.substring(0, index)
+            def value = it.substring(index + 1)
+            environment key, value
+        }
     }
 }
 
+//println buildscript.configurations.classpath.resolvedConfiguration.firstLevelModuleDependencies.moduleVersion
+//buildscript.configurations.classpath.dependencies.each {
+//    println it.name + it.version
+//}

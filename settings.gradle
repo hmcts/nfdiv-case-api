@@ -3,6 +3,12 @@ pluginManagement {
         mavenLocal()
         gradlePluginPortal()
         mavenCentral()
+        maven {
+            url "https://jitpack.io"
+            content {
+                excludeGroup "com.github.ben-manes.versions"
+            }
+        }
     }
 }
 
