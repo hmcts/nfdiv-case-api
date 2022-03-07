@@ -87,7 +87,7 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("contactdivorce@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
             entry(CASE_REFERENCE, 1616591401473378L),
@@ -113,7 +113,7 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("civilpartnership.case@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
             entry(CASE_REFERENCE, 1616591401473378L),
@@ -138,7 +138,7 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("contactdivorce@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
             entry(CASE_REFERENCE, 1616591401473378L),
@@ -163,7 +163,7 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("civilpartnership.case@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
             entry(CASE_REFERENCE, 1616591401473378L),
