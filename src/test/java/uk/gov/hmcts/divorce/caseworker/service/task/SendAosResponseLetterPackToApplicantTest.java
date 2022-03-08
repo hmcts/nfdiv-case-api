@@ -16,6 +16,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -43,9 +45,25 @@ class SendAosResponseLetterPackToApplicantTest {
     }
 
     @Test
-    void shouldSendAosResponsePackToApplicantIfApplicantIsOffline() {
+    void shouldNotSendAosResponsePackToApplicantIfApplicantIsOfflineAndAosIsUndisputed() {
+        final var caseData = caseData();
+        caseData.getApplicant1().setOffline(NO);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        sendAosResponseLetterPackToApplicant.apply(caseDetails);
+
+        verifyNoInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldSendAosResponsePackToApplicantIfApplicantIsOfflineAndAosIsDisputed() {
         final var caseData = caseData();
         caseData.getApplicant1().setOffline(YES);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

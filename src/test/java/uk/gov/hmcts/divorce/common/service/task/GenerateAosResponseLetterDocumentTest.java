@@ -21,6 +21,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
@@ -39,10 +41,11 @@ class GenerateAosResponseLetterDocumentTest {
     private GenerateAosResponseLetterDocument generateAosResponseLetterDocument;
 
     @Test
-    void shouldGenerateRespondentAnswerDocWhenApplicant1IsOffline() {
+    void shouldGenerateRespondentAnswerDocWhenApplicant1IsOfflineAndIsDisputed() {
 
         final CaseData caseData = caseData();
         caseData.getApplicant1().setOffline(YES);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -81,10 +84,27 @@ class GenerateAosResponseLetterDocumentTest {
     }
 
     @Test
-    void shouldNotGenerateRespondentAnswerDocWhenApplicant1IsNotOffline() {
+    void shouldNotGenerateRespondentAnswerDocWhenApplicant1IsOfflineAndUndisputed() {
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        generateAosResponseLetterDocument.apply(caseDetails);
+
+        verifyNoInteractions(caseDataDocumentService, aosResponseLetterTemplateContent);
+    }
+
+    @Test
+    void shouldNotGenerateRespondentAnswerDocWhenApplicant1IsNotOfflineAndDisputed() {
 
         final CaseData caseData = caseData();
         caseData.getApplicant1().setOffline(NO);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

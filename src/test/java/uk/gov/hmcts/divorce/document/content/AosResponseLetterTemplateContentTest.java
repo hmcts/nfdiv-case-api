@@ -23,7 +23,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getTemplateFormatDate;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -72,7 +71,7 @@ public class AosResponseLetterTemplateContentTest {
             entry("ccdCaseReference", formatId(TEST_CASE_ID)),
             entry("applicant1FirstName", TEST_FIRST_NAME),
             entry("applicant1LastName", TEST_LAST_NAME),
-            entry("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nPost Code"),
+            entry("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code"),
             entry("divorceOrCivilPartnershipEmail", "divorcecase@justice.gov.uk"),
             entry("divorceOrEndCivilPartnershipApplication", "divorce application"),
             entry("issueDate", getTemplateFormatDate()),
@@ -113,7 +112,7 @@ public class AosResponseLetterTemplateContentTest {
             entry("ccdCaseReference", formatId(TEST_CASE_ID)),
             entry("applicant1FirstName", TEST_FIRST_NAME),
             entry("applicant1LastName", TEST_LAST_NAME),
-            entry("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nPost Code"),
+            entry("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code"),
             entry("divorceOrCivilPartnershipEmail", "divorcecase@justice.gov.uk"),
             entry("divorceOrEndCivilPartnershipApplication", "application to end your civil partnership"),
             entry("issueDate", getTemplateFormatDate()),
