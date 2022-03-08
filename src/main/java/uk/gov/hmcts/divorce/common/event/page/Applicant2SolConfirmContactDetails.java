@@ -11,12 +11,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 public class Applicant2SolConfirmContactDetails implements CcdPageConfiguration {
 
     private static final String ALWAYS_HIDE = "applicant2SolicitorName=\"ALWAYS_HIDE\"";
+    private static final String BLANK_LABEL = "";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
             .page("Applicant2SolConfirmContactDetails")
-            .pageLabel("Confirm contact details")
+            .pageLabel("Confirm solicitor contact details")
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getApplicant2, ALWAYS_HIDE)
                 .readonlyNoSummary(LabelContent::getApplicant2UC, ALWAYS_HIDE)
@@ -29,11 +30,11 @@ public class Applicant2SolConfirmContactDetails implements CcdPageConfiguration 
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
                     .mandatoryNoSummary(Solicitor::getName, null, "${labelContentApplicant2UC}'s solicitor's name")
-                    .optionalNoSummary(Solicitor::getPhone, null, "${labelContentApplicant2UC}'s solicitor's Phone number")
-                    .label("LabelRespSol-EmailHeader", "### Email contact details")
-                    .label("LabelRespSol-Email", "Email address will be used to send case updates.")
-                    .mandatoryNoSummary(Solicitor::getEmail, null, "${labelContentApplicant2UC}'s solicitor's Email")
-                    .mandatoryNoSummary(Solicitor::getAgreeToReceiveEmailsCheckbox)
+                    .optionalNoSummary(Solicitor::getPhone, null, "${labelContentApplicant2UC}'s solicitor's phone number")
+                    .label("LabelRespSol-EmailHeader", "### Email updates and service")
+                    .label("LabelRespSol-Email", "Updates on the case will be sent to this email address")
+                    .mandatoryNoSummary(Solicitor::getEmail, null, "${labelContentApplicant2UC}'s solicitor's email")
+                    .mandatoryNoSummary(Solicitor::getAgreeToReceiveEmailsCheckbox, null, BLANK_LABEL)
                     .done()
                 .done();
     }
