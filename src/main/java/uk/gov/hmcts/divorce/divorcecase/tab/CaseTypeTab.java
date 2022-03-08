@@ -49,6 +49,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConfidentialRespondentTab(configBuilder);
         buildConfidentialApplicant2Tab(configBuilder);
         buildMarriageCertificateTab(configBuilder);
+        buildCivilPartnershipCertificateTab(configBuilder);
         buildNotesTab(configBuilder);
         buildGeneralReferralTab(configBuilder);
         buildConfidentialDocumentsTab(configBuilder);
@@ -152,13 +153,33 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildMarriageCertificateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("marriageDetails", "Marriage Certificate")
+            .showCondition("divorceOrDissolution = \"divorce\"")
             .field("labelContentTheApplicant2UC", "marriageMarriedInUk=\"NEVER_SHOW\"")
+            .field("labelContentMarriageOrCivilPartnership", "marriageMarriedInUk=\"NEVER_SHOW\"")
+            .field("labelContentMarriageOrCivilPartnershipUC", "marriageMarriedInUk=\"NEVER_SHOW\"")
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
             .field("marriageDate")
             .field("marriageMarriedInUk")
-            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\"")
-            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\"")
+            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\"")
+            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\"")
+            .field("marriageCertifyMarriageCertificateIsCorrect")
+            .field("marriageMarriageCertificateIsIncorrectDetails", "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
+            .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect=\"No\"");
+    }
+
+    private void buildCivilPartnershipCertificateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("civilPartnershipDetails", "Civil Partnership Certificate")
+            .showCondition("divorceOrDissolution = \"dissolution\"")
+            .field("labelContentTheApplicant2UC", "marriageMarriedInUk=\"NEVER_SHOW\"")
+            .field("labelContentMarriageOrCivilPartnership", "marriageMarriedInUk=\"NEVER_SHOW\"")
+            .field("labelContentMarriageOrCivilPartnershipUC", "marriageMarriedInUk=\"NEVER_SHOW\"")
+            .field("marriageApplicant1Name")
+            .field("marriageApplicant2Name")
+            .field("marriageDate")
+            .field("marriageMarriedInUk")
+            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\"")
+            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\"")
             .field("marriageCertifyMarriageCertificateIsCorrect")
             .field("marriageMarriageCertificateIsIncorrectDetails", "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
             .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect=\"No\"");
