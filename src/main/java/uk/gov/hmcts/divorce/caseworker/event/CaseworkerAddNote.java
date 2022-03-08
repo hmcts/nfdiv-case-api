@@ -61,7 +61,6 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
             .grant(CREATE_READ_UPDATE_DELETE,
                 SUPER_USER)
             .grant(READ,
-                SOLICITOR,
                 LEGAL_ADVISOR))
             .page("addCaseNotes")
             .pageLabel("Add case notes")
