@@ -23,30 +23,30 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 public class MarriageDetails {
 
     @CCD(
-        label = "The applicant's full name as on marriage certificate",
+        label = "The applicant's full name as on ${labelContentMarriageOrCivilPartnership} certificate",
         hint = "Exactly as it appears on the certificate. Include any additional text such as 'formally known as'."
     )
     private String applicant1Name;
 
     @CCD(
-        label = "${labelContentTheApplicant2UC} full name as on marriage certificate",
+        label = "${labelContentTheApplicant2UC} full name as on ${labelContentMarriageOrCivilPartnership} certificate",
         hint = "Exactly as it appears on the certificate. Include any additional text such as 'formally known as'."
     )
     private String applicant2Name;
 
     @CCD(
-        label = "Did the marriage take place in the UK?"
+        label = "Did the ${labelContentMarriageOrCivilPartnership} take place in the UK?"
     )
 
     private YesOrNo marriedInUk;
 
     @CCD(
-        label = "Marriage certificate in English?"
+        label = "${labelContentMarriageOrCivilPartnershipUC} certificate in English?"
     )
     private YesOrNo certificateInEnglish;
 
     @CCD(
-        label = "Marriage certificate translation"
+        label = "${labelContentMarriageOrCivilPartnershipUC} certificate translation"
     )
     private YesOrNo certifiedTranslation;
 
@@ -63,7 +63,7 @@ public class MarriageDetails {
     private String placeOfMarriage;
 
     @CCD(
-        label = "Marriage date",
+        label = "${labelContentMarriageOrCivilPartnershipUC} date",
         typeOverride = Date
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -78,12 +78,12 @@ public class MarriageDetails {
     private MarriageFormation formationType;
 
     @CCD(
-        label = "Is the marriage certificate correct?"
+        label = "Is the ${labelContentMarriageOrCivilPartnership} certificate correct?"
     )
     private YesOrNo certifyMarriageCertificateIsCorrect;
 
     @CCD(
-        label = "Why is the Marriage certification incorrect",
+        label = "Why is the ${labelContentMarriageOrCivilPartnershipUC} certification incorrect",
         hint = "e.g. wrong names, misspellings, poor quality photo or scan, damaged, or missing entirely"
     )
     private String marriageCertificateIsIncorrectDetails;
