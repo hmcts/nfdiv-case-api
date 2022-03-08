@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
+import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -50,15 +51,15 @@ public class BulkPrintService {
     public UUID print(final Print print) {
         final String authToken = authTokenGenerator.generate();
         List<Document> documents = print.getLetters().stream()
-            .map(document ->
+            .map(letter ->
                 new Document(
                     getEncoder().encodeToString(
                         getDocumentBytes(
-                            document.getDivorceDocument().getDocumentLink().getUrl(),
+                            letter,
                             authToken
                         )
                     ),
-                    document.getCount()
+                    letter.getCount()
                 )
             )
             .collect(toList());
@@ -76,7 +77,11 @@ public class BulkPrintService {
             .letterId;
     }
 
-    private byte[] getDocumentBytes(final String docUrl, final String authToken) {
+    private byte[] getDocumentBytes(final Letter letter, final String authToken) {
+        String docUrl = letter.getDivorceDocument() != null
+            ? letter.getDivorceDocument().getDocumentLink().getUrl()
+            : letter.getScannedDocument().getUrl().getUrl();
+
         String fileName = FilenameUtils.getName(docUrl);
         final String userAuth = request.getHeader(AUTHORIZATION);
         final var userDetails = idamService.retrieveUser(userAuth).getUserDetails();

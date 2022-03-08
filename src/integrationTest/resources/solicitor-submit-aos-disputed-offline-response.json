@@ -1,0 +1,70 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Gender": "female",
+    "applicant1ContactDetailsType": "public",
+    "applicant1FinancialOrder": "No",
+    "applicant1Offline": "Yes",
+    "applicant2LegalProceedings": "Yes",
+    "applicant2LegalProceedingsDetails": "some description",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "issueDate": "${json-unit.any-string}",
+    "confirmReadPetition": "Yes",
+    "jurisdictionAgree": "Yes",
+    "dateAosSubmitted": "${json-unit.any-string}",
+    "statementOfTruth": "Yes",
+    "prayerHasBeenGiven": "Yes",
+    "howToRespondApplication": "disputeDivorce",
+    "coRespondentAnswersLink": {
+      "document_url": "${json-unit.any-string}",
+      "document_filename": "respondentAnswers.pdf",
+      "document_binary_url": "${json-unit.any-string}"
+    },
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/51afe8e5-0061-42b6-83a2-4c122046901c",
+            "document_filename": "aosResponseLetter.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/51afe8e5-0061-42b6-83a2-4c122046901c/binary"
+          },
+          "documentFileName": "aosResponseLetter.pdf",
+          "documentType": "aosResponseLetter"
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
+            "document_filename": "respondentAnswers.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
+          },
+          "documentFileName": "respondentAnswers.pdf",
+          "documentType": "respondentAnswers"
+        }
+      }
+    ],
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": 1,
+    "scannedDocuments": [
+      {
+        "value": {
+          "subtype": "aos",
+          "url": {
+            "document_url": "http://localhost:8080/4cacfcd1-3588-40c2-94da-c22fb59e1068",
+            "document_binary_url": "http://localhost:8080/4cacfcd1-3588-40c2-94da-c22fb59e1068/binary"
+          }
+        }
+      }
+    ],
+    "warnings": []
+  },
+  "state": "Holding"
+}
