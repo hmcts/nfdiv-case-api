@@ -141,7 +141,11 @@
   },
   {
     "name": "soleOrApplicant1prayerFinancialOrderFor",
-    "value": "theSoleApplicantOrApplicant1,forTheChildren"
+    "value": "myself,children"
+  },
+  {
+    "name": "soleOrApplicant1prayerFinancialOrder",
+    "value": "Yes"
   },
   {
     "name": "soleApplicantOrApplicant1StatementOfTruth",

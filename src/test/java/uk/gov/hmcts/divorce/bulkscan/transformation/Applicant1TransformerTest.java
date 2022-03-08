@@ -16,6 +16,7 @@ import java.util.List;
 import static java.util.Collections.emptySet;
 import static joptsimple.internal.Strings.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.jsonToObject;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
@@ -77,7 +78,8 @@ public class Applicant1TransformerTest {
                 "Please review applicant1 solicitor name in the scanned form",
                 "Please review applicant1 solicitor firm in the scanned form",
                 "Please review applicant1 financial order for in scanned form",
-                "Please review existing or previous court cases in the scanned form"
+                "Please review existing or previous court cases in the scanned form",
+                "Please review applicant1 financial order prayer for in scanned form"
             );
 
         final var expectedApplicant1 =
@@ -120,6 +122,7 @@ public class Applicant1TransformerTest {
                 "Please review applicant1 solicitor firm in the scanned form",
                 "Please review applicant1 solicitor building and street in the scanned form",
                 "Please review applicant1 financial order for in scanned form",
+                "Please review applicant1 financial order prayer for in scanned form",
                 "Please review existing or previous court cases in the scanned form"
             );
 
@@ -161,7 +164,8 @@ public class Applicant1TransformerTest {
 
         assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
-                "Please review applicant1 solicitor details in the scanned form"
+                "Please review applicant1 solicitor details in the scanned form",
+                "Please review applicant1 financial order prayer for in scanned form"
             );
 
         final var expectedApplicant1 =
@@ -169,6 +173,78 @@ public class Applicant1TransformerTest {
                 "src/test/resources/transformation/output/applicant1-transformed-invalid-sol-warnings.json",
                 Applicant.class
             );
+
+        assertThat(transformedOutput.getCaseData().getApplicant1())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplicant1);
+    }
+
+    @Test
+    void shouldSuccessfullyTransformWithWarningsWhenFinancialOrderPrayerValueIsMissing() throws Exception {
+        String validApplicant1OcrJson = loadJson("src/test/resources/transformation/input/valid-applicant1-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicant1OcrJson, new TypeReference<>() {
+        });
+
+        OcrDataFields ocrData = transformOcrMapToObject(ocrDataFields);
+        ocrData.setSoleOrApplicant1FinancialOrder("Yes");
+        ocrData.setSoleOrApplicant1prayerFinancialOrder(EMPTY);
+
+        final var caseData = CaseData.builder().build();
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(ocrData)
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = applicant1Transformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getTransformationWarnings())
+            .containsExactlyInAnyOrder(
+                "Please review applicant1 financial order prayer for in scanned form"
+            );
+
+        final var expectedApplicant1 =
+            jsonToObject("src/test/resources/transformation/output/applicant1-transformed.json", Applicant.class);
+
+        assertThat(transformedOutput.getCaseData().getApplicant1())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplicant1);
+    }
+
+
+    @Test
+    void shouldSuccessfullyTransformWithWarningsWhenFinancialOrderPrayerValueIsAvailableAndFinancialOrderIsEmpty() throws Exception {
+        String validApplicant1OcrJson = loadJson("src/test/resources/transformation/input/valid-applicant1-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicant1OcrJson, new TypeReference<>() {
+        });
+
+        OcrDataFields ocrData = transformOcrMapToObject(ocrDataFields);
+        ocrData.setSoleOrApplicant1FinancialOrder("No");
+        ocrData.setSoleOrApplicant1FinancialOrderFor(EMPTY);
+        ocrData.setSoleOrApplicant1prayerFinancialOrder("myself,children");
+
+        final var caseData = CaseData.builder().build();
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(ocrData)
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = applicant1Transformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getTransformationWarnings())
+            .containsExactlyInAnyOrder(
+                "Please review applicant1 financial order prayer for in scanned form"
+            );
+
+        final var expectedApplicant1 =
+            jsonToObject("src/test/resources/transformation/output/applicant1-transformed.json", Applicant.class);
+        expectedApplicant1.setFinancialOrdersFor(emptySet());
+        expectedApplicant1.setFinancialOrder(NO);
 
         assertThat(transformedOutput.getCaseData().getApplicant1())
             .usingRecursiveComparison()

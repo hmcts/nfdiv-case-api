@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -135,6 +136,14 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
                 transformationDetails.getTransformationWarnings().add("Please review applicant2 financial order for in scanned form");
             }
         }
+        if (OCR_FIELD_VALUE_YES.equalsIgnoreCase(ocrDataFields.getApplicant2FinancialOrder())
+            && isEmpty(ocrDataFields.getApplicant2PrayerFinancialOrder())) {
+            transformationDetails.getTransformationWarnings().add("Please review applicant2 financial order prayer for in scanned form");
+        } else if (OCR_FIELD_VALUE_NO.equalsIgnoreCase(ocrDataFields.getApplicant2FinancialOrder())
+            && isNotEmpty(ocrDataFields.getApplicant2PrayerFinancialOrder())) {
+            transformationDetails.getTransformationWarnings().add("Please review applicant2 financial order prayer for in scanned form");
+        }
+
         caseData.getApplicant2().setFinancialOrdersFor(app2FinancialOrderFor);
     }
 
