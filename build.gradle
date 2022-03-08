@@ -79,6 +79,8 @@ configurations {
   functionalTestRuntime.extendsFrom testRuntime
   integrationTestImplementation.extendsFrom testImplementation
   integrationTestRuntime.extendsFrom testRuntime
+  cftlibTestImplementation.extendsFrom testImplementation
+  cftlibTestRuntime.extendsFrom testRuntime
 }
 
 tasks.withType(JavaCompile) {
