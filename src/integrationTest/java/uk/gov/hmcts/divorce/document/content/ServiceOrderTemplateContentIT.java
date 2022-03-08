@@ -87,7 +87,7 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("contactdivorce@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
             entry(CASE_REFERENCE, 1616591401473378L),
@@ -113,7 +113,7 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("civilpartnership.case@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
             entry(CASE_REFERENCE, 1616591401473378L),
@@ -138,7 +138,7 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("contactdivorce@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
             entry(CASE_REFERENCE, 1616591401473378L),
@@ -163,7 +163,7 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("civilpartnership.case@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
             entry(CASE_REFERENCE, 1616591401473378L),
@@ -205,9 +205,9 @@ public class ServiceOrderTemplateContentIT {
             .centreName("HMCTS Digital Divorce and Dissolution")
             .emailAddress("divorcecase@justice.gov.uk")
             .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 12706")
+            .poBox("PO Box 13226")
             .town("Harlow")
-            .postcode("CM20 9QT")
+            .postcode("CM20 9UG")
             .phoneNumber("0300 303 0642")
             .build();
     }

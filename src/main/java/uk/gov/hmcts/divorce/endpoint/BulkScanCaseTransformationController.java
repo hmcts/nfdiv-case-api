@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkscan.transformation.BulkScanService;
-import uk.gov.hmcts.divorce.endpoint.model.ExceptionRecord;
+import uk.gov.hmcts.divorce.endpoint.model.TransformationInput;
 import uk.gov.hmcts.reform.bsp.common.config.BulkScanEndpoints;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.CaseCreationDetails;
 import uk.gov.hmcts.reform.bsp.common.model.transformation.output.SuccessfulTransformationResponse;
@@ -55,13 +55,13 @@ public class BulkScanCaseTransformationController {
     })
     public ResponseEntity<SuccessfulTransformationResponse> transformExceptionRecordIntoCase(
         @RequestHeader(name = SERVICE_AUTHORIZATION) String s2sAuthToken,
-        @Valid @RequestBody ExceptionRecord exceptionRecord
+        @Valid @RequestBody TransformationInput transformationInput
     ) {
-        String exceptionRecordId = exceptionRecord.getId();
+        String exceptionRecordId = transformationInput.getId();
 
         log.info("Transforming Exception Record to case with Case ID: {}", exceptionRecordId);
 
-        Map<String, Object> transformedCaseData = bulkScanService.transformBulkScanForm(exceptionRecord);
+        Map<String, Object> transformedCaseData = bulkScanService.transformBulkScanForm(transformationInput);
 
         SuccessfulTransformationResponse callbackResponse = SuccessfulTransformationResponse.builder()
             .caseCreationDetails(

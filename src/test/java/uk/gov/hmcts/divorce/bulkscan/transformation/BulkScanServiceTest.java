@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.endpoint.model.ExceptionRecord;
+import uk.gov.hmcts.divorce.endpoint.model.TransformationInput;
 
 import java.util.Map;
 
@@ -25,7 +25,7 @@ public class BulkScanServiceTest {
 
     @Test
     void shouldValidateOcrRequestForD8FormType() {
-        var exceptionRecord = ExceptionRecord.builder().build();
+        var exceptionRecord = TransformationInput.builder().build();
         Map<String, Object> transformedData =
             Map.of(
                 "applicationForDivorce", "true",

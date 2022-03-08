@@ -143,10 +143,12 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
+                null,
                 1
             ),
             new Letter(
                 divorceDocumentListValue2.getValue(),
+                null,
                 2
             )
         );
@@ -214,6 +216,7 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
+                null,
                 1
             )
         );
@@ -243,6 +246,7 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
+                null,
                 1
             )
         );
@@ -271,6 +275,7 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
+                null,
                 1
             )
         );
@@ -313,12 +318,12 @@ class BulkPrintServiceTest {
             divorceDocumentListValue.getValue().getDocumentLink().getUrl());
 
         given(documentManagementClient.downloadBinary(
-                APP_1_SOL_AUTH_TOKEN,
-                TEST_SERVICE_AUTH_TOKEN,
-                solicitorRolesCsv,
-                userId,
-                documentUuid
-            ))
+            APP_1_SOL_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            solicitorRolesCsv,
+            userId,
+            documentUuid
+        ))
             .willReturn(responseEntitySupplier.get());
 
         return divorceDocumentListValue;

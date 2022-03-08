@@ -26,9 +26,8 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.4'
   id 'com.github.ben-manes.versions' version '0.41.0'
-  id 'hmcts.ccd.sdk' version '0.27.0'
   id 'com.github.hmcts.rse-cft-lib' version 'DEV-SNAPSHOT'
-
+  id 'hmcts.ccd.sdk' version '0.27.2'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -183,6 +182,7 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/common/ccd/**',
   '**/uk/gov/hmcts/divorce/common/event/CreateTestCase.java',
   '**/uk/gov/hmcts/divorce/CaseApiApplication.java',
+  '**/uk/gov/hmcts/divorce/notification/GetAllTemplatesFromNotify.java',
   '**/uk/gov/hmcts/divorce/common/config/**'
 ]
 
@@ -247,7 +247,7 @@ ext.libraries = [
 
 dependencies {
 // uncomment for local version
-//implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
+// implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
@@ -270,7 +270,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: versions.springBoot
-  implementation group: 'org.springframework.retry', name: 'spring-retry', version: '1.3.1'
+  implementation group: 'org.springframework.retry', name: 'spring-retry', version: '1.3.2'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.1.1'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.17.2-RELEASE'

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -19,6 +21,10 @@ import java.util.stream.Stream;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.joinWith;
+import static org.apache.commons.lang3.StringUtils.removeStart;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -32,6 +38,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @Builder
 public class Applicant {
+
+    private static final String COMMA_SEPARATOR = ",";
+    private static final int ADDRESS_LINE_MAX_CHARS = 25;
 
     @CCD(label = "First name")
     private String firstName;
@@ -127,7 +136,7 @@ public class Applicant {
     private Set<FinancialOrderFor> financialOrdersFor;
 
     @CCD(
-        label = "Are there any existing or previous court proceedings relating to the ${labelContentMarriageOrCivilPartnership}?"
+        label = "Are there any other legal proceedings relating to the ${labelContentMarriageOrCivilPartnership}?"
     )
     private YesOrNo legalProceedings;
 
@@ -149,9 +158,8 @@ public class Applicant {
     )
     private YesOrNo continueApplication;
 
-    @CCD(
-        label = "The applicant is offline."
-    )
+    @CCD(label = "Offline")
+    @JsonProperty("Offline") // required because isOffline() confuses Jackson
     private YesOrNo offline;
 
     @JsonIgnore
@@ -172,9 +180,9 @@ public class Applicant {
     }
 
     @JsonIgnore
-    // TODO: use getCorrespondenceAddress
     public boolean isBasedOverseas() {
-        return nonNull(address)
+        return !isRepresented()
+            && nonNull(address)
             && !isBlank(address.getCountry())
             && !("UK").equalsIgnoreCase(address.getCountry())
             && !("United Kingdom").equalsIgnoreCase(address.getCountry());
@@ -213,12 +221,28 @@ public class Applicant {
         }
 
         if (null != address) {
+            String formattedAddressLine1;
+            String formattedAddressLine2;
+            // Split the string after 25 characters so that it can fit in the address window of envelope
+            if (address.getAddressLine1().length() > ADDRESS_LINE_MAX_CHARS) {
+                formattedAddressLine1 = substringBefore(address.getAddressLine1(), COMMA_SEPARATOR);
+                formattedAddressLine2 = joinWith(
+                    ",",
+                    substringAfter(address.getAddressLine1(), ","),
+                    address.getAddressLine2()
+                );
+                // remove any space if present due to split
+                formattedAddressLine2 = removeStart(formattedAddressLine2, StringUtils.SPACE);
+            } else {
+                formattedAddressLine1 = address.getAddressLine1();
+                formattedAddressLine2 = address.getAddressLine2();
+            }
+
             return Stream.of(
-                    address.getAddressLine1(),
-                    address.getAddressLine2(),
+                    formattedAddressLine1,
+                    formattedAddressLine2,
                     address.getAddressLine3(),
                     address.getPostTown(),
-                    address.getCounty(),
                     address.getPostCode()
                 )
                 .filter(value -> value != null && !value.isEmpty())

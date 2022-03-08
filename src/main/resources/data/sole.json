@@ -8,18 +8,18 @@
   "applicant1LastName": "test_last_name",
   "applicant1Email": "TEST_SOLICITOR@mailinator.com",
   "applicant1Address": {
-    "addressLine1": "221a Baker Street",
-    "postTown": "London",
-    "county": "Greater London",
-    "postCode": "NW1 6XE",
-    "country": "United Kingdom"
+    "AddressLine1": "221a Baker Street",
+    "PostTown": "London",
+    "County": "Greater London",
+    "PostCode": "NW1 6XE",
+    "Country": "United Kingdom"
   },
   "applicant2Address": {
-    "addressLine1": "221a Baker Street",
-    "postTown": "London",
-    "county": "Greater London",
-    "postCode": "NW1 6XE",
-    "country": "United Kingdom"
+    "AddressLine1": "221a Baker Street",
+    "PostTown": "London",
+    "County": "Greater London",
+    "PostCode": "NW1 6XE",
+    "Country": "United Kingdom"
   },
   "dueDate": "2020-04-28",
   "issueDate": "2020-05-28",
@@ -94,6 +94,17 @@
   "labelContentApplicant2UC": "The respondent",
   "labelContentUnionType": "divorce",
   "labelContentUnionTypeUC": "Divorce",
+  "labelContentApplicantOrApplicant1": "the applicant’s",
+  "labelContentApplicantsOrApplicant1s": "Applicant’s",
+  "labelContentTheApplicantOrApplicant1": "the applicant",
+  "labelContentRespondentsOrApplicant2s": "Respondent's",
+  "labelContentDivorceOrCivilPartnershipApplication": "divorce application",
+  "labelContentDivorceOrEndCivilPartnership": "for divorce",
+  "labelContentDivorceOrCivilPartnership": "divorce",
+  "labelContentFinaliseDivorceOrEndCivilPartnership": "finalise the divorce",
+  "labelContentMarriageOrCivilPartnership": "marriage",
+  "labelContentDivorceOrLegallyEnd": "get a divorce",
+  "labelContentGotMarriedOrFormedCivilPartnership": "got married",
   "coApplicant1IsSubmitted": "No",
   "coApplicant1IsDrafted": "No",
   "isJudicialSeparation": "No"

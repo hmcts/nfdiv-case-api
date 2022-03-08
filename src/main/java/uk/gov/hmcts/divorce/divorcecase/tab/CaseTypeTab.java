@@ -7,10 +7,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
@@ -30,6 +34,8 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private static final String CO_GRANTED_NO = "coGranted=\"No\"";
+    private static final String IS_JOINT = "applicationType=\"jointApplication\"";
+    private static final String IS_JOINT_AND_HWF_ENTERED = "applicationType=\"jointApplication\" AND applicant2HWFReferenceNumber=\"*\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -70,7 +76,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR,
                 SUPER_USER, SOLICITOR)
             .showCondition("applicationType=\"soleApplication\" AND "
-                + notShowForState(Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments))
+                + notShowForState(
+                    Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
+                    AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
             .label("LabelAosTabOnlineResponse-Heading", null, "## This is an online AoS response")
             .field("confirmReadPetition")
             .field("jurisdictionAgree")
@@ -88,7 +96,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildPaymentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
-            .field("applicant1HWFReferenceNumber");
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR)
+            .label("LabelApplicant1-PaymentHeading", IS_JOINT, "### The applicant")
+            .field("applicant1HWFReferenceNumber")
+            .label("LabelApplicant2-PaymentHeading", IS_JOINT_AND_HWF_ENTERED, "### ${labelContentTheApplicant2UC}")
+            .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED);
     }
 
     private void buildLanguageTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -103,6 +115,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("documents", "Documents")
             .field(CaseData::getDocumentsGenerated)
             .field(CaseData::getApplicant1DocumentsUploaded)
+            .field(CaseData::getApplicant2DocumentsUploaded)
             .field(CaseData::getScannedDocuments)
             .field(CaseData::getGeneralOrders)
             .field(CaseData::getDocumentsUploaded)
@@ -114,7 +127,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("ConfidentialApplicant", "Confidential Applicant")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_1_SOLICITOR, SUPER_USER)
             .showCondition("applicant1ContactDetailsType=\"private\"")
-            .field("applicant1CorrespondenceAddress")
             .field("applicant1PhoneNumber")
             .field("applicant1Email")
             .field("applicant1Address");
@@ -154,6 +166,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildNotesTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("notes", "Notes")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .field(CaseData::getNotes);
     }
 
@@ -187,11 +200,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("receivedServiceApplicationDate")
             .field("receivedServiceAddedDate")
             .field("alternativeServiceType")
-            .field("paymentMethod")
-            .field("dateOfPayment", "paymentMethod=\"*\"")
-            .field("feeAccountNumber", "paymentMethod=\"feePayByAccount\"")
-            .field("feeAccountReferenceNumber", "paymentMethod=\"feePayByAccount\"")
-            .field("helpWithFeesReferenceNumber", "paymentMethod=\"feePayByHelp\"")
+            .field("servicePaymentFeePaymentMethod")
+            .field("dateOfPayment", "servicePaymentFeePaymentMethod=\"*\"")
+            .field("servicePaymentFeeAccountNumber", "servicePaymentFeePaymentMethod=\"feePayByAccount\"")
+            .field("servicePaymentFeeAccountReferenceNumber", "servicePaymentFeePaymentMethod=\"feePayByAccount\"")
+            .field("servicePaymentFeeHelpWithFeesReferenceNumber", "servicePaymentFeePaymentMethod=\"feePayByHelp\"")
             .label("bailiffLocalCourtDetailsLabel",
                 "localCourtName=\"*\" OR localCourtEmail=\"*\"", "### Bailiff local court details")
             .field("localCourtName")
@@ -224,6 +237,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplicant1SubmittedDate")
             .field("coApplicant1ChangeOrAddToApplication")
             .field("coApplicant1StatementOfTruth")
+            .field("coApplicant1SolicitorName")
+            .field("coApplicant1SolicitorFirm")
+            .field("coApplicant1SolicitorAdditionalComments")
             .label("labelConditionalOrderDetails-Applicant2",
                 "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
                 "### Applicant 2")
@@ -232,10 +248,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplicant2SubmittedDate")
             .field("coApplicant2ChangeOrAddToApplication")
             .field("coApplicant2StatementOfTruth")
-            .field("coSolicitorName")
-            .field("coSolicitorFirm")
-            .field("coSolicitorAdditionalComments")
-            .field("coCourtName")
+            .field("coApplicant2SolicitorName")
+            .field("coApplicant2SolicitorFirm")
+            .field("coApplicant2SolicitorAdditionalComments")
+            .field("coCourt")
             .field("coDateAndTimeOfHearing")
             .field("coPronouncementJudge");
     }
@@ -291,10 +307,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 FinalOrderOverdue,
                 FinalOrderComplete))
             .label("labelFinalOrderDetails-SoleApplicant",
-                "applicationType=\"soleApplication\" AND doesApplicantWantToApplyForFinalOrder=\"*\"",
+                "applicationType=\"soleApplication\" AND doesApplicant1WantToApplyForFinalOrder=\"*\"",
                 "### Applicant")
-            .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicantWantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("doesApplicantWantToApplyForFinalOrder")
+            .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
             .field("applicant1FinalOrderStatementOfTruth")
             .field("granted")

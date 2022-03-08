@@ -11,8 +11,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 @Component
 public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
-    private static final String APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE = "applicant2ContactDetailsType!=\"private\"";
-    private static final String APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC = "applicant1ContactDetailsType=\"public\"";
+    private static final String APPLICANT_2_CONTACT_DETAILS_TYPE_PUBLIC = "applicant2ContactDetailsType!=\"private\"";
+    private static final String APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC = "applicant1ContactDetailsType!=\"private\"";
     private static final String APPLICATION_TYPE_NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
 
     @Override
@@ -55,13 +55,13 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("divorceWho")
             .field("applicant1ScreenHasMarriageBroken")
             .field("applicant1PcqId")
+            .field("applicant1Offline")
             .label("LabelApplicant1DetailsAreConfidential-Heading",
                 "applicant1ContactDetailsType=\"private\"",
                 "#### The applicant's contact details are confidential")
             .field("applicant1PhoneNumber", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
             .field("applicant1Email", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
             .field("applicant1Address", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
-            .field("applicant1CorrespondenceAddress", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
             .field("applicant1IsApplicant2Represented")
 
             //Applicant 1 Solicitor
@@ -75,7 +75,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1SolicitorPhone", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorEmail", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"Yes\"")
-            .field("applicant1SolicitorAgreeToReceiveEmails", "applicant1SolicitorRepresented=\"Yes\"");
+            .field("applicant1SolicitorAgreeToReceiveEmailsCheckbox", "applicant1SolicitorRepresented=\"Yes\"");
     }
 
     private void addApplicant2(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -94,12 +94,13 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
                 "applicant2ContactDetailsType=\"private\"",
                 "#### ${labelContentTheApplicant2UC}'s contact details are confidential")
             .label("LabelApplicant2DetailsAreShareable-Heading",
-                APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE,
+                APPLICANT_2_CONTACT_DETAILS_TYPE_PUBLIC,
                 "#### ${labelContentTheApplicant2UC}'s contact details may be shared")
-            .field("applicant2PhoneNumber", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
-            .field("applicant2Email", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
-            .field("applicant2Address", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
+            .field("applicant2PhoneNumber", APPLICANT_2_CONTACT_DETAILS_TYPE_PUBLIC)
+            .field("applicant2Email", APPLICANT_2_CONTACT_DETAILS_TYPE_PUBLIC)
+            .field("applicant2Address", APPLICANT_2_CONTACT_DETAILS_TYPE_PUBLIC)
             .field("applicant2AgreedToReceiveEmails")
+            .field("applicant2Offline")
 
             //Applicant 2 Solicitor
             .field("applicant2SolicitorRepresented", APPLICATION_TYPE_NEVER_SHOW)
@@ -120,6 +121,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelMarriage-Heading", null, "### Marriage and certificate")
             .field("labelContentTheApplicant2UC", APPLICATION_TYPE_NEVER_SHOW)
             .field("labelContentTheApplicant2", APPLICATION_TYPE_NEVER_SHOW)
+            .field("labelContentTheApplicantOrApplicant1", APPLICATION_TYPE_NEVER_SHOW)
+            .field("labelContentGotMarriedOrFormedCivilPartnership", APPLICATION_TYPE_NEVER_SHOW)
             .field("marriageDate")
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")

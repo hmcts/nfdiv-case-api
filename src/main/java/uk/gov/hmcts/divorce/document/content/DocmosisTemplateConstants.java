@@ -57,7 +57,6 @@ public final class DocmosisTemplateConstants {
     public static final String HAS_OTHER_COURT_CASES_APPLICANT_2 = "hasOtherCourtCasesApplicant2";
     public static final String APPLICANT_1_COURT_CASE_DETAILS = "applicant1CourtCaseDetails";
     public static final String APPLICANT_2_COURT_CASE_DETAILS = "applicant2CourtCaseDetails";
-    public static final String APPLICANT_1_KNOWS_RESPONDENTS_SOLICITOR_DETAILS = "applicant1KnowsRespondentsSolicitorDetails";
     public static final String APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS = "applicant1HasEnteredRespondentsSolicitorDetails";
     public static final String APPLICANT_2_SOLICITOR_NAME = "applicant2SolicitorName";
     public static final String APPLICANT_2_SOLICITOR_EMAIL = "applicant2SolicitorEmail";
@@ -74,8 +73,8 @@ public final class DocmosisTemplateConstants {
     public static final String RESPONDENT_SOLICITOR_ADDRESS = "respondentSolicitorAddress";
     public static final String NOT_GIVEN = "not given";
     public static final String REFUSAL_REASON = "refusalReasons";
-    public static final String CONTACT_DIVORCE_JUSTICE_GOV_UK = "contactdivorce@justice.gov.uk";
-    public static final String CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK = "civilpartnership.case@justice.gov.uk";
+    public static final String CONTACT_DIVORCE_JUSTICE_GOV_UK = "divorcecase@justice.gov.uk";
+    public static final String CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK = "divorcecase@justice.gov.uk";
 
     public static final String PRONOUNCEMENT_JUDGE = "pronouncementJudge";
     public static final String COURT_NAME = "courtName";

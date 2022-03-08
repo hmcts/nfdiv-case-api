@@ -2,6 +2,7 @@
   "divorceOrDissolution": "divorce",
   "applicant1FirstName": "John",
   "applicant1LastName": "Smith",
+  "applicant1Email": "test@test.com",
   "receivedServiceApplicationDate": "2021-06-18",
   "serviceApplicationDecisionDate": "2021-06-18",
   "serviceApplicationGranted": "No",

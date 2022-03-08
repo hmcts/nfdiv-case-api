@@ -58,7 +58,6 @@
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "dataVersion": "${json-unit.any-number}",
     "issueDate": "2021-04-28",
-    "warnings": [],
-    "transformationAndOcrWarnings": []
+    "warnings": []
   }
 }

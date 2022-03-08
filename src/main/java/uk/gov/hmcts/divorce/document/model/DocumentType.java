@@ -146,7 +146,10 @@ public enum DocumentType implements HasLabel {
     SOLICITOR_SERVICE("Solicitor Service"),
 
     @JsonProperty("welshTranslation")
-    WELSH_TRANSLATION("Welsh Translation");
+    WELSH_TRANSLATION("Welsh Translation"),
+
+    @JsonProperty("aosResponseLetter")
+    AOS_RESPONSE_LETTER("Aos response letter");
 
     private final String label;
 }

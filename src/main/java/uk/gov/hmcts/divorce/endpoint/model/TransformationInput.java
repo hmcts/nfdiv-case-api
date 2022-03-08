@@ -15,13 +15,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExceptionRecord {
+public class TransformationInput {
 
     @JsonProperty("case_type_id")
     private String caseTypeId;
 
+    // Deprecated and is available to support older  version
     @JsonProperty("id")
     private String id;
+
+    @JsonProperty("exception_record_id")
+    private String exceptionRecordId;
 
     @JsonProperty("po_box")
     private String poBox;
@@ -34,5 +38,11 @@ public class ExceptionRecord {
 
     @JsonProperty("ocr_data_fields")
     private List<OcrDataField> ocrDataFields;
+
+    @JsonProperty("is_automated_process")
+    private boolean automatedProcessCreation;
+
+    @JsonProperty("envelope_id")
+    private String envelopeId;
 
 }
