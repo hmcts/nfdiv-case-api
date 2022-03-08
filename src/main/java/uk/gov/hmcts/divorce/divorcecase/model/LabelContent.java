@@ -48,8 +48,11 @@ public class LabelContent {
     @CCD(label = "Divorce or civil partnership")
     private String finaliseDivorceOrEndCivilPartnership;
 
-    @CCD(label = "Marriage or civil partnership")
+    @CCD(label = "marriage or civil partnership")
     private String marriageOrCivilPartnership;
+
+    @CCD(label = "Marriage or civil partnership")
+    private String marriageOrCivilPartnershipUC;
 
     @CCD(label = "Get a divorce or legally end it")
     private String divorceOrLegallyEnd;
@@ -75,6 +78,7 @@ public class LabelContent {
             divorceOrCivilPartnership = "divorce";
             finaliseDivorceOrEndCivilPartnership = "finalise the divorce";
             marriageOrCivilPartnership = "marriage";
+            marriageOrCivilPartnershipUC = "Marriage";
             divorceOrLegallyEnd = "get a divorce";
             gotMarriedOrFormedCivilPartnership = "got married";
         } else {
@@ -85,6 +89,7 @@ public class LabelContent {
             divorceOrCivilPartnership = "civil partnership";
             finaliseDivorceOrEndCivilPartnership = "end civil partnership";
             marriageOrCivilPartnership = "civil partnership";
+            marriageOrCivilPartnershipUC = "Civil partnership";
             divorceOrLegallyEnd = "legally end it";
             gotMarriedOrFormedCivilPartnership = "formed their civil partnership";
         }
