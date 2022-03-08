@@ -50,7 +50,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
             );
 
         } else if (!applicationType.isSole() && (isApplicant1Represented && !isApplicant2Represented)
-            || (!isApplicant1Represented && !isApplicant2Represented)) {
+            || !isApplicant1Represented && !isApplicant2Represented) {
             generateNoticeOfProceedings(
                 caseData,
                 caseId,
