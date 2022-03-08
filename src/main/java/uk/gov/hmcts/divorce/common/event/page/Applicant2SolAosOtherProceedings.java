@@ -11,7 +11,7 @@ public class Applicant2SolAosOtherProceedings implements CcdPageConfiguration {
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
             .page("Applicant2SolAosOtherProceedings")
-            .pageLabel("Are there any other legal proceedings outside of England and Wales?")
+            .pageLabel("Other legal proceedings")
             .complex(CaseData::getApplicant2)
             .mandatory(Applicant::getLegalProceedings)
             .mandatory(Applicant::getLegalProceedingsDetails, "applicant2LegalProceedings=\"Yes\"")
