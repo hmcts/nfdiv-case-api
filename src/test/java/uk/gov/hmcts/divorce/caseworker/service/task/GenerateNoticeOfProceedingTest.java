@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -49,7 +50,7 @@ class GenerateNoticeOfProceedingTest {
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplicationWhenRespondentIsNotOverseas() {
 
-        final CaseData caseData = soleCaseData();
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("UK").build());
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -66,7 +67,7 @@ class GenerateNoticeOfProceedingTest {
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplicationWhenRespondentIsOverseas() {
 
-        final CaseData caseData = soleCaseData();
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -83,7 +84,7 @@ class GenerateNoticeOfProceedingTest {
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1RepresentedApp2Not() {
 
-        final CaseData caseData = jointCaseData(YES, NO);
+        final CaseData caseData = caseData(JOINT_APPLICATION, YES, NO);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -100,7 +101,7 @@ class GenerateNoticeOfProceedingTest {
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1NotRepresentedApp2Not() {
 
-        final CaseData caseData = jointCaseData(NO, NO);
+        final CaseData caseData = caseData(JOINT_APPLICATION, NO, NO);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -117,10 +118,8 @@ class GenerateNoticeOfProceedingTest {
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1RepresentedApp2Represented() {
 
-        final CaseData caseData = jointCaseData(YES, YES);
+        final CaseData caseData = caseData(JOINT_APPLICATION, YES, YES);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
-
-        final Map<String, Object> templateContent = new HashMap<>();
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -150,25 +149,9 @@ class GenerateNoticeOfProceedingTest {
         return caseDetails;
     }
 
-    private CaseData soleCaseData() {
+    private CaseData caseData(ApplicationType applicationType, YesOrNo isApp1Represented, YesOrNo isApp2Represented) {
         return CaseData.builder()
-            .applicationType(SOLE_APPLICATION)
-            .applicant1(Applicant.builder()
-                .solicitorRepresented(NO)
-                .languagePreferenceWelsh(NO)
-                .build())
-            .applicant2(Applicant.builder()
-                .solicitorRepresented(NO)
-                .build())
-            .application(Application.builder()
-                .solSignStatementOfTruth(NO)
-                .build())
-            .build();
-    }
-
-    private CaseData jointCaseData(YesOrNo isApp1Represented, YesOrNo isApp2Represented) {
-        return CaseData.builder()
-            .applicationType(JOINT_APPLICATION)
+            .applicationType(applicationType)
             .applicant1(Applicant.builder()
                 .solicitorRepresented(isApp1Represented)
                 .languagePreferenceWelsh(NO)
@@ -181,5 +164,4 @@ class GenerateNoticeOfProceedingTest {
                 .build())
             .build();
     }
-
 }
