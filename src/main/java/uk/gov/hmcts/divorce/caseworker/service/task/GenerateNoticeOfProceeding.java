@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
@@ -50,15 +49,15 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 templateId
             );
 
-        } else if (!applicationType.isSole() && isApplicant1Represented && !isApplicant2Represented) {
-            // Joint Application, App 1 is solicitor, App 2 is citizen
+        } else if (!applicationType.isSole() && (isApplicant1Represented && !isApplicant2Represented)
+            || (!isApplicant1Represented && !isApplicant2Represented)) {
             generateNoticeOfProceedings(
                 caseData,
                 caseId,
                 JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID
             );
         } else {
-            log.info("Not generating notice of proceedings(sole) as application type needs to sole and should be citizen application");
+            log.info("Not generating notice of proceedings for case id {} as did not match required criteria to generate document", caseId);
         }
 
         return caseDetails;
