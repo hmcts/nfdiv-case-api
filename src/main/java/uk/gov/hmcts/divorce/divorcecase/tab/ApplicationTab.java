@@ -118,18 +118,21 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void addMarriageAndCertificate(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
-            .label("LabelMarriage-Heading", null, "### Marriage and certificate")
+            .label("LabelMarriage-Heading", "divorceOrDissolution = \"divorce\"", "### Marriage and certificate")
+            .label("LabelCivilPartnership-Heading", "divorceOrDissolution = \"dissolution\"", "### Civil partnership and certificate")
             .field("labelContentTheApplicant2UC", APPLICATION_TYPE_NEVER_SHOW)
             .field("labelContentTheApplicant2", APPLICATION_TYPE_NEVER_SHOW)
             .field("labelContentTheApplicantOrApplicant1", APPLICATION_TYPE_NEVER_SHOW)
             .field("labelContentGotMarriedOrFormedCivilPartnership", APPLICATION_TYPE_NEVER_SHOW)
+            .field("labelContentMarriageOrCivilPartnership", APPLICATION_TYPE_NEVER_SHOW)
+            .field("labelContentMarriageOrCivilPartnershipUC", APPLICATION_TYPE_NEVER_SHOW)
             .field("marriageDate")
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
             .field("marriageFormationType")
             .field("marriageMarriedInUk")
-            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\"")
-            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\"")
+            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\"")
+            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\"")
             .field("marriageCertificateInEnglish")
             .field("marriageCertifiedTranslation", "marriageCertificateInEnglish=\"No\"");
     }

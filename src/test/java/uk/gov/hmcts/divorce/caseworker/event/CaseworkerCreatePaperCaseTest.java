@@ -62,6 +62,7 @@ public class CaseworkerCreatePaperCaseTest {
             .applicantOrApplicant1("applicant 1’s")
             .divorceOrCivilPartnership("divorce")
             .finaliseDivorceOrEndCivilPartnership("finalise the divorce")
+            .marriageOrCivilPartnershipUC("Marriage")
             .marriageOrCivilPartnership("marriage")
             .divorceOrLegallyEnd("get a divorce")
             .applicantsOrApplicant1s("Applicant 1’s")
