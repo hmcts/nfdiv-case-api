@@ -10,7 +10,7 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 public class TestWithCCD extends CftlibTest {
 
     @Test
-    public void boots() {
+    public void bootsWithCCD() {
     }
 
 }
