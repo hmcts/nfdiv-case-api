@@ -57,7 +57,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     private Map<String, String> disputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(SUBMISSION_RESPONSE_DATE,
-            caseData.getAcknowledgementOfService().getDateAosSubmitted().plusDays(disputeDueDateOffsetDays).format(DATE_TIME_FORMATTER));
+            caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 }
