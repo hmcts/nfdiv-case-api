@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -196,6 +197,14 @@ public class Applicant1Transformer implements Function<TransformationDetails, Tr
             if (!isEmpty(app1FinancialOrderFor)) {
                 transformationDetails.getTransformationWarnings().add("Please review applicant1 financial order for in scanned form");
             }
+        }
+
+        if (OCR_FIELD_VALUE_YES.equalsIgnoreCase(ocrDataFields.getSoleOrApplicant1FinancialOrder())
+            && isEmpty(ocrDataFields.getSoleOrApplicant1prayerFinancialOrder())) {
+            transformationDetails.getTransformationWarnings().add("Please review applicant1 financial order prayer for in scanned form");
+        } else if (OCR_FIELD_VALUE_NO.equalsIgnoreCase(ocrDataFields.getSoleOrApplicant1FinancialOrder())
+            && isNotEmpty(ocrDataFields.getSoleOrApplicant1prayerFinancialOrder())) {
+            transformationDetails.getTransformationWarnings().add("Please review applicant1 financial order prayer for in scanned form");
         }
         caseData.getApplicant1().setFinancialOrdersFor(app1FinancialOrderFor);
     }
