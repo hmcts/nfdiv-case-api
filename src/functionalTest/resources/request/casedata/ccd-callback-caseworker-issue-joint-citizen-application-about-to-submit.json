@@ -7,7 +7,7 @@
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant1LanguagePreferenceWelsh": "No",
   "applicant1ContactDetailsType": "private",
-  "applicant1SolicitorRepresented": "Yes",
+  "applicant1SolicitorRepresented": "No",
   "applicant1Gender": "female",
   "applicant2FirstName": "test_first_name",
   "applicant2MiddleName": "test_middle_name",
