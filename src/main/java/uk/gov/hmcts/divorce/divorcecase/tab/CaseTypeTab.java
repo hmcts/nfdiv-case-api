@@ -80,7 +80,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 + notShowForState(
                     Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
                     AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
-            .label("LabelAosTabOnlineResponse-Heading", null, "## This is an online AoS response")
+            .field("applicant2Offline", "applicationType=\"NEVER_SHOW\"")
+            .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"", "## This is an online AoS response")
+            .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"", "## This is an offline AoS response")
             .field("confirmReadPetition")
             .field("jurisdictionAgree")
             .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "jurisdictionAgree=\"No\"")
@@ -89,7 +91,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2LegalProceedingsDetails")
             .field("applicant2UserId")
             .field("dueDate")
-            .label("LabelAosTabOnlineResponse-RespondentRepresent", null, "### Respondent")
+            .field("howToRespondApplication")
+            .field("applicant2LanguagePreferenceWelsh")
             .field("applicant2SolicitorRepresented")
             .field("noticeOfProceedingsEmail")
             .field("noticeOfProceedingsSolicitorFirm");
