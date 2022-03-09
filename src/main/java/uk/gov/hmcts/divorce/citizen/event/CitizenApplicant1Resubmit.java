@@ -19,8 +19,12 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 
 @Slf4j
@@ -44,6 +48,7 @@ public class CitizenApplicant1Resubmit implements CCDConfig<CaseData, State, Use
             .name("Applicant 1 Resubmit")
             .description("Applicant 1 resubmits for joint application")
             .grant(CREATE_READ_UPDATE, CITIZEN)
+            .grant(READ, CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
