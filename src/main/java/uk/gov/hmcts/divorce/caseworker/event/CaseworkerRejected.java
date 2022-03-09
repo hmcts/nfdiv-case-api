@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.RejectReason;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static java.util.EnumSet.allOf;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;

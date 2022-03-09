@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
