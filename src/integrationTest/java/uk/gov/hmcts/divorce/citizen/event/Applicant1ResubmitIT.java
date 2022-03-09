@@ -33,7 +33,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant1Resubmit.APPLICANT_1_RESUBMIT;
+import static uk.gov.hmcts.divorce.common.event.Applicant1Resubmit.APPLICANT_1_RESUBMIT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
@@ -49,7 +49,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseDa
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class CitizenApplicant1ResubmitIT {
+public class Applicant1ResubmitIT {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 

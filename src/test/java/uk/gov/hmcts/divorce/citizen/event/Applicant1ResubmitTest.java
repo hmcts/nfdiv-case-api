@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1ResubmitNotification;
+import uk.gov.hmcts.divorce.common.event.Applicant1Resubmit;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -19,7 +20,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant1Resubmit.APPLICANT_1_RESUBMIT;
+import static uk.gov.hmcts.divorce.common.event.Applicant1Resubmit.APPLICANT_1_RESUBMIT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -28,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(SpringExtension.class)
-public class CitizenApplicant1ResubmitTest {
+public class Applicant1ResubmitTest {
 
     @Mock
     private Applicant1ResubmitNotification applicant1ResubmitNotification;
@@ -37,13 +38,13 @@ public class CitizenApplicant1ResubmitTest {
     private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
-    private CitizenApplicant1Resubmit citizenApplicant1Resubmit;
+    private Applicant1Resubmit applicant1Resubmit;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        citizenApplicant1Resubmit.configure(configBuilder);
+        applicant1Resubmit.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -59,7 +60,7 @@ public class CitizenApplicant1ResubmitTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant1Resubmit.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant1Resubmit.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(applicant1ResubmitNotification, caseData, details.getId());
 
@@ -75,7 +76,7 @@ public class CitizenApplicant1ResubmitTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant1Resubmit.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant1Resubmit.aboutToSubmit(details, details);
 
         verifyNoInteractions(notificationDispatcher);
         assertThat(response.getState()).isEqualTo(AwaitingApplicant1Response);
