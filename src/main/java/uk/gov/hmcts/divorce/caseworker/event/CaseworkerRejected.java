@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static java.util.EnumSet.allOf;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -33,7 +34,7 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
 
         new PageBuilder(configBuilder
             .event(CASEWORKER_REJECTED)
-            .forStateTransition(allOf(State.class), Rejected)
+            .forStateTransition(POST_SUBMISSION_STATES, Rejected)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .name(REJECT)
             .description(REJECT)
