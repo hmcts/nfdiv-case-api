@@ -202,6 +202,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().getAddress().setCountry("UK");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
@@ -260,6 +261,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().getAddress().setCountry("France");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
