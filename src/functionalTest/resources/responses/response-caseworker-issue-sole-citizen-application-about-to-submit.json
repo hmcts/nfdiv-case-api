@@ -29,6 +29,8 @@
       "County": "Catalunya",
       "PostTown": "Barcelona"
     },
+    "applicant1SolicitorRepresented": "No",
+    "applicant2SolicitorRepresented": "No",
     "applicant2ContactDetailsType": "public",
     "applicant2Gender": "female",
     "applicant1IsApplicant2Represented": "notSure",
