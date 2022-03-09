@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -45,6 +46,7 @@ public class AosOverdueLetterTemplateContentTest {
 
     @BeforeEach
     public void setup() {
+        ReflectionTestUtils.setField(templateContent, "offsetDays", 28);
         when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(45.0);
     }
 

@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -48,6 +49,9 @@ public class AosOverdueLetterTemplateContent {
     @Autowired
     private PaymentService paymentService;
 
+    @Value("${aos_overdue.arrange_service_offset_days}")
+    private int offsetDays;
+
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference) {
 
@@ -64,7 +68,8 @@ public class AosOverdueLetterTemplateContent {
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
         templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
-        templateContent.put(ARRANGE_SERVICE_BY_DATE, caseData.getApplication().getIssueDate().plusDays(28).format(DATE_TIME_FORMATTER));
+        templateContent.put(ARRANGE_SERVICE_BY_DATE, caseData.getApplication().getIssueDate().plusDays(offsetDays)
+            .format(DATE_TIME_FORMATTER));
         templateContent.put(SEARCH_ADDRESS_COST, otherServiceCost);
         templateContent.put(SERVE_BY_EMAIL_COST, otherServiceCost);
         templateContent.put(DEEMED_SERVICE_COST, otherServiceCost);
