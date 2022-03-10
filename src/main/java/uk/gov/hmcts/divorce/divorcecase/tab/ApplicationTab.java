@@ -50,7 +50,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("dueDate")
             .field(CaseData::getApplicationType)
             .field(CaseData::getDivorceOrDissolution)
-            .field("marriageFormationType")
             .field(CaseData::getDivorceUnit)
             .field(CaseData::getBulkListCaseReference)
             .field(CaseData::getHyphenatedCaseRef, NEVER_SHOW);
@@ -63,6 +62,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1MiddleName")
             .field("applicant1LastName")
             .field("applicant1Gender")
+            .field("marriageFormationType")
             .field("applicant1NameDifferentToMarriageCertificate")
             .field("applicant1NameChangedHow", "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
