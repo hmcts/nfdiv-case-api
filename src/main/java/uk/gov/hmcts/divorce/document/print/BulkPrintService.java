@@ -135,6 +135,6 @@ public class BulkPrintService {
         } catch (IOException e) {
             log.error("Error occurred while loading D10 document from classpath", e);
         }
-        return null;
+        return new byte[0];
     }
 }
