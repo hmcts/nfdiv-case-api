@@ -346,7 +346,7 @@ class BulkPrintServiceTest {
 
         UUID uuid = UUID.randomUUID();
         byte[] firstFile = "data from file 1".getBytes(StandardCharsets.UTF_8);
-        byte[] d10PdfBytes = bulkPrintService.loadD10PdfBytes();
+        byte[] d10PdfBytes = bulkPrintService.loadD10PdfBytes("D10.pdf");
 
         given(sendLetterApi.sendLetter(
             eq(TEST_SERVICE_AUTH_TOKEN),
@@ -538,6 +538,11 @@ class BulkPrintServiceTest {
         assertThatThrownBy(() -> bulkPrintService.print(print))
             .isInstanceOf(InvalidResourceException.class)
             .hasMessage("Resource is invalid " + documentUuid);
+    }
+
+    @Test
+    void shouldReturnEmptyByteArrayWhenLoadPdfIsInvokedWithNonExistingResource() {
+        assertThat(bulkPrintService.loadD10PdfBytes("nonexistent.pdf")).isEmpty();
     }
 
     private ListValue<DivorceDocument> getDivorceDocumentListValue(
