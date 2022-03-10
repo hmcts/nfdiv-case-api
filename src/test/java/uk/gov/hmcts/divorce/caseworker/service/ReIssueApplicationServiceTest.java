@@ -73,6 +73,7 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
@@ -160,6 +161,7 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 

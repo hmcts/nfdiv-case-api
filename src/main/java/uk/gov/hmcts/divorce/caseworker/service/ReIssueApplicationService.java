@@ -70,6 +70,7 @@ public class ReIssueApplicationService {
             return caseTasks(
                 setPostIssueState,
                 setReIssueAndDueDate,
+                generateNoticeOfProceeding,
                 generateRespondentAosInvitation,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
