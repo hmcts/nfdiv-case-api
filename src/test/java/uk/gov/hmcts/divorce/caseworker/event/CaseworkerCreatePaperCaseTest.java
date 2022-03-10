@@ -37,7 +37,7 @@ public class CaseworkerCreatePaperCaseTest {
     }
 
     @Test
-    public void shouldSetHyphenatedCaseRefAndBothApplicant1AndApplicant1Offline() throws Exception {
+    public void shouldSetHyphenatedCaseRefAndApplicant1Offline() throws Exception {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -47,7 +47,6 @@ public class CaseworkerCreatePaperCaseTest {
 
         assertThat(submitResponse.getData().getHyphenatedCaseRef()).isEqualTo("0000-0000-0000-0001");
         assertThat(submitResponse.getData().getApplicant1().getOffline()).isEqualTo(YES);
-        assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(YES);
 
         final var labelContent = LabelContent
             .builder()
