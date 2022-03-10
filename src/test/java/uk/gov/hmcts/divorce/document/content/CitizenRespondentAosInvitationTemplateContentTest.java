@@ -16,14 +16,13 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.LINE_1_LINE_2_CITY_POSTCODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenRespondentAosInvitationTemplateContentTest {
 
     @Mock
-    private RespondentSolicitorAosInvitationTemplateContent respondentSolicitorAosInvitationTemplateContent;
+    private NoticeOfProceedingContent noticeOfProceedingContent;
 
     @InjectMocks
     private CitizenRespondentAosInvitationTemplateContent citizenRespondentAosInvitationTemplateContent;
@@ -38,9 +37,9 @@ class CitizenRespondentAosInvitationTemplateContentTest {
         );
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(respondentSolicitorAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        final Map<String, Object> result = citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        final Map<String, Object> result = citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).isSameAs(templateContent);
     }

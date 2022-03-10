@@ -90,6 +90,18 @@
         "id": "${json-unit.any-string}",
         "value": {
           "documentFileName": "${json-unit.any-string}",
+          "documentType": "coversheet",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "aos",
           "documentLink": {
             "document_binary_url": "${json-unit.any-string}",
