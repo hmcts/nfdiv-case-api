@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.document;
 
-import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Arrays.asList;

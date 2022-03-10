@@ -1,7 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.service.print;
 
-import static java.util.Arrays.asList;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -15,6 +13,10 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
+import java.time.LocalDate;
+import java.util.UUID;
+
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -36,18 +38,22 @@ class AosOverduePrinterTest {
     @Captor
     private ArgumentCaptor<Print> printCaptor;
 
+    private static final LocalDate NOW = LocalDate.now();
+
     @Test
     void shouldPrintAosOverdueLetterForApplicantIfRequiredDocumentsArePresent() {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(AOS_OVERDUE_LETTER)
+                .documentDateAdded(NOW)
                 .build())
             .build();
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(APPLICATION)
+                .documentDateAdded(NOW)
                 .build())
             .build();
 
@@ -73,12 +79,14 @@ class AosOverduePrinterTest {
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(RESPONDENT_ANSWERS)
+                .documentDateAdded(NOW)
                 .build())
             .build();
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(NAME_CHANGE_EVIDENCE)
+                .documentDateAdded(NOW)
                 .build())
             .build();
 
