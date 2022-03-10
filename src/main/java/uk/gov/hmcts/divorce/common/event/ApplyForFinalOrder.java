@@ -63,11 +63,8 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(READ,
-                CASE_WORKER,
-                SUPER_USER,
-                LEGAL_ADVISOR));
+            .grant(READ, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
+            .aboutToSubmitCallback(this::aboutToSubmit));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -76,13 +73,13 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
         log.info("Apply for Final Order about to submit callback invoked");
 
         CaseData data = details.getData();
-
-        if (data.getApplicationType().isSole()) {
-            notificationDispatcher.send(soleAppliedForFinalOrderNotification, data, details.getId());
-        }
-
         State endState = details.getState();
+
         if (details.getState() == AwaitingFinalOrder) {
+            if (data.getApplicationType().isSole()) {
+                notificationDispatcher.send(soleAppliedForFinalOrderNotification, data, details.getId());
+            }
+
             endState = FinalOrderRequested;
         }
 
