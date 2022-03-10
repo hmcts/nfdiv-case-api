@@ -22,9 +22,12 @@ public class SendAosPackToRespondent implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (!caseData.getApplication().isSolicitorServiceMethod() && !caseData.getApplicant2().isBasedOverseas()) {
+        if (caseData.getApplicationType().isSole()
+            && !caseData.getApplicant2().isRepresented()
+            && !caseData.getApplicant2().isBasedOverseas()
+        ) {
 
-            log.info("Sending respondent AoS pack to bulk print.  Case ID: {}:", caseId);
+            log.info("Sending respondent AoS pack to bulk print.  Case ID: {}", caseId);
             aosPackPrinter.sendAosLetterToRespondent(caseData, caseId);
 
             log.info("Setting Notice Of Proceedings information. CaseID: {}", caseId);
