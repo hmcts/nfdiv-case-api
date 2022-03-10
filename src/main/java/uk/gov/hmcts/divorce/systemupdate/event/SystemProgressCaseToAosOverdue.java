@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.AosReminderNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.task.GenerateAosOverdueLetterDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -36,6 +37,9 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
+    @Autowired
+    private GenerateAosOverdueLetterDocument generateAosOverdueLetterDocument;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -52,6 +56,10 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
+
+        if (data.getApplicant1().isOffline()) {
+            generateAosOverdueLetterDocument.apply(details);
+        }
 
         notificationDispatcher.send(aosReminderNotifications, data, details.getId());
 
