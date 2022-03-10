@@ -129,8 +129,11 @@ public class CaseworkerReIssueApplicationIT {
         "classpath:caseworker-issue-application-about-to-submit-error-response.json";
     private static final String SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-reissue-sole-citizen-application-about-to-submit-response.json";
+    private static final String SOLE_CITIZEN_CASEWORKER_OFFLINE_AOS_ABOUT_TO_SUBMIT =
+        "classpath:caseworker-reissue-sole-citizen-application-offlineAos-about-to-submit-response.json";
     private static final String JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-reissue-joint-citizen-application-about-to-submit-response.json";
+
     private static final String MINI_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
     private static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
     private static final String NOTICE_OF_PROCEEDING_ID = "c56b053e-4184-11ec-81d3-0242ac130003";
@@ -186,12 +189,11 @@ public class CaseworkerReIssueApplicationIT {
         when(clock.getZone()).thenReturn(ZoneId.of("Europe/London"));
     }
 
-    @ParameterizedTest
-    @MethodSource("reissueOptions")
-    void shouldSetReIssueDateAndSendApplicationIssueNotificationsForSoleCitizenApplication(ReissueOption reissueOption) throws Exception {
+    @Test
+    void shouldSetReIssueDateAndSendApplicationIssueNotificationsForSoleCitizenApplicationDigitalAos() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setSolSignStatementOfTruth(null);
-        caseData.getApplication().setReissueOption(reissueOption);
+        caseData.getApplication().setReissueOption(DIGITAL_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant2().setSolicitorRepresented(NO);
@@ -235,6 +237,53 @@ public class CaseworkerReIssueApplicationIT {
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSetReIssueDateAndSendApplicationIssueNotificationsForSoleCitizenApplicationOfflineAos() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setEmail(null);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetter();
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_REISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                content().json(expectedResponse(SOLE_CITIZEN_CASEWORKER_OFFLINE_AOS_ABOUT_TO_SUBMIT))
+            );
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
                 anyMap(),
                 eq(ENGLISH));
 
