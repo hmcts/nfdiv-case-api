@@ -78,6 +78,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1Email", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
             .field("applicant1Address", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
             .field("applicant1IsApplicant2Represented")
+            .field("applicant1StatementOfTruth")
 
             //Applicant 1 Solicitor
             .field("applicant1SolicitorRepresented", NEVER_SHOW)
@@ -90,7 +91,16 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1SolicitorPhone", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorEmail", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"Yes\"")
-            .field("applicant1SolicitorAgreeToReceiveEmailsCheckbox", "applicant1SolicitorRepresented=\"Yes\"");
+            .field("applicant1SolicitorAgreeToReceiveEmailsCheckbox", "applicant1SolicitorRepresented=\"Yes\"")
+
+            //Applicant 1 Other proceedings
+            .label("LabelOtherProceedings-Heading",
+                null,
+                "### ${labelContentApplicantsOrApplicant1s} other proceedings:")
+            .field("applicant1LegalProceedings")
+            .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"")
+            .field("applicant1FinancialOrder")
+            .field("applicant1FinancialOrdersFor", "applicant1FinancialOrder=\"Yes\"");
     }
 
     private void addApplicant2(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -114,6 +124,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2Email", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
             .field("applicant2Address", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
             .field("applicant2AgreedToReceiveEmails")
+            .field("applicant2StatementOfTruth", JOINT_APPLICATION)
 
             //Applicant 2 Solicitor
             .field("applicant2SolicitorRepresented", NEVER_SHOW)
@@ -126,7 +137,18 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented=\"Yes\"");
+            .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented=\"Yes\"")
+
+            //Applicant 2 Other proceedings
+            .label("LabelOtherProceedings-Heading",
+                JOINT_APPLICATION,
+                "### Applicant 2's other proceedings:")
+            .field("applicant2LegalProceedings", JOINT_APPLICATION)
+            .field("applicant2LegalProceedingsDetails",
+                "applicant1LegalProceedings=\"Yes\" AND applicationType=\"jointApplication\"")
+            .field("applicant2FinancialOrder", JOINT_APPLICATION)
+            .field("applicant2FinancialOrdersFor",
+                "applicant2FinancialOrder=\"Yes\" AND applicationType=\"jointApplication\"");
     }
 
     private void addMarriageAndCertificate(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -153,30 +175,10 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void addOtherProceedings(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
-            .label("LabelOtherProceedings-Heading",
-                null,
-                "### ${labelContentApplicantsOrApplicant1s} other proceedings:")
-            .field("applicant1LegalProceedings")
-            .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"")
-            .field("applicant1FinancialOrder")
-            .field("applicant1FinancialOrdersFor", "applicant1FinancialOrder=\"Yes\"")
-
-            .label("LabelOtherProceedings-Heading",
-                JOINT_APPLICATION,
-                "### Applicant 2's other proceedings:")
-            .field("applicant2LegalProceedings", JOINT_APPLICATION)
-            .field("applicant2LegalProceedingsDetails",
-                "applicant1LegalProceedings=\"Yes\" AND applicationType=\"jointApplication\"")
-            .field("applicant2FinancialOrder", JOINT_APPLICATION)
-            .field("applicant2FinancialOrdersFor",
-                "applicant2FinancialOrder=\"Yes\" AND applicationType=\"jointApplication\"")
-
             .field("solUrgentCase")
             .field("solUrgentCaseSupportingInformation", "solUrgentCase=\"Yes\"")
             .field("solStatementOfReconciliationCertify")
             .field("solStatementOfReconciliationDiscussed")
-            .field("applicant1StatementOfTruth")
-            .field("applicant2StatementOfTruth", JOINT_APPLICATION)
             .field("solSignStatementOfTruth")
             .field("solStatementOfReconciliationName")
             .field("solStatementOfReconciliationFirm")
