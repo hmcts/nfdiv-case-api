@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.citizen.notification.AosReminderNotifications;
+import uk.gov.hmcts.divorce.common.service.task.GenerateAosOverdueLetterDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -20,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -33,6 +35,9 @@ public class SystemProgressCaseToAosOverdueTest {
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private GenerateAosOverdueLetterDocument generateAosOverdueLetterDocument;
 
     @InjectMocks
     private SystemProgressCaseToAosOverdue systemProgressCaseToAosOverdue;
@@ -101,5 +106,35 @@ public class SystemProgressCaseToAosOverdueTest {
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
 
         verifyNoInteractions(aosReminderNotifications);
+    }
+
+    @Test
+    void shouldGenerateAosOverdueLetterDocIfApplicant1IsOffline() {
+        final CaseData caseData = caseData();
+        caseData.setCaseInvite(new CaseInvite(null, "ACCESS12", null));
+        caseData.getApplicant1().setOffline(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setData(caseData);
+
+        systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
+
+        verify(generateAosOverdueLetterDocument).apply(details);
+    }
+
+    @Test
+    void shouldNotGenerateAosOverdueLetterDocIfApplicant1IsNotOffline() {
+        final CaseData caseData = caseData();
+        caseData.setCaseInvite(new CaseInvite(null, "ACCESS12", null));
+        caseData.getApplicant1().setOffline(NO);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setData(caseData);
+
+        systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
+
+        verifyNoInteractions(generateAosOverdueLetterDocument);
     }
 }

@@ -49,6 +49,20 @@ public final class DocumentUtil {
             .collect(toList());
     }
 
+    public static List<Letter> lettersWithDocumentTypeSortedByAddedDateDesc(final List<ListValue<DivorceDocument>> documents,
+                                                                            final DocumentType documentType) {
+
+        final AtomicInteger letterIndex = new AtomicInteger();
+
+        return ofNullable(documents)
+            .flatMap(Collection::stream)
+            .map(ListValue::getValue)
+            .sorted((doc1, doc2) -> doc2.getDocumentDateAdded().compareTo(doc1.getDocumentDateAdded()))
+            .filter(document -> documentType.equals(document.getDocumentType()))
+            .map(divorceDocument -> new Letter(divorceDocument, null, letterIndex.incrementAndGet()))
+            .collect(toList());
+    }
+
     public static List<Letter> lettersWithAosScannedDocument(final List<ListValue<ScannedDocument>> documents) {
 
         final AtomicInteger letterIndex = new AtomicInteger();

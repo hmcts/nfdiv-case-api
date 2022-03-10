@@ -21,6 +21,7 @@ public final class DocmosisTemplateConstants {
     public static final String PLACE_OF_MARRIAGE = "placeOfMarriage";
     public static final String APPLICANT_1_POSTAL_ADDRESS = "applicant1PostalAddress";
     public static final String APPLICANT_2_POSTAL_ADDRESS = "applicant2PostalAddress";
+    public static final String APPLICANT_1_ADDRESS = "applicant1Address";
     public static final String A_DIVORCE_APPLICATION = "a divorce application";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String END_A_CIVIL_PARTNERSHIP = "an application to end a civil partnership";
@@ -32,6 +33,7 @@ public final class DocmosisTemplateConstants {
     public static final String TO_END_A_CIVIL_PARTNERSHIP = "application to end a civil partnership";
     public static final String ENDING_CIVIL_PARTNERSHIP = "ending the civil partnership";
     public static final String RELATIONSHIP = "relationship";
+    public static final String RELATION = "relation";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
     public static final String APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP = "application to end your civil partnership";
     public static final String DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH = "for the dissolution of the civil partnership with";
@@ -93,6 +95,19 @@ public final class DocmosisTemplateConstants {
     public static final String DISPUTING_CIVIL_PARTNERSHIP = "dispute the application to end the civil partnership";
     public static final String WITHOUT_DISPUTING_CIVIL_PARTNERSHIP =
         "continue without disputing the application to end the civil partnership";
+
+    public static final String SEARCH_ADDRESS_COST = "searchAddressCost";
+    public static final String SERVE_BY_EMAIL_COST = "serveTheApplicationByEmailCost";
+    public static final String BAILIFF_SERVICE_COST = "bailiffServiceCost";
+    public static final String DEEMED_SERVICE_COST = "deemedServiceCost";
+    public static final String DISPENSED_SERVICE_COST = "dispensedServiceCost";
+    public static final String ARRANGE_SERVICE_BY_DATE = "arrangeServiceBeforeDate";
+    public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER = "divorceOrCivilPartnershipServiceHeader";
+    public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL = "divorceOrCivilPartnershipEmail";
+    public static final String DIVORCE_SERVICE = "The Divorce Service";
+    public static final String END_CP_SERVICE = "End A Civil Partnership Service";
+    public static final String CONTACT_DIVORCE_EMAIL = "contactdivorce@justice.gov.uk";
+    public static final String CP_CASE_EMAIL = "civilpartnership.case@justice.gov.uk";
 
     private DocmosisTemplateConstants() {
     }
