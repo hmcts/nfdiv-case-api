@@ -64,6 +64,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("costsOrder")
     COSTS_ORDER("Costs order"),
 
+    @JsonProperty("coversheet")
+    COVERSHEET("Coversheet"),
+    
     @JsonProperty("d84")
     D84("D84"),
 
