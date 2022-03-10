@@ -481,7 +481,7 @@ public class CaseworkerReIssueApplicationIT {
     }
 
     @Test
-    void shouldGenerateOnlyRespondentAosAndRespondentInvitationAndSetReIssueDateAndSendEmailWhenRespondentIsNotSolicitorRepresentedAndReissueTypeIsDigitalAos()
+    void shouldGenerateOnlyRespAosAndInvitationAndSetReIssueDateAndSendEmailWhenRespIsNotSolicitorRepresentedAndReissueTypeIsDigitalAos()
         throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
