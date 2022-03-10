@@ -60,6 +60,7 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
+        System.out.println(response.asString());
         assertThatJson(response.asString())
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedResponse(
