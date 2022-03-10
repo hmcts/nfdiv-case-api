@@ -90,8 +90,6 @@ public class CommonFormToCaseTransformer {
 
         transformedCaseData.put(TRANSFORMATION_AND_OCR_WARNINGS, warnings);
 
-        log.info("Transformed case data map {} ", transformedCaseData);
-
         return transformedCaseData;
     }
 
