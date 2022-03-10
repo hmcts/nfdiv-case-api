@@ -346,6 +346,13 @@ public enum State {
         Applicant2Approved
     ));
 
+    public static final State[] AOS_STATES = {
+        Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral,
+        AwaitingServiceConsideration, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
+        AwaitingJudgeClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
+        GeneralApplicationReceived
+    };
+
     private final String name;
 
 }
