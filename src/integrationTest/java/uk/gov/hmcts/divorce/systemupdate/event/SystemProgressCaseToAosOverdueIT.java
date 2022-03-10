@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.divorce.caseworker.service.print.AosOverduePrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -83,6 +84,9 @@ public class SystemProgressCaseToAosOverdueIT {
     private NotificationService notificationService;
 
     @MockBean
+    private AosOverduePrinter aosOverduePrinter;
+
+    @MockBean
     private CaseDataDocumentService caseDataDocumentService;
 
     @MockBean
@@ -133,6 +137,8 @@ public class SystemProgressCaseToAosOverdueIT {
         verifyNoMoreInteractions(notificationService);
 
         verifyNoMoreInteractions(caseDataDocumentService);
+
+        verifyNoMoreInteractions(aosOverduePrinter);
     }
 
     @Test
@@ -181,6 +187,8 @@ public class SystemProgressCaseToAosOverdueIT {
             eq(AOS_OVERDUE_TEMPLATE_ID),
             eq(ENGLISH),
             eq(AOS_OVERDUE_LETTER_DOCUMENT_NAME));
+
+        verify(aosOverduePrinter).sendLetterToApplicant(any(CaseData.class), anyLong());
     }
 
     private String expectedCcdAboutToStartCallbackSuccess() throws IOException {

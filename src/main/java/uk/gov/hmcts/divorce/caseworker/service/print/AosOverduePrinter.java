@@ -8,11 +8,12 @@ import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static org.springframework.util.CollectionUtils.firstElement;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentTypeSortedByAddedDateDesc;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTER;
 
 @Component
@@ -26,12 +27,16 @@ public class AosOverduePrinter {
 
     public void sendLetterToApplicant(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> letters = lettersWithDocumentType(caseData.getDocumentsGenerated(), AOS_OVERDUE_LETTER);
+        final List<Letter> letters = lettersWithDocumentTypeSortedByAddedDateDesc(
+            caseData.getDocumentsGenerated(), AOS_OVERDUE_LETTER);
 
-        if (!isEmpty(letters)) {
+        Letter aosOverdueLetter = firstElement(letters);
+
+        if (aosOverdueLetter != null) {
 
             final String caseIdString = caseId.toString();
-            final Print print = new Print(letters, caseIdString, caseIdString, LETTER_TYPE_AOS_OVERDUE);
+            final Print print = new Print(Collections.singletonList(aosOverdueLetter),
+                caseIdString, caseIdString, LETTER_TYPE_AOS_OVERDUE);
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);

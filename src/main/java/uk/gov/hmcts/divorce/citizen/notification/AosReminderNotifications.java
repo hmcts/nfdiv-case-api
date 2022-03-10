@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.citizen.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.caseworker.service.print.AosOverduePrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -39,6 +40,9 @@ public class AosReminderNotifications implements ApplicantNotification {
     @Autowired
     private EmailTemplatesConfig config;
 
+    @Autowired
+    private AosOverduePrinter aosOverduePrinter;
+
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Sending the respondent has not responded notification to the applicant for case : {}", id);
@@ -65,6 +69,12 @@ public class AosReminderNotifications implements ApplicantNotification {
                 caseData.getApplicant1().getLanguagePreference()
             );
         }
+    }
+
+    @Override
+    public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
+        log.info("Sending AOS overdue letter to applicant for case : {}", caseId);
+        aosOverduePrinter.sendLetterToApplicant(caseData, caseId);
     }
 
     private Map<String, String> reminderToSoleRespondentTemplateVars(final CaseData caseData, Long id) {
