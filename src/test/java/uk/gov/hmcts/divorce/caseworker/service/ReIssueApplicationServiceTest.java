@@ -98,6 +98,7 @@ class ReIssueApplicationServiceTest {
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
@@ -105,6 +106,7 @@ class ReIssueApplicationServiceTest {
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
         var expectedCaseData = caseData();
+        expectedCaseData.getApplicant2().setOffline(YES);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
@@ -195,6 +197,7 @@ class ReIssueApplicationServiceTest {
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
@@ -203,6 +206,8 @@ class ReIssueApplicationServiceTest {
 
         var expectedCaseData = caseData();
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
+        expectedCaseData.getApplicant2().setOffline(YES);
+        expectedCaseData.getApplicant2().setEmail(null);
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
 
