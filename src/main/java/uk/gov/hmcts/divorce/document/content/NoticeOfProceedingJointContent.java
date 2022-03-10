@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
-import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,9 +64,6 @@ public class NoticeOfProceedingJointContent {
     public static final String DISPLAY_EMAIL_CONFIRMATION = "displayEmailConfirmation";
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
-
-    @Autowired
-    private CommonContent commonContent;
 
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;

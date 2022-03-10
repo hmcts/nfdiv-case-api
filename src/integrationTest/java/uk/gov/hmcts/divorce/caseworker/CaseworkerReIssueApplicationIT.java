@@ -363,6 +363,7 @@ public class CaseworkerReIssueApplicationIT {
         throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setEmail(null);
         caseData.getApplicant2().setSolicitor(
             Solicitor
                 .builder()
@@ -379,6 +380,9 @@ public class CaseworkerReIssueApplicationIT {
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
+
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
