@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
@@ -28,6 +29,9 @@ public class GenerateNoticeOfProceeding implements CaseTask {
     @Autowired
     private NoticeOfProceedingContent templateContent;
 
+    @Autowired
+    private NoticeOfProceedingJointContent jointTemplateContent;
+
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
@@ -37,6 +41,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
         ApplicationType applicationType = caseData.getApplicationType();
         boolean isApplicant1Represented = caseData.getApplicant1().getSolicitorRepresented().toBoolean();
         boolean isApplicant2Represented = caseData.getApplicant2().getSolicitorRepresented().toBoolean();
+        boolean isSoleApplication = true;
 
         if (applicationType.isSole() && !isApplicant1Represented) {
             String templateId = caseData.getApplicant2().isBasedOverseas()
@@ -46,14 +51,23 @@ public class GenerateNoticeOfProceeding implements CaseTask {
             generateNoticeOfProceedings(
                 caseData,
                 caseId,
-                templateId
+                templateId,
+                isSoleApplication
             );
 
         } else if (!applicationType.isSole() && (!isApplicant1Represented || !isApplicant2Represented)) {
             generateNoticeOfProceedings(
                 caseData,
                 caseId,
-                JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID
+                JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+                !isSoleApplication
+            );
+
+            generateNoticeOfProceedings(
+                caseData,
+                caseId,
+                JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+                !isSoleApplication
             );
         } else {
             log.info("Not generating notice of proceedings for case id {} as did not match required criteria to generate document", caseId);
@@ -64,18 +78,40 @@ public class GenerateNoticeOfProceeding implements CaseTask {
 
     private void generateNoticeOfProceedings(CaseData caseData,
                                              Long caseId,
-                                             String templateId) {
+                                             String templateId,
+                                             boolean isSoleApplication) {
 
         log.info("Generating notice of proceedings for case id {} ", caseId);
 
-        caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            NOTICE_OF_PROCEEDINGS,
-            templateContent.apply(caseData, caseId),
-            caseId,
-            templateId,
-            caseData.getApplicant1().getLanguagePreference(),
-            NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME
-        );
+        if (isSoleApplication) {
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                NOTICE_OF_PROCEEDINGS,
+                templateContent.apply(caseData, caseId),
+                caseId,
+                templateId,
+                caseData.getApplicant1().getLanguagePreference(),
+                NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME
+            );
+        } else {
+            // TODO: For the file name, do we want to differentiate as both currently will be called 'noticeOfProceedings.pdf'
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                NOTICE_OF_PROCEEDINGS,
+                jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
+                caseId,
+                templateId,
+                caseData.getApplicant1().getLanguagePreference(),
+                NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
+
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                NOTICE_OF_PROCEEDINGS,
+                jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
+                caseId,
+                templateId,
+                caseData.getApplicant1().getLanguagePreference(),
+                NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
+        }
     }
 }
