@@ -147,6 +147,7 @@ public class CaseworkerIssueApplicationIT {
         "classpath:caseworker-issue-sole-citizen-application-about-to-submit-response.json";
     private static final String JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-joint-citizen-application-about-to-submit-response.json";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -329,7 +330,6 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
-
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
