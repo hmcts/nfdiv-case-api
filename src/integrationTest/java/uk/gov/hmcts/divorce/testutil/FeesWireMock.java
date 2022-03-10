@@ -41,6 +41,17 @@ public final class FeesWireMock {
                 .withBody(feeResponse)));
     }
 
+    public static void stubForFeesLookup(final String feeResponse, final String event, final String service, final String keyword) {
+        String url = String.format("/fees-register/fees/lookup"
+            + "?channel=default&event=%s&jurisdiction1=family&jurisdiction2=family+court&service=%s&keyword=%s",
+            event, service, keyword);
+
+        FEES_SERVER.stubFor(get(url)
+            .willReturn(aResponse()
+                .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .withBody(feeResponse)));
+    }
+
     public static void stubForFeesNotFound() {
         FEES_SERVER.stubFor(get(urlEqualTo(
             "/fees-register/fees/lookup"

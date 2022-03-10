@@ -9,8 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static java.util.EnumSet.allOf;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAlternativeService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -29,7 +29,7 @@ public class CaseworkerServeByAlternativeMethod implements CCDConfig<CaseData, S
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_SERVE_BY_ALTERNATIVE_METHOD)
-            .forStateTransition(allOf(State.class), AwaitingAlternativeService)
+            .forStateTransition(POST_SUBMISSION_STATES, AwaitingAlternativeService)
             .name("Serve by alternative method")
             .description("Serve by alternative method")
             .showEventNotes()

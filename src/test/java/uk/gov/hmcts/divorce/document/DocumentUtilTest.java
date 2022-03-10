@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document;
 
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -9,6 +10,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -17,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentTypeSortedByAddedDateDesc;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
@@ -145,6 +148,47 @@ class DocumentUtilTest {
 
         assertThat(letters.size()).isEqualTo(1);
         assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc3.getValue());
+    }
+
+    @Test
+    void shouldReturnListOfLettersOfGivenDocumentTypesSortedByAddedDateInDescOrder() {
+
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NAME_CHANGE_EVIDENCE)
+                .documentDateAdded(LocalDate.now())
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NAME_CHANGE_EVIDENCE)
+                .documentDateAdded(LocalDate.now().minusDays(2))
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NAME_CHANGE_EVIDENCE)
+                .documentDateAdded(LocalDate.now().plusDays(2))
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc4 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(MARRIAGE_CERTIFICATE)
+                .documentDateAdded(LocalDate.now().plusDays(4))
+                .build())
+            .build();
+
+        final List<Letter> letters = lettersWithDocumentTypeSortedByAddedDateDesc(
+            asList(doc1, doc2, doc3, doc4),
+            NAME_CHANGE_EVIDENCE);
+
+        assertThat(letters.size()).isEqualTo(3);
+        assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc3.getValue());
+        assertThat(letters.get(1).getDivorceDocument()).isSameAs(doc1.getValue());
+        assertThat(letters.get(2).getDivorceDocument()).isSameAs(doc2.getValue());
     }
 
     private DocumentInfo documentInfo() {

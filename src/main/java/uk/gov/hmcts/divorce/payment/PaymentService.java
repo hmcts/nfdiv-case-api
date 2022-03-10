@@ -21,8 +21,6 @@ import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,6 +32,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.penceToPounds;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0001;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0003;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0004;
@@ -307,9 +306,17 @@ public class PaymentService {
         return feeItem.getValue();
     }
 
-    private static String penceToPounds(final String pence) {
-        return NumberFormat.getNumberInstance().format(
-            new BigDecimal(pence).movePointLeft(2)
+    public Double getServiceCost(String service, String event, String keyword) {
+
+        final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
+            DEFAULT_CHANNEL,
+            event,
+            FAMILY,
+            FAMILY_COURT,
+            service,
+            keyword
         );
+
+        return feeResponse.getAmount();
     }
 }
