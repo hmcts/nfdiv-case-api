@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
@@ -16,9 +17,11 @@ import uk.gov.hmcts.divorce.document.print.model.Print;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
@@ -117,6 +120,42 @@ class AosPackPrinterTest {
     }
 
     @Test
+    void shouldPrintAosResponseLetterForApplicantIfRequiredDocumentsArePresent() {
+
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(AOS_RESPONSE_LETTER)
+                .build())
+            .build();
+
+        final ListValue<ScannedDocument> doc2 = ListValue.<ScannedDocument>builder()
+            .value(
+                ScannedDocument
+                    .builder()
+                    .subtype("aos")
+                    .build()
+            )
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .documentsGenerated(singletonList(doc1))
+            .scannedDocuments(singletonList(doc2))
+            .build();
+
+        when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
+
+        aosPackPrinter.sendAosResponseLetterToApplicant(caseData, TEST_CASE_ID);
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("aos-response-pack");
+        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
+        assertThat(print.getLetters().get(1).getScannedDocument()).isSameAs(doc2.getValue());
+    }
+
+    @Test
     void shouldNotPrintAosPackIfRequiredDocumentsAreNotPresent() {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
@@ -160,6 +199,30 @@ class AosPackPrinterTest {
             .build();
 
         aosPackPrinter.sendAosLetterToApplicant(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(bulkPrintService);
+    }
+
+    @Test
+    void shouldNotPrintAosResponseLetterPackIfRequiredDocumentsAreNotPresent() {
+
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NOTICE_OF_PROCEEDINGS)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NAME_CHANGE_EVIDENCE)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .documentsGenerated(asList(doc1, doc2))
+            .build();
+
+        aosPackPrinter.sendAosResponseLetterToApplicant(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(bulkPrintService);
     }

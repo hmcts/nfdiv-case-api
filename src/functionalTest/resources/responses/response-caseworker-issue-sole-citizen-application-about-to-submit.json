@@ -7,7 +7,13 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1Address": {},
+    "applicant1Address": {
+      "AddressLine1": "221a Baker Street",
+      "Country": "United Kingdom",
+      "County": "Greater London",
+      "PostCode": "NW1 6XE",
+      "PostTown": "London"
+    },
     "applicant1ContactDetailsType": "private",
     "applicant1Gender": "male",
     "applicant1FinancialOrder": "No",
@@ -17,7 +23,14 @@
     "applicant2LastName": "test_last_name",
     "applicant2Email": "applicant2@example.com",
     "applicant2LanguagePreferenceWelsh": "No",
-    "applicant2Address": {},
+    "applicant2Address": {
+      "AddressLine1": "Parc de la Ciutadella",
+      "Country": "Spain",
+      "County": "Catalunya",
+      "PostTown": "Barcelona"
+    },
+    "applicant1SolicitorRepresented": "No",
+    "applicant2SolicitorRepresented": "No",
     "applicant2ContactDetailsType": "public",
     "applicant2Gender": "female",
     "applicant1IsApplicant2Represented": "notSure",
@@ -33,8 +46,12 @@
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "divorceWho": "wife",
-    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
-    "applicant2PrayerHasBeenGivenCheckbox": ["Yes"],
+    "applicant1PrayerHasBeenGivenCheckbox": [
+      "Yes"
+    ],
+    "applicant2PrayerHasBeenGivenCheckbox": [
+      "Yes"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "applicant2StatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
@@ -94,7 +111,6 @@
         }
       }
     ],
-    "noticeOfProceedingsEmail": "applicant2@example.com",
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
     "warnings": []

@@ -6,18 +6,19 @@
   "applicant1LastName": "test_last_name",
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant1Address": {
-    "addressLine1": "221a Baker Street",
-    "postTown": "London",
-    "county": "Greater London",
-    "postCode": "NW1 6XE",
-    "country": "United Kingdom"
+    "AddressLine1": "221a Baker Street",
+    "PostTown": "London",
+    "County": "Greater London",
+    "PostCode": "NW1 6XE",
+    "Country": "United Kingdom"
   },
   "applicant2Address": {
-    "addressLine1": "Parc de la Ciutadella",
-    "postTown": "Barcelona",
-    "county": "Catalunya",
-    "country": "Spain"
+    "AddressLine1": "Parc de la Ciutadella",
+    "PostTown": "Barcelona",
+    "County": "Catalunya",
+    "Country": "Spain"
   },
+  "applicant1SolicitorRepresented": "No",
   "applicant1LanguagePreferenceWelsh": "No",
   "applicant1ContactDetailsType": "private",
   "applicant1Gender": "male",
@@ -26,6 +27,7 @@
   "applicant2LastName": "test_last_name",
   "applicant2Email": "applicant2@example.com",
   "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2SolicitorRepresented": "No",
   "applicant2LanguagePreferenceWelsh": "No",
   "applicant2ContactDetailsType": "public",
   "applicant2Gender": "female",

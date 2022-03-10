@@ -11,6 +11,7 @@
     "applicant1Gender": "female",
     "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1SolicitorRepresented": "No",
+    "applicant2SolicitorRepresented": "No",
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "No",
     "applicant2FirstName": "test_first_name",
