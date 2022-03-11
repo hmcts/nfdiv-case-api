@@ -25,6 +25,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -62,7 +63,7 @@ public class CaseworkerCreateGeneralOrder implements CCDConfig<CaseData, State, 
 
         return new PageBuilder(configBuilder
             .event(CASEWORKER_CREATE_GENERAL_ORDER)
-            .forAllStates()
+            .forStates(POST_SUBMISSION_STATES)
             .name("Create general order")
             .description("Create general order")
             .showSummary()

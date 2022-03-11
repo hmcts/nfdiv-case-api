@@ -18,6 +18,7 @@ import java.time.LocalDate;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -38,7 +39,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_REFERRAL)
-            .forAllStates()
+            .forStates(POST_SUBMISSION_STATES)
             .name("General referral")
             .description("General referral")
             .showSummary(false)
