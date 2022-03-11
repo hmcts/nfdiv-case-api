@@ -405,6 +405,7 @@ tasks.cftlibTest.dependsOn buildCCDXlsx
 check.dependsOn cftlibTest
 
 bootWithCCD {
+    group = 'ccd tasks'
     dependsOn(loadEnvSecrets, buildCCDXlsx)
 
     doFirst() {
