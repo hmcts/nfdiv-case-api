@@ -83,6 +83,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                     .optional(MarriageDetails::getDate)
                     .optional(MarriageDetails::getApplicant1Name)
                     .optional(MarriageDetails::getApplicant2Name)
+                    .mandatory(MarriageDetails:: getCountryOfMarriage)
                     .mandatory(MarriageDetails::getPlaceOfMarriage)
                     .done()
                 .done();
