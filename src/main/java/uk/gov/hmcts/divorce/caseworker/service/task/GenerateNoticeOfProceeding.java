@@ -37,50 +37,17 @@ public class GenerateNoticeOfProceeding implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
+        log.info("Generating notice of proceedings for case id {} ", caseId);
+
         boolean isApplicant1Represented = caseData.getApplicant1().getSolicitorRepresented().toBoolean();
         boolean isApplicant2Represented = caseData.getApplicant2().getSolicitorRepresented().toBoolean();
         boolean isSoleApplication = caseData.getApplicationType().isSole();
-
 
         if (isSoleApplication && !isApplicant1Represented) {
             String templateId = caseData.getApplicant2().isBasedOverseas()
                 ? NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID
                 : NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 
-            generateNoticeOfProceedings(
-                caseData,
-                caseId,
-                templateId,
-                isSoleApplication,
-                isApplicant1Represented,
-                isApplicant2Represented
-            );
-
-        } else if (!isSoleApplication && (!isApplicant1Represented || !isApplicant2Represented)) {
-            generateNoticeOfProceedings(
-                caseData,
-                caseId,
-                JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
-                isSoleApplication,
-                isApplicant1Represented,
-                isApplicant2Represented
-            );
-        } else {
-            log.info("Not generating notice of proceedings for case id {} as did not match required criteria to generate document", caseId);
-        }
-
-        return caseDetails;
-    }
-
-    private void generateNoticeOfProceedings(CaseData caseData,
-                                             Long caseId,
-                                             String templateId,
-                                             boolean isSoleApplication,
-                                             boolean isApplicant1Represented,
-                                             boolean isApplicant2Represented) {
-        log.info("Generating notice of proceedings for case id {} ", caseId);
-
-        if (isSoleApplication) {
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
                 NOTICE_OF_PROCEEDINGS,
@@ -90,15 +57,15 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 caseData.getApplicant1().getLanguagePreference(),
                 NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME
             );
-        } else {
-            // TODO: For the file name, do we want to differentiate as both currently will be called 'noticeOfProceedings.pdf'
+
+        } else if (!isSoleApplication && (!isApplicant1Represented || !isApplicant2Represented)) {
             if (!isApplicant1Represented) {
                 caseDataDocumentService.renderDocumentAndUpdateCaseData(
                     caseData,
                     NOTICE_OF_PROCEEDINGS,
                     jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
                     caseId,
-                    templateId,
+                    JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
                     caseData.getApplicant1().getLanguagePreference(),
                     NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
             }
@@ -109,10 +76,14 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                     NOTICE_OF_PROCEEDINGS,
                     jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
                     caseId,
-                    templateId,
+                    JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
                     caseData.getApplicant2().getLanguagePreference(),
                     NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
             }
+        } else {
+            log.info("Not generating notice of proceedings for case id {} as did not match required criteria to generate document", caseId);
         }
+
+        return caseDetails;
     }
 }
