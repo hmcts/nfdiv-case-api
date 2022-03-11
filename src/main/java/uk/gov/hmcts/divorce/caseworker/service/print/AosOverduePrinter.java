@@ -27,6 +27,10 @@ public class AosOverduePrinter {
 
     public void sendLetterToApplicant(final CaseData caseData, final Long caseId) {
 
+        log.info("docs gen : {}, {}",
+            caseData.getDocumentsGenerated().get(0).getValue().getDocumentFileName(),
+            caseData.getDocumentsGenerated().get(0).getValue().getDocumentDateAdded());
+
         final List<Letter> letters = lettersWithDocumentTypeSortedByAddedDateDesc(
             caseData.getDocumentsGenerated(), AOS_OVERDUE_LETTER);
 

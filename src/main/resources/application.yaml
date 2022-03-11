@@ -221,6 +221,7 @@ docmosis:
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
+      NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -244,6 +245,7 @@ docmosis:
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
+      NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
@@ -275,6 +277,9 @@ apply_for_final_order:
 
 aos_overdue:
   arrange_service_offset_days: ${AOS_OVERDUE_ARRANGE_SERVICE_OFFSET_DAYS:28}
+
+aos_response:
+  co_offset_days: ${AOS_RESPONSE_CO_OFFSET_DAYS:141}
 
 court:
   locations:
