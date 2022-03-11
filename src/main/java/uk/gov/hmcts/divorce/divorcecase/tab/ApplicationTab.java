@@ -73,7 +73,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1Offline")
             .label("LabelApplicant1DetailsAreConfidential-Heading",
                 "applicant1ContactDetailsType=\"private\"",
-                "#### The applicant's contact details are confidential")
+                "#### ${labelContentTheApplicantOrApplicant1UC}'s contact details are confidential")
             .field("applicant1PhoneNumber", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
             .field("applicant1Email", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
             .field("applicant1Address", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
@@ -84,7 +84,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1SolicitorRepresented", NEVER_SHOW)
             .label("LabelApplicant1sSolicitor-Heading",
                 "applicant1SolicitorRepresented=\"Yes\"",
-                "#### The applicant's solicitor")
+                "#### ${labelContentTheApplicantOrApplicant1UC}'s solicitor")
             .field("applicant1SolicitorReference", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorName", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorAddress", "applicant1SolicitorRepresented=\"Yes\"")
@@ -96,7 +96,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             //Applicant 1 Other proceedings
             .label("LabelOtherProceedings-Heading",
                 null,
-                "### ${labelContentApplicantsOrApplicant1s} other proceedings:")
+                "#### ${labelContentApplicantsOrApplicant1s} other proceedings:")
             .field("applicant1LegalProceedings")
             .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"")
             .field("applicant1FinancialOrder")
@@ -142,7 +142,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             //Applicant 2 Other proceedings
             .label("LabelOtherProceedings-Heading",
                 JOINT_APPLICATION,
-                "### Applicant 2's other proceedings:")
+                "#### Applicant 2's other proceedings:")
             .field("applicant2LegalProceedings", JOINT_APPLICATION)
             .field("applicant2LegalProceedingsDetails",
                 "applicant1LegalProceedings=\"Yes\" AND applicationType=\"jointApplication\"")
