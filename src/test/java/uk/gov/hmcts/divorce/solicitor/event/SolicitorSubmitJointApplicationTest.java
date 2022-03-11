@@ -109,7 +109,7 @@ class SolicitorSubmitJointApplicationTest {
     }
 
     @Test
-    void shouldPopulateApplicant2SolicitorAddressIfApplicant2RepresentedAndContactInformationReturned() {
+    void shouldPopulateApplicant2SolicitorAddressIfApplicant2RepresentedAndContactInfoReturnedAndStateSetToAwaitingApplicant1Response() {
         OrganisationsResponse organisationsResponse = OrganisationsResponse
             .builder()
             .contactInformation(
