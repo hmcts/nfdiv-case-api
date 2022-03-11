@@ -49,65 +49,61 @@
     "documentUploadComplete": "Yes",
     "issueDate": "${json-unit.any-string}",
     "reissueDate": "${json-unit.any-string}",
-    "applicationPayments": [
-      {
-        "value": {
-          "feeCode": "FEE0001",
-          "amount": 55000,
-          "status": "success",
-          "channel": "online",
-          "reference": "paymentRef",
-          "transactionId": "ge7po9h5bhbtbd466424src9tk"
-        }
+    "applicationPayments": [{
+      "value": {
+        "feeCode": "FEE0001",
+        "amount": 55000,
+        "status": "success",
+        "channel": "online",
+        "reference": "paymentRef",
+        "transactionId": "ge7po9h5bhbtbd466424src9tk"
       }
-    ],
+    }],
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "accessCode": "${json-unit.any-string}",
     "noticeOfProceedingsEmail": "test@test.com",
-    "documentsGenerated": [
-      {
-        "id": "Respondent Invitation",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
-            "document_filename": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
-          },
-          "documentFileName": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "coversheet"
-        }
-      },
+    "documentsGenerated": [{
+      "id": "Respondent Invitation",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
+          "document_filename": "${json-unit.any-string}",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
+        },
+        "documentFileName": "${json-unit.any-string}",
+        "documentType": "coversheet"
+      }
+    },
       {
         "id": "Coversheet",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa",
-            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+            "document_filename": "${json-unit.any-string}",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
           },
-          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "aos"
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa/binary"
-          },
-          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "aos"
-        }
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "aos",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa/binary"
+        },
+        "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+        "documentType": "aos"
       },
       {
         "id": "Respondent Invitation",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_filename": "${json-unit.any-string}",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
           },
-          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "application"
         }
       }
     ],
-    "dueDate": "2021-07-03",
-    "dataVersion": 1,
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
   "state": "AwaitingAos"
