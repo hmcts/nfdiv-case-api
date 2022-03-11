@@ -5,30 +5,36 @@
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
-    "applicant1Email": "test@test.com",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1ContactDetailsType": "public",
     "applicant1Gender": "female",
-    "applicant1SolicitorEmail": "solicitor@test.com",
+    "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorName": "Applicant 1 Solicitor",
+    "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+    "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+    "applicant1SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test 1 Organisation",
+        "OrganisationID": "ABC456"
+      }
+    },
     "applicant1FinancialOrder": "No",
-    "applicant1LegalProceedings": "No",
+    "applicant1LegalProceedings": "Yes",
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
+    "applicant2Offline": "Yes",
     "applicant2LanguagePreferenceWelsh": "No",
-    "applicant2Address": {
-      "AddressLine1": "line 1",
-      "PostTown": "town",
-      "PostCode": "postcode"
-    },
-    "applicant2Gender": "male",
+    "applicant2ContactDetailsType": "public",
+    "applicant2Gender": "female",
     "applicant2SolicitorRepresented": "Yes",
-    "applicant2SolicitorName": "testsol",
-    "applicant2SolicitorEmail": "solicitor@test.com",
-    "applicant2SolicitorAddress": "223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom",
+    "applicant2SolicitorName": "Applicant 2 Solicitor",
+    "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
+    "applicant2SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
     "applicant2SolicitorOrganisationPolicy": {
       "Organisation": {
-        "OrganisationName": "Test Organisation",
+        "OrganisationName": "Test 2 Organisation",
         "OrganisationID": "ABC123"
       }
     },
@@ -51,7 +57,7 @@
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
-    "reissueDate": "2021-06-17",
+    "reissueDate": "${json-unit.any-string}",
     "applicationPayments": [
       {
         "value": {
@@ -64,33 +70,36 @@
         }
       }
     ],
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+    "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
-        "id": "Respondent Invitation",
+        "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
           },
-          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "application"
         }
       },
       {
-        "id": "Respondent Invitation",
+        "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
-            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
           },
-          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "aos"
         }
       }
     ],
-    "dueDate": "2021-07-03"
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}"
   },
   "state": "AwaitingAos"
 }
