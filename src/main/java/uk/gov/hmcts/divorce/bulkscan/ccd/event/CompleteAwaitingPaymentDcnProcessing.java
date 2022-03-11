@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordPageBuilder;
 import uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
@@ -22,7 +23,7 @@ public class CompleteAwaitingPaymentDcnProcessing implements CCDConfig<Exception
     public void configure(final ConfigBuilder<ExceptionRecord, ExceptionRecordState, UserRole> configBuilder) {
         new ExceptionRecordPageBuilder(configBuilder
             .event(COMPLETE_AWAITING_PAYMENT_DCN_PROCESSING)
-            .forAllStates()
+            .forStates(POST_SUBMISSION_STATES)
             .name("Complete DCN processing")
             .description("Complete the processing of payment document control numbers")
             .showEventNotes()
