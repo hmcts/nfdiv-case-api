@@ -344,7 +344,6 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
 
-
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
 
