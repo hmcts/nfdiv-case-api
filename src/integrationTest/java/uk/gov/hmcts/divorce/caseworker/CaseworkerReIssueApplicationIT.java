@@ -60,6 +60,7 @@ import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.NOP_O
 import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.NOTICE_OF_PROCEEDING_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
@@ -240,6 +241,7 @@ public class CaseworkerReIssueApplicationIT {
     @Test
     void shouldSetReIssueDateAndSendApplicationIssueNotificationsForSoleCitizenApplicationOfflineAos() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getApplicant1().setSolicitorRepresented(YES);
@@ -280,8 +282,8 @@ public class CaseworkerReIssueApplicationIT {
 
         verify(notificationService)
             .sendEmail(
-                eq(TEST_APPLICANT_2_USER_EMAIL),
-                eq(JOINT_APPLICATION_ACCEPTED),
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
                 eq(ENGLISH));
 

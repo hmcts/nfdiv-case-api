@@ -46,8 +46,8 @@
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
-    "issueDate": "2022-03-11",
-    "reissueDate": "2021-06-17",
+    "issueDate": "${json-unit.any-string}",
+    "reissueDate": "${json-unit.any-string}",
     "applicationPayments": [
       {
         "value": {
@@ -61,17 +61,17 @@
       }
     ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
-    "accessCode": "5LNP6ER2",
+    "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
         "id": "Divorce application",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_filename": "${json-unit.any-string}",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
           },
-          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "application"
         }
       },
@@ -80,10 +80,10 @@
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
-            "document_filename": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
+            "document_filename": "${json-unit.any-string}",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
           },
-          "documentFileName": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "coversheet"
         }
       },
@@ -92,16 +92,16 @@
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
-            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+            "document_filename": "${json-unit.any-string}",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
           },
-          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "aos"
         }
       }
     ],
-    "dueDate": "2021-07-03",
-    "dataVersion": 1,
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
   "state": "AwaitingAos"
