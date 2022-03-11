@@ -23,8 +23,10 @@ public final class DocumentConstants {
     public static final String JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME = "joint-divorce-application-applicant-2-answers-";
 
     public static final String RESP_SOLICITOR_AOS_INVITATION = "RESP_SOLICITOR_AOS_INVITATION";
-    public static final String CITIZEN_RESP_AOS_INVITATION = "CITIZEN_RESP_AOS_INVITATION";
+    public static final String CITIZEN_RESP_AOS_INVITATION_ONLINE = "CITIZEN_RESP_AOS_INVITATION_ONLINE";
+    public static final String CITIZEN_RESP_AOS_INVITATION_OFFLINE = "CITIZEN_RESP_AOS_INVITATION_OFFLINE";
     public static final String RESP_AOS_INVITATION_DOCUMENT_NAME = "aosinvitation";
+    public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
 
     public static final String CERTIFICATE_OF_SERVICE_DOCUMENT_NAME = "certificateOfService";
 
@@ -72,6 +74,8 @@ public final class DocumentConstants {
     public static final String AOS_UNDEFENDED_RESPONSE_LETTER_DOCUMENT_NAME = "aosUndefendedResponseLetter";
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";
     public static final String AOS_OVERDUE_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED";
+
+    public static final String COVERSHEET_APPLICANT2 = "COVERSHEET_APPLICANT2";
 
     private DocumentConstants() {
     }
