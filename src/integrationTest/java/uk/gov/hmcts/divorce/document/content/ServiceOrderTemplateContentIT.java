@@ -98,7 +98,7 @@ public class ServiceOrderTemplateContentIT {
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry(IS_SERVICE_ORDER_TYPE_DEEMED, "No"),
             entry(REFUSAL_REASON, "refusal reasons"),
-            entry(PARTNER, "wife"),
+            entry(PARTNER, "spouse"),
             entry(IS_DIVORCE, "Yes"),
             entry("ctscContactDetails", ctscContactDetails)
         );
@@ -148,7 +148,7 @@ public class ServiceOrderTemplateContentIT {
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry(IS_SERVICE_ORDER_TYPE_DEEMED, "Yes"),
             entry(REFUSAL_REASON, "refusal reasons"),
-            entry(PARTNER, "wife"),
+            entry(PARTNER, "spouse"),
             entry(IS_DIVORCE, "Yes"),
             entry("ctscContactDetails", ctscContactDetails)
         );

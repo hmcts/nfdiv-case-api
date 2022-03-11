@@ -23,6 +23,7 @@ import java.util.List;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_1;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -46,7 +47,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_NOTICE_OF_CHANGE)
-            .forAllStates()
+            .forStates(POST_SUBMISSION_STATES)
             .name("Notice of change")
             .description("Change applicant representation")
             .showSummary()
@@ -144,8 +145,10 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
         if (data.getNoticeOfChange().getWhichApplicant().equals(APPLICANT_1)) {
             data.getApplicant2().setSolicitor(beforeData.getApplicant2().getSolicitor());
+            data.getApplicant2().setAddress(beforeData.getApplicant2().getAddress());
         } else {
             data.getApplicant1().setSolicitor(beforeData.getApplicant1().getSolicitor());
+            data.getApplicant1().setAddress(beforeData.getApplicant1().getAddress());
         }
 
         return data;

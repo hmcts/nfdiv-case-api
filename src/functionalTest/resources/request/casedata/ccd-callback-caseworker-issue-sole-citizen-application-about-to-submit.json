@@ -18,6 +18,7 @@
     "County": "Catalunya",
     "Country": "Spain"
   },
+  "applicant1SolicitorRepresented": "No",
   "applicant1LanguagePreferenceWelsh": "No",
   "applicant1ContactDetailsType": "private",
   "applicant1Gender": "male",
@@ -26,6 +27,7 @@
   "applicant2LastName": "test_last_name",
   "applicant2Email": "applicant2@example.com",
   "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2SolicitorRepresented": "No",
   "applicant2LanguagePreferenceWelsh": "No",
   "applicant2ContactDetailsType": "public",
   "applicant2Gender": "female",
