@@ -5,29 +5,39 @@
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
-    "applicant1Email": "test@test.com",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1Gender": "female",
     "applicant1ContactDetailsType": "public",
+    "applicant1Gender": "female",
     "applicant1SolicitorRepresented": "Yes",
-    "applicant1SolicitorEmail": "solicitor@test.com",
+    "applicant1SolicitorName": "Applicant 1 Solicitor",
+    "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+    "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+    "applicant1SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test 1 Organisation",
+        "OrganisationID": "ABC456"
+      }
+    },
     "applicant1FinancialOrder": "No",
-    "applicant1LegalProceedings": "No",
+    "applicant1LegalProceedings": "Yes",
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
-    "applicant2Email": "test@test.com",
+    "applicant2Offline": "Yes",
     "applicant2LanguagePreferenceWelsh": "No",
-    "applicant2Address": {
-      "AddressLine1": "223b",
-      "AddressLine2": "Baker Street",
-      "PostTown": "London",
-      "County": "Greater London",
-      "PostCode": "NW1 6XE",
-      "Country": "United Kingdom"
+    "applicant2ContactDetailsType": "public",
+    "applicant2Gender": "female",
+    "applicant2SolicitorRepresented": "Yes",
+    "applicant2SolicitorName": "Applicant 2 Solicitor",
+    "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
+    "applicant2SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+    "applicant2SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test 2 Organisation",
+        "OrganisationID": "ABC123"
+      }
     },
-    "applicant2Gender": "male",
-    "applicant2SolicitorRepresented": "No",
     "applicant2FinancialOrder": "No",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
@@ -38,7 +48,6 @@
     "jurisdictionConnections": [
       "J"
     ],
-    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant1PrayerHasBeenGivenCheckbox": [
       "Yes"
     ],
@@ -48,7 +57,6 @@
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
-    "issueDate": "${json-unit.any-string}",
     "reissueDate": "${json-unit.any-string}",
     "applicationPayments": [
       {
@@ -62,37 +70,36 @@
         }
       }
     ],
-    "applicant2InviteEmailAddress": "applicant2@test.com",
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
-        "id": "Respondent Invitation",
+        "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27",
-            "document_filename": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27/binary"
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
           },
-          "documentFileName": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "coversheet"
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "application"
         }
       },
       {
-        "id": "Coversheet",
+        "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27",
-            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27/binary"
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
           },
-          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "aos"
         }
       }
     ],
-    "dueDate": "2021-07-03",
-    "dataVersion": 1,
-    "warnings": []
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}"
   },
   "state": "AwaitingAos"
 }

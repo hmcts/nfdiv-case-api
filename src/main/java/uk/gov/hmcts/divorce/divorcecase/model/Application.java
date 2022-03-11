@@ -156,7 +156,7 @@ public class Application {
     }
 
     @CCD(
-        label = "The applicant has given their \"prayer\".",
+        label = "${labelContentTheApplicant2UC} has given their \"prayer\".",
         hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
             + " and have decided how money and property will be split (\"financial order\").",
         access = {Applicant2Access.class}

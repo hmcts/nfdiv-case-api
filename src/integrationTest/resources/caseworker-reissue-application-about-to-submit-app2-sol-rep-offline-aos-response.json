@@ -6,27 +6,21 @@
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
-
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1ContactDetailsType": "public",
     "applicant1Gender": "female",
     "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "No",
-
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
-    "applicant2Email": "test@test.com",
-
     "applicant2LanguagePreferenceWelsh": "No",
-
     "applicant2Address": {
       "AddressLine1": "line 1",
       "PostTown": "town",
       "PostCode": "postcode"
     },
-
     "applicant2Gender": "male",
     "applicant2SolicitorRepresented": "Yes",
     "applicant2SolicitorName": "testsol",
@@ -48,7 +42,9 @@
     "jurisdictionConnections": [
       "J"
     ],
-    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
+    "applicant1PrayerHasBeenGivenCheckbox": [
+      "Yes"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
@@ -72,13 +68,25 @@
       {
         "id": "Respondent Invitation",
         "value": {
-          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "aos",
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+          },
+          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "application"
+        }
+      },
+      {
+        "id": "Respondent Invitation",
+        "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
             "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
-          }
+          },
+          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "aos"
         }
       }
     ],

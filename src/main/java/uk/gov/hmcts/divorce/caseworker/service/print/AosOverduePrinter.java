@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentTypeSortedByAddedDateDesc;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTER;
 
 @Component
@@ -27,7 +27,7 @@ public class AosOverduePrinter {
 
     public void sendLetterToApplicant(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> letters = lettersWithDocumentTypeSortedByAddedDateDesc(
+        final List<Letter> letters = lettersWithDocumentType(
             caseData.getDocumentsGenerated(), AOS_OVERDUE_LETTER);
 
         Letter aosOverdueLetter = firstElement(letters);

@@ -425,11 +425,11 @@
   },
   {
     "name": "soleOrApplicant1HWFConfirmation",
-    "value": "HWF123"
+    "value": ""
   },
   {
     "name": "soleOrApplicant1HWFApp",
-    "value": "true"
+    "value": "false"
   },
   {
     "name": "soleOrApplicant1PaymentOther",
@@ -449,7 +449,7 @@
   },
   {
     "name": "applicant2HWFNo",
-    "value": "HWF456"
+    "value": "HWF456123"
   },
   {
     "name": "applicant2HWFApp",

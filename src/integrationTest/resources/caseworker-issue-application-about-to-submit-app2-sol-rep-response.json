@@ -29,7 +29,9 @@
       "J"
     ],
     "applicant1FinancialOrder": "No",
-    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
+    "applicant1PrayerHasBeenGivenCheckbox": [
+      "Yes"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
@@ -75,9 +77,7 @@
     ],
     "documentUploadComplete": "Yes",
     "issueDate": "2021-06-17",
-    "dueDate": "2021-07-03",
-    "noticeOfProceedingsEmail": "solicitor@test.com",
-    "noticeOfProceedingsSolicitorFirm": "Test Organisation"
+    "dueDate": "2021-07-03"
   },
   "state": "AwaitingAos"
 }
