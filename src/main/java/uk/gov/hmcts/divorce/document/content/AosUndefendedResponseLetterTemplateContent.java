@@ -2,8 +2,8 @@ package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
@@ -33,8 +33,8 @@ public class AosUndefendedResponseLetterTemplateContent {
     @Autowired
     private CommonContent commonContent;
 
-    @Value("${aos_response.co_offset_days}")
-    private int offsetDays;
+    @Autowired
+    private HoldingPeriodService holdingPeriodService;
 
     private static final String DATE_TO_WAIT_UNTIL_APPLY_FOR_CO = "dateToWaitUntilApplyForCO";
 
@@ -51,7 +51,8 @@ public class AosUndefendedResponseLetterTemplateContent {
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
         templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
-        templateContent.put(DATE_TO_WAIT_UNTIL_APPLY_FOR_CO, caseData.getApplication().getIssueDate().plusDays(offsetDays)
+        templateContent.put(DATE_TO_WAIT_UNTIL_APPLY_FOR_CO,
+            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
             .format(DATE_TIME_FORMATTER));
 
         if (caseData.isDivorce()) {

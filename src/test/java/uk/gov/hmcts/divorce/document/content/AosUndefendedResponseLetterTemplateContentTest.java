@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -34,14 +34,18 @@ public class AosUndefendedResponseLetterTemplateContentTest {
     @Mock
     private CommonContent commonContent;
 
+    @Mock
+    private HoldingPeriodService holdingPeriodService;
+
     @InjectMocks
     private AosUndefendedResponseLetterTemplateContent templateContent;
 
     private static final LocalDate ISSUE_DATE = LocalDate.of(2022, 2, 2);
+    private static final LocalDate DATE_TO_WAIT_UNTIL_APPLY_FOR_CO = LocalDate.of(2022, 6, 23);
 
     @BeforeEach
     public void setup() {
-        ReflectionTestUtils.setField(templateContent, "offsetDays", 141);
+        when(holdingPeriodService.getDueDateFor(ISSUE_DATE)).thenReturn(DATE_TO_WAIT_UNTIL_APPLY_FOR_CO);
     }
 
     @Test
