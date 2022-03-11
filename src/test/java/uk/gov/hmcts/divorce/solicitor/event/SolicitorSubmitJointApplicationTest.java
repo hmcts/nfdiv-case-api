@@ -30,6 +30,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitJointApplication.SOLICITOR_SUBMIT_JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -88,8 +90,9 @@ class SolicitorSubmitJointApplicationTest {
     }
 
     @Test
-    void shouldNotSetSolicitorAddressIfApplicant2NotRepresented() {
+    void shouldNotSetSolicitorAddressIfApplicant2NotRepresentedAndStateCorrectlyUpdatesToApplicant2Approved() {
         final var caseData = caseData();
+        caseData.getApplication().setApplicant2ConfirmApplicant1Information(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder()
                 .address("DX address")
@@ -100,12 +103,13 @@ class SolicitorSubmitJointApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        solicitorSubmitJointApplication.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitJointApplication.aboutToSubmit(caseDetails, caseDetails);
+        assertThat(response.getState()).isEqualTo(Applicant2Approved);
         verifyNoInteractions(organisationClient);
     }
 
     @Test
-    void shouldPopulateApplicant2SolicitorAddressIfApplicant2RepresentedAndContactInformationReturned() {
+    void shouldPopulateApplicant2SolicitorAddressIfApplicant2RepresentedAndContactInfoReturnedAndStateSetToAwaitingApplicant1Response() {
         OrganisationsResponse organisationsResponse = OrganisationsResponse
             .builder()
             .contactInformation(
@@ -130,12 +134,14 @@ class SolicitorSubmitJointApplicationTest {
                 .build()
         );
         caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplication().setApplicant2ConfirmApplicant1Information(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitJointApplication.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getApplicant2().getSolicitor().getAddress()).isEqualTo("1 Solicitor Court");
+        assertThat(response.getState()).isEqualTo(AwaitingApplicant1Response);
     }
 
     @Test
@@ -157,6 +163,7 @@ class SolicitorSubmitJointApplicationTest {
                 .build()
         );
         caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplication().setApplicant2ConfirmApplicant1Information(NO);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
