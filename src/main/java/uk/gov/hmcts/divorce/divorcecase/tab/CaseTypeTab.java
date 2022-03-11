@@ -89,7 +89,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("inWhichCountryIsYourLifeMainlyBased", "jurisdictionAgree=\"No\"")
             .field("applicant2LegalProceedings")
             .field("applicant2LegalProceedingsDetails")
-            .field("applicant2UserId")
             .field("dueDate")
             .field("howToRespondApplication")
             .field("applicant2LanguagePreferenceWelsh")
