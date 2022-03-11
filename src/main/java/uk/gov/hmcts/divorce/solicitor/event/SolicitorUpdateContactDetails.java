@@ -20,8 +20,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Component
@@ -64,9 +62,9 @@ public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State,
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SOLICITOR)
-            .grant(READ_UPDATE, SUPER_USER)
-            .grant(READ,
+            .grantHistoryOnly(
                 CASE_WORKER,
+                SUPER_USER,
                 LEGAL_ADVISOR));
     }
 }

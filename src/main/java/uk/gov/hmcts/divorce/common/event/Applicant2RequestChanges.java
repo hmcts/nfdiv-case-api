@@ -23,7 +23,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2RequestChanges;
 
 @Slf4j
@@ -47,10 +46,7 @@ public class Applicant2RequestChanges implements CCDConfig<CaseData, State, User
             .name("Applicant 2 Request Changes")
             .description("Applicant 2 Requests changes to be made by Applicant 1")
             .grant(CREATE_READ_UPDATE, APPLICANT_2, SYSTEMUPDATE)
-            .grant(READ,
-                APPLICANT_1_SOLICITOR,
-                CASE_WORKER,
-                SUPER_USER)
+            .grantHistoryOnly(APPLICANT_1_SOLICITOR, CASE_WORKER, SUPER_USER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }

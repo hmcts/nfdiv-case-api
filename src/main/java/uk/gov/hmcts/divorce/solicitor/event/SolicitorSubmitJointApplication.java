@@ -39,7 +39,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.populateSolicitorAddress;
 
 @Slf4j
@@ -92,7 +91,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
             .showSummary()
             .endButtonLabel("Submit Application")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
-            .grant(READ,
+            .grantHistoryOnly(
                 APPLICANT_1_SOLICITOR,
                 CASE_WORKER,
                 SUPER_USER,

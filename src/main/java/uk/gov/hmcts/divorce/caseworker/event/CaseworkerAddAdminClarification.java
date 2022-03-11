@@ -16,7 +16,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class CaseworkerAddAdminClarification implements CCDConfig<CaseData, State, UserRole> {
@@ -32,6 +31,6 @@ public class CaseworkerAddAdminClarification implements CCDConfig<CaseData, Stat
             .description("Add admin clarification")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN));
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN));
     }
 }

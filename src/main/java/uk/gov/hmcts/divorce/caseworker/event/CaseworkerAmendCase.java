@@ -25,7 +25,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole> {
@@ -50,7 +49,7 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
             .showEventNotes()
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
-            .grant(READ,
+            .grantHistoryOnly(
                 SUPER_USER,
                 LEGAL_ADVISOR));
     }
