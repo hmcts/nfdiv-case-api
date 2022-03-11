@@ -63,8 +63,6 @@
         }
       }
     ],
-    "noticeOfProceedingsEmail": "solicitor@test.com",
-    "noticeOfProceedingsSolicitorFirm": "Test Organisation",
     "documentsGenerated": [
       {
         "id": "Respondent Invitation",

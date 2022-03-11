@@ -17,11 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
@@ -37,10 +35,10 @@ class SendAosPackToRespondentTest {
     private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Test
-    void shouldNotPrintAosIfApplicationIsPersonalServiceMethodWhenAboutToSubmit() {
+    void shouldNotPrintAosIfApplicationIsJointApplication() {
 
         final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
+        caseData.setApplicationType(JOINT_APPLICATION);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -58,10 +56,11 @@ class SendAosPackToRespondentTest {
     }
 
     @Test
-    void shouldNotPrintAosIfApplicationIsCourtServiceAndApplicant2IsOverseasWhenAboutToSubmit() {
+    void shouldNotPrintAosIfSoleApplicationAndApplicant2IsOverseasWhenAboutToSubmit() {
 
         final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.setApplicationType(SOLE_APPLICATION);
+
         Applicant applicant2 = respondent();
         applicant2.setAddress(
             AddressGlobalUK
@@ -89,10 +88,9 @@ class SendAosPackToRespondentTest {
     }
 
     @Test
-    void shouldPrintAosAndSetDueDateIfNotPersonalServiceAndRespondentIsNotRepresentedAndIsNotOverseas() {
-
+    void shouldPrintAosAndSetDueDateIfSoleApplicationAndRespondentIsNotRepresentedAndIsNotOverseas() {
         final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         Applicant applicant2 = respondent();
@@ -122,10 +120,10 @@ class SendAosPackToRespondentTest {
     }
 
     @Test
-    void shouldPrintAosAndUpdateCaseDataIfNotPersonalServiceAndRespondentIsRepresented() {
+    void shouldNotPrintAosAndUpdateCaseDataIfSoleApplicationAndRespondentIsRepresented() {
 
         final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.setApplicant2(respondentWithDigitalSolicitor());
 
@@ -140,7 +138,7 @@ class SendAosPackToRespondentTest {
             .extracting(
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
                 AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
-            .contains(TEST_SOLICITOR_EMAIL, TEST_ORG_NAME);
-        verify(aosPackPrinter).sendAosLetterToRespondent(caseData, TEST_CASE_ID);
+            .contains(null, null, null);
+        verifyNoInteractions(aosPackPrinter);
     }
 }
