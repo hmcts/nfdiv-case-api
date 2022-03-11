@@ -39,8 +39,8 @@ public class GenerateNoticeOfProceeding implements CaseTask {
 
         log.info("Generating notice of proceedings for case id {} ", caseId);
 
-        boolean isApplicant1Represented = caseData.getApplicant1().getSolicitorRepresented().toBoolean();
-        boolean isApplicant2Represented = caseData.getApplicant2().getSolicitorRepresented().toBoolean();
+        boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
+        boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
         boolean isSoleApplication = caseData.getApplicationType().isSole();
 
         if (isSoleApplication && !isApplicant1Represented) {
