@@ -258,6 +258,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "### Applicant 1")
             .field("coApplicant1ApplyForConditionalOrder")
             .field("coApplicant1ConfirmInformationStillCorrect")
+            .field("coApplicant1ReasonInformationNotCorrect")
             .field("coApplicant1SubmittedDate")
             .field("coApplicant1ChangeOrAddToApplication")
             .field("coApplicant1StatementOfTruth")
