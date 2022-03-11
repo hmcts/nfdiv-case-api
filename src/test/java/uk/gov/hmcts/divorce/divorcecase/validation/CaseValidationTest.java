@@ -48,6 +48,18 @@ public class CaseValidationTest {
     }
 
     @Test
+    public void shouldValidateBasicOfflineCase() {
+        CaseData caseData = new CaseData();
+        Applicant applicant1 = Applicant.builder().offline(YES).build();
+        Applicant applicant2 = Applicant.builder().offline(YES).build();
+        caseData.setApplicant1(applicant1);
+        caseData.setApplicant2(applicant2);
+
+        List<String> errors = validateBasicCase(caseData);
+        assertThat(errors).hasSize(11);
+    }
+
+    @Test
     public void shouldReturnErrorWhenStringIsNull() {
         List<String> response = notNull(null, "field");
 
