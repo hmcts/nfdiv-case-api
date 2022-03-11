@@ -29,6 +29,8 @@
       "County": "Catalunya",
       "PostTown": "Barcelona"
     },
+    "applicant1SolicitorRepresented": "No",
+    "applicant2SolicitorRepresented": "No",
     "applicant2ContactDetailsType": "public",
     "applicant2Gender": "female",
     "applicant1IsApplicant2Represented": "notSure",
@@ -77,6 +79,18 @@
         "value": {
           "documentFileName": "${json-unit.any-string}",
           "documentType": "application",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "coversheet",
           "documentLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",

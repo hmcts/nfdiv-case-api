@@ -5,6 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.print.AosOverduePrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
@@ -56,6 +58,9 @@ class AosReminderNotificationsTest {
     @Mock
     private EmailTemplatesConfig emailTemplatesConfig;
 
+    @Mock
+    private AosOverduePrinter aosOverduePrinter;
+
     @InjectMocks
     private AosReminderNotifications aosReminderNotifications;
 
@@ -68,8 +73,7 @@ class AosReminderNotificationsTest {
         data.getApplicant2().setEmail(null);
         data.setCaseInvite(new CaseInvite("applicant2@test.com", ACCESS_CODE, null));
 
-        Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getMainTemplateVars());
+        Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
@@ -135,10 +139,6 @@ class AosReminderNotificationsTest {
         data.getApplicant2().setEmail(null);
         data.setCaseInvite(new CaseInvite(null, ACCESS_CODE, null));
 
-        Map<String, String> dissolutionTemplateVars = new HashMap<>();
-        dissolutionTemplateVars.putAll(getMainTemplateVars());
-        dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-
         aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
 
         verifyNoInteractions(notificationService, commonContent);
@@ -175,8 +175,7 @@ class AosReminderNotificationsTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getMainTemplateVars());
+        Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
@@ -194,5 +193,17 @@ class AosReminderNotificationsTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendPartnerNotRespondedLetterToSoleApplicant() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.getApplicant1().setOffline(YesOrNo.YES);
+
+        aosReminderNotifications.sendToApplicant1Offline(data, 1234567890123456L);
+
+        verify(aosOverduePrinter).sendLetterToApplicant(
+            data, 1234567890123456L
+        );
     }
 }

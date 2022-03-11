@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
-import java.time.LocalDate;
 import java.util.Map;
 
 @Component
@@ -13,13 +12,10 @@ import java.util.Map;
 public class CitizenRespondentAosInvitationTemplateContent {
 
     @Autowired
-    private RespondentSolicitorAosInvitationTemplateContent templateContent;
+    private NoticeOfProceedingContent templateContent;
 
-    public Map<String, Object> apply(final CaseData caseData,
-                                     final Long ccdCaseReference,
-                                     final LocalDate createdDate) {
-
-        //TODO: Reusing Respondent Solicitor Template until we know the required content
-        return templateContent.apply(caseData, ccdCaseReference, createdDate);
+    //Reuse notice of proceeding template content as it includes all template vars required for citizen respondent template
+    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
+        return templateContent.apply(caseData, ccdCaseReference);
     }
 }

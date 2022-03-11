@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.cftlib;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,10 @@ import java.util.List;
 
 @Component
 public class CftLibConfig implements CFTLibConfigurer {
+
+    @Value("ccd-NFD-${CCD_DEF_NAME:dev}.xlsx")
+    String defName;
+
     @Override
     public void configure(CFTLib lib) throws Exception {
         for (String p : List.of(
@@ -47,7 +52,7 @@ public class CftLibConfig implements CFTLibConfigurer {
             .getInputStream(), Charset.defaultCharset());
         lib.configureRoleAssignments(json);
 
-        var def = Files.readAllBytes(Path.of("build/ccd-config/ccd-NFD-dev.xlsx"));
+        var def = Files.readAllBytes(Path.of("build/ccd-config/" + defName));
         lib.importDefinition(def);
     }
 }

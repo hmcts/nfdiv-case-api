@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
+import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -299,7 +301,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn4InternalServerErrorWhenResponseEntityIsNull() throws Exception {
+    public void shouldReturn4InternalServerErrorWhenResponseEntityIsNull() {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -393,7 +395,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn404WhenPaymentAccountIsNotFound() throws Exception {
+    public void shouldReturn404WhenPaymentAccountIsNotFound() {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -504,5 +506,65 @@ public class PaymentServiceTest {
             .organisationPolicy(organisationPolicy())
             .reference("testref")
             .build();
+    }
+
+    @Test
+    public void getServiceCostShouldReturnFeeAmountWhenFeeEventIsAvailable() {
+        FeeResponse feeResponse = getFeeResponse();
+
+        doReturn(feeResponse)
+            .when(feesAndPaymentsClient)
+            .getPaymentServiceFee(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString()
+            );
+
+        Assertions.assertEquals(10.0,
+            paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF));
+
+        verify(feesAndPaymentsClient)
+            .getPaymentServiceFee(
+                DEFAULT_CHANNEL,
+                EVENT_ENFORCEMENT,
+                FAMILY,
+                FAMILY_COURT,
+                SERVICE_OTHER,
+                KEYWORD_BAILIFF
+            );
+    }
+
+    @Test
+    public void getServiceCostShouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
+        byte[] emptyBody = {};
+        Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
+
+        FeignException feignException = FeignException.errorStatus(
+            "feeLookupNotFound",
+            Response.builder()
+                .request(request)
+                .status(404)
+                .headers(Collections.emptyMap())
+                .reason("Fee Not found")
+                .build()
+        );
+
+        doThrow(feignException)
+            .when(feesAndPaymentsClient)
+            .getPaymentServiceFee(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString()
+            );
+
+        assertThatThrownBy(() -> paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_INVALID))
+            .hasMessageContaining("404 Fee Not found")
+            .isExactlyInstanceOf(FeignException.NotFound.class);
     }
 }

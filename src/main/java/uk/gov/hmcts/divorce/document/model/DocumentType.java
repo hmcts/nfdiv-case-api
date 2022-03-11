@@ -64,6 +64,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("costsOrder")
     COSTS_ORDER("Costs order"),
 
+    @JsonProperty("coversheet")
+    COVERSHEET("Coversheet"),
+
     @JsonProperty("d84")
     D84("D84"),
 
@@ -149,7 +152,10 @@ public enum DocumentType implements HasLabel {
     WELSH_TRANSLATION("Welsh Translation"),
 
     @JsonProperty("aosResponseLetter")
-    AOS_RESPONSE_LETTER("Aos response letter");
+    AOS_RESPONSE_LETTER("Aos response letter"),
+
+    @JsonProperty("aosOverdueLetter")
+    AOS_OVERDUE_LETTER("Aos overdue letter");
 
     private final String label;
 }
