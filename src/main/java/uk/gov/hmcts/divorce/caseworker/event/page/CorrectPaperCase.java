@@ -145,7 +145,10 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,
                         "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
                 .done()
-            .done();
+            .done()
+            .label("Label-CorrectScannedDocuments",
+                "### Scanned Documents")
+            .mandatory(CaseData::getScannedDocuments);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
