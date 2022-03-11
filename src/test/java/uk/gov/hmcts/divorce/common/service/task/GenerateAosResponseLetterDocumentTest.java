@@ -26,11 +26,9 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_UNDEFENDED_RESPONSE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_UNDEFENDED_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -115,12 +113,12 @@ class GenerateAosResponseLetterDocumentTest {
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                AOS_UNDEFENDED_RESPONSE_LETTER,
+                AOS_RESPONSE_LETTER,
                 templateContent,
                 TEST_CASE_ID,
                 RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID,
                 caseData.getApplicant1().getLanguagePreference(),
-                AOS_UNDEFENDED_RESPONSE_LETTER_DOCUMENT_NAME
+                AOS_RESPONSE_LETTER_DOCUMENT_NAME
             );
 
         verifyNoMoreInteractions(caseDataDocumentService);

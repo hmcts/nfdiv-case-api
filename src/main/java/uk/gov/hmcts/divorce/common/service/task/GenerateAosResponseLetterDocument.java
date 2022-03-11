@@ -13,11 +13,9 @@ import uk.gov.hmcts.divorce.document.content.AosResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.content.AosUndefendedResponseLetterTemplateContent;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_UNDEFENDED_RESPONSE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_UNDEFENDED_RESPONSE_LETTER;
 
 @Component
 @Slf4j
@@ -56,12 +54,12 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
                 log.info("Generating aos response (undefended) letter pdf for case id: {}", caseId);
                 caseDataDocumentService.renderDocumentAndUpdateCaseData(
                     caseData,
-                    AOS_UNDEFENDED_RESPONSE_LETTER,
+                    AOS_RESPONSE_LETTER,
                     aosUndefendedResponseLetterTemplateContent.apply(caseData, caseId),
                     caseId,
                     RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID,
                     caseData.getApplicant1().getLanguagePreference(),
-                    AOS_UNDEFENDED_RESPONSE_LETTER_DOCUMENT_NAME
+                    AOS_RESPONSE_LETTER_DOCUMENT_NAME
                 );
             }
         }

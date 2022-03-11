@@ -154,9 +154,6 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("aosResponseLetter")
     AOS_RESPONSE_LETTER("Aos response letter"),
 
-    @JsonProperty("aosUndefendedResponseLetter")
-    AOS_UNDEFENDED_RESPONSE_LETTER("Aos undefended response letter"),
-
     @JsonProperty("aosOverdueLetter")
     AOS_OVERDUE_LETTER("Aos overdue letter");
 
