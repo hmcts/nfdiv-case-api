@@ -301,6 +301,8 @@ dependencies {
   testImplementation group: 'io.github.openfeign', name: 'feign-jackson', version: '11.8'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
   testImplementation group: 'org.simplify4u', name: 'slf4j-mock', version: '2.1.1'
+  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.25'
+
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
