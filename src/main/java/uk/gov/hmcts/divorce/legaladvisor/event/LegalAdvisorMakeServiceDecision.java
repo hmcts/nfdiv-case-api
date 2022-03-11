@@ -38,7 +38,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_AS_SERVICE_GRANTED;
@@ -77,7 +76,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
-            .grant(READ, CASE_WORKER, SUPER_USER, SOLICITOR, CITIZEN, SYSTEMUPDATE))
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, SOLICITOR, CITIZEN, SYSTEMUPDATE))
             .page("makeServiceDecision")
             .pageLabel("Approve service application")
             .complex(CaseData::getAlternativeService)

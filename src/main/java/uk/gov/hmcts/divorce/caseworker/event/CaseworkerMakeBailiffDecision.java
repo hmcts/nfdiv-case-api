@@ -28,7 +28,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME;
@@ -68,7 +67,7 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ, LEGAL_ADVISOR)
-            .grant(READ, CASE_WORKER, SOLICITOR, SYSTEMUPDATE))
+            .grantHistoryOnly(CASE_WORKER, SOLICITOR, SYSTEMUPDATE))
             .page("makeBailiffDecision-1")
             .pageLabel("Make Bailiff Decision")
             .complex(CaseData::getAlternativeService)

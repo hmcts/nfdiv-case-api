@@ -17,7 +17,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -35,7 +34,7 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
             .showSummary(false)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grant(READ, SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
+            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
             .page("uploadDocument")
             .pageLabel("Upload document")
             .optional(CaseData::getDocumentsUploaded);
