@@ -96,7 +96,7 @@ class CommonContentTest {
 
         caseData = caseData();
         caseData.getApplicant2().setGender(null);
-        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("wife");
+        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("spouse");
 
         caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
