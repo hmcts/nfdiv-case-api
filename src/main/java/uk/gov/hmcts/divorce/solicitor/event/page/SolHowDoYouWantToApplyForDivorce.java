@@ -39,6 +39,7 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
                 .readonly(LabelContent::getDivorceOrLegallyEnd, NEVER_SHOW)
                 .readonly(LabelContent::getApplicantsOrApplicant1s, NEVER_SHOW)
                 .readonly(LabelContent::getTheApplicantOrApplicant1, NEVER_SHOW)
+                .readonly(LabelContent::getTheApplicantOrApplicant1UC, NEVER_SHOW)
                 .readonly(LabelContent::getGotMarriedOrFormedCivilPartnership, NEVER_SHOW)
                 .readonly(LabelContent::getRespondentsOrApplicant2s, NEVER_SHOW)
                 .readonly(LabelContent::getTheApplicantOrApplicant1, NEVER_SHOW)

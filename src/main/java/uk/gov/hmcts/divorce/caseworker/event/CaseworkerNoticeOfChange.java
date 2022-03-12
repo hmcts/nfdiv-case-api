@@ -32,7 +32,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -54,7 +53,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
-            .grant(READ, LEGAL_ADVISOR))
+            .grantHistoryOnly(LEGAL_ADVISOR))
             .page("changeRepresentation-1")
             .pageLabel("Which applicant")
             .complex(CaseData::getNoticeOfChange)
