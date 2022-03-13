@@ -15,7 +15,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class SolicitorConfirmReceipt implements CCDConfig<CaseData, State, UserRole> {
@@ -32,9 +31,6 @@ public class SolicitorConfirmReceipt implements CCDConfig<CaseData, State, UserR
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, SOLICITOR, APPLICANT_2_SOLICITOR)
-            .grant(READ,
-                SUPER_USER,
-                CASE_WORKER,
-                LEGAL_ADVISOR));
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 }

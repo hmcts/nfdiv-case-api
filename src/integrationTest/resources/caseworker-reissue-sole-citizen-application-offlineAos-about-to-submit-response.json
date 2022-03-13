@@ -14,21 +14,19 @@
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "No",
     "applicant2FirstName": "test_first_name",
-    "applicant2Offline": "Yes",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
     "applicant2LanguagePreferenceWelsh": "No",
     "applicant2Address": {
-      "AddressLine1": "223b",
-      "AddressLine2": "Baker Street",
-      "PostTown": "London",
-      "County": "Greater London",
-      "PostCode": "NW1 6XE",
-      "Country": "United Kingdom"
+      "AddressLine1": "line 1",
+      "PostTown": "town",
+      "PostCode": "postcode",
+      "Country": "UK"
     },
     "applicant2Gender": "male",
     "applicant2SolicitorRepresented": "No",
     "applicant2FinancialOrder": "No",
+    "applicant2Offline": "Yes",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
     "marriagePlaceOfMarriage": "Somewhere",
@@ -50,53 +48,55 @@
     "documentUploadComplete": "Yes",
     "issueDate": "${json-unit.any-string}",
     "reissueDate": "${json-unit.any-string}",
-    "applicationPayments": [{
-      "value": {
-        "feeCode": "FEE0001",
-        "amount": 55000,
-        "status": "success",
-        "channel": "online",
-        "reference": "paymentRef",
-        "transactionId": "ge7po9h5bhbtbd466424src9tk"
+    "applicationPayments": [
+      {
+        "value": {
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
       }
-    }],
+    ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
+      {
+        "id": "Divorce application",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "application"
+        }
+      },
+      {
+        "id": "Divorce application",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "coversheet"
+        }
+      },
       {
         "id": "Respondent Invitation",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
-            "document_filename": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
+            "document_filename": "${json-unit.any-string}",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
           },
-          "documentFileName": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "coversheet"
-        }
-      },
-      {
-        "id": "Coversheet",
-        "value": {
-          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-          "documentLink": {
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary",
-            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94"
-          },
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "aos"
-        }
-      },
-      {
-        "id": "Respondent Invitation",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
-          },
-          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "application"
         }
       }
     ],

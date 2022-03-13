@@ -25,23 +25,14 @@ import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.notShowForState;
 
 @Component
 public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, UserRole> {
@@ -99,15 +90,13 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_GENERAL_APPLICATION)
-            .forAllStates()
+            .forStates(POST_ISSUE_STATES)
             .name("General Application")
             .description("General Application")
-            .showCondition(notShowForState(Draft, Applicant2Approved, AwaitingApplicant1Response,
-                    AwaitingApplicant2Response, AwaitingPayment, AwaitingHWFDecision, AwaitingDocuments, Submitted))
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SOLICITOR)
-            .grant(READ, CASE_WORKER, LEGAL_ADVISOR, SUPER_USER));
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 }

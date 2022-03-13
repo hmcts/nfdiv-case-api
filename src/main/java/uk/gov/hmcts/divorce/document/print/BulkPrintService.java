@@ -61,7 +61,7 @@ public class BulkPrintService {
         List<Document> documents = documentRequestForPrint(print, authToken);
 
         if (includeD10Document) {
-            Document d10Document = new Document(getEncoder().encodeToString(loadD10PdfBytes("D10.pdf")), 1);
+            Document d10Document = new Document(getEncoder().encodeToString(loadD10PdfBytes("/D10.pdf")), 1);
             documents.add(d10Document);
         }
 

@@ -16,10 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Slf4j
 @Component
@@ -43,7 +43,7 @@ public class CitizenUpdateContactDetails implements CCDConfig<CaseData, State, U
             .description("Patch a case contact details for correct applicant")
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN, APPLICANT_2)
-            .grant(READ, SUPER_USER)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 

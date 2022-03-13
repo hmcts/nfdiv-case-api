@@ -37,7 +37,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Slf4j
 @Component
@@ -63,8 +62,6 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
         if (env.contains(ENVIRONMENT_AAT)) {
             roles.add(SOLICITOR);
-            roles.add(CASE_WORKER);
-            roles.add(SUPER_USER);
         }
 
         new PageBuilder(configBuilder
@@ -74,7 +71,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, roles.toArray(UserRole[]::new))
-            .grant(READ, SUPER_USER, CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
+            .grantHistoryOnly(SUPER_USER, CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
             .page("Create test case", this::midEvent)
             .mandatory(CaseData::getApplicationType)
             .complex(CaseData::getApplicant1)

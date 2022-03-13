@@ -25,12 +25,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -50,7 +50,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_ADD_NOTE)
-            .forAllStates()
+            .forStates(POST_SUBMISSION_STATES)
             .name("Add note")
             .description("Add note")
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -59,8 +59,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
                 CASE_WORKER)
             .grant(CREATE_READ_UPDATE_DELETE,
                 SUPER_USER)
-            .grant(READ,
-                LEGAL_ADVISOR))
+            .grantHistoryOnly(LEGAL_ADVISOR))
             .page("addCaseNotes")
             .pageLabel("Add case notes")
             .optional(CaseData::getNote);

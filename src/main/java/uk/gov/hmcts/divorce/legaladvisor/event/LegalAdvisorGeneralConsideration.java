@@ -26,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -48,7 +47,7 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
-            .grant(READ,
+            .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER))
             .page("generalConsiderationResponse")

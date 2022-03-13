@@ -98,7 +98,6 @@ class SolicitorCreateApplicationTest {
             .put(SYSTEMUPDATE, R)
             .put(SYSTEMUPDATE, U)
             .put(SUPER_USER, R)
-            .put(SUPER_USER, U)
             .put(CASE_WORKER, R)
             .put(LEGAL_ADVISOR, R)
             .build();

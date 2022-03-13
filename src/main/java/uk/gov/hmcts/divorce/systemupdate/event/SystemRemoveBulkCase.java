@@ -17,7 +17,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole> {
@@ -33,6 +32,6 @@ public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole
             .name("System remove bulk case")
             .description("System remove bulk case")
             .grant(CREATE_READ_UPDATE_DELETE, SYSTEMUPDATE)
-            .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
+            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 }

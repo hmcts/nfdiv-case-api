@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.document.print;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -346,7 +348,7 @@ class BulkPrintServiceTest {
 
         UUID uuid = UUID.randomUUID();
         byte[] firstFile = "data from file 1".getBytes(StandardCharsets.UTF_8);
-        byte[] d10PdfBytes = bulkPrintService.loadD10PdfBytes("D10.pdf");
+        byte[] d10PdfBytes = bulkPrintService.loadD10PdfBytes("/D10.pdf");
 
         given(sendLetterApi.sendLetter(
             eq(TEST_SERVICE_AUTH_TOKEN),
@@ -543,6 +545,13 @@ class BulkPrintServiceTest {
     @Test
     void shouldReturnEmptyByteArrayWhenLoadPdfIsInvokedWithNonExistingResource() {
         assertThat(bulkPrintService.loadD10PdfBytes("nonexistent.pdf")).isEmpty();
+    }
+
+    @Test
+    void shouldLoadD10DocumentSuccessfully() throws Exception {
+        PDDocument d10 = PDDocument.load(bulkPrintService.loadD10PdfBytes("/D10.pdf"));
+        assertThat(new PDFTextStripper().getText(d10))
+            .contains("D10 Respond to a divorce, dissolution or (judicial) separation application");
     }
 
     private ListValue<DivorceDocument> getDivorceDocumentListValue(
