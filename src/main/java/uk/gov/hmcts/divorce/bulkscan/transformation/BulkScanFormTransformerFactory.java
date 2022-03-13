@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.exception.UnsupportedFormTypeException;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;

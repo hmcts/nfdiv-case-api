@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkscan.transformation.BulkScanService;
 import uk.gov.hmcts.divorce.endpoint.model.CaseCreationDetails;
-import uk.gov.hmcts.divorce.endpoint.model.output.SuccessfulTransformationResponse;
 import uk.gov.hmcts.divorce.endpoint.model.input.TransformationInput;
+import uk.gov.hmcts.divorce.endpoint.model.output.SuccessfulTransformationResponse;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;

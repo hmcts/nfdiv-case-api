@@ -1,4 +1,5 @@
 package uk.gov.hmcts.divorce.endpoint.model.input;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

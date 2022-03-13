@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public class InvalidDataException extends RuntimeException {
 
+    private static final long serialVersionUID = 985127511558687731L;
+
     private final List<String> errors;
     private final List<String> warnings;
 
