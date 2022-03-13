@@ -1,0 +1,110 @@
+{
+  "data": {
+    "applicationType": "soleApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Gender": "female",
+    "applicant1ContactDetailsType": "public",
+    "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorEmail": "solicitor@test.com",
+    "applicant1FinancialOrder": "No",
+    "applicant1LegalProceedings": "No",
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2Email": "test@test.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2Address": {
+      "AddressLine1": "223b",
+      "AddressLine2": "Baker Street",
+      "PostTown": "London",
+      "County": "Greater London",
+      "PostCode": "NW1 6XE",
+      "Country": "United Kingdom"
+    },
+    "applicant2Gender": "male",
+    "applicant2SolicitorRepresented": "No",
+    "applicant2FinancialOrder": "No",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "accessCode": "${json-unit.ignore}",
+    "jurisdictionConnections": [
+      "J"
+    ],
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "applicant1PrayerHasBeenGivenCheckbox": [
+      "Yes"
+    ],
+    "applicant1StatementOfTruth": "Yes",
+    "solSignStatementOfTruth": "Yes",
+    "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000"
+    },
+    "documentUploadComplete": "Yes",
+    "issueDate": "2021-06-17",
+    "applicationPayments": [
+      {
+        "value": {
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
+    "applicant2InviteEmailAddress": "applicant2@test.com",
+    "noticeOfProceedingsEmail": "test@test.com",
+    "documentsGenerated": [
+      {
+        "id": "Coversheet",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+          },
+          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "application"
+        }
+      },
+      {
+        "id": "Divorce application",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
+            "document_filename": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
+          },
+          "documentFileName": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "coversheet"
+        }
+      },
+      {
+        "id": "Notice of proceeding respondent",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa",
+            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa/binary"
+          },
+          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "aos"
+        }
+      }
+    ],
+    "dueDate": "2021-07-03",
+    "dataVersion": 1,
+    "warnings": []
+  },
+  "state": "AwaitingAos"
+}

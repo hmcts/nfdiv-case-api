@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.document.print;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -56,6 +58,7 @@ class BulkPrintServiceTest {
 
     @Mock
     private SendLetterApi sendLetterApi;
+
     @Mock
     private AuthTokenGenerator authTokenGenerator;
 
@@ -83,7 +86,6 @@ class BulkPrintServiceTest {
 
         String solicitorRolesCsv = String.join(",", solicitorRoles);
 
-
         String userId = UUID.randomUUID().toString();
 
         User solicitorUser = solicitorUser(solicitorRoles, userId);
@@ -97,10 +99,8 @@ class BulkPrintServiceTest {
         given(authTokenGenerator.generate())
             .willReturn(TEST_SERVICE_AUTH_TOKEN);
 
-
         UUID uuid = UUID.randomUUID();
         byte[] firstFile = "data from file 1".getBytes(StandardCharsets.UTF_8);
-
 
         given(sendLetterApi.sendLetter(
             eq(TEST_SERVICE_AUTH_TOKEN),
@@ -143,10 +143,12 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
+                null,
                 1
             ),
             new Letter(
                 divorceDocumentListValue2.getValue(),
+                null,
                 2
             )
         );
@@ -203,6 +205,256 @@ class BulkPrintServiceTest {
     }
 
     @Test
+    void shouldReturnLetterIdForAosRespondentPackWithoutD10DocumentsWhenPrintRequestIsInvoked() throws IOException {
+        List<String> solicitorRoles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+
+        String solicitorRolesCsv = String.join(",", solicitorRoles);
+
+        String userId = UUID.randomUUID().toString();
+
+        User solicitorUser = solicitorUser(solicitorRoles, userId);
+
+        given(httpServletRequest.getHeader(AUTHORIZATION))
+            .willReturn(APP_1_SOL_AUTH_TOKEN);
+
+        given(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
+            .willReturn(solicitorUser);
+
+        given(authTokenGenerator.generate())
+            .willReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        UUID uuid = UUID.randomUUID();
+        byte[] firstFile = "data from file 1".getBytes(StandardCharsets.UTF_8);
+
+        given(sendLetterApi.sendLetter(
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            isA(LetterV3.class)
+        ))
+            .willReturn(new SendLetterResponse(
+                uuid
+            ));
+
+        given(resource.getInputStream())
+            .willReturn(new ByteArrayInputStream(firstFile))
+            .willReturn(new ByteArrayInputStream(firstFile));
+
+        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
+
+        final String documentUuid = FilenameUtils.getName(
+            divorceDocumentListValue.getValue().getDocumentLink().getUrl());
+        given(documentManagementClient.downloadBinary(
+            APP_1_SOL_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            solicitorRolesCsv,
+            userId,
+            documentUuid
+        ))
+            .willReturn(ResponseEntity.ok(resource));
+
+        ListValue<DivorceDocument> divorceDocumentListValue2 = documentWithType(APPLICATION);
+
+        final String documentUuid2 = FilenameUtils.getName(
+            divorceDocumentListValue2.getValue().getDocumentLink().getUrl());
+        given(documentManagementClient.downloadBinary(
+            APP_1_SOL_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            solicitorRolesCsv,
+            userId,
+            documentUuid2
+        ))
+            .willReturn(ResponseEntity.ok(resource));
+
+        List<Letter> letters = List.of(
+            new Letter(
+                divorceDocumentListValue.getValue(),
+                null,
+                1
+            ),
+            new Letter(
+                divorceDocumentListValue2.getValue(),
+                null,
+                2
+            )
+        );
+
+        Print print = new Print(
+            letters,
+            "1234",
+            "5678",
+            "letterType"
+        );
+
+        UUID letterId = bulkPrintService.printAosRespondentPack(print, false);
+        assertThat(letterId).isEqualTo(uuid);
+
+        verify(sendLetterApi).sendLetter(
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            letterV3ArgumentCaptor.capture()
+        );
+
+        LetterV3 letterV3 = letterV3ArgumentCaptor.getValue();
+        assertThat(letterV3.documents)
+            .extracting(
+                "content",
+                "copies")
+            .contains(
+                tuple(
+                    Base64.getEncoder().encodeToString(firstFile),
+                    1),
+                tuple(
+                    Base64.getEncoder().encodeToString(firstFile),
+                    2)
+            );
+
+        assertThat(letterV3.additionalData)
+            .contains(
+                entry(LETTER_TYPE_KEY, "letterType"),
+                entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
+                entry(CASE_IDENTIFIER_KEY, "1234")
+            );
+
+        verify(httpServletRequest, times(2))
+            .getHeader(AUTHORIZATION);
+        verify(idamService, times(2))
+            .retrieveUser(APP_1_SOL_AUTH_TOKEN);
+        verify(documentManagementClient).downloadBinary(
+            APP_1_SOL_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            solicitorRolesCsv,
+            userId,
+            documentUuid
+        );
+        verify(authTokenGenerator).generate();
+    }
+
+    @Test
+    void shouldReturnLetterIdForAosRespondentPackWithD10DocumentsWhenPrintRequestIsInvoked() throws IOException {
+        List<String> solicitorRoles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+
+        String solicitorRolesCsv = String.join(",", solicitorRoles);
+
+        String userId = UUID.randomUUID().toString();
+
+        User solicitorUser = solicitorUser(solicitorRoles, userId);
+
+        given(httpServletRequest.getHeader(AUTHORIZATION))
+            .willReturn(APP_1_SOL_AUTH_TOKEN);
+
+        given(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
+            .willReturn(solicitorUser);
+
+        given(authTokenGenerator.generate())
+            .willReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        UUID uuid = UUID.randomUUID();
+        byte[] firstFile = "data from file 1".getBytes(StandardCharsets.UTF_8);
+        byte[] d10PdfBytes = bulkPrintService.loadD10PdfBytes("/D10.pdf");
+
+        given(sendLetterApi.sendLetter(
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            isA(LetterV3.class)
+        ))
+            .willReturn(new SendLetterResponse(
+                uuid
+            ));
+
+        given(resource.getInputStream())
+            .willReturn(new ByteArrayInputStream(firstFile))
+            .willReturn(new ByteArrayInputStream(firstFile));
+
+        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
+
+        final String documentUuid = FilenameUtils.getName(
+            divorceDocumentListValue.getValue().getDocumentLink().getUrl());
+        given(documentManagementClient.downloadBinary(
+            APP_1_SOL_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            solicitorRolesCsv,
+            userId,
+            documentUuid
+        ))
+            .willReturn(ResponseEntity.ok(resource));
+
+        ListValue<DivorceDocument> divorceDocumentListValue2 = documentWithType(APPLICATION);
+
+        final String documentUuid2 = FilenameUtils.getName(
+            divorceDocumentListValue2.getValue().getDocumentLink().getUrl());
+        given(documentManagementClient.downloadBinary(
+            APP_1_SOL_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            solicitorRolesCsv,
+            userId,
+            documentUuid2
+        ))
+            .willReturn(ResponseEntity.ok(resource));
+
+        List<Letter> letters = List.of(
+            new Letter(
+                divorceDocumentListValue.getValue(),
+                null,
+                1
+            ),
+            new Letter(
+                divorceDocumentListValue2.getValue(),
+                null,
+                2
+            )
+        );
+
+        Print print = new Print(
+            letters,
+            "1234",
+            "5678",
+            "letterType"
+        );
+
+        UUID letterId = bulkPrintService.printAosRespondentPack(print, true);
+        assertThat(letterId).isEqualTo(uuid);
+
+        verify(sendLetterApi).sendLetter(
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            letterV3ArgumentCaptor.capture()
+        );
+
+        LetterV3 letterV3 = letterV3ArgumentCaptor.getValue();
+        assertThat(letterV3.documents)
+            .extracting(
+                "content",
+                "copies")
+            .contains(
+                tuple(
+                    Base64.getEncoder().encodeToString(firstFile),
+                    1),
+                tuple(
+                    Base64.getEncoder().encodeToString(firstFile),
+                    2),
+                tuple(
+                    Base64.getEncoder().encodeToString(d10PdfBytes),
+                    1)
+            );
+
+        assertThat(letterV3.additionalData)
+            .contains(
+                entry(LETTER_TYPE_KEY, "letterType"),
+                entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
+                entry(CASE_IDENTIFIER_KEY, "1234")
+            );
+
+        verify(httpServletRequest, times(2))
+            .getHeader(AUTHORIZATION);
+        verify(idamService, times(2))
+            .retrieveUser(APP_1_SOL_AUTH_TOKEN);
+        verify(documentManagementClient).downloadBinary(
+            APP_1_SOL_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            solicitorRolesCsv,
+            userId,
+            documentUuid
+        );
+        verify(authTokenGenerator).generate();
+    }
+
+    @Test
     void shouldThrowDocumentDownloadExceptionWhenDocumentCallFails() throws IOException {
         ListValue<DivorceDocument> divorceDocumentListValue = getDivorceDocumentListValue(
             () -> ResponseEntity.ok(resource)
@@ -214,6 +466,7 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
+                null,
                 1
             )
         );
@@ -243,6 +496,7 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
+                null,
                 1
             )
         );
@@ -271,6 +525,7 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
+                null,
                 1
             )
         );
@@ -285,6 +540,18 @@ class BulkPrintServiceTest {
         assertThatThrownBy(() -> bulkPrintService.print(print))
             .isInstanceOf(InvalidResourceException.class)
             .hasMessage("Resource is invalid " + documentUuid);
+    }
+
+    @Test
+    void shouldReturnEmptyByteArrayWhenLoadPdfIsInvokedWithNonExistingResource() {
+        assertThat(bulkPrintService.loadD10PdfBytes("nonexistent.pdf")).isEmpty();
+    }
+
+    @Test
+    void shouldLoadD10DocumentSuccessfully() throws Exception {
+        PDDocument d10 = PDDocument.load(bulkPrintService.loadD10PdfBytes("/D10.pdf"));
+        assertThat(new PDFTextStripper().getText(d10))
+            .contains("D10 Respond to a divorce, dissolution or (judicial) separation application");
     }
 
     private ListValue<DivorceDocument> getDivorceDocumentListValue(
@@ -313,12 +580,12 @@ class BulkPrintServiceTest {
             divorceDocumentListValue.getValue().getDocumentLink().getUrl());
 
         given(documentManagementClient.downloadBinary(
-                APP_1_SOL_AUTH_TOKEN,
-                TEST_SERVICE_AUTH_TOKEN,
-                solicitorRolesCsv,
-                userId,
-                documentUuid
-            ))
+            APP_1_SOL_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            solicitorRolesCsv,
+            userId,
+            documentUuid
+        ))
             .willReturn(responseEntitySupplier.get());
 
         return divorceDocumentListValue;

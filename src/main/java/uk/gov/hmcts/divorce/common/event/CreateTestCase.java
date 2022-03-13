@@ -23,9 +23,11 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.lang.System.getenv;
+import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -35,7 +37,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Slf4j
 @Component
@@ -61,8 +62,6 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
         if (env.contains(ENVIRONMENT_AAT)) {
             roles.add(SOLICITOR);
-            roles.add(CASE_WORKER);
-            roles.add(SUPER_USER);
         }
 
         new PageBuilder(configBuilder
@@ -72,8 +71,8 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, roles.toArray(UserRole[]::new))
-            .grant(READ, SUPER_USER, CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
-            .page("Create test case")
+            .grantHistoryOnly(SUPER_USER, CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
+            .page("Create test case", this::midEvent)
             .mandatory(CaseData::getApplicationType)
             .complex(CaseData::getApplicant1)
                 .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is applicant 1 represented")
@@ -89,6 +88,25 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "Case state")
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        CaseDetails<CaseData, State> details,
+        CaseDetails<CaseData, State> detailsBefore
+    ) {
+
+        final CaseData data = details.getData();
+        try {
+            UUID uuid = UUID.fromString(data.getCaseInvite().applicant2UserId());
+            log.info("{}", uuid);
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .build();
+        } catch (IllegalArgumentException e) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList("User ID entered for applicant 2 is an invalid UUID"))
+                .build();
+        }
     }
 
     @SneakyThrows

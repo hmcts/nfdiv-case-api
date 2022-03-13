@@ -7,6 +7,7 @@ public final class DocumentConstants {
     public static final String DIVORCE_APPLICATION_DOCUMENT_NAME = "divorce-application";
     public static final String RESPONDENT_ANSWERS_DOCUMENT_NAME = "respondentAnswers";
     public static final String RESPONDENT_ANSWERS_TEMPLATE_ID = "RESPONDENT_ANSWERS";
+    public static final String RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID = "NFD_RESP_RESPONDED_DISPUTED";
 
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
     public static final String PRONOUNCEMENT_LIST_DOCUMENT_NAME = "NFD_Pronouncement_List";
@@ -21,14 +22,18 @@ public final class DocumentConstants {
     public static final String JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME = "joint-divorce-application-applicant-2-answers-";
 
     public static final String RESP_SOLICITOR_AOS_INVITATION = "RESP_SOLICITOR_AOS_INVITATION";
-    public static final String CITIZEN_RESP_AOS_INVITATION = "CITIZEN_RESP_AOS_INVITATION";
+    public static final String CITIZEN_RESP_AOS_INVITATION_ONLINE = "CITIZEN_RESP_AOS_INVITATION_ONLINE";
+    public static final String CITIZEN_RESP_AOS_INVITATION_OFFLINE = "CITIZEN_RESP_AOS_INVITATION_OFFLINE";
     public static final String RESP_AOS_INVITATION_DOCUMENT_NAME = "aosinvitation";
+    public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
 
     public static final String CERTIFICATE_OF_SERVICE_DOCUMENT_NAME = "certificateOfService";
 
     public static final String NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME = "noticeOfProceedings";
     public static final String NOTICE_OF_PROCEEDINGS_TEMPLATE_ID = "NOTICE_OF_PROCEEDINGS";
     public static final String NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID = "NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP";
+
+    public static final String JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID = "JOINT_NOTICE_OF_PROCEEDINGS";
 
     public static final String GENERAL_ORDER = "generalOrder";
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
@@ -63,6 +68,12 @@ public final class DocumentConstants {
 
     public static final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID = "CONDITIONAL_ORDER_ANSWERS";
     public static final String CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME = "conditionalOrderAnswers";
+
+    public static final String AOS_RESPONSE_LETTER_DOCUMENT_NAME = "aosResponseLetter";
+    public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";
+    public static final String AOS_OVERDUE_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED";
+
+    public static final String COVERSHEET_APPLICANT2 = "COVERSHEET_APPLICANT2";
 
     private DocumentConstants() {
     }

@@ -30,13 +30,8 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ_UPDATE;
 
 @Slf4j
 @Component
@@ -96,10 +91,6 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, SOLICITOR)
-            .grant(READ_UPDATE, SUPER_USER)
-            .grant(READ,
-                CASE_WORKER,
-                LEGAL_ADVISOR));
+            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR));
     }
 }

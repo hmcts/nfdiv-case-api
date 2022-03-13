@@ -55,10 +55,10 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     @Test
     public void shouldUpdateCaseDataAndSendEmailWhenAboutToSubmitCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
+
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
-
         assertThatJson(response.asString())
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedResponse(

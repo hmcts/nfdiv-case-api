@@ -12,11 +12,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.TITLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -40,13 +40,13 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
 
         return new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_CONTACT_DETAILS)
-            .forAllStates()
+            .forStates(POST_SUBMISSION_STATES)
             .name(TITLE)
             .description(TITLE)
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grant(READ,
+            .grantHistoryOnly(
                 SUPER_USER,
                 LEGAL_ADVISOR));
     }

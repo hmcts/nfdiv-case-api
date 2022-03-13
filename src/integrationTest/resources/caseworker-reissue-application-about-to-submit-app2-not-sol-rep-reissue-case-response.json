@@ -37,7 +37,9 @@
     "jurisdictionConnections": [
       "J"
     ],
-    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
+    "applicant1PrayerHasBeenGivenCheckbox": [
+      "Yes"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
@@ -59,27 +61,39 @@
     ],
     "documentsGenerated": [
       {
-        "id": "Respondent Invitation",
-        "value": {
-          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "aos",
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
-            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
-          }
-        }
-      },
-      {
         "id": "Divorce application",
         "value": {
-          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "application",
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
             "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
-          }
+          },
+          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "application"
+        }
+      },
+      {
+        "id": "Notice of proceeding respondent",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
+            "document_filename": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
+          },
+          "documentFileName": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "coversheet"
+        }
+      },
+      {
+        "id": "Notice of proceeding applicant",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa",
+            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa/binary"
+          },
+          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "aos"
         }
       }
     ],

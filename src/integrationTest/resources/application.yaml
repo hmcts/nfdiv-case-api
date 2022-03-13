@@ -70,13 +70,15 @@ docmosis:
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
       REFUSAL_ORDER: NFD_Refusal_Order.docx
       RESP_SOLICITOR_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
-      CITIZEN_RESP_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      CITIZEN_RESP_AOS_INVITATION_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx
+      CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx
+      JOINT_NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Joint.docx
       NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP: NFD_Notice_Of_Proceedings_Overseas_Sole.docx
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement.docx #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx
@@ -86,18 +88,22 @@ docmosis:
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
+      NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
+      COVERSHEET_APPLICANT2: NFD_Applicant2_Coversheet.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       RESP_SOLICITOR_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
-      CITIZEN_RESP_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      CITIZEN_RESP_AOS_INVITATION_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx
+      CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update template once available
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx  #TODO: update content
+      JOINT_NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Joint.docx #TODO: update content
       NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP: NFD_Notice_Of_Proceedings_Overseas_Sole.docx  #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement.docx #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx #TODO: update content
@@ -107,6 +113,8 @@ docmosis:
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx #TODO: update content
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx #TODO: update content
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx #TODO: update content
+      NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
+      COVERSHEET_APPLICANT2: NFD_Applicant2_Coversheet.docx
 
 document_management:
   url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store-aat.service.core-compute-aat.internal}
@@ -132,6 +140,9 @@ submit_co:
 
 apply_for_final_order:
   reminder_offset_days: ${APPLY_FOR_FINAL_ORDER_REMINDER_OFFSET_DAYS:14}
+
+aos_overdue:
+  arrange_service_offset_days: ${AOS_OVERDUE_ARRANGE_SERVICE_OFFSET_DAYS:28}
 
 court:
   locations:

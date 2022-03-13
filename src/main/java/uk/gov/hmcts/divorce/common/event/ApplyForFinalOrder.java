@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
-import java.util.EnumSet;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
@@ -29,7 +28,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -58,14 +56,14 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(FINAL_ORDER_REQUESTED)
-            .forStateTransition(EnumSet.of(AwaitingFinalOrder, FinalOrderOverdue), FinalOrderRequested)
+            .forStates(AwaitingFinalOrder, FinalOrderOverdue)
             .name(APPLY_FOR_FINAL_ORDER)
             .description(APPLY_FOR_FINAL_ORDER)
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(READ,
+            .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
                 LEGAL_ADVISOR));
@@ -82,9 +80,14 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             notificationDispatcher.send(soleAppliedForFinalOrderNotification, data, details.getId());
         }
 
+        State endState = details.getState();
+        if (details.getState() == AwaitingFinalOrder) {
+            endState = FinalOrderRequested;
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(FinalOrderRequested)
+            .state(endState)
             .build();
     }
 }

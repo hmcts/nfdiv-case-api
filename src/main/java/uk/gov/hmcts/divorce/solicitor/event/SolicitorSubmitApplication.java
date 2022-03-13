@@ -44,7 +44,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
@@ -95,6 +94,9 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 new BigDecimal(orderSummary.getPaymentTotal()).movePointLeft(2)
             )
         );
+
+        caseData.getApplication().setSolStatementOfReconciliationCertify(null);
+        caseData.getApplication().setSolStatementOfReconciliationDiscussed(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -195,7 +197,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SOLICITOR)
-            .grant(READ,
+            .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
                 LEGAL_ADVISOR));

@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.ObjectUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -37,7 +39,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.populateSolicitorAddress;
 
 @Slf4j
@@ -90,7 +91,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
             .showSummary()
             .endButtonLabel("Submit Application")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
-            .grant(READ,
+            .grantHistoryOnly(
                 APPLICANT_1_SOLICITOR,
                 CASE_WORKER,
                 SUPER_USER,
@@ -106,8 +107,12 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
             setApplicant2SolicitorAddress(details);
         }
 
+        State newState = data.getApplication().getApplicant2ConfirmApplicant1Information().toBoolean()
+            ? AwaitingApplicant1Response : Applicant2Approved;
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
+            .state(newState)
             .build();
     }
 

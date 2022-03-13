@@ -48,8 +48,11 @@ public class LabelContent {
     @CCD(label = "Divorce or civil partnership")
     private String finaliseDivorceOrEndCivilPartnership;
 
-    @CCD(label = "Marriage or civil partnership")
+    @CCD(label = "marriage or civil partnership")
     private String marriageOrCivilPartnership;
+
+    @CCD(label = "Marriage or civil partnership")
+    private String marriageOrCivilPartnershipUC;
 
     @CCD(label = "Get a divorce or legally end it")
     private String divorceOrLegallyEnd;
@@ -57,8 +60,11 @@ public class LabelContent {
     @CCD(label = "applicant's or applicant 1’s")
     private String applicantsOrApplicant1s;
 
-    @CCD(label = "The applicant or applicant 1")
+    @CCD(label = "the applicant or applicant 1")
     private String theApplicantOrApplicant1;
+
+    @CCD(label = "The applicant or applicant 1")
+    private String theApplicantOrApplicant1UC;
 
     @CCD(label = "Got married or formed their civil partnership")
     private String gotMarriedOrFormedCivilPartnership;
@@ -75,6 +81,7 @@ public class LabelContent {
             divorceOrCivilPartnership = "divorce";
             finaliseDivorceOrEndCivilPartnership = "finalise the divorce";
             marriageOrCivilPartnership = "marriage";
+            marriageOrCivilPartnershipUC = "Marriage";
             divorceOrLegallyEnd = "get a divorce";
             gotMarriedOrFormedCivilPartnership = "got married";
         } else {
@@ -85,6 +92,7 @@ public class LabelContent {
             divorceOrCivilPartnership = "civil partnership";
             finaliseDivorceOrEndCivilPartnership = "end civil partnership";
             marriageOrCivilPartnership = "civil partnership";
+            marriageOrCivilPartnershipUC = "Civil partnership";
             divorceOrLegallyEnd = "legally end it";
             gotMarriedOrFormedCivilPartnership = "formed their civil partnership";
         }
@@ -99,6 +107,7 @@ public class LabelContent {
             applicantOrApplicant1 = "the applicant’s";
             applicantsOrApplicant1s = "Applicant’s";
             theApplicantOrApplicant1 = "the applicant";
+            theApplicantOrApplicant1UC = "The applicant";
             respondentsOrApplicant2s = "Respondent's";
         } else {
             applicant2 = "applicant 2";
@@ -108,6 +117,7 @@ public class LabelContent {
             applicantOrApplicant1 = "applicant 1’s";
             applicantsOrApplicant1s = "Applicant 1’s";
             theApplicantOrApplicant1 = "applicant 1";
+            theApplicantOrApplicant1UC = "Applicant 1";
             respondentsOrApplicant2s = "Applicant 2's";
         }
     }

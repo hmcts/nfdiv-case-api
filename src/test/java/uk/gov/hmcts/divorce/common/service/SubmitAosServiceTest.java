@@ -6,7 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendAosResponseLetterPackToApplicant;
 import uk.gov.hmcts.divorce.common.service.task.AddRespondentAnswersLink;
+import uk.gov.hmcts.divorce.common.service.task.GenerateAosResponseLetterDocument;
 import uk.gov.hmcts.divorce.common.service.task.GenerateRespondentAnswersDoc;
 import uk.gov.hmcts.divorce.common.service.task.SendCitizenAosNotifications;
 import uk.gov.hmcts.divorce.common.service.task.SetSubmissionAndDueDate;
@@ -36,6 +38,12 @@ class SubmitAosServiceTest {
     @Mock
     private SendCitizenAosNotifications sendCitizenAosNotifications;
 
+    @Mock
+    private GenerateAosResponseLetterDocument generateAosResponseLetterDocument;
+
+    @Mock
+    private SendAosResponseLetterPackToApplicant sendAosResponseLetterPackToApplicant;
+
     @InjectMocks
     private SubmitAosService submitAosService;
 
@@ -49,6 +57,8 @@ class SubmitAosServiceTest {
         when(respondentAnswersDoc.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(addRespondentAnswersLink.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(sendCitizenAosNotifications.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(generateAosResponseLetterDocument.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(sendAosResponseLetterPackToApplicant.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submitAosService.submitAos(caseDetails);
 
@@ -59,5 +69,7 @@ class SubmitAosServiceTest {
         verify(respondentAnswersDoc).apply(caseDetails);
         verify(addRespondentAnswersLink).apply(caseDetails);
         verify(sendCitizenAosNotifications).apply(caseDetails);
+        verify(generateAosResponseLetterDocument).apply(caseDetails);
+        verify(sendAosResponseLetterPackToApplicant).apply(caseDetails);
     }
 }

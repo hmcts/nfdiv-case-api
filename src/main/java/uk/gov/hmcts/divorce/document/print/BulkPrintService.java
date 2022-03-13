@@ -1,12 +1,15 @@
 package uk.gov.hmcts.divorce.document.print;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
+import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -26,6 +29,7 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Service
+@Slf4j
 public class BulkPrintService {
     private static final String XEROX_TYPE_PARAMETER = "NFDIV001";
     private static final String LETTER_TYPE_KEY = "letterType";
@@ -49,20 +53,38 @@ public class BulkPrintService {
 
     public UUID print(final Print print) {
         final String authToken = authTokenGenerator.generate();
-        List<Document> documents = print.getLetters().stream()
-            .map(document ->
+        return triggerPrintRequest(print, authToken, documentRequestForPrint(print, authToken));
+    }
+
+    public UUID printAosRespondentPack(final Print print, final boolean includeD10Document) {
+        final String authToken = authTokenGenerator.generate();
+        List<Document> documents = documentRequestForPrint(print, authToken);
+
+        if (includeD10Document) {
+            Document d10Document = new Document(getEncoder().encodeToString(loadD10PdfBytes("/D10.pdf")), 1);
+            documents.add(d10Document);
+        }
+
+        return triggerPrintRequest(print, authToken, documents);
+    }
+
+    private List<Document> documentRequestForPrint(Print print, String authToken) {
+        return print.getLetters().stream()
+            .map(letter ->
                 new Document(
                     getEncoder().encodeToString(
                         getDocumentBytes(
-                            document.getDivorceDocument().getDocumentLink().getUrl(),
+                            letter,
                             authToken
                         )
                     ),
-                    document.getCount()
+                    letter.getCount()
                 )
             )
             .collect(toList());
+    }
 
+    private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {
         return sendLetterApi.sendLetter(
             authToken,
             new LetterV3(
@@ -76,7 +98,11 @@ public class BulkPrintService {
             .letterId;
     }
 
-    private byte[] getDocumentBytes(final String docUrl, final String authToken) {
+    private byte[] getDocumentBytes(final Letter letter, final String authToken) {
+        String docUrl = letter.getDivorceDocument() != null
+            ? letter.getDivorceDocument().getDocumentLink().getUrl()
+            : letter.getScannedDocument().getUrl().getUrl();
+
         String fileName = FilenameUtils.getName(docUrl);
         final String userAuth = request.getHeader(AUTHORIZATION);
         final var userDetails = idamService.retrieveUser(userAuth).getUserDetails();
@@ -98,5 +124,14 @@ public class BulkPrintService {
                 }
             })
             .orElseThrow(() -> new InvalidResourceException("Resource is invalid " + fileName));
+    }
+
+    public byte[] loadD10PdfBytes(String resourceName) {
+        try {
+            return IOUtils.resourceToByteArray(resourceName);
+        } catch (IOException e) {
+            log.error("Error occurred while loading D10 document from classpath", e);
+        }
+        return new byte[0];
     }
 }

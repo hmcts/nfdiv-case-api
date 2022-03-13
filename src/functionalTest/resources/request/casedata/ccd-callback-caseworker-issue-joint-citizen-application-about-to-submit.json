@@ -7,6 +7,7 @@
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant1LanguagePreferenceWelsh": "No",
   "applicant1ContactDetailsType": "private",
+  "applicant1SolicitorRepresented": "No",
   "applicant1Gender": "female",
   "applicant2FirstName": "test_first_name",
   "applicant2MiddleName": "test_middle_name",
@@ -15,22 +16,23 @@
   "applicant1KnowsApplicant2EmailAddress": "Yes",
   "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
   "applicant1Address": {
-    "addressLine1": "221a Baker Street",
-    "postTown": "London",
-    "county": "Greater London",
-    "postCode": "NW1 6XE",
-    "country": "United Kingdom"
+    "AddressLine1": "221a Baker Street",
+    "PostTown": "London",
+    "County": "Greater London",
+    "PostCode": "NW1 6XE",
+    "Country": "United Kingdom"
   },
   "applicant2Address": {
-    "addressLine1": "221a Baker Street",
-    "postTown": "London",
-    "county": "Greater London",
-    "postCode": "NW1 6XE",
-    "country": "United Kingdom"
+    "AddressLine1": "221a Baker Street",
+    "PostTown": "London",
+    "County": "Greater London",
+    "PostCode": "NW1 6XE",
+    "Country": "United Kingdom"
   },
   "applicant2LanguagePreferenceWelsh": "No",
   "applicant2ContactDetailsType": "public",
   "applicant2Gender": "female",
+  "applicant2SolicitorRepresented": "No",
   "marriageApplicant1Name": "test_first_name test_last_name",
   "marriageApplicant2Name": "test_first_name test_last_name",
   "marriagePlaceOfMarriage": "Somewhere",

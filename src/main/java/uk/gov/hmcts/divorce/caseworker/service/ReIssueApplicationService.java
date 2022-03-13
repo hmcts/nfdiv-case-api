@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.ReissueProcessingException;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
@@ -69,16 +70,22 @@ public class ReIssueApplicationService {
             return caseTasks(
                 setPostIssueState,
                 setReIssueAndDueDate,
+                generateNoticeOfProceeding,
                 generateRespondentAosInvitation,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else if (OFFLINE_AOS.equals(reissueOption)) {
             log.info("For case id {} processing reissue for offline aos ", caseDetails.getId());
+
+            caseDetails.getData().getApplicant2().setOffline(YES);
+            caseDetails.getData().getApplicant2().setEmail(null);
+
             return caseTasks(
                 setPostIssueState,
                 setReIssueAndDueDate,
                 generateNoticeOfProceeding,
                 generateRespondentAosInvitation,
+                generateDivorceApplication,
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,
                 sendApplicationIssueNotifications

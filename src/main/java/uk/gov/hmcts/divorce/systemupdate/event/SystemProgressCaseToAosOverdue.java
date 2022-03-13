@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.AosReminderNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.task.GenerateAosOverdueLetterDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -23,7 +24,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State, UserRole> {
@@ -36,6 +36,9 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
+    @Autowired
+    private GenerateAosOverdueLetterDocument generateAosOverdueLetterDocument;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -44,7 +47,7 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
             .name("AoS not received within SLA")
             .description("AoS not received within SLA")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
+            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
             .aboutToSubmitCallback(this::aboutToSubmit));
     }
 
@@ -52,6 +55,10 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
+
+        if (data.getApplicant1().isOffline()) {
+            generateAosOverdueLetterDocument.apply(details);
+        }
 
         notificationDispatcher.send(aosReminderNotifications, data, details.getId());
 

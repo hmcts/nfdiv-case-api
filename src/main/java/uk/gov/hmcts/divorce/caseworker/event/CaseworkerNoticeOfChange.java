@@ -23,6 +23,7 @@ import java.util.List;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_1;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -31,7 +32,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -46,14 +46,14 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_NOTICE_OF_CHANGE)
-            .forAllStates()
+            .forStates(POST_SUBMISSION_STATES)
             .name("Notice of change")
             .description("Change applicant representation")
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
-            .grant(READ, LEGAL_ADVISOR))
+            .grantHistoryOnly(LEGAL_ADVISOR))
             .page("changeRepresentation-1")
             .pageLabel("Which applicant")
             .complex(CaseData::getNoticeOfChange)
@@ -144,8 +144,10 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
         if (data.getNoticeOfChange().getWhichApplicant().equals(APPLICANT_1)) {
             data.getApplicant2().setSolicitor(beforeData.getApplicant2().getSolicitor());
+            data.getApplicant2().setAddress(beforeData.getApplicant2().getAddress());
         } else {
             data.getApplicant1().setSolicitor(beforeData.getApplicant1().getSolicitor());
+            data.getApplicant1().setAddress(beforeData.getApplicant1().getAddress());
         }
 
         return data;
