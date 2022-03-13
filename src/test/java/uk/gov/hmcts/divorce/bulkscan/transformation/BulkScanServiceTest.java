@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.endpoint.model.TransformationInput;
+import uk.gov.hmcts.divorce.endpoint.model.input.TransformationInput;
 
 import java.util.Map;
 
