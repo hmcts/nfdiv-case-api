@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -37,7 +38,7 @@ public class CaseworkerSetRespondentSolicitorOrganisation implements CCDConfig<C
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR))
             .page("setSolicitorOrg")
             .pageLabel("Set solicitor's organisation")
             .complex(CaseData::getApplicant2)
@@ -51,7 +52,7 @@ public class CaseworkerSetRespondentSolicitorOrganisation implements CCDConfig<C
                             .complex(OrganisationPolicy::getOrganisation)
                                 .mandatory(Organisation::getOrganisationId)
                             .done()
-                            .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_1_SOLICITOR)
+                            .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_2_SOLICITOR)
                             .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
                        .done()
                 .done()
