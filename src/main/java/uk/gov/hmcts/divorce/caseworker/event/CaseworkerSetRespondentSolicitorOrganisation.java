@@ -24,6 +24,7 @@ public class CaseworkerSetRespondentSolicitorOrganisation implements CCDConfig<C
 
     public static final String CASEWORKER_UPDATE_RESPONDENT_SOL_ORG = "caseworker-update-respondent-sol-org";
     public static final  String NEVER_SHOW = "divorceOrDissolution=\"NEVER_SHOW\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
