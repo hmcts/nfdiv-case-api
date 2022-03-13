@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -30,10 +29,11 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
         if (isCitizenUpdateCaseStateEnabled()) {
             configBuilder
                 .event(CITIZEN_UPDATE_CASE_STATE_AAT)
-                .forStates(POST_SUBMISSION_STATES)
+                .forAllStates()
                 .name("Citizen update case state AAT")
                 .description("Citizen update the case state in AAT")
-                .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, CASE_WORKER, SUPER_USER)
+                .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
+                .grantHistoryOnly(CASE_WORKER, SUPER_USER)
                 .aboutToSubmitCallback(this::aboutToSubmit);
         }
     }
