@@ -5,11 +5,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -23,19 +25,27 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.Applicant2RequestChangesNotification.APPLICANT_2_COMMENTS;
+import static uk.gov.hmcts.divorce.citizen.notification.Applicant2RequestChangesNotification.PARTNER_IS_REPRESENTED;
+import static uk.gov.hmcts.divorce.citizen.notification.Applicant2RequestChangesNotification.REQUESTED_CHANGES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPLICANT2_REQUESTED_CHANGES;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
 class Applicant2RequestChangesNotificationTest {
@@ -101,6 +111,64 @@ class Applicant2RequestChangesNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant1SolicitorWithDivorceContent() {
+        CaseData data = validApplicant1CaseData();
+        data.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
+        data.getApplicant1().setSolicitor(Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).build());
+        data.setApplicant2(getApplicant(Gender.FEMALE));
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
+        when(commonContent.basicTemplateVars(data, 1234567890123456L))
+            .thenReturn(getBasicTemplateVars());
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
+
+        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(SOLICITOR_APPLICANT2_REQUESTED_CHANGES),
+            argThat(allOf(
+                hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
+                hasEntry(PARTNER_IS_REPRESENTED, "Yes"),
+                hasEntry(REQUESTED_CHANGES, "Not correct!"),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(IS_DIVORCE, YES)
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).basicTemplateVars(data, 1234567890123456L);
+    }
+
+    @Test
+    void shouldSendEmailToApplicant1SolicitorWithDissolutionContent() {
+        CaseData data = validApplicant1CaseData();
+        data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        data.getApplicant1().setSolicitor(Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).build());
+        data.setApplicant2(getApplicant(Gender.FEMALE));
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
+        data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
+        when(commonContent.basicTemplateVars(data, 1234567890123456L))
+            .thenReturn(getBasicTemplateVars());
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
+
+        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(SOLICITOR_APPLICANT2_REQUESTED_CHANGES),
+            argThat(allOf(
+                hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
+                hasEntry(PARTNER_IS_REPRESENTED, "No"),
+                hasEntry(REQUESTED_CHANGES, "Not correct!"),
+                hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(IS_DIVORCE, NO)
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }
 
     @Test

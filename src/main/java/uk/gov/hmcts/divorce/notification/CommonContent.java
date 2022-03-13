@@ -79,8 +79,7 @@ public class CommonContent {
         templateVars.put(PARTNER, getPartner(caseData, partner));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
-        templateVars.put(SIGN_IN_URL,
-            config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
+        templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
         return templateVars;
     }
 
@@ -132,5 +131,9 @@ public class CommonContent {
             ? YES : NO);
 
         return templateVars;
+    }
+
+    public String getSignInUrl(CaseData caseData) {
+        return config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL);
     }
 }
