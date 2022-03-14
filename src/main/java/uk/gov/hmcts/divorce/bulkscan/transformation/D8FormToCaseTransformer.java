@@ -97,7 +97,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
             return commonFormToCaseTransformer.transformCaseData(caseData, transformationWarnings);
 
         } catch (Exception exception) {
-            //this will result in bulk scan service to create exception record if case creation is automatic case creation
+            //this will result in bulk scan service to create exception record if case creation is automatic
             // In case of caseworker triggering the event it will result into error shown on the UI
             log.error("Exception occurred while transforming D8 form with error", exception);
             throw new InvalidDataException(

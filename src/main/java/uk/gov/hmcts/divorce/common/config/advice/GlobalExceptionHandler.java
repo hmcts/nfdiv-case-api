@@ -17,8 +17,7 @@ import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
 import uk.gov.service.notify.NotificationClientException;
 
-import java.util.Collections;
-
+import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.ResponseEntity.status;
@@ -78,7 +77,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             .body(
                 BspErrorResponse.builder()
                     .errors(exception.getErrors())
-                    .warnings(exception.getWarnings())
                     .build()
             );
     }
@@ -90,7 +88,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return status(UNPROCESSABLE_ENTITY)
             .body(
                 BspErrorResponse.builder()
-                    .errors(Collections.singletonList(exception.getMessage()))
+                    .errors(singletonList(exception.getMessage()))
                     .build()
             );
     }
