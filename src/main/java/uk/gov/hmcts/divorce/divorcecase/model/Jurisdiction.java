@@ -105,13 +105,12 @@ public class Jurisdiction {
     }
 
     private String validateJurisdictionConnectionJKL(CaseData data) {
-        List<JurisdictionConnections> soleConnectionsOnly = List.of(APP_1_RESIDENT_JOINT, APP_2_RESIDENT_TWELVE_MONTHS, APP_2_RESIDENT_SIX_MONTHS);
-        if (
-            connections.stream().anyMatch(soleConnectionsOnly::contains)
-            && data.getApplicationType() != ApplicationType.JOINT_APPLICATION) {
+        List<JurisdictionConnections> soleConnections = List.of(
+            APP_1_RESIDENT_JOINT, APP_2_RESIDENT_TWELVE_MONTHS, APP_2_RESIDENT_SIX_MONTHS
+        );
+        if (connections.stream().anyMatch(soleConnections::contains) && data.getApplicationType() != ApplicationType.SOLE_APPLICATION) {
             return CONNECTION + APP_1_RESIDENT_JOINT + CANNOT_EXIST;
         }
         return null;
     }
-    
 }
