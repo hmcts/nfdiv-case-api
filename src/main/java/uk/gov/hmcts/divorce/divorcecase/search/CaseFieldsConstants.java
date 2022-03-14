@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.divorcecase.search;
 
 public final class CaseFieldsConstants {
 
+    public static final String APPLICANT_TYPE = "applicationType";
     public static final String APPLICANT_1_FIRST_NAME = "applicant1FirstName";
     public static final String APPLICANT_1_LAST_NAME = "applicant1LastName";
     public static final String APPLICANT_2_FIRST_NAME = "applicant2FirstName";
@@ -21,6 +22,8 @@ public final class CaseFieldsConstants {
     public static final String APPLICANT_2_ADDRESS = "applicant2Address";
     public static final String CCD_REFERENCE = "[CASE_REFERENCE]";
     public static final String CASE_STATE = "[STATE]";
+    public static final String DUE_DATE = "dueDate";
+    public static final String LAST_MODIFIED_DATE = "[LAST_MODIFIED_DATE]";
 
     // required for Checkstyle
     private CaseFieldsConstants() {
