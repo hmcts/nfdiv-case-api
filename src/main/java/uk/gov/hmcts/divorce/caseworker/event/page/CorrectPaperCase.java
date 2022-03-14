@@ -40,13 +40,13 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getNameChangedHowOtherDetails,
                     "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getContactDetailsType)
-                .mandatory(Applicant::getAddress)
-                .mandatory(Applicant::getPhoneNumber)
-                .mandatory(Applicant::getEmail)
-                .mandatory(Applicant::getSolicitorRepresented)
-                .label("Label-CorrectApplicant1SolDetails",
+                .mandatoryWithLabel(Applicant::getAddress, "### ${labelContentApplicantsOrApplicant1s} address")
+                .mandatoryWithLabel(Applicant::getPhoneNumber, "### ${labelContentApplicantsOrApplicant1s} phone number")
+                .mandatoryWithLabel(Applicant::getEmail, "### ${labelContentApplicantsOrApplicant1s} email address")
+                .mandatoryWithLabel(Applicant::getSolicitorRepresented,
+                    "Is ${labelContentTheApplicantOrApplicant1} represented by a solicitor?")
+                .complex(Applicant::getSolicitor, "applicant1SolicitorRepresented=\"Yes\"",
                     "### ${labelContentApplicantsOrApplicant1s} solicitor details")
-                .complex(Applicant::getSolicitor)
                     .mandatory(Solicitor::getName, "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getReference, "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getFirmName, "applicant1SolicitorRepresented=\"Yes\"")
