@@ -21,6 +21,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.FINAL_ORDER_REQUESTED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -72,14 +73,26 @@ class ApplyForFinalOrderTest {
     }
 
     @Test
-    void shouldSendSoleAppliedForFinalOrderNotificationIfSoleApplicationType() {
+    void shouldSendSoleAppliedForFinalOrderNotificationIfSoleApplicationTypeAndAwaitingFinalOrderState() {
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.SOLE_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        caseDetails.setState(AwaitingFinalOrder);
 
         applyForFinalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(soleAppliedForFinalOrderNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldNotSendSoleAppliedForFinalOrderNotificationFinalOrderOverdueState() {
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.SOLE_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        caseDetails.setState(FinalOrderOverdue);
+
+        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+
+        verify(notificationDispatcher, never()).send(soleAppliedForFinalOrderNotification, caseData, caseDetails.getId());
     }
 
     @Test
