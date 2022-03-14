@@ -151,7 +151,7 @@ public enum State {
     AwaitingDwpResponse("AwaitingDWPResponse"),
 
     @CCD(
-        name = "Awaiting Final Order",
+        name = "Awaiting final order",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
@@ -179,7 +179,7 @@ public enum State {
     AwaitingHWFDecision("AwaitingHWFDecision"),
 
     @CCD(
-        name = "Awaiting joint Conditional Order",
+        name = "Awaiting joint conditional order",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {DefaultStateAccess.class}
     )
@@ -207,7 +207,7 @@ public enum State {
     AwaitingService("AwaitingService"),
 
     @CCD(
-        name = "Awaiting Service Consideration",
+        name = "Awaiting service consideration",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
@@ -284,7 +284,7 @@ public enum State {
     FinalOrderRequested("FinalOrderRequested"),
 
     @CCD(
-        name = "General Application Received",
+        name = "General application received",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
@@ -298,7 +298,7 @@ public enum State {
     GeneralConsiderationComplete("GeneralConsiderationComplete"),
 
     @CCD(
-        name = "Issued To bailiff",
+        name = "Issued to bailiff",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
@@ -344,6 +344,17 @@ public enum State {
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
         Applicant2Approved
+    ));
+
+    public static final EnumSet<State> POST_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
+        Applicant2Approved,
+        AwaitingPayment,
+        AwaitingHWFDecision,
+        AwaitingDocuments,
+        Submitted
     ));
 
     private final String name;

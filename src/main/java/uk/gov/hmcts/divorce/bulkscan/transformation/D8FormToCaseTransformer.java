@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
+import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
-import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
-import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
+import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
 
 import java.util.List;
 import java.util.Map;
@@ -97,7 +97,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
             return commonFormToCaseTransformer.transformCaseData(caseData, transformationWarnings);
 
         } catch (Exception exception) {
-            //this will result in bulk scan service to create exception record if case creation is automatic case creation
+            //this will result in bulk scan service to create exception record if case creation is automatic
             // In case of caseworker triggering the event it will result into error shown on the UI
             log.error("Exception occurred while transforming D8 form with error", exception);
             throw new InvalidDataException(

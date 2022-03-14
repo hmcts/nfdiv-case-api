@@ -30,7 +30,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
@@ -62,7 +61,7 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CITIZEN)
-            .grant(READ, SUPER_USER, LEGAL_ADVISOR));
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR));
     }
 
     @Override

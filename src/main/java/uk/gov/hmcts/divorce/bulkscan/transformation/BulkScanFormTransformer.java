@@ -6,8 +6,8 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
-import uk.gov.hmcts.divorce.endpoint.model.TransformationInput;
-import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
+import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
+import uk.gov.hmcts.divorce.endpoint.model.input.TransformationInput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,10 +16,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import static uk.gov.hmcts.reform.bsp.common.config.BspCommonFields.BULK_SCAN_CASE_REFERENCE;
-
 @Slf4j
 public abstract class BulkScanFormTransformer {
+
+    public static final String BULK_SCAN_CASE_REFERENCE = "bulkScanCaseReference";
 
     public Map<String, Object> transformIntoCaseData(TransformationInput transformationInput) {
         log.info(

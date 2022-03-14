@@ -25,7 +25,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 
 @Slf4j
@@ -52,7 +51,7 @@ public class InviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CITIZEN, APPLICANT_1_SOLICITOR)
-            .grant(READ,
+            .grantHistoryOnly(
                 SUPER_USER,
                 CASE_WORKER,
                 LEGAL_ADVISOR)

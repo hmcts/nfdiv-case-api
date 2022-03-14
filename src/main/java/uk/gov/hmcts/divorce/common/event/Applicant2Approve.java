@@ -26,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_2_ANSWERS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME;
@@ -59,7 +58,7 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
             .name("Applicant 2 approve")
             .description("Applicant 2 has approved")
             .grant(CREATE_READ_UPDATE, APPLICANT_2, SYSTEMUPDATE)
-            .grant(READ,
+            .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER)
             .retries(120, 120)

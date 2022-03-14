@@ -40,8 +40,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ_UPDATE;
 
 @Slf4j
 @Component
@@ -115,8 +113,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, updatedRoles.toArray(UserRole[]::new))
-            .grant(READ_UPDATE, SUPER_USER)
-            .grant(READ, CASE_WORKER, LEGAL_ADVISOR));
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> before) {
