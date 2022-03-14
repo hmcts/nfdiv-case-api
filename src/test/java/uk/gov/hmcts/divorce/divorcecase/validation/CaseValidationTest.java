@@ -184,15 +184,16 @@ public class CaseValidationTest {
     @Test
     public void shouldValidateJurisdictionConnectionsWhenApplicant1IsNotRepresented() {
         final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setApplicant1(Applicant.builder()
             .solicitorRepresented(NO)
             .build());
 
-        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_APP_2_RESIDENT));
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_RESIDENT_JOINT));
 
         List<String> errors = validateJurisdictionConnections(caseData);
 
-        assertThat(errors).contains(CONNECTION + APP_1_APP_2_RESIDENT + CANNOT_EXIST);
+        assertThat(errors).contains(CONNECTION + APP_1_RESIDENT_JOINT + CANNOT_EXIST);
     }
 
     @Test
