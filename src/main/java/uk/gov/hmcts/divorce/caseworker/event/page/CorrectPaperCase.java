@@ -80,8 +80,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getSolicitorRepresented)
                 .mandatory(Applicant::getAddress)
-                .mandatory(Applicant::getPhoneNumber)
-                .mandatory(Applicant::getEmail)
+                .optional(Applicant::getPhoneNumber)
+                .optional(Applicant::getEmail)
                 .label("Label-CorrectApplicant2SolDetails",
                     "### ${labelContentRespondentsOrApplicant2s} solicitor details")
                 .complex(Applicant::getSolicitor)
@@ -135,11 +135,11 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     .mandatory(MarriageDetails::getCertifiedTranslation,
                         "marriageCertificateInEnglish=\"No\"")
                     .mandatory(MarriageDetails::getMarriedInUk)
-                    .mandatory(MarriageDetails::getIssueApplicationWithoutMarriageCertificate)
+                    .mandatoryWithLabel(MarriageDetails::getIssueApplicationWithoutMarriageCertificate,
+                        "Are you making a separate application to issue without your marriage or civil partnership certificate?")
                     .mandatory(MarriageDetails::getDate)
                     .mandatory(MarriageDetails::getApplicant1Name)
                     .mandatory(MarriageDetails::getApplicant2Name)
-                    .mandatory(MarriageDetails::getFormationType)
                     .mandatory(MarriageDetails::getPlaceOfMarriage)
                     .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
                     .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,
@@ -148,7 +148,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             .done()
             .label("Label-CorrectScannedDocuments",
                 "### Scanned Documents")
-            .mandatory(CaseData::getScannedDocuments);
+            .optional(CaseData::getScannedDocuments);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(

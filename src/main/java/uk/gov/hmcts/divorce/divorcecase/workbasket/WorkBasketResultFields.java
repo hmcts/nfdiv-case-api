@@ -7,6 +7,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.search.SearchResultFields.SEARCH_RESULT_FIELD_LIST;
+
 @Component
 public class WorkBasketResultFields implements CCDConfig<CaseData, State, UserRole> {
 
@@ -15,13 +17,6 @@ public class WorkBasketResultFields implements CCDConfig<CaseData, State, UserRo
 
         configBuilder
             .workBasketResultFields()
-            .caseReferenceField()
-            .field("applicationType", "Application Type")
-            .field("applicant1FirstName", "Applicant's First Name")
-            .field("applicant1LastName", "Applicant's Last Name")
-            .field("applicant2FirstName", "Respondent's First Name")
-            .field("applicant2LastName", "Respondent's Last Name")
-            .field("dueDate","Due Date")
-            .lastModifiedDate();
+            .fields(SEARCH_RESULT_FIELD_LIST);
     }
 }
