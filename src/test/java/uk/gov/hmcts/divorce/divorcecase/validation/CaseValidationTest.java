@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CONNECTION;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
@@ -59,6 +60,25 @@ public class CaseValidationTest {
 
         List<String> errors = validateBasicCase(caseData);
         assertThat(errors).hasSize(11);
+    }
+
+    @Test
+    public void shouldValidateApplicant1BasicCase() {
+        CaseData caseData = new CaseData();
+        List<String> errors = validateApplicant1BasicCase(caseData);
+        assertThat(errors).hasSize(8);
+    }
+
+    @Test
+    public void shouldValidateApplicant1BasicOfflineCase() {
+        CaseData caseData = new CaseData();
+        Applicant applicant1 = Applicant.builder().offline(YES).build();
+        Applicant applicant2 = Applicant.builder().offline(YES).build();
+        caseData.setApplicant1(applicant1);
+        caseData.setApplicant2(applicant2);
+
+        List<String> errors = validateApplicant1BasicCase(caseData);
+        assertThat(errors).hasSize(6);
     }
 
     @Test

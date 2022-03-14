@@ -73,8 +73,8 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"),
             notNull(caseData.getApplicant1().getLastName(), "Applicant1LastName"),
             notNull(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"),
-            notNull(caseData.getApplicant1().getGender(), "Applicant1Gender"),
-            notNull(caseData.getApplicant2().getGender(), "Applicant2Gender"),
+            !caseData.getApplicant1().isOffline() ? notNull(caseData.getApplicant1().getGender(), "Applicant1Gender") : emptyList(),
+            !caseData.getApplicant2().isOffline() ? notNull(caseData.getApplicant2().getGender(), "Applicant2Gender") : emptyList(),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
             validateJurisdictionConnections(caseData)
