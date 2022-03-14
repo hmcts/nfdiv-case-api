@@ -23,8 +23,10 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -204,6 +206,81 @@ public class GenerateRespondentAosInvitationTest {
             );
 
         verifyNoMoreInteractions(caseDataDocumentService);
+
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateAosOfflineVersionAndCoversheetIfRespIsNotRepresentedAndDoesNotHaveEmailAndApp1KnowsApp2Address() {
+        setMockClock(clock);
+
+        final var caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YES);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> coversheetContent = new HashMap<>();
+        final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(coversheetTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(coversheetContent);
+
+        final var result = generateRespondentAosInvitation.apply(caseDetails);
+
+        assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
+
+        verify(caseDataDocumentService)
+            .renderDocumentAndUpdateCaseData(
+                caseData,
+                RESPONDENT_INVITATION,
+                templateContent,
+                TEST_CASE_ID,
+                CITIZEN_RESP_AOS_INVITATION_OFFLINE,
+                ENGLISH,
+                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+            );
+
+        verify(caseDataDocumentService)
+            .renderDocumentAndUpdateCaseData(
+                caseData,
+                COVERSHEET,
+                templateContent,
+                TEST_CASE_ID,
+                COVERSHEET_APPLICANT2,
+                ENGLISH,
+                formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, LocalDateTime.now(clock))
+            );
+
+        verifyNoMoreInteractions(caseDataDocumentService);
+
+        classMock.close();
+    }
+
+    @Test
+    void shouldNotGenerateAosInvitationDocOfflineVersionAndCoversheetIfRespondentIAddressIsNotKnownByApplicantAndIsSole() {
+        final var caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(NO);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final var result = generateRespondentAosInvitation.apply(caseDetails);
+
+        assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
+
+        verifyNoInteractions(caseDataDocumentService);
 
         classMock.close();
     }
