@@ -18,7 +18,7 @@ public class JurisdictionTest {
     @Test
     public void shouldReturnErrorWhenJurisdictionConnectionIsJ() {
         final CaseData caseData = caseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         Jurisdiction jurisdiction = new Jurisdiction();
 
         jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_RESIDENT_JOINT));
