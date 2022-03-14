@@ -81,6 +81,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .data(caseTasks(addMiniApplicationLink)
                 .run(details)
                 .getData())
+            .state(details.getState())
             .build();
     }
 }
