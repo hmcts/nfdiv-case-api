@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CONNECTION;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
@@ -139,15 +141,16 @@ public class CaseValidationTest {
     @Test
     public void shouldValidateJurisdictionConnectionsForCitizenApplication() {
         final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setApplication(Application.builder()
             .solSignStatementOfTruth(NO)
             .build());
 
-        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_APP_2_RESIDENT));
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_RESIDENT_JOINT));
 
         final List<String> errors = validateJurisdictionConnections(caseData);
 
-        assertThat(errors).contains(CONNECTION + APP_1_APP_2_RESIDENT + CANNOT_EXIST);
+        assertThat(errors).contains(CONNECTION + APP_1_RESIDENT_JOINT + CANNOT_EXIST);
     }
 
     @Test
