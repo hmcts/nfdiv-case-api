@@ -135,11 +135,11 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     .mandatory(MarriageDetails::getCertifiedTranslation,
                         "marriageCertificateInEnglish=\"No\"")
                     .mandatory(MarriageDetails::getMarriedInUk)
-                    .mandatory(MarriageDetails::getIssueApplicationWithoutMarriageCertificate)
+                    .mandatoryWithLabel(MarriageDetails::getIssueApplicationWithoutMarriageCertificate,
+                        "Are you making a separate application to issue without your marriage or civil partnership certificate?")
                     .mandatory(MarriageDetails::getDate)
                     .mandatory(MarriageDetails::getApplicant1Name)
                     .mandatory(MarriageDetails::getApplicant2Name)
-                    .mandatory(MarriageDetails::getFormationType)
                     .mandatory(MarriageDetails::getPlaceOfMarriage)
                     .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
                     .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,
