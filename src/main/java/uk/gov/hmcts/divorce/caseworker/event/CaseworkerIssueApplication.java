@@ -32,7 +32,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 
@@ -69,7 +68,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
-            .grant(READ,
+            .grantHistoryOnly(
                 SOLICITOR,
                 SUPER_USER,
                 LEGAL_ADVISOR))

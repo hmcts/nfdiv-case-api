@@ -20,7 +20,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Slf4j
 @Component
@@ -40,7 +39,7 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
             .showEventNotes()
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
-            .grant(READ,
+            .grantHistoryOnly(
                 SOLICITOR,
                 SUPER_USER,
                 LEGAL_ADVISOR))

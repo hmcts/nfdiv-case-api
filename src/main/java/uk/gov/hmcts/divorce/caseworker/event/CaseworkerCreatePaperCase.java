@@ -18,7 +18,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_S
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Slf4j
 @Component
@@ -35,7 +34,7 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
             .name("Create paper case")
             .description("Create paper case")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SYSTEMUPDATE)
-            .grant(READ, SUPER_USER));
+            .grantHistoryOnly(SUPER_USER));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
