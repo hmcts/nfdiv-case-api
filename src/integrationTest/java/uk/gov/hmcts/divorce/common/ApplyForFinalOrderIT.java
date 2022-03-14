@@ -172,7 +172,7 @@ public class ApplyForFinalOrderIT {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, FINAL_ORDER_REQUESTED, "awaitingFinalOrder")))
+            .content(objectMapper.writeValueAsString(callbackRequest(data, FINAL_ORDER_REQUESTED, "AwaitingFinalOrder")))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
