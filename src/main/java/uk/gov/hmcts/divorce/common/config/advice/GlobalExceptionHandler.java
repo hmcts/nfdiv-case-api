@@ -9,16 +9,15 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import uk.gov.hmcts.divorce.common.config.interceptors.UnAuthorisedServiceException;
+import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
+import uk.gov.hmcts.divorce.common.exception.UnsupportedFormTypeException;
 import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
+import uk.gov.hmcts.divorce.endpoint.model.output.BspErrorResponse;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
-import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
-import uk.gov.hmcts.reform.bsp.common.error.UnsupportedFormTypeException;
-import uk.gov.hmcts.reform.bsp.common.model.shared.out.BspErrorResponse;
 import uk.gov.service.notify.NotificationClientException;
 
-import java.util.Collections;
-
+import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.ResponseEntity.status;
@@ -78,7 +77,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             .body(
                 BspErrorResponse.builder()
                     .errors(exception.getErrors())
-                    .warnings(exception.getWarnings())
                     .build()
             );
     }
@@ -90,7 +88,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return status(UNPROCESSABLE_ENTITY)
             .body(
                 BspErrorResponse.builder()
-                    .errors(Collections.singletonList(exception.getMessage()))
+                    .errors(singletonList(exception.getMessage()))
                     .build()
             );
     }

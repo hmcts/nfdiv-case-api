@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkscan.transformation.BulkScanService;
-import uk.gov.hmcts.divorce.endpoint.model.TransformationInput;
-import uk.gov.hmcts.reform.bsp.common.config.BulkScanEndpoints;
-import uk.gov.hmcts.reform.bsp.common.model.transformation.output.CaseCreationDetails;
-import uk.gov.hmcts.reform.bsp.common.model.transformation.output.SuccessfulTransformationResponse;
+import uk.gov.hmcts.divorce.endpoint.model.CaseCreationDetails;
+import uk.gov.hmcts.divorce.endpoint.model.input.TransformationInput;
+import uk.gov.hmcts.divorce.endpoint.model.output.SuccessfulTransformationResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,7 @@ public class BulkScanCaseTransformationController {
     @Autowired
     private BulkScanService bulkScanService;
 
-    @PostMapping(path = BulkScanEndpoints.TRANSFORM, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/transform-exception-record", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     @Operation(summary = "Transform exception record into CCD case data")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Transformation of Exception Record into CCD Case Data has been successful",
@@ -87,7 +86,7 @@ public class BulkScanCaseTransformationController {
 
         return warnings
             .stream()
-            .map(listValue -> listValue.getValue())
+            .map(ListValue::getValue)
             .collect(toList());
     }
 }
