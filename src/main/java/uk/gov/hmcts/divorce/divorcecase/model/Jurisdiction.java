@@ -97,8 +97,8 @@ public class Jurisdiction {
     }
 
     private String validateJurisdictionConnectionI(CaseData data) {
-        if (connections.contains(RESIDUAL_JURISDICTION) && data.isDivorce() &&
-            data.getApplication().getMarriageDetails().getFormationType() != MarriageFormation.SAME_SEX_COUPLE) {
+        if (connections.contains(RESIDUAL_JURISDICTION) && data.isDivorce()
+            && data.getApplication().getMarriageDetails().getFormationType() != MarriageFormation.SAME_SEX_COUPLE) {
             return CONNECTION + RESIDUAL_JURISDICTION + CANNOT_EXIST;
         }
         return null;
