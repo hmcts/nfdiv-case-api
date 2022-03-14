@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -38,6 +39,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAosSu
 @ExtendWith(MockitoExtension.class)
 class SoleApplicationDisputedNotificationTest {
 
+    private static final int DISPUTE_DUE_DATE_OFFSET_DAYS = 37;
+
     @Mock
     private NotificationService notificationService;
 
@@ -50,8 +53,8 @@ class SoleApplicationDisputedNotificationTest {
     @Test
     void shouldSendAosDisputedEmailToSoleApplicantWithDivorceContent() {
         CaseData data = validCaseDataForAosSubmitted();
-        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -62,7 +65,9 @@ class SoleApplicationDisputedNotificationTest {
             eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE,
+                    data.getApplication().getIssueDate()
+                        .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
@@ -75,8 +80,8 @@ class SoleApplicationDisputedNotificationTest {
     void shouldSendAosDisputedEmailToSoleApplicantWithDissolutionContent() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
@@ -88,7 +93,9 @@ class SoleApplicationDisputedNotificationTest {
             eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE,
+                    data.getApplication().getIssueDate()
+                        .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
@@ -100,8 +107,8 @@ class SoleApplicationDisputedNotificationTest {
     @Test
     void shouldSendAosDisputedEmailToSoleRespondentWithDivorceContent() {
         CaseData data = validCaseDataForAosSubmitted();
-        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
         data.getApplicant2().setEmail(null);
 
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
@@ -114,7 +121,9 @@ class SoleApplicationDisputedNotificationTest {
             eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE,
+                    data.getApplication().getIssueDate()
+                        .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
@@ -127,8 +136,8 @@ class SoleApplicationDisputedNotificationTest {
     void shouldSendAosDisputedEmailToSoleRespondentWithDissolutionContent() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
         data.getApplicant2().setEmail(null);
 
         final Map<String, String> templateVars = getMainTemplateVars();
@@ -142,7 +151,9 @@ class SoleApplicationDisputedNotificationTest {
             eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE,
+                    data.getApplication().getIssueDate()
+                        .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),

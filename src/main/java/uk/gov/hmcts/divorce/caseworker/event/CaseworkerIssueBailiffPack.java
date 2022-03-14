@@ -25,7 +25,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_SERVICE_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_SERVICE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_SERVICE;
@@ -52,7 +51,7 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
             .page("issueBailiffPack")
             .pageLabel("Local court details - Issue Bailiff Pack")
             .label("localCourtDetailsIntro",

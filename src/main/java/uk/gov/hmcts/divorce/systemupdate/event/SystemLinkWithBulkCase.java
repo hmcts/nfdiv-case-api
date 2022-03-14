@@ -16,7 +16,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class SystemLinkWithBulkCase implements CCDConfig<CaseData, State, UserRole> {
@@ -32,6 +31,6 @@ public class SystemLinkWithBulkCase implements CCDConfig<CaseData, State, UserRo
             .name("Link with bulk case")
             .description("Linked with bulk case")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
+            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 }

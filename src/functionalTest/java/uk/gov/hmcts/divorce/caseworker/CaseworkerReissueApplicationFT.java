@@ -23,12 +23,16 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
 
     private static final String SOLICITOR_REQUEST_DIGITAL_AOS =
         "classpath:request/casedata/ccd-callback-caseworker-reissue-digital-aos-application-about-to-submit.json";
+    private static final String SOLICITOR_RESPONSE_DIGITAL_AOS =
+        "classpath:responses/response-caseworker-reissue-application-about-to-submit.json";
+
     private static final String SOLICITOR_REQUEST_OFFLINE_AOS =
         "classpath:request/casedata/ccd-callback-caseworker-reissue-offline-aos-application-about-to-submit.json";
+    private static final String SOLICITOR_RESPONSE_OFFLINE_AOS =
+        "classpath:responses/response-caseworker-offline-aos-application-about-to-submit.json";
+
     private static final String SOLICITOR_REQUEST_REISSUE_CASE =
         "classpath:request/casedata/ccd-callback-caseworker-reissue-case-type-application-about-to-submit.json";
-    private static final String SOLICITOR_RESPONSE =
-        "classpath:responses/response-caseworker-reissue-application-about-to-submit.json";
     private static final String SOLICITOR_RESPONSE_REISSUE_TYPE =
         "classpath:responses/response-caseworker-reissue-application-about-to-submit-reissue-case.json";
 
@@ -43,7 +47,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(
-                SOLICITOR_RESPONSE
+                SOLICITOR_RESPONSE_DIGITAL_AOS
             )));
     }
 
@@ -58,7 +62,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(
-                SOLICITOR_RESPONSE
+                SOLICITOR_RESPONSE_OFFLINE_AOS
             )));
     }
 
@@ -77,5 +81,4 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
                 SOLICITOR_RESPONSE_REISSUE_TYPE
             )));
     }
-
 }

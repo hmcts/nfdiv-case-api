@@ -20,6 +20,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
@@ -94,6 +96,8 @@ public class NoticeOfProceedingContentIT {
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
         caseData.getApplicant1().setGender(MALE);
         caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
         caseData.getApplicant1().setAddress(
             AddressGlobalUK
                 .builder()
@@ -143,6 +147,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
+        expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
+        expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID);
 
@@ -166,6 +172,8 @@ public class NoticeOfProceedingContentIT {
                 .build()
         );
         caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 19));
 
@@ -206,6 +214,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
+        expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
+        expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID);
 

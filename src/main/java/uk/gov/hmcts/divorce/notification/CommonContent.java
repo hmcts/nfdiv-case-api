@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.join;
+import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -75,11 +76,10 @@ public class CommonContent {
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
-        templateVars.put(PARTNER, caseData.isDivorce() ? partner.getGender() == MALE ? "husband" : "wife" : "civil partner");
+        templateVars.put(PARTNER, getPartner(caseData, partner));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
-        templateVars.put(SIGN_IN_URL,
-            config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
+        templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
         return templateVars;
     }
 
@@ -99,7 +99,15 @@ public class CommonContent {
     }
 
     public String getPartner(CaseData caseData, Applicant partner) {
-        return caseData.isDivorce() ? partner.getGender() == MALE ? "husband" : "wife" : "civil partner";
+        if (caseData.isDivorce()) {
+            if (isNull(partner.getGender())) {
+                return "spouse";
+            } else {
+                return partner.getGender() == MALE ? "husband" : "wife";
+            }
+        } else {
+            return "civil partner";
+        }
     }
 
     public Map<String, String> conditionalOrderTemplateVars(final CaseData caseData,
@@ -123,5 +131,9 @@ public class CommonContent {
             ? YES : NO);
 
         return templateVars;
+    }
+
+    public String getSignInUrl(CaseData caseData) {
+        return config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL);
     }
 }
