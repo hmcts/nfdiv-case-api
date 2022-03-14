@@ -80,8 +80,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getSolicitorRepresented)
                 .mandatory(Applicant::getAddress)
-                .mandatory(Applicant::getPhoneNumber)
-                .mandatory(Applicant::getEmail)
+                .optional(Applicant::getPhoneNumber)
+                .optional(Applicant::getEmail)
                 .label("Label-CorrectApplicant2SolDetails",
                     "### ${labelContentRespondentsOrApplicant2s} solicitor details")
                 .complex(Applicant::getSolicitor)
@@ -148,7 +148,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             .done()
             .label("Label-CorrectScannedDocuments",
                 "### Scanned Documents")
-            .mandatory(CaseData::getScannedDocuments);
+            .optional(CaseData::getScannedDocuments);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
