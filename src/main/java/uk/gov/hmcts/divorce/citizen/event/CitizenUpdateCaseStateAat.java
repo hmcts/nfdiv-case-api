@@ -13,8 +13,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
@@ -32,8 +33,8 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
                 .forAllStates()
                 .name("Citizen update case state AAT")
                 .description("Citizen update the case state in AAT")
-                .grant(CREATE_READ_UPDATE, CITIZEN, APPLICANT_2, CASE_WORKER)
-                .grantHistoryOnly(SUPER_USER)
+                .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
+                .grantHistoryOnly(CASE_WORKER, SUPER_USER)
                 .aboutToSubmitCallback(this::aboutToSubmit);
         }
     }
