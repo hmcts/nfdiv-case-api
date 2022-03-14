@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
+import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
 
 import java.util.List;
 

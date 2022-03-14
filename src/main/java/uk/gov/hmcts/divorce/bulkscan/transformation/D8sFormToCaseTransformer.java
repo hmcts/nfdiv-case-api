@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
+import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
-import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
+import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
 
 import java.util.List;
 import java.util.Map;
