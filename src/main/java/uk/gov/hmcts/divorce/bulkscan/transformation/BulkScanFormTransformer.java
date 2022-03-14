@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
 import uk.gov.hmcts.divorce.endpoint.model.input.TransformationInput;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
