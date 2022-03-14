@@ -20,7 +20,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -43,7 +42,7 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
             .name("Citizen FO delay reason")
             .description("Citizen final order delay reason")
             .grant(CREATE_READ_UPDATE, CREATOR)
-            .grant(READ, SUPER_USER, LEGAL_ADVISOR, CASE_WORKER)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 

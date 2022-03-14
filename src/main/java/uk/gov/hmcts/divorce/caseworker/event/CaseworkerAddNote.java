@@ -31,7 +31,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -60,8 +59,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
                 CASE_WORKER)
             .grant(CREATE_READ_UPDATE_DELETE,
                 SUPER_USER)
-            .grant(READ,
-                LEGAL_ADVISOR))
+            .grantHistoryOnly(LEGAL_ADVISOR))
             .page("addCaseNotes")
             .pageLabel("Add case notes")
             .optional(CaseData::getNote);

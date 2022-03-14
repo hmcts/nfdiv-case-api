@@ -27,7 +27,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -52,7 +51,7 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
-            .grant(READ, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
             .page("JointConditionalOrderSoT")
             .pageLabel("Statement of Truth - submit joint conditional order")
             .complex(CaseData::getConditionalOrder)

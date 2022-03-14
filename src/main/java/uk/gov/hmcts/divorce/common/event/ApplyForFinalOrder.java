@@ -28,7 +28,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -63,8 +62,11 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
-            .grant(READ, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
-            .aboutToSubmitCallback(this::aboutToSubmit));
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .grantHistoryOnly(
+                CASE_WORKER,
+                SUPER_USER,
+                LEGAL_ADVISOR));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
