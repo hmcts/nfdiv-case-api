@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.type.KeyValue;
-import uk.gov.hmcts.reform.bsp.common.model.shared.in.OcrDataField;
+import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
 
 import java.util.List;
 import java.util.Map;
@@ -185,7 +185,7 @@ public class OcrDataFields {
             .stream()
             .collect(
                 toMap(
-                    entry -> entry.getName(),
+                    OcrDataField::getName,
                     entry -> Optional.ofNullable(entry.getValue()).orElse("")
                 )
             );
