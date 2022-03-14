@@ -3,7 +3,9 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.event.page.CorrectPaperCase;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -36,7 +38,19 @@ public class CaseworkerCorrectPaperCase implements CCDConfig<CaseData, State, Us
             .forState(NewPaperCase)
             .name("Correct paper case")
             .description("Correct paper case")
+            .aboutToStartCallback(this::aboutToStart)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SUPER_USER));
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        CaseData caseData = details.getData();
+
+        caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
+        caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 }
