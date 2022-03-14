@@ -5,6 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.caseworker.service.print.ApplicationPrinter;
+import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -59,6 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
@@ -82,6 +85,12 @@ public class ApplicationIssuedNotificationTest {
 
     @Mock
     private EmailTemplatesConfig emailTemplatesConfig;
+
+    @Mock
+    private NoticeOfProceedingsPrinter noticeOfProceedingsPrinter;
+
+    @Mock
+    private ApplicationPrinter applicationPrinter;
 
     @InjectMocks
     private ApplicationIssuedNotification notification;
@@ -419,6 +428,28 @@ public class ApplicationIssuedNotificationTest {
         );
 
         verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendLetterAndApplicationToOfflineApplicant1() {
+
+        final CaseData caseData = caseData();
+
+        notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant1(caseData, TEST_CASE_ID);
+        verify(applicationPrinter).sendDivorceApplicationPdf(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendLetterAndApplicationToOfflineApplicant2() {
+
+        final CaseData caseData = caseData();
+
+        notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(caseData, TEST_CASE_ID);
+        verify(applicationPrinter).sendDivorceApplicationPdf(caseData, TEST_CASE_ID);
     }
 
     private Map<String, String> respondentSolicitorTemplateVars() {

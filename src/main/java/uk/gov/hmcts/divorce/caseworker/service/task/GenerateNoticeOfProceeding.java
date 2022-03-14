@@ -39,9 +39,13 @@ public class GenerateNoticeOfProceeding implements CaseTask {
 
         log.info("Generating notice of proceedings for case id {} ", caseId);
 
-        boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
-        boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
         boolean isSoleApplication = caseData.getApplicationType().isSole();
+
+        boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
+        boolean isApplicant1Offline = caseData.getApplicant1().isOffline();
+
+        boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
+        boolean isApplicant2Offline = caseData.getApplicant2().isOffline();
 
         if (isSoleApplication && !isApplicant1Represented) {
             String templateId = caseData.getApplicant2().isBasedOverseas()
@@ -58,8 +62,10 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME
             );
 
-        } else if (!isSoleApplication && (!isApplicant1Represented || !isApplicant2Represented)) {
-            if (!isApplicant1Represented) {
+        } else if (!isSoleApplication
+            && ((!isApplicant1Represented || !isApplicant2Represented) || (isApplicant1Offline || isApplicant2Offline))
+        ) {
+            if (!isApplicant1Represented || isApplicant1Offline) {
                 caseDataDocumentService.renderDocumentAndUpdateCaseData(
                     caseData,
                     NOTICE_OF_PROCEEDINGS,
@@ -70,7 +76,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                     NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
             }
 
-            if (!isApplicant2Represented) {
+            if (!isApplicant2Represented || isApplicant2Offline) {
                 caseDataDocumentService.renderDocumentAndUpdateCaseData(
                     caseData,
                     NOTICE_OF_PROCEEDINGS,

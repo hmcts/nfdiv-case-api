@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -59,6 +60,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TH
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent.ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -84,6 +86,14 @@ public class NoticeOfProceedingJointContentIT {
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
         caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK.builder()
+                .addressLine1("line 1")
+                .postTown("town")
+                .postCode("postcode")
+                .country("UK")
+                .build()
+        );
         caseData.getApplicant2().setGender(FEMALE);
 
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
@@ -100,6 +110,7 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put(LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
+        expectedEntries.put(ADDRESS, "line 1\ntown\npostcode");
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
@@ -130,6 +141,14 @@ public class NoticeOfProceedingJointContentIT {
         caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant2().setLastName(TEST_LAST_NAME);
         caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setAddress(
+            AddressGlobalUK.builder()
+                .addressLine1("line 1")
+                .postTown("town")
+                .postCode("postcode")
+                .country("UK")
+                .build()
+        );
         caseData.getApplicant1().setGender(FEMALE);
 
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
@@ -147,7 +166,7 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put(LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-
+        expectedEntries.put(ADDRESS, "line 1\ntown\npostcode");
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP);
