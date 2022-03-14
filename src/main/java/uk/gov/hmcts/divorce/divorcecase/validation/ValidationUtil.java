@@ -122,7 +122,7 @@ public final class ValidationUtil {
             }
             return emptyList();
         }
-        return caseData.getApplication().getJurisdiction().validate();
+        return caseData.getApplication().getJurisdiction().validateJurisdiction(caseData);
     }
 
     public static List<String> validateCasesAcceptedToListForHearing(BulkActionCaseData caseData) {

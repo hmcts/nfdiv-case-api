@@ -16,15 +16,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_DOMICILED;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_DOMICILED;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_DOMICILED;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_SIX_MONTHS;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_TWELVE_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.CONNECTION;
@@ -91,100 +85,33 @@ public class Jurisdiction {
     )
     private Set<JurisdictionConnections> connections;
 
-    public List<String> validate() {
+    public List<String> validateJurisdiction(CaseData data) {
         if (isEmpty(connections)) {
             return List.of("JurisdictionConnections" + EMPTY);
         } else {
             return Stream.of(
-                validateJurisdictionConnectionA(),
-                validateJurisdictionConnectionB(),
-                validateJurisdictionConnectionC(),
-                validateJurisdictionConnectionD(),
-                validateJurisdictionConnectionE(),
-                validateJurisdictionConnectionF(),
-                validateJurisdictionConnectionG(),
-                validateJurisdictionConnectionH(),
-                validateJurisdictionConnectionI(),
-                validateJurisdictionConnectionJ()
+                validateJurisdictionConnectionI(data),
+                validateJurisdictionConnectionJKL(data)
             ).filter(Objects::nonNull).collect(Collectors.toList());
         }
     }
 
-    private String validateJurisdictionConnectionA() {
-        if (connections.contains(APP_1_APP_2_RESIDENT)
-            && (applicant1Residence != YesOrNo.YES
-            || applicant2Residence != YesOrNo.YES)) {
-            return CONNECTION + APP_1_APP_2_RESIDENT + CANNOT_EXIST;
-        }
-        return null;
-    }
-
-    private String validateJurisdictionConnectionB() {
-        if (connections.contains(APP_1_APP_2_LAST_RESIDENT) && bothLastHabituallyResident != YesOrNo.YES) {
-            return CONNECTION + APP_1_APP_2_LAST_RESIDENT + CANNOT_EXIST;
-        }
-        return null;
-    }
-
-    private String validateJurisdictionConnectionC() {
-        if (connections.contains(APP_2_RESIDENT) && applicant2Residence != YesOrNo.YES) {
-            return CONNECTION + APP_2_RESIDENT + CANNOT_EXIST;
-        }
-        return null;
-    }
-
-    private String validateJurisdictionConnectionD() {
-        if (connections.contains(APP_1_RESIDENT_TWELVE_MONTHS)
-            && (applicant1Residence != YesOrNo.YES
-            || app1HabituallyResLastTwelveMonths != YesOrNo.YES)) {
-            return CONNECTION + APP_1_RESIDENT_TWELVE_MONTHS + CANNOT_EXIST;
-        }
-        return null;
-    }
-
-    private String validateJurisdictionConnectionE() {
-        if (connections.contains(APP_1_RESIDENT_SIX_MONTHS)
-            && (applicant1Residence != YesOrNo.YES
-            || app1HabituallyResLastSixMonths != YesOrNo.YES)) {
-            return CONNECTION + APP_1_RESIDENT_SIX_MONTHS + CANNOT_EXIST;
-        }
-        return null;
-    }
-
-    private String validateJurisdictionConnectionF() {
-        if (connections.contains(APP_1_APP_2_DOMICILED)
-            && (applicant1Domicile != YesOrNo.YES
-            || applicant2Domicile != YesOrNo.YES)) {
-            return CONNECTION + APP_1_APP_2_DOMICILED + CANNOT_EXIST;
-        }
-        return null;
-    }
-
-    private String validateJurisdictionConnectionG() {
-        if (connections.contains(APP_1_DOMICILED) && applicant1Domicile != YesOrNo.YES) {
-            return CONNECTION + APP_1_DOMICILED + CANNOT_EXIST;
-        }
-        return null;
-    }
-
-    private String validateJurisdictionConnectionH() {
-        if (connections.contains(APP_2_DOMICILED) && applicant2Domicile != YesOrNo.YES) {
-            return CONNECTION + APP_2_DOMICILED + CANNOT_EXIST;
-        }
-        return null;
-    }
-
-    private String validateJurisdictionConnectionI() {
-        if (connections.contains(RESIDUAL_JURISDICTION) && residualEligible != YesOrNo.YES) {
+    private String validateJurisdictionConnectionI(CaseData data) {
+        if (connections.contains(RESIDUAL_JURISDICTION) && data.isDivorce() &&
+            data.getApplication().getMarriageDetails().getFormationType() != MarriageFormation.SAME_SEX_COUPLE) {
             return CONNECTION + RESIDUAL_JURISDICTION + CANNOT_EXIST;
         }
         return null;
     }
 
-    private String validateJurisdictionConnectionJ() {
-        if (connections.contains(APP_1_RESIDENT_JOINT) && applicant1Residence != YesOrNo.YES) {
+    private String validateJurisdictionConnectionJKL(CaseData data) {
+        List<JurisdictionConnections> soleConnectionsOnly = List.of(APP_1_RESIDENT_JOINT, APP_2_RESIDENT_TWELVE_MONTHS, APP_2_RESIDENT_SIX_MONTHS);
+        if (
+            connections.stream().anyMatch(soleConnectionsOnly::contains)
+            && data.getApplicationType() != ApplicationType.JOINT_APPLICATION) {
             return CONNECTION + APP_1_RESIDENT_JOINT + CANNOT_EXIST;
         }
         return null;
     }
+    
 }
