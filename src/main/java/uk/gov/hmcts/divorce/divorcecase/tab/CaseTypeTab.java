@@ -105,7 +105,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1HWFReferenceNumber")
             .label("LabelApplicant2-PaymentHeading", IS_JOINT_AND_HWF_ENTERED, "### ${labelContentTheApplicant2UC}")
             .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED)
-            // add paper case payment
+            .field("newPaperCase", "applicationType=\"NEVER_SHOW\"")
             .label("LabelPaperCase-PaymentHeading", IS_NEW_PAPER_CASE, "### Paper Case Payment")
             .field("paperCasePaymentMethod", IS_NEW_PAPER_CASE);
     }
