@@ -339,6 +339,28 @@ public enum State {
     )
     Submitted("Submitted");
 
+    public static final EnumSet<State> PRE_CONDITIONAL_ORDER_STATES = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
+        Applicant2Approved,
+        AwaitingHWFDecision,
+        AwaitingPayment,
+        AwaitingDocuments,
+        Submitted,
+        AwaitingAos,
+        AwaitingService,
+        AosOverdue,
+        AosDrafted,
+        AwaitingServicePayment,
+        AwaitingServiceConsideration,
+        AwaitingBailiffReferral,
+        AwaitingBailiffService,
+        IssuedToBailiff,
+        Holding,
+        AwaitingConditionalOrder
+    ));
+
     public static final EnumSet<State> POST_SUBMISSION_STATES = EnumSet.complementOf(EnumSet.of(
         Draft,
         AwaitingApplicant1Response,
