@@ -46,7 +46,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFIC
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.CANCELLED;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.DECLINED;

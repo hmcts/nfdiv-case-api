@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.EnumSet;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 
