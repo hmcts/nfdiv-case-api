@@ -44,8 +44,8 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
                 .mandatory(GeneralLetter::getGeneralLetterParties)
                 .mandatory(GeneralLetter::getOtherRecipientName, "generalLetterParties=\"other\"")
                 .mandatory(GeneralLetter::getOtherRecipientAddress, "generalLetterParties=\"other\"")
-                .optional(GeneralLetter::getAttachments)
                 .mandatory(GeneralLetter::getGeneralLetterDetails)
+                .optional(GeneralLetter::getAttachments)
                 .done();
     }
 
