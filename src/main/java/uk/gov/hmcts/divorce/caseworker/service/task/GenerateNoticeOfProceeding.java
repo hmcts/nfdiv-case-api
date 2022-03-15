@@ -63,7 +63,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
             );
 
         } else if (!isSoleApplication
-            && !isApplicant1Represented || !isApplicant2Represented || isApplicant1Offline || isApplicant2Offline
+            && (!isApplicant1Represented || !isApplicant2Represented || isApplicant1Offline || isApplicant2Offline)
         ) {
             if (!isApplicant1Represented || isApplicant1Offline) {
                 caseDataDocumentService.renderDocumentAndUpdateCaseData(

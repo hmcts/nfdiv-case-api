@@ -792,7 +792,7 @@ public class CaseworkerIssueApplicationIT {
     void shouldRespondWithUnauthorizedStatusIfCaseDataHasDraftApplicationAndServiceAuthorizationFails() throws Exception {
 
         final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setAddress(applicantAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
