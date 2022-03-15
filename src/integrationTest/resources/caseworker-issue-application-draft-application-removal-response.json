@@ -37,7 +37,7 @@
     "jurisdictionApplicant2Residence": "Yes",
     "accessCode": "${json-unit.ignore}",
     "jurisdictionConnections": [
-      "J"
+      "A"
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant1PrayerHasBeenGivenCheckbox": [
