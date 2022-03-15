@@ -115,6 +115,10 @@ public class CaseData {
 
     @JsonUnwrapped
     @Builder.Default
+    private GeneralLetter generalLetter = new GeneralLetter();
+
+    @JsonUnwrapped
+    @Builder.Default
     private GeneralReferral generalReferral = new GeneralReferral();
 
     @JsonUnwrapped
