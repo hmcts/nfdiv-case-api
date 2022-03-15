@@ -77,4 +77,23 @@ class SendAosResponseLetterPackToApplicantTest {
 
         verifyNoMoreInteractions(aosPackPrinter);
     }
+
+    @Test
+    void shouldSendAosResponsePackToApplicantIfApplicantIsOfflineAndAosIsNotDisputed() {
+        final var caseData = caseData();
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        doNothing().when(aosPackPrinter).sendAosResponseLetterToApplicant(caseData, TEST_CASE_ID);
+
+        sendAosResponseLetterPackToApplicant.apply(caseDetails);
+
+        verify(aosPackPrinter).sendAosResponseLetterToApplicant(caseData, TEST_CASE_ID);
+
+        verifyNoMoreInteractions(aosPackPrinter);
+    }
 }
