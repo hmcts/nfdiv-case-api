@@ -225,6 +225,7 @@ docmosis:
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT2: NFD_Applicant2_Coversheet.docx
+      NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -250,6 +251,7 @@ docmosis:
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT2: NFD_Applicant2_Coversheet.docx
+      NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
