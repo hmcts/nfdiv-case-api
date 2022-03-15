@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID;
@@ -45,7 +46,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
         boolean isApplicant1Offline = caseData.getApplicant1().isOffline();
 
         boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
-        boolean isApplicant2Offline = caseData.getApplicant2().isOffline();
+        boolean isApplicant2Offline = isBlank(caseData.getApplicant2().getEmail());
 
         if (isSoleApplication && !isApplicant1Represented) {
             String templateId = caseData.getApplicant2().isBasedOverseas()
