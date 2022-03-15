@@ -8,6 +8,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 
+import java.util.List;
+
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
@@ -30,8 +32,8 @@ public class GeneralLetter {
     @CCD(label = "Recipient's address")
     private AddressGlobalUK otherRecipientAddress;
 
-    @CCD(label = "Add attachment")
-    private Document attachment;
+    @CCD(label = "Add attachments")
+    private List<Document> attachments;
 
     @CCD(
         label = "Please provide details",
