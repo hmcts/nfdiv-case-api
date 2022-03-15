@@ -66,6 +66,9 @@ public class LabelContent {
     @CCD(label = "The applicant or applicant 1")
     private String theApplicantOrApplicant1UC;
 
+    @CCD(label = "Applicant or Applicant 1")
+    private String applicantOrApplicant1UC;
+
     @CCD(label = "Got married or formed their civil partnership")
     private String gotMarriedOrFormedCivilPartnership;
 
@@ -109,6 +112,7 @@ public class LabelContent {
             theApplicantOrApplicant1 = "the applicant";
             theApplicantOrApplicant1UC = "The applicant";
             respondentsOrApplicant2s = "Respondent's";
+            applicantOrApplicant1UC = "Applicant";
         } else {
             applicant2 = "applicant 2";
             theApplicant2 = "applicant 2";
@@ -119,6 +123,7 @@ public class LabelContent {
             theApplicantOrApplicant1 = "applicant 1";
             theApplicantOrApplicant1UC = "Applicant 1";
             respondentsOrApplicant2s = "Applicant 2's";
+            applicantOrApplicant1UC = "Applicant 1";
         }
     }
 }
