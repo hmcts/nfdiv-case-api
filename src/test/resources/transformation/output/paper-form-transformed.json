@@ -23,10 +23,10 @@
   "SoleOrApplicant1PaymentOther": "No",
   "Applicant2PaymentOther": "No",
   "DebitCreditCardPayment": null,
-  "DebitCreditCardPaymentPhone": null,
+  "DebitCreditCardPaymentPhone": "No",
   "HowToPayEmail": null,
   "PaymentDetailEmail": null,
-  "ChequeOrPostalOrderPayment": null,
+  "ChequeOrPostalOrderPayment": "Yes",
   "Applicant2PaymentOtherDetail": "pay details app2",
   "SoleOrApplicant1PaymentOtherDetail": "pay details app1"
 }

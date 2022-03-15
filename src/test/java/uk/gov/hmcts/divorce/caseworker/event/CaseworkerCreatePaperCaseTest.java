@@ -47,6 +47,7 @@ public class CaseworkerCreatePaperCaseTest {
 
         assertThat(submitResponse.getData().getHyphenatedCaseRef()).isEqualTo("0000-0000-0000-0001");
         assertThat(submitResponse.getData().getApplicant1().getOffline()).isEqualTo(YES);
+        assertThat(submitResponse.getData().getNewPaperCase()).isEqualTo(YES);
 
         final var labelContent = LabelContent
             .builder()
