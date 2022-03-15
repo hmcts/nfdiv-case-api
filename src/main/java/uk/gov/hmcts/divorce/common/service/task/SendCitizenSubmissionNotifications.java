@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.EnumSet;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 
@@ -37,7 +36,7 @@ public class SendCitizenSubmissionNotifications implements CaseTask {
         final Long caseId = caseDetails.getId();
         final State state = caseDetails.getState();
 
-        if (EnumSet.of(Submitted, AwaitingDocuments, AwaitingHWFDecision).contains(state)) {
+        if (EnumSet.of(Submitted, AwaitingHWFDecision).contains(state)) {
             log.info("Sending application submitted notifications for case : {}", caseId);
             notificationDispatcher.send(applicationSubmittedNotification, caseData, caseId);
         }
