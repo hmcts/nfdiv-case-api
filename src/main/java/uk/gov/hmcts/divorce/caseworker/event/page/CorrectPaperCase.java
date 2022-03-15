@@ -129,7 +129,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     "Has the ${labelContentRespondentsOrApplicant2s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
                 .mandatoryWithLabel(Application::getApplicant1PrayerHasBeenGivenCheckbox,
                     "${labelContentApplicantOrApplicant1UC} has given their \"prayer\".")
-                .mandatory(Application::getApplicant2PrayerHasBeenGivenCheckbox)
+                .mandatory(Application::getApplicant2PrayerHasBeenGivenCheckbox, "applicationType=\"jointApplication\"")
                 .label("Label-CorrectApp1HWFDetails",
                     "### ${labelContentApplicantsOrApplicant1s} Help With Fees details")
                 .complex(Application::getApplicant1HelpWithFees)
@@ -137,12 +137,13 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     .mandatory(HelpWithFees::getAppliedForFees)
                     .mandatory(HelpWithFees::getNeedHelp)
                 .done()
-                .label("Label-CorrectApp2HWFDetails",
-                    "### ${labelContentRespondentsOrApplicant2s} Help With Fees details")
-                .complex(Application::getApplicant2HelpWithFees)
-                    .optional(HelpWithFees::getReferenceNumber)
-                    .mandatory(HelpWithFees::getAppliedForFees)
-                    .mandatory(HelpWithFees::getNeedHelp)
+                .complex(Application::getApplicant2HelpWithFees, "applicationType=\"jointApplication\"")
+                    .label("Label-CorrectApp2HWFDetails",
+                        "### ${labelContentRespondentsOrApplicant2s} Help With Fees details",
+                        "applicationType=\"jointApplication\"")
+                    .optional(HelpWithFees::getReferenceNumber, "applicationType=\"jointApplication\"")
+                    .mandatory(HelpWithFees::getAppliedForFees, "applicationType=\"jointApplication\"")
+                    .mandatory(HelpWithFees::getNeedHelp, "applicationType=\"jointApplication\"")
                 .done()
                 .mandatory(Application::getScreenHasMarriageCert)
                 .label("Label-CorrectMarriageDetails", "### Marriage details")
