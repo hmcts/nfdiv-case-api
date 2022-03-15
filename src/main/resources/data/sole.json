@@ -59,7 +59,7 @@
   "jurisdictionApplicant1Residence": "Yes",
   "jurisdictionApplicant2Residence": "Yes",
   "jurisdictionConnections": [
-    "J"
+    "A"
   ],
   "applicant1LegalProceedings": "Yes",
   "applicant1FinancialOrder": "No",
@@ -97,6 +97,7 @@
   "labelContentApplicantOrApplicant1": "the applicant’s",
   "labelContentApplicantsOrApplicant1s": "Applicant’s",
   "labelContentTheApplicantOrApplicant1": "the applicant",
+  "labelContentTheApplicantOrApplicant1UC": "The applicant",
   "labelContentRespondentsOrApplicant2s": "Respondent's",
   "labelContentDivorceOrCivilPartnershipApplication": "divorce application",
   "labelContentDivorceOrEndCivilPartnership": "for divorce",

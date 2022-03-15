@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -120,12 +121,67 @@ class SendAosPackToRespondentTest {
     }
 
     @Test
+    void shouldPrintAosAndSetDueDateIfSoleApplicationAndApp1KnowsApp2Address() {
+        final var caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YES);
+
+        Applicant applicant2 = respondent();
+        applicant2.setAddress(
+            AddressGlobalUK
+                .builder()
+                .country("UK")
+                .postTown("London")
+                .addressLine1("Line 1")
+                .build()
+        );
+        caseData.setApplicant2(applicant2);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        final CaseDetails<CaseData, State> result = sendAosPackToRespondent.apply(caseDetails);
+
+        assertThat(result.getData().getAcknowledgementOfService())
+            .extracting(
+                AcknowledgementOfService::getNoticeOfProceedingsEmail,
+                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
+            .contains(null, null, null);
+        verify(aosPackPrinter).sendAosLetterToRespondent(caseData, TEST_CASE_ID);
+    }
+
+    @Test
     void shouldNotPrintAosAndUpdateCaseDataIfSoleApplicationAndRespondentIsRepresented() {
 
         final var caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.setApplicant2(respondentWithDigitalSolicitor());
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        final CaseDetails<CaseData, State> result = sendAosPackToRespondent.apply(caseDetails);
+
+        assertThat(result.getData().getAcknowledgementOfService())
+            .extracting(
+                AcknowledgementOfService::getNoticeOfProceedingsEmail,
+                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
+            .contains(null, null, null);
+        verifyNoInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldNotPrintAosIfApplicant1DoesNotKnowApplicant2Address() {
+
+        final var caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(NO);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
