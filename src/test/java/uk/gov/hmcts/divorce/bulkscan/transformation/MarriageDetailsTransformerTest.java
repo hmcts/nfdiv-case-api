@@ -133,4 +133,38 @@ public class MarriageDetailsTransformerTest {
             .isEqualTo(expectedMarriageDetails);
     }
 
+    @Test
+    void shouldSuccessfullyTransformMarriageDetailsWithWarningsWhenMarriageMonthIsEmpty() throws Exception {
+        String validMarriageDetailsOcrJson = loadJson("src/test/resources/transformation/input/valid-marriage-details-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validMarriageDetailsOcrJson, new TypeReference<>() {
+        });
+
+        OcrDataFields dataFields = transformOcrMapToObject(ocrDataFields);
+        dataFields.setDateOfMarriageOrCivilPartnershipMonth("");
+
+        final var caseData = CaseData.builder().build();
+
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(dataFields)
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = marriageDetailsTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getTransformationWarnings())
+            .containsExactlyInAnyOrder(
+                "Please review marriage date in the scanned form"
+            );
+
+
+        final var expectedMarriageDetails =
+            jsonToObject("src/test/resources/transformation/output/marriage-details-transformed.json", MarriageDetails.class);
+
+        assertThat(transformedOutput.getCaseData().getApplication().getMarriageDetails())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedMarriageDetails);
+    }
 }
