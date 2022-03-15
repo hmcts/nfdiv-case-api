@@ -7,11 +7,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
@@ -111,13 +114,23 @@ public class MarriageDetailsTransformer implements Function<TransformationDetail
     }
 
     private LocalDate deriveMarriageDate(OcrDataFields ocrDataFields, List<String> warnings) {
-        try {
-            int dayParsed = Integer.parseInt(ocrDataFields.getDateOfMarriageOrCivilPartnershipDay()); // format "18"
-            int monthParsed = Integer.parseInt(ocrDataFields.getDateOfMarriageOrCivilPartnershipMonth()); //format "06"
-            int yearParsed = Integer.parseInt(ocrDataFields.getDateOfMarriageOrCivilPartnershipYear()); // format "2022"
-            return LocalDate.of(yearParsed, dayParsed, monthParsed);
-        } catch (DateTimeException | IllegalArgumentException exception) {
-            // log and add validation it as will be corrected manually the caseworker
+        if (isNotEmpty(ocrDataFields.getDateOfMarriageOrCivilPartnershipDay())
+            && isNotEmpty(ocrDataFields.getDateOfMarriageOrCivilPartnershipMonth())
+            && isNotEmpty(ocrDataFields.getDateOfMarriageOrCivilPartnershipYear())
+        ) {
+            try {
+                int dayParsed = Integer.parseInt(ocrDataFields.getDateOfMarriageOrCivilPartnershipDay()); // format "18"
+                int monthParsed = Month.valueOf(
+                        ocrDataFields.getDateOfMarriageOrCivilPartnershipMonth().toUpperCase(Locale.ROOT)) //format "June"
+                    .getValue();
+                int yearParsed = Integer.parseInt(ocrDataFields.getDateOfMarriageOrCivilPartnershipYear()); // format "2022"
+                return LocalDate.of(yearParsed, dayParsed, monthParsed);
+            } catch (DateTimeException | IllegalArgumentException exception) {
+                // log and add validation it as will be corrected manually the caseworker
+                warnings.add("Please review marriage date in the scanned form");
+            }
+            return null;
+        } else {
             warnings.add("Please review marriage date in the scanned form");
         }
         return null;
