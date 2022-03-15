@@ -44,7 +44,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_2_ANSWERS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_APPROVED;
@@ -110,7 +110,7 @@ public class Applicant2ApproveIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_JOINT, "NFD_CP_Application_Joint.docx");
+        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS, "NFD_CP_Joint_Applicant_2_Answers.docx");
 
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -143,7 +143,7 @@ public class Applicant2ApproveIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_JOINT, "NFD_CP_Application_Joint.docx");
+        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS, "NFD_CP_Joint_Applicant_2_Answers.docx");
 
         CaseData data = validApplicant2CaseData();
         data.getApplication().setApplicant1HelpWithFees(HelpWithFees.builder().needHelp(YES).build());
