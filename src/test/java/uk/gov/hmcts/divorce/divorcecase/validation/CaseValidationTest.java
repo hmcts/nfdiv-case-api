@@ -46,6 +46,7 @@ public class CaseValidationTest {
     @Test
     public void shouldValidateBasicCase() {
         CaseData caseData = new CaseData();
+        caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         List<String> errors = validateBasicCase(caseData);
         assertThat(errors).hasSize(13);
     }
@@ -54,9 +55,7 @@ public class CaseValidationTest {
     public void shouldValidateBasicOfflineCase() {
         CaseData caseData = new CaseData();
         Applicant applicant1 = Applicant.builder().offline(YES).build();
-        Applicant applicant2 = Applicant.builder().offline(YES).build();
         caseData.setApplicant1(applicant1);
-        caseData.setApplicant2(applicant2);
 
         List<String> errors = validateBasicCase(caseData);
         assertThat(errors).hasSize(11);
@@ -65,6 +64,7 @@ public class CaseValidationTest {
     @Test
     public void shouldValidateApplicant1BasicCase() {
         CaseData caseData = new CaseData();
+        caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         List<String> errors = validateApplicant1BasicCase(caseData);
         assertThat(errors).hasSize(8);
     }
@@ -73,9 +73,7 @@ public class CaseValidationTest {
     public void shouldValidateApplicant1BasicOfflineCase() {
         CaseData caseData = new CaseData();
         Applicant applicant1 = Applicant.builder().offline(YES).build();
-        Applicant applicant2 = Applicant.builder().offline(YES).build();
         caseData.setApplicant1(applicant1);
-        caseData.setApplicant2(applicant2);
 
         List<String> errors = validateApplicant1BasicCase(caseData);
         assertThat(errors).hasSize(6);
