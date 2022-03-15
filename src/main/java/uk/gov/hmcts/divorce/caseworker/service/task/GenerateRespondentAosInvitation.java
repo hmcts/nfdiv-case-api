@@ -17,8 +17,10 @@ import java.time.Clock;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_ONLINE;
@@ -58,7 +60,10 @@ public class GenerateRespondentAosInvitation implements CaseTask {
         log.info("Generating access code to allow the respondent to access the application");
         caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
 
-        if (caseData.getApplicationType().isSole()) {
+        boolean isAddressKnown = isNull(caseData.getApplication().getApplicant1KnowsApplicant2Address())
+            || YES.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address());
+
+        if (caseData.getApplicationType().isSole() && isAddressKnown) {
             if (caseData.getApplicant2().isRepresented()) {
                 log.info("Generating solicitor respondent AoS invitation for case id {} ", caseId);
                 generateDocumentAndUpdateCaseData(
