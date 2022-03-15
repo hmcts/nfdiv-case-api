@@ -37,7 +37,7 @@ public class SendCitizenSubmissionNotifications implements CaseTask {
         final Long caseId = caseDetails.getId();
         final State state = caseDetails.getState();
 
-        if (EnumSet.of(Submitted, AwaitingDocuments, AwaitingHWFDecision).contains(state)) {
+        if (EnumSet.of(Submitted, AwaitingHWFDecision).contains(state)) {
             log.info("Sending application submitted notifications for case : {}", caseId);
             notificationDispatcher.send(applicationSubmittedNotification, caseData, caseId);
         }

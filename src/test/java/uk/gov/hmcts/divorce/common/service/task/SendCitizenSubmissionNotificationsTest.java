@@ -93,7 +93,21 @@ class SendCitizenSubmissionNotificationsTest {
         sendCitizenSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
 
+    @Test
+    void shouldNotDispatchSubmittedNotificationsIfAwaitingDocumentsState() {
+
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingDocuments);
+
+        sendCitizenSubmissionNotifications.apply(caseDetails);
+
+        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 }
