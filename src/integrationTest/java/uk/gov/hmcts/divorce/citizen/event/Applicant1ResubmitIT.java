@@ -104,6 +104,7 @@ public class Applicant1ResubmitIT {
     @Test
     public void givenInvalidCaseDataThenReturnResponseWithErrors() throws Exception {
         CaseData data = invalidCaseData();
+        data.getApplicant2().setEmail("onlineApplicant2@email.com");
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

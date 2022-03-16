@@ -75,6 +75,7 @@ class CitizenSubmitApplicationTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
+        caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
