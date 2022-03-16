@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
@@ -128,10 +129,10 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Set<DocumentType> getMissingDocuments(CaseData caseData) {
         Set<DocumentType> missingDocuments = new HashSet<>();
-        if (caseData.getApplication().hasAwaitingApplicant1Documents()) {
+        if (Objects.nonNull(caseData.getApplication().getApplicant1CannotUploadSupportingDocument())) {
             missingDocuments.addAll(caseData.getApplication().getApplicant1CannotUploadSupportingDocument());
         }
-        if (caseData.getApplication().hasAwaitingApplicant2Documents()) {
+        if (Objects.nonNull(caseData.getApplication().getApplicant2CannotUploadSupportingDocument())) {
             missingDocuments.addAll(caseData.getApplication().getApplicant2CannotUploadSupportingDocument());
         }
         return missingDocuments;
