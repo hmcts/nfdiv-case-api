@@ -7,13 +7,26 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -30,6 +43,15 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     @Autowired
     private GeneralEmailNotification generalEmailNotification;
 
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
+    @Autowired
+    private Clock clock;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -45,11 +67,11 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .page("createGeneralEmail")
             .pageLabel("Create general email")
             .complex(CaseData::getGeneralEmail)
-                .mandatory(GeneralEmail::getGeneralEmailParties)
-                .mandatory(GeneralEmail::getGeneralEmailOtherRecipientEmail, "generalEmailParties=\"other\"")
-                .mandatory(GeneralEmail::getGeneralEmailOtherRecipientName, "generalEmailParties=\"other\"")
-                .mandatory(GeneralEmail::getGeneralEmailDetails)
-                .done();
+            .mandatory(GeneralEmail::getGeneralEmailParties)
+            .mandatory(GeneralEmail::getGeneralEmailOtherRecipientEmail, "generalEmailParties=\"other\"")
+            .mandatory(GeneralEmail::getGeneralEmailOtherRecipientName, "generalEmailParties=\"other\"")
+            .mandatory(GeneralEmail::getGeneralEmailDetails)
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -59,8 +81,36 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         log.info("Caseworker create general email about to submit callback invoked");
 
         var caseData = details.getData();
+        var generalEmail = caseData.getGeneralEmail();
+        final String userAuth = httpServletRequest.getHeader(AUTHORIZATION);
+        final UserDetails userDetails = idamService.retrieveUser(userAuth).getUserDetails();
+
+        var generalEmailDetails = GeneralEmailDetails
+            .builder()
+            .generalEmailDateTime(LocalDateTime.now(clock))
+            .generalEmailParties(generalEmail.getGeneralEmailParties())
+            .generalEmailCreatedBy(userDetails.getFullName())
+            .generalEmailBody(generalEmail.getGeneralEmailDetails())
+            .build();
+
+        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
+            ListValue
+                .<GeneralEmailDetails>builder()
+                .id(UUID.randomUUID().toString())
+                .value(generalEmailDetails)
+                .build();
+
+        if (isEmpty(caseData.getGeneralEmails())) {
+            List<ListValue<GeneralEmailDetails>> generalEmailListValues = new ArrayList<>();
+            generalEmailListValues.add(generalEmailDetailsListValue);
+            caseData.setGeneralEmails(generalEmailListValues);
+        } else {
+            caseData.getGeneralEmails().add(0, generalEmailDetailsListValue);
+        }
 
         generalEmailNotification.send(caseData, details.getId());
+
+        caseData.setGeneralEmail(null); // clear existing general email
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
