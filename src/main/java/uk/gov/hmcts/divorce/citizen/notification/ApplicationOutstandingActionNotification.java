@@ -48,7 +48,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        if (caseData.getApplication().hasAwaitingApplicant1Documents()) {
+        if (caseData.getApplication().hasAwaitingApplicant1Documents() || caseData.getApplication().hasAwaitingApplicant2Documents()) {
             log.info("Sending application outstanding actions notification to applicant 1 for case : {}", id);
 
             notificationService.sendEmail(
@@ -62,7 +62,8 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        if (caseData.getApplication().hasAwaitingApplicant2Documents()) {
+        if (!caseData.getApplicationType().isSole()
+            && caseData.getApplication().hasAwaitingApplicant1Documents() || caseData.getApplication().hasAwaitingApplicant2Documents()) {
             log.info("Sending application outstanding actions notification to applicant 2 for case : {}", id);
 
             notificationService.sendEmail(
