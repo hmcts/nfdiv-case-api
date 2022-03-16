@@ -16,8 +16,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_CONDITIONAL_ORDER_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
 @Component
 @Slf4j
@@ -35,8 +38,8 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
             .grant(CREATE_READ_UPDATE,
-                CASE_WORKER)
-            .grantHistoryOnly(SOLICITOR))
+                CASE_WORKER, SUPER_USER)
+            .grantHistoryOnly(SOLICITOR, LEGAL_ADVISOR))
             .page("changeServiceRequest")
             .pageLabel("Change service request")
             .complex(CaseData::getApplication)

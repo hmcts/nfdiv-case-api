@@ -340,10 +340,6 @@ public enum State {
     Submitted("Submitted");
 
     public static final EnumSet<State> PRE_CONDITIONAL_ORDER_STATES = EnumSet.of(
-        Draft,
-        AwaitingApplicant1Response,
-        AwaitingApplicant2Response,
-        Applicant2Approved,
         AwaitingHWFDecision,
         AwaitingPayment,
         AwaitingDocuments,
