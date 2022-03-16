@@ -34,7 +34,6 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
@@ -112,25 +111,6 @@ class Applicant2ApproveTest {
     }
 
     @Test
-    void givenEventStartedWithValidCaseThenChangeStateApplicant2ApprovedAndSendEmailToApplicant1AndApplicant2() {
-        final long caseId = 2L;
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = CaseData.builder().build();
-        setValidCaseData(caseData);
-
-        caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
-
-        caseDetails.setState(State.AwaitingApplicant2Response);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
-
-        verify(notificationDispatcher).send(applicant2ApprovedNotification, caseData, caseDetails.getId());
-        verifyNoInteractions(caseDataDocumentService);
-        assertThat(response.getState()).isEqualTo(State.Applicant2Approved);
-    }
-
-    @Test
     void givenEventStartedWithValidCaseThenChangeStateApplicant2ApprovedAndSendEmailAndGenerateApplicationDocument() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -156,26 +136,6 @@ class Applicant2ApproveTest {
 
         final List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
         caseData.setDocumentsGenerated(documentsGenerated);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
-
-        verify(notificationDispatcher).send(applicant2ApprovedNotification, caseData, caseDetails.getId());
-        assertThat(response.getState()).isEqualTo(State.Applicant2Approved);
-    }
-
-    @Test
-    void givenEventStartedWithValidCaseThenChangeStateApplicant2ApprovedAndSendEmailToApplicant1AndApplicant2WithDeniedHwf() {
-        final long caseId = 2L;
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = CaseData.builder().build();
-        setValidCaseData(caseData);
-        caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
-        caseData.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
-
-        caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
-
-        caseDetails.setState(State.AwaitingApplicant2Response);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 

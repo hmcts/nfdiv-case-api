@@ -625,6 +625,7 @@ public class CaseworkerIssueApplicationIT {
     @Test
     void givenInvalidCaseDataWhenAboutToSubmitCallbackIsInvokedThenResponseContainsErrors() throws Exception {
         final CaseData caseData = invalidCaseData();
+        caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);

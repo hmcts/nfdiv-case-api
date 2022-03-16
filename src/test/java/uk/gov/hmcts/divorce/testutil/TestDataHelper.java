@@ -41,7 +41,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderDivorceParties;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
-import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
@@ -91,7 +90,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -275,11 +274,6 @@ public class TestDataHelper {
         marriageDetails.setApplicant2Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         marriageDetails.setMarriedInUk(YES);
 
-        var jurisdiction = new Jurisdiction();
-        jurisdiction.setApplicant1Residence(YES);
-        jurisdiction.setApplicant2Residence(YES);
-        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
-
         var applicant1 = getApplicant();
         applicant1.setContactDetailsType(PRIVATE);
         applicant1.setFinancialOrder(NO);
@@ -289,7 +283,7 @@ public class TestDataHelper {
 
         var application = Application.builder()
             .marriageDetails(marriageDetails)
-            .jurisdiction(jurisdiction)
+            .jurisdiction(getJurisdiction())
             .applicant1HelpWithFees(
                 HelpWithFees.builder()
                     .needHelp(NO)
@@ -379,7 +373,7 @@ public class TestDataHelper {
 
     public static Jurisdiction getJurisdiction() {
         final Jurisdiction jurisdiction = new Jurisdiction();
-        jurisdiction.setConnections(Set.of(APP_1_RESIDENT_JOINT));
+        jurisdiction.setConnections(Set.of(APP_1_APP_2_RESIDENT));
         jurisdiction.setApplicant1Residence(YES);
         jurisdiction.setApplicant2Residence(YES);
 

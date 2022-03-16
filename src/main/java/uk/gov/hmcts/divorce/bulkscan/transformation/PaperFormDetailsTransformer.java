@@ -16,6 +16,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaperCasePaymentMethod.CHEQUE_OR_POSTAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaperCasePaymentMethod.PHONE;
 
 @Component
 public class PaperFormDetailsTransformer implements Function<TransformationDetails, TransformationDetails> {
@@ -166,5 +168,18 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
         caseData.getPaperFormDetails().setApplicant2PaymentOther(
             from(toBoolean(ocrDataFields.getApplicant2PaymentOther()))
         );
+
+        caseData.getPaperFormDetails().setDebitCreditCardPaymentPhone(
+            from(toBoolean(ocrDataFields.getDebitCreditCardPaymentPhone()))
+        );
+        caseData.getPaperFormDetails().setChequeOrPostalOrderPayment(
+            from(toBoolean(ocrDataFields.getChequeOrPostalOrderPayment()))
+        );
+
+        if (toBoolean(ocrDataFields.getDebitCreditCardPaymentPhone())) {
+            caseData.getApplication().setPaperCasePaymentMethod(PHONE);
+        } else if (toBoolean(ocrDataFields.getChequeOrPostalOrderPayment())) {
+            caseData.getApplication().setPaperCasePaymentMethod(CHEQUE_OR_POSTAL_ORDER);
+        }
     }
 }
