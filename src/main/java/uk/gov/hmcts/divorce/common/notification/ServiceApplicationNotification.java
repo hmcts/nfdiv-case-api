@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEM
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
 
 @Component
@@ -60,13 +61,14 @@ public class ServiceApplicationNotification implements ApplicantNotification {
     }
 
     private EmailTemplateName getEmailTemplate(final AlternativeService alternativeService) {
-        EmailTemplateName emailTemplate = null;
+        boolean isServiceApplicationGranted = alternativeService.getServiceApplicationGranted().toBoolean();
 
-        if (YesOrNo.NO.equals(alternativeService.getServiceApplicationGranted())) {
+        if (isServiceApplicationGranted) {
+            log.info(LOGGER_MESSAGE, alternativeService.getAlternativeServiceType().getLabel(), "granted");
+            return SERVICE_APPLICATION_GRANTED;
+        } else {
             log.info(LOGGER_MESSAGE, alternativeService.getAlternativeServiceType().getLabel(), "rejected");
-            emailTemplate = SERVICE_APPLICATION_REJECTED;
+            return SERVICE_APPLICATION_REJECTED;
         }
-
-        return emailTemplate;
     }
 }

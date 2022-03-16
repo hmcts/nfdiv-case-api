@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -53,6 +54,7 @@ class ServiceApplicationNotificationTest {
     private ServiceApplicationNotification serviceApplicationNotification;
 
     private static final YesOrNo NOT_GRANTED = YesOrNo.NO;
+    private static final YesOrNo GRANTED = YesOrNo.YES;
 
     private static final Long ID = 1234567890123456L;
 
@@ -162,6 +164,25 @@ class ServiceApplicationNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(ID)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(IS_DEEMED_SERVICE, NO),
+                hasEntry(IS_DISPENSE_SERVICE, NO),
+                hasEntry(IS_BAILIFF_SERVICE, YES)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void shouldSendBailiffServiceApplicationSuccessfulEmailToSoleApplicant() {
+        sendNotification(BAILIFF, DIVORCE, GRANTED);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SERVICE_APPLICATION_GRANTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(ID)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DEEMED_SERVICE, NO),
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, YES)
