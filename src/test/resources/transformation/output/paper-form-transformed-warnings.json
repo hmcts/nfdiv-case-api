@@ -22,8 +22,8 @@
   "Applicant2PaymentOther": "No",
   "SoleOrApplicant1PaymentOtherDetail": null,
   "DebitCreditCardPayment": null,
-  "DebitCreditCardPaymentPhone": null,
+  "DebitCreditCardPaymentPhone": "No",
   "HowToPayEmail": null,
   "PaymentDetailEmail": null,
-  "ChequeOrPostalOrderPayment": null
+  "ChequeOrPostalOrderPayment": "No"
 }

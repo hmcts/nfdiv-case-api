@@ -440,6 +440,14 @@ public class Application {
     )
     private ProgressPaperCase progressPaperCase;
 
+    @CCD(
+        label = "How is offline payment being made?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "PaperCasePaymentMethod",
+        access = {DefaultAccess.class}
+    )
+    private PaperCasePaymentMethod paperCasePaymentMethod;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary

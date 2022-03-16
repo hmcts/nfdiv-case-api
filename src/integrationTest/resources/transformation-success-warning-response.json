@@ -137,7 +137,9 @@
       "applicant2PhoneNumber": "",
       "marriageIssueApplicationWithoutMarriageCertificate": "No",
       "applicant2NameChangedHowOtherDetails": "",
-      "marriageMarriageCertificateIsIncorrectDetails": ""
+      "marriageMarriageCertificateIsIncorrectDetails": "",
+      "paperFormChequeOrPostalOrderPayment": "No",
+      "paperFormDebitCreditCardPaymentPhone": "No"
     }
   },
   "warnings": [
