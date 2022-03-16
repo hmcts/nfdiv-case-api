@@ -38,8 +38,6 @@ public class GenerateNoticeOfProceeding implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        log.info("Generating notice of proceedings for case id {} ", caseId);
-
         boolean isSoleApplication = caseData.getApplicationType().isSole();
 
         boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
@@ -49,9 +47,12 @@ public class GenerateNoticeOfProceeding implements CaseTask {
         boolean isApplicant2Offline = isBlank(caseData.getApplicant2().getEmail());
 
         if (isSoleApplication && !isApplicant1Represented) {
+
             String templateId = caseData.getApplicant2().isBasedOverseas()
                 ? NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID
                 : NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
+
+            log.info("Generating notice of proceedings for sole case id {} ", caseId);
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
@@ -63,32 +64,36 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME
             );
 
-        } else if (!isSoleApplication
-            && (!isApplicant1Represented || !isApplicant2Represented || isApplicant1Offline || isApplicant2Offline)
-        ) {
-            if (!isApplicant1Represented || isApplicant1Offline) {
-                caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                    caseData,
-                    NOTICE_OF_PROCEEDINGS,
-                    jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
-                    caseId,
-                    JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
-                    caseData.getApplicant1().getLanguagePreference(),
-                    NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
-            }
+        }
 
-            if (!isApplicant2Represented || isApplicant2Offline) {
-                caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                    caseData,
-                    NOTICE_OF_PROCEEDINGS,
-                    jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
-                    caseId,
-                    JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
-                    caseData.getApplicant2().getLanguagePreference(),
-                    NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
-            }
-        } else {
-            log.info("Not generating notice of proceedings for case id {} as did not match required criteria to generate document", caseId);
+        if (!isSoleApplication && (!isApplicant1Represented || isApplicant1Offline)) {
+
+            log.info("Generating applicant 1 notice of proceedings for joint case id {} ", caseId);
+
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                NOTICE_OF_PROCEEDINGS,
+                jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
+                caseId,
+                JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+                caseData.getApplicant1().getLanguagePreference(),
+                NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
+
+        }
+
+        if (!isSoleApplication && (!isApplicant2Represented || isApplicant2Offline)) {
+
+            log.info("Generating applicant 2 notice of proceedings for joint case id {} ", caseId);
+
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                NOTICE_OF_PROCEEDINGS,
+                jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
+                caseId,
+                JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+                caseData.getApplicant2().getLanguagePreference(),
+                NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
+
         }
 
         return caseDetails;
