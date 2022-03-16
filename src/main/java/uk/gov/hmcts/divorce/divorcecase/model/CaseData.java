@@ -297,6 +297,13 @@ public class CaseData {
     @Builder.Default
     private List<ListValue<String>> warnings = new ArrayList<>();
 
+    @CCD(
+        label = "General emails",
+        typeOverride = Collection,
+        typeParameterOverride = "GeneralEmailDetails"
+    )
+    private List<ListValue<GeneralEmailDetails>> generalEmails;
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
