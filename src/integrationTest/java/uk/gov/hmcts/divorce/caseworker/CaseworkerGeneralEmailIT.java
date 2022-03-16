@@ -147,15 +147,15 @@ public class CaseworkerGeneralEmailIT {
             .isArray()
             .containsExactly(
                 json(
-                    "{\n" +
-                        "            \"id\":\"${json-unit.ignore}\",\n" +
-                        "            \"value\":{\n" +
-                        "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n" +
-                        "               \"generalEmailParties\":\"applicant\",\n" +
-                        "               \"generalEmailCreatedBy\":\"forename Surname\",\n" +
-                        "               \"generalEmailBody\":\"some details\"\n" +
-                        "            }\n" +
-                        "         }"
+                    "{\n"
+                        + "            \"id\":\"${json-unit.ignore}\",\n"
+                        + "            \"value\":{\n"
+                        + "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n"
+                        + "               \"generalEmailParties\":\"applicant\",\n"
+                        + "               \"generalEmailCreatedBy\":\"forename Surname\",\n"
+                        + "               \"generalEmailBody\":\"some details\"\n"
+                        + "            }\n"
+                        + "         }"
                 )
             );
 
@@ -216,15 +216,15 @@ public class CaseworkerGeneralEmailIT {
             .isArray()
             .containsExactly(
                 json(
-                    "{\n" +
-                        "            \"id\":\"${json-unit.ignore}\",\n" +
-                        "            \"value\":{\n" +
-                        "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n" +
-                        "               \"generalEmailParties\":\"applicant\",\n" +
-                        "               \"generalEmailCreatedBy\":\"forename Surname\",\n" +
-                        "               \"generalEmailBody\":\"some details\"\n" +
-                        "            }\n" +
-                        "         }"
+                    "{\n"
+                        + "            \"id\":\"${json-unit.ignore}\",\n"
+                        + "            \"value\":{\n"
+                        + "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n"
+                        + "               \"generalEmailParties\":\"applicant\",\n"
+                        + "               \"generalEmailCreatedBy\":\"forename Surname\",\n"
+                        + "               \"generalEmailBody\":\"some details\"\n"
+                        + "            }\n"
+                        + "         }"
                 )
             );
 
@@ -281,15 +281,15 @@ public class CaseworkerGeneralEmailIT {
             .isArray()
             .containsExactly(
                 json(
-                    "{\n" +
-                        "            \"id\":\"${json-unit.ignore}\",\n" +
-                        "            \"value\":{\n" +
-                        "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n" +
-                        "               \"generalEmailParties\":\"respondent\",\n" +
-                        "               \"generalEmailCreatedBy\":\"forename Surname\",\n" +
-                        "               \"generalEmailBody\":\"some details\"\n" +
-                        "            }\n" +
-                        "         }"
+                    "{\n"
+                        + "            \"id\":\"${json-unit.ignore}\",\n"
+                        + "            \"value\":{\n"
+                        + "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n"
+                        + "               \"generalEmailParties\":\"respondent\",\n"
+                        + "               \"generalEmailCreatedBy\":\"forename Surname\",\n"
+                        + "               \"generalEmailBody\":\"some details\"\n"
+                        + "            }\n"
+                        + "         }"
                 )
             );
 
@@ -351,15 +351,15 @@ public class CaseworkerGeneralEmailIT {
             .isArray()
             .containsExactly(
                 json(
-                    "{\n" +
-                        "            \"id\":\"${json-unit.ignore}\",\n" +
-                        "            \"value\":{\n" +
-                        "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n" +
-                        "               \"generalEmailParties\":\"respondent\",\n" +
-                        "               \"generalEmailCreatedBy\":\"forename Surname\",\n" +
-                        "               \"generalEmailBody\":\"some details\"\n" +
-                        "            }\n" +
-                        "         }"
+                    "{\n"
+                        + "            \"id\":\"${json-unit.ignore}\",\n"
+                        + "            \"value\":{\n"
+                        + "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n"
+                        + "               \"generalEmailParties\":\"respondent\",\n"
+                        + "               \"generalEmailCreatedBy\":\"forename Surname\",\n"
+                        + "               \"generalEmailBody\":\"some details\"\n"
+                        + "            }\n"
+                        + "         }"
                 )
             );
 
@@ -418,15 +418,15 @@ public class CaseworkerGeneralEmailIT {
             .isArray()
             .containsExactly(
                 json(
-                    "{\n" +
-                        "            \"id\":\"${json-unit.ignore}\",\n" +
-                        "            \"value\":{\n" +
-                        "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n" +
-                        "               \"generalEmailParties\":\"respondent\",\n" +
-                        "               \"generalEmailCreatedBy\":\"forename Surname\",\n" +
-                        "               \"generalEmailBody\":\"some details\"\n" +
-                        "            }\n" +
-                        "         }"
+                    "{\n"
+                        + "            \"id\":\"${json-unit.ignore}\",\n"
+                        + "            \"value\":{\n"
+                        + "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n"
+                        + "               \"generalEmailParties\":\"other\",\n"
+                        + "               \"generalEmailCreatedBy\":\"forename Surname\",\n"
+                        + "               \"generalEmailBody\":\"some details\"\n"
+                        + "            }\n"
+                        + "         }"
                 )
             );
 
