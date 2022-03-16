@@ -16,7 +16,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -73,7 +72,7 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
             .lastName(ocrDataFields.getRespondentOrApplicant2LastName())
             .nameDifferentToMarriageCertificate(nameDifferentToMarriageCertificate)
             .nameChangedHowOtherDetails(ocrDataFields.getRespondentOrApplicant2WhyMarriedNameChanged())
-            .solicitorRepresented(from(!isNull(ocrDataFields.getRespondentOrApplicant2SolicitorName())))
+            .solicitorRepresented(from(isNotEmpty(ocrDataFields.getRespondentOrApplicant2SolicitorName())))
             .address(
                 AddressGlobalUK
                     .builder()
