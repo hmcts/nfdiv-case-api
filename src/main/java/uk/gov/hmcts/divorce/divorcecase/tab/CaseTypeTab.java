@@ -46,6 +46,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildPaymentTab(configBuilder);
         buildLanguageTab(configBuilder);
         buildDocumentsTab(configBuilder);
+        buildCorrespondenceTab(configBuilder);
         buildConfidentialApplicantTab(configBuilder);
         buildConfidentialRespondentTab(configBuilder);
         buildConfidentialApplicant2Tab(configBuilder);
@@ -128,8 +129,15 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getScannedDocuments)
             .field(CaseData::getGeneralOrders)
             .field(CaseData::getDocumentsUploaded)
+            .field(CaseData::getGeneralEmails)
             .field("certificateOfServiceDocument")
             .field("coCertificateOfEntitlementDocument");
+    }
+
+    private void buildCorrespondenceTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("correspondence", "Correspondence")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
+            .field(CaseData::getGeneralEmails);
     }
 
     private void buildConfidentialApplicantTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
