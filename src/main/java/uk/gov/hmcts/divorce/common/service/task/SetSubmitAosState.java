@@ -17,8 +17,8 @@ public class SetSubmitAosState implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
         if (caseDetails.getState().equals(AosDrafted)) {
-            log.info("Setting submit AoS state to Holding for CaseID: {}", caseDetails.getId());
             caseDetails.setState(Holding);
+            log.info("Setting submit AoS state to Holding for CaseID: {}", caseDetails.getId());
         }
 
         return caseDetails;
