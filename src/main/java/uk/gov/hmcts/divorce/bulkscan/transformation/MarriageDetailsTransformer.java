@@ -124,7 +124,7 @@ public class MarriageDetailsTransformer implements Function<TransformationDetail
                         ocrDataFields.getDateOfMarriageOrCivilPartnershipMonth().toUpperCase(Locale.ROOT)) //format "June"
                     .getValue();
                 int yearParsed = Integer.parseInt(ocrDataFields.getDateOfMarriageOrCivilPartnershipYear()); // format "2022"
-                return LocalDate.of(yearParsed, dayParsed, monthParsed);
+                return LocalDate.of(yearParsed, monthParsed, dayParsed);
             } catch (DateTimeException | IllegalArgumentException exception) {
                 // log and add validation it as will be corrected manually the caseworker
                 warnings.add("Please review marriage date in the scanned form");
