@@ -14,7 +14,6 @@ import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
 
 @Component
@@ -56,7 +55,7 @@ public class NoticeOfProceedingsPrinter {
         } else {
             log.warn(
                 "Notice of Proceedings for applicant has missing documents. Expected document with type {} , for Case ID: {}",
-                AOS_OVERDUE_LETTER,
+                LETTER_TYPE_APPLICANT_1_NOP,
                 caseId
             );
         }
@@ -80,7 +79,7 @@ public class NoticeOfProceedingsPrinter {
         } else {
             log.warn(
                 "Notice of Proceedings for applicant has missing documents. Expected document with type {} , for Case ID: {}",
-                AOS_OVERDUE_LETTER,
+                LETTER_TYPE_APPLICANT_2_NOP,
                 caseId
             );
         }

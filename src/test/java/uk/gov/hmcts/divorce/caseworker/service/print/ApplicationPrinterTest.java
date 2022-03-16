@@ -53,7 +53,7 @@ public class ApplicationPrinterTest {
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("divorce-application-pdf");
+        assertThat(print.getLetterType()).isEqualTo("application-pdf");
         assertThat(print.getLetters().size()).isEqualTo(1);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(applicationDocument.getValue());
     }

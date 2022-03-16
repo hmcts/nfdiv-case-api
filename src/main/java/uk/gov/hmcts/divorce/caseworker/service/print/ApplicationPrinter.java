@@ -20,7 +20,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 @Slf4j
 public class ApplicationPrinter {
 
-    private static final String DIVORCE_APPLICATION_PDF = "divorce-application-pdf";
+    private static final String DIVORCE_APPLICATION_PDF = "application-pdf";
 
     @Autowired
     private BulkPrintService bulkPrintService;
