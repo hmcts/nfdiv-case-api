@@ -169,12 +169,27 @@ withPipeline(type, product, component) {
         env.ENVIRONMENT="aat"
         env.CASE_API_URL="http://nfdiv-case-api-aat.service.core-compute-aat.internal"
         env.CCD_DEF_NAME="aat"
-        env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
         env.ELASTIC_SEARCH_ENABLED=true
         env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
         env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
         env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
         setCommonEnvVariables()
+    }
+
+      before('highleveldatasetup:prod') {
+        env.ENVIRONMENT="prod"
+        env.CASE_API_URL="http://nfdiv-case-api-prod.service.core-compute-prod.internal"
+        env.CCD_DEF_NAME="prod"
+        env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-prod.service.core-compute-prod.internal"
+        env.CITIZEN_UPDATE_CASE_STATE_ENABLED=false
+        env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
+        env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
+        env.IDAM_API_URL_BASE = "https://idam-api.platform.hmcts.net"
+        env.S2S_URL_BASE = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
+        env.BEFTA_S2S_CLIENT_ID = "ccd_data"
+
+        builder.gradle('generateCCDConfig')
+        generateDefinitions()
     }
 
     onDemo {
@@ -183,7 +198,6 @@ withPipeline(type, product, component) {
       env.CCD_DEF_NAME = "demo"
       env.IDAM_API_URL_BASE = "https://idam-api.demo.platform.hmcts.net"
       env.S2S_URL_BASE = "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
-      env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-demo.service.core-compute-demo.internal"
     }
 
     onPerftest {
@@ -192,7 +206,6 @@ withPipeline(type, product, component) {
       env.CCD_DEF_NAME = "perftest"
       env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"
       env.S2S_URL_BASE = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
-      env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-perftest.service.core-compute-perftest.internal"
       env.FEE_API_URL = "http://fees-register-api-demo.service.core-compute-demo.internal"
     }
 
@@ -206,9 +219,7 @@ def setCommonEnvVariables() {
     env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
     env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     env.FEE_API_URL = "http://fees-register-api-aat.service.core-compute-aat.internal"
-    env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
     env.BEFTA_S2S_CLIENT_ID = "ccd_data"
-    env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
 }
 
 def uploadCoreCaseDataDefinitions() {
