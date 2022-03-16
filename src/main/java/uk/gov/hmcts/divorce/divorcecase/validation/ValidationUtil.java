@@ -12,14 +12,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public final class ValidationUtil {
 
@@ -43,7 +44,7 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant2().getLastName(), "Applicant2LastName"),
             notNull(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"),
             !caseData.getApplicant1().isOffline() ? notNull(caseData.getApplicant1().getGender(), "Applicant1Gender") : emptyList(),
-            !caseData.getApplicant2().isOffline() ? notNull(caseData.getApplicant2().getGender(), "Applicant2Gender") : emptyList(),
+            !isBlank(caseData.getApplicant2().getEmail()) ? notNull(caseData.getApplicant2().getGender(), "Applicant2Gender") : emptyList(),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
             notNull(caseData.getApplicant1().getContactDetailsType(), "Applicant1ContactDetailsType"),
             hasStatementOfTruth(caseData.getApplication()),
@@ -60,7 +61,7 @@ public final class ValidationUtil {
     private static List<String> validatePrayer(Set<Application.ThePrayer> thePrayer) {
         final String field = "applicant1PrayerHasBeenGivenCheckbox";
 
-        if (Objects.isNull(thePrayer)) {
+        if (isNull(thePrayer)) {
             return List.of(field + EMPTY);
         } else if (thePrayer.isEmpty()) {
             return List.of(field + MUST_BE_YES);
@@ -74,7 +75,7 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant1().getLastName(), "Applicant1LastName"),
             notNull(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"),
             !caseData.getApplicant1().isOffline() ? notNull(caseData.getApplicant1().getGender(), "Applicant1Gender") : emptyList(),
-            !caseData.getApplicant2().isOffline() ? notNull(caseData.getApplicant2().getGender(), "Applicant2Gender") : emptyList(),
+            !isBlank(caseData.getApplicant2().getEmail()) ? notNull(caseData.getApplicant2().getGender(), "Applicant2Gender") : emptyList(),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
             validateJurisdictionConnections(caseData)
@@ -122,7 +123,7 @@ public final class ValidationUtil {
             }
             return emptyList();
         }
-        return caseData.getApplication().getJurisdiction().validate();
+        return caseData.getApplication().getJurisdiction().validateJurisdiction(caseData);
     }
 
     public static List<String> validateCasesAcceptedToListForHearing(BulkActionCaseData caseData) {

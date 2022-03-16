@@ -17,6 +17,8 @@ import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.jsonToObject;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaperCasePaymentMethod.CHEQUE_OR_POSTAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaperCasePaymentMethod.PHONE;
 
 @ExtendWith(MockitoExtension.class)
 public class PaperFormDetailsTransformerTest {
@@ -90,5 +92,71 @@ public class PaperFormDetailsTransformerTest {
             .usingRecursiveComparison()
             .ignoringActualNullFields()
             .isEqualTo(expectedPaperForm);
+    }
+
+    @Test
+    void shouldSetPaperCasePaymentMethodToChequeOrPostalOrderIfPhonePaymentMethodIsSelected() {
+        List<OcrDataField> ocrDataFields = List.of(
+            new OcrDataField("chequeOrPostalOrderPayment", "true"),
+            new OcrDataField("debitCreditCardPaymentPhone", "false")
+        );
+
+        final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
+
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(transformOcrMapToObject(ocrDataFields))
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = paperFormDetailsTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getCaseData().getApplication().getPaperCasePaymentMethod())
+            .isEqualTo(CHEQUE_OR_POSTAL_ORDER);
+    }
+
+
+    @Test
+    void shouldSetPaperCasePaymentMethodToPhoneIfPhonePaymentMethodIsSelected() {
+        List<OcrDataField> ocrDataFields = List.of(
+            new OcrDataField("chequeOrPostalOrderPayment", "false"),
+            new OcrDataField("debitCreditCardPaymentPhone", "true")
+        );
+
+        final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
+
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(transformOcrMapToObject(ocrDataFields))
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = paperFormDetailsTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getCaseData().getApplication().getPaperCasePaymentMethod())
+            .isEqualTo(PHONE);
+    }
+
+    @Test
+    void shouldNotSetPaperCasePaymentMethodIfNeitherPaymentMethodIsSelected() {
+        List<OcrDataField> ocrDataFields = List.of(
+            new OcrDataField("chequeOrPostalOrderPayment", "false"),
+            new OcrDataField("debitCreditCardPaymentPhone", "false")
+        );
+
+        final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
+
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(transformOcrMapToObject(ocrDataFields))
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = paperFormDetailsTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getCaseData().getApplication().getPaperCasePaymentMethod()).isNull();
     }
 }

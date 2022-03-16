@@ -115,7 +115,7 @@
       "paperFormSummaryApplicant1FinancialOrdersFor": [
         "children"
       ],
-      "applicant2SolicitorRepresented": "Yes",
+      "applicant2SolicitorRepresented": "No",
       "applicant1StatementOfTruth": "Yes",
       "applicant2Address": {
         "AddressLine1": "some street",
@@ -130,7 +130,9 @@
       "screenHasMarriageCert": "Yes",
       "applicant2Email": "app2test@dummy.com",
       "applicant1SolicitorRepresented": "Yes",
-      "marriageIssueApplicationWithoutMarriageCertificate": "No"
+      "marriageIssueApplicationWithoutMarriageCertificate": "No",
+      "paperFormChequeOrPostalOrderPayment": "No",
+      "paperFormDebitCreditCardPaymentPhone": "No"
     }
   },
   "warnings": []
