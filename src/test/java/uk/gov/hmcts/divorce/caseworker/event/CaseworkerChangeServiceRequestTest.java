@@ -45,8 +45,8 @@ class CaseworkerChangeServiceRequestTest {
         final CaseData caseData = CaseData
             .builder()
             .application(Application
-                .builder().
-                solServiceMethod(SOLICITOR_SERVICE)
+                .builder()
+                .solServiceMethod(SOLICITOR_SERVICE)
                 .build())
             .build();
 
@@ -63,8 +63,8 @@ class CaseworkerChangeServiceRequestTest {
         final CaseData caseData = CaseData
             .builder()
             .application(Application
-                .builder().
-                solServiceMethod(COURT_SERVICE)
+                .builder()
+                .solServiceMethod(COURT_SERVICE)
                 .build())
             .build();
 
