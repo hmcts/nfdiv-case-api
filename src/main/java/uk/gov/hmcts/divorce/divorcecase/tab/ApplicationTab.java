@@ -129,13 +129,14 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             //Applicant 2 Solicitor
             .field("applicant2SolicitorRepresented", NEVER_SHOW)
             .label("LabelApplicant2sSolicitor-Heading",
-                "applicant2SolicitorRepresented=\"Yes\"",
+                "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"",
                 "#### ${labelContentTheApplicant2UC}'s solicitor")
             .field("applicant2SolicitorReference", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
+            .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
             .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
+            .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
             .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented=\"Yes\"")
 

@@ -171,6 +171,7 @@ public class CitizenSubmitApplicationIT {
     @Test
     public void givenInvalidCaseDataThenReturnResponseWithErrors() throws Exception {
         var data = invalidCaseData();
+        data.getApplicant2().setEmail("onlineApplicant2@email.com");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

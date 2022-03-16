@@ -130,7 +130,9 @@
       "screenHasMarriageCert": "Yes",
       "applicant2Email": "app2test@dummy.com",
       "applicant1SolicitorRepresented": "Yes",
-      "marriageIssueApplicationWithoutMarriageCertificate": "No"
+      "marriageIssueApplicationWithoutMarriageCertificate": "No",
+      "paperFormChequeOrPostalOrderPayment": "No",
+      "paperFormDebitCreditCardPaymentPhone": "No"
     }
   },
   "warnings": []

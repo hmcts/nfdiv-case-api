@@ -88,17 +88,15 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
 
         notificationDispatcher.send(applicant2ApprovedNotification, data, details.getId());
 
-        if (data.getApplicant1().isRepresented() && data.getApplicant2().isRepresented()) {
-            generateJointApplication(details, data);
+        generateJointApplication(details, data);
 
-            data.getDocumentsGenerated()
-                .stream()
-                .filter(document -> APPLICATION.equals(document.getValue().getDocumentType()))
-                .findFirst()
-                .ifPresent(draftDivorceApplication ->
-                    data.getApplication().setApplicant2SolicitorAnswersLink(draftDivorceApplication.getValue().getDocumentLink())
-                );
-        }
+        data.getDocumentsGenerated()
+            .stream()
+            .filter(document -> APPLICATION.equals(document.getValue().getDocumentType()))
+            .findFirst()
+            .ifPresent(draftDivorceApplication ->
+                data.getApplication().setApplicant2SolicitorAnswersLink(draftDivorceApplication.getValue().getDocumentLink())
+            );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

@@ -36,6 +36,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String CO_GRANTED_NO = "coGranted=\"No\"";
     private static final String IS_JOINT = "applicationType=\"jointApplication\"";
     private static final String IS_JOINT_AND_HWF_ENTERED = "applicationType=\"jointApplication\" AND applicant2HWFReferenceNumber=\"*\"";
+    private static final String IS_NEW_PAPER_CASE = "newPaperCase=\"Yes\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -57,6 +58,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConditionalOrderTab(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
         buildFinalOrderTab(configBuilder);
+
+        configBuilder.addPaymentHistoryTab("Payment History");
     }
 
     private void buildWarningsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -103,7 +106,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelApplicant1-PaymentHeading", IS_JOINT, "### The applicant")
             .field("applicant1HWFReferenceNumber")
             .label("LabelApplicant2-PaymentHeading", IS_JOINT_AND_HWF_ENTERED, "### ${labelContentTheApplicant2UC}")
-            .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED);
+            .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED)
+            .field("newPaperCase", "applicationType=\"NEVER_SHOW\"")
+            .label("LabelPaperCase-PaymentHeading", IS_NEW_PAPER_CASE, "### Paper Case Payment")
+            .field("paperCasePaymentMethod", IS_NEW_PAPER_CASE);
     }
 
     private void buildLanguageTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -340,6 +346,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("granted")
             .field("grantedDate")
             .field("dateFinalOrderNoLongerEligible")
-            .field("dateFinalOrderEligibleToRespondent");
+            .field("dateFinalOrderEligibleToRespondent")
+            .label("labelFinalOrderDetails-SoleRespondent",
+                "applicationType=\"soleApplication\" AND doesApplicant2WantToApplyForFinalOrder=\"*\"",
+                "### Respondent")
+            .field("doesApplicant2WantToApplyForFinalOrder")
+            .field("applicant2FinalOrderExplanation");
     }
 }
