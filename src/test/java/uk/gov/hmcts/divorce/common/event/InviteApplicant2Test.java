@@ -56,6 +56,7 @@ public class InviteApplicant2Test {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
+        caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
@@ -69,6 +70,7 @@ public class InviteApplicant2Test {
     void givenEventStartedWithInvalidCaseThenGiveValidationErrors() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setFinancialOrder(null);
+        caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
