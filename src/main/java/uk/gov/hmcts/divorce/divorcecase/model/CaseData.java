@@ -277,6 +277,12 @@ public class CaseData {
     private PaperFormDetails paperFormDetails = new PaperFormDetails();
 
     @CCD(
+        label = "Is the case a paper case?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo newPaperCase;
+
+    @CCD(
         label = "Is case judicial separation?",
         access = {DefaultAccess.class}
     )
