@@ -16,10 +16,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_CONDITIONAL_ORDER_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
 @Component
 @Slf4j
@@ -38,9 +36,7 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
             .showSummary()
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
-            .grant(CREATE_READ_UPDATE_DELETE,
-                SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR))
+            .grantHistoryOnly(SOLICITOR))
             .page("changeServiceRequest")
             .pageLabel("Change service request")
             .complex(CaseData::getApplication)
@@ -49,23 +45,13 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails
-    ) {
+        final CaseDetails<CaseData, State> beforeDetails) {
+
         log.info("Caseworker change service request callback invoked");
 
         var caseData = details.getData();
-        State state;
 
-        if (caseData.getApplication().isSolicitorServiceMethod()) {
-
-            // Generate solicitor service pack & add to document tab
-
-            // Generate NoP for respondent & add to document tab (don't send, only generate)
-
-            state = AwaitingService;
-        } else {
-            state = AwaitingAos;
-        }
+        State state = caseData.getApplication().isSolicitorServiceMethod() ? AwaitingService : AwaitingAos;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

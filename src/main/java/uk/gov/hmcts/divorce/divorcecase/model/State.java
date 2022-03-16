@@ -339,7 +339,7 @@ public enum State {
     )
     Submitted("Submitted");
 
-    public static final EnumSet<State> PRE_CONDITIONAL_ORDER_STATES = EnumSet.complementOf(EnumSet.of(
+    public static final EnumSet<State> PRE_CONDITIONAL_ORDER_STATES = EnumSet.of(
         Draft,
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
@@ -359,7 +359,7 @@ public enum State {
         IssuedToBailiff,
         Holding,
         AwaitingConditionalOrder
-    ));
+    );
 
     public static final EnumSet<State> POST_SUBMISSION_STATES = EnumSet.complementOf(EnumSet.of(
         Draft,
