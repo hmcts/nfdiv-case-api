@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 
 @Component
 public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
@@ -28,5 +29,9 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
 
         // to shutter the service within xui uncomment this line
         // configBuilder.shutterService();
+
+        if (System.getenv().getOrDefault("ENVIRONMENT", "").equalsIgnoreCase("PROD")) {
+            configBuilder.shutterService(SOLICITOR);
+        }
     }
 }
