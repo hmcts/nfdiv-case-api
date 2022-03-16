@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -27,6 +28,13 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         pageBuilder
             .page("Correct paper case", this::midEvent)
             .pageLabel("Correct paper case")
+            .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getApplicantsOrApplicant1s, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getTheApplicantOrApplicant1, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getApplicantOrApplicant1UC, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getRespondentsOrApplicant2s, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getTheApplicant2, NEVER_SHOW)
+            .done()
             .label("Label-CorrectYourApplication", "### Your application details")
             .mandatory(CaseData::getDivorceOrDissolution)
             .mandatory(CaseData::getApplicationType)
@@ -40,13 +48,15 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getNameChangedHowOtherDetails,
                     "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getContactDetailsType)
-                .mandatory(Applicant::getAddress)
-                .mandatory(Applicant::getPhoneNumber)
-                .mandatory(Applicant::getEmail)
-                .mandatory(Applicant::getSolicitorRepresented)
-                .label("Label-CorrectApplicant1SolDetails",
-                    "### ${labelContentApplicantsOrApplicant1s} solicitor details")
-                .complex(Applicant::getSolicitor)
+                .mandatoryWithLabel(Applicant::getAddress, "${labelContentApplicantsOrApplicant1s} address")
+                .mandatoryWithLabel(Applicant::getPhoneNumber, "${labelContentApplicantsOrApplicant1s} phone number")
+                .mandatoryWithLabel(Applicant::getEmail, "${labelContentApplicantsOrApplicant1s} email address")
+                .mandatoryWithLabel(Applicant::getSolicitorRepresented,
+                    "Is ${labelContentTheApplicantOrApplicant1} represented by a solicitor?")
+                .complex(Applicant::getSolicitor, "applicant1SolicitorRepresented=\"Yes\"")
+                    .label("Label-Applicant1SolDetails",
+                        "### ${labelContentApplicantsOrApplicant1s} solicitor details",
+                        "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getName, "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getReference, "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getFirmName, "applicant1SolicitorRepresented=\"Yes\"")
@@ -78,13 +88,15 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getNameDifferentToMarriageCertificate)
                 .mandatory(Applicant::getNameChangedHowOtherDetails,
                     "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
-                .mandatory(Applicant::getSolicitorRepresented)
-                .mandatory(Applicant::getAddress)
-                .optional(Applicant::getPhoneNumber)
-                .optional(Applicant::getEmail)
-                .label("Label-CorrectApplicant2SolDetails",
-                    "### ${labelContentRespondentsOrApplicant2s} solicitor details")
+                .mandatoryWithLabel(Applicant::getAddress, "${labelContentRespondentsOrApplicant2s} address")
+                .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentRespondentsOrApplicant2s} phone number")
+                .optionalWithLabel(Applicant::getEmail, "${labelContentRespondentsOrApplicant2s} email address")
+                .mandatoryWithLabel(Applicant::getSolicitorRepresented,
+                    "Is ${labelContentTheApplicant2} represented by a solicitor?")
                 .complex(Applicant::getSolicitor)
+                    .label("Label-CorrectApplicant2SolDetails",
+                        "### ${labelContentRespondentsOrApplicant2s} solicitor details",
+                        "applicant2SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getName, "applicant2SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getReference, "applicant2SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getFirmName, "applicant2SolicitorRepresented=\"Yes\"")
@@ -93,7 +105,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .done()
                 .label("Label-CorrectApplicant2FODetails",
                     "### ${labelContentRespondentsOrApplicant2s} financial order details")
-                .mandatory(Applicant::getFinancialOrder)
+                .mandatoryWithLabel(Applicant::getFinancialOrder,
+                    "Does ${labelContentTheApplicant2} wish to apply for a financial order?")
                 .mandatory(Applicant::getFinancialOrdersFor, "applicant2FinancialOrder=\"Yes\"")
             .done()
             .label("Label-CorrectApplicant2SOTDetails",
@@ -110,10 +123,13 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .done()
                 .label("Label-CorrectPrayerDetails", "### Prayer details")
                 .readonly(Application::getDateSubmitted)
-                .mandatory(Application::getApplicant1ScreenHasMarriageBroken)
-                .mandatory(Application::getApplicant2ScreenHasMarriageBroken)
-                .mandatory(Application::getApplicant1PrayerHasBeenGivenCheckbox)
-                .mandatory(Application::getApplicant2PrayerHasBeenGivenCheckbox)
+                .mandatoryWithLabel(Application::getApplicant1ScreenHasMarriageBroken,
+                    "Has the ${labelContentApplicantsOrApplicant1s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
+                .mandatoryWithLabel(Application::getApplicant2ScreenHasMarriageBroken,
+                    "Has the ${labelContentRespondentsOrApplicant2s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
+                .mandatoryWithLabel(Application::getApplicant1PrayerHasBeenGivenCheckbox,
+                    "${labelContentApplicantOrApplicant1UC} has given their \"prayer\".")
+                .mandatory(Application::getApplicant2PrayerHasBeenGivenCheckbox, "applicationType=\"jointApplication\"")
                 .label("Label-CorrectApp1HWFDetails",
                     "### ${labelContentApplicantsOrApplicant1s} Help With Fees details")
                 .complex(Application::getApplicant1HelpWithFees)
@@ -121,12 +137,13 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     .mandatory(HelpWithFees::getAppliedForFees)
                     .mandatory(HelpWithFees::getNeedHelp)
                 .done()
-                .label("Label-CorrectApp2HWFDetails",
-                    "### ${labelContentRespondentsOrApplicant2s} Help With Fees details")
-                .complex(Application::getApplicant2HelpWithFees)
-                    .optional(HelpWithFees::getReferenceNumber)
-                    .mandatory(HelpWithFees::getAppliedForFees)
-                    .mandatory(HelpWithFees::getNeedHelp)
+                .complex(Application::getApplicant2HelpWithFees, "applicationType=\"jointApplication\"")
+                    .label("Label-CorrectApp2HWFDetails",
+                        "### ${labelContentRespondentsOrApplicant2s} Help With Fees details",
+                        "applicationType=\"jointApplication\"")
+                    .optional(HelpWithFees::getReferenceNumber, "applicationType=\"jointApplication\"")
+                    .mandatory(HelpWithFees::getAppliedForFees, "applicationType=\"jointApplication\"")
+                    .mandatory(HelpWithFees::getNeedHelp, "applicationType=\"jointApplication\"")
                 .done()
                 .mandatory(Application::getScreenHasMarriageCert)
                 .label("Label-CorrectMarriageDetails", "### Marriage details")
@@ -138,8 +155,10 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     .mandatoryWithLabel(MarriageDetails::getIssueApplicationWithoutMarriageCertificate,
                         "Are you making a separate application to issue without your marriage or civil partnership certificate?")
                     .mandatory(MarriageDetails::getDate)
-                    .mandatory(MarriageDetails::getApplicant1Name)
-                    .mandatory(MarriageDetails::getApplicant2Name)
+                    .mandatoryWithLabel(MarriageDetails::getApplicant1Name,
+                        "${labelContentApplicantsOrApplicant1s} full name as on marriage certificate")
+                    .mandatoryWithLabel(MarriageDetails::getApplicant2Name,
+                        "${labelContentRespondentsOrApplicant2s} full name as on marriage certificate")
                     .mandatory(MarriageDetails::getPlaceOfMarriage)
                     .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
                     .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,

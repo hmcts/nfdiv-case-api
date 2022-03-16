@@ -277,6 +277,12 @@ public class CaseData {
     private PaperFormDetails paperFormDetails = new PaperFormDetails();
 
     @CCD(
+        label = "Is the case a paper case?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo newPaperCase;
+
+    @CCD(
         label = "Is case judicial separation?",
         access = {DefaultAccess.class}
     )
@@ -290,6 +296,13 @@ public class CaseData {
     )
     @Builder.Default
     private List<ListValue<String>> warnings = new ArrayList<>();
+
+    @CCD(
+        label = "General emails",
+        typeOverride = Collection,
+        typeParameterOverride = "GeneralEmailDetails"
+    )
+    private List<ListValue<GeneralEmailDetails>> generalEmails;
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {

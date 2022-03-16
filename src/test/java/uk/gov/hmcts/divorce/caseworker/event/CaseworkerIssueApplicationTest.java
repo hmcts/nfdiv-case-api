@@ -106,6 +106,7 @@ class CaseworkerIssueApplicationTest {
     @Test
     void shouldFailCaseDataValidationWhenMandatoryFieldsAreNotPopulatedForIssueApplication() {
         final var caseData = invalidCaseData();
+        caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
