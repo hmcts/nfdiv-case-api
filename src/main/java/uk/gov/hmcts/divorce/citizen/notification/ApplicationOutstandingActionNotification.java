@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         if (!caseData.getApplicationType().isSole()
-            && caseData.getApplication().hasAwaitingApplicant1Documents() || caseData.getApplication().hasAwaitingApplicant2Documents()) {
+            && (caseData.getApplication().hasAwaitingApplicant1Documents() || caseData.getApplication().hasAwaitingApplicant2Documents())) {
             log.info("Sending application outstanding actions notification to applicant 2 for case : {}", id);
 
             notificationService.sendEmail(
@@ -77,9 +78,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.putAll(
-            missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant1CannotUploadSupportingDocument())
-        );
+        templateVars.putAll(missingDocsTemplateVars(caseData, getMissingDocuments(caseData)));
         boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
             && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
         templateVars.putAll(serveAnotherWayTemplateVars(soleServingAnotherWay, caseData));
@@ -88,7 +87,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.putAll(missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant2CannotUploadSupportingDocument()));
+        templateVars.putAll(missingDocsTemplateVars(caseData, getMissingDocuments(caseData)));
         templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
         return templateVars;
     }
@@ -125,5 +124,16 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
             nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && !caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_NAME_CHANGE_PROOF, nonNullMissingDocs && missingDocTypes.contains(NAME_CHANGE_EVIDENCE) ? YES : NO);
         return templateVars;
+    }
+
+    private Set<DocumentType> getMissingDocuments(CaseData caseData) {
+        Set<DocumentType> missingDocuments = new HashSet<>();
+        if (caseData.getApplication().hasAwaitingApplicant1Documents()) {
+            missingDocuments.addAll(caseData.getApplication().getApplicant1CannotUploadSupportingDocument());
+        }
+        if (caseData.getApplication().hasAwaitingApplicant2Documents()) {
+            missingDocuments.addAll(caseData.getApplication().getApplicant2CannotUploadSupportingDocument());
+        }
+        return missingDocuments;
     }
 }
