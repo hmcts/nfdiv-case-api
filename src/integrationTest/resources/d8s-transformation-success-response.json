@@ -115,7 +115,7 @@
       "paperFormSummaryApplicant1FinancialOrdersFor": [
         "children"
       ],
-      "applicant2SolicitorRepresented": "Yes",
+      "applicant2SolicitorRepresented": "No",
       "applicant1StatementOfTruth": "Yes",
       "applicant2Address": {
         "AddressLine1": "some street",
