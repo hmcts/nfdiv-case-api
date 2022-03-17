@@ -76,6 +76,9 @@ public final class DocumentConstants {
 
     public static final String COVERSHEET_APPLICANT2 = "COVERSHEET_APPLICANT2";
 
+    public static final String GENERAL_LETTER_DOCUMENT_NAME = "GeneralLetter";
+    public static final String GENERAL_LETTER_TEMPLATE_ID = "GENERAL_LETTER";
+
     private DocumentConstants() {
     }
 }

@@ -1,11 +1,13 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.GeneralLetterService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
@@ -23,8 +25,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @Slf4j
 public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserRole> {
+
     private static final String CASEWORKER_CREATE_GENERAL_LETTER = "caseworker-create-general-letter";
     private static final String CREATE_GENERAL_LETTER_TITLE = "Create general letter";
+
+    @Autowired
+    private GeneralLetterService generalLetterService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -51,15 +57,13 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails
-    ) {
+        final CaseDetails<CaseData, State> beforeDetails) {
         log.info("Caseworker create general letter about to submit callback invoked");
 
-        var caseData = details.getData();
-
+        generalLetterService.processGeneralLetter(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(details.getData())
             .build();
     }
 }
