@@ -23,7 +23,7 @@
   "Gender": null,
   "ContactDetailsType": null,
   "CorrespondenceAddress": null,
-  "SolicitorRepresented": "Yes",
+  "SolicitorRepresented": "No",
   "SolicitorName": "",
   "SolicitorReference": "",
   "SolicitorPhone": null,

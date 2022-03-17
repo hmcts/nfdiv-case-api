@@ -94,7 +94,7 @@
       ],
       "applicant1NameDifferentToMarriageCertificate": "Yes",
       "applicant1LegalProceedingsDetails": "Case Number(s):",
-      "applicant2SolicitorRepresented": "Yes",
+      "applicant2SolicitorRepresented": "No",
       "marriagePlaceOfMarriage": "London",
       "applicant1FinancialOrder": "Yes",
       "applicant2FinancialOrdersFor": [
@@ -132,7 +132,9 @@
       "applicant2PhoneNumber": "",
       "marriageIssueApplicationWithoutMarriageCertificate": "No",
       "applicant2NameChangedHowOtherDetails": "",
-      "marriageMarriageCertificateIsIncorrectDetails": ""
+      "marriageMarriageCertificateIsIncorrectDetails": "",
+      "paperFormChequeOrPostalOrderPayment": "No",
+      "paperFormDebitCreditCardPaymentPhone": "No"
     }
   },
   "warnings": []

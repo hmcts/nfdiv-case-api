@@ -16,6 +16,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.divorce.caseworker.service.print.ApplicationPrinter;
+import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -43,8 +45,11 @@ import static java.util.Arrays.asList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -158,6 +163,12 @@ public class CaseworkerReIssueApplicationIT {
 
     @MockBean
     private NotificationService notificationService;
+
+    @MockBean
+    private NoticeOfProceedingsPrinter noticeOfProceedingsPrinter;
+
+    @MockBean
+    private ApplicationPrinter applicationPrinter;
 
     @MockBean
     private Clock clock;
@@ -288,6 +299,9 @@ public class CaseworkerReIssueApplicationIT {
                 eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(any(CaseData.class), anyLong());
+        verify(applicationPrinter).sendDivorceApplicationPdf(any(CaseData.class), anyLong());
     }
 
     @Test
@@ -699,6 +713,7 @@ public class CaseworkerReIssueApplicationIT {
     @Test
     void givenInvalidCaseDataWhenAboutToSubmitCallbackIsInvokedThenResponseContainsErrors() throws Exception {
         final CaseData caseData = invalidCaseData();
+        caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -720,6 +735,51 @@ public class CaseworkerReIssueApplicationIT {
             .andExpect(
                 content().json(expectedResponse(CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR))
             );
+    }
+
+    @Test
+    void shouldSetReIssueDateAndPrintNoticeOfProceedingsAndApplicationPfdForBothOfflineApplicants() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setOffline(YES);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, "NFD_CP_Application_Joint.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Joint.docx");
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetter();
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    CASEWORKER_REISSUE_APPLICATION)))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant1(any(CaseData.class), anyLong());
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(any(CaseData.class), anyLong());
+
+        verify(applicationPrinter, times(2)).sendDivorceApplicationPdf(any(CaseData.class), anyLong());
     }
 
     private AddressGlobalUK correspondenceAddress() {

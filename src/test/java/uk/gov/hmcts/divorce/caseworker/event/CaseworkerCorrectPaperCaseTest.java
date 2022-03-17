@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import org.elasticsearch.core.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -66,11 +68,38 @@ public class CaseworkerCorrectPaperCaseTest {
             .gotMarriedOrFormedCivilPartnership("got married")
             .respondentsOrApplicant2s("Applicant 2's")
             .theApplicantOrApplicant1UC("Applicant 1")
+            .applicantOrApplicant1UC("Applicant 1")
             .build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerCorrectPaperCase.aboutToStart(caseDetails);
 
         assertThat(response.getData().getLabelContent()).isEqualTo(labelContent);
+    }
+
+    @Test
+    void shouldClearWarnings() {
+        final CaseData caseData = new CaseData();
+        caseData.setWarnings(
+            List.of(
+                ListValue.<String>builder()
+                    .value("Warning about HWF")
+                    .build(),
+                ListValue.<String>builder()
+                    .value("Warning about prayer")
+                    .build(),
+                ListValue.<String>builder()
+                    .value("Warning about something else")
+                    .build()
+            )
+        );
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerCorrectPaperCase.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getWarnings()).isEmpty();
     }
 }

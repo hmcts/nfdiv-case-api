@@ -126,6 +126,14 @@
   {
     "name": "applicant2PaymentOtherDetail",
     "value": "pay details app2"
+  },
+  {
+    "name": "chequeOrPostalOrderPayment",
+    "value": "true"
+  },
+  {
+    "name": "debitCreditCardPaymentPhone",
+    "value": "false"
   }
 ]
 
