@@ -25,7 +25,10 @@ public class HelpWithFeesPageForApplicant2 implements CcdPageConfiguration {
             .complex(CaseData::getApplication)
             .mandatory(Application::getApplicant2NeedsHelpWithFees)
             .complex(Application::getApplicant2HelpWithFees)
-            .mandatory(HelpWithFees::getReferenceNumber, "applicant2NeedsHelpWithFees=\"Yes\"")
+            .mandatory(HelpWithFees::getReferenceNumber,
+                "applicant2NeedsHelpWithFees=\"Yes\"",
+                null,
+                "Applicant 2 help with fees reference")
             .done()
             .done();
     }
