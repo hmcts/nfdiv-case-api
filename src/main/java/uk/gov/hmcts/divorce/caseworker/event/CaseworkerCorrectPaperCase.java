@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static java.util.Collections.emptyList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
@@ -48,6 +49,17 @@ public class CaseworkerCorrectPaperCase implements CCDConfig<CaseData, State, Us
 
         caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
         caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+
+        CaseData caseData = details.getData();
+        caseData.setWarnings(emptyList());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
