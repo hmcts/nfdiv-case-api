@@ -30,6 +30,7 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
         // to shutter the service within xui uncomment this line
         // configBuilder.shutterService();
 
+        System.out.println("Creating definition for " + System.getenv().getOrDefault("ENVIRONMENT", ""));
         if (System.getenv().getOrDefault("ENVIRONMENT", "").equalsIgnoreCase("PROD")) {
             configBuilder.shutterService(SOLICITOR);
         }
