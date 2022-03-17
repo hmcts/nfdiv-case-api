@@ -64,6 +64,7 @@ public class NoticeOfProceedingJointContent {
     public static final String DISPLAY_EMAIL_CONFIRMATION = "displayEmailConfirmation";
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
+    public static final String ADDRESS = "address";
 
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
@@ -79,6 +80,8 @@ public class NoticeOfProceedingJointContent {
 
         templateContent.put(FIRST_NAME, applicant.getFirstName());
         templateContent.put(LAST_NAME, applicant.getLastName());
+
+        templateContent.put(ADDRESS, applicant.getPostalAddress());
 
         templateContent.put(RELATION, caseData.isDivorce() ? applicant.getGender() == MALE ? "wife" : "husband" : "civil partner");
 
