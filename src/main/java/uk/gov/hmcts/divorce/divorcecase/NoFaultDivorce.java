@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -13,6 +14,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICI
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 
 @Component
+@Slf4j
 public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASE_TYPE = "NFD";
@@ -29,8 +31,7 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
 
         // to shutter the service within xui uncomment this line
         // configBuilder.shutterService();
-
-        System.out.println("Creating definition for " + System.getenv().getOrDefault("ENVIRONMENT", ""));
+        log.info("Building definition for " + System.getenv().getOrDefault("ENVIRONMENT", ""));
         if (System.getenv().getOrDefault("ENVIRONMENT", "").equalsIgnoreCase("PROD")) {
             configBuilder.shutterService(SOLICITOR);
         }
