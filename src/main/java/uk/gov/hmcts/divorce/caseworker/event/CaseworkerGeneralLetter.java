@@ -62,6 +62,9 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
 
         generalLetterService.processGeneralLetter(details);
 
+        //clear general letter field so that on next general letter old data is not shown
+        details.getData().setGeneralLetter(null);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .build();

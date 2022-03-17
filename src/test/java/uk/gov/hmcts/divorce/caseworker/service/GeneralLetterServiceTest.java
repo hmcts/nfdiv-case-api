@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,19 +10,26 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateGeneralLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendGeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER_ATTACHMENT;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataWithGeneralLetter;
 
 @ExtendWith(MockitoExtension.class)
 public class GeneralLetterServiceTest {
+
+    private static final LocalDate DATE = LocalDate.of(2022, 3, 16);
 
     @Mock
     private GenerateGeneralLetter generateGeneralLetter;
@@ -31,12 +37,17 @@ public class GeneralLetterServiceTest {
     @Mock
     private SendGeneralLetter sendGeneralLetter;
 
+    @Mock
+    private Clock clock;
+
     @InjectMocks
     private GeneralLetterService service;
 
     @Test
     public void testProcessGeneralLetter() {
-        var caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
+        setMockClock(clock, DATE);
+
+        var caseData = buildCaseDataWithGeneralLetter(APPLICANT);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(1L);
@@ -46,9 +57,17 @@ public class GeneralLetterServiceTest {
 
         final CaseDetails<CaseData, State> response = service.processGeneralLetter(caseDetails);
 
-        var expectedCaseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
-        List<ListValue<DivorceDocument>> attachments = Lists.newArrayList(caseData.getGeneralLetter().getAttachments());
-        expectedCaseData.setDocumentsUploaded(attachments);
+        var expectedCaseData = buildCaseDataWithGeneralLetter(APPLICANT);
+
+        List<ListValue<DivorceDocument>> uploadedDocs = new ArrayList<>();
+
+        expectedCaseData.getGeneralLetter().getAttachments().forEach(document -> {
+            document.getValue().setDocumentType(GENERAL_LETTER_ATTACHMENT);
+            document.getValue().setDocumentDateAdded(DATE);
+            uploadedDocs.add(document);
+        });
+
+        expectedCaseData.setDocumentsUploaded(uploadedDocs);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
 

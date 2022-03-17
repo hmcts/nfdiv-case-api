@@ -9,6 +9,11 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateGeneralLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendGeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
+
+import java.time.Clock;
+import java.time.LocalDate;
 
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
@@ -21,6 +26,9 @@ public class GeneralLetterService {
 
     @Autowired
     private SendGeneralLetter sendGeneralLetter;
+
+    @Autowired
+    private Clock clock;
 
     public CaseDetails<CaseData, State> processGeneralLetter(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
@@ -37,7 +45,18 @@ public class GeneralLetterService {
         CaseData caseData = caseDetails.getData();
 
         if (!CollectionUtils.isEmpty(caseData.getGeneralLetter().getAttachments())) {
-            caseData.getGeneralLetter().getAttachments().forEach(caseData::addToDocumentsUploaded);
+            caseData.getGeneralLetter().getAttachments()
+                .forEach(document -> {
+
+                    DivorceDocument divorceDocument = document.getValue();
+
+                    if (divorceDocument.getDocumentDateAdded() == null) {
+                        divorceDocument.setDocumentDateAdded(LocalDate.now(clock));
+                    }
+
+                    divorceDocument.setDocumentType(DocumentType.GENERAL_LETTER_ATTACHMENT);
+                    caseData.addToDocumentsUploaded(document);
+                });
         }
 
         return caseDetails;
