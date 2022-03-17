@@ -123,6 +123,40 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
+    void shouldSendEmailToApplicant2IfApplicant1IsMissingDocuments() {
+        CaseData data = validApplicant2CaseData();
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+        data.getApplicant2().setEmail(null);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void shouldNotSendEmailToApplicant2IfSoleApplication() {
+        CaseData data = validApplicant2CaseData();
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
+        data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        data.setApplicationType(SOLE_APPLICATION);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
     void shouldNotCallSendEmailToApplicant2IfNoAwaitingDocuments() {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);

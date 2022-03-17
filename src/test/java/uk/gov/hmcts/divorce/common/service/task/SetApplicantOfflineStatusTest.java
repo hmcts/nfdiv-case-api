@@ -5,8 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -30,11 +34,29 @@ class SetApplicantOfflineStatusTest {
     }
 
     @Test
-    void testSetsApplicant2AsOnlineIfRepresented() {
+    void testSetsApplicant2AsOnlineIfRepresentedAndOrganisationPolicyIsPresent() {
         final var details = new CaseDetails<CaseData, State>();
         final var data = caseData();
 
         data.getApplicant2().setSolicitorRepresented(YES);
+        data.getApplicant2().setSolicitor(
+            Solicitor
+                .builder()
+                .organisationPolicy(
+                    OrganisationPolicy
+                        .<UserRole>builder()
+                        .organisation(
+                            Organisation
+                                .builder()
+                                .organisationId("ORG123")
+                                .build()
+                        )
+                        .build()
+                )
+                .address("some address")
+                .name("some sol")
+                .build()
+        );
         details.setData(data);
 
         final var result = task.apply(details);
@@ -63,6 +85,25 @@ class SetApplicantOfflineStatusTest {
 
         data.getApplicant2().setSolicitorRepresented(NO);
         data.getApplicant2().setEmail("");
+        details.setData(data);
+
+        final var result = task.apply(details);
+
+        assertEquals(result.getData().getApplicant2().getOffline(), YES);
+    }
+
+    @Test
+    void testSetsApplicant2AsOfflineIfRepresentedAndDoesNotHaveOrganisationPolicy() {
+        final var details = new CaseDetails<CaseData, State>();
+        final var data = caseData();
+        data.getApplicant2().setSolicitor(
+            Solicitor
+                .builder()
+                .address("some address")
+                .name("some sol")
+                .build()
+        );
+        data.getApplicant2().setSolicitorRepresented(YES);
         details.setData(data);
 
         final var result = task.apply(details);
