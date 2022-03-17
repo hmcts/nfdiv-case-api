@@ -6,7 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class GeneralLetter {
     private AddressGlobalUK otherRecipientAddress;
 
     @CCD(label = "Add attachments")
-    private List<Document> attachments;
+    private List<ListValue<DivorceDocument>> attachments;
 
     @CCD(
         label = "Please provide details",

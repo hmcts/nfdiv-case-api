@@ -949,13 +949,17 @@ public class TestDataHelper {
     }
 
     public static CaseData buildCaseDataWithGeneralLetter(GeneralParties recipient) {
-        Document attachment = Document.builder()
-            .filename("file1").build();
+
+        ListValue<DivorceDocument> attachment = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentFileName("some-file")
+                .build())
+            .build();
 
         GeneralLetter generalLetter = GeneralLetter.builder()
             .generalLetterParties(recipient)
-            .generalLetterDetails("some feedback")
             .attachments(Lists.newArrayList(attachment))
+            .generalLetterDetails("some feedback")
             .build();
 
         var caseData = validJointApplicant1CaseData();

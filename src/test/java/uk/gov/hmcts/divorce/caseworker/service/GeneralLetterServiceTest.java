@@ -1,17 +1,21 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateGeneralLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendGeneralLetter;
-import uk.gov.hmcts.divorce.caseworker.service.task.UploadGeneralLetterAttachments;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -27,9 +31,6 @@ public class GeneralLetterServiceTest {
     @Mock
     private SendGeneralLetter sendGeneralLetter;
 
-    @Mock
-    private UploadGeneralLetterAttachments uploadGeneralLetterAttachments;
-
     @InjectMocks
     private GeneralLetterService service;
 
@@ -41,16 +42,17 @@ public class GeneralLetterServiceTest {
         caseDetails.setId(1L);
 
         when(generateGeneralLetter.apply(caseDetails)).thenReturn(caseDetails);
-        when(uploadGeneralLetterAttachments.apply(caseDetails)).thenReturn(caseDetails);
         when(sendGeneralLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = service.processGeneralLetter(caseDetails);
 
         var expectedCaseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
+        List<ListValue<DivorceDocument>> attachments = Lists.newArrayList(caseData.getGeneralLetter().getAttachments());
+        expectedCaseData.setDocumentsUploaded(attachments);
+
         assertThat(response.getData()).isEqualTo(expectedCaseData);
 
         verify(generateGeneralLetter).apply(caseDetails);
-        verify(uploadGeneralLetterAttachments).apply(caseDetails);
         verify(sendGeneralLetter).apply(caseDetails);
     }
 }

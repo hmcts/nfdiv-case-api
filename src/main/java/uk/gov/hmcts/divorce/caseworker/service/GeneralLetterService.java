@@ -1,17 +1,19 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateGeneralLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendGeneralLetter;
-import uk.gov.hmcts.divorce.caseworker.service.task.UploadGeneralLetterAttachments;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
+@Slf4j
 public class GeneralLetterService {
 
     @Autowired
@@ -20,14 +22,24 @@ public class GeneralLetterService {
     @Autowired
     private SendGeneralLetter sendGeneralLetter;
 
-    @Autowired
-    private UploadGeneralLetterAttachments uploadAttachments;
-
     public CaseDetails<CaseData, State> processGeneralLetter(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             generateGeneralLetter,
-            uploadAttachments,
+            this::uploadAttachments,
             sendGeneralLetter
         ).run(caseDetails);
+    }
+
+    private CaseDetails<CaseData, State> uploadAttachments(final CaseDetails<CaseData, State> caseDetails) {
+
+        log.info("Uploading general letter attachments for case id: {}", caseDetails.getId());
+
+        CaseData caseData = caseDetails.getData();
+
+        if (!CollectionUtils.isEmpty(caseData.getGeneralLetter().getAttachments())) {
+            caseData.getGeneralLetter().getAttachments().forEach(caseData::addToDocumentsUploaded);
+        }
+
+        return caseDetails;
     }
 }
