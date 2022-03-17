@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceSuccessfulNotification;
 import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceUnsuccessfulNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -46,7 +47,10 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
     private NotificationDispatcher notificationDispatcher;
 
     @Autowired
-    private BailiffServiceUnsuccessfulNotification notification;
+    private BailiffServiceUnsuccessfulNotification unsuccessfulNotification;
+
+    @Autowired
+    private BailiffServiceSuccessfulNotification successfulNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -66,8 +70,8 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, LEGAL_ADVISOR)
+            .grantHistoryOnly(SUPER_USER, SOLICITOR, CITIZEN))
             .page("addBailiffReturn")
             .pageLabel("Add Bailiff Return")
             .complex(CaseData::getAlternativeService)
@@ -91,10 +95,11 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
             log.info("Setting state to Holding and due date for case id: {}", caseId);
             caseData.setDueDate(caseData.getAlternativeService().getBailiff().getCertificateOfServiceDate().plusDays(dueDateOffsetDays));
             state = Holding;
+            notificationDispatcher.send(successfulNotification, caseData, caseId);
         } else {
             log.info("Setting state to AwaitingAos for case id: {}", caseId);
             state = AwaitingAos;
-            notificationDispatcher.send(notification, caseData, caseId);
+            notificationDispatcher.send(unsuccessfulNotification, caseData, caseId);
         }
 
         caseData.archiveAlternativeServiceApplicationOnCompletion();

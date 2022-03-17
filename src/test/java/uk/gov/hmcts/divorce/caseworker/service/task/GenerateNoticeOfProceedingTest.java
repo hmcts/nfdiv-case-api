@@ -131,6 +131,123 @@ class GenerateNoticeOfProceedingTest {
         assertThat(result.getData()).isEqualTo(caseData);
     }
 
+    @Test
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OfflineApp2Online() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder()
+                .offline(YES)
+                .solicitorRepresented(YES)
+                .languagePreferenceWelsh(NO)
+                .build())
+            .applicant2(Applicant.builder()
+                .email("onlineApplicant2@email.com")
+                .solicitorRepresented(YES)
+                .build())
+            .application(Application.builder()
+                .solSignStatementOfTruth(NO)
+                .build())
+            .build();
+
+        final Map<String, Object> templateContentApplicant2 = new HashMap<>();
+
+        when(noticeOfProceedingJointContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContentApplicant2);
+
+        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, 1);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+
+    @Test
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OnlineApp2Offline() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder()
+                .offline(NO)
+                .solicitorRepresented(YES)
+                .languagePreferenceWelsh(NO)
+                .build())
+            .applicant2(Applicant.builder()
+                .offline(YES)
+                .solicitorRepresented(YES)
+                .build())
+            .application(Application.builder()
+                .solSignStatementOfTruth(NO)
+                .build())
+            .build();
+
+        final Map<String, Object> templateContentApplicant2 = new HashMap<>();
+
+        when(noticeOfProceedingJointContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2())).thenReturn(templateContentApplicant2);
+
+        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, 1);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OnlineApp2Online() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder()
+                .offline(NO)
+                .solicitorRepresented(YES)
+                .languagePreferenceWelsh(NO)
+                .build())
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(YES)
+                .email("onlineApplicant2@email.com")
+                .build())
+            .application(Application.builder()
+                .solSignStatementOfTruth(NO)
+                .build())
+            .build();
+
+        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyNoInteractions(caseDataDocumentService);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OfflineApp2Offline() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder()
+                .offline(YES)
+                .solicitorRepresented(YES)
+                .languagePreferenceWelsh(NO)
+                .build())
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(YES)
+                .build())
+            .application(Application.builder()
+                .solSignStatementOfTruth(NO)
+                .build())
+            .build();
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingJointContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
+        when(noticeOfProceedingJointContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2())).thenReturn(templateContent);
+
+        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, 2);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
     private void verifyInteractions(CaseData caseData, Map<String, Object> templateContent, String templateId, int times) {
         verify(caseDataDocumentService, times(times))
             .renderDocumentAndUpdateCaseData(
@@ -161,6 +278,7 @@ class GenerateNoticeOfProceedingTest {
                 .build())
             .applicant2(Applicant.builder()
                 .solicitorRepresented(isApp2Represented)
+                .email("onlineApplicant2@email.com")
                 .build())
             .application(Application.builder()
                 .solSignStatementOfTruth(NO)
