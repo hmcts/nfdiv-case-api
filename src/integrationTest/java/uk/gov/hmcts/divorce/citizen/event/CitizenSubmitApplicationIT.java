@@ -131,9 +131,6 @@ public class CitizenSubmitApplicationIT {
             .getContentAsString();
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
-
-        verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
 
         // marriageDate and payments.id are ignored using ${json-unit.ignore}
