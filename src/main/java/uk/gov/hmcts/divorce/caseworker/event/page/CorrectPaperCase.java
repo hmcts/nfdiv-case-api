@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SOT_REQUIRED;
 
@@ -121,15 +120,11 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .complex(Application::getJurisdiction)
                     .mandatory(Jurisdiction::getConnections)
                 .done()
-                .label("Label-CorrectPrayerDetails", "### Prayer details")
                 .readonly(Application::getDateSubmitted)
                 .mandatoryWithLabel(Application::getApplicant1ScreenHasMarriageBroken,
                     "Has the ${labelContentApplicantsOrApplicant1s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
                 .mandatoryWithLabel(Application::getApplicant2ScreenHasMarriageBroken,
                     "Has the ${labelContentRespondentsOrApplicant2s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
-                .mandatoryWithLabel(Application::getApplicant1PrayerHasBeenGivenCheckbox,
-                    "${labelContentApplicantOrApplicant1UC} has given their \"prayer\".")
-                .mandatory(Application::getApplicant2PrayerHasBeenGivenCheckbox, "applicationType=\"jointApplication\"")
                 .label("Label-CorrectApp1HWFDetails",
                     "### ${labelContentApplicantsOrApplicant1s} Help With Fees details")
                 .complex(Application::getApplicant1HelpWithFees)
@@ -187,18 +182,6 @@ public class CorrectPaperCase implements CcdPageConfiguration {
 
         if (application.getApplicant2ScreenHasMarriageBroken() != null && !application.getApplicant2ScreenHasMarriageBroken().toBoolean()) {
             errors.add("To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
-        }
-
-        if (Objects.isNull(application.getApplicant1PrayerHasBeenGivenCheckbox())) {
-            errors.add("Applicant 1 prayer must not be empty");
-        } else if (application.getApplicant1PrayerHasBeenGivenCheckbox().isEmpty()) {
-            errors.add("Applicant 1 prayer must be yes");
-        }
-
-        if (Objects.isNull(application.getApplicant2PrayerHasBeenGivenCheckbox())) {
-            errors.add("Applicant 2 prayer must not be empty");
-        } else if (application.getApplicant2PrayerHasBeenGivenCheckbox().isEmpty()) {
-            errors.add("Applicant 2 prayer must be yes");
         }
 
         if (!application.hasStatementOfTruth()) {
