@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
@@ -44,6 +45,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeServiceDecision.LEGAL_ADVISOR_SERVICE_DECISION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
@@ -120,6 +122,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
         stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
 
         final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .alternativeService(
                 AlternativeService
                     .builder()
@@ -170,6 +173,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
         stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
 
         final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .alternativeService(
                 AlternativeService
                     .builder()
