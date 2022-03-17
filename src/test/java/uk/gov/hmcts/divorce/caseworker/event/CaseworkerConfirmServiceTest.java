@@ -49,7 +49,7 @@ public class CaseworkerConfirmServiceTest {
     }
 
     @Test
-    void shouldReturnValidationErrorWhenServiceMethodIsNotSolicitorService() {
+    void shouldSetDueDateWhenServiceMethodIsCourtService() {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
@@ -57,11 +57,16 @@ public class CaseworkerConfirmServiceTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.setDueDate(LocalDate.of(2021, 01, 01));
+        updatedCaseDetails.setData(caseData);
+
+        when(solicitorSubmitConfirmService.submitConfirmService(caseDetails)).thenReturn(updatedCaseDetails);
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors())
-            .containsExactly("This event can only be used for a case with solicitor service as the service method");
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getData().getDueDate()).isEqualTo(LocalDate.of(2021, 01, 01));
     }
 
     @Test

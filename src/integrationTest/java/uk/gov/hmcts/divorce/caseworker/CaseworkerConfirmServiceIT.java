@@ -100,35 +100,4 @@ public class CaseworkerConfirmServiceIT {
             )
             .andExpect(jsonPath("$.data.dueDate").value(serviceDate.plusDays(16).toString()));
     }
-
-    @Test
-    void shouldFailValidationIfNotSolicitorService() throws Exception {
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        setMockClock(clock);
-        final LocalDate serviceDate = getExpectedLocalDate();
-
-        final SolicitorService solicitorService = SolicitorService.builder()
-            .dateOfService(serviceDate)
-            .build();
-
-        final CaseData caseData = caseData();
-        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
-        caseData.getApplication().setSolServiceMethod(ServiceMethod.COURT_SERVICE);
-        caseData.getApplication().setIssueDate(serviceDate);
-        caseData.getApplication().setSolicitorService(solicitorService);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=CaseworkerConfirmService")
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SOLICITOR_CONFIRM_SERVICE)))
-                .accept(APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(
-                status().isOk()
-            )
-            .andExpect(jsonPath("$.errors").value("This event can only be used for a case with Solicitor Service as the service method"));
-    }
 }
