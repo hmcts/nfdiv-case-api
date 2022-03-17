@@ -188,7 +188,7 @@ withPipeline(type, product, component) {
         env.S2S_URL_BASE = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
         env.BEFTA_S2S_CLIENT_ID = "ccd_data"
 
-        builder.gradle('generateCCDConfig')
+        builder.gradle('generateCCDConfig --rerun-tasks')
         generateDefinitions()
     }
 
