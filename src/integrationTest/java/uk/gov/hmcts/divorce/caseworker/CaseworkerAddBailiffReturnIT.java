@@ -11,6 +11,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceSuccessfulNotification;
 import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceUnsuccessfulNotification;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -59,7 +60,10 @@ public class CaseworkerAddBailiffReturnIT {
     private NotificationDispatcher notificationDispatcher;
 
     @MockBean
-    private BailiffServiceUnsuccessfulNotification notification;
+    private BailiffServiceUnsuccessfulNotification unsuccessfulNotification;
+
+    @MockBean
+    private BailiffServiceSuccessfulNotification successfulNotification;
 
     @MockBean
     private WebMvcConfig webMvcConfig;
