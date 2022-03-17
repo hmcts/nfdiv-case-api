@@ -17,8 +17,8 @@ public class SolPaymentSummary implements CcdPageConfiguration {
             .page("SolPaymentSummary")
             .pageLabel("Order Summary")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getApplicationFeeOrderSummary)
-                .done()
+            .mandatory(Application::getApplicationFeeOrderSummary)
+            .done()
             .label(
                 "LabelSolPaySummaryFeeAccountPara-1",
                 "Payment Method: Fee Account",
@@ -40,15 +40,13 @@ public class SolPaymentSummary implements CcdPageConfiguration {
                 "Applicant 1 Help with fee reference: **${applicant1HWFReferenceNumber}**",
                 "solPaymentHowToPay=\"feesHelpWith\" AND applicationType=\"jointApplication\"")
             .complex(CaseData::getApplication)
-                .complex(Application::getApplicant2HelpWithFees)
-                .readonlyNoSummary(HelpWithFees::getReferenceNumber, ALWAYS_HIDE)
-                .done()
+            .complex(Application::getApplicant2HelpWithFees)
+            .readonlyNoSummary(HelpWithFees::getReferenceNumber, ALWAYS_HIDE)
+            .done()
             .done()
             .label(
                 "LabelHelpWithFeesReferenceNumber-Applicant2",
                 "Applicant 2 Help with fee reference: **${applicant2HWFReferenceNumber}**",
-                "solPaymentHowToPay=\"feesHelpWith\" "
-                    + "AND applicationType=\"jointApplication\" "
-                    + "AND applicant2HWFReferenceNumber=\"*\"");
+                "solPaymentHowToPay=\"feesHelpWith\" AND applicationType=\"jointApplication\"");
     }
 }
