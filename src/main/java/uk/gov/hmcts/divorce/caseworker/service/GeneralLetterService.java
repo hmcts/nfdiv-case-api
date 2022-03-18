@@ -3,17 +3,12 @@ package uk.gov.hmcts.divorce.caseworker.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateGeneralLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendGeneralLetter;
+import uk.gov.hmcts.divorce.caseworker.service.task.UploadGeneralLetterAttachments;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
-
-import java.time.Clock;
-import java.time.LocalDate;
 
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
@@ -28,37 +23,13 @@ public class GeneralLetterService {
     private SendGeneralLetter sendGeneralLetter;
 
     @Autowired
-    private Clock clock;
+    private UploadGeneralLetterAttachments uploadGeneralLetterAttachments;
 
     public CaseDetails<CaseData, State> processGeneralLetter(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             generateGeneralLetter,
-            this::uploadAttachments,
+            uploadGeneralLetterAttachments,
             sendGeneralLetter
         ).run(caseDetails);
-    }
-
-    private CaseDetails<CaseData, State> uploadAttachments(final CaseDetails<CaseData, State> caseDetails) {
-
-        log.info("Uploading general letter attachments for case id: {}", caseDetails.getId());
-
-        CaseData caseData = caseDetails.getData();
-
-        if (!CollectionUtils.isEmpty(caseData.getGeneralLetter().getAttachments())) {
-            caseData.getGeneralLetter().getAttachments()
-                .forEach(document -> {
-
-                    DivorceDocument divorceDocument = document.getValue();
-
-                    if (divorceDocument.getDocumentDateAdded() == null) {
-                        divorceDocument.setDocumentDateAdded(LocalDate.now(clock));
-                    }
-
-                    divorceDocument.setDocumentType(DocumentType.GENERAL_LETTER_ATTACHMENT);
-                    caseData.addToDocumentsUploaded(document);
-                });
-        }
-
-        return caseDetails;
     }
 }

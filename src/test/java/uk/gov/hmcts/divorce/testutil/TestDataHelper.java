@@ -958,7 +958,7 @@ public class TestDataHelper {
 
         GeneralLetter generalLetter = GeneralLetter.builder()
             .generalLetterParties(recipient)
-            .attachments(Lists.newArrayList(attachment))
+            .generalLetterAttachments(Lists.newArrayList(attachment))
             .generalLetterDetails("some feedback")
             .build();
 

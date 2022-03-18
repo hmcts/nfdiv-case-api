@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserRole> {
 
-    private static final String CASEWORKER_CREATE_GENERAL_LETTER = "caseworker-create-general-letter";
+    public static final String CASEWORKER_CREATE_GENERAL_LETTER = "caseworker-create-general-letter";
     private static final String CREATE_GENERAL_LETTER_TITLE = "Create general letter";
 
     @Autowired
@@ -51,7 +51,7 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
                 .mandatory(GeneralLetter::getOtherRecipientName, "generalLetterParties=\"other\"")
                 .mandatory(GeneralLetter::getOtherRecipientAddress, "generalLetterParties=\"other\"")
                 .mandatory(GeneralLetter::getGeneralLetterDetails)
-                .optional(GeneralLetter::getAttachments)
+                .optional(GeneralLetter::getGeneralLetterAttachments)
                 .done();
     }
 

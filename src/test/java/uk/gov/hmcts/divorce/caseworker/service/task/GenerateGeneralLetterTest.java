@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.service.task;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +14,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.GeneralLetterTemplateContent;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,25 +24,38 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataWithGeneralLetter;
 
 @ExtendWith(MockitoExtension.class)
 public class GenerateGeneralLetterTest {
+
+    private static final LocalDate DATE = LocalDate.of(2022, 3, 16);
+    private static final String FILE_NAME = "GeneralLetter-2022-03-16:00:00";
+
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
     private GeneralLetterTemplateContent generalLetterTemplateContent;
 
+    @Mock
+    private Clock clock;
+
     @InjectMocks
     private GenerateGeneralLetter generateLetter;
 
+    @BeforeEach
+    public void setUp() {
+        setMockClock(clock, DATE);
+    }
+
     @Test
     public void testGenerateLetterToApplicant() {
+
         CaseData caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -59,7 +75,7 @@ public class GenerateGeneralLetterTest {
                 TEST_CASE_ID,
                 GENERAL_LETTER_TEMPLATE_ID,
                 ENGLISH,
-                GENERAL_LETTER_DOCUMENT_NAME
+                FILE_NAME
             );
 
         assertThat(result.getData()).isEqualTo(caseData);
@@ -87,7 +103,7 @@ public class GenerateGeneralLetterTest {
                 TEST_CASE_ID,
                 GENERAL_LETTER_TEMPLATE_ID,
                 WELSH,
-                GENERAL_LETTER_DOCUMENT_NAME
+                FILE_NAME
             );
 
         assertThat(result.getData()).isEqualTo(caseData);

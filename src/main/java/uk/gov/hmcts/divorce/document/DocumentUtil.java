@@ -52,6 +52,17 @@ public final class DocumentUtil {
             .collect(toList());
     }
 
+    public static List<Letter> lettersWithDocumentType(final List<ListValue<DivorceDocument>> documents) {
+
+        final AtomicInteger letterIndex = new AtomicInteger();
+
+        return ofNullable(documents)
+            .flatMap(Collection::stream)
+            .map(ListValue::getValue)
+            .map(divorceDocument -> new Letter(divorceDocument, null, letterIndex.incrementAndGet()))
+            .collect(toList());
+    }
+
     public static List<Letter> lettersWithAosScannedDocument(final List<ListValue<ScannedDocument>> documents) {
 
         final AtomicInteger letterIndex = new AtomicInteger();

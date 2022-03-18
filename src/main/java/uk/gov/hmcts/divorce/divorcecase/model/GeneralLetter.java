@@ -34,7 +34,7 @@ public class GeneralLetter {
     private AddressGlobalUK otherRecipientAddress;
 
     @CCD(label = "Add attachments")
-    private List<ListValue<DivorceDocument>> attachments;
+    private List<ListValue<DivorceDocument>> generalLetterAttachments;
 
     @CCD(
         label = "Please provide details",

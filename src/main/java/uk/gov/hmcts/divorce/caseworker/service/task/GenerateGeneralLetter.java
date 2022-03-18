@@ -12,6 +12,10 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.GeneralLetterTemplateContent;
 
+import java.time.Clock;
+
+import static java.time.LocalDateTime.now;
+import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
@@ -25,6 +29,9 @@ public class GenerateGeneralLetter implements CaseTask {
 
     @Autowired
     private GeneralLetterTemplateContent templateContent;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -46,7 +53,7 @@ public class GenerateGeneralLetter implements CaseTask {
             caseId,
             GENERAL_LETTER_TEMPLATE_ID,
             languagePreference,
-            GENERAL_LETTER_DOCUMENT_NAME
+            formatDocumentName(GENERAL_LETTER_DOCUMENT_NAME, now(clock))
         );
 
         return caseDetails;
