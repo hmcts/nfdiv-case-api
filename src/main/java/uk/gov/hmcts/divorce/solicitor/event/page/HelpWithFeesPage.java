@@ -8,8 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 
 public class HelpWithFeesPage implements CcdPageConfiguration {
 
-    private static final String ALWAYS_HIDE = "applicant1HWFReferenceNumber=\"ALWAYS_HIDE\"";
-
     @Override
     public void addTo(final PageBuilder pageBuilder) {
 
@@ -19,16 +17,12 @@ public class HelpWithFeesPage implements CcdPageConfiguration {
             .showCondition("solPaymentHowToPay=\"feesHelpWith\"")
             .complex(CaseData::getApplication)
                 .complex(Application::getApplicant1HelpWithFees)
-                    .mandatory(HelpWithFees::getReferenceNumber)
-                    .done()
-            .done()
-            .complex(CaseData::getApplication)
-                .complex(Application::getApplicant2HelpWithFees)
-                .readonlyNoSummary(HelpWithFees::getReferenceNumber, ALWAYS_HIDE)
+                    .mandatoryWithLabel(HelpWithFees::getReferenceNumber, "Applicant 1 help with fees reference")
                 .done()
-            .done()
-            .label("LabelHWFPage-Applicant2HWFRef",
-                "**Applicant 2 Help with fee reference:**  \n**£${applicant2HWFReferenceNumber}**",
-                "applicationType=\"jointApplication\" AND applicant2HWFReferenceNumber=\"*\"");
+            .complex(Application::getApplicant2HelpWithFees)
+                .mandatory(HelpWithFees::getReferenceNumber, "applicationType=\"jointApplication\"",
+                null, "Applicant 2 help with fees reference")
+                .done()
+            .done();
     }
 }
