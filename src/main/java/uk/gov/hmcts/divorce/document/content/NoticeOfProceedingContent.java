@@ -50,8 +50,8 @@ public class NoticeOfProceedingContent {
     public static final String YOUR_DIVORCE = "your divorce";
     public static final String DIVORCE = "divorce";
     public static final String DIVORCE_URL = "https://www.gov.uk/divorce";
-    public static final String DIVORCE_SERVICE = "Divorce service";
-    public static final String THE_DIVORCE_SERVICE = "The Divorce service";
+    public static final String DIVORCE_SERVICE = "Divorce Service";
+    public static final String THE_DIVORCE_SERVICE = "The Divorce Service";
     public static final String PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP = "proceedings to end your civil partnership";
     public static final String TO_END_YOUR_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String CIVIL_PARTNER = "civil partner";
