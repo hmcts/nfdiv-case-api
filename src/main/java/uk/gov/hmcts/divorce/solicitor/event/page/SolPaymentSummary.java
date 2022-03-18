@@ -40,9 +40,9 @@ public class SolPaymentSummary implements CcdPageConfiguration {
                 "Applicant 1 Help with fee reference: **${applicant1HWFReferenceNumber}**",
                 "solPaymentHowToPay=\"feesHelpWith\" AND applicationType=\"jointApplication\"")
             .complex(CaseData::getApplication)
-            .complex(Application::getApplicant2HelpWithFees)
-            .readonlyNoSummary(HelpWithFees::getReferenceNumber, ALWAYS_HIDE)
-            .done()
+                .complex(Application::getApplicant2HelpWithFees)
+                .readonlyNoSummary(HelpWithFees::getReferenceNumber, ALWAYS_HIDE)
+                .done()
             .done()
             .label(
                 "LabelHelpWithFeesReferenceNumber-Applicant2",
