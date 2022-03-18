@@ -16,13 +16,13 @@ public class HelpWithFeesPage implements CcdPageConfiguration {
             .pageLabel("Help with fees")
             .showCondition("solPaymentHowToPay=\"feesHelpWith\"")
             .complex(CaseData::getApplication)
-            .complex(Application::getApplicant1HelpWithFees)
-            .mandatoryWithLabel(HelpWithFees::getReferenceNumber, "Applicant 1 help with fees reference")
-            .done()
+                .complex(Application::getApplicant1HelpWithFees)
+                .mandatoryWithLabel(HelpWithFees::getReferenceNumber, "Applicant 1 help with fees reference")
+                .done()
             .complex(Application::getApplicant2HelpWithFees)
-            .mandatory(HelpWithFees::getReferenceNumber, "applicationType=\"jointApplication\"",
+                .mandatory(HelpWithFees::getReferenceNumber, "applicationType=\"jointApplication\"",
                 null, "Applicant 2 help with fees reference")
-            .done()
+                .done()
             .done();
     }
 }

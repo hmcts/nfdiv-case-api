@@ -23,13 +23,13 @@ public class HelpWithFeesPageForApplicant2 implements CcdPageConfiguration {
             .showCondition("applicationType=\"soleApplication\"")
             .pageLabel("Help with fees")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getApplicant2NeedsHelpWithFees)
-            .complex(Application::getApplicant2HelpWithFees)
-            .mandatory(HelpWithFees::getReferenceNumber,
+                .mandatory(Application::getApplicant2NeedsHelpWithFees)
+                .complex(Application::getApplicant2HelpWithFees)
+                .mandatory(HelpWithFees::getReferenceNumber,
                 "applicant2NeedsHelpWithFees=\"Yes\"",
                 null,
                 "Applicant 2 help with fees reference")
-            .done()
+                .done()
             .done();
     }
 }
