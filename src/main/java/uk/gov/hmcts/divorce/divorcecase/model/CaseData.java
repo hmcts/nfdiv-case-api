@@ -141,13 +141,9 @@ public class CaseData {
     @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
     private AlternativeService alternativeService = new AlternativeService();
 
-    @CCD(
-        label = "Applicant 1 uploaded documents",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
-    )
-    private List<ListValue<DivorceDocument>> applicant1DocumentsUploaded;
+    @JsonUnwrapped
+    @Builder.Default
+    private CaseDocuments documents = new CaseDocuments();
 
     @CCD(
         label = "Applicant 2 Documents uploaded",
@@ -402,25 +398,6 @@ public class CaseData {
         );
 
         this.setConfidentialDocumentsUploaded(sortedDocuments);
-    }
-
-    public void sortApplicant1UploadedDocuments(List<ListValue<DivorceDocument>> previousDocuments) {
-        if (isEmpty(previousDocuments)) {
-            return;
-        }
-
-        Set<String> previousListValueIds = previousDocuments
-            .stream()
-            .map(ListValue::getId)
-            .collect(toCollection(HashSet::new));
-
-        //Split the collection into two lists one without id's(newly added documents) and other with id's(existing documents)
-        Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds =
-            this.getApplicant1DocumentsUploaded()
-                .stream()
-                .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
-
-        this.setApplicant1DocumentsUploaded(sortDocuments(documentsWithoutIds));
     }
 
     private List<ListValue<DivorceDocument>> sortDocuments(final Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds) {

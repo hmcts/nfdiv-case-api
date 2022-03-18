@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -57,7 +58,9 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
                     + "- Change of name deed\n\n"
                     + "The image must be of the entire document and has to be readable by court staff. "
                     + "You can upload image files with jpg, jpeg, bmp, tif, tiff or PDF file extensions, maximum size 100MB per file")
-            .optional(CaseData::getApplicant1DocumentsUploaded)
+            .complex(CaseData::getDocuments)
+                .optional(CaseDocuments::getApplicant1DocumentsUploaded)
+                .done()
             .complex(CaseData::getApplication)
                 .mandatory(Application::getDocumentUploadComplete)
                 .done();
@@ -87,7 +90,7 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
         allowCaseToBeSubmitted(application);
 
         //sort app1 documents in descending order so latest documents appears first
-        caseData.sortApplicant1UploadedDocuments(beforeDetails.getData().getApplicant1DocumentsUploaded());
+        caseData.getDocuments().sortApplicant1UploadedDocuments(beforeDetails.getData().getDocuments().getApplicant1DocumentsUploaded());
 
         if (application.getDocumentUploadComplete().toBoolean()) {
             return transitionToSubmitted(details, caseData);
