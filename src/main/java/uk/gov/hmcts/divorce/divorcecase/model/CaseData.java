@@ -201,12 +201,6 @@ public class CaseData {
     private List<ListValue<DivorceGeneralOrder>> generalOrders;
 
     @CCD(
-        label = "Case ID for previously Amended Case, which was challenged by the respondent",
-        access = {DefaultAccess.class}
-    )
-    private CaseLink previousCaseId;
-
-    @CCD(
         label = "Due Date",
         access = {DefaultAccess.class}
     )
@@ -313,11 +307,6 @@ public class CaseData {
             temp.substring(8, 12),
             temp.substring(12, 16)
         );
-    }
-
-    @JsonIgnore
-    public boolean isAmendedCase() {
-        return null != previousCaseId;
     }
 
     @JsonIgnore
