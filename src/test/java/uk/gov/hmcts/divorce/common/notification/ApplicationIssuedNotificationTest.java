@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.caseworker.service.print.ApplicationPrinter;
+import uk.gov.hmcts.divorce.caseworker.service.print.D10Printer;
 import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -91,6 +92,9 @@ public class ApplicationIssuedNotificationTest {
 
     @Mock
     private ApplicationPrinter applicationPrinter;
+
+    @Mock
+    private D10Printer d10Printer;
 
     @InjectMocks
     private ApplicationIssuedNotification notification;

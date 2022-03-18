@@ -19,6 +19,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
@@ -43,6 +44,7 @@ public class ApplicationPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
             .documentsGenerated(singletonList(applicationDocument))
             .build();
 

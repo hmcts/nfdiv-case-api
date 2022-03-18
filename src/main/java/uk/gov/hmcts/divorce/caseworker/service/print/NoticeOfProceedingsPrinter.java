@@ -8,10 +8,10 @@ import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.Collections.singletonList;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
@@ -22,6 +22,7 @@ public class NoticeOfProceedingsPrinter {
 
     private static final String LETTER_TYPE_APPLICANT_1_NOP = "applicant1-notice-of-proceedings";
     private static final String LETTER_TYPE_APPLICANT_2_NOP = "applicant2-notice-of-proceedings";
+    private static final String LETTER_TYPE_APPLICANT_2_SOL_NOP = "applicant2-solicitor-notice-of-proceedings";
 
 
     @Autowired
@@ -47,7 +48,7 @@ public class NoticeOfProceedingsPrinter {
         if (noticeOfProceedingsLetter != null) {
 
             final String caseIdString = caseId.toString();
-            final Print print = new Print(Collections.singletonList(noticeOfProceedingsLetter),
+            final Print print = new Print(singletonList(noticeOfProceedingsLetter),
                 caseIdString, caseIdString, LETTER_TYPE_APPLICANT_1_NOP);
             final UUID letterId = bulkPrintService.print(print);
 
@@ -71,7 +72,7 @@ public class NoticeOfProceedingsPrinter {
         if (noticeOfProceedingsLetter != null) {
 
             final String caseIdString = caseId.toString();
-            final Print print = new Print(Collections.singletonList(noticeOfProceedingsLetter),
+            final Print print = new Print(singletonList(noticeOfProceedingsLetter),
                 caseIdString, caseIdString, LETTER_TYPE_APPLICANT_2_NOP);
             final UUID letterId = bulkPrintService.print(print);
 
@@ -79,6 +80,29 @@ public class NoticeOfProceedingsPrinter {
         } else {
             log.warn(
                 "Notice of Proceedings for applicant has missing documents. Expected document with type {} , for Case ID: {}",
+                LETTER_TYPE_APPLICANT_2_NOP,
+                caseId
+            );
+        }
+    }
+
+    public void sendLetterToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
+        final List<Letter> letters = lettersWithDocumentType(
+            caseData.getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS);
+
+        final Letter noticeOfProceedingsLetter = firstElement(letters);
+
+        if (noticeOfProceedingsLetter != null) {
+
+            final String caseIdString = caseId.toString();
+            final Print print = new Print(singletonList(noticeOfProceedingsLetter),
+                caseIdString, caseIdString, LETTER_TYPE_APPLICANT_2_SOL_NOP);
+            final UUID letterId = bulkPrintService.print(print);
+
+            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+        } else {
+            log.warn(
+                "Notice of Proceedings for applicant 2 solicitor was missing. Expected document with type {} , for Case ID: {}",
                 LETTER_TYPE_APPLICANT_2_NOP,
                 caseId
             );
