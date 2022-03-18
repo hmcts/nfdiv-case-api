@@ -223,7 +223,7 @@ public class NoticeOfProceedingContent {
             applicant1.isRepresented() ? applicant1Solicitor.getName() : NOT_REPRESENTED
         );
 
-        templateContent.put(WHO_APPLIED, applicant1.isRepresented() ? "applicant" : "applicant's solicitor");
+        templateContent.put(WHO_APPLIED, applicant1.isRepresented() ? "applicant's solicitor" : "applicant");
 
         templateContent.put(
             RESPOND_BY_DATE,

@@ -345,6 +345,46 @@ public class ApplicationIssuedNotificationTest {
     }
 
     @Test
+    void shouldSendNoticeOfProceedingsAndDivorceApplicationToApplicant2Solicitor() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(getApplicant())
+            .applicant2(respondentWithDigitalSolicitor())
+            .application(Application.builder()
+                .solServiceMethod(COURT_SERVICE)
+                .build())
+            .build();
+
+        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
+        verify(applicationPrinter).sendDivorceApplicationPdf(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendNoticeOfProceedingsDivorceApplicationD10AndCoversheetToApplicant2Solicitor() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(getApplicant())
+            .applicant2(Applicant.builder()
+                .solicitor(Solicitor.builder().build())
+                .build()
+            )
+            .application(Application.builder()
+                .solServiceMethod(COURT_SERVICE)
+                .build())
+            .build();
+
+        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verify(d10Printer).printD10WithCoversheet(caseData, TEST_CASE_ID);
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
+        verify(applicationPrinter).sendDivorceApplicationPdf(caseData, TEST_CASE_ID);
+    }
+
+    @Test
     void shouldSendNotificationToRespondentSolicitorIfSoleApplicationAndNotSolicitorService() {
 
         final CaseData caseData = CaseData.builder()

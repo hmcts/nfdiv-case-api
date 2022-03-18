@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Slf4j
 public class D10Printer {
 
-    private static final String LETTER_TYPE_D10 = "d10-and-coversheet";
+    private static final String LETTER_TYPE_D10_COVERSHEET = "d10-with-coversheet";
 
     @Autowired
     private BulkPrintService bulkPrintService;
@@ -37,7 +37,7 @@ public class D10Printer {
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
 
-    public void sendD10WithCoversheet(final CaseData caseData, final Long caseId) {
+    public void printD10WithCoversheet(final CaseData caseData, final Long caseId) {
 
         log.info("Generating coversheet for case id {} ", caseId);
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
@@ -58,7 +58,7 @@ public class D10Printer {
 
         final String caseIdString = caseId.toString();
         final Print print = new Print(singletonList(noticeOfProceedingsLetter),
-            caseIdString, caseIdString, LETTER_TYPE_D10);
+            caseIdString, caseIdString, LETTER_TYPE_D10_COVERSHEET);
         final UUID letterId = bulkPrintService.printAosRespondentPack(print, true);
 
         log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
