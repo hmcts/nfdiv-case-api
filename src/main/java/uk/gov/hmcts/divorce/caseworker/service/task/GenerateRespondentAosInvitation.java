@@ -82,15 +82,6 @@ public class GenerateRespondentAosInvitation implements CaseTask {
                     RESPONDENT_INVITATION,
                     RESP_AOS_INVITATION_DOCUMENT_NAME
                 );
-
-                log.info("Generating coversheet for case id {} ", caseId);
-                generateDocumentAndUpdateCaseData(
-                    caseDetails,
-                    COVERSHEET_APPLICANT2,
-                    coversheetTemplateContent.apply(caseData, caseId),
-                    COVERSHEET,
-                    COVERSHEET_DOCUMENT_NAME
-                );
             } else if (isEmpty(caseData.getApplicant2().getEmail())) {
                 log.info("Generating citizen respondent(without email) AoS invitation for case id {} ", caseId);
                 generateDocumentAndUpdateCaseData(
