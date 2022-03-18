@@ -1,26 +1,66 @@
 {
   "data": {
+    "applicationType": "jointApplication",
     "divorceOrDissolution": "divorce",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1ContactDetailsType": "public",
-    "applicant1Gender": "female",
-    "applicant1FinancialOrder": "No",
-    "generalOrderDate": "2021-01-01",
-    "generalOrderDivorceParties": [
-      "respondent"
+    "applicant1Address": {
+      "AddressLine1": "line 1",
+      "PostTown": "town",
+      "PostCode": "postcode",
+      "Country": "UK"
+    },
+    "applicant1Gender": "male",
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2Email": "test@test.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2Address": {
+      "AddressLine1": "line 1",
+      "PostTown": "town",
+      "PostCode": "postcode",
+      "Country": "UK"
+    },
+    "applicant2Gender": "male",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriageMarriedInUk": "Yes",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
     ],
-    "generalOrderRecitals": "test recitals",
-    "generalOrderJudgeOrLegalAdvisorType": "districtJudge",
-    "generalOrderJudgeOrLegalAdvisorName": "some name",
-    "generalOrderDetails": "some details",
-    "generalOrderDraft": {
-      "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-      "document_filename": "generalOrder2021-06-15 13:39:00.pdf",
-      "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
-    }
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "applicant1HWFNeedHelp": "No",
+    "applicant2InviteEmailAddress": "applicant2@test.com",
+    "documentsGenerated": [
+      {
+        "id": "123456789",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "GeneralLetter-2021-06-17:01:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+          },
+          "documentFileName": "GeneralLetter-2021-06-17:01:00.pdf",
+          "documentType": "generalLetter"
+        }
+      }
+    ],
+    "documentsUploaded": [
+      {
+        "value": {
+          "documentDateAdded": "2021-06-17",
+          "documentFileName": "some-file"
+        }
+      }
+    ],
+    "dataVersion": 1,
+    "warnings": []
   }
 }

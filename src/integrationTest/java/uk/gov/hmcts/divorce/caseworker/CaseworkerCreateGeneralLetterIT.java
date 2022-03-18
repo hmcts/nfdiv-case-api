@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,24 +14,23 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
+import uk.gov.hmcts.divorce.testutil.ClockTestUtil;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.ZoneId;
+import java.time.LocalDate;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralLetter.CASEWORKER_CREATE_GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
@@ -52,8 +50,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataWithGeneralLetter;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -65,6 +61,9 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
     IdamWireMock.PropertiesInitializer.class
 })
 public class CaseworkerCreateGeneralLetterIT {
+
+    private static final LocalDate DATE = LocalDate.of(2021, 6, 17);
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -79,6 +78,9 @@ public class CaseworkerCreateGeneralLetterIT {
 
     @MockBean
     private DocumentIdProvider documentIdProvider;
+
+    @MockBean
+    private GeneralLetterPrinter generalLetterPrinter;
 
     @MockBean
     private Clock clock;
@@ -97,24 +99,24 @@ public class CaseworkerCreateGeneralLetterIT {
 
     @BeforeEach
     void setClock() {
-        LocalDateTime dateTime = LocalDateTime.of(2021, Month.JUNE, 15, 13, 39);
-        Instant instant = dateTime.atZone(ZoneId.of("Europe/London")).toInstant();
-        when(clock.instant()).thenReturn(instant);
-        when(clock.getZone()).thenReturn(ZoneId.of("Europe/London"));
+        ClockTestUtil.setMockClock(clock, DATE);
     }
 
     @Test
-    @Disabled
     public void shouldProcessGeneralLetterDocumentsForApplicantAndUpdateCaseDataWhenAddressedToApplicant() throws Exception {
         final CaseData caseData = buildCaseDataWithGeneralLetter(APPLICANT);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("123456789");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_General_Letter.docx");
 
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -125,24 +127,28 @@ public class CaseworkerCreateGeneralLetterIT {
                     )
                 )
                 .accept(APPLICATION_JSON))
-            .andDo(print())
             .andExpect(
                 status().isOk())
-            .andExpect(
-                content().json(expectedResponse("classpath:caseworker-general-letter-response.json"))
-            );
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response)
+            .isEqualTo(json(expectedResponse("classpath:caseworker-general-letter-response.json")));
+
     }
 
     @Test
-    @Disabled
     void shouldReturn401UnauthorizedWhenAboutToSubmitCallbackIsInvokedAndAuthorizationFailsForDocAssembly() throws Exception {
-        final CaseData caseData = caseData();
-        caseData.setGeneralOrder(getGeneralOrder());
+        final CaseData caseData = buildCaseDataWithGeneralLetter(APPLICANT);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
         stubForDocAssemblyUnauthorized();
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
