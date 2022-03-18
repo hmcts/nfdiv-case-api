@@ -13,8 +13,6 @@ import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-import java.time.Clock;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +25,6 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPL
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -42,7 +39,6 @@ class CaseDataDocumentServiceTest {
     private static final String URL = "url";
     private static final String FILENAME = "filename";
     private static final String BINARY_URL = "binaryUrl";
-    private static final LocalDate DATE = LocalDate.of(2022, 3, 16);
 
     @Mock
     private DocAssemblyService docAssemblyService;
@@ -52,9 +48,6 @@ class CaseDataDocumentServiceTest {
 
     @Mock
     private IdamService idamService;
-
-    @Mock
-    private Clock clock;
 
     @InjectMocks
     private CaseDataDocumentService caseDataDocumentService;
@@ -67,8 +60,6 @@ class CaseDataDocumentServiceTest {
         final Map<String, Object> templateContent = new HashMap<>();
         final User systemUser = mock(User.class);
         final String filename = DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID;
-
-        setMockClock(clock, DATE);
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -102,7 +93,6 @@ class CaseDataDocumentServiceTest {
 
         assertThat(documentListValue.getId()).isEqualTo(documentId);
         assertThat(divorceDocument.getDocumentType()).isEqualTo(EMAIL);
-        assertThat(divorceDocument.getDocumentDateAdded()).isEqualTo(DATE);
         assertThat(divorceDocument
             .getDocumentLink())
             .extracting(URL, FILENAME, BINARY_URL)

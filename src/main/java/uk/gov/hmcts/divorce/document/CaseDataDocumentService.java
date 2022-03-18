@@ -11,8 +11,6 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.IdamService;
 
-import java.time.Clock;
-import java.time.LocalDate;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
@@ -30,9 +28,6 @@ public class CaseDataDocumentService {
 
     @Autowired
     private IdamService idamService;
-
-    @Autowired
-    private Clock clock;
 
     public void renderDocumentAndUpdateCaseData(final CaseData caseData,
                                                 final DocumentType documentType,
@@ -60,7 +55,7 @@ public class CaseDataDocumentService {
         caseData.addToDocumentsGenerated(
             ListValue.<DivorceDocument>builder()
                 .id(documentIdProvider.documentId())
-                .value(divorceDocumentFrom(documentInfo, documentType, LocalDate.now(clock)))
+                .value(divorceDocumentFrom(documentInfo, documentType))
                 .build());
     }
 

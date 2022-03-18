@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,14 +27,12 @@ public final class DocumentUtil {
             documentInfo.getBinaryUrl());
     }
 
-    public static DivorceDocument divorceDocumentFrom(final DocumentInfo documentInfo, final DocumentType documentType,
-                                                      final LocalDate createdDate) {
+    public static DivorceDocument divorceDocumentFrom(final DocumentInfo documentInfo, final DocumentType documentType) {
         return DivorceDocument
             .builder()
             .documentLink(documentFrom(documentInfo))
             .documentFileName(documentInfo.getFilename())
             .documentType(documentType)
-            .documentDateAdded(createdDate)
             .build();
     }
 

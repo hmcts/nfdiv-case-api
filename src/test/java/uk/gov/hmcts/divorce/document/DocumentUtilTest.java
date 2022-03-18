@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -33,7 +32,6 @@ class DocumentUtilTest {
     private static final String URL = "url";
     private static final String FILENAME = "filename";
     private static final String BINARY_URL = "binaryUrl";
-    private static final LocalDate DATE = LocalDate.of(2022, 3, 16);
 
     @Test
     void shouldConvertFromDocumentInfoToDocument() {
@@ -51,11 +49,10 @@ class DocumentUtilTest {
     @Test
     void shouldCreateDivorceDocumentFromDocumentInfoAndDocumentType() {
 
-        final DivorceDocument divorceDocument = divorceDocumentFrom(documentInfo(), OTHER, DATE);
+        final DivorceDocument divorceDocument = divorceDocumentFrom(documentInfo(), OTHER);
 
         assertThat(divorceDocument.getDocumentType()).isEqualTo(OTHER);
         assertThat(divorceDocument.getDocumentFileName()).isEqualTo(PDF_FILENAME);
-        assertThat(divorceDocument.getDocumentDateAdded()).isEqualTo(DATE);
         assertThat(divorceDocument
             .getDocumentLink())
             .extracting(URL, FILENAME, BINARY_URL)
