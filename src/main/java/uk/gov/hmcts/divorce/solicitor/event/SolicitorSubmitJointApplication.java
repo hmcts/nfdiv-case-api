@@ -38,6 +38,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.populateSolicitorAddress;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Slf4j
 @Component
@@ -84,6 +85,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
             .forStates(AwaitingApplicant2Response, Draft)
             .name("Submit joint application")
             .description("Submit joint application")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .showSummary()
@@ -94,6 +96,21 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
                 CASE_WORKER,
                 SUPER_USER,
                 LEGAL_ADVISOR));
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        CaseData data = details.getData();
+
+        data.getDocumentsGenerated()
+            .stream()
+            .filter(document -> APPLICATION.equals(document.getValue().getDocumentType()))
+            .findFirst()
+            .ifPresent(draftDivorceApplication ->
+                data.getApplication().setApplicant1SolicitorAnswersLink(draftDivorceApplication.getValue().getDocumentLink())
+            );
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -133,3 +150,4 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
         }
     }
 }
+

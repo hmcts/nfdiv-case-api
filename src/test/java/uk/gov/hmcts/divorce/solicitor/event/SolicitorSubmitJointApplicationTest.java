@@ -24,12 +24,17 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.AMENDED_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitJointApplication.SOLICITOR_SUBMIT_JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -38,6 +43,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorSubmitJointApplicationTest {
@@ -163,5 +169,42 @@ class SolicitorSubmitJointApplicationTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitJointApplication.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getApplicant2().getSolicitor().getAddress()).isEqualTo("DX address");
+    }
+
+    @Test
+    public void shouldSetApplicant1SolicitorAnswersLinkWhenDraftApplicationDocumentIsInDocumentsGenerated() {
+        final CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        final var documentListValue = documentWithType(APPLICATION);
+        final var generatedDocuments = singletonList(documentListValue);
+        caseData.setDocumentsGenerated(generatedDocuments);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitJointApplication.aboutToStart(details);
+
+        assertThat(response.getData().getApplication().getApplicant1SolicitorAnswersLink())
+            .isEqualTo(documentListValue.getValue().getDocumentLink());
+    }
+
+    @Test
+    public void shouldNotSetApplicant1SolicitorAnswersLinkWhenDraftApplicationDocumentIsInDocumentsGenerated() {
+        final CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        final var documentListValue = documentWithType(AMENDED_APPLICATION);
+        final var generatedDocuments = singletonList(documentListValue);
+        caseData.setDocumentsGenerated(generatedDocuments);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitJointApplication.aboutToStart(details);
+
+        assertThat(response.getData().getApplication().getApplicant1SolicitorAnswersLink()).isNull();
     }
 }
