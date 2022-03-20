@@ -78,7 +78,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
                 .value(caseData.getGeneralApplication().getGeneralApplicationDocument())
                 .build();
 
-        caseData.addToDocumentsUploaded(generalApplicationDocument);
+        caseData.getDocuments().addToDocumentsUploaded(generalApplicationDocument);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

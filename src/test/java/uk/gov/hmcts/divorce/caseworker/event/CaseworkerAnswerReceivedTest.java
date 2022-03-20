@@ -79,7 +79,7 @@ class CaseworkerAnswerReceivedTest {
             getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "co_granted.pdf", CONDITIONAL_ORDER_GRANTED);
         List<ListValue<DivorceDocument>> documentsUploaded = new ArrayList<>();
         documentsUploaded.add(doc1);
-        caseData.setDocumentsUploaded(documentsUploaded);
+        caseData.getDocuments().setDocumentsUploaded(documentsUploaded);
 
         DivorceDocument d11 = DivorceDocument.builder()
             .documentDateAdded(LocalDate.now())
@@ -103,8 +103,8 @@ class CaseworkerAnswerReceivedTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerAnswerReceived.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getDocumentsUploaded().size()).isEqualTo(2);
-        assertThat(response.getData().getDocumentsUploaded().get(0).getValue()).isSameAs(d11);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue()).isSameAs(d11);
     }
 
     @Test
@@ -133,7 +133,7 @@ class CaseworkerAnswerReceivedTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerAnswerReceived.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getDocumentsUploaded().size()).isEqualTo(1);
-        assertThat(response.getData().getDocumentsUploaded().get(0).getValue()).isSameAs(d11);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue()).isSameAs(d11);
     }
 }

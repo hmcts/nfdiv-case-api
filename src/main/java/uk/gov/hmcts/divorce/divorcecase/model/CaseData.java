@@ -154,14 +154,6 @@ public class CaseData {
     private Court divorceUnit;
 
     @CCD(
-        label = "Documents uploaded",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
-    )
-    private List<ListValue<DivorceDocument>> documentsUploaded;
-
-    @CCD(
         label = "Upload D11 Document",
         access = {CaseworkerAccessBetaOnlyAccess.class}
     )
@@ -328,25 +320,6 @@ public class CaseData {
         return applicant2Email;
     }
 
-    public void sortUploadedDocuments(List<ListValue<DivorceDocument>> previousDocuments) {
-        if (isEmpty(previousDocuments)) {
-            return;
-        }
-
-        Set<String> previousListValueIds = previousDocuments
-            .stream()
-            .map(ListValue::getId)
-            .collect(toCollection(HashSet::new));
-
-        //Split the collection into two lists one without id's(newly added documents) and other with id's(existing documents)
-        Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds =
-            this.getDocumentsUploaded()
-                .stream()
-                .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
-
-        this.setDocumentsUploaded(sortDocuments(documentsWithoutIds));
-    }
-
     public void sortConfidentialDocuments(List<ListValue<ConfidentialDivorceDocument>> previousDocuments) {
         if (isEmpty(previousDocuments)) {
             return;
@@ -431,20 +404,6 @@ public class CaseData {
             }
             // Null the current AlternativeService object instance in the CaseData so that a new one can be created
             this.setAlternativeService(null);
-        }
-    }
-
-    @JsonIgnore
-    public void addToDocumentsUploaded(final ListValue<DivorceDocument> listValue) {
-
-        final List<ListValue<DivorceDocument>> documents = getDocumentsUploaded();
-
-        if (isEmpty(documents)) {
-            final List<ListValue<DivorceDocument>> documentList = new ArrayList<>();
-            documentList.add(listValue);
-            setDocumentsUploaded(documentList);
-        } else {
-            documents.add(0, listValue); // always add to start top of list
         }
     }
 

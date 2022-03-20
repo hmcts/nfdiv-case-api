@@ -96,7 +96,7 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
             .value(caseData.getD11Document())
             .build();
 
-        caseData.addToDocumentsUploaded(d11Document);
+        caseData.getDocuments().addToDocumentsUploaded(d11Document);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

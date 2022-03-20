@@ -52,6 +52,14 @@ public class CaseDocuments {
     )
     private List<ListValue<DivorceDocument>> documentsGenerated;
 
+    @CCD(
+        label = "Documents uploaded",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<DivorceDocument>> documentsUploaded;
+
     public void sortApplicant1UploadedDocuments(List<ListValue<DivorceDocument>> previousDocuments) {
         if (isEmpty(previousDocuments)) {
             return;
@@ -69,6 +77,25 @@ public class CaseDocuments {
                 .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
 
         this.setApplicant1DocumentsUploaded(sortDocuments(documentsWithoutIds));
+    }
+
+    public void sortUploadedDocuments(List<ListValue<DivorceDocument>> previousDocuments) {
+        if (isEmpty(previousDocuments)) {
+            return;
+        }
+
+        Set<String> previousListValueIds = previousDocuments
+            .stream()
+            .map(ListValue::getId)
+            .collect(toCollection(HashSet::new));
+
+        //Split the collection into two lists one without id's(newly added documents) and other with id's(existing documents)
+        Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds =
+            this.getDocumentsUploaded()
+                .stream()
+                .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
+
+        this.setDocumentsUploaded(sortDocuments(documentsWithoutIds));
     }
 
     private List<ListValue<DivorceDocument>> sortDocuments(final Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds) {
@@ -102,4 +129,18 @@ public class CaseDocuments {
             documents.add(0, listValue); // always add to start top of list
         }
     }
+
+    public void addToDocumentsUploaded(final ListValue<DivorceDocument> listValue) {
+
+        final List<ListValue<DivorceDocument>> documents = getDocumentsUploaded();
+
+        if (isEmpty(documents)) {
+            final List<ListValue<DivorceDocument>> documentList = new ArrayList<>();
+            documentList.add(listValue);
+            setDocumentsUploaded(documentList);
+        } else {
+            documents.add(0, listValue); // always add to start top of list
+        }
+    }
+
 }

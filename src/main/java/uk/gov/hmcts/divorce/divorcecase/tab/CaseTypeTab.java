@@ -127,7 +127,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2DocumentsUploaded")
             .field(CaseData::getScannedDocuments)
             .field(CaseData::getGeneralOrders)
-            .field(CaseData::getDocumentsUploaded)
+            .field("documentsUploaded")
             .field(CaseData::getGeneralEmails)
             .field("certificateOfServiceDocument")
             .field("coCertificateOfEntitlementDocument");
