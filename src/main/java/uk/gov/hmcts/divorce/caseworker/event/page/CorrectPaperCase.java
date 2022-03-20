@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
@@ -162,7 +163,9 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             .done()
             .label("Label-CorrectScannedDocuments",
                 "### Scanned Documents")
-            .optional(CaseData::getScannedDocuments);
+            .complex(CaseData::getDocuments)
+                .optional(CaseDocuments::getScannedDocuments)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(

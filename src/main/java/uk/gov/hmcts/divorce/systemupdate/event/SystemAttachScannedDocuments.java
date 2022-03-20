@@ -5,6 +5,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -25,7 +26,9 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .grant(CREATE_READ_UPDATE_DELETE, SYSTEMUPDATE, CASE_WORKER))
             .page("attachScannedDocs")
             .pageLabel("Correspondence")
-            .mandatory(CaseData::getScannedDocuments)
+            .complex(CaseData::getDocuments)
+                .mandatory(CaseDocuments::getScannedDocuments)
+                .done()
             .mandatoryWithLabel(CaseData::getEvidenceHandled, "Supplementary evidence handled");
     }
 }

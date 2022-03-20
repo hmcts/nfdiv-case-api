@@ -142,8 +142,10 @@ class AosPackPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder().documentsGenerated(singletonList(doc1)).build())
-            .scannedDocuments(singletonList(doc2))
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(singletonList(doc1))
+                .scannedDocuments(singletonList(doc2))
+                .build())
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());

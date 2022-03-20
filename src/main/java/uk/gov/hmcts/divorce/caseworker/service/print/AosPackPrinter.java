@@ -82,7 +82,7 @@ public class AosPackPrinter {
             caseData.getDocuments().getDocumentsGenerated(),
             AOS_RESPONSE_LETTER);
 
-        final List<Letter> aosLetters = lettersWithAosScannedDocument(caseData.getScannedDocuments());
+        final List<Letter> aosLetters = lettersWithAosScannedDocument(caseData.getDocuments().getScannedDocuments());
 
         final Letter aosResponseLetter = firstElement(aosResponseLetters);
 
