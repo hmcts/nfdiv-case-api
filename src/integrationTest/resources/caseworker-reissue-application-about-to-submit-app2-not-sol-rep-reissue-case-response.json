@@ -48,7 +48,8 @@
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
-    "issueDate": "2022-03-18",
+    "accessCode": "${json-unit.ignore}",
+    "issueDate": "${json-unit.ignore}",
     "reissueDate": "2021-06-17",
     "applicationPayments": [
       {
