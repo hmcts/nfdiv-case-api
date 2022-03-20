@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.groovy.parser.antlr4.util.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.BulkScanEnvelope;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
@@ -31,7 +30,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
@@ -185,27 +183,11 @@ public class CaseData {
     @CCD(access = {CaseworkerAccess.class})
     private String hyphenatedCaseRef;
 
-    private YesOrNo evidenceHandled;
-
     @CCD(
         access = {CaseworkerAccess.class}
     )
     @JsonUnwrapped(prefix = "noc")
     private NoticeOfChange noticeOfChange;
-
-    @CCD(
-        label = "Bulk Scan Envelopes",
-        typeOverride = Collection,
-        typeParameterOverride = "BulkScanEnvelope",
-        access = {CaseworkerBulkScanAccess.class}
-    )
-    private List<ListValue<BulkScanEnvelope>> bulkScanEnvelopes;
-
-    @CCD(
-        label = "Exception record reference",
-        access = {CaseworkerBulkScanAccess.class}
-    )
-    private String bulkScanCaseReference;
 
     @JsonUnwrapped(prefix = "paperForm")
     @Builder.Default
@@ -213,25 +195,10 @@ public class CaseData {
     private PaperFormDetails paperFormDetails = new PaperFormDetails();
 
     @CCD(
-        label = "Is the case a paper case?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo newPaperCase;
-
-    @CCD(
         label = "Is case judicial separation?",
         access = {DefaultAccess.class}
     )
     private YesOrNo isJudicialSeparation;
-
-    @CCD(
-        label = "Transformation and OCR warnings",
-        typeOverride = Collection,
-        typeParameterOverride = "TextArea",
-        access = {CaseworkerBulkScanAccess.class}
-    )
-    @Builder.Default
-    private List<ListValue<String>> warnings = new ArrayList<>();
 
     @CCD(
         label = "General emails",
@@ -242,6 +209,10 @@ public class CaseData {
 
     @CCD(typeOverride = CasePaymentHistoryViewer)
     private String paymentHistoryField;
+
+    @JsonUnwrapped
+    @Builder.Default
+    private BulkScanMetaInfo bulkScanMetaInfo = new BulkScanMetaInfo();
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {
@@ -346,10 +317,5 @@ public class CaseData {
         this.getApplicant1().setGender(app1Gender);
         this.getApplicant2().setGender(app2Gender);
         this.getApplication().setDivorceWho(whoDivorcing);
-    }
-
-    @JsonIgnore
-    public boolean isPaperCase() {
-        return YES.equals(newPaperCase);
     }
 }

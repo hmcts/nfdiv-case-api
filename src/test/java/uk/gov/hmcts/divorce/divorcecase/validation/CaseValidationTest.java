@@ -280,7 +280,7 @@ public class CaseValidationTest {
             Applicant.builder().email("respondent@test.com").build()
         );
 
-        caseData.setNewPaperCase(YES);
+        caseData.getApplication().setNewPaperCase(YES);
         List<String> errors = validateBasicCase(caseData);
         assertThat(errors).hasSize(11);
         assertThat(errors).containsExactly(

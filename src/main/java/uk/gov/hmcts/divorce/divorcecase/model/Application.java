@@ -450,6 +450,12 @@ public class Application {
     )
     private PaperCasePaymentMethod paperCasePaymentMethod;
 
+    @CCD(
+        label = "Is the case a paper case?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo newPaperCase;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary
@@ -566,4 +572,8 @@ public class Application {
         return missingDocumentTypes;
     }
 
+    @JsonIgnore
+    public boolean isPaperCase() {
+        return YES.equals(newPaperCase);
+    }
 }

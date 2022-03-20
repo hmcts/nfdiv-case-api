@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.BulkScanMetaInfo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -29,6 +30,8 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getScannedDocuments)
                 .done()
-            .mandatoryWithLabel(CaseData::getEvidenceHandled, "Supplementary evidence handled");
+            .complex(CaseData::getBulkScanMetaInfo)
+                .mandatoryWithLabel(BulkScanMetaInfo::getEvidenceHandled, "Supplementary evidence handled")
+                .done();
     }
 }
