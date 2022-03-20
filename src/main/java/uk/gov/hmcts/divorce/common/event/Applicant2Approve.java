@@ -90,7 +90,8 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
 
         generateJointApplication(details, data);
 
-        data.getDocumentsGenerated()
+        data.getDocuments()
+            .getDocumentsGenerated()
             .stream()
             .filter(document -> APPLICATION.equals(document.getValue().getDocumentType()))
             .findFirst()

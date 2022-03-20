@@ -116,7 +116,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         CaseInvite caseInvite = caseData.getCaseInvite();
         caseData.setCaseInvite(new CaseInvite(caseInvite.applicant2InviteEmailAddress(), null, null));
 
-        caseData.setApplicant2DocumentsUploaded(null);
+        caseData.getDocuments().setApplicant2DocumentsUploaded(null);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(null);
         caseData.getApplication().setApplicant2HelpWithFees(null);
         caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(null);

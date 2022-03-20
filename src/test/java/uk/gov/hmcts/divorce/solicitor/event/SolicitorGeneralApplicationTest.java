@@ -60,8 +60,8 @@ public class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
-        assertThat(response.getData().getDocumentsUploaded().size()).isEqualTo(1);
-        assertThat(response.getData().getDocumentsUploaded().get(0).getValue()).isEqualTo(document);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue()).isEqualTo(document);
     }
 
     @Test

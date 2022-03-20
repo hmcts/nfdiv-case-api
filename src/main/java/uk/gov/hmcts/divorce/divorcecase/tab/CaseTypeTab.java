@@ -122,12 +122,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("documents", "Documents")
-            .field(CaseData::getDocumentsGenerated)
-            .field(CaseData::getApplicant1DocumentsUploaded)
-            .field(CaseData::getApplicant2DocumentsUploaded)
-            .field(CaseData::getScannedDocuments)
+            .field("documentsGenerated")
+            .field("applicant1DocumentsUploaded")
+            .field("applicant2DocumentsUploaded")
+            .field("scannedDocuments")
             .field(CaseData::getGeneralOrders)
-            .field(CaseData::getDocumentsUploaded)
+            .field("documentsUploaded")
             .field(CaseData::getGeneralEmails)
             .field("certificateOfServiceDocument")
             .field("coCertificateOfEntitlementDocument");
@@ -227,7 +227,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("confidentialDocuments", "Confidential Document")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
-            .field(CaseData::getConfidentialDocumentsUploaded);
+            .field("confidentialDocumentsUploaded");
     }
 
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
