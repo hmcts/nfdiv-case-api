@@ -263,7 +263,7 @@ class CitizenSwitchedToSoleTest {
                 .contactDetailsType(PRIVATE)
                 .build()
         );
-        caseData.setApplicant2DocumentsUploaded(new ArrayList<>());
+        caseData.getDocuments().setApplicant2DocumentsUploaded(new ArrayList<>());
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder().build());
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
@@ -299,7 +299,7 @@ class CitizenSwitchedToSoleTest {
                 .applicant2InviteEmailAddress(TEST_APPLICANT_2_EMAIL)
                 .build());
 
-        assertThat(response.getData().getApplicant2DocumentsUploaded()).isNull();
+        assertThat(response.getData().getDocuments().getApplicant2DocumentsUploaded()).isNull();
         assertThat(response.getData().getApplication().getApplicant2ScreenHasMarriageBroken()).isNull();
         assertThat(response.getData().getApplication().getApplicant2HelpWithFees()).isNull();
         assertThat(response.getData().getApplication().getApplicant2StatementOfTruth()).isNull();

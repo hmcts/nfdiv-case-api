@@ -179,7 +179,7 @@ class SolicitorSubmitJointApplicationTest {
 
         final var documentListValue = documentWithType(APPLICATION);
         final var generatedDocuments = singletonList(documentListValue);
-        caseData.setDocumentsGenerated(generatedDocuments);
+        caseData.getDocuments().setDocumentsGenerated(generatedDocuments);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -198,7 +198,7 @@ class SolicitorSubmitJointApplicationTest {
 
         final var documentListValue = documentWithType(AMENDED_APPLICATION);
         final var generatedDocuments = singletonList(documentListValue);
-        caseData.setDocumentsGenerated(generatedDocuments);
+        caseData.getDocuments().setDocumentsGenerated(generatedDocuments);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

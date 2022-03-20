@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -46,7 +47,9 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
             .page("caseworkerConfirmService")
             .pageLabel("Confirm Service")
-            .optional(CaseData::getDocumentsUploaded)
+            .complex(CaseData::getDocuments)
+                .optional(CaseDocuments::getDocumentsUploaded)
+                .done()
             .label("applicantLabel", "Name of Applicant - ${applicant1FirstName} ${applicant1LastName}")
             .label("respondentLabel", "Name of Respondent - ${applicant2FirstName} ${applicant2LastName}")
             .complex(CaseData::getApplication)

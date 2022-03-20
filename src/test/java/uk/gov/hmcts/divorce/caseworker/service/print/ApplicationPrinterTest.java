@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -43,7 +44,7 @@ public class ApplicationPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documentsGenerated(singletonList(applicationDocument))
+            .documents(CaseDocuments.builder().documentsGenerated(singletonList(applicationDocument)).build())
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());

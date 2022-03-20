@@ -38,7 +38,7 @@ class DivorceApplicationRemoverTest {
         final var generatedDocuments = singletonList(documentWithType(APPLICATION));
         final var caseData = CaseData.builder().build();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.setDocumentsGenerated(generatedDocuments);
+        caseData.getDocuments().setDocumentsGenerated(generatedDocuments);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -49,7 +49,7 @@ class DivorceApplicationRemoverTest {
             .thenReturn(emptyList());
 
         final var result = divorceApplicationRemover.apply(caseDetails);
-        assertThat(result.getData().getDocumentsGenerated(), empty());
+        assertThat(result.getData().getDocuments().getDocumentsGenerated(), empty());
         verify(draftApplicationRemovalService)
             .removeDraftApplicationDocument(
                 generatedDocuments,
