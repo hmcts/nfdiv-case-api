@@ -80,7 +80,7 @@ public class CaseworkerCorrectPaperCaseTest {
     @Test
     void shouldClearWarnings() {
         final CaseData caseData = new CaseData();
-        caseData.setWarnings(
+        caseData.getBulkScanMetaInfo().setWarnings(
             List.of(
                 ListValue.<String>builder()
                     .value("Warning about HWF")
@@ -100,6 +100,6 @@ public class CaseworkerCorrectPaperCaseTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerCorrectPaperCase.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getWarnings()).isEmpty();
+        assertThat(response.getData().getBulkScanMetaInfo().getWarnings()).isEmpty();
     }
 }
