@@ -22,7 +22,7 @@
       "AddressLine1": "line 1",
       "PostTown": "town",
       "PostCode": "postcode",
-      "Country": "France"
+      "Country": "UK"
     },
     "applicant2Gender": "male",
     "applicant2SolicitorRepresented": "No",
@@ -38,6 +38,7 @@
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "divorceWho": "wife",
+    "solServiceMethod": "courtService",
     "applicant1PrayerHasBeenGivenCheckbox": [
       "Yes"
     ],
@@ -60,6 +61,7 @@
       }
     ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
+    "noticeOfProceedingsEmail": "applicant2@test.com",
     "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
