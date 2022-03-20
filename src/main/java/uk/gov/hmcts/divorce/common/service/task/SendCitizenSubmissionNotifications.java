@@ -35,7 +35,7 @@ public class SendCitizenSubmissionNotifications implements CaseTask {
         final Long caseId = caseDetails.getId();
         final State state = caseDetails.getState();
 
-        if (state == Submitted || (state == AwaitingHWFDecision && isEmpty(caseData.getApplication().getMissingDocumentTypes()))) {
+        if (state == Submitted || state == AwaitingHWFDecision && isEmpty(caseData.getApplication().getMissingDocumentTypes())) {
             log.info("Sending application submitted notifications for case : {}", caseId);
             notificationDispatcher.send(applicationSubmittedNotification, caseData, caseId);
         }
