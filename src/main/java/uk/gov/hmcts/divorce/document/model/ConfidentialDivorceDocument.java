@@ -1,7 +1,8 @@
 package uk.gov.hmcts.divorce.document.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class ConfidentialDivorceDocument {
 
@@ -53,4 +53,22 @@ public class ConfidentialDivorceDocument {
         label = "File name"
     )
     private String documentFileName;
+
+    //Add handwritten constructor as a workaround for @JsonUnwrapped prefix issue
+    @JsonCreator
+    public ConfidentialDivorceDocument(
+        @JsonProperty("confidentialDocumentsReceived") ConfidentialDocumentsReceived confidentialDocumentsReceived,
+        @JsonProperty("documentEmailContent") String documentEmailContent,
+        @JsonProperty("documentLink") Document documentLink,
+        @JsonProperty("documentDateAdded") LocalDate documentDateAdded,
+        @JsonProperty("documentComment") String documentComment,
+        @JsonProperty("documentFileName") String documentFileName) {
+
+        this.confidentialDocumentsReceived = confidentialDocumentsReceived;
+        this.documentEmailContent = documentEmailContent;
+        this.documentLink = documentLink;
+        this.documentDateAdded = documentDateAdded;
+        this.documentComment = documentComment;
+        this.documentFileName = documentFileName;
+    }
 }
