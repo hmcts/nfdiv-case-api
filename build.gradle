@@ -402,7 +402,7 @@ ccd {
 }
 
 tasks.cftlibTest.dependsOn buildCCDXlsx
-check.dependsOn cftlibTest
+integration.dependsOn cftlibTest
 
 bootWithCCD {
     group = 'ccd tasks'
