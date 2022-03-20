@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -36,7 +37,9 @@ public class CaseworkerUploadConfidentialDocument implements CCDConfig<CaseData,
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR))
             .page("uploadConfidentialDocuments")
             .pageLabel("Upload Confidential Documents")
-            .optional(CaseData::getConfidentialDocumentsUploaded);
+            .complex(CaseData::getDocuments)
+                .optional(CaseDocuments::getConfidentialDocumentsUploaded)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -47,7 +50,9 @@ public class CaseworkerUploadConfidentialDocument implements CCDConfig<CaseData,
 
         var caseData = details.getData();
 
-        caseData.sortConfidentialDocuments(beforeDetails.getData().getConfidentialDocumentsUploaded());
+        caseData.getDocuments().sortConfidentialDocuments(
+            beforeDetails.getData().getDocuments().getConfidentialDocumentsUploaded()
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
