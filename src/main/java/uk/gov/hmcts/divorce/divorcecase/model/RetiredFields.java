@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.elasticsearch.common.TriConsumer;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 
 import java.util.Map;
 
@@ -15,8 +16,8 @@ public class RetiredFields {
     @CCD(label = "Case data version")
     private int dataVersion;
 
-    @CCD(label = "retired")
     private String exampleRetiredField;
+    private CaseLink previousCaseId;
 
     @JsonIgnore
     private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {
