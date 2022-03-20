@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
@@ -77,6 +78,12 @@ public class CaseDocuments {
         typeParameterOverride = "ScannedDocument"
     )
     private List<ListValue<ScannedDocument>> scannedDocuments;
+
+    @CCD(
+        label = "Upload D11 Document",
+        access = {CaseworkerAccessBetaOnlyAccess.class}
+    )
+    private DivorceDocument d11Document;
 
     public void sortApplicant1UploadedDocuments(List<ListValue<DivorceDocument>> previousDocuments) {
         if (isEmpty(previousDocuments)) {

@@ -89,8 +89,11 @@ public class CaseworkerAnswerReceivedIT {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder().documentsUploaded(new ArrayList<>()).build())
-            .d11Document(d11)
+            .documents(CaseDocuments.builder()
+                .documentsUploaded(new ArrayList<>())
+                .d11Document(d11)
+                .build()
+            )
             .alternativeService(
                 AlternativeService.builder()
                     .servicePaymentFee(

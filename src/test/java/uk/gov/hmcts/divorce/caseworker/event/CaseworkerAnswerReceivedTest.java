@@ -93,7 +93,7 @@ class CaseworkerAnswerReceivedTest {
             )
             .documentType(DocumentType.D11)
             .build();
-        caseData.setD11Document(d11);
+        caseData.getDocuments().setD11Document(d11);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -123,7 +123,7 @@ class CaseworkerAnswerReceivedTest {
             )
             .documentType(DocumentType.D11)
             .build();
-        caseData.setD11Document(d11);
+        caseData.getDocuments().setD11Document(d11);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

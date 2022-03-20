@@ -20,7 +20,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAcc
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -142,12 +141,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private Court divorceUnit;
-
-    @CCD(
-        label = "Upload D11 Document",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
-    )
-    private DivorceDocument d11Document;
 
     @CCD(
         label = "General Orders",

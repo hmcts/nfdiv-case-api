@@ -93,7 +93,7 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
 
         ListValue<DivorceDocument> d11Document = ListValue.<DivorceDocument>builder()
             .id(String.valueOf(UUID.randomUUID()))
-            .value(caseData.getD11Document())
+            .value(caseData.getDocuments().getD11Document())
             .build();
 
         caseData.getDocuments().addToDocumentsUploaded(d11Document);
