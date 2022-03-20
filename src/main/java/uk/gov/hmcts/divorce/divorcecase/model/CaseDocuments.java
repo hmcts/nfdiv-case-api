@@ -124,21 +124,11 @@ public class CaseDocuments {
                 .stream()
                 .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
 
-        List<ListValue<ConfidentialDivorceDocument>> sortedDocuments = new ArrayList<>();
-        sortedDocuments.addAll(0, documentsWithoutIds.get(true)); // add new documents to start of the list
-        sortedDocuments.addAll(1, documentsWithoutIds.get(false));
-
-        sortedDocuments.forEach(
-            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(UUID.randomUUID()))
-        );
-
-        this.setConfidentialDocumentsUploaded(sortedDocuments);
+        this.setConfidentialDocumentsUploaded(sortDocuments(documentsWithoutIds));
     }
 
-    private List<ListValue<DivorceDocument>> sortDocuments(final Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds) {
-
-        final List<ListValue<DivorceDocument>> sortedDocuments = new ArrayList<>();
-
+    private <T> List<ListValue<T>> sortDocuments(final Map<Boolean, List<ListValue<T>>> documentsWithoutIds) {
+        final List<ListValue<T>> sortedDocuments = new ArrayList<>();
         final var newDocuments = documentsWithoutIds.get(true);
         final var previousDocuments = documentsWithoutIds.get(false);
 
