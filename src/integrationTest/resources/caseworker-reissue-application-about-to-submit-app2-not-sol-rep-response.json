@@ -49,7 +49,7 @@
     },
     "documentUploadComplete": "Yes",
     "issueDate": "${json-unit.any-string}",
-    "reissueDate": "${json-unit.any-string}",
+    "reissueDate": "2021-06-17",
     "applicationPayments": [
       {
         "value": {
@@ -69,21 +69,9 @@
         "id": "Respondent Invitation",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27",
-            "document_filename": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27/binary"
-          },
-          "documentFileName": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "coversheet"
-        }
-      },
-      {
-        "id": "Coversheet",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27",
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/eb90a159-4200-410b-a504-5a925be0b152",
             "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27/binary"
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/eb90a159-4200-410b-a504-5a925be0b152/binary"
           },
           "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "aos"
