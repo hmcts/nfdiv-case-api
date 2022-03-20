@@ -41,6 +41,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
@@ -516,5 +517,10 @@ public class CaseData {
         this.getApplicant1().setGender(app1Gender);
         this.getApplicant2().setGender(app2Gender);
         this.getApplication().setDivorceWho(whoDivorcing);
+    }
+
+    @JsonIgnore
+    public boolean isPaperCase() {
+        return YES.equals(newPaperCase);
     }
 }
