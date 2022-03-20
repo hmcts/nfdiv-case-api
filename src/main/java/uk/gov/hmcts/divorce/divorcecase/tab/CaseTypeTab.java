@@ -122,7 +122,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("documents", "Documents")
-            .field(CaseData::getDocumentsGenerated)
+            .field("documentsGenerated")
             .field("applicant1DocumentsUploaded")
             .field("applicant2DocumentsUploaded")
             .field(CaseData::getScannedDocuments)

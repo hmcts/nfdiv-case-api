@@ -52,7 +52,7 @@ public class CaseDataDocumentService {
 
         log.info("Adding document to case data for templateId : {} case id: {}", templateId, caseId);
 
-        caseData.addToDocumentsGenerated(
+        caseData.getDocuments().addToDocumentsGenerated(
             ListValue.<DivorceDocument>builder()
                 .id(documentIdProvider.documentId())
                 .value(divorceDocumentFrom(documentInfo, documentType))

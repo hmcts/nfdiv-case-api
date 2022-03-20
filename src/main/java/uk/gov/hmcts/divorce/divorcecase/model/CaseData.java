@@ -154,14 +154,6 @@ public class CaseData {
     private Court divorceUnit;
 
     @CCD(
-        label = "Documents generated",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
-    )
-    private List<ListValue<DivorceDocument>> documentsGenerated;
-
-    @CCD(
         label = "Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
@@ -319,20 +311,6 @@ public class CaseData {
             || null != application.getApplicant2HelpWithFees()
             && null != application.getApplicant2HelpWithFees().getNeedHelp()
             && application.getApplicant2HelpWithFees().getNeedHelp().toBoolean();
-    }
-
-    @JsonIgnore
-    public void addToDocumentsGenerated(final ListValue<DivorceDocument> listValue) {
-
-        final List<ListValue<DivorceDocument>> documents = getDocumentsGenerated();
-
-        if (isEmpty(documents)) {
-            final List<ListValue<DivorceDocument>> documentList = new ArrayList<>();
-            documentList.add(listValue);
-            setDocumentsGenerated(documentList);
-        } else {
-            documents.add(0, listValue); // always add to start top of list
-        }
     }
 
     @JsonIgnore

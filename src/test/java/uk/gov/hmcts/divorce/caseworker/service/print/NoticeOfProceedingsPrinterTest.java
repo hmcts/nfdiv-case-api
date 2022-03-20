@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -49,7 +50,7 @@ public class NoticeOfProceedingsPrinterTest {
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().build())
             .applicant2(Applicant.builder().build())
-            .documentsGenerated(singletonList(applicant1NopDocument))
+            .documents(CaseDocuments.builder().documentsGenerated(singletonList(applicant1NopDocument)).build())
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
@@ -89,7 +90,7 @@ public class NoticeOfProceedingsPrinterTest {
                 .offline(YES)
                 .build()
             )
-            .documentsGenerated(asList(applicant2NopDocument, applicant1NopDocument))
+            .documents(CaseDocuments.builder().documentsGenerated(asList(applicant2NopDocument, applicant1NopDocument)).build())
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
@@ -125,7 +126,7 @@ public class NoticeOfProceedingsPrinterTest {
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().build())
             .applicant2(Applicant.builder().build())
-            .documentsGenerated(singletonList(applicant2NopDocument))
+            .documents(CaseDocuments.builder().documentsGenerated(singletonList(applicant2NopDocument)).build())
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());

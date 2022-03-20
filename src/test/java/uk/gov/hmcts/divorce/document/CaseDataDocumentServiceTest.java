@@ -84,7 +84,7 @@ class CaseDataDocumentServiceTest {
             ENGLISH,
             filename);
 
-        final List<ListValue<DivorceDocument>> documentsGenerated = caseData.getDocumentsGenerated();
+        final List<ListValue<DivorceDocument>> documentsGenerated = caseData.getDocuments().getDocumentsGenerated();
 
         assertThat(documentsGenerated).hasSize(1);
 

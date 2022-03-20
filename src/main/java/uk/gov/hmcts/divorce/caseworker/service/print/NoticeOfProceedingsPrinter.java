@@ -30,7 +30,7 @@ public class NoticeOfProceedingsPrinter {
     public void sendLetterToApplicant1(final CaseData caseData, final Long caseId) {
 
         final List<Letter> letters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS);
+            caseData.getDocuments().getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS);
 
         final boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
         final boolean isApplicant1Offline = caseData.getApplicant1().isOffline();
@@ -64,7 +64,7 @@ public class NoticeOfProceedingsPrinter {
     public void sendLetterToApplicant2(final CaseData caseData, final Long caseId) {
 
         final List<Letter> letters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS);
+            caseData.getDocuments().getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS);
 
         final Letter noticeOfProceedingsLetter = firstElement(letters);
 

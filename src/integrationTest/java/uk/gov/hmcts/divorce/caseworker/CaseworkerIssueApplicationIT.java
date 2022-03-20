@@ -933,7 +933,7 @@ public class CaseworkerIssueApplicationIT {
         final var documentListValue = documentWithType(APPLICATION);
         final var generatedDocuments = singletonList(documentListValue);
 
-        caseData.setDocumentsGenerated(generatedDocuments);
+        caseData.getDocuments().setDocumentsGenerated(generatedDocuments);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 

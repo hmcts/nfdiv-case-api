@@ -179,7 +179,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .documentType(CONDITIONAL_ORDER_REFUSAL)
             .build();
 
-        caseData.addToDocumentsGenerated(
+        caseData.getDocuments().addToDocumentsGenerated(
             ListValue
                 .<DivorceDocument>builder()
                 .id(UUID.randomUUID().toString())

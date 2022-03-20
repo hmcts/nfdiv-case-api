@@ -44,6 +44,14 @@ public class CaseDocuments {
     )
     private List<ListValue<DivorceDocument>> applicant2DocumentsUploaded;
 
+    @CCD(
+        label = "Documents generated",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<DivorceDocument>> documentsGenerated;
+
     public void sortApplicant1UploadedDocuments(List<ListValue<DivorceDocument>> previousDocuments) {
         if (isEmpty(previousDocuments)) {
             return;
@@ -80,5 +88,18 @@ public class CaseDocuments {
         }
 
         return previousDocuments;
+    }
+
+    public void addToDocumentsGenerated(final ListValue<DivorceDocument> listValue) {
+
+        final List<ListValue<DivorceDocument>> documents = getDocumentsGenerated();
+
+        if (isEmpty(documents)) {
+            final List<ListValue<DivorceDocument>> documentList = new ArrayList<>();
+            documentList.add(listValue);
+            setDocumentsGenerated(documentList);
+        } else {
+            documents.add(0, listValue); // always add to start top of list
+        }
     }
 }

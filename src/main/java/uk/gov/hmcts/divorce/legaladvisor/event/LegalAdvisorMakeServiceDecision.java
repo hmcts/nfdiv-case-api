@@ -179,7 +179,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .documentType(documentType)
             .build();
 
-        caseDataCopy.addToDocumentsGenerated(
+        caseDataCopy.getDocuments().addToDocumentsGenerated(
             ListValue
                 .<DivorceDocument>builder()
                 .id(UUID.randomUUID().toString())
