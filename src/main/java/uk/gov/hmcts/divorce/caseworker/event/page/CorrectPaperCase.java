@@ -48,8 +48,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getContactDetailsType)
                 .mandatoryWithLabel(Applicant::getAddress, "${labelContentApplicantsOrApplicant1s} address")
-                .mandatoryWithLabel(Applicant::getPhoneNumber, "${labelContentApplicantsOrApplicant1s} phone number")
-                .mandatoryWithLabel(Applicant::getEmail, "${labelContentApplicantsOrApplicant1s} email address")
+                .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentApplicantsOrApplicant1s} phone number")
+                .optionalWithLabel(Applicant::getEmail, "${labelContentApplicantsOrApplicant1s} email address")
                 .mandatoryWithLabel(Applicant::getSolicitorRepresented,
                     "Is ${labelContentTheApplicantOrApplicant1} represented by a solicitor?")
                 .complex(Applicant::getSolicitor, "applicant1SolicitorRepresented=\"Yes\"")
@@ -57,10 +57,10 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                         "### ${labelContentApplicantsOrApplicant1s} solicitor details",
                         "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getName, "applicant1SolicitorRepresented=\"Yes\"")
-                    .mandatory(Solicitor::getReference, "applicant1SolicitorRepresented=\"Yes\"")
+                    .optional(Solicitor::getReference, "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getFirmName, "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getAddress, "applicant1SolicitorRepresented=\"Yes\"")
-                    .mandatory(Solicitor::getPhone, "applicant1SolicitorRepresented=\"Yes\"")
+                    .optional(Solicitor::getPhone, "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getEmail, "applicant1SolicitorRepresented=\"Yes\"")
                 .done()
                 .label("Label-CorrectApplicant1FODetails",
