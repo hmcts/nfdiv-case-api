@@ -108,7 +108,7 @@ public class GenerateRespondentAosInvitationTest {
     }
 
     @Test
-    void shouldGenerateAosInvitationDocOnlineVersionAndCoversheetIfRespondentIsNotRepresentedAndHasEmailAndIsSole() {
+    void shouldGenerateAosInvitationDocOnlineVersionIfRespondentIsNotRepresentedAndHasEmailAndIsSole() {
         setMockClock(clock);
 
         final var caseData = caseData();
@@ -126,7 +126,6 @@ public class GenerateRespondentAosInvitationTest {
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-        when(coversheetTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(coversheetContent);
 
         final var result = generateRespondentAosInvitation.apply(caseDetails);
 
@@ -141,17 +140,6 @@ public class GenerateRespondentAosInvitationTest {
                 CITIZEN_RESP_AOS_INVITATION_ONLINE,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
-            );
-
-        verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
-                caseData,
-                COVERSHEET,
-                templateContent,
-                TEST_CASE_ID,
-                COVERSHEET_APPLICANT2,
-                ENGLISH,
-                formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verifyNoMoreInteractions(caseDataDocumentService);
