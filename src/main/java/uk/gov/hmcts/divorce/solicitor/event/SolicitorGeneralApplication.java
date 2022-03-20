@@ -6,13 +6,11 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentConfirmation;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectApplicationType;
@@ -21,10 +19,10 @@ import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationUploadDocumen
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
@@ -60,10 +58,10 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        final CaseData caseData = details.getData();
+        final CaseData data = details.getData();
 
         if (AwaitingPronouncement == details.getState()
-            && !isEmpty(caseData.getBulkListCaseReference())) {
+            && !isEmpty(data.getBulkListCaseReference())) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(Collections.singletonList(
@@ -72,16 +70,12 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
                 .build();
         }
 
-        ListValue<DivorceDocument> generalApplicationDocument =
-            ListValue.<DivorceDocument>builder()
-                .id(String.valueOf(UUID.randomUUID()))
-                .value(caseData.getGeneralApplication().getGeneralApplicationDocument())
-                .build();
-
-        caseData.addToDocumentsUploaded(generalApplicationDocument);
+        data.getDocuments().setDocumentsUploaded(
+            addDocumentToTop(data.getDocuments().getDocumentsUploaded(), data.getGeneralApplication().getGeneralApplicationDocument())
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .data(data)
             .state(GeneralApplicationReceived)
             .build();
     }

@@ -12,30 +12,20 @@ import org.apache.groovy.parser.antlr4.util.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.BulkScanEnvelope;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toCollection;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -133,30 +123,18 @@ public class CaseData {
         label = "Previous Service Applications",
         typeOverride = Collection,
         typeParameterOverride = "AlternativeServiceOutcome",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes;
 
     @JsonUnwrapped
     @Builder.Default
-    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
+    @CCD(access = {CaseworkerAccessOnlyAccess.class})
     private AlternativeService alternativeService = new AlternativeService();
 
-    @CCD(
-        label = "Applicant 1 uploaded documents",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
-    )
-    private List<ListValue<DivorceDocument>> applicant1DocumentsUploaded;
-
-    @CCD(
-        label = "Applicant 2 Documents uploaded",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        access = {Applicant2Access.class}
-    )
-    private List<ListValue<DivorceDocument>> applicant2DocumentsUploaded;
+    @JsonUnwrapped
+    @Builder.Default
+    private CaseDocuments documents = new CaseDocuments();
 
     @CCD(
         label = "RDC",
@@ -166,38 +144,8 @@ public class CaseData {
     private Court divorceUnit;
 
     @CCD(
-        label = "Documents generated",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
-    )
-    private List<ListValue<DivorceDocument>> documentsGenerated;
-
-    @CCD(
-        label = "Documents uploaded",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
-    )
-    private List<ListValue<DivorceDocument>> documentsUploaded;
-
-    @CCD(
-        label = "Upload D11 Document",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
-    )
-    private DivorceDocument d11Document;
-
-    @CCD(
-        label = "Confidential documents uploaded",
-        typeOverride = Collection,
-        typeParameterOverride = "ConfidentialDivorceDocument",
-        access = {CaseworkerCourtAdminWithSolicitorAccess.class}
-    )
-    private List<ListValue<ConfidentialDivorceDocument>> confidentialDocumentsUploaded;
-
-    @CCD(
         label = "General Orders",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private List<ListValue<DivorceGeneralOrder>> generalOrders;
 
@@ -236,13 +184,6 @@ public class CaseData {
 
     @CCD(access = {CaseworkerAccess.class})
     private String hyphenatedCaseRef;
-
-    @CCD(
-        label = "Scanned documents",
-        typeOverride = Collection,
-        typeParameterOverride = "ScannedDocument"
-    )
-    private List<ListValue<ScannedDocument>> scannedDocuments;
 
     private YesOrNo evidenceHandled;
 
@@ -323,20 +264,6 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public void addToDocumentsGenerated(final ListValue<DivorceDocument> listValue) {
-
-        final List<ListValue<DivorceDocument>> documents = getDocumentsGenerated();
-
-        if (isEmpty(documents)) {
-            final List<ListValue<DivorceDocument>> documentList = new ArrayList<>();
-            documentList.add(listValue);
-            setDocumentsGenerated(documentList);
-        } else {
-            documents.add(0, listValue); // always add to start top of list
-        }
-    }
-
-    @JsonIgnore
     public String getApplicant2EmailAddress() {
         final String applicant2Email = applicant2.getEmail();
 
@@ -349,90 +276,6 @@ public class CaseData {
         }
 
         return applicant2Email;
-    }
-
-    public void sortUploadedDocuments(List<ListValue<DivorceDocument>> previousDocuments) {
-        if (isEmpty(previousDocuments)) {
-            return;
-        }
-
-        Set<String> previousListValueIds = previousDocuments
-            .stream()
-            .map(ListValue::getId)
-            .collect(toCollection(HashSet::new));
-
-        //Split the collection into two lists one without id's(newly added documents) and other with id's(existing documents)
-        Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds =
-            this.getDocumentsUploaded()
-                .stream()
-                .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
-
-        this.setDocumentsUploaded(sortDocuments(documentsWithoutIds));
-    }
-
-    public void sortConfidentialDocuments(List<ListValue<ConfidentialDivorceDocument>> previousDocuments) {
-        if (isEmpty(previousDocuments)) {
-            return;
-        }
-
-        Set<String> previousListValueIds = previousDocuments
-            .stream()
-            .map(ListValue::getId)
-            .collect(toCollection(HashSet::new));
-
-        //Split the collection into two lists one without id's(newly added documents) and other with id's(existing documents)
-        Map<Boolean, List<ListValue<ConfidentialDivorceDocument>>> documentsWithoutIds =
-            this.getConfidentialDocumentsUploaded()
-                .stream()
-                .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
-
-        List<ListValue<ConfidentialDivorceDocument>> sortedDocuments = new ArrayList<>();
-        sortedDocuments.addAll(0, documentsWithoutIds.get(true)); // add new documents to start of the list
-        sortedDocuments.addAll(1, documentsWithoutIds.get(false));
-
-        sortedDocuments.forEach(
-            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(UUID.randomUUID()))
-        );
-
-        this.setConfidentialDocumentsUploaded(sortedDocuments);
-    }
-
-    public void sortApplicant1UploadedDocuments(List<ListValue<DivorceDocument>> previousDocuments) {
-        if (isEmpty(previousDocuments)) {
-            return;
-        }
-
-        Set<String> previousListValueIds = previousDocuments
-            .stream()
-            .map(ListValue::getId)
-            .collect(toCollection(HashSet::new));
-
-        //Split the collection into two lists one without id's(newly added documents) and other with id's(existing documents)
-        Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds =
-            this.getApplicant1DocumentsUploaded()
-                .stream()
-                .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
-
-        this.setApplicant1DocumentsUploaded(sortDocuments(documentsWithoutIds));
-    }
-
-    private List<ListValue<DivorceDocument>> sortDocuments(final Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds) {
-
-        final List<ListValue<DivorceDocument>> sortedDocuments = new ArrayList<>();
-
-        final var newDocuments = documentsWithoutIds.get(true);
-        final var previousDocuments = documentsWithoutIds.get(false);
-
-        if (null != newDocuments) {
-            sortedDocuments.addAll(0, newDocuments); // add new documents to start of the list
-            sortedDocuments.addAll(1, previousDocuments);
-            sortedDocuments.forEach(
-                uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(UUID.randomUUID()))
-            );
-            return sortedDocuments;
-        }
-
-        return previousDocuments;
     }
 
     public void archiveAlternativeServiceApplicationOnCompletion() {
@@ -473,20 +316,6 @@ public class CaseData {
             }
             // Null the current AlternativeService object instance in the CaseData so that a new one can be created
             this.setAlternativeService(null);
-        }
-    }
-
-    @JsonIgnore
-    public void addToDocumentsUploaded(final ListValue<DivorceDocument> listValue) {
-
-        final List<ListValue<DivorceDocument>> documents = getDocumentsUploaded();
-
-        if (isEmpty(documents)) {
-            final List<ListValue<DivorceDocument>> documentList = new ArrayList<>();
-            documentList.add(listValue);
-            setDocumentsUploaded(documentList);
-        } else {
-            documents.add(0, listValue); // always add to start top of list
         }
     }
 

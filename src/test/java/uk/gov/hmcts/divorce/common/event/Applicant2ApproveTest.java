@@ -135,7 +135,7 @@ class Applicant2ApproveTest {
         caseDetails.setState(State.AwaitingApplicant2Response);
 
         final List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
-        caseData.setDocumentsGenerated(documentsGenerated);
+        caseData.getDocuments().setDocumentsGenerated(documentsGenerated);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
@@ -157,7 +157,7 @@ class Applicant2ApproveTest {
         caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
 
         final List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
-        caseData.setDocumentsGenerated(documentsGenerated);
+        caseData.getDocuments().setDocumentsGenerated(documentsGenerated);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
