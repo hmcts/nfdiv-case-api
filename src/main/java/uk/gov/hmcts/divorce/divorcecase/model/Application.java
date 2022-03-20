@@ -572,4 +572,8 @@ public class Application {
         return missingDocumentTypes;
     }
 
+    @JsonIgnore
+    public boolean isPaperCase() {
+        return YES.equals(newPaperCase);
+    }
 }
