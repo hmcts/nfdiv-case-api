@@ -25,7 +25,9 @@ import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static java.lang.Integer.parseInt;
@@ -550,6 +552,18 @@ public class Application {
     @JsonIgnore
     public boolean isSolicitorPaymentMethodPba() {
         return FEE_PAY_BY_ACCOUNT.equals(this.getSolPaymentHowToPay());
+    }
+
+    @JsonIgnore
+    public Set<DocumentType> getMissingDocumentTypes() {
+        Set<DocumentType> missingDocumentTypes = new HashSet<>();
+        if (Objects.nonNull(applicant1CannotUploadSupportingDocument)) {
+            missingDocumentTypes.addAll(applicant1CannotUploadSupportingDocument);
+        }
+        if (Objects.nonNull(applicant2CannotUploadSupportingDocument)) {
+            missingDocumentTypes.addAll(applicant2CannotUploadSupportingDocument);
+        }
+        return missingDocumentTypes;
     }
 
 }
