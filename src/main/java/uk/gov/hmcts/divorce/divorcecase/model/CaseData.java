@@ -17,7 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSolicitorAccess;
@@ -132,13 +132,13 @@ public class CaseData {
         label = "Previous Service Applications",
         typeOverride = Collection,
         typeParameterOverride = "AlternativeServiceOutcome",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes;
 
     @JsonUnwrapped
     @Builder.Default
-    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
+    @CCD(access = {CaseworkerAccessOnlyAccess.class})
     private AlternativeService alternativeService = new AlternativeService();
 
     @CCD(
@@ -182,7 +182,7 @@ public class CaseData {
 
     @CCD(
         label = "Upload D11 Document",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private DivorceDocument d11Document;
 
@@ -196,7 +196,7 @@ public class CaseData {
 
     @CCD(
         label = "General Orders",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private List<ListValue<DivorceGeneralOrder>> generalOrders;
 
