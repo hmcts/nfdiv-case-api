@@ -153,6 +153,8 @@ public class CaseworkerIssueApplicationIT {
         "classpath:caseworker-issue-application-about-to-submit-error-response.json";
     private static final String SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-sole-citizen-application-about-to-submit-response.json";
+    private static final String SOLE_CITIZEN_UK_BASED_CASEWORKER_ABOUT_TO_SUBMIT =
+        "classpath:caseworker-issue-sole-citizen-uk-based-application-about-to-submit-response.json";
     private static final String JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-joint-citizen-application-about-to-submit-response.json";
 
@@ -225,13 +227,11 @@ public class CaseworkerIssueApplicationIT {
         when(documentIdProvider.documentId())
             .thenReturn("Notice of proceeding applicant")
             .thenReturn("Notice of proceeding respondent")
-            .thenReturn("Divorce application")
-            .thenReturn("Coversheet");
+            .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
         stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, "NFD_CP_Application_Sole.docx");
-        stubForDocAssemblyWith(APPLICANT2_COVERSHEET_TEMPLATE_ID, "NFD_Applicant2_Coversheet.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -255,7 +255,7 @@ public class CaseworkerIssueApplicationIT {
             .getContentAsString();
 
         assertThatJson(response)
-            .isEqualTo(json(TestResourceUtil.expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT)));
+            .isEqualTo(json(TestResourceUtil.expectedResponse(SOLE_CITIZEN_UK_BASED_CASEWORKER_ABOUT_TO_SUBMIT)));
 
         verify(notificationService)
             .sendEmail(
@@ -468,11 +468,8 @@ public class CaseworkerIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
-            .thenReturn("Notice of proceeding applicant")
             .thenReturn("Notice of proceeding respondent")
-            .thenReturn("Divorce application")
-            .thenReturn("Coversheet");
-
+            .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, "NFD_CP_Mini_Application_Sole_Joint.docx");
@@ -933,7 +930,7 @@ public class CaseworkerIssueApplicationIT {
         final var documentListValue = documentWithType(APPLICATION);
         final var generatedDocuments = singletonList(documentListValue);
 
-        caseData.setDocumentsGenerated(generatedDocuments);
+        caseData.getDocuments().setDocumentsGenerated(generatedDocuments);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 

@@ -25,7 +25,7 @@ class AnswerReceivedUploadDocumentTest {
     @Test
     void shouldNotReturnErrorsIfDocumentUploadedIsD11Type() {
         final CaseData caseData = caseData();
-        caseData.setD11Document(
+        caseData.getDocuments().setD11Document(
             DivorceDocument.builder()
                 .documentType(DocumentType.D11)
                 .build()
@@ -44,7 +44,7 @@ class AnswerReceivedUploadDocumentTest {
     @Test
     void shouldReturnErrorsIfDocumentUploadedIsNotD11Type() {
         final CaseData caseData = caseData();
-        caseData.setD11Document(
+        caseData.getDocuments().setD11Document(
             DivorceDocument.builder()
                 .documentType(DocumentType.D9H)
                 .build()

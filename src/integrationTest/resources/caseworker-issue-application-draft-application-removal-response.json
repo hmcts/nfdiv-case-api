@@ -35,7 +35,6 @@
     "marriageDate": "1990-06-10",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
-    "accessCode": "${json-unit.ignore}",
     "jurisdictionConnections": [
       "A"
     ],
@@ -63,10 +62,11 @@
       }
     ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
+    "accessCode": "${json-unit.any-string}",
     "noticeOfProceedingsEmail": "test@test.com",
     "documentsGenerated": [
       {
-        "id": "Coversheet",
+        "id": "Divorce application",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
@@ -75,18 +75,6 @@
           },
           "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "application"
-        }
-      },
-      {
-        "id": "Divorce application",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
-            "document_filename": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
-          },
-          "documentFileName": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "coversheet"
         }
       },
       {

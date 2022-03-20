@@ -93,7 +93,7 @@ class SolicitorUpdateApplicationTest {
             getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004", "co_application.pdf", CONDITIONAL_ORDER_APPLICATION);
 
         final var previousCaseData = caseData();
-        previousCaseData.setApplicant1DocumentsUploaded(singletonList(doc1));
+        previousCaseData.getDocuments().setApplicant1DocumentsUploaded(singletonList(doc1));
 
         final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
         previousCaseDetails.setData(previousCaseData);
@@ -101,7 +101,7 @@ class SolicitorUpdateApplicationTest {
         previousCaseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         final var newCaseData = caseData();
-        newCaseData.setApplicant1DocumentsUploaded(List.of(doc1, doc2));
+        newCaseData.getDocuments().setApplicant1DocumentsUploaded(List.of(doc1, doc2));
 
         final CaseDetails<CaseData, State> newCaseDetails = new CaseDetails<>();
         newCaseDetails.setData(newCaseData);
@@ -113,9 +113,9 @@ class SolicitorUpdateApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorUpdateApplication.aboutToSubmit(newCaseDetails, previousCaseDetails);
 
-        assertThat(response.getData().getApplicant1DocumentsUploaded().size()).isEqualTo(2);
-        assertThat(response.getData().getApplicant1DocumentsUploaded().get(0).getValue()).isSameAs(doc2.getValue());
-        assertThat(response.getData().getApplicant1DocumentsUploaded().get(1).getValue()).isSameAs(doc1.getValue());
+        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().get(0).getValue()).isSameAs(doc2.getValue());
+        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().get(1).getValue()).isSameAs(doc1.getValue());
 
         verify(solicitorUpdateApplicationService).aboutToSubmit(newCaseDetails);
         verifyNoMoreInteractions(solicitorUpdateApplicationService);
@@ -128,7 +128,7 @@ class SolicitorUpdateApplicationTest {
             getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "co_granted.pdf", CONDITIONAL_ORDER_GRANTED);
 
         final var previousCaseData = caseData();
-        previousCaseData.setApplicant1DocumentsUploaded(singletonList(doc1));
+        previousCaseData.getDocuments().setApplicant1DocumentsUploaded(singletonList(doc1));
 
         final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
         previousCaseDetails.setData(previousCaseData);
@@ -136,7 +136,7 @@ class SolicitorUpdateApplicationTest {
         previousCaseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         final var newCaseData = caseData();
-        newCaseData.setApplicant1DocumentsUploaded(singletonList(doc1));
+        newCaseData.getDocuments().setApplicant1DocumentsUploaded(singletonList(doc1));
 
         final CaseDetails<CaseData, State> newCaseDetails = new CaseDetails<>();
         newCaseDetails.setData(newCaseData);
@@ -148,8 +148,8 @@ class SolicitorUpdateApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorUpdateApplication.aboutToSubmit(newCaseDetails, previousCaseDetails);
 
-        assertThat(response.getData().getApplicant1DocumentsUploaded().size()).isEqualTo(1);
-        assertThat(response.getData().getApplicant1DocumentsUploaded().get(0).getValue()).isSameAs(doc1.getValue());
+        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().get(0).getValue()).isSameAs(doc1.getValue());
 
         verify(solicitorUpdateApplicationService).aboutToSubmit(newCaseDetails);
         verifyNoMoreInteractions(solicitorUpdateApplicationService);
