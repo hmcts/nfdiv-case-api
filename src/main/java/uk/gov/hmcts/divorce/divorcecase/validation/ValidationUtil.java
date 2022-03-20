@@ -44,7 +44,9 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant2().getLastName(), "Applicant2LastName"),
             notNull(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"),
             !caseData.getApplicant1().isOffline() ? notNull(caseData.getApplicant1().getGender(), "Applicant1Gender") : emptyList(),
-            !isBlank(caseData.getApplicant2().getEmail()) ? notNull(caseData.getApplicant2().getGender(), "Applicant2Gender") : emptyList(),
+            !isBlank(caseData.getApplicant2().getEmail()) && !caseData.isPaperCase()
+                ? notNull(caseData.getApplicant2().getGender(), "Applicant2Gender")
+                : emptyList(),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
             notNull(caseData.getApplicant1().getContactDetailsType(), "Applicant1ContactDetailsType"),
             hasStatementOfTruth(caseData.getApplication()),
