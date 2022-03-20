@@ -147,14 +147,6 @@ public class CaseData {
     private CaseDocuments documents = new CaseDocuments();
 
     @CCD(
-        label = "Applicant 2 Documents uploaded",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        access = {Applicant2Access.class}
-    )
-    private List<ListValue<DivorceDocument>> applicant2DocumentsUploaded;
-
-    @CCD(
         label = "RDC",
         hint = "Regional divorce unit",
         access = {DefaultAccess.class}

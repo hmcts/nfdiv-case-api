@@ -1,13 +1,12 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -36,6 +35,14 @@ public class CaseDocuments {
         access = {DefaultAccess.class}
     )
     private List<ListValue<DivorceDocument>> applicant1DocumentsUploaded;
+
+    @CCD(
+        label = "Applicant 2 Documents uploaded",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {Applicant2Access.class}
+    )
+    private List<ListValue<DivorceDocument>> applicant2DocumentsUploaded;
 
     public void sortApplicant1UploadedDocuments(List<ListValue<DivorceDocument>> previousDocuments) {
         if (isEmpty(previousDocuments)) {

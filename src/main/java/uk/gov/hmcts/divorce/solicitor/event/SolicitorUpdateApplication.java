@@ -74,7 +74,9 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
         final CaseDetails<CaseData, State> result = solicitorUpdateApplicationService.aboutToSubmit(details);
 
         //sort app1 documents in descending order so latest appears first
-        result.getData().getDocuments().sortApplicant1UploadedDocuments(beforeDetails.getData().getDocuments().getApplicant1DocumentsUploaded());
+        result.getData().getDocuments().sortApplicant1UploadedDocuments(
+            beforeDetails.getData().getDocuments().getApplicant1DocumentsUploaded()
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
