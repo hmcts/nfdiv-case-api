@@ -18,6 +18,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -90,7 +91,10 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
         allowCaseToBeSubmitted(application);
 
         //sort app1 documents in descending order so latest documents appears first
-        caseData.getDocuments().sortApplicant1UploadedDocuments(beforeDetails.getData().getDocuments().getApplicant1DocumentsUploaded());
+        caseData.getDocuments().setApplicant1DocumentsUploaded(sortByNewest(
+            beforeDetails.getData().getDocuments().getApplicant1DocumentsUploaded(),
+            caseData.getDocuments().getApplicant1DocumentsUploaded()
+        ));
 
         if (application.getDocumentUploadComplete().toBoolean()) {
             return transitionToSubmitted(details, caseData);

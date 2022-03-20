@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -50,9 +51,10 @@ public class CaseworkerUploadConfidentialDocument implements CCDConfig<CaseData,
 
         var caseData = details.getData();
 
-        caseData.getDocuments().sortConfidentialDocuments(
-            beforeDetails.getData().getDocuments().getConfidentialDocumentsUploaded()
-        );
+        caseData.getDocuments().setConfidentialDocumentsUploaded(sortByNewest(
+            beforeDetails.getData().getDocuments().getConfidentialDocumentsUploaded(),
+            caseData.getDocuments().getConfidentialDocumentsUploaded()
+        ));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

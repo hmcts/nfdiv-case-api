@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -22,8 +21,8 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.UUID;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.ADMIN_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
@@ -179,13 +178,10 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .documentType(CONDITIONAL_ORDER_REFUSAL)
             .build();
 
-        caseData.getDocuments().addToDocumentsGenerated(
-            ListValue
-                .<DivorceDocument>builder()
-                .id(UUID.randomUUID().toString())
-                .value(refusalConditionalOrderDoc)
-                .build()
-        );
+        caseData.getDocuments().setDocumentsGenerated(addDocumentToTop(
+            caseData.getDocuments().getDocumentsGenerated(),
+            refusalConditionalOrderDoc
+        ));
     }
 }
 
