@@ -180,7 +180,10 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
         }
 
-        if (application.getApplicant2ScreenHasMarriageBroken() != null && !application.getApplicant2ScreenHasMarriageBroken().toBoolean()) {
+        if (!data.getApplicationType().isSole()
+            && application.getApplicant2ScreenHasMarriageBroken() != null
+            && !application.getApplicant2ScreenHasMarriageBroken().toBoolean()
+        ) {
             errors.add("To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
         }
 
