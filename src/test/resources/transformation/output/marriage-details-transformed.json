@@ -3,7 +3,7 @@
   "Applicant2Name": "app2 fullname",
   "MarriedInUk": "Yes",
   "CertificateInEnglish": "Yes",
-  "CertifiedTranslation": null,
+  "CertifiedTranslation": "No",
   "CountryOfMarriage": null,
   "PlaceOfMarriage": "London",
   "Date": "1990-01-01",
