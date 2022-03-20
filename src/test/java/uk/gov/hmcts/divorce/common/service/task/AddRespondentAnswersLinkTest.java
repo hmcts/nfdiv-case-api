@@ -34,7 +34,7 @@ class AddRespondentAnswersLinkTest {
             .build();
 
         final CaseData caseData = caseData();
-        caseData.setDocumentsGenerated(singletonList(respondentAnswersListValue));
+        caseData.getDocuments().setDocumentsGenerated(singletonList(respondentAnswersListValue));
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

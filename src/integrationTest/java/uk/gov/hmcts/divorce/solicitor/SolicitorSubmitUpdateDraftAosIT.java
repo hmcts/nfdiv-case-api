@@ -18,6 +18,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -177,7 +178,7 @@ public class SolicitorSubmitUpdateDraftAosIT {
             .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
             .divorceUnit(Court.SERVICE_CENTRE)
-            .documentsGenerated(List.of(listValue))
+            .documents(CaseDocuments.builder().documentsGenerated(List.of(listValue)).build())
             .build();
     }
 

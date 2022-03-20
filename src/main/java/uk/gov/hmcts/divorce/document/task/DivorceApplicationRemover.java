@@ -26,11 +26,11 @@ public class DivorceApplicationRemover implements CaseTask {
 
         final var documentsExcludingApplication =
             draftApplicationRemovalService.removeDraftApplicationDocument(
-                caseData.getDocumentsGenerated(),
+                caseData.getDocuments().getDocumentsGenerated(),
                 caseId
             );
 
-        caseData.setDocumentsGenerated(documentsExcludingApplication);
+        caseData.getDocuments().setDocumentsGenerated(documentsExcludingApplication);
 
         log.info("Successfully removed application documents from case data for case id {}", caseId);
 

@@ -57,14 +57,14 @@ public class CaseworkerUploadConfidentialDocumentTest {
 
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.setConfidentialDocumentsUploaded(List.of(doc1, doc2));
+        caseData.getDocuments().setConfidentialDocumentsUploaded(List.of(doc1, doc2));
 
         updatedCaseDetails.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUploadConfidentialDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
-        List<ListValue<ConfidentialDivorceDocument>> actualDocuments = response.getData().getConfidentialDocumentsUploaded();
+        List<ListValue<ConfidentialDivorceDocument>> actualDocuments = response.getData().getDocuments().getConfidentialDocumentsUploaded();
         assertThat(actualDocuments.size()).isEqualTo(2);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc1.getValue());
         assertThat(actualDocuments.get(1).getValue()).isSameAs(doc2.getValue());
@@ -81,7 +81,7 @@ public class CaseworkerUploadConfidentialDocumentTest {
             getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004", "bailiff.pdf", ConfidentialDocumentsReceived.BAILIFF_SERVICE);
 
         final CaseData previousCaseData = caseData();
-        previousCaseData.setConfidentialDocumentsUploaded(List.of(doc1, doc2));
+        previousCaseData.getDocuments().setConfidentialDocumentsUploaded(List.of(doc1, doc2));
 
         previousCaseDetails.setData(previousCaseData);
 
@@ -90,14 +90,14 @@ public class CaseworkerUploadConfidentialDocumentTest {
 
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.setConfidentialDocumentsUploaded(List.of(doc1, doc2, doc3));
+        caseData.getDocuments().setConfidentialDocumentsUploaded(List.of(doc1, doc2, doc3));
 
         updatedCaseDetails.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUploadConfidentialDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
-        List<ListValue<ConfidentialDivorceDocument>> actualDocuments = response.getData().getConfidentialDocumentsUploaded();
+        List<ListValue<ConfidentialDivorceDocument>> actualDocuments = response.getData().getDocuments().getConfidentialDocumentsUploaded();
         assertThat(actualDocuments.size()).isEqualTo(3);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc3.getValue());
         assertThat(actualDocuments.get(1).getValue()).isSameAs(doc1.getValue());

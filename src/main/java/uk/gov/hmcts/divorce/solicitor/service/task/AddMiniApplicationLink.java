@@ -20,7 +20,7 @@ public class AddMiniApplicationLink implements CaseTask {
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
         final CaseData caseData = caseDetails.getData();
 
-        Stream.ofNullable(caseData.getDocumentsGenerated())
+        Stream.ofNullable(caseData.getDocuments().getDocumentsGenerated())
             .flatMap(Collection::stream)
             .map(ListValue::getValue)
             .filter(divorceDocument ->

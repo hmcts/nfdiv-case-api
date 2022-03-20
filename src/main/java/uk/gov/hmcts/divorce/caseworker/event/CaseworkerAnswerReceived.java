@@ -6,7 +6,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.caseworker.event.page.AnswerReceivedPaymentConfirmation;
 import uk.gov.hmcts.divorce.caseworker.event.page.AnswerReceivedPaymentSummary;
@@ -16,14 +15,13 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
@@ -91,12 +89,9 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
 
-        ListValue<DivorceDocument> d11Document = ListValue.<DivorceDocument>builder()
-            .id(String.valueOf(UUID.randomUUID()))
-            .value(caseData.getD11Document())
-            .build();
-
-        caseData.addToDocumentsUploaded(d11Document);
+        caseData.getDocuments().setDocumentsUploaded(
+            addDocumentToTop(caseData.getDocuments().getDocumentsUploaded(), caseData.getDocuments().getD11Document())
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

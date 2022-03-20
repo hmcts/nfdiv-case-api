@@ -28,6 +28,7 @@ import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdateApplicationService;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -74,7 +75,10 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
         final CaseDetails<CaseData, State> result = solicitorUpdateApplicationService.aboutToSubmit(details);
 
         //sort app1 documents in descending order so latest appears first
-        result.getData().sortApplicant1UploadedDocuments(beforeDetails.getData().getApplicant1DocumentsUploaded());
+        result.getData().getDocuments().setApplicant1DocumentsUploaded(sortByNewest(
+            beforeDetails.getData().getDocuments().getApplicant1DocumentsUploaded(),
+            result.getData().getDocuments().getApplicant1DocumentsUploaded()
+        ));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
