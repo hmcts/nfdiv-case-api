@@ -59,7 +59,7 @@ public class CaseworkerCorrectPaperCase implements CCDConfig<CaseData, State, Us
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData caseData = details.getData();
-        caseData.setWarnings(emptyList());
+        caseData.getBulkScanMetaInfo().setWarnings(emptyList());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

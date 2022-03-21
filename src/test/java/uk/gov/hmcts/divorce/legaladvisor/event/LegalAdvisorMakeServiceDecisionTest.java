@@ -145,7 +145,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .build();
 
 
-        assertThat(response.getData().getDocumentsGenerated())
+        assertThat(response.getData().getDocuments().getDocumentsGenerated())
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
@@ -210,7 +210,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .build();
 
 
-        assertThat(response.getData().getDocumentsGenerated())
+        assertThat(response.getData().getDocuments().getDocumentsGenerated())
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
@@ -273,7 +273,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .build();
 
 
-        assertThat(response.getData().getDocumentsGenerated())
+        assertThat(response.getData().getDocuments().getDocumentsGenerated())
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
@@ -366,7 +366,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .documentType(DocumentType.DISPENSE_WITH_SERVICE_REFUSED)
             .build();
 
-        assertThat(response.getData().getDocumentsGenerated())
+        assertThat(response.getData().getDocuments().getDocumentsGenerated())
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
@@ -428,7 +428,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .documentType(DocumentType.DEEMED_SERVICE_REFUSED)
             .build();
 
-        assertThat(response.getData().getDocumentsGenerated())
+        assertThat(response.getData().getDocuments().getDocumentsGenerated())
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 

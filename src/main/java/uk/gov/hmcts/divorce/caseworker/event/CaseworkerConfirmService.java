@@ -10,11 +10,13 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitConfirmService;
 
+import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -46,7 +48,9 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
             .page("caseworkerConfirmService")
             .pageLabel("Confirm Service")
-            .optional(CaseData::getDocumentsUploaded)
+            .complex(CaseData::getDocuments)
+                .optional(CaseDocuments::getDocumentsUploaded)
+                .done()
             .label("applicantLabel", "Name of Applicant - ${applicant1FirstName} ${applicant1LastName}")
             .label("respondentLabel", "Name of Respondent - ${applicant2FirstName} ${applicant2LastName}")
             .complex(CaseData::getApplication)
@@ -72,8 +76,10 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
 
-        log.info("Caseworker confirm service about to submit callback invoked with service method {}",
-            caseData.getApplication().getSolServiceMethod().toString());
+        var solServiceMethod = !isNull(caseData.getApplication().getSolServiceMethod())
+            ? caseData.getApplication().getSolServiceMethod().toString()
+            : null;
+        log.info("Caseworker confirm service about to submit callback invoked with service method {}", solServiceMethod);
 
         final CaseDetails<CaseData, State> updateDetails = solicitorSubmitConfirmService.submitConfirmService(details);
 

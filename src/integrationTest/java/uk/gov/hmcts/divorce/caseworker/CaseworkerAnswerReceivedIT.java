@@ -16,6 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -88,8 +89,11 @@ public class CaseworkerAnswerReceivedIT {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documentsUploaded(new ArrayList<>())
-            .d11Document(d11)
+            .documents(CaseDocuments.builder()
+                .documentsUploaded(new ArrayList<>())
+                .d11Document(d11)
+                .build()
+            )
             .alternativeService(
                 AlternativeService.builder()
                     .servicePaymentFee(

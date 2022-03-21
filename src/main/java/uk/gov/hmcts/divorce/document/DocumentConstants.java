@@ -32,6 +32,7 @@ public final class DocumentConstants {
 
     public static final String NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME = "noticeOfProceedings";
     public static final String NOTICE_OF_PROCEEDINGS_TEMPLATE_ID = "NOTICE_OF_PROCEEDINGS";
+    public static final String NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID = "NOTICE_OF_PROCEEDINGS_RESP";
     public static final String NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID = "NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP";
 
     public static final String JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID = "JOINT_NOTICE_OF_PROCEEDINGS";
@@ -75,6 +76,7 @@ public final class DocumentConstants {
     public static final String AOS_OVERDUE_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED";
 
     public static final String COVERSHEET_APPLICANT2 = "COVERSHEET_APPLICANT2";
+    public static final String COVERSHEET_APPLICANT2_SOLICITOR = "COVERSHEET_APPLICANT2_SOLICITOR";
 
     private DocumentConstants() {
     }

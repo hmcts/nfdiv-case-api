@@ -101,7 +101,8 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         CaseData data = details.getData();
 
-        data.getDocumentsGenerated()
+        data.getDocuments()
+            .getDocumentsGenerated()
             .stream()
             .filter(document -> APPLICATION.equals(document.getValue().getDocumentType()))
             .findFirst()

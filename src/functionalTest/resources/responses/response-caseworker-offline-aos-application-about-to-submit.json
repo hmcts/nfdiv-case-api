@@ -96,6 +96,18 @@
           "documentFileName": "${json-unit.any-string}",
           "documentType": "aos"
         }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "noticeOfProceedings",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
       }
     ],
     "dueDate": "${json-unit.any-string}",

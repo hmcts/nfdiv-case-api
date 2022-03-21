@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -23,10 +22,10 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.UUID;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -185,12 +184,9 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .documentType(documentType)
             .build();
 
-        caseDataCopy.addToDocumentsGenerated(
-            ListValue
-                .<DivorceDocument>builder()
-                .id(UUID.randomUUID().toString())
-                .value(deemedOrDispensedDoc)
-                .build()
-        );
+        caseDataCopy.getDocuments().setDocumentsGenerated(addDocumentToTop(
+            caseDataCopy.getDocuments().getDocumentsGenerated(),
+            deemedOrDispensedDoc
+        ));
     }
 }

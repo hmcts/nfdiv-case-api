@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.common.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.caseworker.service.print.ApplicationPrinter;
 import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -53,9 +52,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     @Autowired
     private NoticeOfProceedingsPrinter noticeOfProceedingsPrinter;
-
-    @Autowired
-    private ApplicationPrinter applicationPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
@@ -141,13 +137,17 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
 
-        log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
+        if (caseData.getApplicationType().isSole()) {
+            noticeOfProceedingsPrinter.sendLetterToApplicant2Solicitor(caseData, caseId);
+        }
 
         final String email = caseData.getApplicant2().getSolicitor().getEmail();
 
         if (caseData.getApplicationType().isSole()
             && !caseData.getApplication().isSolicitorServiceMethod()
             && isNotBlank(email)) {
+
+            log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
             notificationService.sendEmail(
                 email,
                 RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
@@ -159,20 +159,14 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
-        log.info("Sending Notice of Proceedings letter to applicant 1 for case : {}", caseId);
+        log.info("Sending Notice of Proceedings letter and copy of Divorce Application to applicant 1 for case : {}", caseId);
         noticeOfProceedingsPrinter.sendLetterToApplicant1(caseData, caseId);
-
-        log.info("Sending copy of Divorce Application to applicant 1 for case : {}", caseId);
-        applicationPrinter.sendDivorceApplicationPdf(caseData, caseId);
     }
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
-        log.info("Sending Notice of Proceedings letter to applicant 2 for case : {}", caseId);
+        log.info("Sending Notice of Proceedings letter and copy of Divorce Application to applicant 2 for case : {}", caseId);
         noticeOfProceedingsPrinter.sendLetterToApplicant2(caseData, caseId);
-
-        log.info("Sending copy of Divorce Application to applicant 2 for case : {}", caseId);
-        applicationPrinter.sendDivorceApplicationPdf(caseData, caseId);
     }
 
     private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id) {

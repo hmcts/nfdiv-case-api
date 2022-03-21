@@ -96,6 +96,42 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
+    public void shouldNotReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForSoleApplication() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).isEmpty();
+    }
+
+    @Test
+    public void shouldReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForJointApplication() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotEmpty();
+        assertThat(response.getErrors())
+            .contains("To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
+    }
+
+    @Test
     public void shouldSetCaseLabelsForSoleDivorce() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setDivorceOrDissolution(DIVORCE);

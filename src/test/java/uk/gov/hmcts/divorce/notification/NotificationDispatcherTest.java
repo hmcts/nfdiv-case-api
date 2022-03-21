@@ -108,6 +108,7 @@ class NotificationDispatcherTest {
         final long caseId = 1L;
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder()
+                .email("app2@email.com")
                 .solicitorRepresented(NO)
                 .build())
             .build();
