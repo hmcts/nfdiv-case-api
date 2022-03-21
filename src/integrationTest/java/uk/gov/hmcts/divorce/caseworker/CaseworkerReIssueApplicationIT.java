@@ -377,7 +377,9 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation");
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding respondent")
+            .thenReturn("Respondent Invitation");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -496,7 +498,10 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding respondent")
+            .thenReturn("Divorce application")
+            .thenReturn("Respondent Invitation");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
