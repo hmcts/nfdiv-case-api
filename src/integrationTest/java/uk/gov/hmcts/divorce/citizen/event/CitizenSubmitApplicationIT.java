@@ -234,7 +234,7 @@ public class CitizenSubmitApplicationIT {
             .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.getName())))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().json(expectedCcdAboutToStartCallbackErrorForApplicant2OfflineJointApplicationResponse()));
+            .andExpect(content().json(expectedCcdAboutToSubmitCallbackErrorForApplicant2OfflineJointApplicationResponse()));
     }
 
     private String expectedCcdAboutToStartCallbackErrorResponse() throws IOException {
@@ -272,9 +272,9 @@ public class CitizenSubmitApplicationIT {
         return new String(Files.readAllBytes(invalidCaseDataJsonFile.toPath()));
     }
 
-    private String expectedCcdAboutToStartCallbackErrorForApplicant2OfflineJointApplicationResponse() throws IOException {
+    private String expectedCcdAboutToSubmitCallbackErrorForApplicant2OfflineJointApplicationResponse() throws IOException {
         File invalidCaseDataJsonFile = getFile(
-            "classpath:wiremock/responses/applicant-1-about-to-start-joint-application-applicant-2-offline-errors.json");
+            "classpath:wiremock/responses/applicant-1-about-to-submit-joint-application-applicant-2-offline-errors.json");
 
         return new String(Files.readAllBytes(invalidCaseDataJsonFile.toPath()));
     }
