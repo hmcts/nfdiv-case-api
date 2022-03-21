@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -88,16 +89,18 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
 
         notificationDispatcher.send(applicant2ApprovedNotification, data, details.getId());
 
-        generateJointApplication(details, data);
+        if (data.getApplicationType() == JOINT_APPLICATION && data.getApplicant1().isRepresented()) {
+            generateJointApplication(details, data);
 
-        data.getDocuments()
-            .getDocumentsGenerated()
-            .stream()
-            .filter(document -> APPLICATION.equals(document.getValue().getDocumentType()))
-            .findFirst()
-            .ifPresent(draftDivorceApplication ->
-                data.getApplication().setApplicant2SolicitorAnswersLink(draftDivorceApplication.getValue().getDocumentLink())
-            );
+            data.getDocuments()
+                .getDocumentsGenerated()
+                .stream()
+                .filter(document -> APPLICATION.equals(document.getValue().getDocumentType()))
+                .findFirst()
+                .ifPresent(draftDivorceApplication ->
+                    data.getApplication().setApplicant2SolicitorAnswersLink(draftDivorceApplication.getValue().getDocumentLink())
+                );
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

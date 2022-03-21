@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
@@ -34,10 +33,14 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_2_ANSWERS;
@@ -116,13 +119,13 @@ class Applicant2ApproveTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
         setValidCaseData(caseData);
-        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
             Solicitor.builder()
                 .address("App1 Sol Address")
                 .build()
         );
-        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder()
                 .address("App2 Sol Address")
@@ -144,17 +147,18 @@ class Applicant2ApproveTest {
     }
 
     @Test
-    void shouldRenderDocument() {
+    void shouldRenderDocumentIfJointApplicationAndApplicant1IsRepresented() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Map<String, Object> templateContent = new HashMap<>();
 
         CaseData caseData = CaseData.builder().build();
         setValidCaseData(caseData);
-        caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
-        caseData.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
-        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
-        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YES);
+        caseData.getApplication().getApplicant2HelpWithFees().setNeedHelp(NO);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
 
         final List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
         caseData.getDocuments().setDocumentsGenerated(documentsGenerated);
@@ -179,6 +183,51 @@ class Applicant2ApproveTest {
             );
     }
 
+    @Test
+    void shouldNotRenderDocumentIfNotJointApplicationAndApplicant1IsRepresented() {
+        final long caseId = 2L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        CaseData caseData = CaseData.builder().build();
+        setValidCaseData(caseData);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YES);
+        caseData.getApplication().getApplicant2HelpWithFees().setNeedHelp(NO);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+        caseDetails.setState(State.AwaitingApplicant2Response);
+
+        applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
+
+        verifyNoInteractions(caseDataDocumentService);
+    }
+
+    @Test
+    void shouldNotRenderDocumentIfJointApplicationAndApplicant1IsNotRepresented() {
+        final long caseId = 2L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        CaseData caseData = CaseData.builder().build();
+        setValidCaseData(caseData);
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YES);
+        caseData.getApplication().getApplicant2HelpWithFees().setNeedHelp(NO);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+        caseDetails.setState(State.AwaitingApplicant2Response);
+
+        applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
+
+        verifyNoInteractions(caseDataDocumentService);
+    }
+
     private CaseData setValidCaseData(CaseData caseData) {
         caseData.setApplicant1(getApplicant());
         caseData.setApplicant2(getApplicant(MALE));
@@ -196,16 +245,16 @@ class Applicant2ApproveTest {
         );
 
         caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
-        caseData.getApplication().setApplicant2StatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
         caseData.getApplication().getMarriageDetails().setApplicant1Name("Full name");
         caseData.getApplication().getMarriageDetails().setApplicant2Name("Full name");
 
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
-        caseData.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.YES);
+        caseData.getApplication().setApplicant2ConfirmApplicant1Information(YES);
 
         Jurisdiction jurisdiction = new Jurisdiction();
         jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
-        jurisdiction.setBothLastHabituallyResident(YesOrNo.YES);
+        jurisdiction.setBothLastHabituallyResident(YES);
         caseData.getApplication().setJurisdiction(jurisdiction);
         return caseData;
     }
