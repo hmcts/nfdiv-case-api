@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 public class SolAboutApplicant2 implements CcdPageConfiguration {
@@ -25,7 +26,7 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                 .mandatoryWithLabel(Applicant::getLastName,
                     "${labelContentApplicant2UC}'s last name")
                 .mandatory(Applicant::getNameDifferentToMarriageCertificate,
-                    null,
+                    "applicationType=\"soleApplication\"",
                     null,
                     "Is ${labelContentTheApplicant2}'s name different from the name on the "
                         + "${labelContentMarriageOrCivilPartnership} certificate?",
