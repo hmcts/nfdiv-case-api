@@ -8,27 +8,46 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class NoticeOfProceedingsPrinterTest {
+
+    @Mock
+    private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
     private BulkPrintService bulkPrintService;
@@ -47,10 +66,20 @@ public class NoticeOfProceedingsPrinterTest {
                 .build())
             .build();
 
+        final ListValue<DivorceDocument> applicant1ApplicationDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().build())
             .applicant2(Applicant.builder().build())
-            .documents(CaseDocuments.builder().documentsGenerated(singletonList(applicant1NopDocument)).build())
+            .documents(
+                CaseDocuments.builder()
+                    .documentsGenerated(asList(applicant1NopDocument, applicant1ApplicationDocument))
+                    .build()
+            )
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
@@ -61,8 +90,9 @@ public class NoticeOfProceedingsPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant1-notice-of-proceedings");
-        assertThat(print.getLetters().size()).isEqualTo(1);
+        assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(applicant1NopDocument.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(applicant1ApplicationDocument.getValue());
     }
 
     @Test
@@ -71,6 +101,12 @@ public class NoticeOfProceedingsPrinterTest {
             .value(DivorceDocument.builder()
                 .documentType(NOTICE_OF_PROCEEDINGS)
                 .documentDateAdded(LocalDate.now())
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> applicant1ApplicationDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
                 .build())
             .build();
 
@@ -90,7 +126,12 @@ public class NoticeOfProceedingsPrinterTest {
                 .offline(YES)
                 .build()
             )
-            .documents(CaseDocuments.builder().documentsGenerated(asList(applicant2NopDocument, applicant1NopDocument)).build())
+            .documents(
+                CaseDocuments.builder()
+                    .documentsGenerated(
+                        asList(applicant2NopDocument, applicant1NopDocument, applicant1ApplicationDocument)
+                    )
+                    .build())
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
@@ -101,8 +142,9 @@ public class NoticeOfProceedingsPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant1-notice-of-proceedings");
-        assertThat(print.getLetters().size()).isEqualTo(1);
+        assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(applicant1NopDocument.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(applicant1ApplicationDocument.getValue());
     }
 
     @Test
@@ -123,10 +165,20 @@ public class NoticeOfProceedingsPrinterTest {
                 .build())
             .build();
 
+        final ListValue<DivorceDocument> applicant2ApplicationDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().build())
             .applicant2(Applicant.builder().build())
-            .documents(CaseDocuments.builder().documentsGenerated(singletonList(applicant2NopDocument)).build())
+            .documents(
+                CaseDocuments.builder()
+                    .documentsGenerated(asList(applicant2NopDocument, applicant2ApplicationDocument))
+                    .build()
+            )
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
@@ -137,8 +189,9 @@ public class NoticeOfProceedingsPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant2-notice-of-proceedings");
-        assertThat(print.getLetters().size()).isEqualTo(1);
+        assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(applicant2NopDocument.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(applicant2ApplicationDocument.getValue());
     }
 
     @Test
@@ -147,6 +200,132 @@ public class NoticeOfProceedingsPrinterTest {
         final CaseData caseData = CaseData.builder().build();
 
         noticeOfProceedingsPrinter.sendLetterToApplicant2(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(bulkPrintService);
+    }
+
+    @Test
+    void shouldPrintApplicant2SolicitorNoticeOfProceedingWithoutD10IfDocumentsArePresent() {
+        final ListValue<DivorceDocument> applicant2NopDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NOTICE_OF_PROCEEDINGS)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> applicant2ApplicationDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().build())
+            .applicant2(Applicant.builder()
+                .languagePreferenceWelsh(NO)
+                .solicitorRepresented(YES)
+                .solicitor(
+                    Solicitor.builder()
+                        .name("app 2 sol")
+                        .address("The avenue")
+                        .build()
+                )
+                .build())
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(asList(applicant2NopDocument, applicant2ApplicationDocument))
+                .build()
+            )
+            .build();
+
+        Map<String, Object> templateContent = new HashMap<>();
+
+        templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+        templateContent.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+        templateContent.put(SOLICITOR_ADDRESS, caseData.getApplicant2().getSolicitor().getAddress());
+
+        doNothing()
+            .when(caseDataDocumentService).renderDocumentAndUpdateCaseData(
+                caseData,
+                COVERSHEET,
+                templateContent,
+                TEST_CASE_ID,
+                COVERSHEET_APPLICANT2_SOLICITOR,
+                caseData.getApplicant2().getLanguagePreference(),
+                COVERSHEET_DOCUMENT_NAME);
+        when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(true))).thenReturn(UUID.randomUUID());
+
+        noticeOfProceedingsPrinter.sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("applicant2-solicitor-notice-of-proceedings-with-d10");
+        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(applicant2NopDocument.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(applicant2ApplicationDocument.getValue());
+    }
+
+    @Test
+    void shouldPrintApplicant2SolicitorNoticeOfProceedingWithD10IfDocumentsArePresent() {
+        final ListValue<DivorceDocument> applicant2NopDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NOTICE_OF_PROCEEDINGS)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> applicant2ApplicationDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().build())
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(YES)
+                .solicitor(
+                    Solicitor.builder()
+                        .name("app 2 sol")
+                        .address("The avenue")
+                        .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                            .build())
+                        .build()
+                )
+                .build())
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(asList(applicant2NopDocument, applicant2ApplicationDocument))
+                .build()
+            )
+            .build();
+
+        when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
+
+        noticeOfProceedingsPrinter.sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("applicant2-solicitor-notice-of-proceedings");
+        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(applicant2NopDocument.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(applicant2ApplicationDocument.getValue());
+    }
+
+    @Test
+    void shouldNotPrintApplicant2SolicitorNoticeOfProceedingIfNotPresent() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().build())
+            .applicant2(Applicant.builder()
+                .solicitor(
+                    Solicitor.builder()
+                        .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                            .build())
+                        .build()
+                )
+                .build())
+            .build();
+
+        noticeOfProceedingsPrinter.sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(bulkPrintService);
     }

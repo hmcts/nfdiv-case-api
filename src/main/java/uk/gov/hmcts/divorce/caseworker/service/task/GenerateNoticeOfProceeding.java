@@ -15,6 +15,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
 
@@ -37,16 +38,23 @@ public class GenerateNoticeOfProceeding implements CaseTask {
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
+        final boolean isSoleApplication = caseData.getApplicationType().isSole();
 
-        boolean isSoleApplication = caseData.getApplicationType().isSole();
+        if (isSoleApplication) {
+            generateSoleNoticeOfProceedings(caseData, caseId);
+        } else {
+            generateJointNoticeOfProceedings(caseData, caseId);
+        }
 
-        boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
-        boolean isApplicant1Offline = caseData.getApplicant1().isOffline();
+        return caseDetails;
+    }
 
-        boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
-        boolean isApplicant2Offline = isBlank(caseData.getApplicant2().getEmail());
+    private void generateSoleNoticeOfProceedings(CaseData caseData, Long caseId) {
 
-        if (isSoleApplication && !isApplicant1Represented) {
+        final boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
+        final boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
+
+        if (!isApplicant1Represented) {
 
             String templateId = caseData.getApplicant2().isBasedOverseas()
                 ? NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID
@@ -66,7 +74,32 @@ public class GenerateNoticeOfProceeding implements CaseTask {
 
         }
 
-        if (!isSoleApplication && (!isApplicant1Represented || isApplicant1Offline)) {
+        if (isApplicant2Represented) {
+
+            log.info("Generating notice of proceedings for respondent on sole case id {} ", caseId);
+
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                NOTICE_OF_PROCEEDINGS,
+                templateContent.apply(caseData, caseId),
+                caseId,
+                NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID,
+                caseData.getApplicant1().getLanguagePreference(),
+                NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME
+            );
+
+        }
+    }
+
+    private void generateJointNoticeOfProceedings(CaseData caseData, Long caseId) {
+
+        final boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
+        final boolean isApplicant1Offline = caseData.getApplicant1().isOffline();
+
+        final boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
+        final boolean isApplicant2Offline = isBlank(caseData.getApplicant2().getEmail());
+
+        if (!isApplicant1Represented || isApplicant1Offline) {
 
             log.info("Generating applicant 1 notice of proceedings for joint case id {} ", caseId);
 
@@ -81,7 +114,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
 
         }
 
-        if (!isSoleApplication && (!isApplicant2Represented || isApplicant2Offline)) {
+        if (!isApplicant2Represented || isApplicant2Offline) {
 
             log.info("Generating applicant 2 notice of proceedings for joint case id {} ", caseId);
 
@@ -95,7 +128,5 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
 
         }
-
-        return caseDetails;
     }
 }
