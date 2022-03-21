@@ -196,9 +196,6 @@ class Applicant2ApproveTest {
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitorRepresented(YES);
 
-        final List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
-        caseData.setDocumentsGenerated(documentsGenerated);
-
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
         caseDetails.setState(State.AwaitingApplicant2Response);
@@ -221,9 +218,6 @@ class Applicant2ApproveTest {
         caseData.getApplication().getApplicant2HelpWithFees().setNeedHelp(NO);
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant2().setSolicitorRepresented(YES);
-
-        final List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
-        caseData.setDocumentsGenerated(documentsGenerated);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
