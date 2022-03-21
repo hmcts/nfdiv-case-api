@@ -66,7 +66,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .done()
                 .label("Label-CorrectApplicant1FODetails",
                     "### ${labelContentApplicantsOrApplicant1s} financial order details")
-                .mandatory(Applicant::getFinancialOrder)
+                .mandatoryWithLabel(Applicant::getFinancialOrder,
+                    "Does ${labelContentTheApplicantOrApplicant1} wish to apply for a financial order?")
                 .mandatory(Applicant::getFinancialOrdersFor, "applicant1FinancialOrder=\"Yes\"")
                 .label("Label-CorrectApplicant1LegalProceedingsDetails",
                     "### ${labelContentApplicantsOrApplicant1s} legal proceedings details")
