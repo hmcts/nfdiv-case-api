@@ -112,8 +112,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
         serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
 
-        boolean isServiceApplicationGranted = serviceApplication.getServiceApplicationGranted().toBoolean();
-        if (isServiceApplicationGranted) {
+        if (serviceApplication.isApplicationGranted()) {
             log.info("Service application granted for case id {}", details.getId());
             endState = application.getIssueDate() == null ? Submitted : Holding;
 
@@ -132,7 +131,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     DocumentType.DEEMED_AS_SERVICE_GRANTED,
                     SERVICE_ORDER_TEMPLATE_ID);
             }
-        } else {
+        } else if (serviceApplication.isApplicationRefused()) {
             if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
                 generateAndSetOrderToDeemedOrDispenseDocument(
                     caseDataCopy,

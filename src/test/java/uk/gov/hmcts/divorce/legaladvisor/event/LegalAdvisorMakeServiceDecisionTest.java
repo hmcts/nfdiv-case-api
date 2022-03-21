@@ -30,6 +30,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -433,5 +434,29 @@ class LegalAdvisorMakeServiceDecisionTest {
             .containsExactly(deemedOrDispensedDoc);
 
         verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
+    }
+
+    @Test
+    void shouldNotCallCaseDataDocumentServiceWhenServiceApplicationGrantedIsNull() {
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .receivedServiceApplicationDate(LocalDate.now(clock))
+                    .serviceApplicationGranted(null)
+                    .alternativeServiceType(DEEMED)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        verifyNoInteractions(caseDataDocumentService);
     }
 }

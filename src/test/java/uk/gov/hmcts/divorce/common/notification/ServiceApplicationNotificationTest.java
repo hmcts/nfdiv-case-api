@@ -11,9 +11,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
@@ -191,6 +193,13 @@ class ServiceApplicationNotificationTest {
         );
     }
 
+    @Test
+    void getEmailTemplateShouldThrowErrorIfServiceApplicationGrantedIsNull() {
+        assertThatExceptionOfType(NotificationTemplateException.class)
+            .isThrownBy(() -> sendNotification(BAILIFF, DIVORCE, null))
+            .withMessage("Notification failed with missing field 'serviceApplicationGranted' for Case Id: 1234567890123456");
+    }
+
     private void sendNotification(AlternativeServiceType alternativeServiceType, DivorceOrDissolution divorceOrDissolution,
                                   YesOrNo applicationGranted) {
 
@@ -204,8 +213,10 @@ class ServiceApplicationNotificationTest {
             templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         }
 
-        when(commonContent.mainTemplateVars(data, ID, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(templateVars);
+        if (applicationGranted != null) {
+            when(commonContent.mainTemplateVars(data, ID, data.getApplicant1(), data.getApplicant2()))
+                .thenReturn(templateVars);
+        }
 
         serviceApplicationNotification.sendToApplicant1(data, ID);
     }

@@ -60,4 +60,35 @@ class AlternativeServiceUtilTest {
         assertThat(caseData.getAlternativeServiceOutcomes()).isNull();
     }
 
+    @Test
+    public void assertIsApplicationGrantedYes() {
+        final CaseData caseData = caseData();
+        caseData.getAlternativeService().setServiceApplicationGranted(YesOrNo.YES);
+
+        assertThat(caseData.getAlternativeService().isApplicationGranted()).isTrue();
+    }
+
+    @Test
+    public void assertIsApplicationGrantedNo() {
+        final CaseData caseData = caseData();
+        caseData.getAlternativeService().setServiceApplicationGranted(YesOrNo.NO);
+
+        assertThat(caseData.getAlternativeService().isApplicationGranted()).isFalse();
+    }
+
+    @Test
+    public void assertIsApplicationRefusedYes() {
+        final CaseData caseData = caseData();
+        caseData.getAlternativeService().setServiceApplicationGranted(YesOrNo.YES);
+
+        assertThat(caseData.getAlternativeService().isApplicationRefused()).isFalse();
+    }
+
+    @Test
+    public void assertIsApplicationRefusedNo() {
+        final CaseData caseData = caseData();
+        caseData.getAlternativeService().setServiceApplicationGranted(YesOrNo.NO);
+
+        assertThat(caseData.getAlternativeService().isApplicationRefused()).isTrue();
+    }
 }

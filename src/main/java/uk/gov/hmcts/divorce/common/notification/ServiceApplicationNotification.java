@@ -10,12 +10,16 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import java.util.Map;
 
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_BAILIFF_SERVICE;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DEEMED_SERVICE;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DISPENSE_SERVICE;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ConditionalOrderPronouncedNotification.MISSING_FIELD_MESSAGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
@@ -40,7 +44,7 @@ public class ServiceApplicationNotification implements ApplicantNotification {
     public void sendToApplicant1(final CaseData caseData, final Long id) {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            getEmailTemplate(caseData.getAlternativeService()),
+            getEmailTemplate(caseData.getAlternativeService(), id),
             getServiceApplicationVars(caseData, id),
             caseData.getApplicant1().getLanguagePreference());
     }
@@ -59,10 +63,12 @@ public class ServiceApplicationNotification implements ApplicantNotification {
         return templateVars;
     }
 
-    private EmailTemplateName getEmailTemplate(final AlternativeService alternativeService) {
-        boolean isServiceApplicationGranted = alternativeService.getServiceApplicationGranted().toBoolean();
+    private EmailTemplateName getEmailTemplate(final AlternativeService alternativeService, final Long caseId) {
+        if (isNull(alternativeService.getServiceApplicationGranted())) {
+            throw new NotificationTemplateException(format(MISSING_FIELD_MESSAGE, "serviceApplicationGranted", caseId));
+        }
 
-        if (isServiceApplicationGranted) {
+        if (alternativeService.isApplicationGranted()) {
             log.info(LOGGER_MESSAGE, alternativeService.getAlternativeServiceType().getLabel(), "granted");
             return SERVICE_APPLICATION_GRANTED;
         } else {
