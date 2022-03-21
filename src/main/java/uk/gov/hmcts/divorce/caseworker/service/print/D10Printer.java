@@ -51,8 +51,7 @@ public class D10Printer {
         );
 
         final List<Letter> coversheetLetters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(),
-            COVERSHEET);
+            caseData.getDocuments().getDocumentsGenerated(), COVERSHEET);
 
         final Letter noticeOfProceedingsLetter = firstElement(coversheetLetters);
 

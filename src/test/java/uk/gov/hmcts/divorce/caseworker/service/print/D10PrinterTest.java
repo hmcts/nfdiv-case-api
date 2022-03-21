@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -58,7 +59,7 @@ public class D10PrinterTest {
                         .address("The street")
                         .build())
                 .build())
-            .documentsGenerated(singletonList(coversheet))
+            .documents(CaseDocuments.builder().documentsGenerated(singletonList(coversheet)).build())
             .build();
 
         when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(true))).thenReturn(UUID.randomUUID());

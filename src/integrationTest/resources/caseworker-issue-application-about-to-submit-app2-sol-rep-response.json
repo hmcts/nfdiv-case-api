@@ -64,7 +64,6 @@
       }
     }],
     "applicant2InviteEmailAddress": "applicant2@test.com",
-    "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [{
       "id": "Divorce application",
       "value": {
@@ -91,16 +90,16 @@
       "id": "Respondent Invitation",
       "value": {
         "documentLink": {
-          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/NOTICE_OF_PROCEEDINGS_RESP",
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
           "document_filename": "noticeOfProceedings.pdf",
-          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/NOTICE_OF_PROCEEDINGS_RESP/binary"
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
         },
         "documentFileName": "noticeOfProceedings.pdf",
         "documentType": "noticeOfProceedings"
       }
     }],
     "dueDate": "2021-07-03",
-    "dataVersion": 1,
+     "dataVersion": 1,
     "warnings": []
   },
   "state": "AwaitingAos"

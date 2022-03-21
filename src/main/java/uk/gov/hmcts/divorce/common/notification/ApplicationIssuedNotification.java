@@ -148,14 +148,14 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         if (caseData.getApplicationType().isSole()) {
             if (isNull(caseData.getApplicant2().getSolicitor().getOrganisationPolicy())) {
-                log.info("Sending copy of D10 and coversheet to applicant 2 solicitor for case: {}", caseId);
+                log.info("Sending copy of D10 and coversheet to respondent solicitor for case: {}", caseId);
                 d10Printer.printD10WithCoversheet(caseData, caseId);
             }
 
-            log.info("Sending Notice of Proceedings letter to applicant 2 solicitor for case: {}", caseId);
+            log.info("Sending Notice of Proceedings letter to respondent solicitor for case: {}", caseId);
             noticeOfProceedingsPrinter.sendLetterToApplicant2Solicitor(caseData, caseId);
 
-            log.info("Sending copy of Divorce Application to applicant 2 solicitor for case: {}", caseId);
+            log.info("Sending copy of Divorce Application to respondent solicitor for case: {}", caseId);
             applicationPrinter.sendDivorceApplicationPdf(caseData, caseId);
         }
 

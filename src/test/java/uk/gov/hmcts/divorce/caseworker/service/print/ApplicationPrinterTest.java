@@ -46,7 +46,6 @@ public class ApplicationPrinterTest {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
-            .documentsGenerated(singletonList(applicationDocument))
             .documents(CaseDocuments.builder().documentsGenerated(singletonList(applicationDocument)).build())
             .build();
 

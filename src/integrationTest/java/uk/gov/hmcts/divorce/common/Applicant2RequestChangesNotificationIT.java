@@ -75,6 +75,7 @@ public class Applicant2RequestChangesNotificationIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant2() throws Exception {
         CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.NO);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Some issues");
 
@@ -104,6 +105,7 @@ public class Applicant2RequestChangesNotificationIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1Solicitor() throws Exception {
         CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.NO);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Some issues");
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);

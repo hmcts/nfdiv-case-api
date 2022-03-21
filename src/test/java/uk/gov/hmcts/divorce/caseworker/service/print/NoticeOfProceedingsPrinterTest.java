@@ -162,7 +162,7 @@ public class NoticeOfProceedingsPrinterTest {
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().build())
             .applicant2(Applicant.builder().build())
-            .documentsGenerated(singletonList(applicant2NopDocument))
+            .documents(CaseDocuments.builder().documentsGenerated(singletonList(applicant2NopDocument)).build())
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());

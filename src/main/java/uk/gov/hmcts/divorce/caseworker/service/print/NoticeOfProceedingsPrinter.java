@@ -88,7 +88,7 @@ public class NoticeOfProceedingsPrinter {
 
     public void sendLetterToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
         final List<Letter> letters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS);
+            caseData.getDocuments().getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS);
 
         final Letter noticeOfProceedingsLetter = firstElement(letters);
 
