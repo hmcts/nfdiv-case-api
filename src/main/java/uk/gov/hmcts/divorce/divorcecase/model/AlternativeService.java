@@ -108,9 +108,4 @@ public class AlternativeService {
     public boolean isApplicationGranted() {
         return YesOrNo.YES.equals(serviceApplicationGranted);
     }
-
-    @JsonIgnore
-    public boolean isApplicationRefused() {
-        return YesOrNo.NO.equals(serviceApplicationGranted);
-    }
 }

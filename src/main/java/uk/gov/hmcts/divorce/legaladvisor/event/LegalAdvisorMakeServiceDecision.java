@@ -131,7 +131,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     DocumentType.DEEMED_AS_SERVICE_GRANTED,
                     SERVICE_ORDER_TEMPLATE_ID);
             }
-        } else if (serviceApplication.isApplicationRefused()) {
+        } else {
             if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
                 generateAndSetOrderToDeemedOrDispenseDocument(
                     caseDataCopy,
