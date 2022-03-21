@@ -5,8 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.caseworker.service.print.ApplicationPrinter;
-import uk.gov.hmcts.divorce.caseworker.service.print.D10Printer;
 import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -89,12 +87,6 @@ public class ApplicationIssuedNotificationTest {
 
     @Mock
     private NoticeOfProceedingsPrinter noticeOfProceedingsPrinter;
-
-    @Mock
-    private ApplicationPrinter applicationPrinter;
-
-    @Mock
-    private D10Printer d10Printer;
 
     @InjectMocks
     private ApplicationIssuedNotification notification;
@@ -359,29 +351,6 @@ public class ApplicationIssuedNotificationTest {
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
         verify(noticeOfProceedingsPrinter).sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
-        verify(applicationPrinter).sendDivorceApplicationPdf(caseData, TEST_CASE_ID);
-    }
-
-    @Test
-    void shouldSendNoticeOfProceedingsDivorceApplicationD10AndCoversheetToApplicant2Solicitor() {
-
-        final CaseData caseData = CaseData.builder()
-            .applicationType(SOLE_APPLICATION)
-            .applicant1(getApplicant())
-            .applicant2(Applicant.builder()
-                .solicitor(Solicitor.builder().build())
-                .build()
-            )
-            .application(Application.builder()
-                .solServiceMethod(COURT_SERVICE)
-                .build())
-            .build();
-
-        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
-
-        verify(d10Printer).printD10WithCoversheet(caseData, TEST_CASE_ID);
-        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
-        verify(applicationPrinter).sendDivorceApplicationPdf(caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -482,7 +451,6 @@ public class ApplicationIssuedNotificationTest {
         notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
         verify(noticeOfProceedingsPrinter).sendLetterToApplicant1(caseData, TEST_CASE_ID);
-        verify(applicationPrinter).sendDivorceApplicationPdf(caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -493,7 +461,6 @@ public class ApplicationIssuedNotificationTest {
         notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
         verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(caseData, TEST_CASE_ID);
-        verify(applicationPrinter).sendDivorceApplicationPdf(caseData, TEST_CASE_ID);
     }
 
     private Map<String, String> respondentSolicitorTemplateVars() {

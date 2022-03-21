@@ -3,8 +3,6 @@ package uk.gov.hmcts.divorce.common.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.caseworker.service.print.ApplicationPrinter;
-import uk.gov.hmcts.divorce.caseworker.service.print.D10Printer;
 import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -17,7 +15,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
@@ -55,12 +52,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     @Autowired
     private NoticeOfProceedingsPrinter noticeOfProceedingsPrinter;
-
-    @Autowired
-    private ApplicationPrinter applicationPrinter;
-
-    @Autowired
-    private D10Printer d10Printer;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
@@ -147,16 +138,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
 
         if (caseData.getApplicationType().isSole()) {
-            if (isNull(caseData.getApplicant2().getSolicitor().getOrganisationPolicy())) {
-                log.info("Sending copy of D10 and coversheet to respondent solicitor for case: {}", caseId);
-                d10Printer.printD10WithCoversheet(caseData, caseId);
-            }
-
-            log.info("Sending Notice of Proceedings letter to respondent solicitor for case: {}", caseId);
             noticeOfProceedingsPrinter.sendLetterToApplicant2Solicitor(caseData, caseId);
-
-            log.info("Sending copy of Divorce Application to respondent solicitor for case: {}", caseId);
-            applicationPrinter.sendDivorceApplicationPdf(caseData, caseId);
         }
 
         final String email = caseData.getApplicant2().getSolicitor().getEmail();
@@ -177,20 +159,14 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
-        log.info("Sending Notice of Proceedings letter to applicant 1 for case : {}", caseId);
+        log.info("Sending Notice of Proceedings letter and copy of Divorce Application to applicant 1 for case : {}", caseId);
         noticeOfProceedingsPrinter.sendLetterToApplicant1(caseData, caseId);
-
-        log.info("Sending copy of Divorce Application to applicant 1 for case : {}", caseId);
-        applicationPrinter.sendDivorceApplicationPdf(caseData, caseId);
     }
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
-        log.info("Sending Notice of Proceedings letter to applicant 2 for case : {}", caseId);
+        log.info("Sending Notice of Proceedings letter and copy of Divorce Application to applicant 2 for case : {}", caseId);
         noticeOfProceedingsPrinter.sendLetterToApplicant2(caseData, caseId);
-
-        log.info("Sending copy of Divorce Application to applicant 2 for case : {}", caseId);
-        applicationPrinter.sendDivorceApplicationPdf(caseData, caseId);
     }
 
     private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id) {
