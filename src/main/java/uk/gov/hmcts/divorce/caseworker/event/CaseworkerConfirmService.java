@@ -16,6 +16,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitConfirmService;
 
+import java.util.Objects;
+
+import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -75,8 +78,10 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
 
-        log.info("Caseworker confirm service about to submit callback invoked with service method {}",
-            caseData.getApplication().getSolServiceMethod().toString());
+        var solServiceMethod = !isNull(caseData.getApplication().getSolServiceMethod())
+            ? caseData.getApplication().getSolServiceMethod().toString()
+            : null;
+        log.info("Caseworker confirm service about to submit callback invoked with service method {}", solServiceMethod);
 
         final CaseDetails<CaseData, State> updateDetails = solicitorSubmitConfirmService.submitConfirmService(details);
 
