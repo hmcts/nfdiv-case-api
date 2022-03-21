@@ -14,6 +14,8 @@ import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.jsonToObject;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
@@ -49,6 +51,7 @@ public class MarriageDetailsTransformerTest {
         final var expectedMarriageDetails =
             jsonToObject("src/test/resources/transformation/output/marriage-details-transformed.json", MarriageDetails.class);
 
+        assertThat(transformedOutput.getCaseData().getApplication().getScreenHasMarriageCert()).isEqualTo(YES);
         assertThat(transformedOutput.getCaseData().getApplication().getMarriageDetails())
             .usingRecursiveComparison()
             .ignoringActualNullFields()
@@ -84,7 +87,7 @@ public class MarriageDetailsTransformerTest {
         final var expectedMarriageDetails =
             jsonToObject("src/test/resources/transformation/output/marriage-details-transformed-warnings.json", MarriageDetails.class);
 
-
+        assertThat(transformedOutput.getCaseData().getApplication().getScreenHasMarriageCert()).isEqualTo(NO);
         assertThat(transformedOutput.getCaseData().getPaperFormDetails())
             .usingRecursiveComparison()
             .ignoringActualNullFields()
@@ -112,6 +115,7 @@ public class MarriageDetailsTransformerTest {
 
         final var transformedOutput = marriageDetailsTransformer.apply(transformationDetails);
 
+        assertThat(transformedOutput.getCaseData().getApplication().getScreenHasMarriageCert()).isEqualTo(NO);
         assertThat(transformedOutput.getTransformationWarnings())
             .containsExactlyInAnyOrder(
                 "Please review marriage certificate/translation in the scanned form",
@@ -162,6 +166,7 @@ public class MarriageDetailsTransformerTest {
         final var expectedMarriageDetails =
             jsonToObject("src/test/resources/transformation/output/marriage-details-transformed.json", MarriageDetails.class);
 
+        assertThat(transformedOutput.getCaseData().getApplication().getScreenHasMarriageCert()).isEqualTo(YES);
         assertThat(transformedOutput.getCaseData().getApplication().getMarriageDetails())
             .usingRecursiveComparison()
             .ignoringActualNullFields()

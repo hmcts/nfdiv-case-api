@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AosAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
@@ -123,7 +123,7 @@ public class AcknowledgementOfService {
 
     @JsonUnwrapped(prefix = "disputingFee")
     @Builder.Default
-    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
+    @CCD(access = {CaseworkerAccessOnlyAccess.class})
     private FeeDetails disputingFee = new FeeDetails();
 
     @JsonIgnore

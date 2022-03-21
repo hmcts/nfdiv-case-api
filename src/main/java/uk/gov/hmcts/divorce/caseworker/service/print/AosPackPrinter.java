@@ -79,10 +79,10 @@ public class AosPackPrinter {
     public void sendAosResponseLetterToApplicant(final CaseData caseData, final Long caseId) {
 
         final List<Letter> aosResponseLetters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(),
+            caseData.getDocuments().getDocumentsGenerated(),
             AOS_RESPONSE_LETTER);
 
-        final List<Letter> aosLetters = lettersWithAosScannedDocument(caseData.getScannedDocuments());
+        final List<Letter> aosLetters = lettersWithAosScannedDocument(caseData.getDocuments().getScannedDocuments());
 
         final Letter aosResponseLetter = firstElement(aosResponseLetters);
 
@@ -115,11 +115,11 @@ public class AosPackPrinter {
 
     private List<Letter> aosLetters(CaseData caseData, DocumentType documentType) {
         final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(),
+            caseData.getDocuments().getDocumentsGenerated(),
             APPLICATION);
 
         final List<Letter> notificationLetters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(),
+            caseData.getDocuments().getDocumentsGenerated(),
             documentType);
 
         //Always get document on top of list as new document is added to top after generation
@@ -141,15 +141,15 @@ public class AosPackPrinter {
 
     private List<Letter> aosLettersForRespondent(CaseData caseData) {
         final List<Letter> coversheetLetters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(),
+            caseData.getDocuments().getDocumentsGenerated(),
             COVERSHEET);
 
         final List<Letter> respondentInvitationLetters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(),
+            caseData.getDocuments().getDocumentsGenerated(),
             RESPONDENT_INVITATION);
 
         final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(),
+            caseData.getDocuments().getDocumentsGenerated(),
             APPLICATION);
 
         final Letter coversheetLetter = firstElement(coversheetLetters);

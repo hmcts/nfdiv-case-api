@@ -270,6 +270,62 @@ public class CaseValidationTest {
         assertThat(errors).contains("You can only remove cases from the list of cases accepted to list for hearing.");
     }
 
+    @Test
+    public void shouldValidateBasicPaperCaseAndReturnNoErrorWhenApplicant2GenderIsNotSet() {
+        CaseData caseData = new CaseData();
+        Applicant applicant1 = Applicant.builder().offline(YES).build();
+        caseData.setApplicant1(applicant1);
+
+        caseData.setApplicant2(
+            Applicant.builder().email("respondent@test.com").build()
+        );
+
+        caseData.getApplication().setNewPaperCase(YES);
+        List<String> errors = validateBasicCase(caseData);
+        assertThat(errors).hasSize(11);
+        assertThat(errors).containsExactly(
+            "Applicant1FirstName cannot be empty or null",
+            "Applicant1LastName cannot be empty or null",
+            "Applicant2FirstName cannot be empty or null",
+            "Applicant2LastName cannot be empty or null",
+            "Applicant1FinancialOrder cannot be empty or null",
+            "MarriageApplicant1Name cannot be empty or null",
+            "Applicant1ContactDetailsType cannot be empty or null",
+            "Statement of truth must be accepted by the person making the application",
+            "applicant1PrayerHasBeenGivenCheckbox cannot be empty or null",
+            "MarriageDate cannot be empty or null",
+            "JurisdictionConnections cannot be empty or null"
+        );
+    }
+
+    @Test
+    public void shouldValidateBasicDigitalCaseAndReturnErrorWhenApplicant2GenderIsNotSet() {
+        CaseData caseData = new CaseData();
+        Applicant applicant1 = Applicant.builder().offline(YES).build();
+        caseData.setApplicant1(applicant1);
+
+        caseData.setApplicant2(
+            Applicant.builder().email("respondent@test.com").build()
+        );
+
+        List<String> errors = validateBasicCase(caseData);
+        assertThat(errors).hasSize(12);
+        assertThat(errors).containsExactly(
+            "Applicant1FirstName cannot be empty or null",
+            "Applicant1LastName cannot be empty or null",
+            "Applicant2FirstName cannot be empty or null",
+            "Applicant2LastName cannot be empty or null",
+            "Applicant1FinancialOrder cannot be empty or null",
+            "Applicant2Gender cannot be empty or null",
+            "MarriageApplicant1Name cannot be empty or null",
+            "Applicant1ContactDetailsType cannot be empty or null",
+            "Statement of truth must be accepted by the person making the application",
+            "applicant1PrayerHasBeenGivenCheckbox cannot be empty or null",
+            "MarriageDate cannot be empty or null",
+            "JurisdictionConnections cannot be empty or null"
+        );
+    }
+
     private BulkActionCaseData bulkActionCaseData() {
         final CaseLink caseLink1 = CaseLink.builder()
             .caseReference("12345")

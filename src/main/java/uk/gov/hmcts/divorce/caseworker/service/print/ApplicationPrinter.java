@@ -28,7 +28,7 @@ public class ApplicationPrinter {
     public void sendDivorceApplicationPdf(final CaseData caseData, final Long caseId) {
 
         final List<Letter> letters = lettersWithDocumentType(
-            caseData.getDocumentsGenerated(), APPLICATION);
+            caseData.getDocuments().getDocumentsGenerated(), APPLICATION);
 
         Letter divorceApplication = firstElement(letters);
 
