@@ -48,7 +48,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -166,9 +165,6 @@ public class CaseworkerReIssueApplicationIT {
 
     @MockBean
     private NoticeOfProceedingsPrinter noticeOfProceedingsPrinter;
-
-    @MockBean
-    private ApplicationPrinter applicationPrinter;
 
     @MockBean
     private Clock clock;
@@ -301,7 +297,6 @@ public class CaseworkerReIssueApplicationIT {
         verifyNoMoreInteractions(notificationService);
 
         verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(any(CaseData.class), anyLong());
-        verify(applicationPrinter).sendDivorceApplicationPdf(any(CaseData.class), anyLong());
     }
 
     @Test
@@ -779,8 +774,6 @@ public class CaseworkerReIssueApplicationIT {
 
         verify(noticeOfProceedingsPrinter).sendLetterToApplicant1(any(CaseData.class), anyLong());
         verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(any(CaseData.class), anyLong());
-
-        verify(applicationPrinter, times(2)).sendDivorceApplicationPdf(any(CaseData.class), anyLong());
     }
 
     private AddressGlobalUK correspondenceAddress() {

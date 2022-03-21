@@ -35,6 +35,7 @@ public class NoticeOfProceedingsPrinter {
 
     private static final String LETTER_TYPE_APPLICANT_1_NOP = "applicant1-notice-of-proceedings";
     private static final String LETTER_TYPE_APPLICANT_2_NOP = "applicant2-notice-of-proceedings";
+    private static final String LETTER_TYPE_APPLICANT_2_SOL_NOP = "applicant2-solicitor-notice-of-proceedings";
     private static final String LETTER_TYPE_APPLICANT_2_SOL_NOP_D10_COVERSHEET = "applicant2-solicitor-notice-of-proceedings-with-d10";
 
     @Autowired
@@ -116,7 +117,8 @@ public class NoticeOfProceedingsPrinter {
         List<Letter> lettersToPrint = lettersForApplicant2(caseData);
 
         if (isNull(caseData.getApplicant2().getSolicitor().getOrganisationPolicy())) {
-            log.info("Sending Notice of Proceedings letter, a copy of the Divorce Application and a copy of D10 with coversheet to respondent solicitor for case: {}", caseId);
+            log.info("Sending Notice of Proceedings letter, a copy of the Divorce Application "
+                + "and a copy of D10 with coversheet to respondent solicitor for case: {}", caseId);
             sendLetterWithD10AndCoversheet(caseData, caseId, lettersToPrint);
         } else {
             log.info("Sending Notice of Proceedings letter and copy of Divorce Application to respondent solicitor for case: {}", caseId);
@@ -124,7 +126,7 @@ public class NoticeOfProceedingsPrinter {
             if (!isEmpty(lettersToPrint)) {
                 final String caseIdString = caseId.toString();
                 final Print print = new Print(lettersToPrint,
-                    caseIdString, caseIdString, LETTER_TYPE_APPLICANT_2_NOP);
+                    caseIdString, caseIdString, LETTER_TYPE_APPLICANT_2_SOL_NOP);
                 final UUID letterId = bulkPrintService.print(print);
 
                 log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
@@ -158,7 +160,9 @@ public class NoticeOfProceedingsPrinter {
 
         final Letter coversheet = firstElement(coversheetLetters);
 
-        lettersToPrint.add(0, coversheet);
+        if (coversheet != null) {
+            lettersToPrint.add(0, coversheet);
+        }
 
         if (!isEmpty(lettersToPrint)) {
             final String caseIdString = caseId.toString();
