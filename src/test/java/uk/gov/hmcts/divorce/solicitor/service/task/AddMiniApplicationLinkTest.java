@@ -34,7 +34,7 @@ class AddMiniApplicationLinkTest {
             .build();
 
         final CaseData caseData = caseData();
-        caseData.setDocumentsGenerated(singletonList(miniApplicationListValue));
+        caseData.getDocuments().setDocumentsGenerated(singletonList(miniApplicationListValue));
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

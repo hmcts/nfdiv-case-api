@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -93,7 +94,7 @@ public class SolicitorGeneralApplicationIT {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documentsUploaded(new ArrayList<>())
+            .documents(CaseDocuments.builder().documentsUploaded(new ArrayList<>()).build())
             .generalApplication(GeneralApplication.builder()
                 .generalApplicationDocument(document)
                 .build()

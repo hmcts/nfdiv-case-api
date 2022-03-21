@@ -7,6 +7,7 @@
       "paperFormApplicantWillServeApplication": "No",
       "paperFormApplicant1SigningSOT": "Yes",
       "applicant1HWFAppliedForFees": "No",
+      "marriageCertifiedTranslation" : "No",
       "scannedDocuments": [
         {
           "id": "${json-unit.any-string}",
@@ -39,7 +40,7 @@
       "applicant1LegalProceedings": "No",
       "applicant1Email": "",
       "paperFormApplicant2PaymentOther": "No",
-      "applicant2NameDifferentToMarriageCertificate": "No",
+      "applicant2NameDifferentToMarriageCertificate": "Yes",
       "paperFormRespondentDifferentServiceAddress": "No",
       "solSignStatementOfTruth": "Yes",
       "applicant2SolicitorAddress": "some street\nsecond line of address",
@@ -54,7 +55,7 @@
       "paperFormApplicant1LegalRepPosition": "",
       "marriageCertificateInEnglish": "Yes",
       "applicant2SolicitorReference": "",
-      "applicant1NameDifferentToMarriageCertificate": "Yes",
+      "applicant1NameDifferentToMarriageCertificate": "No",
       "applicant1LegalProceedingsDetails": "Case Number(s):",
       "marriagePlaceOfMarriage": "London",
       "applicant1FinancialOrder": "Yes",

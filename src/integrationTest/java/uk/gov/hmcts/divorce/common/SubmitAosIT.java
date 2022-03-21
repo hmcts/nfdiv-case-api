@@ -254,7 +254,7 @@ public class SubmitAosIT {
         final CaseData caseData = caseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
-        caseData.setScannedDocuments(singletonList(aosScannedDocument()));
+        caseData.getDocuments().setScannedDocuments(singletonList(aosScannedDocument()));
         caseData.getApplicant2().setLegalProceedings(YES);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");

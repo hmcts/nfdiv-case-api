@@ -8,9 +8,11 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -37,7 +39,9 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
             .page("uploadDocument")
             .pageLabel("Upload document")
-            .optional(CaseData::getDocumentsUploaded);
+            .complex(CaseData::getDocuments)
+                .optional(CaseDocuments::getDocumentsUploaded)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -48,7 +52,10 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
 
         var caseData = details.getData();
 
-        caseData.sortUploadedDocuments(beforeDetails.getData().getDocumentsUploaded());
+        caseData.getDocuments().setDocumentsUploaded(sortByNewest(
+            beforeDetails.getData().getDocuments().getDocumentsUploaded(),
+            caseData.getDocuments().getDocumentsUploaded()
+        ));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

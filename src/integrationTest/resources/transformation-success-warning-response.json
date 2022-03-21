@@ -9,6 +9,7 @@
       "paperFormApplicant1SigningSOT": "Yes",
       "solStatementOfReconciliationFirm": "",
       "paperFormApplicant2NoPaymentIncluded": "Yes",
+      "marriageCertifiedTranslation" : "No",
       "applicant1HWFAppliedForFees": "No",
       "scannedDocuments": [
         {
@@ -60,7 +61,7 @@
       "applicant1FirstName": "app1Fname",
       "applicant1Email": "",
       "paperFormApplicant2PaymentOther": "No",
-      "applicant2NameDifferentToMarriageCertificate": "No",
+      "applicant2NameDifferentToMarriageCertificate": "Yes",
       "paperFormRespondentDifferentServiceAddress": "No",
       "solSignStatementOfTruth": "Yes",
       "applicant1SolicitorName": "testsolicitor",
@@ -92,7 +93,7 @@
       "paperFormSummaryApplicant1FinancialOrdersFor": [
         "children"
       ],
-      "applicant1NameDifferentToMarriageCertificate": "Yes",
+      "applicant1NameDifferentToMarriageCertificate": "No",
       "applicant1LegalProceedingsDetails": "Case Number(s):",
       "applicant2SolicitorRepresented": "No",
       "marriagePlaceOfMarriage": "London",

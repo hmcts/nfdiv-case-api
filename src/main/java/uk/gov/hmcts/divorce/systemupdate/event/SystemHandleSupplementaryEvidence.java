@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.BulkScanMetaInfo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -24,6 +25,8 @@ public class SystemHandleSupplementaryEvidence implements CCDConfig<CaseData, St
             .grant(CREATE_READ_UPDATE_DELETE, SYSTEMUPDATE, CASE_WORKER))
             .page("handleEvidence")
             .pageLabel("Correspondence")
-            .mandatoryWithLabel(CaseData::getEvidenceHandled, "Supplementary evidence handled");
+            .complex(CaseData::getBulkScanMetaInfo)
+                .mandatoryWithLabel(BulkScanMetaInfo::getEvidenceHandled, "Supplementary evidence handled")
+                .done();
     }
 }

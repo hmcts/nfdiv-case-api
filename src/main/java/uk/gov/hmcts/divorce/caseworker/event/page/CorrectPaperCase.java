@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
@@ -48,8 +49,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getContactDetailsType)
                 .mandatoryWithLabel(Applicant::getAddress, "${labelContentApplicantsOrApplicant1s} address")
-                .mandatoryWithLabel(Applicant::getPhoneNumber, "${labelContentApplicantsOrApplicant1s} phone number")
-                .mandatoryWithLabel(Applicant::getEmail, "${labelContentApplicantsOrApplicant1s} email address")
+                .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentApplicantsOrApplicant1s} phone number")
+                .optionalWithLabel(Applicant::getEmail, "${labelContentApplicantsOrApplicant1s} email address")
                 .mandatoryWithLabel(Applicant::getSolicitorRepresented,
                     "Is ${labelContentTheApplicantOrApplicant1} represented by a solicitor?")
                 .complex(Applicant::getSolicitor, "applicant1SolicitorRepresented=\"Yes\"")
@@ -57,10 +58,10 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                         "### ${labelContentApplicantsOrApplicant1s} solicitor details",
                         "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getName, "applicant1SolicitorRepresented=\"Yes\"")
-                    .mandatory(Solicitor::getReference, "applicant1SolicitorRepresented=\"Yes\"")
+                    .optional(Solicitor::getReference, "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getFirmName, "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getAddress, "applicant1SolicitorRepresented=\"Yes\"")
-                    .mandatory(Solicitor::getPhone, "applicant1SolicitorRepresented=\"Yes\"")
+                    .optional(Solicitor::getPhone, "applicant1SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getEmail, "applicant1SolicitorRepresented=\"Yes\"")
                 .done()
                 .label("Label-CorrectApplicant1FODetails",
@@ -163,7 +164,9 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             .done()
             .label("Label-CorrectScannedDocuments",
                 "### Scanned Documents")
-            .optional(CaseData::getScannedDocuments);
+            .complex(CaseData::getDocuments)
+                .optional(CaseDocuments::getScannedDocuments)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
@@ -181,7 +184,10 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
         }
 
-        if (application.getApplicant2ScreenHasMarriageBroken() != null && !application.getApplicant2ScreenHasMarriageBroken().toBoolean()) {
+        if (!data.getApplicationType().isSole()
+            && application.getApplicant2ScreenHasMarriageBroken() != null
+            && !application.getApplicant2ScreenHasMarriageBroken().toBoolean()
+        ) {
             errors.add("To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
         }
 
