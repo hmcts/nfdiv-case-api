@@ -176,6 +176,7 @@ public class Applicant2ApproveIT {
     @Test
     public void givenInvalidCaseDataThenReturnResponseWithErrors() throws Exception {
         CaseData data = invalidCaseData();
+        data.getApplicant2().setEmail("test@email.com");
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

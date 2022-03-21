@@ -211,6 +211,7 @@ public class CitizenSubmitApplicationIT {
     @Test
     public void givenInvalidJointCaseDataThenReturnResponseWithErrors() throws Exception {
         var data = validApplicant1CaseData();
+        data.getApplicant2().setEmail("test@email.com");
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -220,6 +221,20 @@ public class CitizenSubmitApplicationIT {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackErrorForJointApplicationResponse()));
+    }
+
+    @Test
+    public void givenApplicant2OfflineInvalidJointCaseDataThenReturnResponseWithErrors() throws Exception {
+        var data = validApplicant1CaseData();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.getName())))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json(expectedCcdAboutToStartCallbackErrorForApplicant2OfflineJointApplicationResponse()));
     }
 
     private String expectedCcdAboutToStartCallbackErrorResponse() throws IOException {
@@ -253,6 +268,13 @@ public class CitizenSubmitApplicationIT {
     private String expectedCcdAboutToStartCallbackErrorForJointApplicationResponse() throws IOException {
         File invalidCaseDataJsonFile = getFile(
             "classpath:wiremock/responses/applicant-1-about-to-start-joint-application-errors.json");
+
+        return new String(Files.readAllBytes(invalidCaseDataJsonFile.toPath()));
+    }
+
+    private String expectedCcdAboutToStartCallbackErrorForApplicant2OfflineJointApplicationResponse() throws IOException {
+        File invalidCaseDataJsonFile = getFile(
+            "classpath:wiremock/responses/applicant-1-about-to-start-joint-application-applicant-2-offline-errors.json");
 
         return new String(Files.readAllBytes(invalidCaseDataJsonFile.toPath()));
     }
