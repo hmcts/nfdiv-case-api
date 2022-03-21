@@ -50,7 +50,9 @@ public final class ValidationUtil {
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
             notNull(caseData.getApplicant1().getContactDetailsType(), "Applicant1ContactDetailsType"),
             hasStatementOfTruth(caseData.getApplication()),
-            validatePrayer(caseData.getApplication().getApplicant1PrayerHasBeenGivenCheckbox()),
+            !caseData.getApplicant1().isOffline()
+                ? validatePrayer(caseData.getApplication().getApplicant1PrayerHasBeenGivenCheckbox())
+                : emptyList(),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
             validateJurisdictionConnections(caseData)
         );
@@ -89,7 +91,9 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant2().getFirstName(), "Applicant2FirstName"),
             notNull(caseData.getApplicant2().getLastName(), "Applicant2LastName"),
             notNull(caseData.getApplication().getApplicant2StatementOfTruth(), "Applicant2StatementOfTruth"),
-            notNull(caseData.getApplication().getApplicant2PrayerHasBeenGivenCheckbox(), "Applicant2PrayerHasBeenGiven"),
+            !isBlank(caseData.getApplicant2().getEmail())
+                ? notNull(caseData.getApplication().getApplicant2PrayerHasBeenGivenCheckbox(), "Applicant2PrayerHasBeenGiven")
+                : emptyList(),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant2Name(), "MarriageApplicant2Name")
         );
     }

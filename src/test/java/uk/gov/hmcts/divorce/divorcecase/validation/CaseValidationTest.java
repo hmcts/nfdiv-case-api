@@ -58,7 +58,7 @@ public class CaseValidationTest {
         caseData.setApplicant1(applicant1);
 
         List<String> errors = validateBasicCase(caseData);
-        assertThat(errors).hasSize(11);
+        assertThat(errors).hasSize(10);
     }
 
     @Test
@@ -282,7 +282,7 @@ public class CaseValidationTest {
 
         caseData.getApplication().setNewPaperCase(YES);
         List<String> errors = validateBasicCase(caseData);
-        assertThat(errors).hasSize(11);
+        assertThat(errors).hasSize(10);
         assertThat(errors).containsExactly(
             "Applicant1FirstName cannot be empty or null",
             "Applicant1LastName cannot be empty or null",
@@ -292,7 +292,6 @@ public class CaseValidationTest {
             "MarriageApplicant1Name cannot be empty or null",
             "Applicant1ContactDetailsType cannot be empty or null",
             "Statement of truth must be accepted by the person making the application",
-            "applicant1PrayerHasBeenGivenCheckbox cannot be empty or null",
             "MarriageDate cannot be empty or null",
             "JurisdictionConnections cannot be empty or null"
         );
@@ -309,7 +308,7 @@ public class CaseValidationTest {
         );
 
         List<String> errors = validateBasicCase(caseData);
-        assertThat(errors).hasSize(12);
+        assertThat(errors).hasSize(11);
         assertThat(errors).containsExactly(
             "Applicant1FirstName cannot be empty or null",
             "Applicant1LastName cannot be empty or null",
@@ -320,7 +319,6 @@ public class CaseValidationTest {
             "MarriageApplicant1Name cannot be empty or null",
             "Applicant1ContactDetailsType cannot be empty or null",
             "Statement of truth must be accepted by the person making the application",
-            "applicant1PrayerHasBeenGivenCheckbox cannot be empty or null",
             "MarriageDate cannot be empty or null",
             "JurisdictionConnections cannot be empty or null"
         );
