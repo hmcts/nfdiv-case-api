@@ -84,7 +84,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         }
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         removeApplicant2AnswersFromCase(data);
-        removeJurisdictionAnswersFromCase(data);
+        data.getApplication().setJurisdiction(null);
 
         CaseInvite caseInviteBefore = beforeDetails.getData().getCaseInvite();
 
@@ -127,20 +127,6 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         caseData.getApplication().setApplicant2ConfirmApplicant1Information(null);
         caseData.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation(null);
         caseData.getApplication().setApplicant2ReminderSent(null);
-
-        return caseData;
-    }
-
-    private CaseData removeJurisdictionAnswersFromCase(CaseData caseData) {
-        caseData.getApplication().getJurisdiction().setApplicant1Domicile(null);
-        caseData.getApplication().getJurisdiction().setApplicant2Domicile(null);
-        caseData.getApplication().getJurisdiction().setResidualEligible(null);
-        caseData.getApplication().getJurisdiction().setConnections(null);
-        caseData.getApplication().getJurisdiction().setApplicant1Residence(null);
-        caseData.getApplication().getJurisdiction().setApplicant2Residence(null);
-        caseData.getApplication().getJurisdiction().setBothLastHabituallyResident(null);
-        caseData.getApplication().getJurisdiction().setApp1HabituallyResLastTwelveMonths(null);
-        caseData.getApplication().getJurisdiction().setApp1HabituallyResLastSixMonths(null);
 
         return caseData;
     }

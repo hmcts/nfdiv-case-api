@@ -417,15 +417,7 @@ class CitizenSwitchedToSoleTest {
                 .applicant2InviteEmailAddress(TEST_APPLICANT_2_EMAIL)
                 .build());
 
-        assertThat(response.getData().getApplication().getJurisdiction().getApplicant1Domicile()).isNull();
-        assertThat(response.getData().getApplication().getJurisdiction().getApplicant2Domicile()).isNull();
-        assertThat(response.getData().getApplication().getJurisdiction().getResidualEligible()).isNull();
-        assertThat(response.getData().getApplication().getJurisdiction().getConnections()).isNull();
-        assertThat(response.getData().getApplication().getJurisdiction().getApplicant1Residence()).isNull();
-        assertThat(response.getData().getApplication().getJurisdiction().getApplicant2Residence()).isNull();
-        assertThat(response.getData().getApplication().getJurisdiction().getBothLastHabituallyResident()).isNull();
-        assertThat(response.getData().getApplication().getJurisdiction().getApp1HabituallyResLastTwelveMonths()).isNull();
-        assertThat(response.getData().getApplication().getJurisdiction().getApp1HabituallyResLastSixMonths()).isNull();
+        assertThat(response.getData().getApplication().getJurisdiction()).isNull();
     }
 
     private CaseData setValidCaseInviteData(CaseData caseData) {
