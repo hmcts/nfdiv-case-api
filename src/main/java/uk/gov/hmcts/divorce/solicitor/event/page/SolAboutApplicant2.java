@@ -25,7 +25,7 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                 .mandatoryWithLabel(Applicant::getLastName,
                     "${labelContentApplicant2UC}'s last name")
                 .mandatory(Applicant::getNameDifferentToMarriageCertificate,
-                    null,
+                    "applicationType=\"soleApplication\"",
                     null,
                     "Is ${labelContentTheApplicant2}'s name different from the name on the "
                         + "${labelContentMarriageOrCivilPartnership} certificate?",
