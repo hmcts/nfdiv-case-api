@@ -60,7 +60,7 @@
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [{
-      "id": "Divorce application",
+      "id": "Respondent Invitation",
       "value": {
         "documentLink": {
           "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
@@ -82,7 +82,7 @@
         "documentType": "aos"
       }
     }, {
-      "id": "Respondent Invitation",
+      "id": "Notice of proceeding respondent",
       "value": {
         "documentLink": {
           "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/NOTICE_OF_PROCEEDINGS_RESP",
