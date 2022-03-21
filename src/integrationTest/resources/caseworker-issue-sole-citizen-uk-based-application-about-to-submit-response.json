@@ -1,0 +1,109 @@
+{
+  "data": {
+    "applicationType": "soleApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Gender": "female",
+    "applicant1ContactDetailsType": "public",
+    "applicant1SolicitorRepresented": "No",
+    "applicant1SolicitorEmail": "solicitor@test.com",
+    "applicant1FinancialOrder": "No",
+    "applicant1LegalProceedings": "No",
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2Email": "applicant2@test.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2Address": {
+      "AddressLine1": "line 1",
+      "PostTown": "town",
+      "PostCode": "postcode",
+      "Country": "UK"
+    },
+    "applicant2Gender": "male",
+    "applicant2SolicitorRepresented": "No",
+    "applicant2FinancialOrder": "No",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
+    ],
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "divorceWho": "wife",
+    "solServiceMethod": "courtService",
+    "applicant1PrayerHasBeenGivenCheckbox": [
+      "Yes"
+    ],
+    "applicant1StatementOfTruth": "Yes",
+    "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000"
+    },
+    "documentUploadComplete": "Yes",
+    "issueDate": "2021-06-17",
+    "applicationPayments": [
+      {
+        "value": {
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
+    "applicant2InviteEmailAddress": "applicant2@test.com",
+    "noticeOfProceedingsEmail": "applicant2@test.com",
+    "accessCode": "${json-unit.any-string}",
+    "documentsGenerated": [
+      {
+        "id": "Divorce application",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+          },
+          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "application"
+        }
+      },
+      {
+        "id": "Notice of proceeding respondent",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa",
+            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa/binary"
+          },
+          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "aos"
+        }
+      },
+      {
+        "id": "Notice of proceeding applicant",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+            "document_filename": "noticeOfProceedings.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+          },
+          "documentFileName": "noticeOfProceedings.pdf",
+          "documentType": "noticeOfProceedings"
+        }
+      }
+    ],
+    "dueDate": "2021-07-03",
+    "dataVersion": 1,
+    "warnings": []
+  },
+  "state": "AwaitingAos"
+}

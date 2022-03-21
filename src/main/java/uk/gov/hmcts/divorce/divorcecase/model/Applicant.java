@@ -126,7 +126,7 @@ public class Applicant {
     private Solicitor solicitor;
 
     @CCD(
-        label = "Does ${labelContentTheApplicantOrApplicant1} wish to apply for a financial order?"
+        label = "Does the applicant wish to apply for a financial order?"
     )
     private YesOrNo financialOrder;
 

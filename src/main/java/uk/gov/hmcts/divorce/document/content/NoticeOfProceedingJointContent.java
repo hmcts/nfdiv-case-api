@@ -46,8 +46,8 @@ public class NoticeOfProceedingJointContent {
     public static final String YOUR_DIVORCE = "your divorce";
     public static final String DIVORCE = "divorce";
     public static final String DIVORCE_URL = "https://www.gov.uk/divorce";
-    public static final String DIVORCE_SERVICE = "Divorce service";
-    public static final String THE_DIVORCE_SERVICE = "The Divorce service";
+    public static final String DIVORCE_SERVICE = "Divorce Service";
+    public static final String THE_DIVORCE_SERVICE = "The Divorce Service";
     public static final String PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP = "proceedings to end your civil partnership";
     public static final String TO_END_YOUR_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String CIVIL_PARTNER = "civil partner";
@@ -64,6 +64,7 @@ public class NoticeOfProceedingJointContent {
     public static final String DISPLAY_EMAIL_CONFIRMATION = "displayEmailConfirmation";
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
+    public static final String ADDRESS = "address";
 
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
@@ -79,6 +80,8 @@ public class NoticeOfProceedingJointContent {
 
         templateContent.put(FIRST_NAME, applicant.getFirstName());
         templateContent.put(LAST_NAME, applicant.getLastName());
+
+        templateContent.put(ADDRESS, applicant.getPostalAddress());
 
         templateContent.put(RELATION, caseData.isDivorce() ? applicant.getGender() == MALE ? "wife" : "husband" : "civil partner");
 

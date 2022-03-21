@@ -29,8 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.ObjectUtils.isEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -40,6 +38,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.populateSolicitorAddress;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Slf4j
 @Component
@@ -86,6 +85,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
             .forStates(AwaitingApplicant2Response, Draft)
             .name("Submit joint application")
             .description("Submit joint application")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .showSummary()
@@ -98,6 +98,22 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
                 LEGAL_ADVISOR));
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        CaseData data = details.getData();
+
+        data.getDocuments()
+            .getDocumentsGenerated()
+            .stream()
+            .filter(document -> APPLICATION.equals(document.getValue().getDocumentType()))
+            .findFirst()
+            .ifPresent(draftDivorceApplication ->
+                data.getApplication().setApplicant1SolicitorAnswersLink(draftDivorceApplication.getValue().getDocumentLink())
+            );
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
@@ -106,13 +122,8 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
         if (details.getData().getApplicant2().isRepresented()) {
             setApplicant2SolicitorAddress(details);
         }
-
-        State newState = data.getApplication().getApplicant2ConfirmApplicant1Information().toBoolean()
-            ? AwaitingApplicant1Response : Applicant2Approved;
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(newState)
             .build();
     }
 
@@ -140,3 +151,4 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
         }
     }
 }
+

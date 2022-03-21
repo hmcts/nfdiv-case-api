@@ -10,7 +10,10 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNot
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+
+import java.util.Set;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -38,7 +41,6 @@ class SendCitizenSubmissionNotificationsTest {
 
     @Test
     void shouldDispatchSubmittedNotificationsAndOutstandingActionNotificationsIfSubmittedState() {
-
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -52,8 +54,7 @@ class SendCitizenSubmissionNotificationsTest {
     }
 
     @Test
-    void shouldDispatchSubmittedNotificationsAndOutstandingActionNotificationsIfAwaitingHwfDecisionState() {
-
+    void shouldDispatchOutstandingAndSubmittedNotificationIfAwaitingHwfDecisionState() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -67,8 +68,22 @@ class SendCitizenSubmissionNotificationsTest {
     }
 
     @Test
-    void shouldOnlyDispatchOutstandingNotificationIfAwaitingDocumentsState() {
+    void shouldOnlyDispatchOutstandingNotificationIfAwaitingHwfDecisionStateAndCannotUpload() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(DocumentType.MARRIAGE_CERTIFICATE));
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingHWFDecision);
 
+        sendCitizenSubmissionNotifications.apply(caseDetails);
+
+        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldOnlyDispatchOutstandingNotificationIfAwaitingDocumentsState() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -78,11 +93,11 @@ class SendCitizenSubmissionNotificationsTest {
         sendCitizenSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
     void shouldNotDispatchSubmittedNotificationsIfOtherState() {
-
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);

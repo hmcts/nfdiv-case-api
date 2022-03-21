@@ -48,7 +48,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        if (caseData.getApplication().hasAwaitingApplicant1Documents()) {
+        if (caseData.getApplication().hasAwaitingApplicant1Documents() || caseData.getApplication().hasAwaitingApplicant2Documents()) {
             log.info("Sending application outstanding actions notification to applicant 1 for case : {}", id);
 
             notificationService.sendEmail(
@@ -62,7 +62,8 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        if (caseData.getApplication().hasAwaitingApplicant2Documents()) {
+        if (!caseData.getApplicationType().isSole()
+            && (caseData.getApplication().hasAwaitingApplicant1Documents() || caseData.getApplication().hasAwaitingApplicant2Documents())) {
             log.info("Sending application outstanding actions notification to applicant 2 for case : {}", id);
 
             notificationService.sendEmail(
@@ -76,9 +77,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.putAll(
-            missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant1CannotUploadSupportingDocument())
-        );
+        templateVars.putAll(missingDocsTemplateVars(caseData));
         boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
             && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
         templateVars.putAll(serveAnotherWayTemplateVars(soleServingAnotherWay, caseData));
@@ -87,7 +86,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.putAll(missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant2CannotUploadSupportingDocument()));
+        templateVars.putAll(missingDocsTemplateVars(caseData));
         templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
         return templateVars;
     }
@@ -105,24 +104,25 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         return templateVars;
     }
 
-    private Map<String, String> missingDocsTemplateVars(CaseData caseData, Set<DocumentType> missingDocTypes) {
+    private Map<String, String> missingDocsTemplateVars(CaseData caseData) {
         Map<String, String> templateVars = new HashMap<>();
-
-        boolean nonNullMissingDocs = missingDocTypes != null && !missingDocTypes.isEmpty();
+        Set<DocumentType> missingDocTypes = caseData.getApplication().getMissingDocumentTypes();
         boolean ukMarriage = caseData.getApplication().getMarriageDetails().getMarriedInUk().toBoolean();
+
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && ukMarriage && caseData.isDivorce() ? YES : NO);
+            missingDocTypes.contains(MARRIAGE_CERTIFICATE) && ukMarriage && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && ukMarriage && !caseData.isDivorce() ? YES : NO);
+            missingDocTypes.contains(MARRIAGE_CERTIFICATE) && ukMarriage && !caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_FOREIGN_MARRIAGE_CERTIFICATE,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && !ukMarriage && caseData.isDivorce() ? YES : NO);
+            missingDocTypes.contains(MARRIAGE_CERTIFICATE) && !ukMarriage && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && !ukMarriage && !caseData.isDivorce() ? YES : NO);
+            missingDocTypes.contains(MARRIAGE_CERTIFICATE) && !ukMarriage && !caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && caseData.isDivorce() ? YES : NO);
+            missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && !caseData.isDivorce() ? YES : NO);
-        templateVars.put(MISSING_NAME_CHANGE_PROOF, nonNullMissingDocs && missingDocTypes.contains(NAME_CHANGE_EVIDENCE) ? YES : NO);
+            missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && !caseData.isDivorce() ? YES : NO);
+        templateVars.put(MISSING_NAME_CHANGE_PROOF, missingDocTypes.contains(NAME_CHANGE_EVIDENCE) ? YES : NO);
+
         return templateVars;
     }
 }

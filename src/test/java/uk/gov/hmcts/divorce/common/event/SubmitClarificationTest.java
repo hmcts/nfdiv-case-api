@@ -58,7 +58,7 @@ class SubmitClarificationTest {
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToSubmit(caseDetails, null);
+        submitClarification.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(postInformationToCourtNotification, caseData, 1L);
         verifyNoMoreInteractions(notificationDispatcher);
@@ -71,7 +71,7 @@ class SubmitClarificationTest {
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToSubmit(caseDetails, null);
+        submitClarification.aboutToSubmit(caseDetails, null);
 
         verifyNoInteractions(notificationDispatcher);
     }
@@ -83,7 +83,7 @@ class SubmitClarificationTest {
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToSubmit(caseDetails, null);
+        submitClarification.aboutToSubmit(caseDetails, null);
 
         verifyNoInteractions(notificationDispatcher);
     }

@@ -146,7 +146,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
                 "#### Applicant 2's other proceedings:")
             .field("applicant2LegalProceedings", JOINT_APPLICATION)
             .field("applicant2LegalProceedingsDetails",
-                "applicant1LegalProceedings=\"Yes\" AND applicationType=\"jointApplication\"")
+                "applicant2LegalProceedings=\"Yes\" AND applicationType=\"jointApplication\"")
             .field("applicant2FinancialOrder", JOINT_APPLICATION)
             .field("applicant2FinancialOrdersFor",
                 "applicant2FinancialOrder=\"Yes\" AND applicationType=\"jointApplication\"");

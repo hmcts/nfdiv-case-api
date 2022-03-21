@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
-import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -58,46 +57,6 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfPrayerCheckboxIsNull() {
-        final CaseData caseData = validApplicant2CaseData();
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
-        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
-        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(null);
-        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(null);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
-
-        assertThat(response.getErrors()).hasSize(2);
-        assertThat(response.getErrors())
-            .contains("Applicant 1 prayer must not be empty");
-        assertThat(response.getErrors())
-            .contains("Applicant 2 prayer must not be empty");
-    }
-
-    @Test
-    public void shouldReturnErrorsIfPrayerCheckboxIsEmpty() {
-        final CaseData caseData = validApplicant2CaseData();
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
-        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
-        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(emptySet());
-        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(emptySet());
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
-
-        assertThat(response.getErrors()).hasSize(2);
-        assertThat(response.getErrors())
-            .contains("Applicant 1 prayer must be yes");
-        assertThat(response.getErrors())
-            .contains("Applicant 2 prayer must be yes");
-    }
-
-    @Test
     public void shouldReturnErrorsIfStatementOfTruthNotAcceptedForSoleApplication() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setApplicationType(SOLE_APPLICATION);
@@ -134,6 +93,42 @@ public class CorrectPaperCaseTest {
             .contains(SOT_REQUIRED);
         assertThat(response.getErrors())
             .contains("Statement of truth must be accepted by Applicant 2 for joint applications");
+    }
+
+    @Test
+    public void shouldNotReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForSoleApplication() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).isEmpty();
+    }
+
+    @Test
+    public void shouldReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForJointApplication() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotEmpty();
+        assertThat(response.getErrors())
+            .contains("To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
     }
 
     @Test

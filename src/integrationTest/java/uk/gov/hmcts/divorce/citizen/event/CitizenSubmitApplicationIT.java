@@ -44,7 +44,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesNotFound;
@@ -131,9 +130,6 @@ public class CitizenSubmitApplicationIT {
             .getContentAsString();
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
-
-        verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
 
         // marriageDate and payments.id are ignored using ${json-unit.ignore}
@@ -215,6 +211,7 @@ public class CitizenSubmitApplicationIT {
     @Test
     public void givenInvalidJointCaseDataThenReturnResponseWithErrors() throws Exception {
         var data = validApplicant1CaseData();
+        data.getApplicant2().setEmail("test@email.com");
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -224,6 +221,20 @@ public class CitizenSubmitApplicationIT {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackErrorForJointApplicationResponse()));
+    }
+
+    @Test
+    public void givenApplicant2OfflineInvalidJointCaseDataThenReturnResponseWithErrors() throws Exception {
+        var data = validApplicant1CaseData();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.getName())))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json(expectedCcdAboutToSubmitCallbackErrorForApplicant2OfflineJointApplicationResponse()));
     }
 
     private String expectedCcdAboutToStartCallbackErrorResponse() throws IOException {
@@ -257,6 +268,13 @@ public class CitizenSubmitApplicationIT {
     private String expectedCcdAboutToStartCallbackErrorForJointApplicationResponse() throws IOException {
         File invalidCaseDataJsonFile = getFile(
             "classpath:wiremock/responses/applicant-1-about-to-start-joint-application-errors.json");
+
+        return new String(Files.readAllBytes(invalidCaseDataJsonFile.toPath()));
+    }
+
+    private String expectedCcdAboutToSubmitCallbackErrorForApplicant2OfflineJointApplicationResponse() throws IOException {
+        File invalidCaseDataJsonFile = getFile(
+            "classpath:wiremock/responses/applicant-1-about-to-submit-joint-application-applicant-2-offline-errors.json");
 
         return new String(Files.readAllBytes(invalidCaseDataJsonFile.toPath()));
     }
