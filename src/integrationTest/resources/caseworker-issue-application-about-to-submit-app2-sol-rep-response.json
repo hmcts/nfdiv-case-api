@@ -65,7 +65,7 @@
     }],
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "documentsGenerated": [{
-      "id": "Respondent Invitation",
+      "id": "Divorce application",
       "value": {
         "documentLink": {
           "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
@@ -76,7 +76,7 @@
         "documentType": "application"
       }
     }, {
-      "id": "Divorce application",
+      "id": "Respondent Invitation",
       "value": {
         "documentLink": {
           "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
