@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
@@ -15,15 +16,25 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
@@ -52,6 +63,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     @Autowired
     private NoticeOfProceedingsPrinter noticeOfProceedingsPrinter;
+
+    @Autowired
+    private HoldingPeriodService holdingPeriodService;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
@@ -95,13 +109,15 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 ENGLISH
             );
         } else {
-            log.info("Sending Notice Of Proceedings email to applicant solicitor.  Case ID: {}", caseId);
+            if (caseData.getApplicationType().isSole()) {
+                log.info("Sending Notice Of Proceedings email to applicant solicitor.  Case ID: {}", caseId);
 
-            notificationService.sendEmail(
-                email,
-                APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-                solicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH);
+                notificationService.sendEmail(
+                    email,
+                    APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+                    solicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+                    ENGLISH);
+            }
         }
     }
 
@@ -195,9 +211,24 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     }
 
     private Map<String, String> solicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
+
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
+
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
+        templateVars.put(
+            SOLICITOR_REFERENCE,
+            isNotEmpty(caseData.getApplicant1().getSolicitor().getReference())
+                ? caseData.getApplicant1().getSolicitor().getReference()
+                : NOT_PROVIDED);
         templateVars.put(CASE_ID, caseId.toString());
+        templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
+        templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
+        templateVars.put(SIGN_IN_URL, commonContent.getSignInUrl(caseData));
+        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(SUBMISSION_RESPONSE_DATE,
+            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER));
+
         return templateVars;
     }
 

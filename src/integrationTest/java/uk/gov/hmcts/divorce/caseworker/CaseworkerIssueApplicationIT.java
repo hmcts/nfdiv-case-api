@@ -384,13 +384,6 @@ public class CaseworkerIssueApplicationIT {
 
         verify(notificationService)
             .sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
-                anyMap(),
-                eq(ENGLISH));
-
-        verify(notificationService)
-            .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(JOINT_APPLICATION_ACCEPTED),
                 anyMap(),
