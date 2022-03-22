@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Slf4j
 public class ConditionalOrderPronouncedNotification implements ApplicantNotification {
 
-    private static final String MISSING_FIELD_MESSAGE = "Notification failed with missing field '%s' for Case Id: %s";
+    public static final String MISSING_FIELD_MESSAGE = "Notification failed with missing field '%s' for Case Id: %s";
 
     @Autowired
     private NotificationService notificationService;

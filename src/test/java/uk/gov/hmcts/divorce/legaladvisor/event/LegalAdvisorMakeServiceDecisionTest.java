@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ServiceOrderTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -28,10 +29,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -71,6 +68,9 @@ class LegalAdvisorMakeServiceDecisionTest {
 
     @Mock
     private ServiceApplicationNotification serviceApplicationNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private LegalAdvisorMakeServiceDecision makeServiceDecision;
@@ -149,7 +149,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
-        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
     }
 
     @Test
@@ -214,7 +214,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
-        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
     }
 
     @Test
@@ -277,7 +277,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
-        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
     }
 
     @Test
@@ -308,7 +308,7 @@ class LegalAdvisorMakeServiceDecisionTest {
         ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate()).isEqualTo(getExpectedLocalDate());
 
-        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
     }
 
     @Test
@@ -370,7 +370,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
-        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
     }
 
     @Test
@@ -432,6 +432,6 @@ class LegalAdvisorMakeServiceDecisionTest {
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
-        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
     }
 }

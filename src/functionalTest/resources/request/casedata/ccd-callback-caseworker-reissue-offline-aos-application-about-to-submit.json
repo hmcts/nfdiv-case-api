@@ -2,6 +2,7 @@
   "divorceOrDissolution": "divorce",
   "applicationType": "soleApplication",
   "reissueOption": "offlineAos",
+  "issueDate": "2022-01-01",
   "applicant1FirstName": "test_first_name",
   "applicant1MiddleName": "test_middle_name",
   "applicant1LastName": "test_last_name",

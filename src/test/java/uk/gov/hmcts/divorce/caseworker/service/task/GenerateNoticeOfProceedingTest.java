@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -65,6 +66,23 @@ class GenerateNoticeOfProceedingTest {
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, 1);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplicationWhenRespondentIsRepresented() {
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, YES);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("UK").build());
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID, 1);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
