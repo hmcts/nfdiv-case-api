@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ServiceOrderTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -61,7 +62,10 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
     private ServiceOrderTemplateContent serviceOrderTemplateContent;
 
     @Autowired
-    private ServiceApplicationNotification notification;
+    private ServiceApplicationNotification serviceApplicationNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -106,7 +110,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
         log.info("Application end state is {}", endState);
 
         serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
-        if (serviceApplication.getServiceApplicationGranted().toBoolean()) {
+
+        if (serviceApplication.isApplicationGranted()) {
             log.info("Service application granted for case id {}", details.getId());
             endState = application.getIssueDate() == null ? Submitted : Holding;
 
@@ -142,12 +147,13 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     SERVICE_REFUSAL_TEMPLATE_ID);
             }
 
-            notification.sendToApplicant1(caseDataCopy, details.getId());
-
             endState = AwaitingAos;
         }
 
         log.info("ServiceApplication decision. End State is {} Due date is {}", endState, caseDataCopy.getDueDate());
+
+        log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
+        notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
 
         caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
 
