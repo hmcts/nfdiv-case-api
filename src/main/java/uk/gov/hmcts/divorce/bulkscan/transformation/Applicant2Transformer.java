@@ -58,9 +58,9 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
         YesOrNo nameDifferentToMarriageCertificate = null;
         if (OCR_FIELD_VALUE_YES.equalsIgnoreCase(respondentOrApplicant2MarriedName)
             || OCR_FIELD_VALUE_BOTH.equalsIgnoreCase(respondentOrApplicant2MarriedName)) {
-            nameDifferentToMarriageCertificate = YES;
-        } else if (OCR_FIELD_VALUE_NO.equalsIgnoreCase(respondentOrApplicant2MarriedName)) {
             nameDifferentToMarriageCertificate = NO;
+        } else if (OCR_FIELD_VALUE_NO.equalsIgnoreCase(respondentOrApplicant2MarriedName)) {
+            nameDifferentToMarriageCertificate = YES;
         } else {
             warnings.add("Please review respondent/applicant2 name different to marriage certificate in the scanned form");
         }

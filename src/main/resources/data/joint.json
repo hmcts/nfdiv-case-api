@@ -62,6 +62,9 @@
     "A"
   ],
   "applicant1LegalProceedings": "Yes",
+  "applicant1LegalProceedingsDetails": "Proceedings",
+  "applicant2LegalProceedings": "Yes",
+  "applicant2LegalProceedingsDetails": "Proceedings",
   "applicant1FinancialOrder": "No",
   "applicant2FinancialOrder": "No",
   "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],

@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -66,7 +67,7 @@ class AosPackPrinterTest {
 
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder().email("testresp@test.com").build())
-            .documentsGenerated(asList(doc1, doc2, doc3))
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2, doc3)).build())
             .build();
 
         when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(false))).thenReturn(UUID.randomUUID());
@@ -106,7 +107,7 @@ class AosPackPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documentsGenerated(asList(doc1, doc2, doc3))
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2, doc3)).build())
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
@@ -141,8 +142,10 @@ class AosPackPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documentsGenerated(singletonList(doc1))
-            .scannedDocuments(singletonList(doc2))
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(singletonList(doc1))
+                .scannedDocuments(singletonList(doc2))
+                .build())
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
@@ -174,7 +177,7 @@ class AosPackPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documentsGenerated(asList(doc1, doc2))
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
             .build();
 
         aosPackPrinter.sendAosLetterToRespondent(caseData, TEST_CASE_ID);
@@ -198,7 +201,7 @@ class AosPackPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documentsGenerated(asList(doc1, doc2))
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
             .build();
 
         aosPackPrinter.sendAosLetterToApplicant(caseData, TEST_CASE_ID);
@@ -222,7 +225,7 @@ class AosPackPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documentsGenerated(asList(doc1, doc2))
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
             .build();
 
         aosPackPrinter.sendAosResponseLetterToApplicant(caseData, TEST_CASE_ID);

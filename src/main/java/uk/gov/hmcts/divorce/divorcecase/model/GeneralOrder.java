@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -24,7 +24,7 @@ public class GeneralOrder {
 
     @CCD(
         label = "Court order date",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate generalOrderDate;
@@ -32,7 +32,7 @@ public class GeneralOrder {
     @CCD(
         label = "Who is the general order for?",
         hint = "Select all parties the general order should be made available to",
-        access = {CaseworkerAccessBetaOnlyAccess.class},
+        access = {CaseworkerAccessOnlyAccess.class},
         typeOverride = MultiSelectList,
         typeParameterOverride = "GeneralOrderDivorceParties"
     )
@@ -42,13 +42,13 @@ public class GeneralOrder {
     @CCD(
         label = "Recitals",
         typeOverride = TextArea,
-        access = {CaseworkerAccessBetaOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private String generalOrderRecitals;
 
     @CCD(
         label = "Select Judge or Legal Advisor",
-        access = {CaseworkerAccessBetaOnlyAccess.class},
+        access = {CaseworkerAccessOnlyAccess.class},
         typeOverride = FixedList,
         typeParameterOverride = "GeneralOrderJudgeOrLegalAdvisorType"
     )
@@ -56,20 +56,20 @@ public class GeneralOrder {
 
     @CCD(
         label = "Name Of Judge or Legal Advisor",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private String generalOrderJudgeOrLegalAdvisorName;
 
     @CCD(
         label = "General order details",
         typeOverride = TextArea,
-        access = {CaseworkerAccessBetaOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private String generalOrderDetails;
 
     @CCD(
         label = "General Order Draft",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private Document generalOrderDraft;
 }

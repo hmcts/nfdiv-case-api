@@ -37,9 +37,18 @@ public class MarriageDetailsTransformer implements Function<TransformationDetail
         caseData.getApplication().setScreenHasMarriageCert(from(marriageOrCivilPartnershipCert));
 
         if (marriageOrCivilPartnershipCert && !translation) {
+            caseData.getApplication().setScreenHasMarriageCert(YES);
             caseData.getApplication().getMarriageDetails().setCertificateInEnglish(YES);
+            caseData.getApplication().getMarriageDetails().setCertifiedTranslation(NO);
         } else if (!marriageOrCivilPartnershipCert && translation) {
+            caseData.getApplication().setScreenHasMarriageCert(YES);
+            caseData.getApplication().getMarriageDetails().setCertificateInEnglish(NO);
             caseData.getApplication().getMarriageDetails().setCertifiedTranslation(YES);
+        } else if (marriageOrCivilPartnershipCert && translation) {
+            caseData.getApplication().setScreenHasMarriageCert(YES);
+            caseData.getApplication().getMarriageDetails().setCertificateInEnglish(NO);
+            caseData.getApplication().getMarriageDetails().setCertifiedTranslation(YES);
+            transformationDetails.getTransformationWarnings().add("Please review marriage certificate/translation in the scanned form");
         } else {
             transformationDetails.getTransformationWarnings().add("Please review marriage certificate/translation in the scanned form");
         }

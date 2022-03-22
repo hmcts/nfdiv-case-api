@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -58,7 +59,7 @@ class AosOverduePrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documentsGenerated(asList(doc1, doc2))
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
@@ -91,7 +92,7 @@ class AosOverduePrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documentsGenerated(asList(doc1, doc2))
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
             .build();
 
         aosOverduePrinter.sendLetterToApplicant(caseData, TEST_CASE_ID);

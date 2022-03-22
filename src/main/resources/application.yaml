@@ -213,6 +213,7 @@ docmosis:
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx
+      NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx
       JOINT_NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Joint.docx
       NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP: NFD_Notice_Of_Proceedings_Overseas_Sole.docx
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement.docx #TODO: update content
@@ -226,6 +227,7 @@ docmosis:
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT2: NFD_Applicant2_Coversheet.docx
+      COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
       GENERAL_LETTER: NFD_General_Letter.docx
     welsh:
@@ -241,6 +243,7 @@ docmosis:
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx  #TODO: update content
+      NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx #TODO: update content
       NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP: NFD_Notice_Of_Proceedings_Overseas_Sole.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement.docx #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx #TODO: update content
@@ -253,6 +256,7 @@ docmosis:
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT2: NFD_Applicant2_Coversheet.docx
+      COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
       GENERAL_LETTER: NFD_General_Letter.docx
 
