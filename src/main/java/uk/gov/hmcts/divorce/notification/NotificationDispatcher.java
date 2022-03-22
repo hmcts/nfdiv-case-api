@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.notification;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
-import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 public class NotificationDispatcher {
@@ -20,7 +20,7 @@ public class NotificationDispatcher {
 
         if (caseData.getApplicant2().isRepresented()) {
             applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
-        } else if (isNull(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isOffline()) {
+        } else if (isBlank(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isOffline()) {
             applicantNotification.sendToApplicant2Offline(caseData, caseId);
         } else {
             applicantNotification.sendToApplicant2(caseData, caseId);
