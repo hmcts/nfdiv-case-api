@@ -423,7 +423,7 @@ public class ApplicationIssuedNotificationTest {
     }
 
     @Test
-    void shouldSendPersonalServiceNotificationToApplicantSolicitor() {
+    void shouldSendPersonalServiceNotificationToApplicantSolicitorForDivorceApplication() {
 
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)
@@ -443,6 +443,41 @@ public class ApplicationIssuedNotificationTest {
         personalServiceTemplateVars.put(APPLICATION_REFERENCE, TEST_CASE_ID.toString());
         personalServiceTemplateVars.put("union type", "divorce");
         personalServiceTemplateVars.put("solicitor reference", "not provided");
+
+        verify(notificationService).sendEmail(
+            TEST_SOLICITOR_EMAIL,
+            APPLICANT_SOLICITOR_SERVICE,
+            personalServiceTemplateVars,
+            ENGLISH
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendPersonalServiceNotificationToApplicantSolicitorForDissolutionApplication() {
+
+        Applicant  applicant1 = applicantRepresentedBySolicitor();
+        applicant1.getSolicitor().setReference("someRef");
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DISSOLUTION)
+            .applicant1(applicant1)
+            .application(Application.builder()
+                .solServiceMethod(SOLICITOR_SERVICE)
+                .build())
+            .build();
+
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.getProfessionalUsersSignInUrl()).thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/");
+
+        notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
+
+        Map<String,String> personalServiceTemplateVars = personalServiceTemplateVars();
+        personalServiceTemplateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl() + TEST_CASE_ID);
+        personalServiceTemplateVars.put(APPLICATION_REFERENCE, TEST_CASE_ID.toString());
+        personalServiceTemplateVars.put("union type", "dissolution");
+        personalServiceTemplateVars.put("solicitor reference", "someRef");
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
