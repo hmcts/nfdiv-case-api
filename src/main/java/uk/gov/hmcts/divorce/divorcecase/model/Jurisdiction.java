@@ -17,9 +17,10 @@ import java.util.stream.Stream;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_SIX_MONTHS;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_TWELVE_MONTHS;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_JOINT;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_CP;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_D;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.CONNECTION;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
@@ -90,25 +91,47 @@ public class Jurisdiction {
             return List.of("JurisdictionConnections" + EMPTY);
         } else {
             return Stream.of(
-                validateJurisdictionConnectionI(data),
-                validateJurisdictionConnectionJKL(data)
+                validateJurisdictionConnectionC1(data),
+                validateJurisdictionConnectionC2(data),
+                validateJurisdictionConnectionI1(data),
+                validateJurisdictionConnectionI2(data),
+                validateJurisdictionConnectionJ(data)
+
             ).filter(Objects::nonNull).collect(Collectors.toList());
         }
     }
 
-    private String validateJurisdictionConnectionI(CaseData data) {
-        if (connections.contains(RESIDUAL_JURISDICTION) && data.isDivorce()
-            && data.getApplication().getMarriageDetails().getFormationType() != MarriageFormation.SAME_SEX_COUPLE) {
-            return CONNECTION + RESIDUAL_JURISDICTION + CANNOT_EXIST;
+    private String validateJurisdictionConnectionC1(CaseData data) {
+        if (connections.contains(APP_2_RESIDENT_SOLE) && !data.getApplicationType().isSole()) {
+            return CONNECTION + APP_2_RESIDENT_SOLE + CANNOT_EXIST;
         }
         return null;
     }
 
-    private String validateJurisdictionConnectionJKL(CaseData data) {
-        List<JurisdictionConnections> soleConnections = List.of(
-            APP_1_RESIDENT_JOINT, APP_2_RESIDENT_TWELVE_MONTHS, APP_2_RESIDENT_SIX_MONTHS
-        );
-        if (connections.stream().anyMatch(soleConnections::contains) && data.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
+    private String validateJurisdictionConnectionC2(CaseData data) {
+        if (connections.contains(APP_2_RESIDENT_JOINT) && data.getApplicationType().isSole()) {
+            return CONNECTION + APP_2_RESIDENT_JOINT + CANNOT_EXIST;
+        }
+        return null;
+    }
+
+    private String validateJurisdictionConnectionI1(CaseData data) {
+        if (connections.contains(RESIDUAL_JURISDICTION_CP) && data.isDivorce()) {
+            return CONNECTION + RESIDUAL_JURISDICTION_CP + CANNOT_EXIST;
+        }
+        return null;
+    }
+
+    private String validateJurisdictionConnectionI2(CaseData data) {
+        if (connections.contains(RESIDUAL_JURISDICTION_D)
+            && (!data.isDivorce() || data.getApplication().getMarriageDetails().getFormationType() != MarriageFormation.SAME_SEX_COUPLE)) {
+            return CONNECTION + RESIDUAL_JURISDICTION_D + CANNOT_EXIST;
+        }
+        return null;
+    }
+
+    private String validateJurisdictionConnectionJ(CaseData data) {
+        if (connections.contains(APP_1_RESIDENT_JOINT) && data.getApplicationType().isSole()) {
             return CONNECTION + APP_1_RESIDENT_JOINT + CANNOT_EXIST;
         }
         return null;

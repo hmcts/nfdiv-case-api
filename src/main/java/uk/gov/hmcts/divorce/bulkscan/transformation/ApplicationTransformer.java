@@ -28,8 +28,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_DOMICILED;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_CP;
 
 @Component
 public class ApplicationTransformer implements Function<TransformationDetails, TransformationDetails> {
@@ -90,7 +90,7 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
             connections.add(APP_1_APP_2_LAST_RESIDENT);
         }
         if (toBoolean(ocrDataFields.getJurisdictionReasonsRespHabitual())) {
-            connections.add(APP_2_RESIDENT);
+            connections.add(APP_2_RESIDENT_SOLE);
         }
         if (toBoolean(ocrDataFields.getJurisdictionReasonsJointHabitual())) {
             connections.add(APP_1_RESIDENT_JOINT);
@@ -116,7 +116,7 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         }
         if (toBoolean(ocrDataFields.getJurisdictionReasonsSameSex())) {
             // only for civil partnership/same-sex
-            connections.add(RESIDUAL_JURISDICTION);
+            connections.add(RESIDUAL_JURISDICTION_CP);
         }
 
         if (isEmpty(connections)) {
