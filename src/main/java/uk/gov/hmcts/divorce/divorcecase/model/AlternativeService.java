@@ -103,4 +103,9 @@ public class AlternativeService {
             .reasonFailureToServeByBailiff(bailiff.getReasonFailureToServeByBailiff())
             .build();
     }
+
+    @JsonIgnore
+    public boolean isApplicationGranted() {
+        return YesOrNo.YES.equals(serviceApplicationGranted);
+    }
 }

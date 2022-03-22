@@ -1,6 +1,7 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
+    "applicant1Email":"simulate-delivered@notifications.service.gov.uk",
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
