@@ -37,6 +37,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String IS_JOINT = "applicationType=\"jointApplication\"";
     private static final String IS_JOINT_AND_HWF_ENTERED = "applicationType=\"jointApplication\" AND applicant2HWFReferenceNumber=\"*\"";
     private static final String IS_NEW_PAPER_CASE = "newPaperCase=\"Yes\"";
+    private static final String APPLICANT_1_CONTACT_DETAILS_PUBLIC = "applicant1ContactDetailsType!=\"private\"";
+    private static final String APPLICANT_1_CONTACT_DETAILS_PRIVATE = "applicant1ContactDetailsType=\"private\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -125,7 +127,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("documentsGenerated")
             .field("applicant1DocumentsUploaded")
             .field("applicant2DocumentsUploaded")
-            .field("scannedDocuments")
+            .field("scannedDocuments", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
             .field(CaseData::getGeneralOrders)
             .field("documentsUploaded")
             .field(CaseData::getGeneralEmails)
@@ -227,7 +229,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("confidentialDocuments", "Confidential Document")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
-            .field("confidentialDocumentsUploaded");
+            .field("confidentialDocumentsUploaded")
+            .field("scannedDocuments", APPLICANT_1_CONTACT_DETAILS_PRIVATE);
     }
 
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
