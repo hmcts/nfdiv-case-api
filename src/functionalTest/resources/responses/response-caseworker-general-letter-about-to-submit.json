@@ -82,7 +82,7 @@
     ],
     "documentsUploaded": [
       {
-        "id": "8c1a4b5e-8a05-41d8-b55d-d0e190356437",
+        "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4",
