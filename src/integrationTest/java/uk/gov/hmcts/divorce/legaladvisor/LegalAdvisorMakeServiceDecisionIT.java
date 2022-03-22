@@ -120,6 +120,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
         stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
 
         final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .alternativeService(
                 AlternativeService
                     .builder()
@@ -170,6 +171,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
         stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
 
         final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .alternativeService(
                 AlternativeService
                     .builder()

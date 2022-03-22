@@ -59,14 +59,14 @@ public class CaseworkerUploadDocumentTest {
 
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.setDocumentsUploaded(List.of(doc1, doc2));
+        caseData.getDocuments().setDocumentsUploaded(List.of(doc1, doc2));
 
         updatedCaseDetails.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
-        List<ListValue<DivorceDocument>> actualDocuments = response.getData().getDocumentsUploaded();
+        List<ListValue<DivorceDocument>> actualDocuments = response.getData().getDocuments().getDocumentsUploaded();
         assertThat(actualDocuments.size()).isEqualTo(2);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc1.getValue());
         assertThat(actualDocuments.get(1).getValue()).isSameAs(doc2.getValue());
@@ -83,7 +83,7 @@ public class CaseworkerUploadDocumentTest {
             getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004", "bailiff.pdf", BAILIFF_SERVICE);
 
         final CaseData previousCaseData = caseData();
-        previousCaseData.setDocumentsUploaded(List.of(doc1, doc2));
+        previousCaseData.getDocuments().setDocumentsUploaded(List.of(doc1, doc2));
 
         previousCaseDetails.setData(previousCaseData);
 
@@ -92,14 +92,14 @@ public class CaseworkerUploadDocumentTest {
 
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.setDocumentsUploaded(List.of(doc1, doc2, doc3));
+        caseData.getDocuments().setDocumentsUploaded(List.of(doc1, doc2, doc3));
 
         updatedCaseDetails.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
-        List<ListValue<DivorceDocument>> actualDocuments = response.getData().getDocumentsUploaded();
+        List<ListValue<DivorceDocument>> actualDocuments = response.getData().getDocuments().getDocumentsUploaded();
         assertThat(actualDocuments.size()).isEqualTo(3);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc3.getValue());
         assertThat(actualDocuments.get(1).getValue()).isSameAs(doc1.getValue());

@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -19,13 +18,14 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ServiceOrderTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.UUID;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -62,7 +62,10 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
     private ServiceOrderTemplateContent serviceOrderTemplateContent;
 
     @Autowired
-    private ServiceApplicationNotification notification;
+    private ServiceApplicationNotification serviceApplicationNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -107,7 +110,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
         log.info("Application end state is {}", endState);
 
         serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
-        if (serviceApplication.getServiceApplicationGranted().toBoolean()) {
+
+        if (serviceApplication.isApplicationGranted()) {
             log.info("Service application granted for case id {}", details.getId());
             endState = application.getIssueDate() == null ? Submitted : Holding;
 
@@ -143,12 +147,13 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     SERVICE_REFUSAL_TEMPLATE_ID);
             }
 
-            notification.sendToApplicant1(caseDataCopy, details.getId());
-
             endState = AwaitingAos;
         }
 
         log.info("ServiceApplication decision. End State is {} Due date is {}", endState, caseDataCopy.getDueDate());
+
+        log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
+        notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
 
         caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
 
@@ -179,12 +184,9 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .documentType(documentType)
             .build();
 
-        caseDataCopy.addToDocumentsGenerated(
-            ListValue
-                .<DivorceDocument>builder()
-                .id(UUID.randomUUID().toString())
-                .value(deemedOrDispensedDoc)
-                .build()
-        );
+        caseDataCopy.getDocuments().setDocumentsGenerated(addDocumentToTop(
+            caseDataCopy.getDocuments().getDocumentsGenerated(),
+            deemedOrDispensedDoc
+        ));
     }
 }

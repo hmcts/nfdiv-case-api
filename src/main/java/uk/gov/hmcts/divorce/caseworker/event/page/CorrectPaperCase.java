@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
@@ -46,129 +47,131 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             .label("Label-CorrectApplicant1Details",
                 "### ${labelContentApplicantsOrApplicant1s} details")
             .complex(CaseData::getApplicant1)
-            .mandatory(Applicant::getFirstName)
-            .optional(Applicant::getMiddleName)
-            .mandatory(Applicant::getLastName)
-            .mandatory(Applicant::getNameDifferentToMarriageCertificate)
-            .mandatory(Applicant::getNameChangedHowOtherDetails,
-                "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
-            .mandatory(Applicant::getContactDetailsType)
-            .mandatoryWithLabel(Applicant::getAddress, "${labelContentApplicantsOrApplicant1s} address")
-            .mandatoryWithLabel(Applicant::getPhoneNumber, "${labelContentApplicantsOrApplicant1s} phone number")
-            .mandatoryWithLabel(Applicant::getEmail, "${labelContentApplicantsOrApplicant1s} email address")
-            .mandatoryWithLabel(Applicant::getSolicitorRepresented,
-                "Is ${labelContentTheApplicantOrApplicant1} represented by a solicitor?")
-            .complex(Applicant::getSolicitor, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-            .label("Label-Applicant1SolDetails",
-                "### ${labelContentApplicantsOrApplicant1s} solicitor details",
-                APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-            .mandatory(Solicitor::getName, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-            .mandatory(Solicitor::getReference, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-            .mandatory(Solicitor::getFirmName, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-            .mandatory(Solicitor::getAddress, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-            .mandatory(Solicitor::getPhone, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-            .mandatory(Solicitor::getEmail, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-            .done()
-            .label("Label-CorrectApplicant1FODetails",
-                "### ${labelContentApplicantsOrApplicant1s} financial order details")
-            .mandatory(Applicant::getFinancialOrder)
-            .mandatory(Applicant::getFinancialOrdersFor, "applicant1FinancialOrder=\"Yes\"")
-            .label("Label-CorrectApplicant1LegalProceedingsDetails",
-                "### ${labelContentApplicantsOrApplicant1s} legal proceedings details")
-            .mandatory(Applicant::getLegalProceedings)
-            .mandatory(Applicant::getLegalProceedingsDetails, "applicant1LegalProceedings=\"Yes\"")
+                .mandatory(Applicant::getFirstName)
+                .optional(Applicant::getMiddleName)
+                .mandatory(Applicant::getLastName)
+                .mandatory(Applicant::getNameDifferentToMarriageCertificate)
+                .mandatory(Applicant::getNameChangedHowOtherDetails,
+                    "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
+                .mandatory(Applicant::getContactDetailsType)
+                .mandatoryWithLabel(Applicant::getAddress, "${labelContentApplicantsOrApplicant1s} address")
+                .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentApplicantsOrApplicant1s} phone number")
+                .optionalWithLabel(Applicant::getEmail, "${labelContentApplicantsOrApplicant1s} email address")
+                .mandatoryWithLabel(Applicant::getSolicitorRepresented,
+                    "Is ${labelContentTheApplicantOrApplicant1} represented by a solicitor?")
+                .complex(Applicant::getSolicitor, "applicant1SolicitorRepresented=\"Yes\"")
+                    .label("Label-Applicant1SolDetails",
+                        "### ${labelContentApplicantsOrApplicant1s} solicitor details",
+                        "applicant1SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getName, "applicant1SolicitorRepresented=\"Yes\"")
+                    .optional(Solicitor::getReference, "applicant1SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getFirmName, "applicant1SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getAddress, "applicant1SolicitorRepresented=\"Yes\"")
+                    .optional(Solicitor::getPhone, "applicant1SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getEmail, "applicant1SolicitorRepresented=\"Yes\"")
+                .done()
+                .label("Label-CorrectApplicant1FODetails",
+                    "### ${labelContentApplicantsOrApplicant1s} financial order details")
+                .mandatoryWithLabel(Applicant::getFinancialOrder,
+                    "Does ${labelContentTheApplicantOrApplicant1} wish to apply for a financial order?")
+                .mandatory(Applicant::getFinancialOrdersFor, "applicant1FinancialOrder=\"Yes\"")
+                .label("Label-CorrectApplicant1LegalProceedingsDetails",
+                    "### ${labelContentApplicantsOrApplicant1s} legal proceedings details")
+                .mandatory(Applicant::getLegalProceedings)
+                .mandatory(Applicant::getLegalProceedingsDetails, "applicant1LegalProceedings=\"Yes\"")
             .done()
             .label("Label-CorrectApplicant1SOTDetails",
                 "### ${labelContentApplicantsOrApplicant1s} statement of truth details")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getApplicant1StatementOfTruth)
-            .mandatory(Application::getSolSignStatementOfTruth)
+                .mandatory(Application::getApplicant1StatementOfTruth)
+                .mandatory(Application::getSolSignStatementOfTruth)
             .done()
             .label("Label-CorrectApplicant2Details",
                 "### ${labelContentRespondentsOrApplicant2s} details")
             .complex(CaseData::getApplicant2)
-            .mandatory(Applicant::getFirstName)
-            .optional(Applicant::getMiddleName)
-            .mandatory(Applicant::getLastName)
-            .mandatory(Applicant::getNameDifferentToMarriageCertificate)
-            .mandatory(Applicant::getNameChangedHowOtherDetails,
-                "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
-            .mandatoryWithLabel(Applicant::getAddress, "${labelContentRespondentsOrApplicant2s} address")
-            .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentRespondentsOrApplicant2s} phone number")
-            .optionalWithLabel(Applicant::getEmail, "${labelContentRespondentsOrApplicant2s} email address")
-            .mandatoryWithLabel(Applicant::getSolicitorRepresented,
-                "Is ${labelContentTheApplicant2} represented by a solicitor?")
-            .complex(Applicant::getSolicitor)
-            .label("Label-CorrectApplicant2SolDetails",
-                "### ${labelContentRespondentsOrApplicant2s} solicitor details",
-                APPLICANT_2_SOLICITOR_REPRESENTED_YES)
-            .mandatory(Solicitor::getName, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
-            .mandatory(Solicitor::getReference, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
-            .mandatory(Solicitor::getFirmName, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
-            .mandatory(Solicitor::getAddress, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
-            .mandatory(Solicitor::getPhone, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
-            .done()
-            .label("Label-CorrectApplicant2FODetails",
-                "### ${labelContentRespondentsOrApplicant2s} financial order details")
-            .mandatoryWithLabel(Applicant::getFinancialOrder,
-                "Does ${labelContentTheApplicant2} wish to apply for a financial order?")
-            .mandatory(Applicant::getFinancialOrdersFor, "applicant2FinancialOrder=\"Yes\"")
+                .mandatory(Applicant::getFirstName)
+                .optional(Applicant::getMiddleName)
+                .mandatory(Applicant::getLastName)
+                .mandatory(Applicant::getNameDifferentToMarriageCertificate)
+                .mandatory(Applicant::getNameChangedHowOtherDetails,
+                    "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
+                .mandatoryWithLabel(Applicant::getAddress, "${labelContentRespondentsOrApplicant2s} address")
+                .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentRespondentsOrApplicant2s} phone number")
+                .optionalWithLabel(Applicant::getEmail, "${labelContentRespondentsOrApplicant2s} email address")
+                .mandatoryWithLabel(Applicant::getSolicitorRepresented,
+                    "Is ${labelContentTheApplicant2} represented by a solicitor?")
+                .complex(Applicant::getSolicitor)
+                    .label("Label-CorrectApplicant2SolDetails",
+                        "### ${labelContentRespondentsOrApplicant2s} solicitor details",
+                        "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getName, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getReference, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getFirmName, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getAddress, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getPhone, "applicant2SolicitorRepresented=\"Yes\"")
+                .done()
+                .label("Label-CorrectApplicant2FODetails",
+                    "### ${labelContentRespondentsOrApplicant2s} financial order details")
+                .mandatoryWithLabel(Applicant::getFinancialOrder,
+                    "Does ${labelContentTheApplicant2} wish to apply for a financial order?")
+                .mandatory(Applicant::getFinancialOrdersFor, "applicant2FinancialOrder=\"Yes\"")
             .done()
             .label("Label-CorrectApplicant2SOTDetails",
                 "### ${labelContentRespondentsOrApplicant2s} statement of truth details",
-                JOINT_APPLICATION)
+                "applicationType=\"jointApplication\"")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getApplicant2StatementOfTruth, JOINT_APPLICATION)
-            .mandatory(Application::getApplicant2SolSignStatementOfTruth, JOINT_APPLICATION)
-            .mandatory(Application::getApplicant2SolStatementOfReconciliationName, JOINT_APPLICATION)
-            .mandatory(Application::getApplicant2SolStatementOfReconciliationFirm, JOINT_APPLICATION)
-            .label("Label-CorrectJurisdictionDetails", "### Jurisdiction connection details")
-            .complex(Application::getJurisdiction)
-            .mandatory(Jurisdiction::getConnections)
-            .done()
-            .readonly(Application::getDateSubmitted)
-            .mandatoryWithLabel(Application::getApplicant1ScreenHasMarriageBroken,
-                "Has the ${labelContentApplicantsOrApplicant1s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
-            .mandatoryWithLabel(Application::getApplicant2ScreenHasMarriageBroken,
-                "Has the ${labelContentRespondentsOrApplicant2s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
-            .label("Label-CorrectApp1HWFDetails",
-                "### ${labelContentApplicantsOrApplicant1s} Help With Fees details")
-            .complex(Application::getApplicant1HelpWithFees)
-            .optional(HelpWithFees::getReferenceNumber)
-            .mandatory(HelpWithFees::getAppliedForFees)
-            .mandatory(HelpWithFees::getNeedHelp)
-            .done()
-            .complex(Application::getApplicant2HelpWithFees, JOINT_APPLICATION)
-            .label("Label-CorrectApp2HWFDetails",
-                "### ${labelContentRespondentsOrApplicant2s} Help With Fees details",
-                JOINT_APPLICATION)
-            .optional(HelpWithFees::getReferenceNumber, JOINT_APPLICATION)
-            .mandatory(HelpWithFees::getAppliedForFees, JOINT_APPLICATION)
-            .mandatory(HelpWithFees::getNeedHelp, JOINT_APPLICATION)
-            .done()
-            .mandatory(Application::getScreenHasMarriageCert)
-            .label("Label-CorrectMarriageDetails", "### Marriage details")
-            .complex(Application::getMarriageDetails)
-            .mandatory(MarriageDetails::getCertificateInEnglish)
-            .mandatory(MarriageDetails::getCertifiedTranslation,
-                "marriageCertificateInEnglish=\"No\"")
-            .mandatory(MarriageDetails::getMarriedInUk)
-            .mandatoryWithLabel(MarriageDetails::getIssueApplicationWithoutMarriageCertificate,
-                "Are you making a separate application to issue without your marriage or civil partnership certificate?")
-            .mandatory(MarriageDetails::getDate)
-            .mandatoryWithLabel(MarriageDetails::getApplicant1Name,
-                "${labelContentApplicantsOrApplicant1s} full name as on marriage certificate")
-            .mandatoryWithLabel(MarriageDetails::getApplicant2Name,
-                "${labelContentRespondentsOrApplicant2s} full name as on marriage certificate")
-            .mandatory(MarriageDetails::getPlaceOfMarriage)
-            .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
-            .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,
-                "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
-            .done()
+                .mandatory(Application::getApplicant2StatementOfTruth, "applicationType=\"jointApplication\"")
+                .mandatory(Application::getApplicant2SolSignStatementOfTruth, "applicationType=\"jointApplication\"")
+                .mandatory(Application::getApplicant2SolStatementOfReconciliationName, "applicationType=\"jointApplication\"")
+                .mandatory(Application::getApplicant2SolStatementOfReconciliationFirm, "applicationType=\"jointApplication\"")
+                .label("Label-CorrectJurisdictionDetails", "### Jurisdiction connection details")
+                .complex(Application::getJurisdiction)
+                    .mandatory(Jurisdiction::getConnections)
+                .done()
+                .readonly(Application::getDateSubmitted)
+                .mandatoryWithLabel(Application::getApplicant1ScreenHasMarriageBroken,
+                    "Has the ${labelContentApplicantsOrApplicant1s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
+                .mandatoryWithLabel(Application::getApplicant2ScreenHasMarriageBroken,
+                    "Has the ${labelContentRespondentsOrApplicant2s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
+                .label("Label-CorrectApp1HWFDetails",
+                    "### ${labelContentApplicantsOrApplicant1s} Help With Fees details")
+                .complex(Application::getApplicant1HelpWithFees)
+                    .optional(HelpWithFees::getReferenceNumber)
+                    .mandatory(HelpWithFees::getAppliedForFees)
+                    .mandatory(HelpWithFees::getNeedHelp)
+                .done()
+                .complex(Application::getApplicant2HelpWithFees, "applicationType=\"jointApplication\"")
+                    .label("Label-CorrectApp2HWFDetails",
+                        "### ${labelContentRespondentsOrApplicant2s} Help With Fees details",
+                        "applicationType=\"jointApplication\"")
+                    .optional(HelpWithFees::getReferenceNumber, "applicationType=\"jointApplication\"")
+                    .mandatory(HelpWithFees::getAppliedForFees, "applicationType=\"jointApplication\"")
+                    .mandatory(HelpWithFees::getNeedHelp, "applicationType=\"jointApplication\"")
+                .done()
+                .mandatory(Application::getScreenHasMarriageCert)
+                .label("Label-CorrectMarriageDetails", "### Marriage details")
+                .complex(Application::getMarriageDetails)
+                    .mandatory(MarriageDetails::getCertificateInEnglish)
+                    .mandatory(MarriageDetails::getCertifiedTranslation,
+                        "marriageCertificateInEnglish=\"No\"")
+                    .mandatory(MarriageDetails::getMarriedInUk)
+                    .mandatoryWithLabel(MarriageDetails::getIssueApplicationWithoutMarriageCertificate,
+                        "Are you making a separate application to issue without your marriage or civil partnership certificate?")
+                    .mandatory(MarriageDetails::getDate)
+                    .mandatoryWithLabel(MarriageDetails::getApplicant1Name,
+                        "${labelContentApplicantsOrApplicant1s} full name as on marriage certificate")
+                    .mandatoryWithLabel(MarriageDetails::getApplicant2Name,
+                        "${labelContentRespondentsOrApplicant2s} full name as on marriage certificate")
+                    .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
+                    .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,
+                        "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
+                .done()
             .done()
             .label("Label-CorrectScannedDocuments",
                 "### Scanned Documents")
-            .optional(CaseData::getScannedDocuments);
+            .complex(CaseData::getDocuments)
+                .optional(CaseDocuments::getScannedDocuments)
+                .done();
     }
 
     @Override
@@ -419,7 +422,10 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
         }
 
-        if (application.getApplicant2ScreenHasMarriageBroken() != null && !application.getApplicant2ScreenHasMarriageBroken().toBoolean()) {
+        if (!data.getApplicationType().isSole()
+            && application.getApplicant2ScreenHasMarriageBroken() != null
+            && !application.getApplicant2ScreenHasMarriageBroken().toBoolean()
+        ) {
             errors.add("To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
         }
 

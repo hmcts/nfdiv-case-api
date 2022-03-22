@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 
 import java.time.LocalDate;
 
@@ -75,12 +75,12 @@ public class AlternativeService {
 
     @JsonUnwrapped
     @Builder.Default
-    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
+    @CCD(access = {CaseworkerAccessOnlyAccess.class})
     private Bailiff bailiff = new Bailiff();
 
     @JsonUnwrapped(prefix = "servicePaymentFee")
     @Builder.Default
-    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
+    @CCD(access = {CaseworkerAccessOnlyAccess.class})
     private FeeDetails servicePaymentFee = new FeeDetails();
 
     @SuppressWarnings("PMD")
@@ -102,5 +102,10 @@ public class AlternativeService {
             .successfulServedByBailiff(bailiff.getSuccessfulServedByBailiff())
             .reasonFailureToServeByBailiff(bailiff.getReasonFailureToServeByBailiff())
             .build();
+    }
+
+    @JsonIgnore
+    public boolean isApplicationGranted() {
+        return YesOrNo.YES.equals(serviceApplicationGranted);
     }
 }

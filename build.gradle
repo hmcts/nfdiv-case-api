@@ -26,8 +26,8 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.4'
   id 'com.github.ben-manes.versions' version '0.41.0'
-  id 'hmcts.ccd.sdk' version '1.4.1'
-  id 'com.github.hmcts.rse-cft-lib' version '0.15.16'
+  id 'hmcts.ccd.sdk' version '2.0.1'
+  id 'com.github.hmcts.rse-cft-lib' version '0.15.19'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -402,7 +402,7 @@ ccd {
 }
 
 tasks.cftlibTest.dependsOn buildCCDXlsx
-check.dependsOn cftlibTest
+integration.dependsOn cftlibTest
 
 bootWithCCD {
     group = 'ccd tasks'

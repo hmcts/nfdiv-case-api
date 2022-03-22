@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.List;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
@@ -23,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
 
 @Slf4j
 @Component
@@ -60,6 +63,15 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
         log.info("Caseworker progress paper case callback invoked");
 
         var caseData = details.getData();
+
+        log.info("Validating case data CaseID: {}", details.getId());
+        final List<String> submittedErrors = validateReadyForPayment(caseData);
+
+        if (!submittedErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(submittedErrors)
+                .build();
+        }
 
         if (caseData.getApplication().getProgressPaperCase().equals(ProgressPaperCase.SUBMITTED)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()

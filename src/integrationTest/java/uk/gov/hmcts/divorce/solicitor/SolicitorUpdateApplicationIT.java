@@ -213,7 +213,7 @@ public class SolicitorUpdateApplicationIT {
             .value(divorceDocument)
             .build();
 
-        caseData.setDocumentsGenerated(singletonList(divorceDocumentListValue));
+        caseData.getDocuments().setDocumentsGenerated(singletonList(divorceDocumentListValue));
         return caseData;
     }
 }
