@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.BailiffApprovedOrderContent;
 import uk.gov.hmcts.divorce.document.content.BailiffNotApprovedOrderContent;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -54,7 +55,10 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
     private Clock clock;
 
     @Autowired
-    private ServiceApplicationNotification notification;
+    private ServiceApplicationNotification serviceApplicationNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -119,10 +123,11 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
                 BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME
             );
 
-            notification.sendToApplicant1(caseDataCopy, caseId);
-
             caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
         }
+
+        log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
+        notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
 
         log.info("Setting end state of case id {} to {}", details.getId(), endState);
 
