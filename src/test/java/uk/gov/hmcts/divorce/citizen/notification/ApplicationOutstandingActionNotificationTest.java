@@ -22,12 +22,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.CONDITIONAL_COURT_EMAIL;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.CONDITIONAL_REFERENCE_NUMBER;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_CIVIL_PARTNERSHIP_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_FOREIGN_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_NAME_CHANGE_PROOF;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.PAPERS_SERVED_ANOTHER_WAY;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SERVE_HUSBAND_ANOTHER_WAY;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -79,6 +82,9 @@ class ApplicationOutstandingActionNotificationTest {
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, YES),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
@@ -116,6 +122,9 @@ class ApplicationOutstandingActionNotificationTest {
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
             eq(ENGLISH)
@@ -138,6 +147,9 @@ class ApplicationOutstandingActionNotificationTest {
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
             eq(ENGLISH)
@@ -191,6 +203,9 @@ class ApplicationOutstandingActionNotificationTest {
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
                 hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES),
@@ -225,9 +240,47 @@ class ApplicationOutstandingActionNotificationTest {
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
                 hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    @SuppressWarnings("squid:S6068")
+    void shouldCallSendEmailForPapersServedAnotherWayAndNoDocumentsRequired() {
+        CaseData data = caseData();
+        data.setApplicationType(SOLE_APPLICATION);
+        data.setApplicant2(getApplicant2(MALE));
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        data.setApplicationType(SOLE_APPLICATION);
+
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(new HashSet<>());
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(SEND_DOCUMENTS_TO_COURT, CommonContent.NO),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, null),
+                hasEntry(CONDITIONAL_COURT_EMAIL, null),
+                hasEntry(MISSING_MARRIAGE_CERTIFICATE, CommonContent.NO),
+                hasEntry(MISSING_NAME_CHANGE_PROOF, CommonContent.NO),
+                hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES),
+                hasEntry(SERVE_HUSBAND_ANOTHER_WAY, YES),
+                hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
+                hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
             )),
             eq(ENGLISH)
         );
