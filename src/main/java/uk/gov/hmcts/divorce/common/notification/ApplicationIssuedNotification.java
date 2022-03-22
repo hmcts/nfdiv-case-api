@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
