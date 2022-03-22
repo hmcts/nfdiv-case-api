@@ -56,3 +56,4 @@ java:
     CITIZEN_UPDATE_CASE_STATE_ENABLED: false
     SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
     SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+    NOTIFY_TEMPLATE_SIGN_IN_PROFESSIONAL_USERS_URL: https://manage-case.{{ .Values.global.environment }}.platform.hmcts.net/cases/case-details/
