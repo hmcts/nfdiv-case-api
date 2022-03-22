@@ -117,8 +117,8 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         boolean ukMarriage = caseData.getApplication().getMarriageDetails().getMarriedInUk().toBoolean();
 
         templateVars.put(SEND_DOCUMENTS_TO_COURT, needsToSendDocuments ? YES : NO);
-        templateVars.put(CONDITIONAL_REFERENCE_NUMBER, needsToSendDocuments ? referenceNumber : null);
-        templateVars.put(CONDITIONAL_COURT_EMAIL, needsToSendDocuments ? courtEmail : null);
+        templateVars.put(CONDITIONAL_REFERENCE_NUMBER, needsToSendDocuments ? referenceNumber : "");
+        templateVars.put(CONDITIONAL_COURT_EMAIL, needsToSendDocuments ? courtEmail : "");
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE,
             missingDocTypes.contains(MARRIAGE_CERTIFICATE) && ukMarriage && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE,
