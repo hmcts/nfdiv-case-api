@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
@@ -69,7 +70,7 @@ class GeneralLetterPrinterTest {
             .build();
 
         final CaseData caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
-        caseData.setDocumentsGenerated(Lists.newArrayList(doc1, doc2));
+        caseData.getDocuments().setDocumentsGenerated(Lists.newArrayList(doc1, doc2));
         caseData.getGeneralLetter().setGeneralLetterAttachments(Lists.newArrayList(attachment));
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
@@ -103,7 +104,9 @@ class GeneralLetterPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .documentsGenerated(asList(doc1, doc2))
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(asList(doc1, doc2))
+                .build())
             .build();
 
         printer.sendLetterWithAttachments(caseData, TEST_CASE_ID);

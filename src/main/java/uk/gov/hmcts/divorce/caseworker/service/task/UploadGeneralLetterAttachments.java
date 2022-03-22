@@ -14,6 +14,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 
 @Component
 @Slf4j
@@ -40,7 +41,9 @@ public class UploadGeneralLetterAttachments implements CaseTask {
                         divorceDocument.setDocumentDateAdded(createdDate.toLocalDate());
                     }
 
-                    caseData.addToDocumentsUploaded(document);
+                    caseData.getDocuments().setDocumentsUploaded(
+                        addDocumentToTop(caseData.getDocuments().getDocumentsUploaded(), divorceDocument)
+                    );
                 });
         }
 

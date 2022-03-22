@@ -45,8 +45,8 @@ public class UploadGeneralLetterAttachmentsTest {
             .documentDateAdded(DATE)
             .build();
 
-        assertThat(response.getData().getDocumentsUploaded().size()).isEqualTo(1);
-        assertThat(response.getData().getDocumentsUploaded().get(0).getValue())
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
             .isEqualTo(attachment);
     }
 }

@@ -28,7 +28,7 @@ public class GeneralLetterPrinter {
 
     public void sendLetterWithAttachments(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> generalLetters = lettersWithDocumentType(caseData.getDocumentsGenerated(), GENERAL_LETTER);
+        final List<Letter> generalLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), GENERAL_LETTER);
         final List<Letter> attachments = lettersWithDocumentType(caseData.getGeneralLetter().getGeneralLetterAttachments());
 
         Letter generalLetter = firstElement(generalLetters);
