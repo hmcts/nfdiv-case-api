@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,6 +15,39 @@ public class JurisdictionTest {
 
     public static final String CONNECTION = "Connection ";
     public static final String CANNOT_EXIST = " cannot exist";
+
+    @Test
+    public void shouldNotReturnErrorsWhenJurisdictionConnectionIsC1AndI1ForValidCase() {
+        final CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        Jurisdiction jurisdiction = new Jurisdiction();
+
+        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_2_RESIDENT_SOLE, JurisdictionConnections.RESIDUAL_JURISDICTION_CP));
+
+        List<String> errors = jurisdiction.validateJurisdiction(caseData);
+
+        Assertions.assertThat(errors).isEmpty();
+    }
+
+    @Test
+    public void shouldNotReturnErrorsWhenJurisdictionConnectionIsC2AndI2AndJForValidCase() {
+        final CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
+        caseData.getApplication().getMarriageDetails().setFormationType(MarriageFormation.SAME_SEX_COUPLE);
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        Jurisdiction jurisdiction = new Jurisdiction();
+
+        jurisdiction.setConnections(Set.of(
+            JurisdictionConnections.APP_2_RESIDENT_JOINT,
+            JurisdictionConnections.RESIDUAL_JURISDICTION_D,
+            JurisdictionConnections.APP_1_RESIDENT_JOINT
+        ));
+
+        List<String> errors = jurisdiction.validateJurisdiction(caseData);
+
+        Assertions.assertThat(errors).isEmpty();
+    }
 
     @Test
     public void shouldReturnErrorWhenJurisdictionConnectionIsC1ForJointCase() {
