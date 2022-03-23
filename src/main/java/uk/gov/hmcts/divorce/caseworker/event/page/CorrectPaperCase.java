@@ -67,8 +67,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         buildCourtFeeFields(fieldCollectionBuilder);
 
         fieldCollectionBuilder
-            .label("Label-CorrectScannedDocuments",
-            "### Scanned Documents")
+            .label("Label-CorrectScannedDocuments", "### Scanned Documents")
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getScannedDocuments)
             .done();
