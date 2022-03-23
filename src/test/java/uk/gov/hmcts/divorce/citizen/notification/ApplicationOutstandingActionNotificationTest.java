@@ -273,8 +273,8 @@ class ApplicationOutstandingActionNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, CommonContent.NO),
-                hasEntry(CONDITIONAL_REFERENCE_NUMBER, null),
-                hasEntry(CONDITIONAL_COURT_EMAIL, null),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, ""),
+                hasEntry(CONDITIONAL_COURT_EMAIL, ""),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, CommonContent.NO),
                 hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES),
