@@ -65,7 +65,7 @@
     "noticeOfProceedingsEmail": "applicant2@test.com",
     "documentsGenerated": [
       {
-        "id": "Notice of proceeding respondent",
+        "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
@@ -77,7 +77,7 @@
         }
       },
       {
-        "id": "Notice of proceeding applicant",
+        "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa",
@@ -89,8 +89,8 @@
         }
       }
     ],
-    "dueDate": "2021-07-03",
-    "dataVersion": 1,
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
   "state": "AwaitingAos"

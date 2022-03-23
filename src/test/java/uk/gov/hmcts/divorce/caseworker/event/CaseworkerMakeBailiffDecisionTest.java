@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.BailiffApprovedOrderContent;
 import uk.gov.hmcts.divorce.document.content.BailiffNotApprovedOrderContent;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.util.HashMap;
@@ -25,9 +26,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -69,6 +68,9 @@ class CaseworkerMakeBailiffDecisionTest {
     @Mock
     private ServiceApplicationNotification serviceApplicationNotification;
 
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
     @InjectMocks
     private CaseworkerMakeBailiffDecision makeBailiffDecision;
 
@@ -95,14 +97,14 @@ class CaseworkerMakeBailiffDecisionTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeBailiffDecision.aboutToSubmit(details, details);
 
-        assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingBailiffService);
-        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServiceApplicationDecisionDate())
+        assertThat(response.getState()).isEqualTo(AwaitingBailiffService);
+        assertThat(response.getData().getAlternativeService().getServiceApplicationDecisionDate())
             .isEqualTo(getExpectedLocalDate());
 
-        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
     }
 
     @Test
@@ -116,15 +118,15 @@ class CaseworkerMakeBailiffDecisionTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeBailiffDecision.aboutToSubmit(details, details);
 
-        assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingAos);
+        assertThat(response.getState()).isEqualTo(AwaitingAos);
 
-        ListValue<AlternativeServiceOutcome> listValue = aboutToStartOrSubmitResponse.getData().getAlternativeServiceOutcomes().get(0);
+        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate()).isEqualTo(getExpectedLocalDate());
 
-        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
     }
 
     @Test
@@ -143,7 +145,8 @@ class CaseworkerMakeBailiffDecisionTest {
         when(bailiffApprovedOrderContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
 
-        makeBailiffDecision.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeBailiffDecision.aboutToSubmit(details, details);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
@@ -156,7 +159,7 @@ class CaseworkerMakeBailiffDecisionTest {
                 BAILIFF_APPLICATION_APPROVED_FILE_NAME
             );
 
-        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
     }
 
     @Test
@@ -176,7 +179,8 @@ class CaseworkerMakeBailiffDecisionTest {
         when(bailiffApprovedOrderContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
 
-        makeBailiffDecision.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeBailiffDecision.aboutToSubmit(details, details);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
@@ -189,7 +193,7 @@ class CaseworkerMakeBailiffDecisionTest {
                 BAILIFF_APPLICATION_APPROVED_FILE_NAME
             );
 
-        verify(serviceApplicationNotification, never()).sendToApplicant1(any(CaseData.class), anyLong());
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
     }
 
     @Test
@@ -208,7 +212,8 @@ class CaseworkerMakeBailiffDecisionTest {
         when(bailiffNotApprovedOrderContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
 
-        makeBailiffDecision.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeBailiffDecision.aboutToSubmit(details, details);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
@@ -221,7 +226,7 @@ class CaseworkerMakeBailiffDecisionTest {
                 eq(BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME)
             );
 
-        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
     }
 
     @Test
@@ -241,7 +246,8 @@ class CaseworkerMakeBailiffDecisionTest {
         when(bailiffNotApprovedOrderContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
 
-        makeBailiffDecision.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeBailiffDecision.aboutToSubmit(details, details);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
@@ -254,6 +260,6 @@ class CaseworkerMakeBailiffDecisionTest {
                 eq(BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME)
             );
 
-        verify(serviceApplicationNotification).sendToApplicant1(any(CaseData.class), eq(TEST_CASE_ID));
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
     }
 }
