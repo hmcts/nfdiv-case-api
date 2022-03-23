@@ -102,7 +102,7 @@
         "id": "${json-unit.any-string}",
         "value": {
           "documentFileName": "noticeOfProceedings.pdf",
-          "documentType": "noticeOfProceedingsApp1",
+          "documentType": "noticeOfProceedings",
           "documentLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "noticeOfProceedings.pdf",
