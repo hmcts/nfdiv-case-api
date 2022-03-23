@@ -12,6 +12,10 @@
     "value": "true"
   },
   {
+    "name": "jurisdictionReasonsJointHabitualWho",
+    "value": "applicant,applicant1"
+  },
+  {
     "name": "jurisdictionReasons6MonthsHabitual",
     "value": "true"
   },
