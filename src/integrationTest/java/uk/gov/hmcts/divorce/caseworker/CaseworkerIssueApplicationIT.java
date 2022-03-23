@@ -72,6 +72,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -154,6 +156,8 @@ public class CaseworkerIssueApplicationIT {
         "classpath:caseworker-issue-sole-citizen-application-about-to-submit-response.json";
     private static final String SOLE_CITIZEN_UK_BASED_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-sole-citizen-uk-based-application-about-to-submit-response.json";
+    private static final String SOLE_APPLICANT1_REPRESENTED_BY_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT =
+        "classpath:caseworker-issue-applicant1-represented-by-solicitor-about-to-submit-response.json";
     private static final String JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-joint-citizen-application-about-to-submit-response.json";
 
@@ -271,6 +275,71 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
+    void shouldSendApplicationIssueNotificationsForApplicant1SolicitorWhenIsRepresentedInDissolutionCase() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 20));
+        caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.getApplicant1().getSolicitor().setReference("TEST");
+        caseData.getApplicant1().setGender(FEMALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Notice of proceeding respondent")
+            .thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
+        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx");
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, "NFD_CP_Application_Sole.docx");
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetter();
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response)
+            .isEqualTo(json(TestResourceUtil.expectedResponse(SOLE_APPLICANT1_REPRESENTED_BY_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT)));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
     void shouldSendApplicationIssueNotificationsForSoleCitizenApplicationWhenRespondentIsOverseasBased() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
@@ -381,13 +450,6 @@ public class CaseworkerIssueApplicationIT {
 
         assertThatJson(response)
             .isEqualTo(json(TestResourceUtil.expectedResponse(JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT)));
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
-                anyMap(),
-                eq(ENGLISH));
 
         verify(notificationService)
             .sendEmail(
