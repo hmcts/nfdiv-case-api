@@ -100,6 +100,6 @@ public class CaseworkerCorrectPaperCaseTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerCorrectPaperCase.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getBulkScanMetaInfo().getWarnings()).isEmpty();
+        assertThat(response.getData().getBulkScanMetaInfo().getWarnings()).isNull();
     }
 }
