@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.BailiffApprovedOrderContent;
 import uk.gov.hmcts.divorce.document.content.BailiffNotApprovedOrderContent;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -54,7 +55,10 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
     private Clock clock;
 
     @Autowired
-    private ServiceApplicationNotification notification;
+    private ServiceApplicationNotification serviceApplicationNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -107,6 +111,9 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
                 caseDataCopy.getApplicant1().getLanguagePreference(),
                 BAILIFF_APPLICATION_APPROVED_FILE_NAME
             );
+
+            log.info("Sending ServiceApplicationNotification (granted) case ID: {}", details.getId());
+            notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
         } else {
             endState = AwaitingAos;
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
@@ -119,8 +126,10 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
                 BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME
             );
 
-            notification.sendToApplicant1(caseDataCopy, caseId);
+            log.info("Sending ServiceApplicationNotification (refused) case ID: {}", details.getId());
+            notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
 
+            log.info("Archiving service application for case ID: {}", details.getId());
             caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
         }
 
