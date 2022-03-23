@@ -24,6 +24,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -50,6 +51,10 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
     private static final String CASE_ID = "case id";
     private static final String SOLICITOR_ORGANISATION = "solicitor organisation";
+    private static final String UNION_TYPE = "union type";
+    private static final String DIVORCE = "divorce";
+    private static final String DISSOLUTION = "dissolution";
+    private static final String SOLICITOR_REFERENCE = "solicitor reference";
 
     @Autowired
     private NotificationService notificationService;
@@ -249,8 +254,16 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {
 
+        String solicitorReference = isNotEmpty(caseData.getApplicant1().getSolicitor().getReference())
+            ? caseData.getApplicant1().getSolicitor().getReference()
+            : "not provided";
+
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl() + caseId);
+        templateVars.put(APPLICATION_REFERENCE, String.valueOf(caseId));
+        templateVars.put(UNION_TYPE, caseData.isDivorce() ? DIVORCE : DISSOLUTION);
+        templateVars.put(SOLICITOR_REFERENCE, solicitorReference);
         return templateVars;
     }
 }
