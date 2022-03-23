@@ -1,6 +1,14 @@
 [
   {
+    "name": "applicationForDivorce",
+    "value": "true"
+  },
+  {
     "name": "jurisdictionReasonsBothPartiesHabitual",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsRespHabitual",
     "value": "true"
   },
   {
@@ -25,7 +33,7 @@
   },
   {
     "name": "jurisdictionReasonsSameSex",
-    "value": "false"
+    "value": "true"
   },
   {
     "name": "soleOrApplicant1ConfirmationOfBreakdown",

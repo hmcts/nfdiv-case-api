@@ -120,7 +120,6 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
                 warnings.add("Please verify jurisdiction connections(missing/invalid domiciled who) in scanned form");
             }
         }
-
         if (toBoolean(ocrDataFields.getJurisdictionReasonsSameSex())) {
             if (toBoolean(ocrDataFields.getApplicationForDissolution())) {
                 connections.add(RESIDUAL_JURISDICTION_CP);
