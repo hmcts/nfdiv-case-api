@@ -111,6 +111,9 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
                 caseDataCopy.getApplicant1().getLanguagePreference(),
                 BAILIFF_APPLICATION_APPROVED_FILE_NAME
             );
+
+            log.info("Sending ServiceApplicationNotification (granted) case ID: {}", details.getId());
+            notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
         } else {
             endState = AwaitingAos;
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
@@ -123,11 +126,12 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
                 BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME
             );
 
+            log.info("Sending ServiceApplicationNotification (refused) case ID: {}", details.getId());
+            notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
+
+            log.info("Archiving service application for case ID: {}", details.getId());
             caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
         }
-
-        log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
-        notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
 
         log.info("Setting end state of case id {} to {}", details.getId(), endState);
 
