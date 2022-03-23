@@ -229,7 +229,7 @@ docmosis:
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
-      COVERSHEET_APPLICANT2: NFD_Applicant2_Coversheet.docx
+      COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
       COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
     welsh:
@@ -257,7 +257,7 @@ docmosis:
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
-      COVERSHEET_APPLICANT2: NFD_Applicant2_Coversheet.docx
+      COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
       COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
 

@@ -142,7 +142,8 @@ public class CaseworkerIssueApplicationIT {
     protected static final String AOS_COVER_LETTER_TEMPLATE_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
     protected static final String NOTICE_OF_PROCEEDING_TEMPLATE_ID = "c56b053e-4184-11ec-81d3-0242ac130003";
     protected static final String NOP_ONLINE_SOLE_RESP_TEMPLATE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
-    protected static final String APPLICANT2_COVERSHEET_TEMPLATE_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
+    protected static final String APPLICANT_COVERSHEET_TEMPLATE_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
+    protected static final String CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID = "af679900-4c5c-491c-9b7f-22078412ff94";
 
     private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP =
         "classpath:caseworker-issue-application-about-to-submit-app2-sol-rep-response.json";
@@ -354,19 +355,20 @@ public class CaseworkerIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
             .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Coversheet")
             .thenReturn("Notice of proceeding respondent")
-            .thenReturn("Divorce application")
-            .thenReturn("Coversheet");
+            .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Overseas_Sole.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx");
+        stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, "NFD_CP_Application_Sole.docx");
-        stubForDocAssemblyWith(APPLICANT2_COVERSHEET_TEMPLATE_ID, "NFD_Applicant2_Coversheet.docx");
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetter();
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -773,7 +775,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, "NFD_CP_Application_Sole.docx");
         stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx");
-        stubForDocAssemblyWith(APPLICANT2_COVERSHEET_TEMPLATE_ID, "NFD_Applicant2_Coversheet.docx");
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
         stubAosPackSendLetter();
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -953,16 +955,20 @@ public class CaseworkerIssueApplicationIT {
         final var documentListValue3 = documentWithType(
             NOTICE_OF_PROCEEDINGS_APP_1,
             NOTICE_OF_PROCEEDING_TEMPLATE_ID);
-
         final var documentListValue4 = documentWithType(
             COVERSHEET,
-            APPLICANT2_COVERSHEET_TEMPLATE_ID);
+            APPLICANT_COVERSHEET_TEMPLATE_ID);
+        final var documentListValue5 = documentWithType(
+            RESPONDENT_INVITATION,
+            CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID);
 
         final List<String> documentIds = asList(
             FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
             FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
             FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl()),
-            FilenameUtils.getName(documentListValue4.getValue().getDocumentLink().getUrl()));
+            FilenameUtils.getName(documentListValue4.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue5.getValue().getDocumentLink().getUrl())
+        );
 
         final byte[] pdfAsBytes = loadPdfAsBytes();
 
