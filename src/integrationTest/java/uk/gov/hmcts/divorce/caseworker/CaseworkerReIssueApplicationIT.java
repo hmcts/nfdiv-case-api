@@ -57,7 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.APPLICANT2_COVERSHEET_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.APPLICANT_COVERSHEET_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.DIVORCE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.NOP_ONLINE_SOLE_RESP_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.NOTICE_OF_PROCEEDING_TEMPLATE_ID;
@@ -144,7 +144,7 @@ public class CaseworkerReIssueApplicationIT {
     private static final String MINI_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
     private static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
     private static final String NOTICE_OF_PROCEEDING_ID = "c56b053e-4184-11ec-81d3-0242ac130003";
-    private static final String COVERSHEET_APPLICANT2_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
+    private static final String COVERSHEET_APPLICANT_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
     private static final String CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
     private static final String CITIZEN_RESP_AOS_INVITATION_ONLINE_ID = "eb90a159-4200-410b-a504-5a925be0b152";
 
@@ -263,7 +263,7 @@ public class CaseworkerReIssueApplicationIT {
 
         stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent.docx");
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
-        stubForDocAssemblyWith(COVERSHEET_APPLICANT2_ID, "NFD_Applicant2_Coversheet.docx");
+        stubForDocAssemblyWith(COVERSHEET_APPLICANT_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -679,7 +679,7 @@ public class CaseworkerReIssueApplicationIT {
         when(documentIdProvider.documentId()).thenReturn("Coversheet").thenReturn("Respondent Invitation");
 
         stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent.docx");
-        stubForDocAssemblyWith(COVERSHEET_APPLICANT2_ID, "NFD_Applicant2_Coversheet.docx");
+        stubForDocAssemblyWith(COVERSHEET_APPLICANT_ID, "NFD_Applicant_Coversheet.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -874,7 +874,7 @@ public class CaseworkerReIssueApplicationIT {
 
         final var documentListValue4 = documentWithType(
             COVERSHEET,
-            APPLICANT2_COVERSHEET_TEMPLATE_ID);
+            APPLICANT_COVERSHEET_TEMPLATE_ID);
 
         final List<String> documentIds = asList(
             FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),

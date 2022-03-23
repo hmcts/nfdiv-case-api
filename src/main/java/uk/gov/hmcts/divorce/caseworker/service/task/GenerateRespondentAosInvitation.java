@@ -4,12 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTemplateContent;
-import uk.gov.hmcts.divorce.document.content.CoversheetTemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
 import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -24,7 +25,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_ONLINE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
@@ -46,7 +47,7 @@ public class GenerateRespondentAosInvitation implements CaseTask {
     private CitizenRespondentAosInvitationTemplateContent citizenRespondentAosInvitationTemplateContent;
 
     @Autowired
-    private CoversheetTemplateContent coversheetTemplateContent;
+    private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
 
     @Autowired
     private Clock clock;
@@ -64,7 +65,20 @@ public class GenerateRespondentAosInvitation implements CaseTask {
             || YES.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address());
 
         if (caseData.getApplicationType().isSole() && isAddressKnown) {
-            if (caseData.getApplicant2().isRepresented()) {
+
+            final Applicant applicant1 = caseData.getApplicant1();
+            final Applicant applicant2 = caseData.getApplicant2();
+
+            if (!applicant1.isRepresented() && !applicant2.isRepresented() && applicant2.isBasedOverseas()) {
+                log.info("Generating citizen respondent(Offline) AoS invitation for case id {} ", caseId);
+                generateDocumentAndUpdateCaseData(
+                    caseDetails,
+                    CITIZEN_RESP_AOS_INVITATION_OFFLINE,
+                    citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId),
+                    RESPONDENT_INVITATION,
+                    RESP_AOS_INVITATION_DOCUMENT_NAME
+                );
+            } else if (applicant2.isRepresented()) {
                 log.info("Generating solicitor respondent AoS invitation for case id {} ", caseId);
                 generateDocumentAndUpdateCaseData(
                     caseDetails,
@@ -73,7 +87,7 @@ public class GenerateRespondentAosInvitation implements CaseTask {
                     RESPONDENT_INVITATION,
                     RESP_AOS_INVITATION_DOCUMENT_NAME
                 );
-            } else if (isNotEmpty(caseData.getApplicant2().getEmail())) {
+            } else if (isNotEmpty(applicant2.getEmail())) {
                 log.info("Generating citizen respondent(with email) AoS invitation for case id {} ", caseId);
                 generateDocumentAndUpdateCaseData(
                     caseDetails,
@@ -82,7 +96,7 @@ public class GenerateRespondentAosInvitation implements CaseTask {
                     RESPONDENT_INVITATION,
                     RESP_AOS_INVITATION_DOCUMENT_NAME
                 );
-            } else if (isEmpty(caseData.getApplicant2().getEmail())) {
+            } else if (isEmpty(applicant2.getEmail())) {
                 log.info("Generating citizen respondent(without email) AoS invitation for case id {} ", caseId);
                 generateDocumentAndUpdateCaseData(
                     caseDetails,
@@ -95,8 +109,8 @@ public class GenerateRespondentAosInvitation implements CaseTask {
                 log.info("Generating coversheet for case id {} ", caseId);
                 generateDocumentAndUpdateCaseData(
                     caseDetails,
-                    COVERSHEET_APPLICANT2,
-                    coversheetTemplateContent.apply(caseData, caseId),
+                    COVERSHEET_APPLICANT,
+                    coversheetApplicant2TemplateContent.apply(caseData, caseId),
                     COVERSHEET,
                     COVERSHEET_DOCUMENT_NAME
                 );
