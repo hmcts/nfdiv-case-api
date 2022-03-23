@@ -205,11 +205,11 @@
   },
   {
     "name": "respondentOrApplicant2SolicitorBuildingAndStreet",
-    "value": ""
+    "value": "some street"
   },
   {
     "name": "respondentOrApplicant2SolicitorSecondLineOfAddress",
-    "value": ""
+    "value": "second line of address"
   },
   {
     "name": "respondentOrApplicant2SolicitorTownOrCity",
