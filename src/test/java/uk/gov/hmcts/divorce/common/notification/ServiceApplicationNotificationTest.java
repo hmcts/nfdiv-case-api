@@ -11,9 +11,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,6 +36,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -53,6 +56,7 @@ class ServiceApplicationNotificationTest {
     private ServiceApplicationNotification serviceApplicationNotification;
 
     private static final YesOrNo NOT_GRANTED = YesOrNo.NO;
+    private static final YesOrNo GRANTED = YesOrNo.YES;
 
     private static final Long ID = 1234567890123456L;
 
@@ -170,6 +174,32 @@ class ServiceApplicationNotificationTest {
         );
     }
 
+    @Test
+    void shouldSendBailiffServiceApplicationSuccessfulEmailToSoleApplicant() {
+        sendNotification(BAILIFF, DIVORCE, GRANTED);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SERVICE_APPLICATION_GRANTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(ID)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(IS_DEEMED_SERVICE, NO),
+                hasEntry(IS_DISPENSE_SERVICE, NO),
+                hasEntry(IS_BAILIFF_SERVICE, YES)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void getEmailTemplateShouldThrowErrorIfServiceApplicationGrantedIsNull() {
+        assertThatExceptionOfType(NotificationTemplateException.class)
+            .isThrownBy(() -> sendNotification(BAILIFF, DIVORCE, null))
+            .withMessage("Notification failed with missing field 'serviceApplicationGranted' for Case Id: 1234567890123456");
+    }
+
     private void sendNotification(AlternativeServiceType alternativeServiceType, DivorceOrDissolution divorceOrDissolution,
                                   YesOrNo applicationGranted) {
 
@@ -183,8 +213,10 @@ class ServiceApplicationNotificationTest {
             templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         }
 
-        when(commonContent.mainTemplateVars(data, ID, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(templateVars);
+        if (applicationGranted != null) {
+            when(commonContent.mainTemplateVars(data, ID, data.getApplicant1(), data.getApplicant2()))
+                .thenReturn(templateVars);
+        }
 
         serviceApplicationNotification.sendToApplicant1(data, ID);
     }

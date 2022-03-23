@@ -35,6 +35,7 @@ public class CommonContent {
     public static final String SIGN_IN_URL = "signin url";
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
+    public static final String SIGN_IN_PROFESSIONAL_USERS_URL = "signInProfessionalUsersUrl";
     public static final String DIVORCE_COURT_EMAIL = "divorceCourtEmail";
     public static final String DISSOLUTION_COURT_EMAIL = "dissolutionCourtEmail";
 
@@ -135,5 +136,9 @@ public class CommonContent {
 
     public String getSignInUrl(CaseData caseData) {
         return config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL);
+    }
+
+    public String getProfessionalUsersSignInUrl() {
+        return config.getTemplateVars().get(SIGN_IN_PROFESSIONAL_USERS_URL);
     }
 }

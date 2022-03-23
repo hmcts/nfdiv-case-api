@@ -7,6 +7,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -108,7 +109,26 @@ class NotificationDispatcherTest {
         final long caseId = 1L;
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder()
+                .email("app2@email.com")
                 .solicitorRepresented(NO)
+                .build())
+            .build();
+
+        notificationDispatcher.send(applicantNotification, caseData, caseId);
+
+        verify(applicantNotification).sendToApplicant2(caseData, caseId);
+    }
+
+    @Test
+    void shouldNotifyApplicant2IfNotRepresentedWithCaseInvite() {
+
+        final long caseId = 1L;
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(NO)
+                .build())
+            .caseInvite(CaseInvite.builder()
+                .applicant2InviteEmailAddress("app2@email.com")
                 .build())
             .build();
 

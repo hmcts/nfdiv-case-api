@@ -41,6 +41,7 @@ uk:
           respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
           respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
           signInDissolutionUrl: ${NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/}
+          signInProfessionalUsersUrl: ${NOTIFY_TEMPLATE_SIGN_IN_PROFESSIONAL_USERS_URL:https://manage-case.aat.platform.hmcts.net/cases/case-details/}
           divorceCourtEmail: divorcecase@justice.gov.uk
           dissolutionCourtEmail: divorcecase@justice.gov.uk
         templates:
@@ -106,6 +107,7 @@ uk:
             POST_INFORMATION_TO_COURT: '03d15445-c91d-44b0-a8b0-a7755864381e'
             GENERAL_APPLICATION_RECEIVED: '97a51838-789b-4c18-b4b8-9b4ff32e831f'
             SERVICE_APPLICATION_REJECTED: 'db7f376b-ab61-4316-b59f-83fe570b8f23'
+            SERVICE_APPLICATION_GRANTED: '2b7cc04e-2c21-4c06-9ae4-e7109a3efde4'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: '1bc9ce05-557b-4cf6-9e20-87d57d55e89c'
@@ -165,6 +167,7 @@ uk:
             POST_INFORMATION_TO_COURT: '03d15445-c91d-44b0-a8b0-a7755864381e'
             GENERAL_APPLICATION_RECEIVED: '97a51838-789b-4c18-b4b8-9b4ff32e831f'
             SERVICE_APPLICATION_REJECTED: 'db7f376b-ab61-4316-b59f-83fe570b8f23'
+            SERVICE_APPLICATION_GRANTED: '2b7cc04e-2c21-4c06-9ae4-e7109a3efde4'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
@@ -213,6 +216,7 @@ docmosis:
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx
+      NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx
       JOINT_NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Joint.docx
       NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP: NFD_Notice_Of_Proceedings_Overseas_Sole.docx
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement.docx #TODO: update content
@@ -226,6 +230,7 @@ docmosis:
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT2: NFD_Applicant2_Coversheet.docx
+      COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -240,6 +245,7 @@ docmosis:
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx  #TODO: update content
+      NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx #TODO: update content
       NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP: NFD_Notice_Of_Proceedings_Overseas_Sole.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement.docx #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx #TODO: update content
@@ -252,6 +258,7 @@ docmosis:
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT2: NFD_Applicant2_Coversheet.docx
+      COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
 
 doc_assembly:

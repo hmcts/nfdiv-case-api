@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.common.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.caseworker.service.print.ApplicationPrinter;
 import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -17,12 +16,15 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
@@ -41,6 +43,10 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
     private static final String CASE_ID = "case id";
     private static final String SOLICITOR_ORGANISATION = "solicitor organisation";
+    private static final String UNION_TYPE = "union type";
+    private static final String DIVORCE = "divorce";
+    private static final String DISSOLUTION = "dissolution";
+    private static final String SOLICITOR_REFERENCE = "solicitor reference";
 
     @Autowired
     private NotificationService notificationService;
@@ -53,9 +59,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     @Autowired
     private NoticeOfProceedingsPrinter noticeOfProceedingsPrinter;
-
-    @Autowired
-    private ApplicationPrinter applicationPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
@@ -141,13 +144,17 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
 
-        log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
+        if (caseData.getApplicationType().isSole()) {
+            noticeOfProceedingsPrinter.sendLetterToApplicant2Solicitor(caseData, caseId);
+        }
 
         final String email = caseData.getApplicant2().getSolicitor().getEmail();
 
         if (caseData.getApplicationType().isSole()
             && !caseData.getApplication().isSolicitorServiceMethod()
             && isNotBlank(email)) {
+
+            log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
             notificationService.sendEmail(
                 email,
                 RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
@@ -159,20 +166,14 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
-        log.info("Sending Notice of Proceedings letter to applicant 1 for case : {}", caseId);
+        log.info("Sending Notice of Proceedings letter and copy of Divorce Application to applicant 1 for case : {}", caseId);
         noticeOfProceedingsPrinter.sendLetterToApplicant1(caseData, caseId);
-
-        log.info("Sending copy of Divorce Application to applicant 1 for case : {}", caseId);
-        applicationPrinter.sendDivorceApplicationPdf(caseData, caseId);
     }
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
-        log.info("Sending Notice of Proceedings letter to applicant 2 for case : {}", caseId);
+        log.info("Sending Notice of Proceedings letter and copy of Divorce Application to applicant 2 for case : {}", caseId);
         noticeOfProceedingsPrinter.sendLetterToApplicant2(caseData, caseId);
-
-        log.info("Sending copy of Divorce Application to applicant 2 for case : {}", caseId);
-        applicationPrinter.sendDivorceApplicationPdf(caseData, caseId);
     }
 
     private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id) {
@@ -225,8 +226,16 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {
 
+        String solicitorReference = isNotEmpty(caseData.getApplicant1().getSolicitor().getReference())
+            ? caseData.getApplicant1().getSolicitor().getReference()
+            : "not provided";
+
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl() + caseId);
+        templateVars.put(APPLICATION_REFERENCE, String.valueOf(caseId));
+        templateVars.put(UNION_TYPE, caseData.isDivorce() ? DIVORCE : DISSOLUTION);
+        templateVars.put(SOLICITOR_REFERENCE, solicitorReference);
         return templateVars;
     }
 }

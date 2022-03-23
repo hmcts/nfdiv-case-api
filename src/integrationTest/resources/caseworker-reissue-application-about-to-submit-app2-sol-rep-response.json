@@ -68,20 +68,29 @@
         }
       }
     ],
-    "documentsGenerated": [
-      {
-        "id": "Respondent Invitation",
-        "value": {
-          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "aos",
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
-            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
-          }
-        }
+    "documentsGenerated": [{
+      "id": "Respondent Invitation",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
+          "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
+        },
+        "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+        "documentType": "aos"
       }
-    ],
+    }, {
+      "id": "Notice of proceeding respondent",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+          "document_filename": "noticeOfProceedings.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+        },
+        "documentFileName": "noticeOfProceedings.pdf",
+        "documentType": "noticeOfProceedings"
+      }
+    }],
     "dueDate": "2021-07-03"
   },
   "state": "AwaitingAos"
