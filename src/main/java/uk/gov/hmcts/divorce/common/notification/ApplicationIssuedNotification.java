@@ -22,7 +22,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
@@ -33,6 +32,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
@@ -54,7 +54,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private static final String UNION_TYPE = "union type";
     private static final String DIVORCE = "divorce";
     private static final String DISSOLUTION = "dissolution";
-    private static final String SOLICITOR_REFERENCE = "solicitor reference";
 
     @Autowired
     private NotificationService notificationService;
