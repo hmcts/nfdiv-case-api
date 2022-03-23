@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -39,6 +40,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -318,6 +320,7 @@ public class ApplicationIssuedNotificationTest {
     void shouldSendNotificationToApplicantSolicitor() {
 
         final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
             .applicant1(applicantRepresentedBySolicitor())
             .applicant2(respondent())
             .build();
@@ -420,9 +423,10 @@ public class ApplicationIssuedNotificationTest {
     }
 
     @Test
-    void shouldSendPersonalServiceNotificationToApplicantSolicitor() {
+    void shouldSendPersonalServiceNotificationToApplicantSolicitorForDivorceApplication() {
 
         final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
             .applicant1(applicantRepresentedBySolicitor())
             .application(Application.builder()
                 .solServiceMethod(SOLICITOR_SERVICE)
@@ -430,13 +434,55 @@ public class ApplicationIssuedNotificationTest {
             .build();
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.getProfessionalUsersSignInUrl()).thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/");
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
+
+        Map<String,String> personalServiceTemplateVars = personalServiceTemplateVars();
+        personalServiceTemplateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl() + TEST_CASE_ID);
+        personalServiceTemplateVars.put(APPLICATION_REFERENCE, TEST_CASE_ID.toString());
+        personalServiceTemplateVars.put("union type", "divorce");
+        personalServiceTemplateVars.put("solicitor reference", "not provided");
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             APPLICANT_SOLICITOR_SERVICE,
-            personalServiceTemplateVars(),
+            personalServiceTemplateVars,
+            ENGLISH
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendPersonalServiceNotificationToApplicantSolicitorForDissolutionApplication() {
+
+        Applicant  applicant1 = applicantRepresentedBySolicitor();
+        applicant1.getSolicitor().setReference("someRef");
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DISSOLUTION)
+            .applicant1(applicant1)
+            .application(Application.builder()
+                .solServiceMethod(SOLICITOR_SERVICE)
+                .build())
+            .build();
+
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.getProfessionalUsersSignInUrl()).thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/");
+
+        notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
+
+        Map<String,String> personalServiceTemplateVars = personalServiceTemplateVars();
+        personalServiceTemplateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl() + TEST_CASE_ID);
+        personalServiceTemplateVars.put(APPLICATION_REFERENCE, TEST_CASE_ID.toString());
+        personalServiceTemplateVars.put("union type", "dissolution");
+        personalServiceTemplateVars.put("solicitor reference", "someRef");
+
+        verify(notificationService).sendEmail(
+            TEST_SOLICITOR_EMAIL,
+            APPLICANT_SOLICITOR_SERVICE,
+            personalServiceTemplateVars,
             ENGLISH
         );
 
@@ -482,19 +528,15 @@ public class ApplicationIssuedNotificationTest {
     }
 
     private Map<String, String> personalServiceTemplateVars() {
-
         final Map<String, String> templateVars = commonTemplateVars();
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         return templateVars;
     }
 
     private Map<String, String> commonTemplateVars() {
-
         final Map<String, String> templateVars = new HashMap<>();
-
         templateVars.put(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME));
         templateVars.put(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME));
-        templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
 
         return templateVars;
     }
