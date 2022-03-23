@@ -111,16 +111,15 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 templateVars(caseData, caseId),
                 ENGLISH
             );
-        } else {
-            if (caseData.getApplicationType().isSole()) {
-                log.info("Sending Notice Of Proceedings email to applicant solicitor.  Case ID: {}", caseId);
+        } else if (caseData.getApplicationType().isSole()) {
 
-                notificationService.sendEmail(
-                    email,
-                    APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-                    solicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                    ENGLISH);
-            }
+            log.info("Sending Notice Of Proceedings email to applicant solicitor.  Case ID: {}", caseId);
+
+            notificationService.sendEmail(
+                email,
+                APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+                solicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+                ENGLISH);
         }
     }
 
