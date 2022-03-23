@@ -342,13 +342,6 @@ public class CaseworkerReIssueApplicationIT {
         assertThatJson(response)
             .isEqualTo(json(TestResourceUtil.expectedResponse(JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT)));
 
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
-                anyMap(),
-                eq(ENGLISH));
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
