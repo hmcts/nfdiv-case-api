@@ -132,7 +132,7 @@ public class DivorceApplicationSoleTemplateContent {
                 .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
                 .orElse(null));
 
-        templateContent.put("jurisdictions", applicationTemplateDataProvider.deriveSoleJurisdictionList(application, caseId));
+        templateContent.put("jurisdictions", applicationTemplateDataProvider.deriveJurisdictionList(application, caseId));
 
         return templateContent;
     }
