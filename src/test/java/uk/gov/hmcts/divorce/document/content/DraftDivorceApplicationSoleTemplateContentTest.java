@@ -117,7 +117,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
                 .build()
         );
 
-        when(applicationTemplateDataProvider.deriveSoleJurisdictionList(any(), eq(TEST_CASE_ID)))
+        when(applicationTemplateDataProvider.deriveJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
 
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
@@ -164,7 +164,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
 
-        when(applicationTemplateDataProvider.deriveJointJurisdictionList(any(), eq(TEST_CASE_ID)))
+        when(applicationTemplateDataProvider.deriveJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
         when(applicantTemplateDataProvider.deriveJointFinancialOrder(eq(caseData.getApplicant1().getFinancialOrdersFor())))
             .thenReturn(null);
@@ -213,7 +213,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(Solicitor.builder().build());
 
-        when(applicationTemplateDataProvider.deriveSoleJurisdictionList(any(), eq(TEST_CASE_ID)))
+        when(applicationTemplateDataProvider.deriveJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
 
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
@@ -259,7 +259,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
 
-        when(applicationTemplateDataProvider.deriveJointJurisdictionList(any(), eq(TEST_CASE_ID)))
+        when(applicationTemplateDataProvider.deriveJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
 
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
@@ -300,7 +300,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplication().setMarriageDetails(marriageDetails);
 
-        when(applicationTemplateDataProvider.deriveSoleJurisdictionList(any(), eq(TEST_CASE_ID)))
+        when(applicationTemplateDataProvider.deriveJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
 
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
