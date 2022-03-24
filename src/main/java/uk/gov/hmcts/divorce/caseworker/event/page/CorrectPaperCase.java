@@ -107,12 +107,12 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     .label("Label-Applicant1SolDetails",
                 "### ${labelContentApplicantsOrApplicant1s} solicitor details",
                 APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-                    .mandatory(Solicitor::getName, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-                    .mandatory(Solicitor::getReference, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-                    .mandatory(Solicitor::getFirmName, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-                    .mandatory(Solicitor::getAddress, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-                    .mandatory(Solicitor::getPhone, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
-                    .mandatory(Solicitor::getEmail, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
+                    .optional(Solicitor::getName, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
+                    .optional(Solicitor::getReference, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
+                    .optional(Solicitor::getFirmName, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
+                    .optional(Solicitor::getAddress, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
+                    .optional(Solicitor::getPhone, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
+                    .optional(Solicitor::getEmail, APPLICANT_1_SOLICITOR_REPRESENTED_YES)
                 .done()
             .done();
     }
@@ -137,11 +137,11 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .complex(Applicant::getSolicitor)
                     .label("Label-CorrectApplicant2SolDetails",
                 "### ${labelContentRespondentsOrApplicant2s} solicitor details", APPLICANT_2_SOLICITOR_REPRESENTED_YES)
-                    .mandatory(Solicitor::getName, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
-                    .mandatory(Solicitor::getReference, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
-                    .mandatory(Solicitor::getFirmName, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
-                    .mandatory(Solicitor::getAddress, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
-                    .mandatory(Solicitor::getPhone, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
+                    .optional(Solicitor::getName, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
+                    .optional(Solicitor::getReference, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
+                    .optional(Solicitor::getFirmName, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
+                    .optional(Solicitor::getAddress, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
+                    .optional(Solicitor::getPhone, APPLICANT_2_SOLICITOR_REPRESENTED_YES)
                 .done()
             .done();
     }
