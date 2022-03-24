@@ -96,12 +96,12 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
 
     private Solicitor solicitor2(OcrDataFields ocrDataFields) {
         String app2SolicitorAddress = Stream.of(
-                ocrDataFields.getRespondentOrApplicant2BuildingAndStreet(),
-                ocrDataFields.getRespondentOrApplicant2SecondLineOfAddress(),
-                ocrDataFields.getRespondentOrApplicant2TownOrCity(),
-                ocrDataFields.getRespondentOrApplicant2County(),
-                ocrDataFields.getRespondentOrApplicant2Country(),
-                ocrDataFields.getRespondentOrApplicant2Postcode(),
+                ocrDataFields.getRespondentOrApplicant2SolicitorBuildingAndStreet(),
+                ocrDataFields.getRespondentOrApplicant2SolicitorSecondLineOfAddress(),
+                ocrDataFields.getRespondentOrApplicant2SolicitorTownOrCity(),
+                ocrDataFields.getRespondentOrApplicant2SolicitorCounty(),
+                ocrDataFields.getRespondentOrApplicant2SolicitorCountry(),
+                ocrDataFields.getRespondentOrApplicant2SolicitorPostcode(),
                 ocrDataFields.getRespondentOrApplicant2SolicitorDX()
             )
             .filter(value -> value != null && !value.isEmpty())
