@@ -14,13 +14,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.CoversheetApplicant1TemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
+import java.time.Clock;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -28,20 +31,28 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 
 @ExtendWith(MockitoExtension.class)
 class GenerateNoticeOfProceedingTest {
+
+    @Mock
+    private CoversheetApplicant1TemplateContent coversheetTemplateContent;
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -52,11 +63,16 @@ class GenerateNoticeOfProceedingTest {
     @Mock
     private NoticeOfProceedingJointContent noticeOfProceedingJointContent;
 
+    @Mock
+    private Clock clock;
+
     @InjectMocks
     private GenerateNoticeOfProceeding generateNoticeOfProceeding;
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplicationWhenRespondentIsNotOverseas() {
+
+        setMockClock(clock);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("UK").build());
@@ -75,6 +91,8 @@ class GenerateNoticeOfProceedingTest {
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplicationWhenRespondentIsRepresented() {
 
+        setMockClock(clock);
+
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, YES);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("UK").build());
 
@@ -84,7 +102,7 @@ class GenerateNoticeOfProceedingTest {
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2,1);
+        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -92,22 +110,38 @@ class GenerateNoticeOfProceedingTest {
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplicationWhenRespondentIsOverseas() {
 
+        setMockClock(clock);
+
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
 
         final Map<String, Object> templateContent = new HashMap<>();
 
         when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(coversheetTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
+
+        verify(caseDataDocumentService)
+            .renderDocumentAndUpdateCaseData(
+                caseData,
+                COVERSHEET,
+                templateContent,
+                TEST_CASE_ID,
+                COVERSHEET_APPLICANT,
+                caseData.getApplicant1().getLanguagePreference(),
+                formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
+            );
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1RepresentedApp2Not() {
+
+        setMockClock(clock);
 
         final CaseData caseData = caseData(JOINT_APPLICATION, YES, NO);
 
@@ -124,6 +158,8 @@ class GenerateNoticeOfProceedingTest {
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1NotRepresentedApp2Not() {
+
+        setMockClock(clock);
 
         final CaseData caseData = caseData(JOINT_APPLICATION, NO, NO);
 
@@ -155,6 +191,8 @@ class GenerateNoticeOfProceedingTest {
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OfflineApp2Online() {
 
+        setMockClock(clock);
+
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
             .applicant1(Applicant.builder()
@@ -185,6 +223,8 @@ class GenerateNoticeOfProceedingTest {
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OnlineApp2Offline() {
+
+        setMockClock(clock);
 
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
@@ -242,6 +282,8 @@ class GenerateNoticeOfProceedingTest {
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OfflineApp2Offline() {
 
+        setMockClock(clock);
+
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
             .applicant1(Applicant.builder()
@@ -282,7 +324,7 @@ class GenerateNoticeOfProceedingTest {
                 TEST_CASE_ID,
                 templateId,
                 caseData.getApplicant1().getLanguagePreference(),
-                NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
             );
     }
 

@@ -76,6 +76,26 @@ public class AosPackPrinter {
         }
     }
 
+    public void sendOverseasAosLetterToApplicant(final CaseData caseData, final Long caseId) {
+
+        final List<Letter> currentAosLetters = overseasLetters(caseData);
+
+        if (!isEmpty(currentAosLetters)) {
+
+            final String caseIdString = caseId.toString();
+            final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_APPLICANT_PACK);
+            final UUID letterId = bulkPrintService.printWithD10Form(print);
+
+            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+        } else {
+            log.warn(
+                "AoS Pack for print applicant has missing documents. Expected documents with type {} , for Case ID: {}",
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_1),
+                caseId
+            );
+        }
+    }
+
     public void sendAosResponseLetterToApplicant(final CaseData caseData, final Long caseId) {
 
         final List<Letter> aosResponseLetters = lettersWithDocumentType(
@@ -167,6 +187,50 @@ public class AosPackPrinter {
         if (null != divorceApplicationLetter) {
             currentAosLetters.add(divorceApplicationLetter);
         }
+        return currentAosLetters;
+    }
+
+    private List<Letter> overseasLetters(final CaseData caseData) {
+        final List<Letter> coversheetLetters = lettersWithDocumentType(
+            caseData.getDocuments().getDocumentsGenerated(),
+            COVERSHEET);
+
+        final List<Letter> respondentInvitationLetters = lettersWithDocumentType(
+            caseData.getDocuments().getDocumentsGenerated(),
+            RESPONDENT_INVITATION);
+
+        final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
+            caseData.getDocuments().getDocumentsGenerated(),
+            APPLICATION);
+
+        final List<Letter> notificationLetters = lettersWithDocumentType(
+            caseData.getDocuments().getDocumentsGenerated(),
+            NOTICE_OF_PROCEEDINGS_APP_1);
+
+        final Letter coversheetLetter = firstElement(coversheetLetters);
+        final Letter respondentInvitationLetter = firstElement(respondentInvitationLetters);
+        final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
+        final Letter notificationLetter = firstElement(notificationLetters);
+
+        final List<Letter> currentAosLetters = new ArrayList<>();
+
+        if (null != coversheetLetter) {
+            currentAosLetters.add(coversheetLetter);
+        }
+
+        if (null != divorceApplicationLetter) {
+            currentAosLetters.add(divorceApplicationLetter);
+            currentAosLetters.add(divorceApplicationLetter);
+        }
+
+        if (null != notificationLetter) {
+            currentAosLetters.add(notificationLetter);
+        }
+
+        if (null != respondentInvitationLetter) {
+            currentAosLetters.add(respondentInvitationLetter);
+        }
+
         return currentAosLetters;
     }
 }

@@ -11,38 +11,38 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-class CoversheetTemplateContentTest {
+class CoversheetApplicant1TemplateContentTest {
 
     @InjectMocks
-    private CoversheetTemplateContent coversheetTemplateContent;
+    private CoversheetApplicant1TemplateContent coversheetApplicant1TemplateContent;
 
     @Test
     void shouldReturnCoversheetTemplateContent() {
 
         final CaseData caseData = caseData();
-        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
-        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
-        caseData.getApplicant2().setAddress(
+        caseData.getApplicant1().setFirstName(APPLICANT_1_FIRST_NAME);
+        caseData.getApplicant1().setLastName(APPLICANT_1_LAST_NAME);
+        caseData.getApplicant1().setAddress(
             AddressGlobalUK
                 .builder()
                 .addressLine1("line 1")
                 .postCode("postcode")
                 .build()
         );
-        final Map<String, Object> result = coversheetTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> result = coversheetApplicant1TemplateContent.apply(caseData, TEST_CASE_ID);
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put("caseReference", formatId(1616591401473378L));
-        expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
-        expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
-        expectedEntries.put("applicant2Address", "line 1\npostcode");
+        expectedEntries.put("applicantFirstName", APPLICANT_1_FIRST_NAME);
+        expectedEntries.put("applicantLastName", APPLICANT_1_LAST_NAME);
+        expectedEntries.put("applicantAddress", "line 1\npostcode");
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
