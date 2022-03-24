@@ -28,8 +28,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_DOMICILED;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_JOINT;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_CP;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_D;
 
 @Component
 public class ApplicationTransformer implements Function<TransformationDetails, TransformationDetails> {
@@ -90,10 +92,14 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
             connections.add(APP_1_APP_2_LAST_RESIDENT);
         }
         if (toBoolean(ocrDataFields.getJurisdictionReasonsRespHabitual())) {
-            connections.add(APP_2_RESIDENT);
+            connections.add(APP_2_RESIDENT_SOLE);
         }
         if (toBoolean(ocrDataFields.getJurisdictionReasonsJointHabitual())) {
-            connections.add(APP_1_RESIDENT_JOINT);
+            if (APPLICANT_2.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
+                connections.add(APP_2_RESIDENT_JOINT);
+            } else if (APPLICANT_APPLICANT_1.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
+                connections.add(APP_1_RESIDENT_JOINT);
+            }
         }
         if (toBoolean(ocrDataFields.getJurisdictionReasons1YrHabitual())) {
             connections.add(APP_1_RESIDENT_TWELVE_MONTHS);
@@ -115,8 +121,11 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
             }
         }
         if (toBoolean(ocrDataFields.getJurisdictionReasonsSameSex())) {
-            // only for civil partnership/same-sex
-            connections.add(RESIDUAL_JURISDICTION);
+            if (toBoolean(ocrDataFields.getApplicationForDissolution())) {
+                connections.add(RESIDUAL_JURISDICTION_CP);
+            } else if (toBoolean(ocrDataFields.getApplicationForDivorce())) {
+                connections.add(RESIDUAL_JURISDICTION_D);
+            }
         }
 
         if (isEmpty(connections)) {
