@@ -22,8 +22,15 @@ public class SendAosPackToApplicant implements CaseTask {
         final CaseData caseData = caseDetails.getData();
 
         if (!caseData.getApplicant1().isRepresented()) {
-            log.info("Sending NOP and application pack to bulk print as applicant 1 is not represented. Case id: {}:", caseId);
-            aosPackPrinter.sendAosLetterToApplicant(caseData, caseId);
+
+            if (!caseData.getApplicant2().isRepresented() && caseData.getApplicant2().isBasedOverseas()) {
+                log.info("Sending NOP and application pack to bulk print as applicant 1 and applicant 2 are not "
+                    + "represented and applicant 2 is overseas. Case id: {}:", caseId);
+                aosPackPrinter.sendOverseasAosLetterToApplicant(caseData, caseId);
+            } else {
+                log.info("Sending NOP and application pack to bulk print as applicant 1 is not represented. Case id: {}:", caseId);
+                aosPackPrinter.sendAosLetterToApplicant(caseData, caseId);
+            }
         } else {
             log.info("Not sending NOP and application pack to bulk print as applicant 1 is represented. Case id: {}:", caseId);
         }
