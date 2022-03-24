@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_DOMICILED;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_DOMICILED;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_CP;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 
@@ -108,14 +109,17 @@ public class ApplicationTransformerTest {
     }
 
     @Test
-    void shouldSuccessfullyTransformSoleApplicationWithoutWarningsWhenApp1IsDomiciled() throws Exception {
+    void shouldSuccessfullyTransformSoleApplicationWithoutWarningsWhenApp1IsDomiciledAndDissolution() throws Exception {
         String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-application-ocr.json");
         List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
 
         OcrDataFields dataFields = transformOcrMapToObject(ocrDataFields);
+        dataFields.setApplicationForDissolution("true");
         dataFields.setJurisdictionReasonsOnePartyDomiciled("true");
         dataFields.setJurisdictionReasonsOnePartyDomiciledWho("applicant,applicant1");
+        dataFields.setJurisdictionReasonsSameSex("true");
+        dataFields.setJurisdictionReasonsRespHabitual(EMPTY);
         dataFields.setJurisdictionReasonsBothPartiesHabitual(EMPTY);
         dataFields.setJurisdictionReasonsBothPartiesLastHabitual(EMPTY);
         dataFields.setJurisdictionReasons6MonthsHabitual(EMPTY);
@@ -136,7 +140,7 @@ public class ApplicationTransformerTest {
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
-        expectedApplication.getJurisdiction().setConnections(Set.of(APP_1_DOMICILED));
+        expectedApplication.getJurisdiction().setConnections(Set.of(APP_1_DOMICILED, RESIDUAL_JURISDICTION_CP));
 
         assertThat(transformedOutput.getCaseData().getApplication())
             .usingRecursiveComparison()
@@ -148,14 +152,18 @@ public class ApplicationTransformerTest {
     }
 
     @Test
-    void shouldSuccessfullyTransformSoleApplicationWithoutWarningsWhenApp2IsDomiciled() throws Exception {
+    void shouldSuccessfullyTransformSoleApplicationWithoutWarningsWhenApp2IsDomiciledAndResident() throws Exception {
         String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-application-ocr.json");
         List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
         });
 
         OcrDataFields dataFields = transformOcrMapToObject(ocrDataFields);
+        dataFields.setJurisdictionReasonsJointHabitual("true");
+        dataFields.setJurisdictionReasonsJointHabitualWho("applicant2");
         dataFields.setJurisdictionReasonsOnePartyDomiciled("true");
         dataFields.setJurisdictionReasonsOnePartyDomiciledWho("applicant2");
+        dataFields.setJurisdictionReasonsSameSex(EMPTY);
+        dataFields.setJurisdictionReasonsRespHabitual(EMPTY);
         dataFields.setJurisdictionReasonsBothPartiesHabitual(EMPTY);
         dataFields.setJurisdictionReasonsBothPartiesLastHabitual(EMPTY);
         dataFields.setJurisdictionReasons6MonthsHabitual(EMPTY);
