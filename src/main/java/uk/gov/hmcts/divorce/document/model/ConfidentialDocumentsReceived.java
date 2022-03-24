@@ -94,7 +94,13 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
     SOLICITOR_SERVICE("Confidential - Solicitor Service"),
 
     @JsonProperty("welshTranslation")
-    WELSH_TRANSLATION("Confidential - Welsh Translation");
+    WELSH_TRANSLATION("Confidential - Welsh Translation"),
+
+    @JsonProperty("noticeOfProceedings")
+    NOTICE_OF_PROCEEDINGS_APP_1("Notice of proceedings for applicant/applicant 1"),
+
+    @JsonProperty("noticeOfProceedingsApp2")
+    NOTICE_OF_PROCEEDINGS_APP_2("Notice of proceedings for respondent/applicant 2");
 
     private final String label;
 }

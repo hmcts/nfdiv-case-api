@@ -229,6 +229,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("confidentialDocuments", "Confidential Document")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
+            .field("confidentialDocumentsGenerated")
             .field("confidentialDocumentsUploaded")
             .field("scannedDocuments", APPLICANT_1_CONTACT_DETAILS_PRIVATE);
     }

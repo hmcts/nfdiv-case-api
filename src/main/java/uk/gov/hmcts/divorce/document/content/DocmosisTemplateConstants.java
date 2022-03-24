@@ -119,6 +119,8 @@ public final class DocmosisTemplateConstants {
     public static final String CONTACT_DIVORCE_EMAIL = "contactdivorce@justice.gov.uk";
     public static final String CP_CASE_EMAIL = "civilpartnership.case@justice.gov.uk";
 
+    public static final String IS_CONTACT_PRIVATE = "isContactPrivate";
+
     private DocmosisTemplateConstants() {
     }
 }
