@@ -35,11 +35,12 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
@@ -117,8 +118,16 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
             notificationService.sendEmail(
                 email,
-                APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-                solicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+                SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+                applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+                ENGLISH);
+        } else if (!caseData.getApplicationType().isSole()) {
+            log.info("Sending Notice Of Proceedings email to applicant 1 solicitor for joint case.  Case ID: {}", caseId);
+
+            notificationService.sendEmail(
+                email,
+                JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+                applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
                 ENGLISH);
         }
     }
@@ -172,6 +181,14 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 respondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
                 ENGLISH
             );
+        } else if (!caseData.getApplicationType().isSole() && !caseData.getApplication().isSolicitorServiceMethod()) {
+            log.info("Sending Notice Of Proceedings email to applicant 2 solicitor for joint case.  Case ID: {}", caseId);
+
+            notificationService.sendEmail(
+                email,
+                JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+                applicant2SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+                ENGLISH);
         }
     }
 
@@ -212,9 +229,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         return templateVars;
     }
 
-    private Map<String, String> solicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
+    private Map<String, String> applicant1SolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
 
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
+        final Map<String, String> templateVars = commonSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId);
 
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
         templateVars.put(
@@ -222,6 +239,27 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
             isNotEmpty(caseData.getApplicant1().getSolicitor().getReference())
                 ? caseData.getApplicant1().getSolicitor().getReference()
                 : NOT_PROVIDED);
+
+        return templateVars;
+    }
+
+    private Map<String, String> applicant2SolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
+
+        final Map<String, String> templateVars = commonSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId);
+
+        templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+        templateVars.put(
+            SOLICITOR_REFERENCE,
+            isNotEmpty(caseData.getApplicant2().getSolicitor().getReference())
+                ? caseData.getApplicant1().getSolicitor().getReference()
+                : NOT_PROVIDED);
+
+        return templateVars;
+    }
+
+    private Map<String, String> commonSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
+
         templateVars.put(CASE_ID, caseId.toString());
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
