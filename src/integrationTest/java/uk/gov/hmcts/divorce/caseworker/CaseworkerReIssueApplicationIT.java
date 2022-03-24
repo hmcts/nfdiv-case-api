@@ -70,7 +70,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
@@ -342,13 +342,6 @@ public class CaseworkerReIssueApplicationIT {
         assertThatJson(response)
             .isEqualTo(json(TestResourceUtil.expectedResponse(JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT)));
 
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
-                anyMap(),
-                eq(ENGLISH));
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -804,7 +797,7 @@ public class CaseworkerReIssueApplicationIT {
             RESPONDENT_INVITATION,
             NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
         final var documentListValue3 = documentWithType(
-            NOTICE_OF_PROCEEDINGS,
+            NOTICE_OF_PROCEEDINGS_APP_1,
             NOTICE_OF_PROCEEDING_TEMPLATE_ID);
 
         final var documentListValue4 = documentWithType(

@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,8 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDI
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 
@@ -65,7 +67,7 @@ class GenerateNoticeOfProceedingTest {
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, 1);
+        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -82,7 +84,7 @@ class GenerateNoticeOfProceedingTest {
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID, 1);
+        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2,1);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -99,7 +101,7 @@ class GenerateNoticeOfProceedingTest {
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID, 1);
+        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -115,7 +117,7 @@ class GenerateNoticeOfProceedingTest {
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, 1);
+        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -132,7 +134,8 @@ class GenerateNoticeOfProceedingTest {
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, 2);
+        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
+        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -174,7 +177,7 @@ class GenerateNoticeOfProceedingTest {
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, 1);
+        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -205,7 +208,7 @@ class GenerateNoticeOfProceedingTest {
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, 1);
+        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -261,16 +264,20 @@ class GenerateNoticeOfProceedingTest {
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, 2);
+        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
+        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
 
-    private void verifyInteractions(CaseData caseData, Map<String, Object> templateContent, String templateId, int times) {
+    private void verifyInteractions(CaseData caseData, Map<String, Object> templateContent,
+                                    String templateId,
+                                    DocumentType documentType,
+                                    int times) {
         verify(caseDataDocumentService, times(times))
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                NOTICE_OF_PROCEEDINGS,
+                documentType,
                 templateContent,
                 TEST_CASE_ID,
                 templateId,

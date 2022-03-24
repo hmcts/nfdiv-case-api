@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.ACKNOWLEDGEMENT_O
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 
 
@@ -58,7 +58,7 @@ public class AosPackPrinter {
 
     public void sendAosLetterToApplicant(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> currentAosLetters = aosLetters(caseData, NOTICE_OF_PROCEEDINGS);
+        final List<Letter> currentAosLetters = aosLetters(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
 
         if (!isEmpty(currentAosLetters)) {
 
@@ -70,7 +70,7 @@ public class AosPackPrinter {
         } else {
             log.warn(
                 "AoS Pack for print applicant has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS),
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_1),
                 caseId
             );
         }
