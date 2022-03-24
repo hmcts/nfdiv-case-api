@@ -22,13 +22,9 @@ public class GeneralLetterService {
     @Autowired
     private SendGeneralLetter sendGeneralLetter;
 
-    @Autowired
-    private UploadGeneralLetterAttachments uploadGeneralLetterAttachments;
-
     public CaseDetails<CaseData, State> processGeneralLetter(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             generateGeneralLetter,
-            uploadGeneralLetterAttachments,
             sendGeneralLetter
         ).run(caseDetails);
     }

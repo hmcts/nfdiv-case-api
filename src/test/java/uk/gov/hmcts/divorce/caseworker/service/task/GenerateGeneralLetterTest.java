@@ -7,11 +7,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.content.GeneralLetterTemplateContent;
 
 import java.time.Clock;
@@ -25,7 +27,6 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataWithGeneralLetter;
@@ -35,6 +36,8 @@ public class GenerateGeneralLetterTest {
 
     private static final LocalDate DATE = LocalDate.of(2022, 3, 16);
     private static final String FILE_NAME = "GeneralLetter-2022-03-16:00:00";
+    private static final String DOCUMENT_URL = "http://localhost:8080/1234";
+    private static final String DOC_ID = "1234";
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -45,12 +48,17 @@ public class GenerateGeneralLetterTest {
     @Mock
     private Clock clock;
 
+    @Mock
+    private DocumentIdProvider documentIdProvider;
+
     @InjectMocks
     private GenerateGeneralLetter generateLetter;
 
     @BeforeEach
     public void setUp() {
         setMockClock(clock, DATE);
+
+        when(documentIdProvider.documentId()).thenReturn(DOC_ID);
     }
 
     @Test
@@ -65,12 +73,18 @@ public class GenerateGeneralLetterTest {
 
         when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
+        when(caseDataDocumentService.renderDocument(
+            templateContent,
+            TEST_CASE_ID,
+            GENERAL_LETTER_TEMPLATE_ID,
+            ENGLISH,
+            FILE_NAME
+        )).thenReturn(buildDocument());
+
         final var result = generateLetter.apply(caseDetails);
 
         verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
-                caseData,
-                GENERAL_LETTER,
+            .renderDocument(
                 templateContent,
                 TEST_CASE_ID,
                 GENERAL_LETTER_TEMPLATE_ID,
@@ -93,12 +107,18 @@ public class GenerateGeneralLetterTest {
 
         when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
+        when(caseDataDocumentService.renderDocument(
+            templateContent,
+            TEST_CASE_ID,
+            GENERAL_LETTER_TEMPLATE_ID,
+            WELSH,
+            FILE_NAME
+        )).thenReturn(buildDocument());
+
         final var result = generateLetter.apply(caseDetails);
 
         verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
-                caseData,
-                GENERAL_LETTER,
+            .renderDocument(
                 templateContent,
                 TEST_CASE_ID,
                 GENERAL_LETTER_TEMPLATE_ID,
@@ -107,5 +127,13 @@ public class GenerateGeneralLetterTest {
             );
 
         assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    private Document buildDocument() {
+        return new Document(
+            DOCUMENT_URL,
+            String.format("%s.pdf", FILE_NAME),
+            String.format("%s/binary", DOCUMENT_URL)
+        );
     }
 }

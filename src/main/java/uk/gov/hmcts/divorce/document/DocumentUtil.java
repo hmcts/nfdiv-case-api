@@ -49,14 +49,18 @@ public final class DocumentUtil {
             .collect(toList());
     }
 
-    public static List<Letter> lettersWithDocumentType(final List<ListValue<DivorceDocument>> documents) {
+    public static List<Letter> mapToLetters(final List<ListValue<Document>> documents, final DocumentType documentType) {
 
         final AtomicInteger letterIndex = new AtomicInteger();
 
         return ofNullable(documents)
             .flatMap(Collection::stream)
             .map(ListValue::getValue)
-            .map(divorceDocument -> new Letter(divorceDocument, null, letterIndex.incrementAndGet()))
+            .map(document -> new Letter(DivorceDocument.builder()
+                .documentType(documentType)
+                .documentFileName(document.getFilename())
+                .documentLink(document)
+                .build(), null, letterIndex.incrementAndGet()))
             .collect(toList());
     }
 

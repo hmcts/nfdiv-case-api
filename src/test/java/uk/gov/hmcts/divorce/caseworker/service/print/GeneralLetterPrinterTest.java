@@ -8,26 +8,19 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataWithGeneralLetter;
 
@@ -43,35 +36,45 @@ class GeneralLetterPrinterTest {
     @Captor
     private ArgumentCaptor<Print> printCaptor;
 
-    private static final LocalDate NOW = LocalDate.now();
-
     @Test
     void shouldPrintGeneralLetterIfRequiredDocumentsArePresent() {
 
-        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(GENERAL_LETTER)
-                .documentDateAdded(NOW)
+        Document generalLetter = Document.builder()
+            .filename("GeneralLetter.pdf")
+            .build();
+
+//        Document attachment = Document.builder()
+//            .filename("some-attachment.pdf")
+//            .build();
+
+//        ListValue<Document> generalLetter = ListValue.<Document>builder()
+//            .value(Document.builder()
+//                .filename("GeneralLetter.pdf")
+//                .build())
+//            .build();
+
+        ListValue<Document> attachment = ListValue.<Document>builder()
+            .value(Document.builder()
+                .filename("some-attachment.pdf")
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
-                .documentDateAdded(NOW)
-                .build())
+        final ListValue<GeneralLetterDetails> doc1 = ListValue.<GeneralLetterDetails>builder()
+            .value(GeneralLetterDetails.builder()
+                    .generalLetterLink(generalLetter)
+                    .generalLetterAttachmentLinks(Lists.newArrayList(attachment))
+                    .build())
             .build();
 
-        final ListValue<DivorceDocument> attachment = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(OTHER)
-                .documentDateAdded(NOW)
+        final ListValue<GeneralLetterDetails> doc2 = ListValue.<GeneralLetterDetails>builder()
+            .value(GeneralLetterDetails.builder()
+                .generalLetterLink(Document.builder().build())
                 .build())
             .build();
 
         final CaseData caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
-        caseData.getDocuments().setDocumentsGenerated(Lists.newArrayList(doc1, doc2));
-        caseData.getGeneralLetter().setGeneralLetterAttachments(Lists.newArrayList(attachment));
+
+        caseData.setGeneralLetters(Lists.newArrayList(doc1, doc2));
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
@@ -82,34 +85,14 @@ class GeneralLetterPrinterTest {
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("general-letter");
         assertThat(print.getLetters().size()).isEqualTo(2);
-        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
-        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(attachment.getValue());
+        assertThat(print.getLetters().get(0).getDivorceDocument().getDocumentLink()).isSameAs(generalLetter);
+        assertThat(print.getLetters().get(1).getDivorceDocument().getDocumentLink()).isSameAs(attachment);
     }
 
     @Test
     void shouldNotPrintGeneralLetterIfRequiredDocumentsAreNotPresent() {
 
-        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(RESPONDENT_ANSWERS)
-                .documentDateAdded(NOW)
-                .build())
-            .build();
-
-        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(NAME_CHANGE_EVIDENCE)
-                .documentDateAdded(NOW)
-                .build())
-            .build();
-
-        final CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder()
-                .documentsGenerated(asList(doc1, doc2))
-                .build())
-            .build();
-
-        printer.sendLetterWithAttachments(caseData, TEST_CASE_ID);
+        printer.sendLetterWithAttachments(CaseData.builder().build(), TEST_CASE_ID);
 
         verifyNoInteractions(bulkPrintService);
     }

@@ -4,21 +4,27 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.content.GeneralLetterTemplateContent;
 
 import java.time.Clock;
+import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 
 @Component
 @Slf4j
@@ -33,6 +39,9 @@ public class GenerateGeneralLetter implements CaseTask {
     @Autowired
     private Clock clock;
 
+    @Autowired
+    private DocumentIdProvider documentIdProvider;
+
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
@@ -46,9 +55,7 @@ public class GenerateGeneralLetter implements CaseTask {
             ? caseData.getApplicant2().getLanguagePreference()
             : caseData.getApplicant1().getLanguagePreference();
 
-        caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            GENERAL_LETTER,
+        Document generalLetterDoc = caseDataDocumentService.renderDocument(
             templateContent.apply(caseData, caseId),
             caseId,
             GENERAL_LETTER_TEMPLATE_ID,
@@ -56,6 +63,34 @@ public class GenerateGeneralLetter implements CaseTask {
             formatDocumentName(GENERAL_LETTER_DOCUMENT_NAME, now(clock))
         );
 
+        updateCaseData(caseData, generalLetterDoc);
+
         return caseDetails;
+    }
+
+    private void updateCaseData(CaseData caseData, Document generalLetterDoc) {
+
+        caseData.setGeneralLetters(addDocumentToTop(
+            caseData.getGeneralLetters(),
+            mapToGeneralLetterDetails(caseData.getGeneralLetter(), generalLetterDoc),
+            documentIdProvider.documentId()
+        ));
+    }
+
+    private GeneralLetterDetails mapToGeneralLetterDetails(GeneralLetter generalLetter,
+                                                           Document generalLetterDoc) {
+
+        return GeneralLetterDetails.builder()
+            .generalLetterLink(generalLetterDoc)
+            .generalLetterAttachmentLinks(
+                generalLetter.getGeneralLetterAttachments()
+                    .stream()
+                    .map(divorceDocument -> ListValue.<Document>builder()
+                        .id(documentIdProvider.documentId())
+                        .value(divorceDocument.getValue().getDocumentLink()).build())
+                    .collect(Collectors.toList()))
+            .generalLetterDateTime(now(clock))
+            .generalLetterParties(generalLetter.getGeneralLetterParties())
+            .build();
     }
 }
