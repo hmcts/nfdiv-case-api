@@ -26,7 +26,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
@@ -47,7 +48,7 @@ public class NoticeOfProceedingsPrinter {
     public void sendLetterToApplicant1(final CaseData caseData, final Long caseId) {
 
         final List<Letter> lettersWithDocumentTypeNop = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS);
+            caseData.getDocuments().getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS_APP_1);
 
         final boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
         final boolean isApplicant1Offline = caseData.getApplicant1().isOffline();
@@ -86,7 +87,7 @@ public class NoticeOfProceedingsPrinter {
         } else {
             log.warn(
                 "Notice of Proceedings for applicant 1 has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS),
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_1),
                 caseId
             );
         }
@@ -106,7 +107,7 @@ public class NoticeOfProceedingsPrinter {
         } else {
             log.warn(
                 "Notice of Proceedings for applicant 2 has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS),
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_2),
                 caseId
             );
         }
@@ -133,7 +134,7 @@ public class NoticeOfProceedingsPrinter {
             } else {
                 log.warn(
                     "Notice of Proceedings for applicant 2 has missing documents. Expected documents with type {} , for Case ID: {}",
-                    List.of(APPLICATION, NOTICE_OF_PROCEEDINGS),
+                    List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_2),
                     caseId
                 );
             }
@@ -174,7 +175,7 @@ public class NoticeOfProceedingsPrinter {
         } else {
             log.warn(
                 "Notice of Proceedings for applicant 2 solicitor has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS, COVERSHEET),
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_2, COVERSHEET),
                 caseId
             );
         }
@@ -182,7 +183,7 @@ public class NoticeOfProceedingsPrinter {
 
     private List<Letter> lettersForApplicant2(CaseData caseData) {
         final List<Letter> lettersWithDocumentTypeNop = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS);
+            caseData.getDocuments().getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS_APP_2);
 
         final Letter noticeOfProceedingsLetter = firstElement(lettersWithDocumentTypeNop);
 

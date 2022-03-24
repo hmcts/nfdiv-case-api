@@ -11,5 +11,6 @@
     <suppress>
     <notes>poi-*.4.0.0</notes>
       <cve>CVE-2019-12415</cve>
+      <cve>CVE-2022-26336</cve>
     </suppress>
 </suppressions>
