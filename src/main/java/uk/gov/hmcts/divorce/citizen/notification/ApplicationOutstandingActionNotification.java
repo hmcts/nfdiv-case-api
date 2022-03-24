@@ -83,7 +83,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.putAll(missingDocsTemplateVars(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars.get(COURT_EMAIL)));
+        templateVars.putAll(sendingDocumentsToCourt(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars.get(COURT_EMAIL)));
         boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
             && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
         templateVars.putAll(serveAnotherWayTemplateVars(soleServingAnotherWay, caseData));
@@ -92,7 +92,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.putAll(missingDocsTemplateVars(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars.get(COURT_EMAIL)));
+        templateVars.putAll(sendingDocumentsToCourt(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars.get(COURT_EMAIL)));
         templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
         return templateVars;
     }
@@ -110,15 +110,25 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         return templateVars;
     }
 
-    private Map<String, String> missingDocsTemplateVars(CaseData caseData, String referenceNumber, String courtEmail) {
+    private Map<String, String> sendingDocumentsToCourt(CaseData caseData, String referenceNumber, String courtEmail) {
         Map<String, String> templateVars = new HashMap<>();
-        Set<DocumentType> missingDocTypes = caseData.getApplication().getMissingDocumentTypes();
-        boolean needsToSendDocuments = !isEmpty(missingDocTypes);
-        boolean ukMarriage = caseData.getApplication().getMarriageDetails().getMarriedInUk().toBoolean();
+        boolean needsToSendDocuments = !isEmpty(caseData.getApplication().getMissingDocumentTypes());
 
         templateVars.put(SEND_DOCUMENTS_TO_COURT, needsToSendDocuments ? YES : NO);
         templateVars.put(CONDITIONAL_REFERENCE_NUMBER, needsToSendDocuments ? referenceNumber : "");
         templateVars.put(CONDITIONAL_COURT_EMAIL, needsToSendDocuments ? courtEmail : "");
+
+        templateVars.putAll(missingDocsTemplateVars(caseData));
+
+        return templateVars;
+    }
+
+    private Map<String, String> missingDocsTemplateVars(CaseData caseData) {
+        Map<String, String> templateVars = new HashMap<>();
+        Set<DocumentType> missingDocTypes = caseData.getApplication().getMissingDocumentTypes();
+        boolean ukMarriage = caseData.getApplication().getMarriageDetails().getMarriedInUk().toBoolean();
+
+
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE,
             missingDocTypes.contains(MARRIAGE_CERTIFICATE) && ukMarriage && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE,
