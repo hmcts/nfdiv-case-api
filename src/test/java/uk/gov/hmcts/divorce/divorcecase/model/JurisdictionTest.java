@@ -17,7 +17,7 @@ public class JurisdictionTest {
     public static final String CANNOT_EXIST = " cannot exist";
 
     @Test
-    public void shouldNotReturnErrorsWhenJurisdictionConnectionIsC1AndI1ForValidCase() {
+    public void shouldNotReturnErrorsWhenJurisdictionConnectionIsCAndIForValidCase() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -50,7 +50,7 @@ public class JurisdictionTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenJurisdictionConnectionIsC1ForJointCase() {
+    public void shouldReturnErrorWhenJurisdictionConnectionIsCForJointCase() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         Jurisdiction jurisdiction = new Jurisdiction();
@@ -89,7 +89,7 @@ public class JurisdictionTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenJurisdictionConnectionIsI1ForDivorceCase() {
+    public void shouldReturnErrorWhenJurisdictionConnectionIsIForDivorceCase() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         Jurisdiction jurisdiction = new Jurisdiction();

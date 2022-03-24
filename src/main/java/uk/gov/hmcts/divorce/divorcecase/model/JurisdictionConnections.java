@@ -19,7 +19,7 @@ public enum JurisdictionConnections implements HasLabel {
     APP_1_APP_2_LAST_RESIDENT("Both parties to the marriage or civil partnership were last habitually resident in England and Wales"
         + " and one of them continues to reside there"),
 
-    @JsonProperty("C1")
+    @JsonProperty("C")
     @JsonPropertyDescription("APP_2_RESIDENT_SOLE")
     APP_2_RESIDENT_SOLE("The respondent is habitually resident in England and Wales"),
 
@@ -49,7 +49,7 @@ public enum JurisdictionConnections implements HasLabel {
     @JsonPropertyDescription("APP_2_DOMICILED")
     APP_2_DOMICILED("Only applicant 2 (in a joint) or the respondent (in a sole) is domiciled in England and Wales"),
 
-    @JsonProperty("I1")
+    @JsonProperty("I")
     @JsonPropertyDescription("RESIDUAL_JURISDICTION_CP")
     RESIDUAL_JURISDICTION_CP("The parties registered as civil partners of each other in England or Wales and it would be in the "
         + "interest of justice for the court to assume jurisdiction in this case"),

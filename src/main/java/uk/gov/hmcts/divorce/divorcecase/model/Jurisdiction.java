@@ -91,9 +91,9 @@ public class Jurisdiction {
             return List.of("JurisdictionConnections" + EMPTY);
         } else {
             return Stream.of(
-                validateJurisdictionConnectionC1(data),
+                validateJurisdictionConnectionC(data),
                 validateJurisdictionConnectionC2(data),
-                validateJurisdictionConnectionI1(data),
+                validateJurisdictionConnectionI(data),
                 validateJurisdictionConnectionI2(data),
                 validateJurisdictionConnectionJ(data)
 
@@ -101,7 +101,7 @@ public class Jurisdiction {
         }
     }
 
-    private String validateJurisdictionConnectionC1(CaseData data) {
+    private String validateJurisdictionConnectionC(CaseData data) {
         if (connections.contains(APP_2_RESIDENT_SOLE) && !data.getApplicationType().isSole()) {
             return CONNECTION + APP_2_RESIDENT_SOLE + CANNOT_EXIST;
         }
@@ -115,7 +115,7 @@ public class Jurisdiction {
         return null;
     }
 
-    private String validateJurisdictionConnectionI1(CaseData data) {
+    private String validateJurisdictionConnectionI(CaseData data) {
         if (connections.contains(RESIDUAL_JURISDICTION_CP) && data.isDivorce()) {
             return CONNECTION + RESIDUAL_JURISDICTION_CP + CANNOT_EXIST;
         }
