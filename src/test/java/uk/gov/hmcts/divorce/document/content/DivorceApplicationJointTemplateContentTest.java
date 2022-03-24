@@ -146,7 +146,7 @@ class DivorceApplicationJointTemplateContentTest {
         );
 
         verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));
-        verify(applicationTemplateDataProvider).deriveJointJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
+        verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
 
     @Test
@@ -219,6 +219,6 @@ class DivorceApplicationJointTemplateContentTest {
         );
 
         verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));
-        verify(applicationTemplateDataProvider).deriveJointJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
+        verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
 }
