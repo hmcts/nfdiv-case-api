@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -21,7 +22,9 @@ import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -56,7 +59,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(DRAFT_AOS)
-            .forStateTransition(AwaitingAos, AosDrafted)
+            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue))
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
@@ -70,10 +73,15 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        if (details.getState() == AwaitingAos || details.getState() == AosOverdue) {
+            details.setState(AosDrafted);
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseTasks(addMiniApplicationLink)
                 .run(details)
                 .getData())
+            .state(details.getState())
             .build();
     }
 }
