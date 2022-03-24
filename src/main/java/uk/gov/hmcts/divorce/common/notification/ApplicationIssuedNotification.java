@@ -50,7 +50,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
     private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
     private static final String CASE_ID = "case id";
-    private static final String SOLICITOR_ORGANISATION = "solicitor organisation";
     private static final String UNION_TYPE = "union type";
     private static final String DIVORCE = "divorce";
     private static final String DISSOLUTION = "dissolution";
@@ -262,7 +261,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(CASE_ID, caseId.toString());
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
-        templateVars.put(SIGN_IN_URL, commonContent.getSignInUrl(caseData));
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl());
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SUBMISSION_RESPONSE_DATE,
