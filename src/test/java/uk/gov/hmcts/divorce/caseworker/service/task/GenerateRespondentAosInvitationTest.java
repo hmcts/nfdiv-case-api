@@ -7,12 +7,13 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTemplateContent;
-import uk.gov.hmcts.divorce.document.content.CoversheetTemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
 import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
 
 import java.time.Clock;
@@ -33,7 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_ONLINE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
@@ -60,7 +61,7 @@ public class GenerateRespondentAosInvitationTest {
     private CitizenRespondentAosInvitationTemplateContent citizenRespondentAosInvitationTemplateContent;
 
     @Mock
-    private CoversheetTemplateContent coversheetTemplateContent;
+    private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
 
     @Mock
     private Clock clock;
@@ -165,7 +166,7 @@ public class GenerateRespondentAosInvitationTest {
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-        when(coversheetTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(coversheetContent);
+        when(coversheetApplicant2TemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(coversheetContent);
 
         final var result = generateRespondentAosInvitation.apply(caseDetails);
 
@@ -188,7 +189,7 @@ public class GenerateRespondentAosInvitationTest {
                 COVERSHEET,
                 templateContent,
                 TEST_CASE_ID,
-                COVERSHEET_APPLICANT2,
+                COVERSHEET_APPLICANT,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
@@ -217,7 +218,7 @@ public class GenerateRespondentAosInvitationTest {
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-        when(coversheetTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(coversheetContent);
+        when(coversheetApplicant2TemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(coversheetContent);
 
         final var result = generateRespondentAosInvitation.apply(caseDetails);
 
@@ -240,7 +241,7 @@ public class GenerateRespondentAosInvitationTest {
                 COVERSHEET,
                 templateContent,
                 TEST_CASE_ID,
-                COVERSHEET_APPLICANT2,
+                COVERSHEET_APPLICANT,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
@@ -269,6 +270,50 @@ public class GenerateRespondentAosInvitationTest {
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
         verifyNoInteractions(caseDataDocumentService);
+
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateAosInvitationDocOfflineVersionIfApplicantAndRespondentAreNotRepresentedAndRepsondentIsOverseas() {
+        setMockClock(clock);
+
+        final var caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YES);
+
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> coversheetContent = new HashMap<>();
+        final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        final var result = generateRespondentAosInvitation.apply(caseDetails);
+
+        assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
+
+        verify(caseDataDocumentService)
+            .renderDocumentAndUpdateCaseData(
+                caseData,
+                RESPONDENT_INVITATION,
+                templateContent,
+                TEST_CASE_ID,
+                CITIZEN_RESP_AOS_INVITATION_OFFLINE,
+                ENGLISH,
+                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+            );
+
+        verifyNoMoreInteractions(caseDataDocumentService);
 
         classMock.close();
     }

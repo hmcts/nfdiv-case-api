@@ -56,16 +56,29 @@ public class BulkPrintService {
         return triggerPrintRequest(print, authToken, documentRequestForPrint(print, authToken));
     }
 
+    public UUID printWithD10Form(final Print print) {
+        final String authToken = authTokenGenerator.generate();
+        final List<Document> documents = documentRequestForPrint(print, authToken);
+
+        addD10FormTo(documents);
+
+        return triggerPrintRequest(print, authToken, documents);
+    }
+
     public UUID printAosRespondentPack(final Print print, final boolean includeD10Document) {
         final String authToken = authTokenGenerator.generate();
         List<Document> documents = documentRequestForPrint(print, authToken);
 
         if (includeD10Document) {
-            Document d10Document = new Document(getEncoder().encodeToString(loadD10PdfBytes("/D10.pdf")), 1);
-            documents.add(d10Document);
+            addD10FormTo(documents);
         }
 
         return triggerPrintRequest(print, authToken, documents);
+    }
+
+    private void addD10FormTo(final List<Document> documents) {
+        final Document d10Document = new Document(getEncoder().encodeToString(loadD10PdfBytes("/D10.pdf")), 1);
+        documents.add(d10Document);
     }
 
     private List<Document> documentRequestForPrint(Print print, String authToken) {
