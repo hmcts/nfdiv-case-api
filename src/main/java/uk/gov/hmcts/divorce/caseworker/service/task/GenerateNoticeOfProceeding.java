@@ -17,7 +17,8 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDI
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 
 @Component
@@ -64,7 +65,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
-                NOTICE_OF_PROCEEDINGS,
+                NOTICE_OF_PROCEEDINGS_APP_1,
                 templateContent.apply(caseData, caseId),
                 caseId,
                 templateId,
@@ -80,7 +81,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
-                NOTICE_OF_PROCEEDINGS,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent.apply(caseData, caseId),
                 caseId,
                 NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID,
@@ -105,13 +106,12 @@ public class GenerateNoticeOfProceeding implements CaseTask {
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
-                NOTICE_OF_PROCEEDINGS,
+                NOTICE_OF_PROCEEDINGS_APP_1,
                 jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
                 caseId,
                 JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
                 caseData.getApplicant1().getLanguagePreference(),
                 NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
-
         }
 
         if (!isApplicant2Represented || isApplicant2Offline) {
@@ -120,13 +120,12 @@ public class GenerateNoticeOfProceeding implements CaseTask {
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
-                NOTICE_OF_PROCEEDINGS,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
                 caseId,
                 JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
                 caseData.getApplicant2().getLanguagePreference(),
                 NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
-
         }
     }
 }

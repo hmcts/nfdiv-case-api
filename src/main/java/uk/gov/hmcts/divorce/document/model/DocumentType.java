@@ -122,7 +122,10 @@ public enum DocumentType implements HasLabel {
     NAME_CHANGE_EVIDENCE("Name change evidence"),
 
     @JsonProperty("noticeOfProceedings")
-    NOTICE_OF_PROCEEDINGS("Notice of proceedings"),
+    NOTICE_OF_PROCEEDINGS_APP_1("Notice of proceedings for applicant/applicant 1"),
+
+    @JsonProperty("noticeOfProceedingsApp2")
+    NOTICE_OF_PROCEEDINGS_APP_2("Notice of proceedings for respondent/applicant 2"),
 
     @JsonProperty("noticeOfRefusalOfEntitlement")
     NOTICE_OF_REFUSAL_OF_ENTITLEMENT("Notice of refusal of entitlement to a CO"),
