@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETT
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -89,7 +89,7 @@ class AosPackPrinterTest {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(NOTICE_OF_PROCEEDINGS)
+                .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
                 .build())
             .build();
 
@@ -214,7 +214,7 @@ class AosPackPrinterTest {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(NOTICE_OF_PROCEEDINGS)
+                .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
                 .build())
             .build();
 
