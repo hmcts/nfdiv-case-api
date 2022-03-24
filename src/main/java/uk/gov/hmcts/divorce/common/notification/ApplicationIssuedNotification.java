@@ -250,7 +250,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(
             SOLICITOR_REFERENCE,
             isNotEmpty(caseData.getApplicant2().getSolicitor().getReference())
-                ? caseData.getApplicant1().getSolicitor().getReference()
+                ? caseData.getApplicant2().getSolicitor().getReference()
                 : NOT_PROVIDED);
 
         return templateVars;
