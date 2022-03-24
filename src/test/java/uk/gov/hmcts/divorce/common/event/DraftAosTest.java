@@ -18,6 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.event.DraftAos.DRAFT_AOS;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -56,5 +59,33 @@ class DraftAosTest {
         assertThat(response.getData()).isSameAs(expectedCaseData);
 
         verify(addMiniApplicationLink).apply(caseDetails);
+    }
+
+    @Test
+    void shouldChangeTheStateAndReturnCaseDataOnAboutToStart() {
+        final CaseData expectedCaseData = CaseData.builder().build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(expectedCaseData);
+        caseDetails.setState(AwaitingAos);
+
+        when(addMiniApplicationLink.apply(caseDetails)).thenReturn(caseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToStart(caseDetails);
+
+        assertThat(response.getState()).isEqualTo(AosDrafted);
+    }
+
+    @Test
+    void shouldNotChangeTheStateAndReturnCaseDataOnAboutToStart() {
+        final CaseData expectedCaseData = CaseData.builder().build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(expectedCaseData);
+        caseDetails.setState(AwaitingConditionalOrder);
+
+        when(addMiniApplicationLink.apply(caseDetails)).thenReturn(caseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToStart(caseDetails);
+
+        assertThat(response.getState()).isEqualTo(AwaitingConditionalOrder);
     }
 }
