@@ -117,13 +117,7 @@ public class DraftApplicationTemplateContent {
                 .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
                 .orElse(null));
 
-        if (isSole) {
-            templateContent.put("jurisdictions",
-                applicationTemplateDataProvider.deriveSoleJurisdictionList(application, ccdCaseReference));
-        } else {
-            templateContent.put("jurisdictions",
-                applicationTemplateDataProvider.deriveJointJurisdictionList(application, ccdCaseReference));
-        }
+        templateContent.put("jurisdictions", applicationTemplateDataProvider.deriveJurisdictionList(application, ccdCaseReference));
 
         if (!isNull(applicant1.getLegalProceedings())) {
             templateContent.put(HAS_OTHER_COURT_CASES_APPLICANT_1, applicant1.getLegalProceedings().toBoolean());
