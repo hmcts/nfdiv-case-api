@@ -178,7 +178,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
             notificationService.sendEmail(
                 email,
                 RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-                respondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+                applicant2SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
                 ENGLISH
             );
         } else if (!caseData.getApplicationType().isSole() && !caseData.getApplication().isSolicitorServiceMethod()) {
@@ -268,22 +268,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER));
-
-        return templateVars;
-    }
-
-    private Map<String, String> respondentSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
-
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
-        final Solicitor respondentSolicitor = caseData.getApplicant2().getSolicitor();
-        final String respondentOrganisationName = respondentSolicitor
-            .getOrganisationPolicy()
-            .getOrganisation()
-            .getOrganisationName();
-
-        templateVars.put(SOLICITOR_NAME, respondentSolicitor.getName());
-        templateVars.put(CASE_ID, caseId.toString());
-        templateVars.put(SOLICITOR_ORGANISATION, respondentOrganisationName);
 
         return templateVars;
     }

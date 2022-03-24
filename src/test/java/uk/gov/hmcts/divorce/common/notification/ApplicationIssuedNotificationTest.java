@@ -350,7 +350,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            applicantSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(),
             ENGLISH
         );
 
@@ -364,10 +364,12 @@ public class ApplicationIssuedNotificationTest {
             .applicationType(SOLE_APPLICATION)
             .applicant1(getApplicant())
             .applicant2(respondentWithDigitalSolicitor())
-            .application(Application.builder()
-                .solServiceMethod(COURT_SERVICE)
-                .build())
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
+
+        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
@@ -381,10 +383,12 @@ public class ApplicationIssuedNotificationTest {
             .applicationType(SOLE_APPLICATION)
             .applicant1(getApplicant())
             .applicant2(respondentWithDigitalSolicitor())
-            .application(Application.builder()
-                .solServiceMethod(COURT_SERVICE)
-                .build())
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
+
+        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
@@ -393,7 +397,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            respondentSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(),
             ENGLISH
         );
 
@@ -423,7 +427,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            applicantSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(),
             ENGLISH
         );
 
@@ -563,7 +567,7 @@ public class ApplicationIssuedNotificationTest {
         return templateVars;
     }
 
-    private Map<String, String> applicantSolicitorTemplateVars() {
+    private Map<String, String> nopSolicitorTemplateVars() {
         final Map<String, String> templateVars = solicitorTemplateVars();
 
         templateVars.put(SOLICITOR_REFERENCE, NOT_PROVIDED);
