@@ -17,7 +17,7 @@ public class Applicant2SolStatementOfTruth implements CcdPageConfiguration {
 
         pageBuilder
             .page("Applicant2SolStatementOfTruth")
-            .pageLabel("Statement of truth and reconciliation")
+            .pageLabel("Statement of truth")
             .label("LabelApplicant2SolStatementOfTruth-AoSReview", "### Review the answers in your Acknowledgement "
                 + "of Service below. If you wish to change any of your answers, please go back and use the 'Update AoS' action")
             .complex(CaseData::getLabelContent)
@@ -26,6 +26,7 @@ public class Applicant2SolStatementOfTruth implements CcdPageConfiguration {
             .complex(CaseData::getAcknowledgementOfService)
                 .readonlyNoSummary(AcknowledgementOfService::getConfirmReadPetition)
                 .readonlyNoSummary(AcknowledgementOfService::getJurisdictionAgree)
+                .readonlyNoSummary(AcknowledgementOfService::getHowToRespondApplication)
                 .readonlyNoSummary(AcknowledgementOfService::getReasonCourtsOfEnglandAndWalesHaveNoJurisdiction, "jurisdictionAgree=\"No\"")
                 .readonlyNoSummary(AcknowledgementOfService::getInWhichCountryIsYourLifeMainlyBased, "jurisdictionAgree=\"No\"")
             .done()
