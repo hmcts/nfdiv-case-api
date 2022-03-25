@@ -62,9 +62,44 @@ public class GenerateGeneralLetterTest {
     }
 
     @Test
-    public void testGenerateLetterToApplicant() {
+    public void shouldGenerateGeneralLetterAndUpdateCaseDataWithGeneralLettersWithAttachments() {
 
         CaseData caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        when(caseDataDocumentService.renderDocument(
+            templateContent,
+            TEST_CASE_ID,
+            GENERAL_LETTER_TEMPLATE_ID,
+            ENGLISH,
+            FILE_NAME
+        )).thenReturn(buildDocument());
+
+        final var result = generateLetter.apply(caseDetails);
+
+        verify(caseDataDocumentService)
+            .renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                GENERAL_LETTER_TEMPLATE_ID,
+                ENGLISH,
+                FILE_NAME
+            );
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    public void shouldGenerateGeneralLetterAndUpdateCaseDataWithGeneralLettersWithoutAttachments() {
+
+        CaseData caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
+        caseData.getGeneralLetter().setGeneralLetterAttachments(null);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);

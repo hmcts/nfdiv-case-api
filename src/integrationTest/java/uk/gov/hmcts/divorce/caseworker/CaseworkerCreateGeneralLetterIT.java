@@ -28,6 +28,9 @@ import java.time.LocalDate;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -132,6 +135,8 @@ public class CaseworkerCreateGeneralLetterIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
+
+        verify(generalLetterPrinter).sendLetterWithAttachments(any(CaseData.class), anyLong());
 
         assertThatJson(response)
             .isEqualTo(json(expectedResponse("classpath:caseworker-general-letter-response.json")));

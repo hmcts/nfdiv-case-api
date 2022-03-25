@@ -52,11 +52,7 @@ public class GeneralLetterPrinter {
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
-            log.warn(
-                "General letter has missing documents. Expected document with type {} , for Case ID: {}",
-                GENERAL_LETTER,
-                caseId
-            );
+            log.warn("No general letters found for print , for Case ID: {}", caseId);
         }
     }
 }

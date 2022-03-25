@@ -952,7 +952,12 @@ public class TestDataHelper {
 
         ListValue<DivorceDocument> attachment = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentFileName("some-file")
+                .documentFileName("some-file.pdf")
+                .documentLink(Document.builder()
+                    .filename("some-file.pdf")
+                    .url("http://localhost:8080/1234")
+                    .binaryUrl("http://localhost:8080/1234/binary")
+                    .build())
                 .build())
             .build();
 

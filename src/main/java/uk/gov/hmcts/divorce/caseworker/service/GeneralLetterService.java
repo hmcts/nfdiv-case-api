@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateGeneralLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendGeneralLetter;
-import uk.gov.hmcts.divorce.caseworker.service.task.UploadGeneralLetterAttachments;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 

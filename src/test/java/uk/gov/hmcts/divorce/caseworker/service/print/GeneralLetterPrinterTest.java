@@ -43,16 +43,6 @@ class GeneralLetterPrinterTest {
             .filename("GeneralLetter.pdf")
             .build();
 
-//        Document attachment = Document.builder()
-//            .filename("some-attachment.pdf")
-//            .build();
-
-//        ListValue<Document> generalLetter = ListValue.<Document>builder()
-//            .value(Document.builder()
-//                .filename("GeneralLetter.pdf")
-//                .build())
-//            .build();
-
         ListValue<Document> attachment = ListValue.<Document>builder()
             .value(Document.builder()
                 .filename("some-attachment.pdf")
@@ -86,7 +76,7 @@ class GeneralLetterPrinterTest {
         assertThat(print.getLetterType()).isEqualTo("general-letter");
         assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getDivorceDocument().getDocumentLink()).isSameAs(generalLetter);
-        assertThat(print.getLetters().get(1).getDivorceDocument().getDocumentLink()).isSameAs(attachment);
+        assertThat(print.getLetters().get(1).getDivorceDocument().getDocumentLink()).isSameAs(attachment.getValue());
     }
 
     @Test

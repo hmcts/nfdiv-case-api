@@ -1,69 +1,68 @@
 {
-  "data":{
-    "applicationType":"jointApplication",
-    "divorceOrDissolution":"divorce",
-    "applicant1FirstName":"test_first_name",
-    "applicant1MiddleName":"test_middle_name",
-    "applicant1LastName":"test_last_name",
-    "applicant1Email":"test@test.com",
-    "applicant1LanguagePreferenceWelsh":"No",
-    "applicant1Address":{
-      "AddressLine1":"line 1",
-      "PostTown":"town",
-      "PostCode":"postcode",
-      "Country":"UK"
+  "data": {
+    "applicationType": "jointApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Address": {
+      "AddressLine1": "line 1",
+      "PostTown": "town",
+      "PostCode": "postcode",
+      "Country": "UK"
     },
-    "applicant1Gender":"male",
-    "applicant2FirstName":"test_first_name",
-    "applicant2MiddleName":"test_middle_name",
-    "applicant2LastName":"test_last_name",
-    "applicant2Email":"test@test.com",
-    "applicant2LanguagePreferenceWelsh":"No",
-    "applicant2Address":{
-      "AddressLine1":"line 1",
-      "PostTown":"town",
-      "PostCode":"postcode",
-      "Country":"UK"
+    "applicant1Gender": "male",
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2Email": "test@test.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2Address": {
+      "AddressLine1": "line 1",
+      "PostTown": "town",
+      "PostCode": "postcode",
+      "Country": "UK"
     },
-    "applicant2Gender":"male",
-    "marriageApplicant1Name":"test_first_name test_last_name",
-    "marriageApplicant2Name":"test_first_name test_last_name",
-    "marriageMarriedInUk":"Yes",
-    "marriageDate":"1990-06-10",
-    "jurisdictionApplicant1Residence":"Yes",
-    "jurisdictionApplicant2Residence":"Yes",
-    "jurisdictionConnections":[
+    "applicant2Gender": "male",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriageMarriedInUk": "Yes",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
       "A"
     ],
-    "solServiceTruthStatement":"I believe that the facts stated in the application are true.",
-    "applicant1HWFNeedHelp":"No",
-    "applicant2InviteEmailAddress":"applicant2@test.com",
-    "documentsUploaded":[
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "applicant1HWFNeedHelp": "No",
+    "applicant2InviteEmailAddress": "applicant2@test.com",
+    "dataVersion": 1,
+    "warnings": [],
+    "generalLetters": [
       {
-        "id":"${json-unit.any-string}",
-        "value":{
-          "documentDateAdded":"2021-06-17",
-          "documentFileName":"some-file"
-        }
-      }
-    ],
-    "documentsGenerated":[
-      {
-        "id":"${json-unit.any-string}",
-        "value":{
-          "documentLink":{
-            "document_url":"http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename":"GeneralLetter-2021-06-17:01:00.pdf",
-            "document_binary_url":"http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+        "id": "123456789",
+        "value": {
+          "generalLetterDateTime": "2021-06-17T01:00:00.000",
+          "generalLetterParties": "applicant",
+          "generalLetterLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "GeneralLetter-2021-06-17:01:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
           },
-          "documentFileName":"GeneralLetter-2021-06-17:01:00.pdf",
-          "documentType":"generalLetter"
+          "generalLetterAttachmentLinks": [
+            {
+              "id": "123456789",
+              "value": {
+                "document_url": "http://localhost:8080/1234",
+                "document_filename": "some-file.pdf",
+                "document_binary_url": "http://localhost:8080/1234/binary"
+              }
+            }
+          ]
         }
       }
-    ],
-    "dataVersion":1,
-    "warnings":[
-
     ]
   }
 }

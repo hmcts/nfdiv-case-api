@@ -18,9 +18,11 @@ import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.content.GeneralLetterTemplateContent;
 
 import java.time.Clock;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.List;
 
 import static java.time.LocalDateTime.now;
+import static java.util.stream.Stream.ofNullable;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_DOCUMENT_NAME;
@@ -55,7 +57,7 @@ public class GenerateGeneralLetter implements CaseTask {
             ? caseData.getApplicant2().getLanguagePreference()
             : caseData.getApplicant1().getLanguagePreference();
 
-        Document generalLetterDoc = caseDataDocumentService.renderDocument(
+        Document generalLetterDocument = caseDataDocumentService.renderDocument(
             templateContent.apply(caseData, caseId),
             caseId,
             GENERAL_LETTER_TEMPLATE_ID,
@@ -63,32 +65,32 @@ public class GenerateGeneralLetter implements CaseTask {
             formatDocumentName(GENERAL_LETTER_DOCUMENT_NAME, now(clock))
         );
 
-        updateCaseData(caseData, generalLetterDoc);
+        updateCaseData(caseData, generalLetterDocument);
 
         return caseDetails;
     }
 
-    private void updateCaseData(CaseData caseData, Document generalLetterDoc) {
+    private void updateCaseData(CaseData caseData, Document generalLetterDocument) {
 
         caseData.setGeneralLetters(addDocumentToTop(
             caseData.getGeneralLetters(),
-            mapToGeneralLetterDetails(caseData.getGeneralLetter(), generalLetterDoc),
+            mapToGeneralLetterDetails(caseData.getGeneralLetter(), generalLetterDocument),
             documentIdProvider.documentId()
         ));
     }
 
-    private GeneralLetterDetails mapToGeneralLetterDetails(GeneralLetter generalLetter,
-                                                           Document generalLetterDoc) {
+    private GeneralLetterDetails mapToGeneralLetterDetails(GeneralLetter generalLetter, Document generalLetterDocument) {
+
+        List<ListValue<Document>> attachments = ofNullable(generalLetter.getGeneralLetterAttachments())
+            .flatMap(Collection::stream)
+            .map(divorceDocument -> ListValue.<Document>builder()
+                .id(documentIdProvider.documentId())
+                .value(divorceDocument.getValue().getDocumentLink()).build())
+            .toList();
 
         return GeneralLetterDetails.builder()
-            .generalLetterLink(generalLetterDoc)
-            .generalLetterAttachmentLinks(
-                generalLetter.getGeneralLetterAttachments()
-                    .stream()
-                    .map(divorceDocument -> ListValue.<Document>builder()
-                        .id(documentIdProvider.documentId())
-                        .value(divorceDocument.getValue().getDocumentLink()).build())
-                    .collect(Collectors.toList()))
+            .generalLetterLink(generalLetterDocument)
+            .generalLetterAttachmentLinks(attachments)
             .generalLetterDateTime(now(clock))
             .generalLetterParties(generalLetter.getGeneralLetterParties())
             .build();

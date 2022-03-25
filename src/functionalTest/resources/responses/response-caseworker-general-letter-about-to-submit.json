@@ -66,35 +66,32 @@
     ],
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "accessCode": "",
-    "documentsGenerated": [
+    "dueDate": "2020-04-28",
+    "dataVersion": 1,
+    "warnings": [],
+    "generalLetters": [
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentLink": {
+          "generalLetterDateTime": "${json-unit.any-string}",
+          "generalLetterParties": "applicant",
+          "generalLetterLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",
             "document_binary_url": "${json-unit.any-string}"
           },
-          "documentFileName": "${json-unit.any-string}",
-          "documentType": "generalLetter"
+          "generalLetterAttachmentLinks": [
+            {
+              "id": "${json-unit.any-string}",
+              "value": {
+                "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4",
+                "document_filename": "4ab5c253-44a4-4061-ab64-e58cdeae1ddd.pdf",
+                "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4/binary"
+              }
+            }
+          ]
         }
       }
-    ],
-    "documentsUploaded": [
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4",
-            "document_filename": "4ab5c253-44a4-4061-ab64-e58cdeae1ddd.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4/binary"
-          },
-          "documentDateAdded": "${json-unit.any-string}"
-        }
-      }
-    ],
-    "dueDate": "2020-04-28",
-    "dataVersion": 1,
-    "warnings": []
+    ]
   }
 }
