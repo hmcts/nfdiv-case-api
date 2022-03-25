@@ -128,7 +128,7 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldPrintOverseasAosPackForApplicantIfRequiredDocumentsArePresent() {
+    void shouldPrintPersonalServiceAosPackForApplicantIfRequiredDocumentsArePresent() {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -232,6 +232,30 @@ class AosPackPrinterTest {
             .build();
 
         aosPackPrinter.sendAosLetterToRespondent(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(bulkPrintService);
+    }
+
+    @Test
+    void shouldNotPrintPersonalServiceAosPackIfRequiredDocumentsAreNotPresent() {
+
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(RESPONDENT_ANSWERS)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NAME_CHANGE_EVIDENCE)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
+            .build();
+
+        aosPackPrinter.sendPersonalServiceAosLetterToApplicant(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(bulkPrintService);
     }
