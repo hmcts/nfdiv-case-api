@@ -66,6 +66,20 @@
     ],
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "accessCode": "",
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "generalLetter"
+        }
+      }
+    ],
     "dueDate": "2020-04-28",
     "dataVersion": 1,
     "warnings": [],

@@ -16,10 +16,12 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.content.GeneralLetterTemplateContent;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
 import static java.util.stream.Stream.ofNullable;
@@ -27,6 +29,7 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 
 @Component
 @Slf4j
@@ -57,7 +60,9 @@ public class GenerateGeneralLetter implements CaseTask {
             ? caseData.getApplicant2().getLanguagePreference()
             : caseData.getApplicant1().getLanguagePreference();
 
-        Document generalLetterDocument = caseDataDocumentService.renderDocument(
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            GENERAL_LETTER,
             templateContent.apply(caseData, caseId),
             caseId,
             GENERAL_LETTER_TEMPLATE_ID,
@@ -65,18 +70,25 @@ public class GenerateGeneralLetter implements CaseTask {
             formatDocumentName(GENERAL_LETTER_DOCUMENT_NAME, now(clock))
         );
 
-        updateCaseData(caseData, generalLetterDocument);
+        updateGeneralLetters(caseData);
 
         return caseDetails;
     }
 
-    private void updateCaseData(CaseData caseData, Document generalLetterDocument) {
+    private void updateGeneralLetters(CaseData caseData) {
 
-        caseData.setGeneralLetters(addDocumentToTop(
+        Optional<Document> generalLetterDocument = ofNullable(caseData.getDocuments().getDocumentsGenerated())
+            .flatMap(Collection::stream)
+            .map(ListValue::getValue)
+            .filter(document -> GENERAL_LETTER.equals(document.getDocumentType()))
+            .findFirst()
+            .map(DivorceDocument::getDocumentLink);
+
+        generalLetterDocument.ifPresent(document -> caseData.setGeneralLetters(addDocumentToTop(
             caseData.getGeneralLetters(),
-            mapToGeneralLetterDetails(caseData.getGeneralLetter(), generalLetterDocument),
+            mapToGeneralLetterDetails(caseData.getGeneralLetter(), document),
             documentIdProvider.documentId()
-        ));
+        )));
     }
 
     private GeneralLetterDetails mapToGeneralLetterDetails(GeneralLetter generalLetter, Document generalLetterDocument) {
