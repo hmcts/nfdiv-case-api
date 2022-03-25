@@ -10,6 +10,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Prayer;
 public class SolStatementOfTruth implements CcdPageConfiguration {
 
     private static final String ALWAYS_HIDE = "applicant1StatementOfTruth=\"ALWAYS_HIDE\"";
+    private static final String DIVORCE_APPLICATION = "divorceOrDissolution = \"divorce\"";
+    private static final String DISSOLUTION_APPLICATION = "divorceOrDissolution = \"dissolution\"";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -38,11 +40,11 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 .mandatory(Application::getSolStatementOfReconciliationDiscussed)
                 .label("LabelPrayer", "## The prayer ##")
                 .complex(Application::getPrayer)
-                    .mandatory(Prayer::getApplicant1PrayerDissolveDivorce)
-                    .mandatory(Prayer::getApplicant1PrayerEndCivilPartnership)
-                    .mandatory(Prayer::getApplicant1PrayerFinancialOrdersThemselves)
-                    .mandatory(Prayer::getApplicant1PrayerFinancialOrdersChild)
-                .done()
+                    .mandatory(Prayer::getApplicant1PrayerDissolveDivorce, DIVORCE_APPLICATION)
+                    .mandatory(Prayer::getApplicant1PrayerEndCivilPartnership, DISSOLUTION_APPLICATION)
+                    .optional(Prayer::getApplicant1PrayerFinancialOrdersThemselves)
+                    .optional(Prayer::getApplicant1PrayerFinancialOrdersChild)
+                    .done()
                 .label("LabelSolStatementOfTruth-SOT", "## Statement of truth ##")
                 .mandatory(Application::getApplicant1StatementOfTruth)
                 .mandatory(Application::getSolSignStatementOfTruth)

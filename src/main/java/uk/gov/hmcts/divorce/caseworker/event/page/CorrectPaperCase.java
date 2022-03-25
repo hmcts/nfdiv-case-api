@@ -27,9 +27,13 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SOT_REQ
 public class CorrectPaperCase implements CcdPageConfiguration {
 
     private static final String TITLE = "Correct paper case";
-    public static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
-    public static final String APPLICANT_1_SOLICITOR_REPRESENTED_YES = "applicant1SolicitorRepresented=\"Yes\"";
-    public static final String APPLICANT_2_SOLICITOR_REPRESENTED_YES = "applicant2SolicitorRepresented=\"Yes\"";
+    private static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
+    private static final String JOINT_DIVORCE_APPLICATION = "applicationType=\"jointApplication\" AND divorceOrDissolution = \"divorce\"";
+    private static final String JOINT_DISSOLUTION_APPLICATION = "applicationType=\"jointApplication\" AND divorceOrDissolution = \"dissolution\" ";
+    private static final String APPLICANT_1_SOLICITOR_REPRESENTED_YES = "applicant1SolicitorRepresented=\"Yes\"";
+    private static final String APPLICANT_2_SOLICITOR_REPRESENTED_YES = "applicant2SolicitorRepresented=\"Yes\"";
+    private static final String DIVORCE_APPLICATION = "divorceOrDissolution = \"divorce\"";
+    private static final String DISSOLUTION_APPLICATION = "divorceOrDissolution = \"dissolution\"";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -244,14 +248,14 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 "### The prayer details")
             .complex(CaseData::getApplication)
                 .complex(Application::getPrayer)
-                .mandatory(Prayer::getApplicant1PrayerDissolveDivorce)
-                .mandatory(Prayer::getApplicant1PrayerEndCivilPartnership)
-                .mandatory(Prayer::getApplicant1PrayerFinancialOrdersThemselves)
-                .mandatory(Prayer::getApplicant1PrayerFinancialOrdersChild)
-                .mandatory(Prayer::getApplicant2PrayerDissolveDivorce, JOINT_APPLICATION)
-                .mandatory(Prayer::getApplicant2PrayerEndCivilPartnership, JOINT_APPLICATION)
-                .mandatory(Prayer::getApplicant2PrayerFinancialOrdersThemselves, JOINT_APPLICATION)
-                .mandatory(Prayer::getApplicant2PrayerFinancialOrdersChild, JOINT_APPLICATION)
+                .mandatory(Prayer::getApplicant1PrayerDissolveDivorce, DIVORCE_APPLICATION)
+                .mandatory(Prayer::getApplicant1PrayerEndCivilPartnership, DISSOLUTION_APPLICATION)
+                .optional(Prayer::getApplicant1PrayerFinancialOrdersThemselves)
+                .optional(Prayer::getApplicant1PrayerFinancialOrdersChild)
+                .mandatory(Prayer::getApplicant2PrayerDissolveDivorce, JOINT_DIVORCE_APPLICATION)
+                .mandatory(Prayer::getApplicant2PrayerEndCivilPartnership, JOINT_DISSOLUTION_APPLICATION)
+                .optional(Prayer::getApplicant2PrayerFinancialOrdersThemselves, JOINT_APPLICATION)
+                .optional(Prayer::getApplicant2PrayerFinancialOrdersChild, JOINT_APPLICATION)
                 .done()
             .done();
     }
