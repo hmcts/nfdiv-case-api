@@ -3,9 +3,9 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Prayer;
 
 public class SolStatementOfTruth implements CcdPageConfiguration {
 
@@ -38,14 +38,18 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 .label("LabelSolStatementOTruthPara-3", "## Statement of reconciliation")
                 .mandatory(Application::getSolStatementOfReconciliationCertify)
                 .mandatory(Application::getSolStatementOfReconciliationDiscussed)
-                .label("LabelPrayer", "## The prayer ##")
-                .complex(Application::getPrayer)
-                    .mandatory(Prayer::getApplicant1PrayerDissolveDivorce, DIVORCE_APPLICATION)
-                    .mandatory(Prayer::getApplicant1PrayerEndCivilPartnership, DISSOLUTION_APPLICATION)
-                    .optional(Prayer::getApplicant1PrayerFinancialOrdersThemselves)
-                    .optional(Prayer::getApplicant1PrayerFinancialOrdersChild)
+            .done()
+            .label("LabelPrayer", "## The prayer ##")
+            .complex(CaseData::getApplicant1)
+                    .complex(Applicant::getApplicantPrayer)
+                    .mandatory(ApplicantPrayer::getPrayerDissolveDivorce, DIVORCE_APPLICATION)
+                    .mandatory(ApplicantPrayer::getPrayerEndCivilPartnership, DISSOLUTION_APPLICATION)
+                    .optional(ApplicantPrayer::getPrayerFinancialOrdersThemselves)
+                    .optional(ApplicantPrayer::getPrayerFinancialOrdersChild)
                     .done()
-                .label("LabelSolStatementOfTruth-SOT", "## Statement of truth ##")
+            .done()
+            .label("LabelSolStatementOfTruth-SOT", "## Statement of truth ##")
+            .complex(CaseData::getApplication)
                 .mandatory(Application::getApplicant1StatementOfTruth)
                 .mandatory(Application::getSolSignStatementOfTruth)
                 .label("LabelSolStatementOfTruth-SOTInfo",

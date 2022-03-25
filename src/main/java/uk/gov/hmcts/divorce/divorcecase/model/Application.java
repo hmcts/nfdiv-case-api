@@ -136,10 +136,6 @@ public class Application {
     )
     private YesOrNo solStatementOfReconciliationDiscussed;
 
-    @JsonUnwrapped()
-    @Builder.Default
-    private Prayer prayer = new Prayer();
-
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
         access = {DefaultAccess.class}

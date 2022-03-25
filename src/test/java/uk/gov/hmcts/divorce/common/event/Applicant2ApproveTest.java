@@ -38,12 +38,12 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.divorcecase.model.Prayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_2_ANSWERS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -243,7 +243,7 @@ class Applicant2ApproveTest {
                 .build()
         );
 
-        caseData.getApplication().getPrayer().setApplicant2PrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
+        caseData.getApplicant2().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
         caseData.getApplication().getMarriageDetails().setApplicant1Name("Full name");
         caseData.getApplication().getMarriageDetails().setApplicant2Name("Full name");

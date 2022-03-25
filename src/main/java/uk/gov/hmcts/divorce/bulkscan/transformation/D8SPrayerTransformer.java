@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
-import static uk.gov.hmcts.divorce.divorcecase.model.Prayer.DissolveDivorce.DISSOLVE_DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.Prayer.FinancialOrdersThemselves.FINANCIAL_ORDERS_THEMSELVES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.FinancialOrdersThemselves.FINANCIAL_ORDERS_THEMSELVES;
 
 @Component
 public class D8SPrayerTransformer implements Function<TransformationDetails, TransformationDetails> {
@@ -27,7 +27,7 @@ public class D8SPrayerTransformer implements Function<TransformationDetails, Tra
         OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
 
         if (toBoolean(ocrDataFields.getPrayerApplicant1JudiciallySeparated())) {
-            caseData.getApplication().getPrayer().setApplicant1PrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
+            caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         } else {
             transformationDetails.getTransformationWarnings().add("Please review prayer in the scanned form");
         }
@@ -43,21 +43,21 @@ public class D8SPrayerTransformer implements Function<TransformationDetails, Tra
 
     private void applicant1PrayerFinancialOrders(CaseData caseData, String applicant1PrayerFinancialOrder) {
         if (FOR_APPLICANT_1.equalsIgnoreCase(applicant1PrayerFinancialOrder)) {
-            caseData.getApplication().getPrayer().setApplicant1PrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
+            caseData.getApplicant1().getApplicantPrayer().setPrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
         } else if (FOR_THE_CHILDREN.equalsIgnoreCase(applicant1PrayerFinancialOrder)) {
-            caseData.getApplication().getPrayer().setApplicant1PrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
+            caseData.getApplicant1().getApplicantPrayer().setPrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
         } else if (FOR_APPLICANT1_AND_CHILDREN.equalsIgnoreCase(applicant1PrayerFinancialOrder)) {
-            caseData.getApplication().getPrayer().setApplicant1PrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
+            caseData.getApplicant1().getApplicantPrayer().setPrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
         }
     }
 
     private void applicant2PrayerFinancialOrders(CaseData caseData, String applicant2PrayerFinancialOrder) {
         if (FOR_APPLICANT_2.equalsIgnoreCase(applicant2PrayerFinancialOrder)) {
-            caseData.getApplication().getPrayer().setApplicant2PrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
+            caseData.getApplicant2().getApplicantPrayer().setPrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
         } else if (FOR_THE_CHILDREN.equalsIgnoreCase(applicant2PrayerFinancialOrder)) {
-            caseData.getApplication().getPrayer().setApplicant2PrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
+            caseData.getApplicant2().getApplicantPrayer().setPrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
         } else if (FOR_APPLICANT2_AND_CHILDREN.equalsIgnoreCase(applicant2PrayerFinancialOrder)) {
-            caseData.getApplication().getPrayer().setApplicant2PrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
+            caseData.getApplicant2().getApplicantPrayer().setPrayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES));
         }
     }
 }

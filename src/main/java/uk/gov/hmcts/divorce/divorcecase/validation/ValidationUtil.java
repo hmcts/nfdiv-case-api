@@ -19,8 +19,6 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static uk.gov.hmcts.divorce.divorcecase.validation.PrayerUtil.validatePrayerApplicant1;
-import static uk.gov.hmcts.divorce.divorcecase.validation.PrayerUtil.validatePrayerApplicant2;
 
 public final class ValidationUtil {
 
@@ -50,7 +48,7 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant1().getContactDetailsType(), "Applicant1ContactDetailsType"),
             hasStatementOfTruth(caseData.getApplication()),
             !caseData.getApplicant1().isOffline()
-                ? validatePrayerApplicant1(caseData)
+                ? caseData.getApplicant1().getApplicantPrayer().validatePrayerApplicant1(caseData)
                 : emptyList(),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
             validateJurisdictionConnections(caseData)
@@ -80,7 +78,7 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant2().getLastName(), "Applicant2LastName"),
             notNull(caseData.getApplication().getApplicant2StatementOfTruth(), "Applicant2StatementOfTruth"),
             !isBlank(caseData.getApplicant2().getEmail())
-                ? validatePrayerApplicant2(caseData)
+                ? caseData.getApplicant2().getApplicantPrayer().validatePrayerApplicant2(caseData)
                 : emptyList(),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant2Name(), "MarriageApplicant2Name")
         );
