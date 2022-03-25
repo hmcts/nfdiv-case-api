@@ -63,6 +63,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
             .endButtonLabel("Save AoS Response")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
@@ -82,6 +83,18 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
                 .run(details)
                 .getData())
             .state(details.getState())
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> before) {
+        var state = details.getState() == AwaitingAos || details.getState() == AosOverdue ? AosDrafted : details.getState();
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseTasks(addMiniApplicationLink)
+                .run(details)
+                .getData())
+            .state(state)
             .build();
     }
 }
