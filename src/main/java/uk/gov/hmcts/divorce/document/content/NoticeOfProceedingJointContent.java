@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +73,13 @@ public class NoticeOfProceedingJointContent {
     @Autowired
     private HoldingPeriodService holdingPeriodService;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, Applicant applicant) {
+    @Autowired
+    private CommonContent commonContent;
+
+    public Map<String, Object> apply(final CaseData caseData,
+                                     final Long ccdCaseReference,
+                                     Applicant applicant,
+                                     Applicant partner) {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -83,7 +90,7 @@ public class NoticeOfProceedingJointContent {
 
         templateContent.put(ADDRESS, applicant.getPostalAddress());
 
-        templateContent.put(RELATION, caseData.isDivorce() ? applicant.getGender() == MALE ? "wife" : "husband" : "civil partner");
+        templateContent.put(RELATION, commonContent.getPartner(caseData, partner));
 
         boolean displayEmailConfirmation = !applicant.isOffline() || applicant.getEmail() != null;
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
