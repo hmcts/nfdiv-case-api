@@ -7,6 +7,8 @@
   "applicant1MiddleName": "test_middle_name",
   "applicant1LastName": "test_last_name",
   "applicant1Email": "TEST_SOLICITOR@mailinator.com",
+  "applicant1ContactDetailsType": "public",
+  "applicant2ContactDetailsType": "public",
   "applicant1Address": {
     "AddressLine1": "221a Baker Street",
     "PostTown": "London",
@@ -19,7 +21,7 @@
     "PostTown": "London",
     "County": "Greater London",
     "PostCode": "NW1 6XE",
-    "Country": "United Kingdom"
+    "Country": "France"
   },
   "dueDate": "2020-04-28",
   "issueDate": "2020-05-28",

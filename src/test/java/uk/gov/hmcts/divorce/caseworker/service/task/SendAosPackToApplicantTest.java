@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosPackPrinter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -64,6 +65,24 @@ class SendAosPackToApplicantTest {
         sendAosPackToApplicant.apply(caseDetails);
 
         verify(aosPackPrinter).sendAosLetterToApplicant(caseData, TEST_CASE_ID);
+
+        verifyNoMoreInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldSendOverseasAosPackToApplicantIfApplicantAndRespondentAreNotRepresentedAndResppndentIsOverseas() {
+        final var caseData = caseData();
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        sendAosPackToApplicant.apply(caseDetails);
+
+        verify(aosPackPrinter).sendOverseasAosLetterToApplicant(caseData, TEST_CASE_ID);
 
         verifyNoMoreInteractions(aosPackPrinter);
     }
