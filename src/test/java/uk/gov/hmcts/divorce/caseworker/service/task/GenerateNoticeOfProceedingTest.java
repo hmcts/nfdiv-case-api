@@ -40,6 +40,7 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
@@ -122,11 +123,12 @@ class GenerateNoticeOfProceedingTest {
     }
 
     @Test
-    void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplicationWhenRespondentIsOverseas() {
+    void shouldReturnCaseDataWithSoleDivorceApplicationDocumentAndCoversheetWhenRespondentIsOverseasAndPersonalService() {
 
         setMockClock(clock);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
 
         final Map<String, Object> templateContent = new HashMap<>();

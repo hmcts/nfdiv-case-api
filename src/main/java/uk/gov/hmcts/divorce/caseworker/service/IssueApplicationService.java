@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
@@ -19,6 +20,7 @@ import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
@@ -59,7 +61,13 @@ public class IssueApplicationService {
         return caseTasks(
             setPostIssueState,
             details -> {
-                details.getData().getApplication().setIssueDate(LocalDate.now(clock));
+                final CaseData caseData = details.getData();
+                final Applicant applicant1 = caseData.getApplicant1();
+                final Applicant applicant2 = caseData.getApplicant2();
+                if (!applicant1.isRepresented() && !applicant2.isRepresented() && applicant2.isBasedOverseas()) {
+                    caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+                }
+                caseData.getApplication().setIssueDate(LocalDate.now(clock));
                 return details;
             },
             setDueDateAfterIssue,

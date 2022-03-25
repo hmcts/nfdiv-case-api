@@ -18,6 +18,7 @@ import java.time.Clock;
 import static java.time.LocalDateTime.now;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
@@ -96,7 +97,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
             );
 
-            if (!isApplicant2Represented && caseData.getApplicant2().isBasedOverseas()) {
+            if (caseData.getApplication().getSolServiceMethod() == PERSONAL_SERVICE) {
                 log.info("Generating coversheet for case id {} ", caseId);
                 caseDataDocumentService.renderDocumentAndUpdateCaseData(
                     caseData,

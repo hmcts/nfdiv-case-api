@@ -109,6 +109,8 @@
         }
       }
     ],
+    "solServiceMethod": "personalService",
+    "noticeOfProceedingsEmail": "applicant2@test.com",
     "dueDate": "2021-07-03",
     "dataVersion": 1,
     "warnings": []
