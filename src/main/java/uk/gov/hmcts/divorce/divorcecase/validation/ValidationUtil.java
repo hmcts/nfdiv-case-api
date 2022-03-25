@@ -12,15 +12,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.gov.hmcts.divorce.divorcecase.validation.PrayerUtil.validatePrayerApplicant1;
+import static uk.gov.hmcts.divorce.divorcecase.validation.PrayerUtil.validatePrayerApplicant2;
 
 public final class ValidationUtil {
 
@@ -28,7 +28,6 @@ public final class ValidationUtil {
     public static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
-    public static final String MUST_BE_YES = " must be YES";
     public static final String CONNECTION = "Connection ";
     public static final String CANNOT_EXIST = " cannot exist";
     public static final String SOT_REQUIRED = "Statement of truth must be accepted by the person making the application";
@@ -51,7 +50,7 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant1().getContactDetailsType(), "Applicant1ContactDetailsType"),
             hasStatementOfTruth(caseData.getApplication()),
             !caseData.getApplicant1().isOffline()
-                ? validatePrayer(caseData.getApplication().getApplicant1PrayerHasBeenGivenCheckbox())
+                ? validatePrayerApplicant1(caseData)
                 : emptyList(),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
             validateJurisdictionConnections(caseData)
@@ -60,17 +59,6 @@ public final class ValidationUtil {
 
     private static List<String> hasStatementOfTruth(Application application) {
         return application.hasStatementOfTruth() ? emptyList() : List.of(SOT_REQUIRED);
-    }
-
-    private static List<String> validatePrayer(Set<Application.ThePrayer> thePrayer) {
-        final String field = "applicant1PrayerHasBeenGivenCheckbox";
-
-        if (isNull(thePrayer)) {
-            return List.of(field + EMPTY);
-        } else if (thePrayer.isEmpty()) {
-            return List.of(field + MUST_BE_YES);
-        }
-        return emptyList();
     }
 
     public static List<String> validateApplicant1BasicCase(CaseData caseData) {
@@ -92,7 +80,7 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant2().getLastName(), "Applicant2LastName"),
             notNull(caseData.getApplication().getApplicant2StatementOfTruth(), "Applicant2StatementOfTruth"),
             !isBlank(caseData.getApplicant2().getEmail())
-                ? notNull(caseData.getApplication().getApplicant2PrayerHasBeenGivenCheckbox(), "Applicant2PrayerHasBeenGiven")
+                ? validatePrayerApplicant2(caseData)
                 : emptyList(),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant2Name(), "MarriageApplicant2Name")
         );

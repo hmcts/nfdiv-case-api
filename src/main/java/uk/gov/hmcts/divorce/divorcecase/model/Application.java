@@ -2,15 +2,12 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -139,31 +136,9 @@ public class Application {
     )
     private YesOrNo solStatementOfReconciliationDiscussed;
 
-    @CCD(
-        label = "The applicant has given their \"prayer\".",
-        hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
-            + " and have decided how money and property will be split (\"financial order\").",
-        access = {DefaultAccess.class}
-    )
-    private Set<ThePrayer> applicant1PrayerHasBeenGivenCheckbox;
-
-    @Getter
-    @AllArgsConstructor
-    public enum ThePrayer implements HasLabel {
-
-        @JsonProperty("Yes")
-        I_CONFIRM("Yes");
-
-        private final String label;
-    }
-
-    @CCD(
-        label = "${labelContentTheApplicant2UC} has given their \"prayer\".",
-        hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
-            + " and have decided how money and property will be split (\"financial order\").",
-        access = {Applicant2Access.class}
-    )
-    private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
+    @JsonUnwrapped()
+    @Builder.Default
+    private Prayer prayer = new Prayer();
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",

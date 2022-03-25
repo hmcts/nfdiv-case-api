@@ -119,7 +119,10 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         caseData.getDocuments().setApplicant2DocumentsUploaded(null);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(null);
         caseData.getApplication().setApplicant2HelpWithFees(null);
-        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(null);
+        caseData.getApplication().getPrayer().setApplicant2PrayerDissolveDivorce(null);
+        caseData.getApplication().getPrayer().setApplicant2PrayerEndCivilPartnership(null);
+        caseData.getApplication().getPrayer().setApplicant2PrayerFinancialOrdersThemselves(null);
+        caseData.getApplication().getPrayer().setApplicant2PrayerFinancialOrdersChild(null);
         caseData.getApplication().setApplicant2StatementOfTruth(null);
         caseData.getApplication().setApplicant2AgreeToReceiveEmails(null);
         caseData.getApplication().setApplicant2CannotUploadSupportingDocument(null);

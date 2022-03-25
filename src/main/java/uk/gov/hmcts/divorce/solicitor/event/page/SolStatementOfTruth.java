@@ -5,6 +5,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Prayer;
 
 public class SolStatementOfTruth implements CcdPageConfiguration {
 
@@ -36,7 +37,12 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 .mandatory(Application::getSolStatementOfReconciliationCertify)
                 .mandatory(Application::getSolStatementOfReconciliationDiscussed)
                 .label("LabelPrayer", "## The prayer ##")
-                .mandatory(Application::getApplicant1PrayerHasBeenGivenCheckbox)
+                .complex(Application::getPrayer)
+                    .mandatory(Prayer::getApplicant1PrayerDissolveDivorce)
+                    .mandatory(Prayer::getApplicant1PrayerEndCivilPartnership)
+                    .mandatory(Prayer::getApplicant1PrayerFinancialOrdersThemselves)
+                    .mandatory(Prayer::getApplicant1PrayerFinancialOrdersChild)
+                .done()
                 .label("LabelSolStatementOfTruth-SOT", "## Statement of truth ##")
                 .mandatory(Application::getApplicant1StatementOfTruth)
                 .mandatory(Application::getSolSignStatementOfTruth)

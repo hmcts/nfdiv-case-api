@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.jsonToObject;
@@ -21,6 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Prayer.EndCivilPartnership.END_CIVIL_PARTNERSHIP;
 
 @ExtendWith(MockitoExtension.class)
 public class D8PrayerTransformerTest {
@@ -87,6 +89,8 @@ public class D8PrayerTransformerTest {
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/d8-prayer-transformed.json", Application.class);
+        expectedApplication.getPrayer().setApplicant1PrayerEndCivilPartnership(Set.of(END_CIVIL_PARTNERSHIP));
+        expectedApplication.getPrayer().setApplicant2PrayerEndCivilPartnership(Set.of(END_CIVIL_PARTNERSHIP));
 
         assertThat(transformedOutput.getCaseData().getApplication())
             .usingRecursiveComparison()

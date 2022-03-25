@@ -1,13 +1,18 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.elasticsearch.common.TriConsumer;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +23,26 @@ public class RetiredFields {
 
     private String exampleRetiredField;
     private CaseLink previousCaseId;
+
+    @CCD(
+        label = "Retired applicant 1 prayer checkbox"
+    )
+    private Set<ThePrayer> applicant1PrayerHasBeenGivenCheckbox;
+
+    @Getter
+    @AllArgsConstructor
+    public enum ThePrayer implements HasLabel {
+
+        @JsonProperty("Yes")
+        I_CONFIRM("Yes");
+
+        private final String label;
+    }
+
+    @CCD(
+        label = "Retired applicant 2 prayer checkbox"
+    )
+    private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
 
     @JsonIgnore
     private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {

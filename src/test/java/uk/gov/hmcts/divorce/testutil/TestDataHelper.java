@@ -30,7 +30,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedHow;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedWhere;
@@ -42,6 +41,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorTyp
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Prayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -81,7 +81,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
-import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
@@ -91,6 +90,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.Prayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -237,7 +237,7 @@ public class TestDataHelper {
     public static CaseData caseData() {
         return CaseData.builder()
             .applicant1(getApplicant())
-            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .divorceOrDissolution(DIVORCE)
             .caseInvite(new CaseInvite(null, null, null))
             .build();
     }
@@ -245,7 +245,7 @@ public class TestDataHelper {
     public static CaseData invalidCaseData() {
         return CaseData.builder()
             .applicant1(getInvalidApplicant())
-            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .divorceOrDissolution(DIVORCE)
             .build();
     }
 
@@ -262,7 +262,7 @@ public class TestDataHelper {
         caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_USER_EMAIL, null, null));
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplication().getPrayer().setApplicant1PrayerDissolveDivorce(Set.of(Prayer.DissolveDivorce.DISSOLVE_DIVORCE));
 
         return caseData;
     }
@@ -307,19 +307,19 @@ public class TestDataHelper {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplication().getPrayer().setApplicant1PrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         return caseData;
     }
 
     public static CaseData validApplicant2CaseData() {
         CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplication().getPrayer().setApplicant1PrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         caseData.setApplicant2(getApplicantWithAddress());
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder()
             .needHelp(NO)
             .build());
-        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplication().getPrayer().setApplicant2PrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
 
@@ -345,7 +345,7 @@ public class TestDataHelper {
 
         var application = Application.builder()
             .solSignStatementOfTruth(YES)
-            .applicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM))
+            .prayer(Prayer.builder().applicant1PrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE)).build())
             .applicationFeeOrderSummary(orderSummary)
             .applicationPayments(singletonList(payment))
             .marriageDetails(getMarriageDetails())
@@ -417,7 +417,7 @@ public class TestDataHelper {
         final Application application = caseData.getApplication();
         application.setDocumentUploadComplete(YES);
         application.setMarriageDetails(marriageDetails);
-        application.setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        application.getPrayer().setApplicant1PrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         application.setApplicant1StatementOfTruth(YES);
         application.setJurisdiction(getJurisdiction());
         caseData.setApplicationType(SOLE_APPLICATION);

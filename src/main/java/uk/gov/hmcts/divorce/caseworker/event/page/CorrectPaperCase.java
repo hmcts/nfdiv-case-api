@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Prayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -242,8 +243,16 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             .label("Label-CorrectPrayerDetails",
                 "### The prayer details")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getApplicant1PrayerHasBeenGivenCheckbox)
-                .mandatory(Application::getApplicant2PrayerHasBeenGivenCheckbox, JOINT_APPLICATION)
+                .complex(Application::getPrayer)
+                .mandatory(Prayer::getApplicant1PrayerDissolveDivorce)
+                .mandatory(Prayer::getApplicant1PrayerEndCivilPartnership)
+                .mandatory(Prayer::getApplicant1PrayerFinancialOrdersThemselves)
+                .mandatory(Prayer::getApplicant1PrayerFinancialOrdersChild)
+                .mandatory(Prayer::getApplicant2PrayerDissolveDivorce, JOINT_APPLICATION)
+                .mandatory(Prayer::getApplicant2PrayerEndCivilPartnership, JOINT_APPLICATION)
+                .mandatory(Prayer::getApplicant2PrayerFinancialOrdersThemselves, JOINT_APPLICATION)
+                .mandatory(Prayer::getApplicant2PrayerFinancialOrdersChild, JOINT_APPLICATION)
+                .done()
             .done();
     }
 
