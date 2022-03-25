@@ -62,29 +62,25 @@ class DraftAosTest {
     }
 
     @Test
-    void shouldChangeTheStateAndReturnCaseDataOnAboutToStart() {
+    void shouldChangeTheStateAndReturnCaseDataOnAboutToSubmit() {
         final CaseData expectedCaseData = CaseData.builder().build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(expectedCaseData);
         caseDetails.setState(AwaitingAos);
 
-        when(addMiniApplicationLink.apply(caseDetails)).thenReturn(caseDetails);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToStart(caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(AosDrafted);
     }
 
     @Test
-    void shouldNotChangeTheStateAndReturnCaseDataOnAboutToStart() {
+    void shouldNotChangeTheStateAndReturnCaseDataOnAboutToSubmit() {
         final CaseData expectedCaseData = CaseData.builder().build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(expectedCaseData);
         caseDetails.setState(AwaitingConditionalOrder);
 
-        when(addMiniApplicationLink.apply(caseDetails)).thenReturn(caseDetails);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToStart(caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(AwaitingConditionalOrder);
     }
