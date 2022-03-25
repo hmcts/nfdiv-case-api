@@ -42,7 +42,7 @@ public class Prayer {
     private Set<FinancialOrdersChild> applicant1PrayerFinancialOrdersChild;
 
     @CCD(
-        label = "The prayer",
+        label = " ",
         access = {DefaultAccess.class}
     )
     private Set<DissolveDivorce> applicant2PrayerDissolveDivorce;
