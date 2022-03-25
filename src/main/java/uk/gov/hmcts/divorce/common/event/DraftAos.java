@@ -74,15 +74,10 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        if (details.getState() == AwaitingAos || details.getState() == AosOverdue) {
-            details.setState(AosDrafted);
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseTasks(addMiniApplicationLink)
                 .run(details)
                 .getData())
-            .state(details.getState())
             .build();
     }
 
