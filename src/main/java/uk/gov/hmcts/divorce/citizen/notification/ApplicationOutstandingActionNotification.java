@@ -83,7 +83,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.putAll(sendingDocumentsToCourt(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars.get(COURT_EMAIL)));
+        templateVars.putAll(courtDocumentDetails(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars.get(COURT_EMAIL)));
         boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
             && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
         templateVars.putAll(serveAnotherWayTemplateVars(soleServingAnotherWay, caseData));
@@ -92,7 +92,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.putAll(sendingDocumentsToCourt(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars.get(COURT_EMAIL)));
+        templateVars.putAll(courtDocumentDetails(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars.get(COURT_EMAIL)));
         templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
         return templateVars;
     }
@@ -110,7 +110,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         return templateVars;
     }
 
-    private Map<String, String> sendingDocumentsToCourt(CaseData caseData, String referenceNumber, String courtEmail) {
+    private Map<String, String> courtDocumentDetails(CaseData caseData, String referenceNumber, String courtEmail) {
         Map<String, String> templateVars = new HashMap<>();
         boolean needsToSendDocuments = !isEmpty(caseData.getApplication().getMissingDocumentTypes());
 
