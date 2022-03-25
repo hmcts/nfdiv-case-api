@@ -155,7 +155,7 @@ class AosPackPrinterTest {
 
         when(bulkPrintService.printWithD10Form(printCaptor.capture())).thenReturn(randomUUID());
 
-        aosPackPrinter.sendOverseasAosLetterToApplicant(caseData, TEST_CASE_ID);
+        aosPackPrinter.sendPersonalServiceAosLetterToApplicant(caseData, TEST_CASE_ID);
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
