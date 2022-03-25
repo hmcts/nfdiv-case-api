@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.document;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
@@ -16,6 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.ofNullable;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 public final class DocumentUtil {
 
@@ -71,5 +75,14 @@ public final class DocumentUtil {
             .filter(document -> "aos".equals(document.getSubtype()))
             .map(scannedDocument -> new Letter(null, scannedDocument, letterIndex.incrementAndGet()))
             .collect(toList());
+    }
+
+    public static boolean isApplicableForConfidentiality(final DocumentType documentType) {
+        List<DocumentType> documentsApplicableForConfidentiality = Lists.newArrayList(
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            NOTICE_OF_PROCEEDINGS_APP_2
+        );
+
+        return documentsApplicableForConfidentiality.contains(documentType);
     }
 }
