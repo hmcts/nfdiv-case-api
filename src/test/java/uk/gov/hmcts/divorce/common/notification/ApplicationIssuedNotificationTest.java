@@ -28,10 +28,12 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
@@ -49,11 +51,12 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -346,8 +349,8 @@ public class ApplicationIssuedNotificationTest {
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
-            APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            applicantSolicitorTemplateVars(),
+            SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+            nopSolicitorTemplateVars(),
             ENGLISH
         );
 
@@ -361,10 +364,12 @@ public class ApplicationIssuedNotificationTest {
             .applicationType(SOLE_APPLICATION)
             .applicant1(getApplicant())
             .applicant2(respondentWithDigitalSolicitor())
-            .application(Application.builder()
-                .solServiceMethod(COURT_SERVICE)
-                .build())
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
+
+        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
@@ -378,10 +383,12 @@ public class ApplicationIssuedNotificationTest {
             .applicationType(SOLE_APPLICATION)
             .applicant1(getApplicant())
             .applicant2(respondentWithDigitalSolicitor())
-            .application(Application.builder()
-                .solServiceMethod(COURT_SERVICE)
-                .build())
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
+
+        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
@@ -390,7 +397,37 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            respondentSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(),
+            ENGLISH
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendNotificationToApplicant2SolicitorIfJointApplicationAndNotSolicitorService() {
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicantRepresentedBySolicitor())
+            .applicant2(applicantRepresentedBySolicitor())
+            .applicationType(JOINT_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
+            .build();
+        caseData.getApplicant1().setGender(MALE);
+
+        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+
+        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            TEST_SOLICITOR_EMAIL,
+            JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+            nopSolicitorTemplateVars(),
             ENGLISH
         );
 
@@ -530,7 +567,7 @@ public class ApplicationIssuedNotificationTest {
         return templateVars;
     }
 
-    private Map<String, String> applicantSolicitorTemplateVars() {
+    private Map<String, String> nopSolicitorTemplateVars() {
         final Map<String, String> templateVars = solicitorTemplateVars();
 
         templateVars.put(SOLICITOR_REFERENCE, NOT_PROVIDED);

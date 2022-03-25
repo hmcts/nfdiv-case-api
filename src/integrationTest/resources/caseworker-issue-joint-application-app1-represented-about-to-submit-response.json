@@ -1,6 +1,6 @@
 {
   "data": {
-    "applicationType": "soleApplication",
+    "applicationType": "jointApplication",
     "divorceOrDissolution": "divorce",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
@@ -9,7 +9,7 @@
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1Gender": "female",
     "applicant1ContactDetailsType": "public",
-    "applicant1SolicitorRepresented": "No",
+    "applicant1SolicitorRepresented": "Yes",
     "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "No",
@@ -22,14 +22,14 @@
       "AddressLine1": "line 1",
       "PostTown": "town",
       "PostCode": "postcode",
-      "Country": "France"
+      "Country": "UK"
     },
     "applicant2Gender": "male",
     "applicant2SolicitorRepresented": "No",
     "applicant2FinancialOrder": "No",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
-    "marriagePlaceOfMarriage": "Somewhere",
+    "marriagePlaceOfMarriage": "London",
     "marriageDate": "1990-06-10",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
@@ -37,14 +37,15 @@
       "A"
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "divorceWho": "wife",
     "applicant1PrayerHasBeenGivenCheckbox": [
       "Yes"
     ],
     "applicant1StatementOfTruth": "Yes",
+    "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000"
     },
+    "applicant1KnowsApplicant2EmailAddress": "Yes",
     "documentUploadComplete": "Yes",
     "issueDate": "2021-06-17",
     "applicationPayments": [
@@ -75,31 +76,7 @@
         }
       },
       {
-        "id": "Notice of proceeding respondent",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af679900-4c5c-491c-9b7f-22078412ff94",
-            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af679900-4c5c-491c-9b7f-22078412ff94/binary"
-          },
-          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "aos"
-        }
-      },
-      {
-        "id": "Coversheet",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
-            "document_filename": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
-          },
-          "documentFileName": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "coversheet"
-        }
-      },
-      {
-        "id": "Notice of proceeding applicant",
+        "id": "Respondent Invitation",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
@@ -107,13 +84,13 @@
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
           },
           "documentFileName": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "noticeOfProceedings"
+          "documentType": "noticeOfProceedingsApp2"
         }
       }
     ],
-    "dueDate": "2021-07-03",
-    "dataVersion": 1,
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
-  "state": "AwaitingAos"
+  "state": "Holding"
 }
