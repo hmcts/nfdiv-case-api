@@ -39,6 +39,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String IS_NEW_PAPER_CASE = "newPaperCase=\"Yes\"";
     private static final String APPLICANT_1_CONTACT_DETAILS_PUBLIC = "applicant1ContactDetailsType!=\"private\"";
     private static final String APPLICANT_1_CONTACT_DETAILS_PRIVATE = "applicant1ContactDetailsType=\"private\"";
+    private static final String PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS =
+        "paperFormApplicant1NoPaymentIncluded=\"Yes\" AND paperFormSoleOrApplicant1PaymentOther=\"Yes\"";
+    private static final String PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS =
+        "paperFormApplicant2NoPaymentIncluded=\"Yes\" AND paperFormApplicant2PaymentOther=\"Yes\"";
+    private static final String PAPER_FORM_PAYMENT_OTHER_DETAILS =
+        String.format("(%s) OR (%s)", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS, PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS);
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -111,6 +117,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("newPaperCase", "applicationType=\"NEVER_SHOW\"")
             .label("LabelPaperCase-PaymentHeading", IS_NEW_PAPER_CASE, "### Paper Case Payment")
             .field("paperCasePaymentMethod", IS_NEW_PAPER_CASE)
+            .field("paperFormApplicant1NoPaymentIncluded", "applicationType=\"NEVER_SHOW\"")
+            .field("paperFormApplicant2NoPaymentIncluded", "applicationType=\"NEVER_SHOW\"")
+            .field("paperFormSoleOrApplicant1PaymentOther", "applicationType=\"NEVER_SHOW\"")
+            .field("paperFormApplicant2PaymentOther", "applicationType=\"NEVER_SHOW\"")
+            .label("LabelPaperForm-App1PaymentHeading", PAPER_FORM_PAYMENT_OTHER_DETAILS, "### Paper Form Payment Details")
+            .field("paperFormSoleOrApplicant1PaymentOtherDetail", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS)
+            .field("paperFormApplicant2PaymentOtherDetail", PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS)
             .field(CaseData::getPaymentHistoryField);
     }
 
