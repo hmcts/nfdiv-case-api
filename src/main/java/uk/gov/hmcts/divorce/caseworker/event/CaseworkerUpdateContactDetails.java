@@ -3,7 +3,9 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -41,6 +43,7 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
         return new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_CONTACT_DETAILS)
             .forStates(POST_SUBMISSION_STATES)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .name(TITLE)
             .description(TITLE)
             .showSummary()
@@ -49,5 +52,18 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
             .grantHistoryOnly(
                 SUPER_USER,
                 LEGAL_ADVISOR));
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        log.info("Callback invoked for {}", CASEWORKER_UPDATE_CONTACT_DETAILS);
+
+        var caseData = details.getData();
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 }
