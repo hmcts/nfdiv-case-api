@@ -23,6 +23,7 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Prayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
@@ -45,6 +46,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
@@ -75,6 +77,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.Prayer.EndCivilPartnership.END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
@@ -284,6 +287,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
         caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplication().getPrayer().setApplicant1PrayerEndCivilPartnership(Set.of(END_CIVIL_PARTNERSHIP));
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
         caseData.getApplicant1().getSolicitor().setReference("TEST");
         caseData.getApplicant1().setGender(FEMALE);

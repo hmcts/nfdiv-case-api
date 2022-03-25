@@ -48,7 +48,7 @@
     "jurisdictionConnections": [
       "A"
     ],
-    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
+    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {

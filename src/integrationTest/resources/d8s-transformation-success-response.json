@@ -32,6 +32,12 @@
       "paperFormApplicant1NoPaymentIncluded": "Yes",
       "marriageDate": "1990-01-01",
       "applicant2SolStatementOfReconciliationName": "some name",
+      "applicant1PrayerFinancialOrdersThemselves": [
+        "financialOrdersThemselves"
+      ],
+      "applicant2PrayerFinancialOrdersThemselves": [
+        "financialOrdersThemselves"
+      ],
       "marriageFormationType": "oppositeSexCouple",
       "applicant1MiddleName": "",
       "applicant2StatementOfTruth": "Yes",
@@ -67,9 +73,7 @@
       "applicant1PhoneNumber": "",
       "applicant2HWFNeedHelp": "Yes",
       "applicant1ScreenHasMarriageBroken": "Yes",
-      "applicant1PrayerHasBeenGivenCheckbox": [
-        "Yes"
-      ],
+      "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
       "jurisdictionConnections": [
         "A"
       ],
