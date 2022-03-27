@@ -11,10 +11,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Collections.emptyList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.CHILDREN;
@@ -75,43 +75,45 @@ public class ApplicantPrayer {
 
     @JsonIgnore
     public List<String> validatePrayerApplicant1(CaseData caseData) {
+        List<String> warnings = new ArrayList<>();
+
         if (caseData.isDivorce() && isEmpty(this.getPrayerDissolveDivorce())) {
-            return List.of("Applicant 1 must confirm prayer to dissolve their marriage (get a divorce)");
+            warnings.add("Applicant 1 must confirm prayer to dissolve their marriage (get a divorce)");
+        } else if (!caseData.isDivorce() && isEmpty(this.getPrayerEndCivilPartnership())) {
+            warnings.add("Applicant 1 must confirm prayer to end their civil partnership");
         }
-        if (!caseData.isDivorce() && isEmpty(this.getPrayerEndCivilPartnership())) {
-            return List.of("Applicant 1 must confirm prayer to end their civil partnership");
-        }
+
         if (caseData.getApplicant1().appliedForFinancialOrder()
             && caseData.getApplicant1().getFinancialOrdersFor().contains(APPLICANT)
             && isEmpty(this.getPrayerFinancialOrdersThemselves())) {
-            return List.of("Applicant 1 must confirm prayer  for financial orders for themselves");
+            warnings.add("Applicant 1 must confirm prayer for financial orders for themselves");
         }
 
         if (caseData.getApplicant1().appliedForFinancialOrder()
             && caseData.getApplicant1().getFinancialOrdersFor().contains(CHILDREN)
             && isEmpty(this.getPrayerFinancialOrdersChild())) {
-            return List.of("Applicant 1 must confirm prayer for financial orders for the children");
+            warnings.add("Applicant 1 must confirm prayer for financial orders for the children");
         }
-        return emptyList();
+        return warnings;
     }
 
     public List<String> validatePrayerApplicant2(CaseData caseData) {
+        List<String> warnings = new ArrayList<>();
         if (caseData.isDivorce() && isEmpty(this.getPrayerDissolveDivorce())) {
-            return List.of("Applicant 2 must confirm prayer to dissolve their marriage (get a divorce)");
-        }
-        if (!caseData.isDivorce() && isEmpty(this.getPrayerEndCivilPartnership())) {
-            return List.of("Applicant 2 must confirm prayer to end their civil partnership");
+            warnings.add("Applicant 2 must confirm prayer to dissolve their marriage (get a divorce)");
+        } else if (!caseData.isDivorce() && isEmpty(this.getPrayerEndCivilPartnership())) {
+            warnings.add("Applicant 2 must confirm prayer to end their civil partnership");
         }
         if (caseData.getApplicant2().appliedForFinancialOrder()
             && caseData.getApplicant2().getFinancialOrdersFor().contains(APPLICANT)
             && isEmpty(this.getPrayerFinancialOrdersThemselves())) {
-            return List.of("Applicant 2 must confirm prayer for financial orders for themselves");
+            warnings.add("Applicant 2 must confirm prayer for financial orders for themselves");
         }
         if (caseData.getApplicant2().appliedForFinancialOrder()
             && caseData.getApplicant2().getFinancialOrdersFor().contains(CHILDREN)
             && isEmpty(this.getPrayerFinancialOrdersChild())) {
-            return List.of("Applicant 2 must confirm prayer for financial orders for the children");
+            warnings.add("Applicant 2 must confirm prayer for financial orders for the children");
         }
-        return emptyList();
+        return warnings;
     }
 }
