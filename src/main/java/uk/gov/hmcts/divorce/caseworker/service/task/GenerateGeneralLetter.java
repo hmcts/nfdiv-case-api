@@ -77,7 +77,8 @@ public class GenerateGeneralLetter implements CaseTask {
 
     private void updateGeneralLetters(CaseData caseData) {
 
-        Optional<Document> generalLetterDocument = ofNullable(caseData.getDocuments().getDocumentsGenerated())
+        Optional<Document> generalLetterDocument =
+            ofNullable(caseData.getDocuments().getDocumentsGenerated())
             .flatMap(Collection::stream)
             .map(ListValue::getValue)
             .filter(document -> GENERAL_LETTER.equals(document.getDocumentType()))
