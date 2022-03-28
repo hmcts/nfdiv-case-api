@@ -12,13 +12,18 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_APPROVED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPROVED_APPLICANT1_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -26,6 +31,8 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 public class Applicant2ApprovedNotification implements ApplicantNotification {
 
     public static final String PAYS_FEES = "paysFees";
+    public static final String IS_APPLICANT2_REPRESENTED = "isApplicant2Represented";
+    public static final String IS_APPLICANT2_CITIZEN = "isApplicant2Citizen";
 
     @Autowired
     private NotificationService notificationService;
@@ -70,6 +77,21 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
         );
     }
 
+    @Override
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
+
+        if(!caseData.getApplicationType().isSole()) {
+            log.info("Sending applicant 2 approved notification to applicant 1 solicitor for case : {}", id);
+
+            notificationService.sendEmail(
+                caseData.getApplicant1().getSolicitor().getEmail(),
+                JOINT_APPLICANT2_APPROVED_APPLICANT1_SOLICITOR,
+                applicant1SolicitorTemplateVars(caseData, id),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
+    }
+
     private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
@@ -81,6 +103,19 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        return templateVars;
+    }
+
+    private Map<String, String> applicant1SolicitorTemplateVars(CaseData caseData, Long id) {
+        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
+
+        templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
+        templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
+        templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl());
+        templateVars.put(IS_APPLICANT2_REPRESENTED, caseData.getApplicant2().isRepresented() ? YES : NO);
+        templateVars.put(IS_APPLICANT2_CITIZEN, caseData.getApplicant2().isRepresented() ? YES : NO);
+
         return templateVars;
     }
 
