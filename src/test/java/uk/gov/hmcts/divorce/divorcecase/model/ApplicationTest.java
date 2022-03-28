@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -217,6 +218,26 @@ class ApplicationTest {
             .build();
 
         assertThat(application.isSolicitorServiceMethod()).isFalse();
+    }
+
+    @Test
+    void shouldReturnTrueIfPersonalService() {
+
+        final var application = Application.builder()
+            .solServiceMethod(PERSONAL_SERVICE)
+            .build();
+
+        assertThat(application.isPersonalServiceMethod()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfNotPersonalService() {
+
+        final var application = Application.builder()
+            .solServiceMethod(COURT_SERVICE)
+            .build();
+
+        assertThat(application.isPersonalServiceMethod()).isFalse();
     }
 
     @Test

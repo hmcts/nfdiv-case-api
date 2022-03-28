@@ -38,6 +38,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 @Slf4j
 public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REISSUE_APPLICATION = "caseworker-reissue-application";
+    public static final String BLANK_LABEL = " ";
 
     @Autowired
     private ReIssueApplicationService reIssueApplicationService;
@@ -47,7 +48,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
         new PageBuilder(configBuilder
             .event(CASEWORKER_REISSUE_APPLICATION)
             .forStates(
-                AwaitingAos,AosDrafted, AosOverdue,
+                AwaitingAos, AosDrafted, AosOverdue,
                 Rejected, ConditionalOrderRefused, Withdrawn,
                 Disputed, Holding, AwaitingDocuments, AwaitingService)
             .name("Reissue")
@@ -64,6 +65,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .pageLabel("Reissue Divorce Application")
             .complex(CaseData::getApplication)
                 .mandatory(Application::getReissueOption)
+                .mandatoryWithoutDefaultValue(Application::getSolServiceMethod, "reissueOption=\"reissueCase\"", BLANK_LABEL)
                 .done()
             .done();
     }
