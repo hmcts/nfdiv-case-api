@@ -152,6 +152,34 @@ public class CommonFormToCaseTransformerTest {
     }
 
     @Test
+    void getApplicationTypeReturnsNullWhenNeitherApplicationTypeIsTicked() throws IOException {
+
+        OcrDataFields ocrDataFields = new OcrDataFields();
+        ocrDataFields.setSoleApplication("false");
+        ocrDataFields.setJointApplication("false");
+
+        List<String> warnings = new ArrayList<>();
+
+        var applicationType = commonFormToCaseTransformer.getApplicationType(ocrDataFields, warnings);
+
+        assertThat(applicationType).isNull();
+    }
+
+    @Test
+    void getApplicationTypeReturnsNullWhenBothApplicationTypesAreTicked() throws IOException {
+
+        OcrDataFields ocrDataFields = new OcrDataFields();
+        ocrDataFields.setSoleApplication("true");
+        ocrDataFields.setJointApplication("true");
+
+        List<String> warnings = new ArrayList<>();
+
+        var applicationType = commonFormToCaseTransformer.getApplicationType(ocrDataFields, warnings);
+
+        assertThat(applicationType).isNull();
+    }
+
+    @Test
     void transformCaseDataReturnsSuccessfullyTransformedCaseDataWhenValidDataGiven() {
 
         final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();

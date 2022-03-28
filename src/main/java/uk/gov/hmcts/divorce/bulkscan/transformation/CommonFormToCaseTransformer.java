@@ -68,7 +68,7 @@ public class CommonFormToCaseTransformer {
             return SOLE_APPLICATION;
         } else {
             warnings.add("Please review application type in the scanned form");
-            return SOLE_APPLICATION;
+            return null;
         }
     }
 
