@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.PaperFormDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -79,10 +80,23 @@ public class CorrectPaperCase implements CcdPageConfiguration {
 
         buildCourtFeeFields(fieldCollectionBuilder);
 
+        buildServiceDetails(fieldCollectionBuilder);
+
         fieldCollectionBuilder
             .label("Label-CorrectScannedDocuments", "### Scanned Documents")
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getScannedDocuments)
+            .done();
+    }
+
+    private void buildServiceDetails(
+        FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
+        fieldCollectionBuilder
+            .label("Label-CorrectServiceDetails", "### Service details")
+            .complex(CaseData::getPaperFormDetails)
+            .optional(PaperFormDetails::getServeOutOfUK)
+            .optional(PaperFormDetails::getRespondentServePostOnly)
+            .optional(PaperFormDetails::getApplicantWillServeApplication)
             .done();
     }
 
