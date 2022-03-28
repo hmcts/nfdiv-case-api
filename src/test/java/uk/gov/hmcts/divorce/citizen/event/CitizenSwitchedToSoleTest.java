@@ -52,6 +52,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -357,29 +358,9 @@ class CitizenSwitchedToSoleTest {
     @Test
     void givenEventStartedWithValidJointCaseShouldRemoveJurisdictionAnswers() {
         final long caseId = 1L;
-        CaseData caseData = validJointApplicant1CaseData();
+        CaseData caseData = validApplicant2CaseData();
         setValidCaseInviteData(caseData);
         caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_EMAIL, ACCESS_CODE, null));
-        caseData.setApplicant2(
-            Applicant.builder()
-                .firstName("Bob")
-                .middleName("The")
-                .lastName("Build")
-                .email("bob@buildings.com")
-                .gender(MALE)
-                .financialOrder(YES)
-                .lastNameChangedWhenMarried(YES)
-                .address(
-                    AddressGlobalUK.builder()
-                        .addressLine1("123 The Street")
-                        .postTown("The town")
-                        .county("County Durham")
-                        .country("England")
-                        .postCode("POSTCODE")
-                        .build())
-                .contactDetailsType(PRIVATE)
-                .build()
-        );
 
         caseData.getApplication().getJurisdiction().setApplicant1Domicile(YesOrNo.YES);
         caseData.getApplication().getJurisdiction().setApplicant2Domicile(YesOrNo.YES);
@@ -392,30 +373,12 @@ class CitizenSwitchedToSoleTest {
         caseData.getApplication().getJurisdiction().setApp1HabituallyResLastSixMonths(YesOrNo.NO);
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(caseId).build();
-        CaseData caseDataBefore = validJointApplicant1CaseData();
-        setValidCaseInviteData(caseDataBefore);
-        final CaseDetails<CaseData, State> caseDetailsBefore =
-            CaseDetails.<CaseData, State>builder().data(caseDataBefore).id(caseId).build();
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
         when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
         when(idamService.retrieveSystemUpdateUserDetails())
             .thenReturn(new User("system-user-token", UserDetails.builder().build()));
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetailsBefore);
-
-        assertThat(response.getData().getApplicant2())
-            .isEqualTo(
-                Applicant.builder()
-                    .firstName("Bob")
-                    .middleName("The")
-                    .lastName("Build")
-                    .gender(MALE)
-                    .build());
-
-        assertThat(response.getData().getCaseInvite())
-            .isEqualTo(CaseInvite.builder()
-                .applicant2InviteEmailAddress(TEST_APPLICANT_2_EMAIL)
-                .build());
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getApplication().getJurisdiction()).isNull();
     }
