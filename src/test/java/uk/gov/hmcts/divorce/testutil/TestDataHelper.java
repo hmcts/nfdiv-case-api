@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.common.collect.Lists;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
@@ -36,9 +37,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedHow;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedWhere;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderDivorceParties;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
@@ -132,7 +135,7 @@ public class TestDataHelper {
     public static final LocalDate LOCAL_DATE = LocalDate.of(2021, 4, 28);
     public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 4, 28, 1, 0);
     private static final String DOC_CONTROL_NUMBER = "61347040100200003";
-    private static final LocalDateTime DOC_SCANNED_DATE_META_INFO = LocalDateTime.of(2022, 1, 1, 12, 12, 00);
+    private static final LocalDateTime DOC_SCANNED_DATE_META_INFO = LocalDateTime.of(2022, 1, 1, 12, 12, 0);
     private static final String DOCUMENT_URL = "http://localhost:8080/documents/640055da-9330-11ec-b909-0242ac120002";
     private static final String DOCUMENT_BINARY_URL = "http://localhost:8080/documents/640055da-9330-11ec-b909-0242ac120002/binary";
     private static final String FILE_NAME = "61347040100200003.pdf";
@@ -943,5 +946,31 @@ public class TestDataHelper {
             )
             .build();
         return singletonList(inputScannedDoc);
+    }
+
+    public static CaseData buildCaseDataWithGeneralLetter(GeneralParties recipient) {
+
+        ListValue<DivorceDocument> attachment = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentFileName("some-file.pdf")
+                .documentLink(Document.builder()
+                    .filename("some-file.pdf")
+                    .url("http://localhost:8080/1234")
+                    .binaryUrl("http://localhost:8080/1234/binary")
+                    .build())
+                .build())
+            .build();
+
+        GeneralLetter generalLetter = GeneralLetter.builder()
+            .generalLetterParties(recipient)
+            .generalLetterAttachments(Lists.newArrayList(attachment))
+            .generalLetterDetails("some feedback")
+            .build();
+
+        var caseData = validJointApplicant1CaseData();
+        caseData.setGeneralLetter(generalLetter);
+        caseData.setApplicant1(getApplicantWithAddress());
+        caseData.setApplicant2(getApplicantWithAddress());
+        return caseData;
     }
 }
