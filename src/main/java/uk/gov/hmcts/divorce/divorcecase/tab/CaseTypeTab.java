@@ -39,6 +39,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String IS_NEW_PAPER_CASE = "newPaperCase=\"Yes\"";
     private static final String APPLICANT_1_CONTACT_DETAILS_PUBLIC = "applicant1ContactDetailsType!=\"private\"";
     private static final String APPLICANT_1_CONTACT_DETAILS_PRIVATE = "applicant1ContactDetailsType=\"private\"";
+    private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -98,7 +99,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2LanguagePreferenceWelsh")
             .field("applicant2SolicitorRepresented")
             .field("noticeOfProceedingsEmail")
-            .field("noticeOfProceedingsSolicitorFirm");
+            .field("noticeOfProceedingsSolicitorFirm")
+            .field("applicant2SolicitorRepresented", NEVER_SHOW)
+            .field("statementOfTruth", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2StatementOfTruth", "applicant2SolicitorRepresented=\"No\"")
+            .field("dateAosSubmitted");
     }
 
     private void buildPaymentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
