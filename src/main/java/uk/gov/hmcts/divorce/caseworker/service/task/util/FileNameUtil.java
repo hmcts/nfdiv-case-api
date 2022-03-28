@@ -8,7 +8,8 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 
 public final class FileNameUtil {
 
-    public static final DateTimeFormatter FILE_NAME_DATE_TIME_FORMATTER = ofPattern("yyyy-MM-dd:HH:mm");
+    private static final DateTimeFormatter FILE_NAME_DATE_TIME_FORMATTER = ofPattern("yyyy-MM-dd:HH:mm");
+    private static final String DELIMITER = "-";
 
     private FileNameUtil() {
     }
@@ -18,9 +19,19 @@ public final class FileNameUtil {
         final String documentName,
         final LocalDateTime localDateTime
     ) {
-        return new StringJoiner("-")
+        return new StringJoiner(DELIMITER)
             .add(documentName)
             .add(String.valueOf(caseId))
+            .add(localDateTime.format(FILE_NAME_DATE_TIME_FORMATTER))
+            .toString();
+    }
+
+    public static String formatDocumentName(
+        final String documentName,
+        final LocalDateTime localDateTime
+    ) {
+        return new StringJoiner(DELIMITER)
+            .add(documentName)
             .add(localDateTime.format(FILE_NAME_DATE_TIME_FORMATTER))
             .toString();
     }
