@@ -129,7 +129,8 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        Map<String, Object> templateContent =
+            noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -185,8 +186,37 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent =
+            noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSetRelationToSpouseIfPartnerGenderIsNotSet() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant2().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setAddress(
+            AddressGlobalUK.builder()
+                .addressLine1("line 1")
+                .postTown("town")
+                .postCode("postcode")
+                .country("UK")
+                .build()
+        );
+        caseData.getApplicant1().setGender(null);
+
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(RELATION, "spouse");
+
+        Map<String, Object> templateContent =
+            noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
+
+        assertThat(templateContent).containsAllEntriesOf(expectedEntries);
     }
 }
