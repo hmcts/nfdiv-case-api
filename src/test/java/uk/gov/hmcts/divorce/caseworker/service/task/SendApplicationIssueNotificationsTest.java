@@ -44,7 +44,7 @@ class SendApplicationIssueNotificationsTest {
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("Spain").build());
         caseData.setCaseInvite(new CaseInvite("applicant2Invite@email.com", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
-        caseDetails.setState(AwaitingAos);
+        caseDetails.setState(AwaitingService);
 
         underTest.apply(caseDetails);
 
@@ -53,13 +53,13 @@ class SendApplicationIssueNotificationsTest {
     }
 
     @Test
-    void shouldNotSendOverseasNotificationIfNotAwaitingAosState() {
+    void shouldNotSendOverseasNotificationIfNotAwaitingServiceState() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("Spain").build());
         caseData.setCaseInvite(new CaseInvite("", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
-        caseDetails.setState(AwaitingService);
+        caseDetails.setState(AwaitingAos);
 
         underTest.apply(caseDetails);
 
