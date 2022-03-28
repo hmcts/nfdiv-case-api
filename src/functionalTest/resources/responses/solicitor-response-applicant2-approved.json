@@ -1,0 +1,36 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicationType": "jointApplication",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorName": "Applicant 1 Solicitor",
+    "applicant1SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+    "applicant1SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test 1 Organisation",
+        "OrganisationID": "ABC456"
+      }
+    },
+    "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1Gender": "male",
+    "applicant2Gender": "female",
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2FirstName": "Sarah",
+    "applicant2LastName": "Smith",
+    "applicant1HWFNeedHelp": "Yes",
+    "applicant2HWFNeedHelp": "Yes",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
+    ],
+    "marriageDate": "2020-04-28",
+    "marriageApplicant2Name": "Sarah Smith",
+    "marriageApplicant1Name": "John Smith",
+    "applicant1FinancialOrder": "No"
+  },
+  "state": "Applicant2Approved"
+}
