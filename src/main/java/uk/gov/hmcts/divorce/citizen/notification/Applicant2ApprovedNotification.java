@@ -80,7 +80,7 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
 
-        if(!caseData.getApplicationType().isSole()) {
+        if (!caseData.getApplicationType().isSole()) {
             log.info("Sending applicant 2 approved notification to applicant 1 solicitor for case : {}", id);
 
             notificationService.sendEmail(
