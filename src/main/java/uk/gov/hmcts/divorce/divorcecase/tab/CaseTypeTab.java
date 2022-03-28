@@ -138,7 +138,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildCorrespondenceTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("correspondence", "Correspondence")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
-            .field(CaseData::getGeneralEmails);
+            .field(CaseData::getGeneralEmails)
+            .field(CaseData::getGeneralLetters);
     }
 
     private void buildConfidentialApplicantTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
