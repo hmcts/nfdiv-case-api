@@ -25,6 +25,9 @@ public class Applicant2ApproveFT extends FunctionalTestSuite {
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-applicant2-approved.json";
     private static final String RESPONSE = "classpath:responses/response-applicant2-approved.json";
 
+    private static final String SOLICITOR_REQUEST = "classpath:request/casedata/ccd-callback-casedata-solicitor-applicant2-approved.json";
+    private static final String SOLICITOR_RESPONSE = "classpath:responses/solicitor-response-applicant2-approved.json";
+
     @Test
     public void shouldSendEmailToApplicant1AndApplicant2WhenAllTemplateParamsAreValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
@@ -39,4 +42,17 @@ public class Applicant2ApproveFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(RESPONSE)));
     }
 
+    @Test
+    public void shouldSendEmailToApplicant1SolicitorAndApplicant2WhenAllTemplateParamsAreValid() throws IOException {
+        Map<String, Object> request = caseData(SOLICITOR_REQUEST);
+
+        Response response = triggerCallback(request, APPLICANT_2_APPROVE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(SOLICITOR_RESPONSE)));
+    }
 }
