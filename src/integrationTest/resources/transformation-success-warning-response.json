@@ -58,6 +58,9 @@
       "applicant1PrayerFinancialOrdersThemselves": [
         "financialOrdersThemselves"
       ],
+      "applicant1PrayerFinancialOrdersChild": [
+        "financialOrdersChild"
+      ],
       "applicant2PrayerFinancialOrdersThemselves": [
         "financialOrdersThemselves"
       ],

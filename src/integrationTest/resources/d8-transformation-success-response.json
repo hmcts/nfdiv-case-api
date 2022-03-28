@@ -58,6 +58,9 @@
         "children",
         "applicant"
       ],
+      "applicant1PrayerFinancialOrdersChild": [
+        "financialOrdersChild"
+      ],
       "applicant2StatementOfTruth": "Yes",
       "paperFormSoleOrApplicant1PaymentOtherDetail": "",
       "applicant2SolicitorFirmName": "",

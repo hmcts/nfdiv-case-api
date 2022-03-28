@@ -38,6 +38,9 @@
       "applicant2PrayerFinancialOrdersThemselves": [
         "financialOrdersThemselves"
       ],
+      "applicant1PrayerFinancialOrdersChild": [
+        "financialOrdersChild"
+      ],
       "marriageFormationType": "oppositeSexCouple",
       "applicant1MiddleName": "",
       "applicant2StatementOfTruth": "Yes",
