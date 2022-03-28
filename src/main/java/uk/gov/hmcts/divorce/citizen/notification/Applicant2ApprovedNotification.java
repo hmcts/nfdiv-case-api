@@ -114,7 +114,7 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl());
         templateVars.put(IS_APPLICANT2_REPRESENTED, caseData.getApplicant2().isRepresented() ? YES : NO);
-        templateVars.put(IS_APPLICANT2_CITIZEN, caseData.getApplicant2().isRepresented() ? YES : NO);
+        templateVars.put(IS_APPLICANT2_CITIZEN, !caseData.getApplicant2().isRepresented() ? YES : NO);
 
         return templateVars;
     }
