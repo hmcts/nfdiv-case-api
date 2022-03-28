@@ -24,11 +24,6 @@ public class RetiredFields {
     private String exampleRetiredField;
     private CaseLink previousCaseId;
 
-    @CCD(
-        label = "Retired applicant 1 prayer checkbox"
-    )
-    private Set<ThePrayer> applicant1PrayerHasBeenGivenCheckbox;
-
     @Getter
     @AllArgsConstructor
     public enum ThePrayer implements HasLabel {
@@ -39,9 +34,7 @@ public class RetiredFields {
         private final String label;
     }
 
-    @CCD(
-        label = "Retired applicant 2 prayer checkbox"
-    )
+    private Set<ThePrayer> applicant1PrayerHasBeenGivenCheckbox;
     private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
 
     @JsonIgnore
