@@ -254,6 +254,7 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
+  implementation(platform("com.fasterxml.jackson:jackson-bom:2.13.2.20220324")) // Temporary workaround https://github.com/FasterXML/jackson-databind/issues/3428
   implementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.2-Categories'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.6'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
