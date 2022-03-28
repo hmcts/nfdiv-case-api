@@ -126,5 +126,5 @@
     "solServiceMethod": "personalService",
     "warnings": []
   },
-  "state": "AwaitingAos"
+  "state": "AwaitingService"
 }
