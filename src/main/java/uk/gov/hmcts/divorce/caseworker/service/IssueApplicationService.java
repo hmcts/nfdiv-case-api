@@ -59,7 +59,6 @@ public class IssueApplicationService {
 
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
-            setPostIssueState,
             details -> {
                 final CaseData caseData = details.getData();
                 final Applicant applicant1 = caseData.getApplicant1();
@@ -70,6 +69,7 @@ public class IssueApplicationService {
                 caseData.getApplication().setIssueDate(LocalDate.now(clock));
                 return details;
             },
+            setPostIssueState,
             setDueDateAfterIssue,
             generateNoticeOfProceeding,
             generateRespondentAosInvitation,
