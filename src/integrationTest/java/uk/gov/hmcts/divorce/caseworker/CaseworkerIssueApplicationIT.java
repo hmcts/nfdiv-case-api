@@ -144,12 +144,12 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
     SendLetterWireMock.PropertiesInitializer.class})
 public class CaseworkerIssueApplicationIT {
 
-    protected static final String DIVORCE_APPLICATION_TEMPLATE_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
-    protected static final String AOS_COVER_LETTER_TEMPLATE_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
-    protected static final String NOTICE_OF_PROCEEDING_TEMPLATE_ID = "c56b053e-4184-11ec-81d3-0242ac130003";
-    protected static final String NOP_ONLINE_SOLE_RESP_TEMPLATE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
-    protected static final String APPLICANT_COVERSHEET_TEMPLATE_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
-    protected static final String CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID = "af679900-4c5c-491c-9b7f-22078412ff94";
+    private static final String DIVORCE_APPLICATION_TEMPLATE_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
+    private static final String AOS_COVER_LETTER_TEMPLATE_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
+    private static final String NOTICE_OF_PROCEEDING_TEMPLATE_ID = "c56b053e-4184-11ec-81d3-0242ac130003";
+    private static final String NOP_ONLINE_SOLE_RESP_TEMPLATE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
+    private static final String APPLICANT_COVERSHEET_TEMPLATE_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
+    private static final String CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID = "af679900-4c5c-491c-9b7f-22078412ff94";
 
     private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP =
         "classpath:caseworker-issue-application-about-to-submit-app2-sol-rep-response.json";

@@ -62,7 +62,19 @@
     "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
-        "id": "Respondent Invitation",
+        "id": "Divorce application",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+          },
+          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "application"
+        }
+      },
+      {
+        "id": "Coversheet",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
@@ -74,27 +86,15 @@
         }
       },
       {
-        "id": "Coversheet",
-        "value": {
-          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-          "documentLink": {
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary",
-            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94"
-          },
-          "documentType": "aos"
-        }
-      },
-      {
         "id": "Respondent Invitation",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94",
+            "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94/binary"
           },
-          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
-          "documentType": "application"
+          "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "aos"
         }
       }
     ],
