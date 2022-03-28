@@ -23,6 +23,7 @@ public class RetiredFields {
 
     private String exampleRetiredField;
     private CaseLink previousCaseId;
+    private String paperFormServiceOutsideUK;
 
     @Getter
     @AllArgsConstructor
