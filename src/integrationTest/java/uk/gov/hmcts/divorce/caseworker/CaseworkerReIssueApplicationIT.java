@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,7 +28,6 @@ import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
-import uk.gov.hmcts.divorce.testutil.TestResourceUtil;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
@@ -57,10 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.APPLICANT_COVERSHEET_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.DIVORCE_APPLICATION_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.NOP_ONLINE_SOLE_RESP_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.caseworker.CaseworkerIssueApplicationIT.NOTICE_OF_PROCEEDING_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -68,6 +66,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
@@ -140,13 +140,16 @@ public class CaseworkerReIssueApplicationIT {
         "classpath:caseworker-reissue-joint-application-applicant1-solicitor-about-to-submit-response.json";
     private static final String JOINT_APPLICATION_APPLICANT2_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-reissue-joint-application-applicant2-solicitor-about-to-submit-response.json";
+    private static final String SOLE_CITIZEN_CASEWORKER_PERSONAL_SERVICE_ABOUT_TO_SUBMIT =
+        "classpath:caseworker-reissue-sole-citizen-application-personal-service-about-to-submit-response.json";
 
     private static final String MINI_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
     private static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
     private static final String NOTICE_OF_PROCEEDING_ID = "c56b053e-4184-11ec-81d3-0242ac130003";
     private static final String COVERSHEET_APPLICANT_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
-    private static final String CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
+    private static final String CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID = "rf939456-4c5c-491c-9b7f-22056412ff94";
     private static final String CITIZEN_RESP_AOS_INVITATION_ONLINE_ID = "eb90a159-4200-410b-a504-5a925be0b152";
+    private static final String DIVORCE_APPLICATION_TEMPLATE_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
 
     @Autowired
     private MockMvc mockMvc;
@@ -288,7 +291,7 @@ public class CaseworkerReIssueApplicationIT {
             .getContentAsString();
 
         assertThatJson(response)
-            .isEqualTo(json(TestResourceUtil.expectedResponse(SOLE_CITIZEN_CASEWORKER_OFFLINE_AOS_ABOUT_TO_SUBMIT)));
+            .isEqualTo(json(expectedResponse(SOLE_CITIZEN_CASEWORKER_OFFLINE_AOS_ABOUT_TO_SUBMIT)));
 
         verify(notificationService)
             .sendEmail(
@@ -343,7 +346,7 @@ public class CaseworkerReIssueApplicationIT {
             .getContentAsString();
 
         assertThatJson(response)
-            .isEqualTo(json(TestResourceUtil.expectedResponse(JOINT_APPLICATION_APPLICANT1_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT)));
+            .isEqualTo(json(expectedResponse(JOINT_APPLICATION_APPLICANT1_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT)));
 
         verify(notificationService)
             .sendEmail(
@@ -405,7 +408,7 @@ public class CaseworkerReIssueApplicationIT {
             .getContentAsString();
 
         assertThatJson(response)
-            .isEqualTo(json(TestResourceUtil.expectedResponse(JOINT_APPLICATION_APPLICANT2_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT)));
+            .isEqualTo(json(expectedResponse(JOINT_APPLICATION_APPLICANT2_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT)));
 
         verify(notificationService)
             .sendEmail(
@@ -573,7 +576,7 @@ public class CaseworkerReIssueApplicationIT {
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -647,7 +650,7 @@ public class CaseworkerReIssueApplicationIT {
         assertThatJson(response)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(
-                TestResourceUtil.expectedResponse(REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
+                expectedResponse(REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
             );
 
         verify(notificationService)
@@ -676,10 +679,14 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Coversheet").thenReturn("Respondent Invitation");
+        when(documentIdProvider.documentId())
+            .thenReturn("Respondent Invitation")
+            .thenReturn("Coversheet")
+            .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent.docx");
         stubForDocAssemblyWith(COVERSHEET_APPLICANT_ID, "NFD_Applicant_Coversheet.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -705,7 +712,7 @@ public class CaseworkerReIssueApplicationIT {
         assertThatJson(response)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(
-                TestResourceUtil.expectedResponse(REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_OFFLINE_AOS))
+                expectedResponse(REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_OFFLINE_AOS))
             );
 
         verify(notificationService)
@@ -729,11 +736,13 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
-            .thenReturn("Notice of proceeding respondent")
+            .thenReturn("Respondent Invitation")
+            .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, "NFD_CP_Application_Sole.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -758,7 +767,7 @@ public class CaseworkerReIssueApplicationIT {
         assertThatJson(response)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(
-                    TestResourceUtil.expectedResponse(
+                    expectedResponse(
                         REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_REISSUE_CASE_TYPE)
                 )
             );
@@ -849,6 +858,64 @@ public class CaseworkerReIssueApplicationIT {
         verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(any(CaseData.class), anyLong());
     }
 
+    @Test
+    void shouldSendApplicationReissueNotificationsForSoleCitizenApplicationWhenPersonalService() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 20));
+        caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setEmail(null);
+        caseData.setCaseInvite(null);
+        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Coversheet")
+            .thenReturn("Notice of proceeding respondent")
+            .thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
+        stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent.docx");
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, "NFD_CP_Application_Sole.docx");
+        stubForDocAssemblyWith(COVERSHEET_APPLICANT_ID, "NFD_Applicant_Coversheet.docx");
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetter();
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response).isEqualTo(expectedPersonalServiceResponse().json());
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
     private AddressGlobalUK correspondenceAddress() {
         return AddressGlobalUK.builder()
             .addressLine1("223b")
@@ -865,22 +932,25 @@ public class CaseworkerReIssueApplicationIT {
         final var documentListValue1 = documentWithType(
             APPLICATION,
             DIVORCE_APPLICATION_TEMPLATE_ID);
+
         final var documentListValue2 = documentWithType(
             RESPONDENT_INVITATION,
-            NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
+            CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID);
+
         final var documentListValue3 = documentWithType(
             NOTICE_OF_PROCEEDINGS_APP_1,
-            NOTICE_OF_PROCEEDING_TEMPLATE_ID);
+            NOTICE_OF_PROCEEDING_ID);
 
         final var documentListValue4 = documentWithType(
             COVERSHEET,
-            APPLICANT_COVERSHEET_TEMPLATE_ID);
+            COVERSHEET_APPLICANT_ID);
 
         final List<String> documentIds = asList(
             FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
             FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
             FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl()),
-            FilenameUtils.getName(documentListValue4.getValue().getDocumentLink().getUrl()));
+            FilenameUtils.getName(documentListValue4.getValue().getDocumentLink().getUrl())
+        );
 
         final byte[] pdfAsBytes = loadPdfAsBytes();
 
@@ -910,4 +980,12 @@ public class CaseworkerReIssueApplicationIT {
         return resourceAsBytes("classpath:Test.pdf");
     }
 
+    private DocumentContext expectedPersonalServiceResponse() throws IOException {
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(SOLE_CITIZEN_CASEWORKER_PERSONAL_SERVICE_ABOUT_TO_SUBMIT));
+        jsonDocument.set("data.applicant2Address.Country", "UK");
+        jsonDocument.delete("data.applicant2Email");
+        jsonDocument.delete("data.applicant2InviteEmailAddress");
+        jsonDocument.delete("data.noticeOfProceedingsEmail");
+        return jsonDocument;
+    }
 }
