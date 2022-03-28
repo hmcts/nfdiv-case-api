@@ -176,9 +176,10 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
             notificationService.sendEmail(
                 email,
                 RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-                applicant2SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+                soleRespondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
                 ENGLISH
             );
+
         } else if (!caseData.getApplicationType().isSole() && !caseData.getApplication().isSolicitorServiceMethod()) {
             log.info("Sending Notice Of Proceedings email to applicant 2 solicitor for joint case.  Case ID: {}", caseId);
 
@@ -238,6 +239,25 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 ? caseData.getApplicant1().getSolicitor().getReference()
                 : NOT_PROVIDED);
 
+        templateVars.put(SUBMISSION_RESPONSE_DATE,
+            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER));
+
+        return templateVars;
+    }
+
+    private Map<String, String> soleRespondentSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
+        final Map<String, String> templateVars = commonSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId);
+
+        templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+        templateVars.put(
+            SOLICITOR_REFERENCE,
+            isNotEmpty(caseData.getApplicant2().getSolicitor().getReference())
+                ? caseData.getApplicant2().getSolicitor().getReference()
+                : NOT_PROVIDED);
+
+        templateVars.put(SUBMISSION_RESPONSE_DATE,
+            caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
+
         return templateVars;
     }
 
@@ -252,6 +272,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 ? caseData.getApplicant2().getSolicitor().getReference()
                 : NOT_PROVIDED);
 
+        templateVars.put(SUBMISSION_RESPONSE_DATE,
+            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER));
+
         return templateVars;
     }
 
@@ -264,8 +287,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl());
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
-        templateVars.put(SUBMISSION_RESPONSE_DATE,
-            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }
