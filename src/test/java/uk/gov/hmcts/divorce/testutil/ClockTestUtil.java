@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -23,6 +24,11 @@ public final class ClockTestUtil {
 
     public static void setMockClock(final Clock clock) {
         when(clock.instant()).thenReturn(NOW);
+        when(clock.getZone()).thenReturn(ZONE_ID);
+    }
+
+    public static void setMockClock(final Clock clock, final LocalDate date) {
+        when(clock.instant()).thenReturn(date.atStartOfDay().toInstant(ZoneOffset.UTC));
         when(clock.getZone()).thenReturn(ZONE_ID);
     }
 

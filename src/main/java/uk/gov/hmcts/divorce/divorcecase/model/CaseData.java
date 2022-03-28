@@ -104,6 +104,10 @@ public class CaseData {
 
     @JsonUnwrapped
     @Builder.Default
+    private GeneralLetter generalLetter = new GeneralLetter();
+
+    @JsonUnwrapped
+    @Builder.Default
     private GeneralReferral generalReferral = new GeneralReferral();
 
     @JsonUnwrapped
@@ -213,6 +217,13 @@ public class CaseData {
     @JsonUnwrapped
     @Builder.Default
     private BulkScanMetaInfo bulkScanMetaInfo = new BulkScanMetaInfo();
+
+    @CCD(
+        label = "General letters",
+        typeOverride = Collection,
+        typeParameterOverride = "GeneralLetterDetails"
+    )
+    private List<ListValue<GeneralLetterDetails>> generalLetters;
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {
