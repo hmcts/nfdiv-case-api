@@ -18,6 +18,7 @@ public class RetiredFields {
 
     private String exampleRetiredField;
     private CaseLink previousCaseId;
+    private String paperFormServiceOutsideUK;
 
     @JsonIgnore
     private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {

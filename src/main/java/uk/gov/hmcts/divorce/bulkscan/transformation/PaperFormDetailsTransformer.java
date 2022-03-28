@@ -35,7 +35,14 @@ public class PaperFormDetailsTransformer implements Function<TransformationDetai
             transformationDetails.getTransformationWarnings().add("Please review serve respondent outside UK in scanned form");
         }
 
-        caseData.getPaperFormDetails().setServiceOutsideUK(ocrDataFields.getServeOutOfUK());
+        caseData.getPaperFormDetails().setServeOutOfUK(
+            from(toBoolean(ocrDataFields.getServeOutOfUK()))
+        );
+
+        caseData.getPaperFormDetails().setRespondentServePostOnly(
+            from(toBoolean(ocrDataFields.getRespondentServePostOnly()))
+        );
+
         caseData.getPaperFormDetails().setApplicantWillServeApplication(
             from(toBoolean(ocrDataFields.getApplicantWillServeApplication()))
         );

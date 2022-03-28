@@ -1,5 +1,6 @@
 {
-  "ServiceOutsideUK": "",
+  "ServeOutOfUK": "No",
+  "RespondentServePostOnly": "No",
   "ApplicantWillServeApplication": "Yes",
   "RespondentDifferentServiceAddress": "No",
   "SummaryApplicant1FinancialOrdersFor": [],
