@@ -9,8 +9,7 @@
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1Gender": "female",
     "applicant1ContactDetailsType": "public",
-    "applicant1SolicitorRepresented": "Yes",
-    "applicant1SolicitorEmail": "solicitor@test.com",
+    "applicant1SolicitorRepresented": "No",
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "No",
     "applicant2FirstName": "test_first_name",
@@ -25,7 +24,8 @@
       "Country": "UK"
     },
     "applicant2Gender": "male",
-    "applicant2SolicitorRepresented": "No",
+    "applicant2SolicitorRepresented": "Yes",
+    "applicant2SolicitorEmail" : "solicitor@test.com",
     "applicant2FinancialOrder": "No",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
@@ -47,7 +47,8 @@
     },
     "applicant1KnowsApplicant2EmailAddress": "Yes",
     "documentUploadComplete": "Yes",
-    "issueDate": "2021-06-17",
+    "issueDate": "${json-unit.any-string}",
+    "reissueDate": "${json-unit.any-string}",
     "applicationPayments": [
       {
         "value": {
@@ -64,7 +65,7 @@
     "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
-        "id": "Divorce application",
+        "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
@@ -76,14 +77,14 @@
         }
       },
       {
-        "id": "Respondent Invitation",
+        "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
-            "document_filename": "noticeOfProceedings.pdf",
+            "document_filename": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
           },
-          "documentFileName": "noticeOfProceedings.pdf",
+          "documentFileName": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "noticeOfProceedings"
         }
       }

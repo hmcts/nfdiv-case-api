@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static java.util.Collections.emptyList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
@@ -40,6 +39,7 @@ public class CaseworkerCorrectPaperCase implements CCDConfig<CaseData, State, Us
             .name("Correct paper case")
             .description("Correct paper case")
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SUPER_USER));
     }
@@ -59,7 +59,7 @@ public class CaseworkerCorrectPaperCase implements CCDConfig<CaseData, State, Us
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData caseData = details.getData();
-        caseData.getBulkScanMetaInfo().setWarnings(emptyList());
+        caseData.getBulkScanMetaInfo().setWarnings(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

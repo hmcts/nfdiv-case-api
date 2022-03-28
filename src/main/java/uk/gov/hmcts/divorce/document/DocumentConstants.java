@@ -75,8 +75,11 @@ public final class DocumentConstants {
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";
     public static final String AOS_OVERDUE_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED";
 
-    public static final String COVERSHEET_APPLICANT2 = "COVERSHEET_APPLICANT2";
+    public static final String COVERSHEET_APPLICANT = "COVERSHEET_APPLICANT";
     public static final String COVERSHEET_APPLICANT2_SOLICITOR = "COVERSHEET_APPLICANT2_SOLICITOR";
+
+    public static final String GENERAL_LETTER_DOCUMENT_NAME = "GeneralLetter";
+    public static final String GENERAL_LETTER_TEMPLATE_ID = "GENERAL_LETTER";
 
     private DocumentConstants() {
     }
