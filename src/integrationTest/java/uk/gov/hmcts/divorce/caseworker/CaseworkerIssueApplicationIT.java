@@ -1323,7 +1323,6 @@ public class CaseworkerIssueApplicationIT {
 
     private DocumentContext expectedPersonalServiceResponse() throws IOException {
         DocumentContext jsonDocument = JsonPath.parse(TestResourceUtil.expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT));
-        jsonDocument.set("state", "AwaitingService");
         jsonDocument.set("data.applicant2Address.Country", "UK");
         jsonDocument.delete("data.applicant2Email");
         jsonDocument.delete("data.applicant2InviteEmailAddress");
