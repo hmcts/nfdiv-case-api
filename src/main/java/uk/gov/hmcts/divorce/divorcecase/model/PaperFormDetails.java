@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.util.Set;
@@ -17,8 +18,13 @@ import java.util.Set;
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class PaperFormDetails {
 
-    private String serviceOutsideUK;
+    @CCD(label = "Is the application to be served on the respondent outside England and Wales?")
+    private YesOrNo serveOutOfUK;
 
+    @CCD(label = "Serve this application by post only")
+    private YesOrNo respondentServePostOnly;
+
+    @CCD(label = "Applicant will arrange service on the respondent")
     private YesOrNo applicantWillServeApplication;
 
     private YesOrNo respondentDifferentServiceAddress;
