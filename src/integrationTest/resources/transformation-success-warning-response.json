@@ -54,6 +54,7 @@
         "applicant"
       ],
       "applicant2StatementOfTruth": "Yes",
+      "paperFormRespondentServePostOnly": "No",
       "paperFormSoleOrApplicant1PaymentOtherDetail": "",
       "applicant1PrayerFinancialOrdersThemselves": [
         "financialOrdersThemselves"
@@ -86,7 +87,7 @@
       "applicant1SolicitorPhone": "",
       "applicant2HWFReferenceNumber": "HWF456123",
       "solStatementOfReconciliationName": "test name",
-      "paperFormServiceOutsideUK": "No",
+      "paperFormServeOutOfUK": "No",
       "paperFormApplicant2SOTSignedOn": "18 01 2022",
       "paperFormFeeInPounds": "595£",
       "marriageApplicant2Name": "resptest name",
