@@ -15,6 +15,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String APPLICANT_2_CONTACT_DETAILS_PUBLIC = "applicant2ContactDetailsType!=\"private\"";
     private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
     private static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
+    private static final String NOT_NEW_PAPER_CASE = "newPaperCase=\"No\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -62,7 +63,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1MiddleName")
             .field("applicant1LastName")
             .field("applicant1Gender")
-            .field("marriageFormationType")
+            .field("newPaperCase", NEVER_SHOW)
+            .field("marriageFormationType", NOT_NEW_PAPER_CASE)
             .field("applicant1NameDifferentToMarriageCertificate")
             .field("applicant1NameChangedHow", "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
