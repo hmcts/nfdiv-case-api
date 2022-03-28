@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.BulkScanEnvelope;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 
 import java.util.ArrayList;
@@ -43,9 +42,6 @@ public class BulkScanMetaInfo {
         access = {CaseworkerBulkScanAccess.class}
     )
     private String bulkScanCaseReference;
-
-    @CCD(access = {CaseworkerAccess.class})
-    private String hyphenatedCaseRef;
 
     private YesOrNo evidenceHandled;
 }
