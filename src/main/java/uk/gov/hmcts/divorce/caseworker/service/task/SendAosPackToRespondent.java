@@ -29,6 +29,7 @@ public class SendAosPackToRespondent implements CaseTask {
             || YES.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address());
 
         if (caseData.getApplicationType().isSole()
+            && !caseData.getApplication().isPersonalServiceMethod()
             && !caseData.getApplicant2().isRepresented()
             && !caseData.getApplicant2().isBasedOverseas()
             &&  isAddressKnown
