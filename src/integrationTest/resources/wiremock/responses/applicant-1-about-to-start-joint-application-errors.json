@@ -8,7 +8,7 @@
     "applicant1Email": "test@test.com"
   },
   "errors": [
-    "Applicant2PrayerHasBeenGiven cannot be empty or null",
+    "Applicant 2 must confirm prayer to dissolve their marriage (get a divorce)",
     "Applicant2StatementOfTruth cannot be empty or null"
   ],
   "state": "Draft"

@@ -67,9 +67,9 @@
   "applicant2LegalProceedingsDetails": "Proceedings",
   "applicant1FinancialOrder": "No",
   "applicant2FinancialOrder": "No",
-  "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
+  "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
   "applicant1StatementOfTruth": "Yes",
-  "applicant2PrayerHasBeenGivenCheckbox": ["Yes"],
+  "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
   "applicant2StatementOfTruth": "Yes",
   "applicationFeeOrderSummary": {
     "PaymentReference": null,

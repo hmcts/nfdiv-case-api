@@ -18,7 +18,7 @@
   "jurisdictionConnections": ["A"],
   "applicant2FirstName": "Sarah",
   "applicant2LastName": "Smith",
-  "applicant2PrayerHasBeenGivenCheckbox": ["Yes"],
+  "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
   "applicant2StatementOfTruth": "YES",
   "applicant1HWFNeedHelp": "Yes",
   "applicant2HWFNeedHelp": "Yes"

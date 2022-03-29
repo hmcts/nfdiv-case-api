@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
@@ -47,6 +48,7 @@ public class CaseValidationTest {
     public void shouldValidateBasicCase() {
         CaseData caseData = new CaseData();
         caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
+        caseData.setDivorceOrDissolution(DIVORCE);
         List<String> errors = validateBasicCase(caseData);
         assertThat(errors).hasSize(13);
     }
@@ -54,6 +56,7 @@ public class CaseValidationTest {
     @Test
     public void shouldValidateBasicOfflineCase() {
         CaseData caseData = new CaseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
         Applicant applicant1 = Applicant.builder().offline(YES).build();
         caseData.setApplicant1(applicant1);
 
@@ -64,6 +67,7 @@ public class CaseValidationTest {
     @Test
     public void shouldValidateApplicant1BasicCase() {
         CaseData caseData = new CaseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
         caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         List<String> errors = validateApplicant1BasicCase(caseData);
         assertThat(errors).hasSize(8);
@@ -72,6 +76,7 @@ public class CaseValidationTest {
     @Test
     public void shouldValidateApplicant1BasicOfflineCase() {
         CaseData caseData = new CaseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
         Applicant applicant1 = Applicant.builder().offline(YES).build();
         caseData.setApplicant1(applicant1);
 
@@ -82,14 +87,12 @@ public class CaseValidationTest {
     @Test
     public void shouldReturnErrorWhenStringIsNull() {
         List<String> response = notNull(null, "field");
-
         assertThat(response).isEqualTo(List.of("field" + EMPTY));
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsInTheFuture() {
         List<String> response = validateMarriageDate(LocalDate.now().plus(2, YEARS), "field");
-
         assertThat(response).isEqualTo(List.of("field" + IN_THE_FUTURE));
     }
 
@@ -114,6 +117,7 @@ public class CaseValidationTest {
     @Test
     public void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
         CaseData caseData = new CaseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         assertTrue(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
@@ -121,12 +125,14 @@ public class CaseValidationTest {
     @Test
     public void shouldReturnFalseWhenCaseDoesNotHaveAwaitingDocuments() {
         CaseData caseData = new CaseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
         assertFalse(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
 
     @Test
     public void shouldReturnErrorWhenApp2MarriageCertNameAndPlaceOfMarriageAreMissing() {
         CaseData caseData = new CaseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
         List<String> errors = validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails());
 
         assertThat(errors).containsExactlyInAnyOrder(

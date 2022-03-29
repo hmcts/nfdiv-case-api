@@ -56,6 +56,15 @@
       "applicant2StatementOfTruth": "Yes",
       "paperFormRespondentServePostOnly": "No",
       "paperFormSoleOrApplicant1PaymentOtherDetail": "",
+      "applicant1PrayerFinancialOrdersThemselves": [
+        "financialOrdersThemselves"
+      ],
+      "applicant1PrayerFinancialOrdersChild": [
+        "financialOrdersChild"
+      ],
+      "applicant2PrayerFinancialOrdersThemselves": [
+        "financialOrdersThemselves"
+      ],
       "applicant2SolicitorFirmName": "",
       "coApplicant1IsDrafted": "No",
       "applicant1LegalProceedings": "No",
@@ -88,9 +97,7 @@
       "paperFormApplicant1LegalRepPosition": "",
       "marriageCertificateInEnglish": "Yes",
       "applicant2SolicitorReference": "",
-      "applicant2PrayerHasBeenGivenCheckbox": [
-        "Yes"
-      ],
+      "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
       "paperFormSummaryApplicant1FinancialOrdersFor": [
         "children"
       ],
@@ -122,9 +129,7 @@
           "value": "Please review divorce type in the scanned form"
         }
       ],
-      "applicant1PrayerHasBeenGivenCheckbox": [
-        "Yes"
-      ],
+      "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
       "applicant1SolicitorAddress": "some street\nsecond line of address\nUK",
       "screenHasMarriageCert": "Yes",
       "jurisdictionConnections": [
