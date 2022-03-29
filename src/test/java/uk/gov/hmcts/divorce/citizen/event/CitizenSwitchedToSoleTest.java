@@ -42,7 +42,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSole.SWITCH_TO_SOLE;
-import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
@@ -244,6 +244,8 @@ class CitizenSwitchedToSoleTest {
     void givenEventStartedWithValidJointCaseShouldRemoveApplicant2Answers() {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
+        caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
+
         setValidCaseInviteData(caseData);
         caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_EMAIL, ACCESS_CODE, null));
         caseData.setApplicant2(
@@ -270,7 +272,6 @@ class CitizenSwitchedToSoleTest {
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder().build());
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         caseData.getApplication().setApplicant2AgreeToReceiveEmails(YES);
         caseData.getApplication().setApplicant2CannotUploadSupportingDocument(new HashSet<>());
         caseData.getApplication().setApplicant2ConfirmApplicant1Information(YES);
@@ -306,12 +307,13 @@ class CitizenSwitchedToSoleTest {
         assertThat(response.getData().getApplication().getApplicant2ScreenHasMarriageBroken()).isNull();
         assertThat(response.getData().getApplication().getApplicant2HelpWithFees()).isNull();
         assertThat(response.getData().getApplication().getApplicant2StatementOfTruth()).isNull();
-        assertThat(response.getData().getApplication().getApplicant2PrayerHasBeenGivenCheckbox()).isNull();
         assertThat(response.getData().getApplication().getApplicant2AgreeToReceiveEmails()).isNull();
         assertThat(response.getData().getApplication().getApplicant2CannotUploadSupportingDocument()).isNull();
         assertThat(response.getData().getApplication().getApplicant2CannotUploadSupportingDocument()).isNull();
         assertThat(response.getData().getApplication().getApplicant2ConfirmApplicant1Information()).isNull();
         assertThat(response.getData().getApplication().getApplicant2ReminderSent()).isNull();
+
+        assertThat(response.getData().getApplicant2().getApplicantPrayer().getPrayerDissolveDivorce()).isNull();
         verify(ccdAccessService)
             .unlinkUserFromApplication(eq("system-user-token"), eq(caseId), eq("app2-user-id"));
     }

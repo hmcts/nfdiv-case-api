@@ -45,9 +45,9 @@
         }
       }
     ],
-    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
+    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
     "applicant1StatementOfTruth": "Yes",
-    "applicant2PrayerHasBeenGivenCheckbox": ["Yes"],
+    "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
     "applicant2StatementOfTruth": "Yes"
   },
   "state": "Holding"

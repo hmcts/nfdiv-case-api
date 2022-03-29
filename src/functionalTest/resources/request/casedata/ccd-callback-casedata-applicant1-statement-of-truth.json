@@ -15,7 +15,7 @@
   "marriageApplicant1Name": "test_first_name test_last_name",
   "applicant1FinancialOrder": "NO",
   "applicant1HWFNeedHelp": "NO",
-  "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
+  "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
   "applicant1StatementOfTruth": "YES",
   "solSignStatementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",

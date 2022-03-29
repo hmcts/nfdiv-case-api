@@ -38,10 +38,11 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
-import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_2_ANSWERS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME;
@@ -116,7 +117,7 @@ class Applicant2ApproveTest {
     void givenEventStartedWithValidCaseThenChangeStateApplicant2ApprovedAndSendEmailAndGenerateApplicationDocument() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         setValidCaseData(caseData);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
@@ -151,7 +152,7 @@ class Applicant2ApproveTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Map<String, Object> templateContent = new HashMap<>();
 
-        CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         setValidCaseData(caseData);
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YES);
@@ -187,7 +188,7 @@ class Applicant2ApproveTest {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
 
-        CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         setValidCaseData(caseData);
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YES);
@@ -208,9 +209,8 @@ class Applicant2ApproveTest {
     void shouldNotRenderDocumentIfJointApplicationAndApplicant1IsNotRepresented() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final Map<String, Object> templateContent = new HashMap<>();
 
-        CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         setValidCaseData(caseData);
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YES);
@@ -243,7 +243,7 @@ class Applicant2ApproveTest {
                 .build()
         );
 
-        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplicant2().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
         caseData.getApplication().getMarriageDetails().setApplicant1Name("Full name");
         caseData.getApplication().getMarriageDetails().setApplicant2Name("Full name");

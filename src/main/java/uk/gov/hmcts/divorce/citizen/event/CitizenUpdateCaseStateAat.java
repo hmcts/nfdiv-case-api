@@ -26,8 +26,8 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-
-        if (isCitizenUpdateCaseStateEnabled()) {
+        var updateCaseStateEnabled = Boolean.parseBoolean(System.getenv().get("CITIZEN_UPDATE_CASE_STATE_ENABLED"));
+        if (updateCaseStateEnabled) {
             configBuilder
                 .event(CITIZEN_UPDATE_CASE_STATE_AAT)
                 .forAllStates()
