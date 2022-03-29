@@ -13,6 +13,9 @@
     "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "No",
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant1Offline": "Yes",
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
@@ -40,9 +43,6 @@
       "A"
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "applicant1PrayerHasBeenGivenCheckbox": [
-      "Yes"
-    ],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
