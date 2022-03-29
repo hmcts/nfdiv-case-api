@@ -81,7 +81,7 @@ class SolicitorSubmitJointApplicationTest {
     }
 
     @Test
-    void shouldInvokeSubmitEventForApprovalOrRequestingChangesOnSubmittedCallback() throws InterruptedException {
+    void shouldInvokeSubmitEventForApprovalOrRequestingChangesOnSubmittedCallback() {
         final var caseData = caseData();
         caseData.getApplication().setApplicant2ConfirmApplicant1Information(YES);
 
