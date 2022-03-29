@@ -80,7 +80,7 @@
   "applicant1LegalProceedings": "Yes",
   "applicant1FinancialOrder": "No",
   "applicant2FinancialOrder": "No",
-  "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
+  "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
   "applicant1StatementOfTruth": "Yes",
   "solSignStatementOfTruth": "Yes",
   "applicationFeeOrderSummary": {

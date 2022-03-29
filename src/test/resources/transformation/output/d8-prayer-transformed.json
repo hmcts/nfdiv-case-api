@@ -1,8 +1,8 @@
 {
-  "applicant1PrayerHasBeenGivenCheckbox": [
-    "Yes"
+  "applicant1PrayerDissolveDivorce": [
+    "dissolveDivorce"
   ],
-  "applicant2PrayerHasBeenGivenCheckbox": [
-    "Yes"
+  "applicant2PrayerDissolveDivorce": [
+    "dissolveDivorce"
   ]
 }

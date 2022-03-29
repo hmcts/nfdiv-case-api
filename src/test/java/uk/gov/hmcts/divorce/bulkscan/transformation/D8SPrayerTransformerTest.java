@@ -6,16 +6,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.jsonToObject;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.FinancialOrdersChild.FINANCIAL_ORDERS_CHILD;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.FinancialOrdersThemselves.FINANCIAL_ORDERS_THEMSELVES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -84,6 +90,133 @@ public class D8SPrayerTransformerTest {
             .usingRecursiveComparison()
             .ignoringActualNullFields()
             .isEqualTo(expectedApplication);
+    }
+
+    @Test
+    void shouldSuccessfullyTransformJointApplicationWithoutWarningsAndSetFinancialOrdersPrayerForApplicant1And2()
+        throws Exception {
+
+        String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8s-prayer-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        });
+
+        OcrDataFields dataFields = transformOcrMapToObject(ocrDataFields);
+        dataFields.setSoleOrApplicant1prayerFinancialOrderFor("theSoleApplicantOrApplicant1");
+        dataFields.setApplicant2PrayerFinancialOrderFor("applicant2");
+
+        final var caseData = CaseData.builder().applicationType(JOINT_APPLICATION).divorceOrDissolution(DIVORCE).build();
+
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(dataFields)
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = d8SPrayerTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
+
+        var expectedApplicant = ApplicantPrayer
+            .builder()
+            .prayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE))
+            .prayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES))
+            .build();
+
+        assertThat(transformedOutput.getCaseData().getApplicant1().getApplicantPrayer())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplicant);
+
+        assertThat(transformedOutput.getCaseData().getApplicant2().getApplicantPrayer())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplicant);
+    }
+
+    @Test
+    void shouldSuccessfullyTransformJointApplicationWithoutWarningsAndSetFinancialOrdersPrayerForApplicant1And2Children()
+        throws Exception {
+
+        String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8s-prayer-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        });
+
+        OcrDataFields dataFields = transformOcrMapToObject(ocrDataFields);
+        dataFields.setSoleOrApplicant1prayerFinancialOrderFor("forTheChildren");
+        dataFields.setApplicant2PrayerFinancialOrderFor("forTheChildren");
+
+        final var caseData = CaseData.builder().applicationType(JOINT_APPLICATION).divorceOrDissolution(DIVORCE).build();
+
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(dataFields)
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = d8SPrayerTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
+
+        var expectedApplicant = ApplicantPrayer
+            .builder()
+            .prayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE))
+            .prayerFinancialOrdersChild(Set.of(FINANCIAL_ORDERS_CHILD))
+            .build();
+
+        assertThat(transformedOutput.getCaseData().getApplicant1().getApplicantPrayer())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplicant);
+
+        assertThat(transformedOutput.getCaseData().getApplicant2().getApplicantPrayer())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplicant);
+    }
+
+    @Test
+    void shouldSuccessfullyTransformJointApplicationWithoutWarningsAndSetFinancialOrdersPrayerForApplicant1And2AndTheirChild()
+        throws Exception {
+
+        String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-d8s-prayer-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        });
+
+        OcrDataFields dataFields = transformOcrMapToObject(ocrDataFields);
+        dataFields.setSoleOrApplicant1prayerFinancialOrderFor("theSoleApplicantOrApplicant1,forTheChildren");
+        dataFields.setApplicant2PrayerFinancialOrderFor("applicant2,forTheChildren");
+
+        final var caseData = CaseData.builder().applicationType(JOINT_APPLICATION).divorceOrDissolution(DIVORCE).build();
+
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(dataFields)
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = d8SPrayerTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
+
+        var expectedApplicant = ApplicantPrayer
+            .builder()
+            .prayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE))
+            .prayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES))
+            .prayerFinancialOrdersChild(Set.of(FINANCIAL_ORDERS_CHILD))
+            .build();
+
+        assertThat(transformedOutput.getCaseData().getApplicant1().getApplicantPrayer())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplicant);
+
+        assertThat(transformedOutput.getCaseData().getApplicant2().getApplicantPrayer())
+            .usingRecursiveComparison()
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplicant);
     }
 
     @Test
