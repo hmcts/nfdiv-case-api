@@ -57,7 +57,7 @@ withPipeline(type, product, component) {
     disableLegacyDeployment()
     loadVaultSecrets(secrets)
     syncBranchesWithMaster(['demo', 'perftest', 'ithc'])
-
+    enableSlackNotifications('#no-fault-divorce-builds')
     MetricsPublisher metricsPublisher = new MetricsPublisher(this, currentBuild, product, component, params.subscription )
     approvedEnvironmentRepository(params.environment, metricsPublisher) {
       enableHighLevelDataSetup()
