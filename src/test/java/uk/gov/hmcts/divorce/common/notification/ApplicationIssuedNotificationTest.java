@@ -65,7 +65,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -85,7 +84,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 public class ApplicationIssuedNotificationTest {
 
     private static final String CASE_ID = "case id";
-    private static final String SOLICITOR_ORGANISATION = "solicitor organisation";
 
     @Mock
     private NotificationService notificationService;
@@ -369,15 +367,13 @@ public class ApplicationIssuedNotificationTest {
             .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
 
-        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
-
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
         verify(noticeOfProceedingsPrinter).sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
     }
 
     @Test
-    void shouldSendNotificationToRespondentSolicitorIfSoleApplicationAndNotSolicitorService() {
+    void shouldSendNotificationToRespondentSolicitorIfSoleApplicationAndNotSolicitorServiceWithoutSolicitorReference() {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
@@ -388,7 +384,33 @@ public class ApplicationIssuedNotificationTest {
             .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
 
-        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+
+        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            TEST_SOLICITOR_EMAIL,
+            RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+            respondentSolicitorTemplateVars(),
+            ENGLISH
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendNotificationToRespondentSolicitorIfSoleApplicationAndNotSolicitorServiceWithSolicitorReference() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(getApplicant())
+            .applicant2(respondentWithDigitalSolicitor())
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
+            .build();
+
+        caseData.getApplicant2().getSolicitor().setReference("TEST");
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
@@ -397,7 +419,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            nopSolicitorTemplateVars(),
+            respondentSolicitorTemplateVarsWithSolicitorReference(),
             ENGLISH
         );
 
@@ -562,8 +584,26 @@ public class ApplicationIssuedNotificationTest {
     private Map<String, String> respondentSolicitorTemplateVars() {
         final Map<String, String> templateVars = solicitorTemplateVars();
 
-        templateVars.put(SOLICITOR_ORGANISATION, TEST_ORG_NAME);
+        templateVars.put(SOLICITOR_REFERENCE, NOT_PROVIDED);
+        templateVars.put(DUE_DATE, LOCAL_DATE.plusDays(7).format(DATE_TIME_FORMATTER));
+        templateVars.put(ISSUE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER));
+        templateVars.put(SIGN_IN_URL, null);
+        templateVars.put(IS_DISSOLUTION, NO);
+        templateVars.put(IS_DIVORCE, YES);
+        templateVars.put(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.plusDays(16).format(DATE_TIME_FORMATTER));
+        return templateVars;
+    }
 
+    private Map<String, String> respondentSolicitorTemplateVarsWithSolicitorReference() {
+        final Map<String, String> templateVars = solicitorTemplateVars();
+
+        templateVars.put(SOLICITOR_REFERENCE, "TEST");
+        templateVars.put(DUE_DATE, LOCAL_DATE.plusDays(7).format(DATE_TIME_FORMATTER));
+        templateVars.put(ISSUE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER));
+        templateVars.put(SIGN_IN_URL, null);
+        templateVars.put(IS_DISSOLUTION, NO);
+        templateVars.put(IS_DIVORCE, YES);
+        templateVars.put(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.plusDays(16).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
