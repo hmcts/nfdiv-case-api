@@ -132,7 +132,12 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
 
         log.info("Solicitor submit joint application submitted callback invoked for case id: {}", details.getId());
 
-        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(details);
+
+        try {
+            solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(details);
+        } catch (InterruptedException e) {
+            log.error("Solicitor submit joint application submitted callback failed for case id {} ", details.getId(), e);
+        }
 
         return SubmittedCallbackResponse.builder().build();
     }

@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.util.concurrent.TimeUnit;
+
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
 import static uk.gov.hmcts.divorce.common.event.Applicant2RequestChanges.APPLICANT_2_REQUEST_CHANGES;
@@ -20,6 +22,8 @@ import static uk.gov.hmcts.divorce.common.event.Applicant2RequestChanges.APPLICA
 @Service
 @Slf4j
 public class SolicitorSubmitJointApplicationService {
+
+    private static final Long DELAY = 2L;
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
@@ -31,7 +35,7 @@ public class SolicitorSubmitJointApplicationService {
     private AuthTokenGenerator authTokenGenerator;
 
     @Async
-    public void submitEventForApprovalOrRequestingChanges(final CaseDetails<CaseData, State> details) {
+    public void submitEventForApprovalOrRequestingChanges(final CaseDetails<CaseData, State> details) throws InterruptedException {
         final Application application = details.getData().getApplication();
 
         String eventId = YES.equals(application.getApplicant2ConfirmApplicant1Information())
@@ -44,6 +48,7 @@ public class SolicitorSubmitJointApplicationService {
 
         log.info("Submitting event id {} for case id: {}", eventId, details.getId());
 
+        TimeUnit.SECONDS.sleep(DELAY);
         ccdUpdateService.submitEvent(details, eventId, solUser, serviceAuthorization);
     }
 }

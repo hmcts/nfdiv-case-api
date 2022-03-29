@@ -40,7 +40,7 @@ public class SolicitorSubmitJointApplicationServiceTest {
     private SolicitorSubmitJointApplicationService solicitorSubmitJointApplicationService;
 
     @Test
-    void shouldSubmitCcdApplicant2RequestChangesEventOnSubmittedCallbackIfApp2SolicitorHasRequestedChanges() {
+    void shouldSubmitCcdApplicant2RequestChangesEventOnSubmittedCallbackIfApp2SolicitorHasRequestedChanges() throws InterruptedException {
         final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
@@ -58,7 +58,7 @@ public class SolicitorSubmitJointApplicationServiceTest {
     }
 
     @Test
-    void shouldSubmitCcdApplicant2ApproveEventOnSubmittedCallbackIfApp2SolicitorHasNotRequestedChanges() {
+    void shouldSubmitCcdApplicant2ApproveEventOnSubmittedCallbackIfApp2SolicitorHasNotRequestedChanges() throws InterruptedException {
         final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
