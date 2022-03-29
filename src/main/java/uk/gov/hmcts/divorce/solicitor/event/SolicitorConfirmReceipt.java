@@ -18,19 +18,19 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 public class SolicitorConfirmReceipt implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SOLICITOR_CONFIRM_RECEIPT = "solicitor-confirm-receipt";
+    public static final String CONFIRM_RECEIPT = "confirm-receipt";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(SOLICITOR_CONFIRM_RECEIPT)
+            .event(CONFIRM_RECEIPT)
             .forStates(Holding)
             .showCondition("applicationType=\"jointApplication\"")
             .name("Confirm Receipt")
             .description("Confirm Receipt")
             .showSummary()
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, SOLICITOR, APPLICANT_2_SOLICITOR)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
+            .grant(CREATE_READ_UPDATE, SOLICITOR, APPLICANT_2_SOLICITOR, CASE_WORKER)
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR));
     }
 }
