@@ -114,6 +114,9 @@ public class ApplicationIssuedNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
+        when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
+            .thenReturn(data.getApplication().getIssueDate().plusDays(16));
+
         notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
@@ -141,6 +144,9 @@ public class ApplicationIssuedNotificationTest {
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(dissolutionTemplateVars);
+
+        when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
+            .thenReturn(data.getApplication().getIssueDate().plusDays(16));
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
