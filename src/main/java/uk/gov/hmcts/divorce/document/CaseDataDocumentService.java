@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentTo
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isApplicableForConfidentiality;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
 
 @Service
 @Slf4j
@@ -83,7 +84,7 @@ public class CaseDataDocumentService {
                                 final Long caseId,
                                 final String templateId) {
 
-        if (isApplicableForConfidentiality(documentType) && isConfidential(caseData, documentType)) {
+        if (isApplicableForConfidentiality(documentType, null) && isConfidential(caseData, documentType)) {
 
             log.info("Adding confidential document to case data for templateId : {} case id: {}", templateId, caseId);
 
@@ -105,11 +106,5 @@ public class CaseDataDocumentService {
                 documentIdProvider.documentId()
             ));
         }
-    }
-
-    private boolean isConfidential(final CaseData caseData, final DocumentType documentType) {
-        return DocumentType.NOTICE_OF_PROCEEDINGS_APP_1.equals(documentType)
-            ? caseData.getApplicant1().isConfidentialContactDetails()
-            : caseData.getApplicant2().isConfidentialContactDetails();
     }
 }

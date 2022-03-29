@@ -6,6 +6,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails;
+import uk.gov.hmcts.divorce.common.service.ProcessConfidentialDocumentsService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -22,7 +23,8 @@ class CaseworkerUpdateContactDetailsTest {
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        CaseworkerUpdateContactDetails caseworkerUpdateContactDetails = new CaseworkerUpdateContactDetails(new UpdateContactDetails());
+        CaseworkerUpdateContactDetails caseworkerUpdateContactDetails = new CaseworkerUpdateContactDetails(new UpdateContactDetails(),
+            new ProcessConfidentialDocumentsService());
 
         caseworkerUpdateContactDetails.configure(configBuilder);
 

@@ -48,6 +48,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.endpoint.data.FormType;
@@ -620,6 +622,33 @@ public class TestDataHelper {
             .<DivorceDocument>builder()
             .id(APPLICATION.getLabel())
             .value(divorceDocument)
+            .build();
+    }
+
+    public static ListValue<ConfidentialDivorceDocument> confidentialDocumentWithType(final ConfidentialDocumentsReceived documentType) {
+        return confidentialDocumentWithType(documentType, UUID.randomUUID().toString());
+    }
+
+    public static ListValue<ConfidentialDivorceDocument> confidentialDocumentWithType(final ConfidentialDocumentsReceived documentType,
+                                                              final String documentId) {
+        String documentUrl = "http://localhost:8080/" + documentId;
+
+        Document ccdDocument = new Document(
+            documentUrl,
+            "test-draft-divorce-application.pdf",
+            documentUrl + "/binary"
+        );
+
+        ConfidentialDivorceDocument confidentialDivorceDocument = ConfidentialDivorceDocument.builder()
+            .documentLink(ccdDocument)
+            .documentFileName("test-draft-divorce-application-12345.pdf")
+            .confidentialDocumentsReceived(documentType)
+            .build();
+
+        return ListValue
+            .<ConfidentialDivorceDocument>builder()
+            .id(documentType.getLabel())
+            .value(confidentialDivorceDocument)
             .build();
     }
 

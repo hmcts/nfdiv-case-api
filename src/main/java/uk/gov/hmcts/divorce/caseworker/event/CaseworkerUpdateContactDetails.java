@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.ProcessConfidentialDocumentsService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -28,8 +29,12 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
 
     private final CcdPageConfiguration updateContactDetails;
 
-    public CaseworkerUpdateContactDetails(UpdateContactDetails updateContactDetails) {
+    private final ProcessConfidentialDocumentsService confidentialDocumentsService;
+
+    public CaseworkerUpdateContactDetails(UpdateContactDetails updateContactDetails,
+                                          ProcessConfidentialDocumentsService confidentialDocumentsService) {
         this.updateContactDetails = updateContactDetails;
+        this.confidentialDocumentsService = confidentialDocumentsService;
     }
 
     @Override
@@ -61,6 +66,8 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
         log.info("Callback invoked for {}", CASEWORKER_UPDATE_CONTACT_DETAILS);
 
         var caseData = details.getData();
+
+        confidentialDocumentsService.processDocuments(caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

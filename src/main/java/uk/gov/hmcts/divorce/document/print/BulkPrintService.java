@@ -112,9 +112,17 @@ public class BulkPrintService {
     }
 
     private byte[] getDocumentBytes(final Letter letter, final String authToken) {
-        String docUrl = letter.getDivorceDocument() != null
-            ? letter.getDivorceDocument().getDocumentLink().getUrl()
-            : letter.getScannedDocument().getUrl().getUrl();
+        String docUrl;
+
+        if (letter.getDivorceDocument() != null) {
+            docUrl = letter.getDivorceDocument().getDocumentLink().getUrl();
+        } else if (letter.getScannedDocument() != null) {
+            docUrl = letter.getScannedDocument().getUrl().getUrl();
+        } else if (letter.getConfidentialDivorceDocument() != null) {
+            docUrl = letter.getConfidentialDivorceDocument().getDocumentLink().getUrl();
+        } else {
+            throw new InvalidResourceException("Invalid document resource");
+        }
 
         String fileName = FilenameUtils.getName(docUrl);
         final String userAuth = request.getHeader(AUTHORIZATION);
