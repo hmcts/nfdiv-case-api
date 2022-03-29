@@ -212,7 +212,10 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private Map<String, String> soleRespondentTemplateVars(final CaseData caseData, Long id) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(IS_REMINDER, NO);
-        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
+        templateVars.put(
+            REVIEW_DEADLINE_DATE,
+            holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
+        );
         templateVars.put(
             CREATE_ACCOUNT_LINK,
             config.getTemplateVars()

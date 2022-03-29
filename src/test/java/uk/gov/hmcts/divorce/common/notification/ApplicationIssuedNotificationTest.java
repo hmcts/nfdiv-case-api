@@ -172,6 +172,9 @@ public class ApplicationIssuedNotificationTest {
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
+        when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
+            .thenReturn(data.getApplication().getIssueDate().plusDays(16));
+
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
@@ -202,6 +205,8 @@ public class ApplicationIssuedNotificationTest {
             .thenReturn(dissolutionTemplateVars);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+        when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
+            .thenReturn(data.getApplication().getIssueDate().plusDays(16));
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -510,7 +515,7 @@ public class ApplicationIssuedNotificationTest {
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
-        Map<String,String> personalServiceTemplateVars = personalServiceTemplateVars();
+        Map<String, String> personalServiceTemplateVars = personalServiceTemplateVars();
         personalServiceTemplateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl() + TEST_CASE_ID);
         personalServiceTemplateVars.put(APPLICATION_REFERENCE, TEST_CASE_ID.toString());
         personalServiceTemplateVars.put("union type", "divorce");
@@ -529,7 +534,7 @@ public class ApplicationIssuedNotificationTest {
     @Test
     void shouldSendPersonalServiceNotificationToApplicantSolicitorForDissolutionApplication() {
 
-        Applicant  applicant1 = applicantRepresentedBySolicitor();
+        Applicant applicant1 = applicantRepresentedBySolicitor();
         applicant1.getSolicitor().setReference("someRef");
 
         final CaseData caseData = CaseData.builder()
@@ -545,7 +550,7 @@ public class ApplicationIssuedNotificationTest {
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
-        Map<String,String> personalServiceTemplateVars = personalServiceTemplateVars();
+        Map<String, String> personalServiceTemplateVars = personalServiceTemplateVars();
         personalServiceTemplateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl() + TEST_CASE_ID);
         personalServiceTemplateVars.put(APPLICATION_REFERENCE, TEST_CASE_ID.toString());
         personalServiceTemplateVars.put("union type", "dissolution");
