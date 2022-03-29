@@ -4,7 +4,7 @@
     "Applicant2FirstName cannot be empty or null",
     "Applicant2LastName cannot be empty or null",
     "Applicant2StatementOfTruth cannot be empty or null",
-    "Applicant2PrayerHasBeenGiven cannot be empty or null",
+    "Applicant 2 must confirm prayer to dissolve their marriage (get a divorce)",
     "MarriageApplicant2Name cannot be empty or null"
   ]
 }

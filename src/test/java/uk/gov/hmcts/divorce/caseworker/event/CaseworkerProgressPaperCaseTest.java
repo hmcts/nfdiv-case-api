@@ -13,7 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event. CaseworkerProgressPaperCase.CASEWORKER_PROGRESS_PAPER_CASE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerProgressPaperCase.CASEWORKER_PROGRESS_PAPER_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase.AWAITING_DOCUMENTS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase.AWAITING_PAYMENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase.SUBMITTED;
@@ -91,7 +92,7 @@ public class CaseworkerProgressPaperCaseTest {
     void shouldReturnErrorsIfCaseDataIsNotReadyForProgression() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
@@ -110,7 +111,7 @@ public class CaseworkerProgressPaperCaseTest {
             "MarriageApplicant1Name cannot be empty or null",
             "Applicant1ContactDetailsType cannot be empty or null",
             "Statement of truth must be accepted by the person making the application",
-            "applicant1PrayerHasBeenGivenCheckbox cannot be empty or null",
+            "Applicant 1 must confirm prayer to dissolve their marriage (get a divorce)",
             "MarriageDate cannot be empty or null",
             "JurisdictionConnections cannot be empty or null"
         );

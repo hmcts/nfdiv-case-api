@@ -5,6 +5,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -27,9 +28,14 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SOT_REQ
 public class CorrectPaperCase implements CcdPageConfiguration {
 
     private static final String TITLE = "Correct paper case";
-    public static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
-    public static final String APPLICANT_1_SOLICITOR_REPRESENTED_YES = "applicant1SolicitorRepresented=\"Yes\"";
-    public static final String APPLICANT_2_SOLICITOR_REPRESENTED_YES = "applicant2SolicitorRepresented=\"Yes\"";
+    private static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
+    private static final String JOINT_DIVORCE_APPLICATION = "applicationType=\"jointApplication\" AND divorceOrDissolution = \"divorce\"";
+    private static final String JOINT_DISSOLUTION_APPLICATION
+        = "applicationType=\"jointApplication\" AND divorceOrDissolution = \"dissolution\" ";
+    private static final String APPLICANT_1_SOLICITOR_REPRESENTED_YES = "applicant1SolicitorRepresented=\"Yes\"";
+    private static final String APPLICANT_2_SOLICITOR_REPRESENTED_YES = "applicant2SolicitorRepresented=\"Yes\"";
+    private static final String DIVORCE_APPLICATION = "divorceOrDissolution = \"divorce\"";
+    private static final String DISSOLUTION_APPLICATION = "divorceOrDissolution = \"dissolution\"";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -259,9 +265,21 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         fieldCollectionBuilder
             .label("Label-CorrectPrayerDetails",
                 "### The prayer details")
-            .complex(CaseData::getApplication)
-                .mandatory(Application::getApplicant1PrayerHasBeenGivenCheckbox)
-                .mandatory(Application::getApplicant2PrayerHasBeenGivenCheckbox, JOINT_APPLICATION)
+            .complex(CaseData::getApplicant1)
+                .complex(Applicant::getApplicantPrayer)
+                .mandatory(ApplicantPrayer::getPrayerDissolveDivorce, DIVORCE_APPLICATION)
+                .mandatory(ApplicantPrayer::getPrayerEndCivilPartnership, DISSOLUTION_APPLICATION)
+                .optional(ApplicantPrayer::getPrayerFinancialOrdersThemselves)
+                .optional(ApplicantPrayer::getPrayerFinancialOrdersChild)
+                .done()
+            .done()
+            .complex(CaseData::getApplicant2)
+                .complex(Applicant::getApplicantPrayer)
+                .mandatory(ApplicantPrayer::getPrayerDissolveDivorce, JOINT_DIVORCE_APPLICATION)
+                .mandatory(ApplicantPrayer::getPrayerEndCivilPartnership, JOINT_DISSOLUTION_APPLICATION)
+                .optional(ApplicantPrayer::getPrayerFinancialOrdersThemselves, JOINT_APPLICATION)
+                .optional(ApplicantPrayer::getPrayerFinancialOrdersChild, JOINT_APPLICATION)
+                .done()
             .done();
     }
 

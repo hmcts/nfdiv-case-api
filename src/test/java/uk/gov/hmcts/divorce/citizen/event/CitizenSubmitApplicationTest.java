@@ -33,8 +33,9 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
-import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
@@ -74,7 +75,7 @@ class CitizenSubmitApplicationTest {
     public void givenEventStartedWithEmptyCaseThenGiveValidationErrors() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -89,8 +90,10 @@ class CitizenSubmitApplicationTest {
     public void givenEventStartedWithInvalidCaseThenGiveValidationErrors() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = CaseData.builder().build();
-        setValidCaseData(caseData).getApplication().setApplicant1PrayerHasBeenGivenCheckbox(emptySet());
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
+        setValidCaseData(caseData);
+
+        caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(emptySet());
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -98,14 +101,14 @@ class CitizenSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(1);
-        assertThat(response.getErrors().get(0)).isEqualTo("applicant1PrayerHasBeenGivenCheckbox must be YES");
+        assertThat(response.getErrors().get(0)).isEqualTo("Applicant 1 must confirm prayer to dissolve their marriage (get a divorce)");
     }
 
     @Test
     public void givenEventStartedWithValidCaseThenChangeStateAndSetOrderSummary() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         setValidCaseData(caseData);
 
         caseDetails.setData(caseData);
@@ -113,7 +116,7 @@ class CitizenSubmitApplicationTest {
 
         var orderSummary = orderSummary();
 
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE,KEYWORD_DIVORCE))
+        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
             .thenReturn(
                 orderSummary()
             );
@@ -130,14 +133,14 @@ class CitizenSubmitApplicationTest {
     public void givenEventStartedWithValidJointCaseThenChangeStateAndSetOrderSummary() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         setValidCaseData(caseData);
 
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.getApplicant2().setFirstName("App");
         caseData.getApplicant2().setLastName("Two");
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplicant2().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         caseData.getApplication().getMarriageDetails().setApplicant2Name("App Two");
 
         caseDetails.setData(caseData);
@@ -162,7 +165,7 @@ class CitizenSubmitApplicationTest {
     public void givenEventStartedWithValidCaseThenChangeStateAwaitingHwfDecision() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         setValidCaseData(caseData).getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
 
         caseDetails.setData(caseData);
@@ -185,7 +188,7 @@ class CitizenSubmitApplicationTest {
     public void givenEventStartedWithValidJointCaseThenChangeStateAwaitingHwfDecision() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         setValidCaseData(caseData).getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.getApplicant2().setFirstName("App");
@@ -197,7 +200,7 @@ class CitizenSubmitApplicationTest {
                 .build()
         );
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplicant2().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         caseData.getApplication().getMarriageDetails().setApplicant2Name("App Two");
 
         caseDetails.setData(caseData);
@@ -235,7 +238,7 @@ class CitizenSubmitApplicationTest {
                 .build()
         );
 
-        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         caseData.getApplication().getMarriageDetails().setApplicant1Name("Full name");
         caseData.getApplication().setApplicant1StatementOfTruth(YesOrNo.YES);
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
