@@ -132,7 +132,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
                 NOTICE_OF_PROCEEDINGS_APP_1,
-                jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
+                jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
                 caseId,
                 JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
                 caseData.getApplicant1().getLanguagePreference(),
@@ -146,7 +146,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
                 NOTICE_OF_PROCEEDINGS_APP_2,
-                jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
+                jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseId,
                 JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
                 caseData.getApplicant2().getLanguagePreference(),

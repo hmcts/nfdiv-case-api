@@ -46,6 +46,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
@@ -72,6 +73,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.EndCivilPartnership.END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
@@ -289,6 +291,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
         caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplicant1().getApplicantPrayer().setPrayerEndCivilPartnership(Set.of(END_CIVIL_PARTNERSHIP));
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
         caseData.getApplicant1().getSolicitor().setReference("TEST");
         caseData.getApplicant1().setGender(FEMALE);

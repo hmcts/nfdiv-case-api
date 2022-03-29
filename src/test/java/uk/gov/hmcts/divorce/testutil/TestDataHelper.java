@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -31,7 +32,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedHow;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedWhere;
@@ -86,7 +86,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
-import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
@@ -242,7 +242,7 @@ public class TestDataHelper {
     public static CaseData caseData() {
         return CaseData.builder()
             .applicant1(getApplicant())
-            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .divorceOrDissolution(DIVORCE)
             .caseInvite(new CaseInvite(null, null, null))
             .build();
     }
@@ -250,7 +250,7 @@ public class TestDataHelper {
     public static CaseData invalidCaseData() {
         return CaseData.builder()
             .applicant1(getInvalidApplicant())
-            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .divorceOrDissolution(DIVORCE)
             .build();
     }
 
@@ -267,7 +267,7 @@ public class TestDataHelper {
         caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_USER_EMAIL, null, null));
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE));
 
         return caseData;
     }
@@ -312,19 +312,19 @@ public class TestDataHelper {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         return caseData;
     }
 
     public static CaseData validApplicant2CaseData() {
         CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         caseData.setApplicant2(getApplicantWithAddress());
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder()
             .needHelp(NO)
             .build());
-        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
+        caseData.getApplicant2().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
 
@@ -347,10 +347,10 @@ public class TestDataHelper {
         var applicant1 = getApplicant();
         applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
         applicant1.setSolicitorRepresented(YES);
+        applicant1.setApplicantPrayer(ApplicantPrayer.builder().prayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE)).build());
 
         var application = Application.builder()
             .solSignStatementOfTruth(YES)
-            .applicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM))
             .applicationFeeOrderSummary(orderSummary)
             .applicationPayments(singletonList(payment))
             .marriageDetails(getMarriageDetails())
@@ -422,12 +422,12 @@ public class TestDataHelper {
         final Application application = caseData.getApplication();
         application.setDocumentUploadComplete(YES);
         application.setMarriageDetails(marriageDetails);
-        application.setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         application.setApplicant1StatementOfTruth(YES);
         application.setJurisdiction(getJurisdiction());
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setFinancialOrder(NO);
         caseData.getApplicant1().setLegalProceedings(NO);
+        caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
         caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_USER_EMAIL, null, null));
 
         return caseData;

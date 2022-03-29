@@ -45,6 +45,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         "paperFormApplicant2NoPaymentIncluded=\"Yes\" AND paperFormApplicant2PaymentOther=\"Yes\"";
     private static final String PAPER_FORM_PAYMENT_OTHER_DETAILS =
         String.format("(%s) OR (%s)", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS, PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS);
+    private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -104,7 +105,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2LanguagePreferenceWelsh")
             .field("applicant2SolicitorRepresented")
             .field("noticeOfProceedingsEmail")
-            .field("noticeOfProceedingsSolicitorFirm");
+            .field("noticeOfProceedingsSolicitorFirm")
+            .field("applicant2SolicitorRepresented", NEVER_SHOW)
+            .field("statementOfTruth", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2StatementOfTruth", "applicant2SolicitorRepresented=\"No\"")
+            .field("dateAosSubmitted");
     }
 
     private void buildPaymentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

@@ -28,10 +28,20 @@
       ],
       "marriageMarriedInUk": "Yes",
       "applicant1SolicitorFirmName": "some firm",
+      "paperFormRespondentServePostOnly": "No",
       "paperFormApplicant1SOTSignedOn": "18 01 2022",
       "paperFormApplicant1NoPaymentIncluded": "Yes",
       "marriageDate": "1990-01-01",
       "applicant2SolStatementOfReconciliationName": "some name",
+      "applicant1PrayerFinancialOrdersThemselves": [
+        "financialOrdersThemselves"
+      ],
+      "applicant2PrayerFinancialOrdersThemselves": [
+        "financialOrdersThemselves"
+      ],
+      "applicant1PrayerFinancialOrdersChild": [
+        "financialOrdersChild"
+      ],
       "marriageFormationType": "oppositeSexCouple",
       "applicant1MiddleName": "",
       "applicant2StatementOfTruth": "Yes",
@@ -67,9 +77,7 @@
       "applicant1PhoneNumber": "",
       "applicant2HWFNeedHelp": "Yes",
       "applicant1ScreenHasMarriageBroken": "Yes",
-      "applicant1PrayerHasBeenGivenCheckbox": [
-        "Yes"
-      ],
+      "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
       "jurisdictionConnections": [
         "A"
       ],
@@ -109,7 +117,7 @@
       "applicant2HWFAppliedForFees": "Yes",
       "applicant2MiddleName": "respMname",
       "marriageApplicant1Name": "app1 fullname",
-      "paperFormServiceOutsideUK": "No",
+      "paperFormServeOutOfUK": "No",
       "paperFormFeeInPounds": "595£",
       "applicant2SolStatementOfReconciliationFirm": "",
       "coApplicant1IsSubmitted": "No",

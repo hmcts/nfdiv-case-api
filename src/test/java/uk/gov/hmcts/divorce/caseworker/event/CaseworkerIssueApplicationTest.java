@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
@@ -32,7 +33,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
@@ -124,7 +125,7 @@ class CaseworkerIssueApplicationTest {
                 "Applicant2Gender cannot be empty or null",
                 "MarriageApplicant1Name cannot be empty or null",
                 "Applicant1ContactDetailsType cannot be empty or null",
-                "applicant1PrayerHasBeenGivenCheckbox cannot be empty or null",
+                "Applicant 1 must confirm prayer to dissolve their marriage (get a divorce)",
                 "MarriageDate cannot be empty or null",
                 "JurisdictionConnections cannot be empty or null",
                 "MarriageApplicant2Name cannot be empty or null",
@@ -187,12 +188,12 @@ class CaseworkerIssueApplicationTest {
             .firstName("app1FirstName")
             .lastName("app1LastName")
             .gender(Gender.MALE)
+            .applicantPrayer(ApplicantPrayer.builder().prayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE)).build())
             .contactDetailsType(PRIVATE)
             .build()
         );
 
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
         caseData.getApplication().getJurisdiction().setApplicant1Residence(YES);
