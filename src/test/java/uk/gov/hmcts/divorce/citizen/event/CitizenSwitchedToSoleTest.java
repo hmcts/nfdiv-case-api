@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleNotification;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -46,10 +47,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -352,6 +355,34 @@ class CitizenSwitchedToSoleTest {
         citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetailsBefore);
 
         verify(ccdAccessService, times(0)).unlinkUserFromApplication(anyString(), anyLong(), anyString());
+    }
+
+    @Test
+    void givenEventStartedWithValidJointCaseShouldRemoveJurisdictionAnswers() {
+        final long caseId = 1L;
+        CaseData caseData = validApplicant2CaseData();
+        setValidCaseInviteData(caseData);
+        caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_EMAIL, ACCESS_CODE, null));
+
+        caseData.getApplication().getJurisdiction().setApplicant1Domicile(YesOrNo.YES);
+        caseData.getApplication().getJurisdiction().setApplicant2Domicile(YesOrNo.YES);
+        caseData.getApplication().getJurisdiction().setResidualEligible(YesOrNo.NO);
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_RESIDENT_JOINT));
+        caseData.getApplication().getJurisdiction().setApplicant1Residence(YesOrNo.NO);
+        caseData.getApplication().getJurisdiction().setApplicant2Residence(YesOrNo.NO);
+        caseData.getApplication().getJurisdiction().setBothLastHabituallyResident(YesOrNo.NO);
+        caseData.getApplication().getJurisdiction().setApp1HabituallyResLastTwelveMonths(YesOrNo.NO);
+        caseData.getApplication().getJurisdiction().setApp1HabituallyResLastSixMonths(YesOrNo.NO);
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(caseId).build();
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
+        when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getApplication().getJurisdiction()).isNull();
     }
 
     private CaseData setValidCaseInviteData(CaseData caseData) {
