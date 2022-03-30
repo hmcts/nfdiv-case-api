@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-public class SolicitorConfirmReceipt implements CCDConfig<CaseData, State, UserRole> {
+public class ConfirmReceipt implements CCDConfig<CaseData, State, UserRole> {
     public static final String CONFIRM_RECEIPT = "confirm-receipt";
 
     @Override
