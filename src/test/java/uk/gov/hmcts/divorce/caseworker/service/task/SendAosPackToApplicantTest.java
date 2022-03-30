@@ -18,6 +18,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -31,8 +33,9 @@ class SendAosPackToApplicantTest {
     private SendAosPackToApplicant sendAosPackToApplicant;
 
     @Test
-    void shouldNotSendAosPackToApplicantIfApplicantIsRepresented() {
+    void shouldNotSendAosPackToApplicantIfApplicantIsRepresentedAndApplicationTypeIsJoint() {
         final var caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
@@ -54,6 +57,7 @@ class SendAosPackToApplicantTest {
     @Test
     void shouldSendAosPackToApplicantIfApplicantIsNotRepresented() {
         final var caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setSolicitorRepresented(NO);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -72,6 +76,7 @@ class SendAosPackToApplicantTest {
     @Test
     void shouldSendOverseasAosPackToApplicantIfApplicantAndRespondentAreNotRepresentedAndResppndentIsOverseas() {
         final var caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());

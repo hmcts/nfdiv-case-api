@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -31,6 +32,7 @@ public class CaseworkerUpdateDueDate implements CCDConfig<CaseData, State, UserR
             .grant(CREATE_READ_UPDATE_DELETE,
                 SUPER_USER)
             .grantHistoryOnly(
+                CASE_WORKER,
                 SOLICITOR,
                 LEGAL_ADVISOR))
             .page("updateDueDate")

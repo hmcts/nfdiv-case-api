@@ -21,7 +21,7 @@ public class SendAosPackToApplicant implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (!caseData.getApplicant1().isRepresented()) {
+        if (caseData.getApplicationType().isSole() && !caseData.getApplicant1().isRepresented()) {
 
             if (!caseData.getApplicant2().isRepresented() && caseData.getApplicant2().isBasedOverseas()) {
                 log.info("Sending NOP and application pack to bulk print as applicant 1 and applicant 2 are not "
