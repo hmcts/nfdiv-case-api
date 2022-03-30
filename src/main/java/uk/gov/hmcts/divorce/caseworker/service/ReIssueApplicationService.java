@@ -4,14 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.*;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -51,6 +44,9 @@ public class ReIssueApplicationService {
     @Autowired
     private SendAosPackToApplicant sendAosPackToApplicant;
 
+    @Autowired
+    private GenerateD10Form generateD10Form;
+
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
         ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
 
@@ -72,6 +68,7 @@ public class ReIssueApplicationService {
                 setReIssueAndDueDate,
                 generateNoticeOfProceeding,
                 generateRespondentAosInvitation,
+                generateD10Form,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else if (OFFLINE_AOS.equals(reissueOption)) {
@@ -88,6 +85,7 @@ public class ReIssueApplicationService {
                 generateDivorceApplication,
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,
+                generateD10Form,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else if (REISSUE_CASE.equals(reissueOption)) {
@@ -100,6 +98,7 @@ public class ReIssueApplicationService {
                 generateDivorceApplication,
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,
+                generateD10Form,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else {

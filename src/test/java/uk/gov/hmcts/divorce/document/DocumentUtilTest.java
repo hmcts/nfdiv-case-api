@@ -10,18 +10,15 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.*;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.*;
 
 @ExtendWith(MockitoExtension.class)
 class DocumentUtilTest {
@@ -146,6 +143,50 @@ class DocumentUtilTest {
 
         assertThat(letters.size()).isEqualTo(1);
         assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc3.getValue());
+    }
+
+    @Test
+    void shouldReturnTrueIfDocumentWithTypeD10IsPresent() {
+
+        final ListValue<DivorceDocument> d10Document = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(D10)
+                .build())
+            .build();
+
+        final boolean d10IsPresent = documentsWithDocumentType(
+            singletonList(d10Document),
+            D10);
+
+        assertThat(d10IsPresent).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfDocumentWithTypeD10IsNotPresent() {
+
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
+        final boolean d10IsPresent = documentsWithDocumentType(
+            singletonList(doc1),
+            D10);
+
+        assertThat(d10IsPresent).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfNullDocumentList() {
+        final boolean d10IsPresent = documentsWithDocumentType(null, D10);
+        assertThat(d10IsPresent).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfEmptyDocumentList() {
+        final boolean d10IsPresent = documentsWithDocumentType(emptyList(), D10);
+        assertThat(d10IsPresent).isFalse();
     }
 
     private DocumentInfo documentInfo() {

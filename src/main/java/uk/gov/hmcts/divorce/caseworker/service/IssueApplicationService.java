@@ -4,14 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
+import uk.gov.hmcts.divorce.caseworker.service.task.*;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
@@ -53,6 +46,9 @@ public class IssueApplicationService {
     private SendAosPackToApplicant sendAosPackToApplicant;
 
     @Autowired
+    private GenerateD10Form generateD10Form;
+
+    @Autowired
     private Clock clock;
 
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
@@ -69,6 +65,7 @@ public class IssueApplicationService {
             generateDivorceApplication,
             sendAosPackToRespondent,
             sendAosPackToApplicant,
+            generateD10Form,
             sendApplicationIssueNotifications
         ).run(caseDetails);
     }

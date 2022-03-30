@@ -36,6 +36,15 @@ public final class DocumentUtil {
             .build();
     }
 
+    public static boolean documentsWithDocumentType(final List<ListValue<DivorceDocument>> documents,
+                                                       final DocumentType documentType) {
+
+        return ofNullable(documents)
+            .flatMap(Collection::stream)
+            .map(ListValue::getValue)
+            .anyMatch(document -> documentType.equals(document.getDocumentType()));
+    }
+
     public static List<Letter> lettersWithDocumentType(final List<ListValue<DivorceDocument>> documents,
                                                        final DocumentType documentType) {
 
