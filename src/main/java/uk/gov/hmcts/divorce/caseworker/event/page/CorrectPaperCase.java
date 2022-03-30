@@ -57,6 +57,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
 
         buildApplicant2Fields(fieldCollectionBuilder);
 
+        buildServiceDetails(fieldCollectionBuilder);
+
         buildMarriageDetailFields(fieldCollectionBuilder);
 
         buildJurisdictionFields(fieldCollectionBuilder);
@@ -72,8 +74,6 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         buildSOTFields(fieldCollectionBuilder);
 
         buildCourtFeeFields(fieldCollectionBuilder);
-
-        buildServiceDetails(fieldCollectionBuilder);
 
         fieldCollectionBuilder
             .label("Label-CorrectScannedDocuments", "### Scanned Documents")
