@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -17,20 +17,20 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-public class SolicitorConfirmReceipt implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SOLICITOR_CONFIRM_RECEIPT = "solicitor-confirm-receipt";
+public class ConfirmReceipt implements CCDConfig<CaseData, State, UserRole> {
+    public static final String CONFIRM_RECEIPT = "confirm-receipt";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(SOLICITOR_CONFIRM_RECEIPT)
+            .event(CONFIRM_RECEIPT)
             .forStates(Holding)
             .showCondition("applicationType=\"jointApplication\"")
             .name("Confirm Receipt")
             .description("Confirm Receipt")
             .showSummary()
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, SOLICITOR, APPLICANT_2_SOLICITOR)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
+            .grant(CREATE_READ_UPDATE, SOLICITOR, APPLICANT_2_SOLICITOR, CASE_WORKER)
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR));
     }
 }
