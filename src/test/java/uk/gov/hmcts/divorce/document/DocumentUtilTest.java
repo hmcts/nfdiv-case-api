@@ -10,15 +10,21 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.*;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.*;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
 
 @ExtendWith(MockitoExtension.class)
 class DocumentUtilTest {
