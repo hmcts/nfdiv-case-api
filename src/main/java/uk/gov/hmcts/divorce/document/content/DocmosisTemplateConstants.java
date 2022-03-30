@@ -127,6 +127,9 @@ public final class DocmosisTemplateConstants {
     public static final String HUSBAND_OR_WIFE = "husband or wife";
     public static final String CIVIL_PARTNER = "civil partner";
 
+    public static final String DUE_DATE = "dueDate";
+    public static final String APPLICANT_SOLICITOR_REGISTERED = "isApplicantSolicitorRegistered";
+
     private DocmosisTemplateConstants() {
     }
 }
