@@ -1,13 +1,13 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails;
-import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.ProcessConfidentialDocumentsService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -27,15 +27,11 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
 
     public static final String CASEWORKER_UPDATE_CONTACT_DETAILS = "caseworker-update-contact-details";
 
-    private final CcdPageConfiguration updateContactDetails;
+    @Autowired
+    private UpdateContactDetails updateContactDetails;
 
-    private final ProcessConfidentialDocumentsService confidentialDocumentsService;
-
-    public CaseworkerUpdateContactDetails(UpdateContactDetails updateContactDetails,
-                                          ProcessConfidentialDocumentsService confidentialDocumentsService) {
-        this.updateContactDetails = updateContactDetails;
-        this.confidentialDocumentsService = confidentialDocumentsService;
-    }
+    @Autowired
+    private ProcessConfidentialDocumentsService confidentialDocumentsService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

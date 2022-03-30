@@ -1,12 +1,12 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.ProcessConfidentialDocumentsService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -26,15 +26,11 @@ public class SolicitorUpdateApplicant1ContactDetails implements CCDConfig<CaseDa
 
     public static final String APPLICANT_UPDATE_APPLICANT1_CONTACT_DETAILS = "solicitor-update-applicant1-contact-details";
 
-    private final CcdPageConfiguration applicant1UpdateContactDetails;
+    @Autowired
+    private UpdateApplicant1ContactDetails applicant1UpdateContactDetails;
 
-    private final ProcessConfidentialDocumentsService confidentialDocumentsService;
-
-    public SolicitorUpdateApplicant1ContactDetails(UpdateApplicant1ContactDetails applicant1UpdateContactDetails,
-                                                   ProcessConfidentialDocumentsService confidentialDocumentsService) {
-        this.applicant1UpdateContactDetails = applicant1UpdateContactDetails;
-        this.confidentialDocumentsService = confidentialDocumentsService;
-    }
+    @Autowired
+    private ProcessConfidentialDocumentsService confidentialDocumentsService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
