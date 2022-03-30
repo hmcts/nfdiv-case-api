@@ -86,6 +86,9 @@ apply_for_final_order:
 aos_overdue:
   arrange_service_offset_days: ${AOS_OVERDUE_ARRANGE_SERVICE_OFFSET_DAYS:28}
 
+applicant:
+  response_offset_days: ${APPLICANT_RESPOND_BY_OFFSET_DAYS:16}
+
 court:
   locations:
     serviceCentre:
