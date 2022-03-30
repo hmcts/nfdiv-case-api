@@ -28,7 +28,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_DOMICILED;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_DOMICILED;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_CP;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -140,7 +142,7 @@ public class ApplicationTransformerTest {
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
-        expectedApplication.getJurisdiction().setConnections(Set.of(APP_1_DOMICILED, RESIDUAL_JURISDICTION_CP));
+        expectedApplication.getJurisdiction().setConnections(Set.of(APP_1_DOMICILED, APP_1_RESIDENT_JOINT, RESIDUAL_JURISDICTION_CP));
 
         assertThat(transformedOutput.getCaseData().getApplication())
             .usingRecursiveComparison()
@@ -168,7 +170,6 @@ public class ApplicationTransformerTest {
         dataFields.setJurisdictionReasonsBothPartiesLastHabitual(EMPTY);
         dataFields.setJurisdictionReasons6MonthsHabitual(EMPTY);
         dataFields.setJurisdictionReasonsBothPartiesDomiciled(EMPTY);
-        dataFields.setJurisdictionReasonsJointHabitual(EMPTY);
 
         final var caseData = CaseData.builder().applicationType(SOLE_APPLICATION).divorceOrDissolution(DIVORCE).build();
         final var transformationDetails =
@@ -184,7 +185,7 @@ public class ApplicationTransformerTest {
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
-        expectedApplication.getJurisdiction().setConnections(Set.of(APP_2_DOMICILED));
+        expectedApplication.getJurisdiction().setConnections(Set.of(APP_2_RESIDENT_JOINT, APP_2_DOMICILED));
 
         assertThat(transformedOutput.getCaseData().getApplication())
             .usingRecursiveComparison()
