@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.solicitor.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -30,7 +29,6 @@ public class SolicitorSubmitJointApplicationService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    @Async
     public void submitEventForApprovalOrRequestingChanges(final CaseDetails<CaseData, State> details) {
         final Application application = details.getData().getApplication();
 
