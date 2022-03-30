@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.event.page.CorrectPaperCase;
+import uk.gov.hmcts.divorce.caseworker.event.page.CorrectRelationshipDetails;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -24,11 +25,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerCorrectPaperCase implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CORRECT_PAPER_CASE = "caseworker-correct-paper-case";
+    private final CcdPageConfiguration correctRelationshipDetails = new CorrectRelationshipDetails();
     private final CcdPageConfiguration correctPaperCase = new CorrectPaperCase();
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         var pageBuilder = addEventConfig(configBuilder);
+        correctRelationshipDetails.addTo(pageBuilder);
         correctPaperCase.addTo(pageBuilder);
     }
 
