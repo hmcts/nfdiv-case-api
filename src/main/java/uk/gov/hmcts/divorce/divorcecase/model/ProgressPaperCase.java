@@ -16,7 +16,10 @@ public enum ProgressPaperCase implements HasLabel {
     AWAITING_PAYMENT("Awaiting payment"),
 
     @JsonProperty("submitted")
-    SUBMITTED("submitted");
+    SUBMITTED("Submitted"),
+
+    @JsonProperty("awaitingHwfDecision")
+    AWAITING_HWF_DECISION("Awaiting HWF Decision");
 
     private final String label;
 }
