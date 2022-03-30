@@ -50,17 +50,7 @@ public class NoticeOfProceedingsPrinter {
         final List<Letter> lettersWithDocumentTypeNop = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS_APP_1);
 
-        final boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
-        final boolean isApplicant1Offline = caseData.getApplicant1().isOffline();
-        final boolean applicant1NoticeOfProceedingsGenerated = isApplicant1Represented || isApplicant1Offline;
-
-        final boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
-        final boolean isApplicant2Offline = caseData.getApplicant2().isOffline();
-        final boolean applicant2NoticeOfProceedingsGenerated = isApplicant2Represented || isApplicant2Offline;
-
-        final Letter noticeOfProceedingsLetter = applicant1NoticeOfProceedingsGenerated && applicant2NoticeOfProceedingsGenerated
-            ? lettersWithDocumentTypeNop.get(1)
-            : firstElement(lettersWithDocumentTypeNop);
+        final Letter noticeOfProceedingsLetter = firstElement(lettersWithDocumentTypeNop);
 
         final List<Letter> lettersWithDocumentTypeApplication = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(), APPLICATION);
