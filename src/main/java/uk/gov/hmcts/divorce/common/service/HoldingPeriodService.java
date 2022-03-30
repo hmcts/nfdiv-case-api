@@ -16,6 +16,9 @@ public class HoldingPeriodService {
     @Value("${case_progression.holding_offset_days}")
     private int holdingPeriodInDays;
 
+    @Value("${applicant.response_offset_days}")
+    private int respondOffsetInDays;
+
     @Autowired
     private Clock clock;
 
@@ -29,5 +32,9 @@ public class HoldingPeriodService {
 
     public LocalDate getDueDateFor(final LocalDate issueDate) {
         return issueDate.plusDays(holdingPeriodInDays);
+    }
+
+    public LocalDate getRespondByDateFor(final LocalDate issueDate) {
+        return issueDate.plusDays(respondOffsetInDays);
     }
 }

@@ -37,7 +37,6 @@ public class MarriageDetails {
     @CCD(
         label = "Did the ${labelContentMarriageOrCivilPartnership} take place in the UK?"
     )
-
     private YesOrNo marriedInUk;
 
     @CCD(

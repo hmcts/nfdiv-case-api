@@ -44,18 +44,33 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             .page("correctPaperCase", this::midEvent)
             .pageLabel(TITLE)
             .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getApplicantOrApplicant1UC, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getApplicant2, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getApplicant2UC, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getTheApplicant2, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getTheApplicant2UC, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getUnionTypeUC, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnershipApplication, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getFinaliseDivorceOrEndCivilPartnership, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getApplicantOrApplicant1, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getDivorceOrEndCivilPartnership, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getMarriageOrCivilPartnership, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getMarriageOrCivilPartnershipUC, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getDivorceOrLegallyEnd, NEVER_SHOW)
                 .readonlyNoSummary(LabelContent::getApplicantsOrApplicant1s, NEVER_SHOW)
                 .readonlyNoSummary(LabelContent::getTheApplicantOrApplicant1, NEVER_SHOW)
-                .readonlyNoSummary(LabelContent::getApplicantOrApplicant1UC, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getTheApplicantOrApplicant1UC, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getGotMarriedOrFormedCivilPartnership, NEVER_SHOW)
                 .readonlyNoSummary(LabelContent::getRespondentsOrApplicant2s, NEVER_SHOW)
-                .readonlyNoSummary(LabelContent::getTheApplicant2, NEVER_SHOW)
             .done();
-
-        buildDivorceDetailFields(fieldCollectionBuilder);
 
         buildApplicant1Fields(fieldCollectionBuilder);
 
         buildApplicant2Fields(fieldCollectionBuilder);
+
+        buildServiceDetails(fieldCollectionBuilder);
 
         buildMarriageDetailFields(fieldCollectionBuilder);
 
@@ -73,8 +88,6 @@ public class CorrectPaperCase implements CcdPageConfiguration {
 
         buildCourtFeeFields(fieldCollectionBuilder);
 
-        buildServiceDetails(fieldCollectionBuilder);
-
         fieldCollectionBuilder
             .label("Label-CorrectScannedDocuments", "### Scanned Documents")
             .complex(CaseData::getDocuments)
@@ -87,20 +100,9 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         fieldCollectionBuilder
             .label("Label-CorrectServiceDetails", "### Service details")
             .complex(CaseData::getPaperFormDetails)
-                .optional(PaperFormDetails::getServeOutOfUK)
-                .optional(PaperFormDetails::getRespondentServePostOnly)
-                .optional(PaperFormDetails::getApplicantWillServeApplication)
-                .done();
-    }
-
-    private void buildDivorceDetailFields(
-        FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
-        fieldCollectionBuilder
-            .label("Label-CorrectYourApplication", "### Your application details")
-            .mandatory(CaseData::getDivorceOrDissolution)
-            .mandatory(CaseData::getApplicationType)
-            .complex(CaseData::getApplication)
-                .mandatory(Application::getScreenHasMarriageCert)
+            .optional(PaperFormDetails::getServeOutOfUK)
+            .optional(PaperFormDetails::getRespondentServePostOnly)
+            .optional(PaperFormDetails::getApplicantWillServeApplication)
             .done();
     }
 
@@ -114,7 +116,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getFirstName)
                 .optional(Applicant::getMiddleName)
                 .mandatory(Applicant::getLastName)
-                .mandatory(Applicant::getNameDifferentToMarriageCertificate)
+                .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
+                    "Have they changed their name since they ${labelContentGotMarriedOrFormedCivilPartnership}?")
                 .mandatory(Applicant::getNameChangedHowOtherDetails,
                 "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getContactDetailsType)
@@ -146,7 +149,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getFirstName)
                 .optional(Applicant::getMiddleName)
                 .mandatory(Applicant::getLastName)
-                .mandatory(Applicant::getNameDifferentToMarriageCertificate)
+                .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
+                    "Have they changed their name since they ${labelContentGotMarriedOrFormedCivilPartnership}?")
                 .mandatory(Applicant::getNameChangedHowOtherDetails,
                 "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatoryWithLabel(Applicant::getAddress, "${labelContentRespondentsOrApplicant2s} address")
@@ -171,17 +175,17 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                                              fieldCollectionBuilder) {
         fieldCollectionBuilder
             .complex(CaseData::getApplication)
-                .label("Label-CorrectMarriageDetails", "### Marriage details")
+                .label("Label-CorrectMarriageDetails", "### ${labelContentMarriageOrCivilPartnershipUC} details")
                 .complex(Application::getMarriageDetails)
                     .mandatory(MarriageDetails::getMarriedInUk)
                     .mandatoryWithLabel(MarriageDetails::getIssueApplicationWithoutMarriageCertificate,
-                "Are you making a separate application to issue without your marriage or civil partnership certificate?")
+                "Are you making a separate application to issue without your ${labelContentMarriageOrCivilPartnership} certificate?")
                     .mandatoryWithLabel(MarriageDetails::getDate, "Date of ${labelContentMarriageOrCivilPartnershipUC}")
                     .mandatoryWithLabel(MarriageDetails::getApplicant1Name,
-                "${labelContentApplicantsOrApplicant1s} full name as on marriage certificate")
+                "${labelContentApplicantsOrApplicant1s} full name as on ${labelContentMarriageOrCivilPartnership} certificate")
                     .mandatoryWithLabel(MarriageDetails::getApplicant2Name,
-                "${labelContentRespondentsOrApplicant2s} full name as on marriage certificate")
-                    .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
+                "${labelContentRespondentsOrApplicant2s} full name as on ${labelContentMarriageOrCivilPartnership} certificate")
+                    .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect) //fix
                     .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,
                 "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
                 .done()
@@ -307,9 +311,6 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         final CaseData data = details.getData();
         final Application application = data.getApplication();
         final List<String> errors = new ArrayList<>();
-
-        data.getLabelContent().setApplicationType(data.getApplicationType());
-        data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
 
         if (!application.getApplicant1ScreenHasMarriageBroken().toBoolean()) {
             errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
