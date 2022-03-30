@@ -41,6 +41,7 @@ public class CaseworkerCorrectPaperCase implements CCDConfig<CaseData, State, Us
             .forState(NewPaperCase)
             .name("Correct paper case")
             .description("Correct paper case")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SUPER_USER));
