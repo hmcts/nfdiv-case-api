@@ -16,9 +16,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerProgressPaperCase.CASEWORKER_PROGRESS_PAPER_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase.AWAITING_DOCUMENTS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase.AWAITING_HWF_DECISION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase.AWAITING_PAYMENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase.SUBMITTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -86,6 +88,22 @@ public class CaseworkerProgressPaperCaseTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerProgressPaperCase.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(Submitted);
+    }
+
+    @Test
+    void shouldUpdateCaseStateWhenCaseworkerSelectsAwaitingHwfDecision() {
+
+        final long caseId = 1L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = validApplicant1CaseData();
+        caseData.getApplication().setProgressPaperCase(AWAITING_HWF_DECISION);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerProgressPaperCase.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(AwaitingHWFDecision);
     }
 
     @Test
