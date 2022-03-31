@@ -21,6 +21,7 @@ import uk.gov.hmcts.reform.document.utils.InMemoryMultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.nio.file.Files.readAllBytes;
@@ -73,6 +74,7 @@ public class GenerateD10Form implements CaseTask {
         Document document = uploadD10ToDocumentStore();
 
         final ListValue<DivorceDocument> d10Document = ListValue.<DivorceDocument>builder()
+            .id(UUID.randomUUID().toString())
             .value(DivorceDocument.builder()
                 .documentType(D10)
                 .documentFileName(D10_FILENAME)
