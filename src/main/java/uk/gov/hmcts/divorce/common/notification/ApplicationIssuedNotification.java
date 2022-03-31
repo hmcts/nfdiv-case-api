@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.common.notification;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
@@ -69,9 +68,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     @Autowired
     private HoldingPeriodService holdingPeriodService;
-
-    @Value("${case_progression.holding_offset_days}")
-    private int holdingPeriodInDays;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
@@ -234,7 +230,10 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     private Map<String, String> commonTemplateVars(final CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(
+            SUBMISSION_RESPONSE_DATE,
+            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
+        );
         return templateVars;
     }
 
