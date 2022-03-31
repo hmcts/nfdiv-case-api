@@ -14,13 +14,13 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_LABEL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_REGISTERED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
@@ -31,7 +31,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WHO_APPLIED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -59,8 +58,11 @@ public class NoticeOfProceedingApplicantSolicitorContent {
         Applicant applicant1 = caseData.getApplicant1();
         Applicant applicant2 = caseData.getApplicant2();
         Solicitor applicant1Solicitor = applicant1.getSolicitor();
+        Solicitor applicant2Solicitor = applicant2.getSolicitor();
         LocalDate applicationIssueDate = caseData.getApplication().getIssueDate();
         boolean isJoint = !caseData.getApplicationType().isSole();
+        boolean oneSolicitorApplyingForBothParties = applicant1.isRepresented() && applicant2.isRepresented()
+            && applicant1Solicitor.equals(applicant2Solicitor);
 
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
@@ -70,8 +72,9 @@ public class NoticeOfProceedingApplicantSolicitorContent {
         templateContent.put(ISSUE_DATE, applicationIssueDate.format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, isJoint);
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
-        templateContent.put(WHO_APPLIED, isJoint ? "Applicant's solicitor" : "Applicants solicitor");
-        templateContent.put(APPLICANT_SOLICITOR_REGISTERED, isNull(applicant1Solicitor.getOrganisationPolicy()));
+        templateContent.put(APPLICANT_SOLICITOR_LABEL,
+            isJoint && oneSolicitorApplyingForBothParties ? "Applicants solicitor" : "Applicant's solicitor");
+        templateContent.put(APPLICANT_SOLICITOR_REGISTERED, applicant1Solicitor.hasOrgId());
         templateContent.put(SOLICITOR_NAME, applicant1Solicitor.getName());
         templateContent.put(SOLICITOR_ADDRESS, applicant1Solicitor.getAddress());
 
@@ -85,10 +88,12 @@ public class NoticeOfProceedingApplicantSolicitorContent {
             applicant1.isRepresented() ? applicant1Solicitor.getName() : NOT_REPRESENTED
         );
 
-        templateContent.put(
-            DUE_DATE,
-            holdingPeriodService.getRespondByDateFor(applicationIssueDate).format(DATE_TIME_FORMATTER)
-        );
+        if (!isJoint) {
+            templateContent.put(
+                DUE_DATE,
+                holdingPeriodService.getRespondByDateFor(applicationIssueDate).format(DATE_TIME_FORMATTER)
+            );
+        }
 
         templateContent.put(CTSC_CONTACT_DETAILS, CtscContactDetails
             .builder()

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -38,6 +39,7 @@ public class NoticeOfProceedingsPrinter {
     private static final String LETTER_TYPE_APPLICANT_2_NOP = "applicant2-notice-of-proceedings";
     private static final String LETTER_TYPE_APPLICANT_2_SOL_NOP = "applicant2-solicitor-notice-of-proceedings";
     private static final String LETTER_TYPE_APPLICANT_2_SOL_NOP_D10_COVERSHEET = "applicant2-solicitor-notice-of-proceedings-with-d10";
+    private static final String LETTER_TYPE_APPLICANT_1_SOL_NOP = "applicant1-solicitor-notice-of-proceedings";
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -98,6 +100,27 @@ public class NoticeOfProceedingsPrinter {
             log.warn(
                 "Notice of Proceedings for applicant 2 has missing documents. Expected documents with type {} , for Case ID: {}",
                 List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_2),
+                caseId
+            );
+        }
+    }
+
+    public void sendLetterToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
+        List<Letter> lettersToPrint = lettersForApplicant1(caseData);
+
+        log.info("Sending Notice of Proceedings letter and copy of Divorce Application to applicant solicitor for case: {}", caseId);
+
+        if (!isEmpty(lettersToPrint)) {
+            final String caseIdString = caseId.toString();
+            final Print print = new Print(lettersToPrint,
+                caseIdString, caseIdString, LETTER_TYPE_APPLICANT_1_SOL_NOP);
+            final UUID letterId = bulkPrintService.print(print);
+
+            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+        } else {
+            log.warn(
+                "Notice of Proceedings for applicant 1 solicitor has missing documents. Expected documents with type {} , for Case ID: {}",
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_1),
                 caseId
             );
         }
@@ -171,9 +194,17 @@ public class NoticeOfProceedingsPrinter {
         }
     }
 
+    private List<Letter> lettersForApplicant1(CaseData caseData) {
+        return getLettersToPrintForApplicants(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
+    }
+
     private List<Letter> lettersForApplicant2(CaseData caseData) {
+        return getLettersToPrintForApplicants(caseData, NOTICE_OF_PROCEEDINGS_APP_2);
+    }
+
+    private List<Letter> getLettersToPrintForApplicants(CaseData caseData, DocumentType documentType) {
         final List<Letter> lettersWithDocumentTypeNop = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS_APP_2);
+            caseData.getDocuments().getDocumentsGenerated(), documentType);
 
         final Letter noticeOfProceedingsLetter = firstElement(lettersWithDocumentTypeNop);
 

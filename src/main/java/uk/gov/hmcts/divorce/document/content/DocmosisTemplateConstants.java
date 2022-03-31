@@ -129,6 +129,7 @@ public final class DocmosisTemplateConstants {
 
     public static final String DUE_DATE = "dueDate";
     public static final String APPLICANT_SOLICITOR_REGISTERED = "isApplicantSolicitorRegistered";
+    public static final String APPLICANT_SOLICITOR_LABEL = "applicantSolicitorLabel";
 
     private DocmosisTemplateConstants() {
     }

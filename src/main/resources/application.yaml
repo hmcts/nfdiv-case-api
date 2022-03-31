@@ -237,6 +237,7 @@ docmosis:
       COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
       GENERAL_LETTER: NFD_General_Letter.docx
+      NOTICE_OF_PROCEEDINGS_APPLICANT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Applicant_Solicitor.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -266,6 +267,7 @@ docmosis:
       COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
       GENERAL_LETTER: NFD_General_Letter.docx
+      NOTICE_OF_PROCEEDINGS_APPLICANT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Applicant_Solicitor.docx
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
