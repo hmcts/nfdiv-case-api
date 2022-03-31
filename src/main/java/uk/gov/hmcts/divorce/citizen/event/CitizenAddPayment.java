@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -69,7 +68,7 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(details.getData())
-                .state(Draft)
+                .state(AwaitingPayment)
                 .build();
         }
 

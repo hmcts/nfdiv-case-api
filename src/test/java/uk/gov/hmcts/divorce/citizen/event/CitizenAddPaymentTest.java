@@ -87,7 +87,7 @@ public class CitizenAddPaymentTest {
     }
 
     @Test
-    void givenUnsuccessfulPaymentCaseDataWhenCallbackIsInvokedThenSetToDraft() {
+    void givenUnsuccessfulPaymentCaseDataWhenCallbackIsInvokedThenSetToAwaitingPayment() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
@@ -105,7 +105,7 @@ public class CitizenAddPaymentTest {
         final var response = citizenAddPayment.aboutToSubmit(details, details);
 
         verifyNoInteractions(submissionService);
-        assertThat(response.getState()).isEqualTo(Draft);
+        assertThat(response.getState()).isEqualTo(AwaitingPayment);
     }
 
     @Test
@@ -178,7 +178,7 @@ public class CitizenAddPaymentTest {
         final AboutToStartOrSubmitResponse<CaseData, State> result = citizenAddPayment.aboutToSubmit(details, details);
 
         assertThat(result.getData()).isSameAs(caseData);
-        assertThat(result.getState()).isEqualTo(Draft);
+        assertThat(result.getState()).isEqualTo(AwaitingPayment);
         verifyNoInteractions(submissionService);
     }
 }
