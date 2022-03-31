@@ -12,13 +12,17 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
+import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
@@ -273,5 +277,43 @@ public class NoticeOfProceedingsPrinterTest {
         noticeOfProceedingsPrinter.sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(bulkPrintService);
+    }
+
+    @Test
+    void shouldPrintApplicant1NoticeOfProceedingWhenApplicantContactIsPrivateAndConfidentialDocumentsArePresent() {
+        final ListValue<ConfidentialDivorceDocument> applicant1NopDocument = ListValue.<ConfidentialDivorceDocument>builder()
+            .value(ConfidentialDivorceDocument.builder()
+                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> applicant1ApplicationDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
+            .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
+            .documents(
+                CaseDocuments.builder()
+                    .documentsGenerated(List.of(applicant1ApplicationDocument))
+                    .confidentialDocumentsGenerated(List.of(applicant1NopDocument))
+                    .build()
+            )
+            .build();
+
+        when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
+
+        noticeOfProceedingsPrinter.sendLetterToApplicant1(caseData, TEST_CASE_ID);
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("applicant1-notice-of-proceedings");
+        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(applicant1NopDocument.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(applicant1ApplicationDocument.getValue());
     }
 }

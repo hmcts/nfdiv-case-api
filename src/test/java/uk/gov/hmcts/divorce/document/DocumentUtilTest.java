@@ -6,21 +6,29 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.isApplicableForConfidentiality;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
 
 @ExtendWith(MockitoExtension.class)
@@ -146,6 +154,62 @@ class DocumentUtilTest {
 
         assertThat(letters.size()).isEqualTo(1);
         assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc3.getValue());
+    }
+
+    @Test
+    void mapToLettersShouldReturnListOfLettersOfGivenDocumentType() {
+
+        final ListValue<Document> doc1 = ListValue.<Document>builder()
+            .value(Document.builder().filename("doc1.pdf").build())
+            .build();
+
+        final ListValue<Document> doc2 = ListValue.<Document>builder()
+            .value(Document.builder().filename("doc2.pdf").build())
+            .build();
+
+        final List<Letter> letters = mapToLetters(asList(doc1, doc2), NOTICE_OF_PROCEEDINGS_APP_1);
+
+        assertThat(letters.size()).isEqualTo(2);
+        assertThat(
+            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentFileName()).collect(Collectors.toList()))
+            .containsExactlyInAnyOrder("doc1.pdf", "doc2.pdf");
+        assertThat(
+            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentType()).collect(Collectors.toList()))
+            .containsExactlyInAnyOrder(NOTICE_OF_PROCEEDINGS_APP_1, NOTICE_OF_PROCEEDINGS_APP_1);
+    }
+
+    @Test
+    public void isApplicableForConfidentialityShouldReturnTrueForApplicant1WhenGivenDocumentTypeIsApplicableForConfidentiality() {
+        assertTrue(isApplicableForConfidentiality(DocumentType.NOTICE_OF_PROCEEDINGS_APP_1, true));
+    }
+
+    @Test
+    public void isApplicableForConfidentialityShouldReturnTrueForApplicant2WhenGivenDocumentTypeIsApplicableForConfidentiality() {
+        assertTrue(isApplicableForConfidentiality(DocumentType.NOTICE_OF_PROCEEDINGS_APP_2, false));
+    }
+
+    @Test
+    public void isApplicableForConfidentialityShouldReturnTrueWhenGivenDocumentTypeIsApplicableForConfidentiality() {
+        assertTrue(isApplicableForConfidentiality(DocumentType.NOTICE_OF_PROCEEDINGS_APP_1, null));
+    }
+
+    @Test
+    public void isApplicableForConfidentialityShouldReturnFalseWhenGivenDocumentTypeIsNotApplicableForConfidentiality() {
+        assertFalse(isApplicableForConfidentiality(APPLICATION, null));
+    }
+
+    @Test
+    public void isApplicableForConfidentialityShouldReturnTrueForApplicant1WhenConfidentialDocumentReceivedIsApplicableForConfidentiality(
+
+    ) {
+        assertTrue(isApplicableForConfidentiality(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1, true));
+    }
+
+    @Test
+    public void isApplicableForConfidentialityShouldReturnTrueForApplicant2WhenConfidentialDocumentReceivedIsApplicableForConfidentiality(
+
+    ) {
+        assertTrue(isApplicableForConfidentiality(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2, false));
     }
 
     private DocumentInfo documentInfo() {

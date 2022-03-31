@@ -69,6 +69,20 @@
     ],
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "accessCode": "${json-unit.any-string}",
+    "confidentialDocumentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "confidentialDocumentsReceived": "noticeOfProceedings",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          },
+          "documentFileName": "${json-unit.any-string}"
+        }
+      }
+    ],
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
@@ -103,18 +117,6 @@
             "document_binary_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",
             "document_url": "${json-unit.any-string}"
-          }
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentFileName": "${json-unit.any-string}",
-          "documentType": "noticeOfProceedings",
-          "documentLink": {
-            "document_url": "${json-unit.any-string}",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "${json-unit.any-string}"
           }
         }
       }
