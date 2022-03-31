@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
     APPLICATION("Confidential - Application"),
 
     @JsonProperty("bailiffService")
+    @JsonAlias({"serviceBailiff"})
     BAILIFF_SERVICE("Confidential - Bailiff Service"),
 
     @JsonProperty("coe")
