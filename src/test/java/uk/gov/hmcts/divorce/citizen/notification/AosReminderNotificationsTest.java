@@ -69,7 +69,7 @@ class AosReminderNotificationsTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        data.getApplication().setSolServiceMethod(COURT_SERVICE);
+        data.getApplication().setServiceMethod(COURT_SERVICE);
         data.getApplicant2().setEmail(null);
         data.setCaseInvite(new CaseInvite("applicant2@test.com", ACCESS_CODE, null));
 
@@ -101,7 +101,7 @@ class AosReminderNotificationsTest {
         data.setDivorceOrDissolution(DISSOLUTION);
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        data.getApplication().setSolServiceMethod(COURT_SERVICE);
+        data.getApplication().setServiceMethod(COURT_SERVICE);
         data.getApplicant2().setEmail(null);
         data.setCaseInvite(new CaseInvite("applicant2@test.com", ACCESS_CODE, null));
 
@@ -135,7 +135,7 @@ class AosReminderNotificationsTest {
         data.setDivorceOrDissolution(DISSOLUTION);
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        data.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
+        data.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         data.getApplicant2().setEmail(null);
         data.setCaseInvite(new CaseInvite(null, ACCESS_CODE, null));
 

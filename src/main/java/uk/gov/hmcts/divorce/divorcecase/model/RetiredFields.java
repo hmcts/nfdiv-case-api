@@ -18,6 +18,9 @@ import java.util.Set;
 @NoArgsConstructor
 public class RetiredFields {
 
+    @CCD(label = "Retired solServiceMethod")
+    private ServiceMethod solServiceMethod;
+
     @CCD(label = "Case data version")
     private int dataVersion;
 
@@ -44,7 +47,8 @@ public class RetiredFields {
 
     @JsonIgnore
     private static final Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = Map.of(
-        "exampleRetiredField", moveTo("applicant1FirstName")
+        "exampleRetiredField", moveTo("applicant1FirstName"),
+        "solServiceMethod", moveTo(("serviceMethod"))
     );
 
     /**

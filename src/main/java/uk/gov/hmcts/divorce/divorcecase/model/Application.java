@@ -123,7 +123,7 @@ public class Application {
         label = "How would you like the respondent to be served?",
         access = {DefaultAccess.class}
     )
-    private ServiceMethod solServiceMethod;
+    private ServiceMethod serviceMethod;
 
     @CCD(
         label = "I have discussed the possibility of a reconciliation with the applicant.",
@@ -501,12 +501,12 @@ public class Application {
 
     @JsonIgnore
     public boolean isSolicitorServiceMethod() {
-        return SOLICITOR_SERVICE.equals(solServiceMethod);
+        return SOLICITOR_SERVICE.equals(serviceMethod);
     }
 
     @JsonIgnore
     public boolean isPersonalServiceMethod() {
-        return PERSONAL_SERVICE.equals(solServiceMethod);
+        return PERSONAL_SERVICE.equals(serviceMethod);
     }
 
     @JsonIgnore

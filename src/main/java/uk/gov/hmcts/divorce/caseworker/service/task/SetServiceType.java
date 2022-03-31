@@ -22,7 +22,7 @@ public class SetServiceType implements CaseTask {
         final Applicant applicant2 = caseData.getApplicant2();
 
         if (!applicant1.isRepresented() && !applicant2.isRepresented() && applicant2.isBasedOverseas()) {
-            caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+            caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         }
 
         return details;
