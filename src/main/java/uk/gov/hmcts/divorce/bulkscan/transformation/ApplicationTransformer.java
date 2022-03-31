@@ -98,11 +98,12 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         if (toBoolean(ocrDataFields.getJurisdictionReasonsRespHabitual())) {
             connections.add(APP_2_RESIDENT_SOLE);
         }
-        if (ocrDataFields.getJurisdictionReasonsJointHabitualWho().contains(APPLICANT_APPLICANT_1)
-        || ocrDataFields.getJurisdictionReasonsJointHabitualWho().contains(APPLICANT_1)) {
+        if (APPLICANT_1.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
             connections.add(APP_1_RESIDENT_JOINT);
-        }
-        if (ocrDataFields.getJurisdictionReasonsJointHabitualWho().contains(APPLICANT_2)) {
+        } else if (APPLICANT_2.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
+            connections.add(APP_2_RESIDENT_JOINT);
+        } else if (ocrDataFields.getJurisdictionReasonsJointHabitualWho().equalsIgnoreCase(APPLICANT_1 + "," + APPLICANT_2)) {
+            connections.add(APP_1_RESIDENT_JOINT);
             connections.add(APP_2_RESIDENT_JOINT);
         }
         if (toBoolean(ocrDataFields.getJurisdictionReasons1YrHabitual())) {
