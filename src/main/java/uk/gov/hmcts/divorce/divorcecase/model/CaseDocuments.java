@@ -65,6 +65,14 @@ public class CaseDocuments {
     private List<ListValue<ConfidentialDivorceDocument>> confidentialDocumentsUploaded;
 
     @CCD(
+        label = "Confidential documents generated",
+        typeOverride = Collection,
+        typeParameterOverride = "ConfidentialDivorceDocument",
+        access = {CaseworkerCourtAdminWithSolicitorAccess.class}
+    )
+    private List<ListValue<ConfidentialDivorceDocument>> confidentialDocumentsGenerated;
+
+    @CCD(
         label = "Documents generated",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",

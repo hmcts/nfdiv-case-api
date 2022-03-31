@@ -132,25 +132,25 @@ public class NoticeOfProceedingApplicantSolicitorContentTest {
 
         final Map<String, Object> templateContent = applicantSolicitorNopContent.apply(caseData, TEST_CASE_ID);
 
-        assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
-            entry(APPLICANT_1_FIRST_NAME, "test_first_name"),
-            entry(APPLICANT_1_LAST_NAME, "test_last_name"),
-            entry(APPLICANT_2_FIRST_NAME, "applicant_2_first_name"),
-            entry(APPLICANT_2_LAST_NAME, "test_last_name"),
-            entry(ISSUE_DATE, "30 March 2022"),
-            entry(IS_JOINT, true),
-            entry(IS_DIVORCE, true),
-            entry(APPLICANT_SOLICITOR_LABEL, "Applicants solicitor"),
-            entry(APPLICANT_SOLICITOR_REGISTERED, true),
-            entry(SOLICITOR_NAME, "The Solicitor"),
-            entry(SOLICITOR_ADDRESS, ADDRESS),
-            entry(SOLICITOR_REFERENCE, "Not provided"),
-            entry(APPLICANT_1_SOLICITOR_NAME, "The Solicitor"),
-            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
-        );
-
-        assertThat(templateContent).doesNotContain(entry(DUE_DATE, "15 April 2022"));
+        assertThat(templateContent)
+            .doesNotContain(
+                entry(DUE_DATE, "15 April 2022"))
+            .contains(
+                entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+                entry(APPLICANT_1_FIRST_NAME, "test_first_name"),
+                entry(APPLICANT_1_LAST_NAME, "test_last_name"),
+                entry(APPLICANT_2_FIRST_NAME, "applicant_2_first_name"),
+                entry(APPLICANT_2_LAST_NAME, "test_last_name"),
+                entry(ISSUE_DATE, "30 March 2022"),
+                entry(IS_JOINT, true),
+                entry(IS_DIVORCE, true),
+                entry(APPLICANT_SOLICITOR_LABEL, "Applicants solicitor"),
+                entry(APPLICANT_SOLICITOR_REGISTERED, true),
+                entry(SOLICITOR_NAME, "The Solicitor"),
+                entry(SOLICITOR_ADDRESS, ADDRESS),
+                entry(SOLICITOR_REFERENCE, "Not provided"),
+                entry(APPLICANT_1_SOLICITOR_NAME, "The Solicitor"),
+                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT));
 
         verifyNoInteractions(holdingPeriodService);
     }

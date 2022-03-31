@@ -21,6 +21,10 @@ import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.isApplicableForConfidentiality;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithConfidentialDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
@@ -49,8 +53,7 @@ public class NoticeOfProceedingsPrinter {
 
     public void sendLetterToApplicant1(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> lettersWithDocumentTypeNop = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(), NOTICE_OF_PROCEEDINGS_APP_1);
+        final List<Letter> lettersWithDocumentTypeNop = getNotificationLetters(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
 
         final Letter noticeOfProceedingsLetter = firstElement(lettersWithDocumentTypeNop);
 
@@ -203,8 +206,7 @@ public class NoticeOfProceedingsPrinter {
     }
 
     private List<Letter> getLettersToPrintForApplicants(CaseData caseData, DocumentType documentType) {
-        final List<Letter> lettersWithDocumentTypeNop = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(), documentType);
+        final List<Letter> lettersWithDocumentTypeNop = getNotificationLetters(caseData, documentType);
 
         final Letter noticeOfProceedingsLetter = firstElement(lettersWithDocumentTypeNop);
 
@@ -235,5 +237,20 @@ public class NoticeOfProceedingsPrinter {
         templateContent.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
         templateContent.put(SOLICITOR_ADDRESS, caseData.getApplicant2().getSolicitor().getAddress());
         return templateContent;
+    }
+
+    private List<Letter> getNotificationLetters(final CaseData caseData, final DocumentType documentType) {
+        List<Letter> notificationLetters;
+
+        if (isApplicableForConfidentiality(documentType, null) && isConfidential(caseData, documentType)) {
+            notificationLetters = lettersWithConfidentialDocumentType(
+                caseData.getDocuments().getConfidentialDocumentsGenerated(),
+                getConfidentialDocumentType(documentType));
+        } else {
+            notificationLetters = lettersWithDocumentType(
+                caseData.getDocuments().getDocumentsGenerated(),
+                documentType);
+        }
+        return notificationLetters;
     }
 }
