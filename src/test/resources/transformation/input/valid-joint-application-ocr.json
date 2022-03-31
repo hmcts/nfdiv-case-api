@@ -1,0 +1,135 @@
+[
+  {
+    "name": "applicationForDivorce",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsBothPartiesHabitual",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsRespHabitual",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsBothPartiesLastHabitual",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsJointHabitual",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsJointHabitualWho",
+    "value": "applicant,applicant1,applicant2"
+  },
+  {
+    "name": "jurisdictionReasons6MonthsHabitual",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsBothPartiesDomiciled",
+    "value": "true"
+  },
+  {
+    "name": "jurisdictionReasonsSameSex",
+    "value": "true"
+  },
+  {
+    "name": "soleOrApplicant1ConfirmationOfBreakdown",
+    "value": "true"
+  },
+  {
+    "name": "applicant2ConfirmationOfBreakdown",
+    "value": "true"
+  },
+  {
+    "name": "existingOrPreviousCourtCases",
+    "value": "Both"
+  },
+  {
+    "name": "existingOrPreviousCourtCaseNumbers",
+    "value": ""
+  },
+  {
+    "name": "summaryOfExistingOrPreviousCourtCases",
+    "value": ""
+  },
+  {
+    "name": "soleOrApplicant1FinancialOrder",
+    "value": "Yes"
+  },
+  {
+    "name": "soleOrApplicant1FinancialOrderFor",
+    "value": "myself,children"
+  },
+  {
+    "name": "applicant2FinancialOrder",
+    "value": "No"
+  },
+  {
+    "name": "applicant2FinancialOrderFor",
+    "value": ""
+  },
+  {
+    "name": "courtFee",
+    "value": "595£"
+  },
+  {
+    "name": "soleOrApplicant1NoPaymentIncluded",
+    "value": "Yes"
+  },
+  {
+    "name": "soleOrApplicant1HWFConfirmation",
+    "value": "HWF-123"
+  },
+  {
+    "name": "soleOrApplicant1HWFApp",
+    "value": "true"
+  },
+  {
+    "name": "soleOrApplicant1PaymentOther",
+    "value": "false"
+  },
+  {
+    "name": "soleOrApplicant1PaymentOtherDetail",
+    "value": ""
+  },
+  {
+    "name": "applicant2NoPaymentIncluded",
+    "value": "true"
+  },
+  {
+    "name": "applicant2HWFConfirmation",
+    "value": "true"
+  },
+  {
+    "name": "applicant2HWFNo",
+    "value": "HWF456123"
+  },
+  {
+    "name": "applicant2HWFApp",
+    "value": "true"
+  },
+  {
+    "name": "applicant2PaymentOther",
+    "value": "false"
+  },
+  {
+    "name": "debitCreditCardPayment",
+    "value": "false"
+  },
+  {
+    "name": "debitCreditCardPaymentPhone",
+    "value": "false"
+  },
+  {
+    "name": "paymentDetailEmail",
+    "value": ""
+  },
+  {
+    "name": "chequeOrPostalOrderPayment",
+    "value": "false"
+  }
+]
+

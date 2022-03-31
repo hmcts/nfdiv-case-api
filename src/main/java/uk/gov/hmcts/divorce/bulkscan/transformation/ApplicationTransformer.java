@@ -35,9 +35,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RES
 
 @Component
 public class ApplicationTransformer implements Function<TransformationDetails, TransformationDetails> {
+
+    private static final String APPLICANT_1 = "applicant1";
+    private static final String APPLICANT_APPLICANT_1 = "applicant,applicant1";
+
     private static final String APPLICANT_2 = "applicant2";
     private static final String RESPONDENT = "respondent";
-    private static final String APPLICANT_APPLICANT_1 = "applicant,applicant1";
+
     private static final int HWF_NO_VALID_LENGTH = 9;
 
     @Autowired
@@ -94,13 +98,13 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         if (toBoolean(ocrDataFields.getJurisdictionReasonsRespHabitual())) {
             connections.add(APP_2_RESIDENT_SOLE);
         }
-
-        if (APPLICANT_2.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
-            connections.add(APP_2_RESIDENT_JOINT);
-        } else if (APPLICANT_APPLICANT_1.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
+        if (ocrDataFields.getJurisdictionReasonsJointHabitualWho().contains(APPLICANT_APPLICANT_1)
+        || ocrDataFields.getJurisdictionReasonsJointHabitualWho().contains(APPLICANT_1)) {
             connections.add(APP_1_RESIDENT_JOINT);
         }
-
+        if (ocrDataFields.getJurisdictionReasonsJointHabitualWho().contains(APPLICANT_2)) {
+            connections.add(APP_2_RESIDENT_JOINT);
+        }
         if (toBoolean(ocrDataFields.getJurisdictionReasons1YrHabitual())) {
             connections.add(APP_1_RESIDENT_TWELVE_MONTHS);
         }
