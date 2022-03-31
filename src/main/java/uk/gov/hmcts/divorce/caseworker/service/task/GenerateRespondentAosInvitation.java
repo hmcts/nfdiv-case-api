@@ -107,7 +107,7 @@ public class GenerateRespondentAosInvitation implements CaseTask {
                     RESP_AOS_INVITATION_DOCUMENT_NAME
                 );
 
-                if (caseData.getApplication().getSolServiceMethod() != PERSONAL_SERVICE) {
+                if (!caseData.getApplication().isPersonalServiceMethod()) {
                     log.info("Generating coversheet for case id {} ", caseId);
                     generateDocumentAndUpdateCaseData(
                         caseDetails,
