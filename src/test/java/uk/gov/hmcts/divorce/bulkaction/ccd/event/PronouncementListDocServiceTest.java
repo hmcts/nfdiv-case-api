@@ -74,7 +74,7 @@ public class PronouncementListDocServiceTest {
 
         pronouncementListDocService.generateDocument(bulkListCaseDetails, bulkListCaseDetails.getData().getBulkListCaseDetails());
 
-        assertThat(bulkListCaseDetails.getData().getPronouncementListDocument().getDocumentFileName().equals("pronouncementList"));
+        assertThat(bulkListCaseDetails.getData().getPronouncementListDocument().getDocumentFileName()).isEqualTo("pronouncementList");
 
     }
 
