@@ -77,7 +77,7 @@ class SendAosPackToApplicantTest {
     void shouldSendPersonalServiceAosPackToApplicantIfPersonalSerive() {
         final var caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant2().setSolicitorRepresented(NO);
 

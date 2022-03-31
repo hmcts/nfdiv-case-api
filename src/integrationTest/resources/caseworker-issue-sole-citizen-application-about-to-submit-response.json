@@ -109,10 +109,10 @@
         }
       }
     ],
-    "solServiceMethod": "personalService",
+    "serviceMethod": "personalService",
     "noticeOfProceedingsEmail": "applicant2@test.com",
     "dueDate": "2021-07-03",
-    "dataVersion": 1,
+    "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
   "state": "AwaitingService"

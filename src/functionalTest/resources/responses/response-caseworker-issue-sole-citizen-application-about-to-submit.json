@@ -121,7 +121,7 @@
     ],
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
-    "solServiceMethod": "personalService",
+    "serviceMethod": "personalService",
     "warnings": []
   },
   "state": "AwaitingService"
