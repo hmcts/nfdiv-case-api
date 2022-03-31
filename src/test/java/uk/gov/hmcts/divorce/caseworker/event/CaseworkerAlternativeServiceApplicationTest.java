@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 
@@ -31,6 +32,9 @@ class CaseworkerAlternativeServiceApplicationTest {
 
     @Mock
     private GeneralApplicationReceivedNotification generalApplicationReceivedNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @Mock
     private Clock clock;
@@ -58,7 +62,7 @@ class CaseworkerAlternativeServiceApplicationTest {
 
         caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, null);
 
-        verify(generalApplicationReceivedNotification).sendToApplicant1(caseData, 1L);
+        verify(notificationDispatcher).send(generalApplicationReceivedNotification, caseData, caseDetails.getId());
     }
 
     private CaseData caseData() {
