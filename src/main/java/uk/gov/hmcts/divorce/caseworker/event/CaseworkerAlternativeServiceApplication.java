@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -41,11 +43,14 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
     @Autowired
     private GeneralApplicationReceivedNotification generalApplicationReceivedNotification;
 
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_SERVICE_RECEIVED)
-            .forStates(AosOverdue, AwaitingAos, AosDrafted, Submitted, AwaitingDocuments)
+            .forStates(AosOverdue, AwaitingAos, AosDrafted, Submitted, AwaitingDocuments, GeneralApplicationReceived)
             .name("Service application received")
             .description("Service application received")
             .showSummary()
@@ -71,7 +76,7 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
         caseData.getAlternativeService().setReceivedServiceAddedDate(LocalDate.now(clock));
 
-        generalApplicationReceivedNotification.sendToApplicant1(caseData, details.getId());
+        notificationDispatcher.send(generalApplicationReceivedNotification, caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
