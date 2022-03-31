@@ -73,13 +73,12 @@ public class GenerateNoticeOfProceeding implements CaseTask {
         final boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
         final boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
 
-        if (isApplicant1Represented
-            && caseData.getApplicant1().getSolicitor().hasOrgId()
-            && !caseData.getApplication().isSolicitorServiceMethod()) {
-            generateApplicantSolicitorNoticeOfProceedings(caseData, caseId);
-        }
-
-        if (!isApplicant1Represented) {
+        if (isApplicant1Represented) {
+            if (caseData.getApplicant1().getSolicitor().hasOrgId()
+                && !caseData.getApplication().isSolicitorServiceMethod()) {
+                generateApplicantSolicitorNoticeOfProceedings(caseData, caseId);
+            }
+        } else {
 
             String templateId = caseData.getApplicant2().isBasedOverseas()
                 ? NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID
