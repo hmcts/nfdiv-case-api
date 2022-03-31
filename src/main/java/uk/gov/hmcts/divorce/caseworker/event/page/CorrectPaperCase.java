@@ -70,8 +70,6 @@ public class CorrectPaperCase implements CcdPageConfiguration {
 
         buildApplicant2Fields(fieldCollectionBuilder);
 
-        buildServiceDetails(fieldCollectionBuilder);
-
         buildMarriageDetailFields(fieldCollectionBuilder);
 
         buildJurisdictionFields(fieldCollectionBuilder);
@@ -92,17 +90,6 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             .label("Label-CorrectScannedDocuments", "### Scanned Documents")
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getScannedDocuments)
-            .done();
-    }
-
-    private void buildServiceDetails(
-        FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
-        fieldCollectionBuilder
-            .label("Label-CorrectServiceDetails", "### Service details")
-            .complex(CaseData::getPaperFormDetails)
-            .optional(PaperFormDetails::getServeOutOfUK)
-            .optional(PaperFormDetails::getRespondentServePostOnly)
-            .optional(PaperFormDetails::getApplicantWillServeApplication)
             .done();
     }
 
@@ -156,6 +143,14 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatoryWithLabel(Applicant::getAddress, "${labelContentRespondentsOrApplicant2s} address")
                 .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentRespondentsOrApplicant2s} phone number")
                 .optionalWithLabel(Applicant::getEmail, "${labelContentRespondentsOrApplicant2s} email address")
+            .done()
+            .label("Label-CorrectServiceDetails", "### Service details")
+                .complex(CaseData::getPaperFormDetails)
+                    .mandatory(PaperFormDetails::getServeOutOfUK)
+                    .mandatory(PaperFormDetails::getRespondentServePostOnly)
+                    .mandatory(PaperFormDetails::getApplicantWillServeApplication)
+                .done()
+            .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getSolicitorRepresented,
                 "Is ${labelContentTheApplicant2} represented by a solicitor?")
                 .complex(Applicant::getSolicitor)
