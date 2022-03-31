@@ -230,7 +230,10 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     private Map<String, String> commonTemplateVars(final CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(
+            SUBMISSION_RESPONSE_DATE,
+            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
+        );
         return templateVars;
     }
 
