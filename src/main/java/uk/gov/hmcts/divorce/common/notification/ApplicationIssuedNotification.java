@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.common.notification;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
@@ -68,6 +69,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     @Autowired
     private HoldingPeriodService holdingPeriodService;
+
+    @Value("${case_progression.holding_offset_days}")
+    private int holdingPeriodInDays;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
