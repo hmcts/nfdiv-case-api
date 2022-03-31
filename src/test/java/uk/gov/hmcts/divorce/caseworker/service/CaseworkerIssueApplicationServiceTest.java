@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
@@ -14,22 +13,15 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetIssueDate;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 
-import java.time.Clock;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -64,7 +56,10 @@ class CaseworkerIssueApplicationServiceTest {
     private SendAosPackToApplicant sendAosPackToApplicant;
 
     @Mock
-    private Clock clock;
+    private SetServiceType setServiceType;
+
+    @Mock
+    private SetIssueDate setIssueDate;
 
     @InjectMocks
     private IssueApplicationService issueApplicationService;
@@ -79,8 +74,8 @@ class CaseworkerIssueApplicationServiceTest {
         caseDetails.setId(1L);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        setMockClock(clock);
-
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
+        when(setIssueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
@@ -93,88 +88,6 @@ class CaseworkerIssueApplicationServiceTest {
 
         final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
 
-        var expectedCaseData = caseData();
-        expectedCaseData.getApplication().setIssueDate(getExpectedLocalDate());
-
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
-    }
-
-    @Test
-    void shouldSetPersonalServiceIfApplicant1AndApplicant2NotRepresentedAndApplicant2IsOverseas() {
-
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(1L);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        setMockClock(clock);
-
-        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
-        when(divorceApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
-        when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
-
-        final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
-
-        var expectedCaseData = caseData();
-        expectedCaseData.getApplicant1().setSolicitorRepresented(NO);
-        expectedCaseData.getApplicant2().setSolicitorRepresented(NO);
-        expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
-        expectedCaseData.getApplication().setIssueDate(getExpectedLocalDate());
-        expectedCaseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
-
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
-    }
-
-    @Test
-    void shouldRunIssueApplicationTasksForSolicitorApplication() {
-
-        final CaseData caseData = caseData();
-        caseData.getApplicant2().setSolicitorRepresented(YES);
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-
-        final Solicitor solicitor = Solicitor.builder()
-            .name("testsol")
-            .email(TEST_SOLICITOR_EMAIL)
-            .build();
-
-        caseData.getApplicant2().setSolicitor(solicitor);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(1L);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        setMockClock(clock);
-
-        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
-        when(divorceApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
-        when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
-        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
-
-        final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
-
-        var expectedCaseData = caseData();
-        expectedCaseData.getApplication().setIssueDate(getExpectedLocalDate());
-        expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
-        expectedCaseData.getApplicant2().setSolicitor(solicitor);
-        expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
-
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getData()).isEqualTo(caseData);
     }
 }
