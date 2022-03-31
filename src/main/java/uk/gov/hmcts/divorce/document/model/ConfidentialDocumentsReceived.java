@@ -21,7 +21,7 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
     @JsonProperty("application")
     APPLICATION("Confidential - Application"),
 
-    @JsonProperty("baliffService")
+    @JsonProperty("bailiffService")
     BAILIFF_SERVICE("Confidential - Bailiff Service"),
 
     @JsonProperty("coe")
