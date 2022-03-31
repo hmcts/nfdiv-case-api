@@ -42,6 +42,8 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
     private static final String APPLICANT_2 = "applicant2";
     private static final String RESPONDENT = "respondent";
 
+    private static final String APPLICANT_1_APPLICANT2 = APPLICANT_1 + "," + APPLICANT_2;
+
     private static final int HWF_NO_VALID_LENGTH = 9;
 
     @Autowired
@@ -102,7 +104,7 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
             connections.add(APP_1_RESIDENT_JOINT);
         } else if (APPLICANT_2.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
             connections.add(APP_2_RESIDENT_JOINT);
-        } else if (ocrDataFields.getJurisdictionReasonsJointHabitualWho().equalsIgnoreCase(APPLICANT_1 + "," + APPLICANT_2)) {
+        } else if (APPLICANT_1_APPLICANT2.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
             connections.add(APP_1_RESIDENT_JOINT);
             connections.add(APP_2_RESIDENT_JOINT);
         }
