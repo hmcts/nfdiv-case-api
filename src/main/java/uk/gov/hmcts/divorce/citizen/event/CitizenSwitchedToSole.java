@@ -84,6 +84,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         }
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         removeApplicant2AnswersFromCase(data);
+        data.getApplication().setJurisdiction(null);
 
         CaseInvite caseInviteBefore = beforeDetails.getData().getCaseInvite();
 

@@ -9,13 +9,16 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase.AWAITING_DOCUMENTS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase.AWAITING_HWF_DECISION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase.SUBMITTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -53,8 +56,8 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
             .page("Progress paper case")
             .pageLabel("Progress paper case")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getProgressPaperCase)
-                .done()
+            .mandatory(Application::getProgressPaperCase)
+            .done()
             .done();
     }
 
@@ -73,15 +76,20 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
                 .build();
         }
 
-        if (caseData.getApplication().getProgressPaperCase().equals(ProgressPaperCase.SUBMITTED)) {
+        if (caseData.getApplication().getProgressPaperCase().equals(SUBMITTED)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .state(Submitted)
                 .build();
-        } else if (caseData.getApplication().getProgressPaperCase().equals(ProgressPaperCase.AWAITING_DOCUMENTS)) {
+        } else if (caseData.getApplication().getProgressPaperCase().equals(AWAITING_DOCUMENTS)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .state(AwaitingDocuments)
+                .build();
+        } else if (caseData.getApplication().getProgressPaperCase().equals(AWAITING_HWF_DECISION)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(AwaitingHWFDecision)
                 .build();
         } else {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
