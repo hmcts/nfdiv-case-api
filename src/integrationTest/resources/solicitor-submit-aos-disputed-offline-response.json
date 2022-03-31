@@ -52,7 +52,7 @@
       }
     ],
     "dueDate": "${json-unit.any-string}",
-    "dataVersion": 1,
+    "dataVersion": "${json-unit.any-number}",
     "scannedDocuments": [
       {
         "value": {

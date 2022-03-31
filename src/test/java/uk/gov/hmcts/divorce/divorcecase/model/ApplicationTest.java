@@ -204,7 +204,7 @@ class ApplicationTest {
     void shouldReturnTrueIfSolicitorService() {
 
         final var application = Application.builder()
-            .solServiceMethod(SOLICITOR_SERVICE)
+            .serviceMethod(SOLICITOR_SERVICE)
             .build();
 
         assertThat(application.isSolicitorServiceMethod()).isTrue();
@@ -214,7 +214,7 @@ class ApplicationTest {
     void shouldReturnFalseIfNotSolicitorService() {
 
         final var application = Application.builder()
-            .solServiceMethod(COURT_SERVICE)
+            .serviceMethod(COURT_SERVICE)
             .build();
 
         assertThat(application.isSolicitorServiceMethod()).isFalse();
@@ -224,7 +224,7 @@ class ApplicationTest {
     void shouldReturnTrueIfPersonalService() {
 
         final var application = Application.builder()
-            .solServiceMethod(PERSONAL_SERVICE)
+            .serviceMethod(PERSONAL_SERVICE)
             .build();
 
         assertThat(application.isPersonalServiceMethod()).isTrue();
@@ -234,7 +234,7 @@ class ApplicationTest {
     void shouldReturnFalseIfNotPersonalService() {
 
         final var application = Application.builder()
-            .solServiceMethod(COURT_SERVICE)
+            .serviceMethod(COURT_SERVICE)
             .build();
 
         assertThat(application.isPersonalServiceMethod()).isFalse();

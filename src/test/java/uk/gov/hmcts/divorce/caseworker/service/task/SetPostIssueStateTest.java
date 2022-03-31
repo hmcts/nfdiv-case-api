@@ -29,7 +29,7 @@ class SetPostIssueStateTest {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder()
-                .solServiceMethod(SOLICITOR_SERVICE)
+                .serviceMethod(SOLICITOR_SERVICE)
                 .build())
             .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();
@@ -47,7 +47,7 @@ class SetPostIssueStateTest {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder()
-                .solServiceMethod(PERSONAL_SERVICE)
+                .serviceMethod(PERSONAL_SERVICE)
                 .build())
             .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();
@@ -65,7 +65,7 @@ class SetPostIssueStateTest {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder()
-                .solServiceMethod(COURT_SERVICE)
+                .serviceMethod(COURT_SERVICE)
                 .build())
             .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();

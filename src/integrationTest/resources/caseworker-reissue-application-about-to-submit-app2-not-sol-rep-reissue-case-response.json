@@ -65,7 +65,7 @@
     "noticeOfProceedingsEmail": "test@test.com",
     "documentsGenerated": [
       {
-        "id": "Coversheet",
+        "id": "Divorce application",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
@@ -90,7 +90,7 @@
       }
     ],
     "dueDate": "2021-07-03",
-    "dataVersion": 1,
+    "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
   "state": "AwaitingAos"

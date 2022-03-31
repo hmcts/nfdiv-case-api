@@ -42,7 +42,7 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
             .page("changeServiceRequest")
             .pageLabel("Change service request")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getSolServiceMethod);
+            .mandatory(Application::getServiceMethod);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(

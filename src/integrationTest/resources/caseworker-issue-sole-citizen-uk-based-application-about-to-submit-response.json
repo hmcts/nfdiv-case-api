@@ -38,7 +38,7 @@
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "divorceWho": "wife",
-    "solServiceMethod": "courtService",
+    "serviceMethod": "courtService",
     "applicant1PrayerDissolveDivorce": [
       "dissolveDivorce"
     ],
@@ -102,7 +102,7 @@
       }
     ],
     "dueDate": "2021-07-03",
-    "dataVersion": 1,
+    "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
   "state": "AwaitingAos"

@@ -128,7 +128,7 @@ class GenerateNoticeOfProceedingTest {
         setMockClock(clock);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
-        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
 
         final Map<String, Object> templateContent = new HashMap<>();

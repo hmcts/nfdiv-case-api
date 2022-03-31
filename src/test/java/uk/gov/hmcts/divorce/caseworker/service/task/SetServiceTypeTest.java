@@ -41,7 +41,7 @@ class SetServiceTypeTest {
         expectedCaseData.getApplicant1().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
-        expectedCaseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+        expectedCaseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
@@ -65,7 +65,7 @@ class SetServiceTypeTest {
         expectedCaseData.getApplicant1().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
-        expectedCaseData.getApplication().setSolServiceMethod(null);
+        expectedCaseData.getApplication().setServiceMethod(null);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
@@ -89,7 +89,7 @@ class SetServiceTypeTest {
         expectedCaseData.getApplicant1().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
-        expectedCaseData.getApplication().setSolServiceMethod(null);
+        expectedCaseData.getApplication().setServiceMethod(null);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
@@ -113,7 +113,7 @@ class SetServiceTypeTest {
         expectedCaseData.getApplicant1().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
-        expectedCaseData.getApplication().setSolServiceMethod(null);
+        expectedCaseData.getApplication().setServiceMethod(null);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }

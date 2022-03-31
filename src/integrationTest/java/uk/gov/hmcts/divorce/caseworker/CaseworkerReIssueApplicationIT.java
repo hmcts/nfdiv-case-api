@@ -745,12 +745,10 @@ public class CaseworkerReIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
             .thenReturn("Respondent Invitation")
-            .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, "NFD_CP_Application_Sole.docx");
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -877,7 +875,7 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().setEmail(null);
         caseData.setCaseInvite(null);
-        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
@@ -928,7 +926,7 @@ public class CaseworkerReIssueApplicationIT {
     void shouldGenerateOnlyDivorceApplicationAndSetIssueDateAndSendEmailWhenSolicitorServiceMethod() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setAddress(null);
         caseData.getApplicant2().setSolicitor(
