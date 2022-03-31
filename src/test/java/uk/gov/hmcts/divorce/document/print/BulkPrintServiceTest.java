@@ -14,6 +14,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -48,6 +50,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.confidentialDocumentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(MockitoExtension.class)
@@ -143,12 +146,10 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
-                null,
                 1
             ),
             new Letter(
                 divorceDocumentListValue2.getValue(),
-                null,
                 2
             )
         );
@@ -267,12 +268,10 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
-                null,
                 1
             ),
             new Letter(
                 divorceDocumentListValue2.getValue(),
-                null,
                 2
             )
         );
@@ -391,12 +390,10 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
-                null,
                 1
             ),
             new Letter(
                 divorceDocumentListValue2.getValue(),
-                null,
                 2
             )
         );
@@ -518,12 +515,10 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
-                null,
                 1
             ),
             new Letter(
                 divorceDocumentListValue2.getValue(),
-                null,
                 2
             )
         );
@@ -593,7 +588,6 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
-                null,
                 1
             )
         );
@@ -623,7 +617,6 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
-                null,
                 1
             )
         );
@@ -652,7 +645,6 @@ class BulkPrintServiceTest {
         List<Letter> letters = List.of(
             new Letter(
                 divorceDocumentListValue.getValue(),
-                null,
                 1
             )
         );
@@ -679,6 +671,125 @@ class BulkPrintServiceTest {
         PDDocument d10 = PDDocument.load(bulkPrintService.loadD10PdfBytes("/D10.pdf"));
         assertThat(new PDFTextStripper().getText(d10))
             .contains("D10 Respond to a divorce, dissolution or (judicial) separation application");
+    }
+
+    @Test
+    void shouldReturnLetterIdForValidRequestForConfidentialDocuments() throws IOException {
+        List<String> solicitorRoles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+
+        String solicitorRolesCsv = String.join(",", solicitorRoles);
+
+        String userId = UUID.randomUUID().toString();
+
+        User solicitorUser = solicitorUser(solicitorRoles, userId);
+
+        given(httpServletRequest.getHeader(AUTHORIZATION))
+            .willReturn(APP_1_SOL_AUTH_TOKEN);
+
+        given(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
+            .willReturn(solicitorUser);
+
+        given(authTokenGenerator.generate())
+            .willReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        UUID uuid = UUID.randomUUID();
+        byte[] firstFile = "data from file 1".getBytes(StandardCharsets.UTF_8);
+
+        given(sendLetterApi.sendLetter(
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            isA(LetterV3.class)
+        ))
+            .willReturn(new SendLetterResponse(
+                uuid
+            ));
+
+        given(resource.getInputStream())
+            .willReturn(new ByteArrayInputStream(firstFile))
+            .willReturn(new ByteArrayInputStream(firstFile));
+
+        ListValue<ConfidentialDivorceDocument> divorceDocumentListValue = confidentialDocumentWithType(
+            ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1);
+
+        final String documentUuid = FilenameUtils.getName(divorceDocumentListValue.getValue().getDocumentLink().getUrl());
+
+        given(documentManagementClient.downloadBinary(
+            APP_1_SOL_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            solicitorRolesCsv,
+            userId,
+            documentUuid
+        ))
+            .willReturn(ResponseEntity.ok(resource));
+
+        List<Letter> letters = List.of(
+            new Letter(
+                divorceDocumentListValue.getValue(),
+                1
+            )
+        );
+
+        Print print = new Print(
+            letters,
+            "1234",
+            "5678",
+            "letterType"
+        );
+
+        UUID letterId = bulkPrintService.print(print);
+        assertThat(letterId).isEqualTo(uuid);
+
+        verify(sendLetterApi).sendLetter(
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            letterV3ArgumentCaptor.capture()
+        );
+
+        LetterV3 letterV3 = letterV3ArgumentCaptor.getValue();
+        assertThat(letterV3.documents)
+            .extracting(
+                "content",
+                "copies")
+            .contains(
+                tuple(
+                    Base64.getEncoder().encodeToString(firstFile),
+                    1)
+            );
+
+        assertThat(letterV3.additionalData)
+            .contains(
+                entry(LETTER_TYPE_KEY, "letterType"),
+                entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
+                entry(CASE_IDENTIFIER_KEY, "1234")
+            );
+
+        verify(httpServletRequest, times(1))
+            .getHeader(AUTHORIZATION);
+        verify(idamService, times(1))
+            .retrieveUser(APP_1_SOL_AUTH_TOKEN);
+        verify(documentManagementClient).downloadBinary(
+            APP_1_SOL_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            solicitorRolesCsv,
+            userId,
+            documentUuid
+        );
+        verify(authTokenGenerator).generate();
+
+    }
+
+    @Test
+    void shouldThrowExceptionWhenDocumentResourceIsNull() {
+        ListValue<DivorceDocument> divorceDocumentListValue = ListValue.<DivorceDocument>builder()
+            .value(null)
+            .id("1")
+            .build();
+
+        List<Letter> letters = List.of(new Letter(divorceDocumentListValue.getValue(), 1));
+
+        Print print = new Print(letters, "1234", "5678", "letterType");
+
+        assertThatThrownBy(() -> bulkPrintService.print(print))
+            .isInstanceOf(InvalidResourceException.class)
+            .hasMessage("Invalid document resource");
     }
 
     private ListValue<DivorceDocument> getDivorceDocumentListValue(
