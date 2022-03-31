@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -41,6 +42,9 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
     @Autowired
     private GeneralApplicationReceivedNotification generalApplicationReceivedNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -72,7 +76,7 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
         caseData.getAlternativeService().setReceivedServiceAddedDate(LocalDate.now(clock));
 
-        generalApplicationReceivedNotification.sendToApplicant1(caseData, details.getId());
+        notificationDispatcher.send(generalApplicationReceivedNotification, caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
