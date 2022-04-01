@@ -18,9 +18,6 @@ import java.util.Set;
 @NoArgsConstructor
 public class RetiredFields {
 
-    @CCD(label = "Retired solServiceMethod")
-    private ServiceMethod solServiceMethod;
-
     @CCD(label = "Case data version")
     private int dataVersion;
 
@@ -35,11 +32,13 @@ public class RetiredFields {
         @JsonProperty("Yes")
         I_CONFIRM("Yes");
 
+
         private final String label;
     }
 
     private Set<ThePrayer> applicant1PrayerHasBeenGivenCheckbox;
     private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
+    private ServiceMethod solServiceMethod;
 
     @JsonIgnore
     private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {
