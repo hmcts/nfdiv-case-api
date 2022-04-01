@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 
 import java.util.EnumSet;
 
@@ -13,7 +14,7 @@ public enum State {
 
     @CCD(
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, SolicitorAccess.class}
     )
     Draft("Draft"),
 
@@ -48,7 +49,7 @@ public enum State {
     @CCD(
         name = "Applicant 2 approved",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, SolicitorAccess.class}
     )
     Applicant2Approved("Applicant2Approved"),
 
@@ -104,14 +105,14 @@ public enum State {
     @CCD(
         name = "Awaiting applicant 1 response",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, SolicitorAccess.class}
     )
     AwaitingApplicant1Response("AwaitingApplicant1Response"),
 
     @CCD(
         name = "Awaiting applicant 2 response",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, SolicitorAccess.class}
     )
     AwaitingApplicant2Response("AwaitingApplicant2Response"),
 
