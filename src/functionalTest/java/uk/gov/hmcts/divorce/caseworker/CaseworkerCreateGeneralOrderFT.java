@@ -13,6 +13,7 @@ import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreateGeneralOrder.CASEWORKER_CREATE_GENERAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CREATE_GENERAL_ORDER_MID_EVENT_URL;
@@ -24,6 +25,7 @@ public class CaseworkerCreateGeneralOrderFT extends FunctionalTestSuite {
     @Test
     public void shouldGenerateOrderDocumentAndUpdateCaseDataWhenMidEventIsTriggered() throws Exception {
         final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-general-order.json");
+        caseData.put("applicationType", SOLE_APPLICATION);
 
         final Response midEventResponse = triggerCallback(caseData, CASEWORKER_CREATE_GENERAL_ORDER, CREATE_GENERAL_ORDER_MID_EVENT_URL);
         assertThat(midEventResponse.getStatusCode()).isEqualTo(OK.value());
