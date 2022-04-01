@@ -154,6 +154,48 @@ public class ApplicationTransformerTest {
     }
 
     @Test
+    void shouldSuccessfullyTransformSoleApplicationWithoutWarningsWithApplicant1andApplicant2JointConnections() throws Exception {
+        String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-joint-application-ocr.json");
+        List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {
+        });
+
+        OcrDataFields dataFields = transformOcrMapToObject(ocrDataFields);
+        dataFields.setJurisdictionReasonsOnePartyDomiciled("false");
+        dataFields.setJurisdictionReasonsSameSex("false");
+        dataFields.setJurisdictionReasonsJointHabitualWho("applicant1,applicant2");
+        dataFields.setJurisdictionReasonsRespHabitual(EMPTY);
+        dataFields.setJurisdictionReasonsBothPartiesHabitual(EMPTY);
+        dataFields.setJurisdictionReasonsBothPartiesLastHabitual(EMPTY);
+        dataFields.setJurisdictionReasons6MonthsHabitual(EMPTY);
+        dataFields.setJurisdictionReasonsBothPartiesDomiciled(EMPTY);
+        dataFields.setJurisdictionReasonsJointHabitual(EMPTY);
+
+        final var caseData = CaseData.builder().applicationType(JOINT_APPLICATION).divorceOrDissolution(DIVORCE).build();
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(dataFields)
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = applicationTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
+
+        final var expectedApplication =
+            jsonToObject("src/test/resources/transformation/output/joint-application-transformed.json", Application.class);
+        expectedApplication.getJurisdiction().setConnections(Set.of(APP_1_RESIDENT_JOINT, APP_2_RESIDENT_JOINT));
+
+        assertThat(transformedOutput.getCaseData().getApplication())
+            .usingRecursiveComparison()
+            .ignoringFields("dateSubmitted")
+            .ignoringActualNullFields()
+            .isEqualTo(expectedApplication);
+
+        assertThat(transformedOutput.getCaseData().getApplication().getDateSubmitted()).isEqualTo(getExpectedLocalDateTime());
+    }
+
+    @Test
     void shouldSuccessfullyTransformSoleApplicationWithoutWarningsWhenApp2IsDomiciledAndResident() throws Exception {
         String validApplicationOcrJson = loadJson("src/test/resources/transformation/input/valid-application-ocr.json");
         List<OcrDataField> ocrDataFields = MAPPER.readValue(validApplicationOcrJson, new TypeReference<>() {

@@ -24,6 +24,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -200,7 +201,7 @@ public class NoticeOfProceedingContent {
             .phoneNumber(phoneNumber)
             .build();
 
-        templateContent.put("ctscContactDetails", ctscContactDetails);
+        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;
     }
