@@ -48,7 +48,7 @@ public class RetiredFields {
     @JsonIgnore
     private static final Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = Map.of(
         "exampleRetiredField", moveTo("applicant1FirstName"),
-        "solServiceMethod", moveTo(("serviceMethod"))
+        "solServiceMethod", moveTo("serviceMethod")
     );
 
     /**
