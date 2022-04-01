@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER_V2;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -78,7 +78,7 @@ public class CreateGeneralOrderTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                DIVORCE_GENERAL_ORDER,
+                DIVORCE_GENERAL_ORDER_V2,
                 ENGLISH,
                 GENERAL_ORDER + "2021-06-15 13:39:00"
             ))
@@ -99,7 +99,7 @@ public class CreateGeneralOrderTest {
         verify(caseDataDocumentService).renderDocument(
             templateContent,
             TEST_CASE_ID,
-            DIVORCE_GENERAL_ORDER,
+            DIVORCE_GENERAL_ORDER_V2,
             ENGLISH,
             GENERAL_ORDER + "2021-06-15 13:39:00"
         );
