@@ -8,11 +8,11 @@
     "value": "true"
   },
   {
-    "name": "jurisdictionReasonsBothPartiesLastHabitual",
+    "name": "jurisdictionReasonsRespHabitual",
     "value": "true"
   },
   {
-    "name": "jurisdictionReasonsRespHabitual",
+    "name": "jurisdictionReasonsBothPartiesLastHabitual",
     "value": "true"
   },
   {
@@ -21,7 +21,7 @@
   },
   {
     "name": "jurisdictionReasonsJointHabitualWho",
-    "value": "applicant1"
+    "value": "applicant,applicant1,applicant2"
   },
   {
     "name": "jurisdictionReasons6MonthsHabitual",
@@ -41,7 +41,7 @@
   },
   {
     "name": "applicant2ConfirmationOfBreakdown",
-    "value": "false"
+    "value": "true"
   },
   {
     "name": "existingOrPreviousCourtCases",
@@ -49,11 +49,11 @@
   },
   {
     "name": "existingOrPreviousCourtCaseNumbers",
-    "value": null
+    "value": ""
   },
   {
     "name": "summaryOfExistingOrPreviousCourtCases",
-    "value": null
+    "value": ""
   },
   {
     "name": "soleOrApplicant1FinancialOrder",
@@ -69,15 +69,7 @@
   },
   {
     "name": "applicant2FinancialOrderFor",
-    "value": null
-  },
-  {
-    "name": "prayerMarriageDissolved",
-    "value": "true"
-  },
-  {
-    "name": "prayerCivilPartnershipDissolved",
-    "value": null
+    "value": ""
   },
   {
     "name": "courtFee",
@@ -101,7 +93,7 @@
   },
   {
     "name": "soleOrApplicant1PaymentOtherDetail",
-    "value": null
+    "value": ""
   },
   {
     "name": "applicant2NoPaymentIncluded",
@@ -133,7 +125,7 @@
   },
   {
     "name": "paymentDetailEmail",
-    "value": null
+    "value": ""
   },
   {
     "name": "chequeOrPostalOrderPayment",
