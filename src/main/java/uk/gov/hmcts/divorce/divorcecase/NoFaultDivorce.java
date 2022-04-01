@@ -33,7 +33,7 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
         // configBuilder.shutterService();
         log.info("Building definition for " + System.getenv().getOrDefault("ENVIRONMENT", ""));
         if (System.getenv().getOrDefault("ENVIRONMENT", "").equalsIgnoreCase("PROD")) {
-            configBuilder.shutterService(SOLICITOR);
+            configBuilder.shutterService();
         }
     }
 }
