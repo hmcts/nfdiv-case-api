@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
@@ -32,11 +33,18 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 
 @ExtendWith(MockitoExtension.class)
 public class NoticeOfProceedingsPrinterTest {
@@ -275,6 +283,68 @@ public class NoticeOfProceedingsPrinterTest {
             .build();
 
         noticeOfProceedingsPrinter.sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(bulkPrintService);
+    }
+
+    @Test
+    void shouldPrintApplicant1SolicitorNoticeOfProceedingIfDocumentsArePresent() {
+        final ListValue<DivorceDocument> applicant1NopDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> applicant1ApplicationDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
+        Applicant applicant1 = applicantRepresentedBySolicitor();
+        applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant1)
+            .applicant2(respondent())
+            .divorceOrDissolution(DIVORCE)
+            .applicationType(JOINT_APPLICATION)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().issueDate(LOCAL_DATE).build())
+            .documents(
+                CaseDocuments.builder()
+                    .documentsGenerated(asList(applicant1NopDocument, applicant1ApplicationDocument))
+                    .build()
+            )
+            .build();
+
+        when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
+
+        noticeOfProceedingsPrinter.sendLetterToApplicant1Solicitor(caseData, TEST_CASE_ID);
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("applicant1-solicitor-notice-of-proceedings");
+        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(applicant1NopDocument.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(applicant1ApplicationDocument.getValue());
+    }
+
+    @Test
+    void shouldNotPrintApplicant1SolicitorNoticeOfProceedingIfDocumentsAreNotPresent() {
+
+        Applicant applicant1 = applicantRepresentedBySolicitor();
+        applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant1)
+            .applicant2(respondent())
+            .divorceOrDissolution(DIVORCE)
+            .applicationType(SOLE_APPLICATION)
+            .build();
+
+        noticeOfProceedingsPrinter.sendLetterToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(bulkPrintService);
     }
