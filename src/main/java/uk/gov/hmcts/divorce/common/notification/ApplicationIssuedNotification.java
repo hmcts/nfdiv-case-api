@@ -100,8 +100,13 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
 
         final String email = caseData.getApplicant1().getSolicitor().getEmail();
+        boolean isSolicitorServiceMethod = caseData.getApplication().isSolicitorServiceMethod();
 
-        if (caseData.getApplication().isSolicitorServiceMethod()) {
+        if (caseData.getApplicant1().getSolicitor().hasOrgId() && !isSolicitorServiceMethod) {
+            noticeOfProceedingsPrinter.sendLetterToApplicant1Solicitor(caseData, caseId);
+        }
+
+        if (isSolicitorServiceMethod) {
             log.info("Sending Personal Service email to applicant solicitor.  Case ID: {}", caseId);
 
             notificationService.sendEmail(
