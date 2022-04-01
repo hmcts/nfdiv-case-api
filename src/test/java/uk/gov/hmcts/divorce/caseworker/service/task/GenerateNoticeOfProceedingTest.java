@@ -448,7 +448,7 @@ class GenerateNoticeOfProceedingTest {
             .applicationType(SOLE_APPLICATION)
             .application(Application.builder()
                 .solicitorService(SolicitorService.builder().dateOfService(getExpectedLocalDate()).build())
-                .solServiceMethod(ServiceMethod.SOLICITOR_SERVICE)
+                .serviceMethod(ServiceMethod.SOLICITOR_SERVICE)
                 .build())
             .build();
 

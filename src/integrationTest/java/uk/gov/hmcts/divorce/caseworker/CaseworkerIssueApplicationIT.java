@@ -364,7 +364,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplicant1().getApplicantPrayer().setPrayerEndCivilPartnership(Set.of(END_CIVIL_PARTNERSHIP));
-        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant1().getSolicitor().setReference("TEST");
         caseData.getApplicant1().getSolicitor().setOrganisationPolicy(organisationPolicy());
         caseData.getApplicant1().setGender(FEMALE);

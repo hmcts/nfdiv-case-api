@@ -467,7 +467,7 @@ public class ApplicationIssuedNotificationTest {
             .dueDate(LOCAL_DATE.plusDays(7))
             .application(Application.builder()
                 .solicitorService(SolicitorService.builder().dateOfService(LOCAL_DATE).build())
-                .solServiceMethod(SOLICITOR_SERVICE)
+                .serviceMethod(SOLICITOR_SERVICE)
                 .issueDate(LOCAL_DATE).build())
             .build();
 
