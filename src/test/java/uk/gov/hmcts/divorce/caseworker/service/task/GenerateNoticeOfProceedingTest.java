@@ -18,9 +18,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicant1TemplateContent;
-import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingApplicantSolicitorContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
@@ -43,8 +43,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APPLICANT_SOLICITOR_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
@@ -75,7 +75,7 @@ class GenerateNoticeOfProceedingTest {
     private NoticeOfProceedingJointContent noticeOfProceedingJointContent;
 
     @Mock
-    private NoticeOfProceedingApplicantSolicitorContent applicantSolicitorTemplateContent;
+    private NoticeOfProceedingSolicitorContent noticeOfProceedingSolicitorContent;
 
     @Mock
     private Clock clock;
@@ -173,7 +173,7 @@ class GenerateNoticeOfProceedingTest {
     }
 
     @Test
-    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1NotRepresentedApp2Not() {
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1AndApp2AreNotRepresented() {
 
         setMockClock(clock);
 
@@ -196,14 +196,24 @@ class GenerateNoticeOfProceedingTest {
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1RepresentedApp2Represented() {
-
+        setMockClock(clock);
         final CaseData caseData = caseData(JOINT_APPLICATION, YES, YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder().build());
         caseData.getApplicant2().setSolicitor(Solicitor.builder().build());
 
+        final Map<String, Object> templateContentApplicant2 = new HashMap<>();
+        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, false))
+            .thenReturn(templateContentApplicant2);
+
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyNoInteractions(caseDataDocumentService);
+        verifyInteractions(
+            caseData,
+            templateContentApplicant2,
+            NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID,
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            1
+        );
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -244,7 +254,7 @@ class GenerateNoticeOfProceedingTest {
     }
 
     @Test
-    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OnlineApp2Offline() {
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OnlineApp2OfflineAndNotRepresented() {
 
         setMockClock(clock);
 
@@ -258,8 +268,7 @@ class GenerateNoticeOfProceedingTest {
                 .build())
             .applicant2(Applicant.builder()
                 .offline(YES)
-                .solicitorRepresented(YES)
-                .solicitor(Solicitor.builder().build())
+                .solicitorRepresented(NO)
                 .build())
             .application(Application.builder()
                 .solSignStatementOfTruth(NO)
@@ -279,7 +288,8 @@ class GenerateNoticeOfProceedingTest {
     }
 
     @Test
-    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OnlineApp2Online() {
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OnlineApp2OnlineAndBothRepresented() {
+        setMockClock(clock);
 
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
@@ -299,15 +309,25 @@ class GenerateNoticeOfProceedingTest {
                 .build())
             .build();
 
+        final Map<String, Object> templateContentApplicant2 = new HashMap<>();
+        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, false))
+            .thenReturn(templateContentApplicant2);
+
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyNoInteractions(caseDataDocumentService);
+        verifyInteractions(
+            caseData,
+            templateContentApplicant2,
+            NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID,
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            1
+        );
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
 
     @Test
-    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OfflineApp2Offline() {
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointDivorceApp1OfflineRepresentedAndApp2OfflineNonRepresented() {
 
         setMockClock(clock);
 
@@ -320,7 +340,7 @@ class GenerateNoticeOfProceedingTest {
                 .languagePreferenceWelsh(NO)
                 .build())
             .applicant2(Applicant.builder()
-                .solicitorRepresented(YES)
+                .solicitorRepresented(NO)
                 .solicitor(Solicitor.builder().build())
                 .build())
             .application(Application.builder()
@@ -359,13 +379,13 @@ class GenerateNoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(applicantSolicitorTemplateContent.apply(caseData, TEST_CASE_ID))
+        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true))
             .thenReturn(templateContent);
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verify(applicantSolicitorTemplateContent).apply(caseData, TEST_CASE_ID);
-        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_APPLICANT_SOLICITOR_TEMPLATE_ID,
+        verify(noticeOfProceedingSolicitorContent).apply(caseData, TEST_CASE_ID, true);
+        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID,
             NOTICE_OF_PROCEEDINGS_APP_1, 1);
         verifyNoMoreInteractions(caseDataDocumentService);
         verifyNoInteractions(noticeOfProceedingContent, noticeOfProceedingJointContent);
@@ -388,13 +408,13 @@ class GenerateNoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(applicantSolicitorTemplateContent.apply(caseData, TEST_CASE_ID))
+        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true))
             .thenReturn(templateContent);
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verify(applicantSolicitorTemplateContent).apply(caseData, TEST_CASE_ID);
-        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_APPLICANT_SOLICITOR_TEMPLATE_ID,
+        verify(noticeOfProceedingSolicitorContent).apply(caseData, TEST_CASE_ID, true);
+        verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID,
             NOTICE_OF_PROCEEDINGS_APP_1, 1);
         verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1);
         verifyNoMoreInteractions(caseDataDocumentService);
@@ -416,7 +436,7 @@ class GenerateNoticeOfProceedingTest {
         verify(noticeOfProceedingContent).apply(caseData, TEST_CASE_ID);
         verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
         verifyNoMoreInteractions(caseDataDocumentService);
-        verifyNoInteractions(applicantSolicitorTemplateContent);
+        verifyNoInteractions(noticeOfProceedingSolicitorContent);
         assertThat(result.getData()).isEqualTo(caseData);
     }
 
@@ -429,7 +449,7 @@ class GenerateNoticeOfProceedingTest {
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyNoMoreInteractions(caseDataDocumentService);
-        verifyNoInteractions(applicantSolicitorTemplateContent);
+        verifyNoInteractions(noticeOfProceedingSolicitorContent);
         assertThat(result.getData()).isEqualTo(caseData);
     }
 
@@ -453,7 +473,7 @@ class GenerateNoticeOfProceedingTest {
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyNoMoreInteractions(caseDataDocumentService);
-        verifyNoInteractions(applicantSolicitorTemplateContent);
+        verifyNoInteractions(noticeOfProceedingSolicitorContent);
         assertThat(result.getData()).isEqualTo(caseData);
     }
 

@@ -25,7 +25,7 @@
     },
     "applicant2Gender": "male",
     "applicant2SolicitorRepresented": "Yes",
-    "applicant2SolicitorEmail" : "solicitor@test.com",
+    "applicant2SolicitorEmail": "solicitor@test.com",
     "applicant2FinancialOrder": "No",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
@@ -37,7 +37,9 @@
       "A"
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
@@ -63,7 +65,7 @@
     "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
-        "id": "${json-unit.any-string}",
+        "id": "Divorce application",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
@@ -75,7 +77,19 @@
         }
       },
       {
-        "id": "${json-unit.any-string}",
+        "id": "Notice of proceedings app2",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+            "document_filename": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+          },
+          "documentFileName": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "noticeOfProceedingsApp2"
+        }
+      },
+      {
+        "id": "Respondent Invitation",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
