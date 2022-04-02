@@ -520,8 +520,8 @@ public class Application {
 
     @JsonIgnore
     public boolean isHelpWithFeesApplication() {
-        return null != applicant1HelpWithFees
-            && null != applicant1HelpWithFees.getNeedHelp()
+        return Objects.nonNull(applicant1HelpWithFees)
+            && Objects.nonNull(applicant1HelpWithFees.getNeedHelp())
             && applicant1HelpWithFees.getNeedHelp().toBoolean()
             || FEES_HELP_WITH.equals(solPaymentHowToPay);
     }

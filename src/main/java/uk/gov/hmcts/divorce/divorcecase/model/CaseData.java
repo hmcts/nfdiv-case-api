@@ -239,11 +239,11 @@ public class CaseData {
 
     @JsonIgnore
     public boolean isSoleApplicationOrApplicant2HasAgreedHwf() {
-        return (null != applicationType
+        return nonNull(applicationType)
             && applicationType.isSole()
-            || null != application.getApplicant2HelpWithFees()
-            && null != application.getApplicant2HelpWithFees().getNeedHelp()
-            && application.getApplicant2HelpWithFees().getNeedHelp().toBoolean())
+            || nonNull(application.getApplicant2HelpWithFees())
+            && nonNull(application.getApplicant2HelpWithFees().getNeedHelp())
+            && application.getApplicant2HelpWithFees().getNeedHelp().toBoolean()
             || FEES_HELP_WITH.equals(application.getSolPaymentHowToPay());
     }
 
