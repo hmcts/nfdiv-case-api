@@ -379,11 +379,15 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId())
+            .thenReturn("Respondent Invitation")
+            .thenReturn("Notice of proceedings app2")
+            .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID);
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Joint.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -407,6 +411,7 @@ public class CaseworkerReIssueApplicationIT {
             .getContentAsString();
 
         assertThatJson(response)
+            .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(TestResourceUtil.expectedResponse(JOINT_APPLICATION_APPLICANT2_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT)));
 
         verify(notificationService)
