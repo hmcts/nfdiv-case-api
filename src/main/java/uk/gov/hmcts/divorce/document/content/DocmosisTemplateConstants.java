@@ -81,7 +81,7 @@ public final class DocmosisTemplateConstants {
     public static final String SOLICITOR_NAME = "solicitorName";
     public static final String SOLICITOR_ADDRESS = "solicitorAddress";
     public static final String SOLICITOR_REFERENCE = "solicitorReference";
-    public static final String APPLICANT_1_SOLICITOR_NAME = "applicant1SolicitorName";
+    public static final String SOLICITOR_NAME_WITH_DEFAULT_VALUE = "solicitorNameWithDefaultValue";
     public static final String WHO_APPLIED = "whoApplied";
     public static final String RESPOND_BY_DATE = "respondByDate";
     public static final String RESPONDENT_SOLICITOR_REGISTERED = "respSolicitorRegistered";
