@@ -32,6 +32,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 
@@ -238,11 +239,12 @@ public class CaseData {
 
     @JsonIgnore
     public boolean isSoleApplicationOrApplicant2HasAgreedHwf() {
-        return null != applicationType
+        return (null != applicationType
             && applicationType.isSole()
             || null != application.getApplicant2HelpWithFees()
             && null != application.getApplicant2HelpWithFees().getNeedHelp()
-            && application.getApplicant2HelpWithFees().getNeedHelp().toBoolean();
+            && application.getApplicant2HelpWithFees().getNeedHelp().toBoolean())
+            || FEES_HELP_WITH.equals(application.getSolPaymentHowToPay());
     }
 
     @JsonIgnore
