@@ -11,11 +11,15 @@ import java.util.Map;
 @Slf4j
 public class CitizenRespondentAosInvitationTemplateContent {
 
+    public static final String APPLICANT_2_ADDRESS = "applicant2Address";
+
     @Autowired
-    private NoticeOfProceedingContent templateContent;
+    private NoticeOfProceedingContent noticeOfProceedingContent;
 
     //Reuse notice of proceeding template content as it includes all template vars required for citizen respondent template
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
-        return templateContent.apply(caseData, ccdCaseReference);
+        Map<String, Object> respondentAosTemplateContent = noticeOfProceedingContent.apply(caseData, ccdCaseReference);
+        respondentAosTemplateContent.put(APPLICANT_2_ADDRESS, caseData.getApplicant2().getPostalAddress());
+        return respondentAosTemplateContent;
     }
 }
