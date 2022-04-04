@@ -29,8 +29,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
@@ -160,7 +160,7 @@ class CaseDataDocumentServiceTest {
                 templateContent,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
-                NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+                NFD_NOP_A1_SOLE_APP1_CIT_CS,
                 ENGLISH,
                 filename))
             .thenReturn(new DocumentInfo(DOC_URL, NOP_PDF_FILENAME, DOC_BINARY_URL));
@@ -172,7 +172,7 @@ class CaseDataDocumentServiceTest {
             NOTICE_OF_PROCEEDINGS_APP_1,
             templateContent,
             TEST_CASE_ID,
-            NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+            NFD_NOP_A1_SOLE_APP1_CIT_CS,
             ENGLISH,
             filename);
 
@@ -215,7 +215,7 @@ class CaseDataDocumentServiceTest {
                 templateContent,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
-                NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+                NFD_NOP_A1_SOLE_APP1_CIT_CS,
                 ENGLISH,
                 filename))
             .thenReturn(new DocumentInfo(DOC_URL, NOP_PDF_FILENAME, DOC_BINARY_URL));
@@ -227,7 +227,7 @@ class CaseDataDocumentServiceTest {
             NOTICE_OF_PROCEEDINGS_APP_2,
             templateContent,
             TEST_CASE_ID,
-            NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+            NFD_NOP_A1_SOLE_APP1_CIT_CS,
             ENGLISH,
             filename);
 
