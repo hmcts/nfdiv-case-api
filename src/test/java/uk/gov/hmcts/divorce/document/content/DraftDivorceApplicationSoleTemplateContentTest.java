@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
@@ -23,8 +24,10 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -33,20 +36,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MIDDLE_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
@@ -63,7 +62,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_GIVEN;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_IS_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_FIRM_NAME;
@@ -127,7 +125,6 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
-            entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce from"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, DIVORCE_APPLICATION),
@@ -137,17 +134,16 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null),
-            entry(RESPONDENT_IS_REPRESENTED, true),
             entry(RESPONDENT_SOLICITOR_NAME, "Mr Sol"),
             entry(RESPONDENT_SOLICITOR_EMAIL, "sol@solbros.com"),
             entry(RESPONDENT_SOLICITOR_FIRM_NAME, "Sol Bros"),
             entry(RESPONDENT_SOLICITOR_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE)
         );
 
+        verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verifyNoMoreInteractions(authTokenGenerator);
     }
 
@@ -178,8 +174,6 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
-            entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
-            entry(APPLICANT_1_EMAIL, "test@test.com"),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, DIVORCE_APPLICATION),
@@ -191,14 +185,13 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_MIDDLE_NAME, null),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
-            entry(APPLICANT_2_LAST_NAME, null),
-            entry(APPLICANT_2_EMAIL, null)
+            entry(APPLICANT_2_LAST_NAME, null)
         );
 
+        verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verifyNoMoreInteractions(authTokenGenerator);
     }
 
@@ -223,8 +216,6 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
-            entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
-            entry(APPLICANT_1_EMAIL, "test@test.com"),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of the civil partnership with"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, TO_END_A_CIVIL_PARTNERSHIP),
@@ -232,18 +223,16 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_POSTAL_ADDRESS, null),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_2_LAST_NAME, null),
-            entry(APPLICANT_2_EMAIL, null),
-            entry(RESPONDENT_IS_REPRESENTED, true),
             entry(RESPONDENT_SOLICITOR_NAME, NOT_GIVEN),
             entry(RESPONDENT_SOLICITOR_EMAIL, NOT_GIVEN),
             entry(RESPONDENT_SOLICITOR_FIRM_NAME, NOT_GIVEN),
             entry(RESPONDENT_SOLICITOR_ADDRESS, NOT_GIVEN)
         );
 
+        verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verifyNoMoreInteractions(authTokenGenerator);
     }
 
@@ -269,8 +258,6 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
-            entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
-            entry(APPLICANT_1_EMAIL, "test@test.com"),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of their civil partnership"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP),
@@ -278,13 +265,12 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
-            entry(APPLICANT_2_LAST_NAME, null),
-            entry(APPLICANT_2_EMAIL, null)
+            entry(APPLICANT_2_LAST_NAME, null)
         );
 
+        verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verifyNoMoreInteractions(authTokenGenerator);
     }
 
@@ -293,7 +279,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         MarriageDetails marriageDetails = new MarriageDetails();
-        marriageDetails.setDate(LocalDate.of(2019, 06, 4));
+        marriageDetails.setDate(LocalDate.of(2019, 6, 4));
         marriageDetails.setPlaceOfMarriage("UK");
 
         caseData.setDivorceOrDissolution(DISSOLUTION);
@@ -310,6 +296,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(PLACE_OF_MARRIAGE, "UK")
         );
 
+        verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verifyNoMoreInteractions(authTokenGenerator);
     }
 }
