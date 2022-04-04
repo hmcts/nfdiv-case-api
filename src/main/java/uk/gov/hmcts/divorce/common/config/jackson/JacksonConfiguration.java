@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import uk.gov.hmcts.ccd.sdk.api.HasRole;
+import uk.gov.hmcts.reform.document.healthcheck.InternalHealth;
 
 import static com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS;
 import static com.fasterxml.jackson.databind.MapperFeature.INFER_BUILDER_TYPE_BINDINGS;
@@ -26,6 +27,7 @@ public class JacksonConfiguration {
 
         SimpleModule deserialization = new SimpleModule();
         deserialization.addDeserializer(HasRole.class, new HasRoleDeserializer());
+        deserialization.addDeserializer(InternalHealth.class, new InternalHealthDeserializer());
         mapper.registerModule(deserialization);
 
         JavaTimeModule datetime = new JavaTimeModule();

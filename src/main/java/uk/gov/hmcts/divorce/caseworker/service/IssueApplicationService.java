@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
@@ -52,6 +53,9 @@ public class IssueApplicationService {
     private SendAosPackToApplicant sendAosPackToApplicant;
 
     @Autowired
+    private GenerateD10Form generateD10Form;
+
+    @Autowired
     private SetServiceType setServiceType;
 
     @Autowired
@@ -69,6 +73,7 @@ public class IssueApplicationService {
             generateDivorceApplication,
             sendAosPackToRespondent,
             sendAosPackToApplicant,
+            generateD10Form,
             sendApplicationIssueNotifications
         ).run(caseDetails);
     }
