@@ -11,14 +11,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -33,9 +32,10 @@ class SendAosPackToApplicantTest {
     private SendAosPackToApplicant sendAosPackToApplicant;
 
     @Test
-    void shouldNotSendAosPackToApplicantIfApplicantIsRepresentedAndApplicationTypeIsJoint() {
+    void shouldSendAosLetterToApplicantIfCourtService() {
         final var caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
@@ -51,30 +51,12 @@ class SendAosPackToApplicantTest {
 
         sendAosPackToApplicant.apply(caseDetails);
 
-        verifyNoInteractions(aosPackPrinter);
-    }
-
-    @Test
-    void shouldSendAosPackToApplicantIfApplicantIsNotRepresented() {
-        final var caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplicant1().setSolicitorRepresented(NO);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        doNothing().when(aosPackPrinter).sendAosLetterToApplicant(caseData, TEST_CASE_ID);
-
-        sendAosPackToApplicant.apply(caseDetails);
-
         verify(aosPackPrinter).sendAosLetterToApplicant(caseData, TEST_CASE_ID);
-
         verifyNoMoreInteractions(aosPackPrinter);
     }
 
     @Test
-    void shouldSendPersonalServiceAosPackToApplicantIfPersonalSerive() {
+    void shouldSendAosLetterAndRespondentAosPackToApplicantIfNotCourtService() {
         final var caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
