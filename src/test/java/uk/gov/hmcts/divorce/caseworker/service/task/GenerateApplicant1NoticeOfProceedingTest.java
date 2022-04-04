@@ -61,7 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 
 @ExtendWith(MockitoExtension.class)
-class GenerateNoticeOfProceedingTest {
+class GenerateApplicant1NoticeOfProceedingTest {
 
     @Mock
     private CoversheetApplicant1TemplateContent coversheetTemplateContent;
@@ -82,7 +82,7 @@ class GenerateNoticeOfProceedingTest {
     private Clock clock;
 
     @InjectMocks
-    private GenerateNoticeOfProceeding generateNoticeOfProceeding;
+    private GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplicationWhenRespondentIsNotOverseas() {
@@ -96,7 +96,7 @@ class GenerateNoticeOfProceedingTest {
 
         when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
 
@@ -115,7 +115,7 @@ class GenerateNoticeOfProceedingTest {
 
         when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1,
             NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME);
@@ -136,7 +136,7 @@ class GenerateNoticeOfProceedingTest {
         when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
         when(coversheetTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
 
@@ -167,7 +167,7 @@ class GenerateNoticeOfProceedingTest {
         when(noticeOfProceedingJointContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(templateContentApplicant2);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1,
             NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME);
@@ -189,7 +189,7 @@ class GenerateNoticeOfProceedingTest {
         when(noticeOfProceedingJointContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(templateContent);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
         verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1,
@@ -209,7 +209,7 @@ class GenerateNoticeOfProceedingTest {
         when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, false))
             .thenReturn(templateContentApplicant2);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(
             caseData,
@@ -251,7 +251,7 @@ class GenerateNoticeOfProceedingTest {
         when(noticeOfProceedingJointContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(templateContentApplicant2);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
 
@@ -285,7 +285,7 @@ class GenerateNoticeOfProceedingTest {
         when(noticeOfProceedingJointContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(templateContentApplicant2);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1,
             NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME);
@@ -319,7 +319,7 @@ class GenerateNoticeOfProceedingTest {
         when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, false))
             .thenReturn(templateContentApplicant2);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(
             caseData,
@@ -362,7 +362,7 @@ class GenerateNoticeOfProceedingTest {
         when(noticeOfProceedingJointContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(templateContent);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
         verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1,
@@ -390,7 +390,7 @@ class GenerateNoticeOfProceedingTest {
         when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true))
             .thenReturn(templateContent);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verify(noticeOfProceedingSolicitorContent).apply(caseData, TEST_CASE_ID, true);
         verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID,
@@ -419,7 +419,7 @@ class GenerateNoticeOfProceedingTest {
         when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true))
             .thenReturn(templateContent);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verify(noticeOfProceedingSolicitorContent).apply(caseData, TEST_CASE_ID, true);
         verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID,
@@ -440,7 +440,7 @@ class GenerateNoticeOfProceedingTest {
 
         when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verify(noticeOfProceedingContent).apply(caseData, TEST_CASE_ID);
         verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
@@ -455,7 +455,7 @@ class GenerateNoticeOfProceedingTest {
         final CaseData caseData = caseData(SOLE_APPLICATION, YES, NO);
         caseData.getApplicant1().setSolicitor(Solicitor.builder().build());
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyNoMoreInteractions(caseDataDocumentService);
         verifyNoInteractions(noticeOfProceedingSolicitorContent);
@@ -479,7 +479,7 @@ class GenerateNoticeOfProceedingTest {
                 .build())
             .build();
 
-        final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyNoMoreInteractions(caseDataDocumentService);
         verifyNoInteractions(noticeOfProceedingSolicitorContent);

@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEED
 
 @Component
 @Slf4j
-public class GenerateNoticeOfProceeding implements CaseTask {
+public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
 
     @Autowired
     private CoversheetApplicant1TemplateContent coversheetTemplateContent;

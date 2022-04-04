@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
@@ -34,10 +34,10 @@ public class ReIssueApplicationService {
     private GenerateDivorceApplication generateDivorceApplication;
 
     @Autowired
-    private GenerateRespondentAosInvitation generateRespondentAosInvitation;
+    private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
     @Autowired
-    private GenerateNoticeOfProceeding generateNoticeOfProceeding;
+    private GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
 
     @Autowired
     private SendAosPackToRespondent sendAosPackToRespondent;
@@ -70,8 +70,8 @@ public class ReIssueApplicationService {
             return caseTasks(
                 setPostIssueState,
                 setReIssueAndDueDate,
-                generateNoticeOfProceeding,
-                generateRespondentAosInvitation,
+                generateApplicant1NoticeOfProceeding,
+                generateApplicant2NoticeOfProceedings,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else if (OFFLINE_AOS.equals(reissueOption)) {
@@ -83,8 +83,8 @@ public class ReIssueApplicationService {
             return caseTasks(
                 setPostIssueState,
                 setReIssueAndDueDate,
-                generateNoticeOfProceeding,
-                generateRespondentAosInvitation,
+                generateApplicant1NoticeOfProceeding,
+                generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,
@@ -95,8 +95,8 @@ public class ReIssueApplicationService {
             return caseTasks(
                 setPostIssueState,
                 setReIssueAndDueDate,
-                generateNoticeOfProceeding,
-                generateRespondentAosInvitation,
+                generateApplicant1NoticeOfProceeding,
+                generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,

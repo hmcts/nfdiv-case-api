@@ -49,7 +49,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateRespondentAosInvitationTest {
+public class GenerateApplicant2NoticeOfProceedingsTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -67,7 +67,7 @@ public class GenerateRespondentAosInvitationTest {
     private Clock clock;
 
     @InjectMocks
-    private GenerateRespondentAosInvitation generateRespondentAosInvitation;
+    private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
     @Test
     void shouldReturnCaseDataWithAosInvitationDocumentIfRespondentIsRepresentedAndIsSoleApplication() {
@@ -90,7 +90,7 @@ public class GenerateRespondentAosInvitationTest {
 
         when(respondentSolicitorAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
@@ -128,7 +128,7 @@ public class GenerateRespondentAosInvitationTest {
 
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
@@ -168,7 +168,7 @@ public class GenerateRespondentAosInvitationTest {
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
         when(coversheetApplicant2TemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(coversheetContent);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
@@ -220,7 +220,7 @@ public class GenerateRespondentAosInvitationTest {
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
         when(coversheetApplicant2TemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(coversheetContent);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
@@ -265,7 +265,7 @@ public class GenerateRespondentAosInvitationTest {
         final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
@@ -298,7 +298,7 @@ public class GenerateRespondentAosInvitationTest {
 
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
