@@ -39,7 +39,7 @@
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "divorceWho": "wife",
-    "solServiceMethod": "courtService",
+    "serviceMethod": "courtService",
     "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
     "applicant1StatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {

@@ -44,7 +44,7 @@
     "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionConnections": ["A"],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "solServiceMethod": "courtService",
+    "serviceMethod": "courtService",
     "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
@@ -99,7 +99,7 @@
       }
     }],
     "dueDate": "2021-07-03",
-     "dataVersion": 1,
+    "dataVersion": 2,
     "warnings": []
   },
   "state": "AwaitingAos"

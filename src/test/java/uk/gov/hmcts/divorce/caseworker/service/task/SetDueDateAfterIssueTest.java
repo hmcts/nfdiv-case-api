@@ -92,7 +92,7 @@ class SetDueDateAfterIssueTest {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setApplication(
             Application.builder()
-                .solServiceMethod(SOLICITOR_SERVICE)
+                .serviceMethod(SOLICITOR_SERVICE)
                 .build()
         );
         caseDetails.setData(caseData);

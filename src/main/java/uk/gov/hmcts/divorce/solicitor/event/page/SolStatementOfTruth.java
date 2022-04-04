@@ -30,11 +30,11 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 .done()
             .label("LabelSolServiceMethod", "## Service method", "applicationType=\"soleApplication\"")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getSolServiceMethod, "applicationType=\"soleApplication\"")
+                .mandatory(Application::getServiceMethod, "applicationType=\"soleApplication\"")
                 .label("LabelSolicitorService",
                 "After service is complete you must notify the court by completing the ‘Confirm Service’ event in CCD. "
                     + "Refer to the notification that will be sent upon the issuing of the the case",
-                "solServiceMethod=\"solicitorService\" AND applicationType=\"soleApplication\"")
+                "serviceMethod=\"solicitorService\" AND applicationType=\"soleApplication\"")
                 .label("LabelSolStatementOTruthPara-3", "## Statement of reconciliation")
                 .mandatory(Application::getSolStatementOfReconciliationCertify)
                 .mandatory(Application::getSolStatementOfReconciliationDiscussed)
