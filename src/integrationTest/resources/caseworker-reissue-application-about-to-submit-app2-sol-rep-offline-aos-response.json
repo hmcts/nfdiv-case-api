@@ -63,26 +63,37 @@
       }
     ],
     "documentsGenerated": [{
-      "id": "Divorce application",
+      "id": "Coversheet",
       "value": {
         "documentLink": {
           "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-          "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+          "document_filename": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
           "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
         },
-        "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
-        "documentType": "application"
+        "documentFileName": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
+        "documentType": "coversheet"
       }
     }, {
       "id": "Notice of proceeding respondent",
       "value": {
         "documentLink": {
-          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8uh725e8-f053-8745-7gbt-bb69d1905ae3",
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94",
           "document_filename": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
-          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8uh725e8-f053-8745-7gbt-bb69d1905ae3/binary"
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94/binary"
         },
         "documentFileName": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
         "documentType": "noticeOfProceedingsApp2"
+      }
+    },{
+      "id": "Notice of proceeding applicant",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+          "document_filename": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+        },
+        "documentFileName": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
+        "documentType": "noticeOfProceedings"
       }
     }],
     "dueDate": "2021-07-03"
