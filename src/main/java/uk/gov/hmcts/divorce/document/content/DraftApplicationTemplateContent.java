@@ -13,20 +13,16 @@ import java.util.Map;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MIDDLE_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
@@ -36,6 +32,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDER_APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDER_APPLICANT_2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_OTHER_COURT_CASES_APPLICANT_1;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JURISDICTIONS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
@@ -43,7 +40,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_GIVEN;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_IS_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_FIRM_NAME;
@@ -117,32 +113,26 @@ public class DraftApplicationTemplateContent {
                 .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
                 .orElse(null));
 
-        templateContent.put("jurisdictions", applicationTemplateDataProvider.deriveJurisdictionList(application, ccdCaseReference));
+        templateContent.put(JURISDICTIONS, applicationTemplateDataProvider.deriveJurisdictionList(application, ccdCaseReference));
 
         if (!isNull(applicant1.getLegalProceedings())) {
             templateContent.put(HAS_OTHER_COURT_CASES_APPLICANT_1, applicant1.getLegalProceedings().toBoolean());
             templateContent.put(APPLICANT_1_COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
         }
 
-        templateContent.put(APPLICANT_1_POSTAL_ADDRESS, applicant1.getCorrespondenceAddress());
-        templateContent.put(APPLICANT_1_EMAIL, applicant1.getEmail());
-        templateContent.put(APPLICANT_2_POSTAL_ADDRESS, applicant2.getCorrespondenceAddress());
-        templateContent.put(APPLICANT_2_EMAIL, applicant2.getEmail());
+        applicantTemplateDataProvider.mapContactDetails(applicant1, applicant2, templateContent);
 
-        if (isSole) {
-            templateContent.put(RESPONDENT_IS_REPRESENTED, applicant2.isRepresented());
-            if (applicant2.isRepresented()) {
-                templateContent.put(RESPONDENT_SOLICITOR_NAME,
-                    isNull(applicant2Solicitor.getName()) ? NOT_GIVEN : applicant2Solicitor.getName());
-                templateContent.put(RESPONDENT_SOLICITOR_EMAIL,
-                    isNull(applicant2Solicitor.getEmail()) ? NOT_GIVEN : applicant2Solicitor.getEmail());
-                templateContent.put(RESPONDENT_SOLICITOR_FIRM_NAME,
-                    isNull(applicant2Solicitor.getOrganisationPolicy())
-                        ? NOT_GIVEN
-                        : applicant2Solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
-                templateContent.put(RESPONDENT_SOLICITOR_ADDRESS,
-                    isNull(applicant2Solicitor.getAddress()) ? NOT_GIVEN : applicant2Solicitor.getAddress());
-            }
+        if (isSole && applicant2.isRepresented()) {
+            templateContent.put(RESPONDENT_SOLICITOR_NAME,
+                isNull(applicant2Solicitor.getName()) ? NOT_GIVEN : applicant2Solicitor.getName());
+            templateContent.put(RESPONDENT_SOLICITOR_EMAIL,
+                isNull(applicant2Solicitor.getEmail()) ? NOT_GIVEN : applicant2Solicitor.getEmail());
+            templateContent.put(RESPONDENT_SOLICITOR_FIRM_NAME,
+                isNull(applicant2Solicitor.getOrganisationPolicy())
+                    ? NOT_GIVEN
+                    : applicant2Solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
+            templateContent.put(RESPONDENT_SOLICITOR_ADDRESS,
+                isNull(applicant2Solicitor.getAddress()) ? NOT_GIVEN : applicant2Solicitor.getAddress());
         }
 
         return templateContent;

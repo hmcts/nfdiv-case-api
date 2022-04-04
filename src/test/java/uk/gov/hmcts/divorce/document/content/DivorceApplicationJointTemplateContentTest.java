@@ -17,6 +17,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -34,13 +35,11 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_COURT_CASE_DETAILS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MIDDLE_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP;
@@ -135,8 +134,6 @@ class DivorceApplicationJointTemplateContentTest {
             entry(APPLICANT_2_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
-            entry(APPLICANT_2_POSTAL_ADDRESS, null),
-            entry(APPLICANT_2_EMAIL, TEST_USER_EMAIL),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
             entry(APPLICANT_2_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_2, false),
@@ -146,6 +143,7 @@ class DivorceApplicationJointTemplateContentTest {
         );
 
         verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));
+        verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
 
@@ -208,8 +206,6 @@ class DivorceApplicationJointTemplateContentTest {
             entry(APPLICANT_2_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
-            entry(APPLICANT_2_POSTAL_ADDRESS, null),
-            entry(APPLICANT_2_EMAIL, TEST_USER_EMAIL),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
             entry(APPLICANT_2_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_2, false),
@@ -219,6 +215,7 @@ class DivorceApplicationJointTemplateContentTest {
         );
 
         verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));
+        verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
 }

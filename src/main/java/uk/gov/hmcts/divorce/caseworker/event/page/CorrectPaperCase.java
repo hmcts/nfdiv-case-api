@@ -251,7 +251,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 "### ${labelContentRespondentsOrApplicant2s} financial order details", JOINT_APPLICATION)
                 .mandatory(Applicant::getFinancialOrder, JOINT_APPLICATION, null,
                 "Does ${labelContentTheApplicant2} wish to apply for a financial order?")
-                .mandatory(Applicant::getFinancialOrdersFor, "applicant2FinancialOrder=\"Yes\"")
+                .mandatory(Applicant::getFinancialOrdersFor, "applicant2FinancialOrder=\"Yes\" AND applicationType=\"jointApplication\"")
             .done();
     }
 

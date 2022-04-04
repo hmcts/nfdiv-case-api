@@ -100,7 +100,7 @@
         "id": "${json-unit.any-string}",
         "value": {
           "documentFileName": "${json-unit.any-string}",
-          "documentType": "aos",
+          "documentType": "noticeOfProceedingsApp2",
           "documentLink": {
             "document_binary_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",
@@ -123,7 +123,8 @@
     ],
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
+    "serviceMethod": "personalService",
     "warnings": []
   },
-  "state": "AwaitingAos"
+  "state": "AwaitingService"
 }

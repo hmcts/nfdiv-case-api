@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.common.event.DraftAos.DRAFT_AOS;
 import static uk.gov.hmcts.divorce.common.event.UpdateAos.UPDATE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -121,7 +121,7 @@ public class SolicitorSubmitUpdateDraftAosIT {
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(
                 objectMapper.writeValueAsString(
-                    callbackRequest(caseDataWithDocument(RESPONDENT_INVITATION),
+                    callbackRequest(caseDataWithDocument(NOTICE_OF_PROCEEDINGS_APP_2),
                         eventId)))
             .accept(APPLICATION_JSON))
             .andExpect(

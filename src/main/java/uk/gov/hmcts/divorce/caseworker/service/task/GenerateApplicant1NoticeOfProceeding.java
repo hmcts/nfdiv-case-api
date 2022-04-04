@@ -9,30 +9,30 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicant1TemplateContent;
-import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingApplicantSolicitorContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 
 import java.time.Clock;
 
 import static java.time.LocalDateTime.now;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APPLICANT_SOLICITOR_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A2_SOLE_APP1_CIT_PS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 @Component
 @Slf4j
-public class GenerateNoticeOfProceeding implements CaseTask {
+public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
 
     @Autowired
     private CoversheetApplicant1TemplateContent coversheetTemplateContent;
@@ -47,7 +47,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
     private NoticeOfProceedingJointContent jointTemplateContent;
 
     @Autowired
-    private NoticeOfProceedingApplicantSolicitorContent applicantSolicitorTemplateContent;
+    private NoticeOfProceedingSolicitorContent noticeOfProceedingSolicitorContent;
 
     @Autowired
     private Clock clock;
@@ -81,8 +81,8 @@ public class GenerateNoticeOfProceeding implements CaseTask {
         } else {
 
             String templateId = caseData.getApplicant2().isBasedOverseas()
-                ? NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID
-                : NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
+                ? NFD_NOP_A2_SOLE_APP1_CIT_PS
+                : NFD_NOP_A1_SOLE_APP1_CIT_CS;
 
             log.info("Generating notice of proceedings for sole case id {} ", caseId);
 
@@ -96,7 +96,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
             );
 
-            if (!isApplicant2Represented && caseData.getApplicant2().isBasedOverseas()) {
+            if (caseData.getApplication().isPersonalServiceMethod()) {
                 log.info("Generating coversheet for case id {} ", caseId);
                 caseDataDocumentService.renderDocumentAndUpdateCaseData(
                     caseData,
@@ -119,9 +119,9 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent.apply(caseData, caseId),
                 caseId,
-                NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID,
+                NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE,
                 caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
+                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
             );
 
         }
@@ -133,7 +133,6 @@ public class GenerateNoticeOfProceeding implements CaseTask {
         final boolean isApplicant1Offline = caseData.getApplicant1().isOffline();
 
         final boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
-        final boolean isApplicant2Offline = isBlank(caseData.getApplicant2().getEmail());
 
         if (isApplicant1Represented
             && caseData.getApplicant1().getSolicitor().hasOrgId()
@@ -150,23 +149,36 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 NOTICE_OF_PROCEEDINGS_APP_1,
                 jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
                 caseId,
-                JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+                NFD_NOP_JA1_JOINT_APP1APP2_CIT,
                 caseData.getApplicant1().getLanguagePreference(),
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock)));
         }
 
-        if (!isApplicant2Represented || isApplicant2Offline) {
+        if (isApplicant2Represented) {
+            // App2 represented - generate docs for solicitor NOP
+            log.info("Generating notice of proceedings(joint) for applicant 2 solicitor for case id {} ", caseId);
 
-            log.info("Generating applicant 2 notice of proceedings for joint case id {} ", caseId);
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                NOTICE_OF_PROCEEDINGS_APP_2,
+                noticeOfProceedingSolicitorContent.apply(caseData, caseId, false),
+                caseId,
+                NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS,
+                caseData.getApplicant2().getLanguagePreference(),
+                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
+            );
+        } else {
+            // App2 not represented - generate docs for applicant2 NOP(offline/online)
+            log.info("Generating applicant 2 notice of proceedings(joint) for joint case id {} ", caseId);
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseId,
-                JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+                NFD_NOP_JA1_JOINT_APP1APP2_CIT,
                 caseData.getApplicant2().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock)));
+                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock)));
         }
     }
 
@@ -176,12 +188,11 @@ public class GenerateNoticeOfProceeding implements CaseTask {
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             NOTICE_OF_PROCEEDINGS_APP_1,
-            applicantSolicitorTemplateContent.apply(caseData, caseId),
+            noticeOfProceedingSolicitorContent.apply(caseData, caseId, true),
             caseId,
-            NOTICE_OF_PROCEEDINGS_APPLICANT_SOLICITOR_TEMPLATE_ID,
+            NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS,
             caseData.getApplicant1().getLanguagePreference(),
             formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
         );
-
     }
 }

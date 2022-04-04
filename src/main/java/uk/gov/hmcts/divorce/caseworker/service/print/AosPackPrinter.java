@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETT
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 
 @Component
@@ -55,7 +55,7 @@ public class AosPackPrinter {
         } else {
             log.warn(
                 "AoS Pack print for respondent has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(APPLICATION, RESPONDENT_INVITATION),
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_2),
                 caseId);
         }
     }
@@ -80,9 +80,9 @@ public class AosPackPrinter {
         }
     }
 
-    public void sendOverseasAosLetterToApplicant(final CaseData caseData, final Long caseId) {
+    public void sendPersonalServiceAosLetterToApplicant(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> currentAosLetters = overseasLetters(caseData);
+        final List<Letter> currentAosLetters = personalServiceLetters(caseData);
 
         if (!isEmpty(currentAosLetters)) {
 
@@ -94,7 +94,7 @@ public class AosPackPrinter {
         } else {
             log.warn(
                 "AoS Pack for print applicant has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_1),
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_1, COVERSHEET, NOTICE_OF_PROCEEDINGS_APP_2),
                 caseId
             );
         }
@@ -166,7 +166,7 @@ public class AosPackPrinter {
 
         final List<Letter> respondentInvitationLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
-            RESPONDENT_INVITATION);
+            NOTICE_OF_PROCEEDINGS_APP_2);
 
         final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
@@ -190,14 +190,14 @@ public class AosPackPrinter {
         return currentAosLetters;
     }
 
-    private List<Letter> overseasLetters(final CaseData caseData) {
+    private List<Letter> personalServiceLetters(final CaseData caseData) {
         final List<Letter> coversheetLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
             COVERSHEET);
 
         final List<Letter> respondentInvitationLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
-            RESPONDENT_INVITATION);
+            NOTICE_OF_PROCEEDINGS_APP_2);
 
         final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
