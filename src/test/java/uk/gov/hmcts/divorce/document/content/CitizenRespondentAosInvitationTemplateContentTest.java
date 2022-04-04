@@ -5,8 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.LINE_1_LINE_2_CITY_POSTCODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -28,12 +27,18 @@ class CitizenRespondentAosInvitationTemplateContentTest {
     private CitizenRespondentAosInvitationTemplateContent citizenRespondentAosInvitationTemplateContent;
 
     @Test
-    void shouldReturnRespondentSolicitorAosInvitationTemplateContent() {
+    void shouldReturnRespondentAosInvitationTemplateContent() {
 
         final CaseData caseData = caseData();
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.getApplicant2().setSolicitor(
-            Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
+        caseData.getApplicant2().setAddress(
+            AddressGlobalUK.builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .postTown("city")
+                .postCode("postcode")
+                .build()
+
         );
         final Map<String, Object> templateContent = new HashMap<>();
 
