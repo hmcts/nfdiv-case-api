@@ -77,7 +77,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
@@ -1103,7 +1103,7 @@ public class CaseworkerReIssueApplicationIT {
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
+        stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
         stubAosPackSendLetter();
         final String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
