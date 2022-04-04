@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -65,6 +66,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
+            .showCondition("applicationType=\"soleApplication\" AND dateAosSubmitted=\"\"")
             .endButtonLabel("Save AoS Response")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
             .grantHistoryOnly(
@@ -83,6 +85,16 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> before) {
+        final var caseData = details.getData();
+        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+
+        if (null != acknowledgementOfService && null != acknowledgementOfService.getDateAosSubmitted()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList("The Acknowledgement Of Service has already been submitted."))
+                .build();
+        }
+
         var state = details.getState() == AwaitingAos || details.getState() == AosOverdue ? AosDrafted : details.getState();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

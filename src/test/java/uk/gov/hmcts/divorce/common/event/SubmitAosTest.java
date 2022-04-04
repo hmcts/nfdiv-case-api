@@ -19,6 +19,9 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -32,6 +35,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WIT
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosDisputed.SYSTEM_ISSUE_AOS_DISPUTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosUnDisputed.SYSTEM_ISSUE_AOS_UNDISPUTED;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -51,6 +55,9 @@ class SubmitAosTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private Clock clock;
 
     @InjectMocks
     private SubmitAos submitAos;
@@ -90,6 +97,29 @@ class SubmitAosTest {
                 "You must be authorised by the respondent to sign this statement.",
                 "The respondent must have given their prayer.",
                 "The respondent must have read the application for divorce.");
+    }
+
+    @Test
+    void shouldReturnErrorsIfAosValidationFailsDueToAlreadySubmitted() {
+
+        setMockClock(clock);
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .dateAosSubmitted(LocalDateTime.now(clock))
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitAos.aboutToSubmit(caseDetails, beforeDetails);
+
+        assertThat(response.getData()).isSameAs(caseData);
+        assertThat(response.getErrors())
+            .containsExactly(
+                "The Acknowledgement Of Service has already been submitted.");
     }
 
     @Test

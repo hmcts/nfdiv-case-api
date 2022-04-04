@@ -94,6 +94,10 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
         final List<String> errors = new ArrayList<>();
 
+        if (null != acknowledgementOfService.getDateAosSubmitted()) {
+            errors.add("The Acknowledgement Of Service has already been submitted.");
+        }
+
         if (NO.equals(acknowledgementOfService.getStatementOfTruth())) {
             errors.add("You must be authorised by the respondent to sign this statement.");
         }
@@ -116,6 +120,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .name("Submit AoS")
             .description("Submit AoS")
             .showSummary()
+            .showCondition("applicationType=\"soleApplication\" AND dateAosSubmitted=\"\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
