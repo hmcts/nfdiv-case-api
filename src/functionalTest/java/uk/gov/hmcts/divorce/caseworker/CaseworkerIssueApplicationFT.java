@@ -15,6 +15,7 @@ import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
@@ -26,6 +27,8 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-caseworker-issue-application-about-to-submit.json";
     private static final String SOLICITOR_RESPONSE =
         "classpath:responses/response-caseworker-issue-application-about-to-submit.json";
+    private static final String SOLICITOR_RESPONSE_WITH_D10 =
+        "classpath:responses/response-caseworker-issue-application-with-d10-about-to-submit.json";
     private static final String SOLE_CITIZEN_REQUEST =
         "classpath:request/casedata/ccd-callback-caseworker-issue-sole-citizen-application-about-to-submit.json";
     private static final String SOLE_CITIZEN_RESPONSE =
@@ -49,6 +52,24 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(
                 SOLICITOR_RESPONSE
+            )));
+    }
+
+    @Test
+    public void shouldUpdateCaseDataAndAddD10DocumentWhenAboutToSubmitCallbackIsSuccessfulForSolicitorApplication() throws Exception {
+        final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST);
+        caseData.put("solServiceMethod", SOLICITOR_SERVICE);
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        System.out.println(response.asString());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(
+                SOLICITOR_RESPONSE_WITH_D10
             )));
     }
 
