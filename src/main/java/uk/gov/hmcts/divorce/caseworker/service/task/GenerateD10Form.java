@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.service.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
@@ -58,9 +58,11 @@ public class GenerateD10Form implements CaseTask {
             documentsWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D10);
 
         var app2 = caseData.getApplicant2();
-        var d10Needed = !caseData.getApplication().isCourtServiceMethod()
-            || (app2.isRepresented() && app2.getSolicitor().getOrganisationPolicy() != null)
-            || isNotEmpty(caseData.getApplicant2().getEmail());
+        var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
+            ? !app2.getSolicitor().hasOrgId()
+            : StringUtils.isEmpty(caseData.getApplicant2().getEmail());
+
+        var d10Needed = !caseData.getApplication().isCourtServiceMethod() || app2Offline;
 
         if (d10Needed && !d10DocumentAlreadyGenerated) {
             try {

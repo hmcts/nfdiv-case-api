@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 
 @Component
@@ -26,9 +27,9 @@ public class SetServiceType implements CaseTask {
         if (!applicant1.isRepresented() && !applicant2.isRepresented() && (
             applicant2.isBasedOverseas() || NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address()))) {
             caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        } else if (caseData.getApplication().getServiceMethod() == null) {
+            caseData.getApplication().setServiceMethod(COURT_SERVICE);
         }
-
-
 
         return details;
     }

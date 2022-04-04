@@ -50,10 +50,12 @@ public class AosPackPrinter {
             final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_RESPONDENT_PACK);
             final var app2 = caseData.getApplicant2();
 
-            boolean includeD10Document = app2.isRepresented() && app2.getSolicitor() != null
+            var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
                 ? !app2.getSolicitor().hasOrgId()
                 : StringUtils.isEmpty(caseData.getApplicant2().getEmail());
-            final UUID letterId = bulkPrintService.printAosRespondentPack(print, includeD10Document);
+
+            var d10Needed = !caseData.getApplication().isCourtServiceMethod() || app2Offline;
+            final UUID letterId = bulkPrintService.printAosRespondentPack(print, d10Needed);
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             log.warn(
