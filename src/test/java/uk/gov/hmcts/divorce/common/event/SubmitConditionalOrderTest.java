@@ -190,7 +190,7 @@ class SubmitConditionalOrderTest {
         final CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .application(Application.builder()
-                .solServiceMethod(SOLICITOR_SERVICE)
+                .serviceMethod(SOLICITOR_SERVICE)
                 .solSignStatementOfTruth(YesOrNo.YES)
                 .build())
             .conditionalOrder(ConditionalOrder.builder()

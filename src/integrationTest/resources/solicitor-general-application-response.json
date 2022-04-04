@@ -22,7 +22,7 @@
         "documentType": "d11"
       }
     }],
-    "dataVersion": 1,
+    "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
   "state": "GeneralApplicationReceived"

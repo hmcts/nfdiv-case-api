@@ -190,21 +190,21 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void addService(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
-            .label("Label-SolicitorService", "solServiceMethod=\"solicitorService\"", "### Solicitor Service")
-            .field("solServiceMethod", "solServiceMethod=\"*\"")
-            .field("solServiceDateOfService", "solServiceMethod=\"solicitorService\"")
-            .field("solServiceDocumentsServed", "solServiceMethod=\"solicitorService\"")
-            .field("solServiceOnWhomServed", "solServiceMethod=\"solicitorService\"")
-            .field("solServiceHowServed", "solServiceMethod=\"solicitorService\"")
+            .label("Label-SolicitorService", "serviceMethod=\"solicitorService\"", "### Solicitor Service")
+            .field("serviceMethod", "serviceMethod=\"*\"")
+            .field("solServiceDateOfService", "serviceMethod=\"solicitorService\"")
+            .field("solServiceDocumentsServed", "serviceMethod=\"solicitorService\"")
+            .field("solServiceOnWhomServed", "serviceMethod=\"solicitorService\"")
+            .field("solServiceHowServed", "serviceMethod=\"solicitorService\"")
             .field("solServiceServiceDetails",
                 "solServiceHowServed=\"deliveredTo\" OR solServiceHowServed=\"postedTo\"")
-            .field("solServiceAddressServed", "solServiceMethod=\"solicitorService\"")
-            .field("solServiceBeingThe", "solServiceMethod=\"solicitorService\"")
-            .field("solServiceLocationServed", "solServiceMethod=\"solicitorService\"")
+            .field("solServiceAddressServed", "serviceMethod=\"solicitorService\"")
+            .field("solServiceBeingThe", "serviceMethod=\"solicitorService\"")
+            .field("solServiceLocationServed", "serviceMethod=\"solicitorService\"")
             .field("solServiceSpecifyLocationServed",
-                "solServiceMethod=\"solicitorService\" AND solServiceLocationServed=\"otherSpecify\"")
-            .field("solServiceServiceSotName", "solServiceMethod=\"solicitorService\"")
-            .field("solServiceTruthStatement", "solServiceMethod=\"solicitorService\" AND solServiceHowServed=\"*\"")
-            .field("solServiceServiceSotFirm", "solServiceMethod=\"solicitorService\"");
+                "serviceMethod=\"solicitorService\" AND solServiceLocationServed=\"otherSpecify\"")
+            .field("solServiceServiceSotName", "serviceMethod=\"solicitorService\"")
+            .field("solServiceTruthStatement", "serviceMethod=\"solicitorService\" AND solServiceHowServed=\"*\"")
+            .field("solServiceServiceSotFirm", "serviceMethod=\"solicitorService\"");
     }
 }

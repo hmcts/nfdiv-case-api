@@ -17,7 +17,6 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_LABEL;
@@ -30,6 +29,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME_WITH_DEFAULT_VALUE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class NoticeOfProceedingApplicantSolicitorContent {
+public class NoticeOfProceedingSolicitorContent {
 
     @Value("${court.locations.serviceCentre.email}")
     private String email;
@@ -49,7 +49,7 @@ public class NoticeOfProceedingApplicantSolicitorContent {
     @Autowired
     private HoldingPeriodService holdingPeriodService;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
+    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, boolean isApplicantSolicitor) {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -75,17 +75,17 @@ public class NoticeOfProceedingApplicantSolicitorContent {
         templateContent.put(APPLICANT_SOLICITOR_LABEL,
             isJoint && oneSolicitorApplyingForBothParties ? "Applicants solicitor" : "Applicant's solicitor");
         templateContent.put(APPLICANT_SOLICITOR_REGISTERED, applicant1Solicitor.hasOrgId());
-        templateContent.put(SOLICITOR_NAME, applicant1Solicitor.getName());
-        templateContent.put(SOLICITOR_ADDRESS, applicant1Solicitor.getAddress());
+        templateContent.put(SOLICITOR_NAME, isApplicantSolicitor ? applicant1Solicitor.getName() : applicant2Solicitor.getName());
+        templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor ? applicant1Solicitor.getAddress() : applicant2Solicitor.getAddress());
 
         templateContent.put(
             SOLICITOR_REFERENCE,
-            isNotEmpty(applicant1Solicitor.getReference()) ? applicant1Solicitor.getReference() : NOT_PROVIDED
+            isApplicantSolicitor ? solicitorReference(applicant1Solicitor) : solicitorReference(applicant2Solicitor)
         );
 
         templateContent.put(
-            APPLICANT_1_SOLICITOR_NAME,
-            applicant1.isRepresented() ? applicant1Solicitor.getName() : NOT_REPRESENTED
+            SOLICITOR_NAME_WITH_DEFAULT_VALUE,
+            isApplicantSolicitor ? solicitorName(applicant1, applicant1Solicitor) : solicitorName(applicant2, applicant2Solicitor)
         );
 
         if (!isJoint) {
@@ -102,5 +102,13 @@ public class NoticeOfProceedingApplicantSolicitorContent {
             .build());
 
         return templateContent;
+    }
+
+    private String solicitorName(Applicant applicant, Solicitor solicitor) {
+        return applicant.isRepresented() ? solicitor.getName() : NOT_REPRESENTED;
+    }
+
+    private String solicitorReference(Solicitor solicitor) {
+        return isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : NOT_PROVIDED;
     }
 }
