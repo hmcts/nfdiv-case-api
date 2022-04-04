@@ -7,6 +7,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -479,9 +480,11 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
             .thenReturn("Notice of proceeding respondent");
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -695,8 +698,11 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent");
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Notice of proceeding respondent");
 
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
         stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_ONLINE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -751,20 +757,45 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
-            .thenReturn("Notice of proceedings respondent")
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Notice of proceeding respondent")
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Overseas_Sole.docx");
         stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent.docx");
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(COVERSHEET_APPLICANT_ID, "NFD_Applicant_Coversheet.docx");
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubAosPackSendLetter();
 
+        final var documentListValue1 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            NOTICE_OF_PROCEEDING_ID);
+
+        final var documentListValue2 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID);
+
+        final var documentListValue3 = documentWithType(
+            APPLICATION,
+            DIVORCE_APPLICATION_TEMPLATE_ID);
+
+        final var documentListValue4 = documentWithType(
+            COVERSHEET,
+            COVERSHEET_APPLICANT_ID);
+
+        final List<String> documentIds = asList(
+            FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue4.getValue().getDocumentLink().getUrl())
+        );
+
+        stubAosPackSendLetter(documentIds);
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
