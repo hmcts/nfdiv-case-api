@@ -231,7 +231,8 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
@@ -905,7 +906,7 @@ public class CaseworkerReIssueApplicationIT {
     }
 
     @Test
-    void shouldGenerateD10DocumentWhenSolicitorMethodIsSelected() throws Exception {
+    void shouldGenerateD10DocumentWhenSolicitorMethodIsSelected() throws Exception { // pass
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
@@ -952,15 +953,16 @@ public class CaseworkerReIssueApplicationIT {
     }
 
     @Test
-    void shouldNotGenerateD10DocumentWhenSolicitorMethodIsNotSelected() throws Exception {
+    void shouldNotGenerateD10DocumentWhenCourtServiceIsSelectedAndApp2Online() throws Exception { // pass
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
-        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.getApplication().setReissueOption(DIGITAL_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setEmail("notNull@email.com");
         caseData.getApplicant2().setOffline(YES);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
