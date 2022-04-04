@@ -76,6 +76,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("d9H")
     D9H("D9H"),
 
+    @JsonProperty("d10")
+    D10("D10"),
+
     @JsonProperty("d11")
     D11("D11"),
 

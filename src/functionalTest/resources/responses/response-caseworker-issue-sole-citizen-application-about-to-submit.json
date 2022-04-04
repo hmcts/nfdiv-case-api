@@ -123,7 +123,8 @@
     ],
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
+    "serviceMethod": "personalService",
     "warnings": []
   },
-  "state": "AwaitingAos"
+  "state": "AwaitingService"
 }

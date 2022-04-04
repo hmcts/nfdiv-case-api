@@ -84,7 +84,7 @@ public class SolicitorConfirmServiceIT {
 
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
-        caseData.getApplication().setSolServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
+        caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
         caseData.getApplication().setIssueDate(serviceDate);
         caseData.getApplication().setSolicitorService(solicitorService);
 
@@ -115,7 +115,7 @@ public class SolicitorConfirmServiceIT {
 
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
-        caseData.getApplication().setSolServiceMethod(ServiceMethod.COURT_SERVICE);
+        caseData.getApplication().setServiceMethod(ServiceMethod.COURT_SERVICE);
         caseData.getApplication().setIssueDate(serviceDate);
         caseData.getApplication().setSolicitorService(solicitorService);
 

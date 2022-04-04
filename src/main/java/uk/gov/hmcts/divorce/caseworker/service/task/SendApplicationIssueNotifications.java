@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 
 @Component
 public class SendApplicationIssueNotifications implements CaseTask {
@@ -32,7 +32,7 @@ public class SendApplicationIssueNotifications implements CaseTask {
 
         notificationDispatcher.send(applicationIssuedNotification, caseData, caseId);
 
-        if (caseDetails.getState() == AwaitingAos
+        if (caseDetails.getState() == AwaitingService
             && caseData.getApplicationType().isSole()
             && caseData.getApplicant2().isBasedOverseas()) {
             notificationDispatcher.send(applicationIssuedOverseasNotification, caseData, caseId);
