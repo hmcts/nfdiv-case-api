@@ -383,6 +383,24 @@ public enum State {
         GeneralApplicationReceived
     };
 
+    public static final EnumSet<State> PRE_GENERAL_APPLICATION_STATES = EnumSet.complementOf(EnumSet.of(
+        Submitted,
+        GeneralApplicationReceived,
+        AwaitingGeneralConsideration,
+        AwaitingGeneralReferralPayment,
+        GeneralConsiderationComplete,
+        AwaitingJudgeClarification,
+        AwaitingDwpResponse,
+        AwaitingAlternativeService,
+        AwaitingServicePayment,
+        AwaitingServiceConsideration,
+        AwaitingBailiffReferral,
+        AwaitingBailiffService,
+        IssuedToBailiff,
+        Holding,
+        AwaitingConditionalOrder
+    ));
+
     private final String name;
 
 }

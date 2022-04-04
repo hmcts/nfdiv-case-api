@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentTo
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_GENERAL_APPLICATION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -84,7 +85,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_GENERAL_APPLICATION)
-            .forStates(POST_ISSUE_STATES)
+            .forStates(PRE_GENERAL_APPLICATION_STATES)
             .name("General Application")
             .description("General Application")
             .showSummary()
