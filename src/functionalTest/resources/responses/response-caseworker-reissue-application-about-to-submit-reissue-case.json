@@ -74,28 +74,48 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentFileName": "${json-unit.any-string}",
-          "documentType": "noticeOfProceedingsApp2",
           "documentLink": {
             "document_url": "${json-unit.any-string}",
-            "document_filename": "${json-unit.any-string}",
+            "document_filename": "D10.pdf",
             "document_binary_url": "${json-unit.any-string}"
-          }
+          },
+          "documentFileName": "D10.pdf",
+          "documentType": "d10"
         }
-      },
-      {
+      }, {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentFileName": "${json-unit.any-string}",
-          "documentType": "application",
           "documentLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",
             "document_binary_url": "${json-unit.any-string}"
-          }
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "application"
         }
-      },
-      {
+      }, {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "coversheet"
+        }
+      }, {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "noticeOfProceedingsApp2"
+        }
+      }, {
         "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
