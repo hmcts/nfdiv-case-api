@@ -94,7 +94,7 @@
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94/binary"
           },
           "documentFileName": "${json-unit.any-string}",
-          "documentType": "aos"
+          "documentType": "noticeOfProceedingsApp2"
         }
       }
     ],

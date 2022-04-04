@@ -27,14 +27,14 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICA
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 @Component
 @Slf4j
-public class GenerateRespondentAosInvitation implements CaseTask {
+public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -75,8 +75,8 @@ public class GenerateRespondentAosInvitation implements CaseTask {
                     caseDetails,
                     NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                     citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId),
-                    RESPONDENT_INVITATION,
-                    RESP_AOS_INVITATION_DOCUMENT_NAME
+                    NOTICE_OF_PROCEEDINGS_APP_2,
+                    NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
                 );
             } else if (applicant2.isRepresented()) {
                 log.info("Generating solicitor respondent AoS invitation for case id {} ", caseId);
@@ -84,8 +84,8 @@ public class GenerateRespondentAosInvitation implements CaseTask {
                     caseDetails,
                     RESP_SOLICITOR_AOS_INVITATION,
                     respondentSolicitorAosInvitationTemplateContent.apply(caseData, caseId, caseDetails.getCreatedDate().toLocalDate()),
-                    RESPONDENT_INVITATION,
-                    RESP_AOS_INVITATION_DOCUMENT_NAME
+                    NOTICE_OF_PROCEEDINGS_APP_2,
+                    NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
                 );
             } else if (isNotEmpty(applicant2.getEmail())) {
                 log.info("Generating citizen respondent(with email) AoS invitation for case id {} ", caseId);
@@ -93,8 +93,8 @@ public class GenerateRespondentAosInvitation implements CaseTask {
                     caseDetails,
                     NFD_NOP_R1_SOLE_APP2_CIT_ONLINE,
                     citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId),
-                    RESPONDENT_INVITATION,
-                    RESP_AOS_INVITATION_DOCUMENT_NAME
+                    NOTICE_OF_PROCEEDINGS_APP_2,
+                    NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
                 );
             } else if (isEmpty(applicant2.getEmail())) {
                 log.info("Generating citizen respondent(without email) AoS invitation for case id {} ", caseId);
@@ -102,8 +102,8 @@ public class GenerateRespondentAosInvitation implements CaseTask {
                     caseDetails,
                     NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                     citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId),
-                    RESPONDENT_INVITATION,
-                    RESP_AOS_INVITATION_DOCUMENT_NAME
+                    NOTICE_OF_PROCEEDINGS_APP_2,
+                    NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
                 );
 
                 if (!caseData.getApplication().isPersonalServiceMethod()) {
