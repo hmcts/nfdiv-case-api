@@ -58,7 +58,7 @@ public class GenerateD10FormTest {
     @Test
     void shouldGenerateD10DocumentAndAddToListOfDocumentsGenerated() {
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -104,7 +104,7 @@ public class GenerateD10FormTest {
     @Test
     void shouldNotGenerateD10DocumentIfSolicitorServiceMethodHasNotBeenSelected() {
         CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
@@ -132,7 +132,7 @@ public class GenerateD10FormTest {
             .build();
 
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getDocuments().setDocumentsGenerated(singletonList(d10Document));
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

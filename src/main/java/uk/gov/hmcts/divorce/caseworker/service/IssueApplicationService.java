@@ -12,13 +12,12 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetIssueDate;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
-
-import java.time.Clock;
-import java.time.LocalDate;
 
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
@@ -57,15 +56,16 @@ public class IssueApplicationService {
     private GenerateD10Form generateD10Form;
 
     @Autowired
-    private Clock clock;
+    private SetServiceType setServiceType;
+
+    @Autowired
+    private SetIssueDate setIssueDate;
 
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
+            setServiceType,
+            setIssueDate,
             setPostIssueState,
-            details -> {
-                details.getData().getApplication().setIssueDate(LocalDate.now(clock));
-                return details;
-            },
             setDueDateAfterIssue,
             generateNoticeOfProceeding,
             generateRespondentAosInvitation,
