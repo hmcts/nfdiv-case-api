@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_I
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
@@ -102,7 +102,7 @@ public class GenerateRespondentAosInvitationTest {
                 TEST_CASE_ID,
                 RESP_SOLICITOR_AOS_INVITATION,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         classMock.close();
@@ -140,7 +140,7 @@ public class GenerateRespondentAosInvitationTest {
                 TEST_CASE_ID,
                 CITIZEN_RESP_AOS_INVITATION_ONLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verifyNoMoreInteractions(caseDataDocumentService);
@@ -180,7 +180,7 @@ public class GenerateRespondentAosInvitationTest {
                 TEST_CASE_ID,
                 CITIZEN_RESP_AOS_INVITATION_OFFLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verify(caseDataDocumentService)
@@ -232,7 +232,7 @@ public class GenerateRespondentAosInvitationTest {
                 TEST_CASE_ID,
                 CITIZEN_RESP_AOS_INVITATION_OFFLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verify(caseDataDocumentService)
@@ -310,7 +310,7 @@ public class GenerateRespondentAosInvitationTest {
                 TEST_CASE_ID,
                 CITIZEN_RESP_AOS_INVITATION_OFFLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verifyNoMoreInteractions(caseDataDocumentService);
