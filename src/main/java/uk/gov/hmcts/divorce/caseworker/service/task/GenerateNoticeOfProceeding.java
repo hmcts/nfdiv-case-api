@@ -165,7 +165,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 caseId,
                 NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID,
                 caseData.getApplicant2().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
+                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
             );
         } else {
             // App2 not represented - generate docs for applicant2 NOP(offline/online)
