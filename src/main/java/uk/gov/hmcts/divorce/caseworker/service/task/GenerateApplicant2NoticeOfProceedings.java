@@ -79,7 +79,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                 ? NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE
                 : NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
         } else {
-            log.info("Generating notice of proceedings for sole case id {} ", caseId);
+            log.info("Generating notice of proceedings for respondent for sole case id {} ", caseId);
 
             templateId = isNotEmpty(caseData.getApplicant2().getEmail())
                 ? NFD_NOP_R1_SOLE_APP2_CIT_ONLINE
@@ -101,7 +101,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             || templateId.equals(NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE)
             || templateId.equals(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE)) {
 
-            log.info("Generating coversheet for case id {} ", caseId);
+            log.info("Generating coversheet for sole case id {} ", caseId);
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
                 COVERSHEET,
@@ -120,11 +120,11 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         Map<String, Object> content;
 
         if (caseData.getApplicant2().isRepresented()) {
-            log.info("Generating notice of proceedings(joint) for applicant 2 solicitor for case id {} ", caseId);
+            log.info("Generating notice of proceedings for applicant 2 solicitor for case id {} ", caseId);
             templateId = NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
             content = solicitorTemplateContent.apply(caseData, caseId, false);
         } else {
-            log.info("Generating applicant 2 notice of proceedings(joint) for joint case id {} ", caseId);
+            log.info("Generating applicant 2 notice of proceedings for applicant for joint case id {} ", caseId);
             templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
             content = templateContent.apply(caseData, caseId);
         }

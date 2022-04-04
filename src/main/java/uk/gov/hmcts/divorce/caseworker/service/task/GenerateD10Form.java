@@ -66,7 +66,7 @@ public class GenerateD10Form implements CaseTask {
 
         if (d10Needed && !d10DocumentAlreadyGenerated) {
             try {
-                log.info("Adding d10 to documents generated for case id: {}", caseId);
+                log.info("Adding D10 to list of generated documents for case id: {}", caseId);
                 addD10FormToGeneratedDocuments(caseData);
             } catch (Exception e) {
                 log.error("Error encountered whilst adding D10 document to list of generated documents for case id: {}", caseId);
