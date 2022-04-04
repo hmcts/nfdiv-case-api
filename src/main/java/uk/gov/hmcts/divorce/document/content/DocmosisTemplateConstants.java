@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
 public final class DocmosisTemplateConstants {
+
     public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
     public static final String MARRIAGE_OR_RELATIONSHIP = "marriageOrRelationship";
     public static final String MARRIAGE_OR_CIVIL_PARTNERSHIP = "marriageOrCivilPartnership";
@@ -66,7 +67,6 @@ public final class DocmosisTemplateConstants {
     public static final String SERVICE_APPLICATION_DECISION_DATE = "serviceApplicationDecisionDate";
     public static final String IS_SERVICE_ORDER_TYPE_DEEMED = "isServiceOrderTypeDeemed";
     public static final String DOCUMENTS_ISSUED_ON = "documentIssuedOn";
-    public static final String RESPONDENT_IS_REPRESENTED = "respondentIsRepresented";
     public static final String RESPONDENT_SOLICITOR_NAME = "respondentSolicitorName";
     public static final String RESPONDENT_SOLICITOR_EMAIL = "respondentSolicitorEmail";
     public static final String RESPONDENT_SOLICITOR_FIRM_NAME = "respondentSolicitorFirmName";
@@ -128,6 +128,12 @@ public final class DocmosisTemplateConstants {
     public static final String DUE_DATE = "dueDate";
     public static final String APPLICANT_SOLICITOR_REGISTERED = "isApplicantSolicitorRegistered";
     public static final String APPLICANT_SOLICITOR_LABEL = "applicantSolicitorLabel";
+
+    public static final String IS_APP1_CONTACT_PRIVATE = "isApplicant1ContactPrivate";
+    public static final String IS_APP1_REPRESENTED = "isApplicant1Represented";
+    public static final String IS_APP2_CONTACT_PRIVATE = "isApplicant2ContactPrivate";
+    public static final String IS_APP2_REPRESENTED = "isApplicant2Represented";
+    public static final String JURISDICTIONS = "jurisdictions";
 
     private DocmosisTemplateConstants() {
     }

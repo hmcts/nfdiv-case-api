@@ -66,8 +66,8 @@ doc_assembly:
 docmosis:
   templates:
     english:
-      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole.docx
-      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint.docx
+      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_V2.docx
+      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V2.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
       REFUSAL_ORDER: NFD_Refusal_Order.docx
       RESP_SOLICITOR_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -83,9 +83,9 @@ docmosis:
       JOINT_NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Joint.docx
       NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP: NFD_Notice_Of_Proceedings_Overseas_Sole.docx
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement.docx #TODO: update content
-      DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx
-      DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx
-      DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers.docx
+      DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers_V2.docx
+      DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers_V2.docx
+      DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers_V2.docx
       SERVICE_REFUSAL: NFD_Refusal_Order_Deemed_Dispensed_Service.docx
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx
