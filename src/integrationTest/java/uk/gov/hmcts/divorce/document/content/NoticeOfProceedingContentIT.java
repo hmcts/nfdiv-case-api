@@ -25,7 +25,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -39,6 +38,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPOND_BY_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME_WITH_DEFAULT_VALUE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WHO_APPLIED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_ADDRESS;
@@ -320,7 +320,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(SOLICITOR_NAME, "app 2 sol");
         expectedEntries.put(SOLICITOR_ADDRESS, "The avenue");
         expectedEntries.put(SOLICITOR_REFERENCE, "ref");
-        expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "app 1 sol");
+        expectedEntries.put(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "app 1 sol");
         expectedEntries.put(WHO_APPLIED, "applicant's solicitor");
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "Yes");
@@ -406,7 +406,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(SOLICITOR_NAME, "app 2 sol");
         expectedEntries.put(SOLICITOR_ADDRESS, "The avenue");
         expectedEntries.put(SOLICITOR_REFERENCE, NOT_PROVIDED);
-        expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, NOT_REPRESENTED);
+        expectedEntries.put(SOLICITOR_NAME_WITH_DEFAULT_VALUE, NOT_REPRESENTED);
         expectedEntries.put(WHO_APPLIED, "applicant");
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
