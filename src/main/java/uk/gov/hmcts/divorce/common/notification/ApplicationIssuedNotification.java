@@ -93,6 +93,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 commonTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
                 languagePreference
             );
+
+            log.info("Sending(bulk print) joint application NOP to applicant 1 for case : {}", caseId);
+            noticeOfProceedingsPrinter.sendLetterToApplicant1(caseData,caseId);
         }
     }
 
