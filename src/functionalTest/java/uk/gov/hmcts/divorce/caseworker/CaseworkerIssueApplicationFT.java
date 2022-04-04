@@ -58,7 +58,7 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     @Test
     public void shouldUpdateCaseDataAndAddD10DocumentWhenAboutToSubmitCallbackIsSuccessfulForSolicitorApplication() throws Exception {
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST);
-        caseData.put("solServiceMethod", SOLICITOR_SERVICE);
+        caseData.put("serviceMethod", SOLICITOR_SERVICE);
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
