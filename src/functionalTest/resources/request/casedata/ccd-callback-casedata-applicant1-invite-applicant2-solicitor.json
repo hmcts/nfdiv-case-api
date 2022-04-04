@@ -1,0 +1,24 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2SolicitorRepresented": "Yes",
+  "applicant2SolicitorName": "Applicant 2 Solicitor",
+  "applicant2SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+  "applicant2SolicitorOrganisationPolicy": {
+    "Organisation": {
+      "OrganisationName": "Test 2 Organisation",
+      "OrganisationID": "N5AFUXG"
+    }
+  },
+  "applicant1Gender": "male",
+  "applicant2Gender": "female",
+  "marriageApplicant1Name":"John Smith",
+  "marriageDate": "2020-04-28",
+  "applicant1FinancialOrder": "No",
+  "jurisdictionApplicant1Residence": "Yes",
+  "jurisdictionApplicant2Residence": "Yes",
+  "jurisdictionConnections": ["A"]
+}
