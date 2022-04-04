@@ -52,7 +52,7 @@ public class CaseworkerConfirmServiceTest {
     void shouldSetDueDateWhenServiceMethodIsCourtService() {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -73,7 +73,7 @@ public class CaseworkerConfirmServiceTest {
     void shouldSetDueDateWhenServiceMethodIsSolicitorService() {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
