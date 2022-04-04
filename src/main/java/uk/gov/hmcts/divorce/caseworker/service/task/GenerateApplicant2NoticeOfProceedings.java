@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTemplateContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
-import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
@@ -27,8 +27,8 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICA
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
@@ -39,15 +39,14 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
 
-    //TODO: Use correct template content when application template requirements are known.
-    @Autowired
-    private RespondentSolicitorAosInvitationTemplateContent respondentSolicitorAosInvitationTemplateContent;
-
     @Autowired
     private CitizenRespondentAosInvitationTemplateContent citizenRespondentAosInvitationTemplateContent;
 
     @Autowired
     private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
+
+    @Autowired
+    private NoticeOfProceedingContent templateContent;
 
     @Autowired
     private Clock clock;
@@ -66,29 +65,23 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
         if (caseData.getApplicationType().isSole() && isAddressKnown) {
 
-            final Applicant applicant1 = caseData.getApplicant1();
             final Applicant applicant2 = caseData.getApplicant2();
 
-            if (!applicant1.isRepresented() && !applicant2.isRepresented() && applicant2.isBasedOverseas()) {
-                log.info("Generating citizen respondent(Offline) AoS invitation for case id {} ", caseId);
-                generateDocumentAndUpdateCaseData(
-                    caseDetails,
-                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
-                    citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId),
+            if (applicant2.isRepresented()) {
+                log.info("Generating solicitor respondent NoP for case id {} ", caseId);
+
+                caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                    caseData,
                     NOTICE_OF_PROCEEDINGS_APP_2,
-                    NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
+                    templateContent.apply(caseData, caseId),
+                    caseId,
+                    NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE,
+                    caseData.getApplicant1().getLanguagePreference(),
+                    formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
                 );
-            } else if (applicant2.isRepresented()) {
-                log.info("Generating solicitor respondent AoS invitation for case id {} ", caseId);
-                generateDocumentAndUpdateCaseData(
-                    caseDetails,
-                    RESP_SOLICITOR_AOS_INVITATION,
-                    respondentSolicitorAosInvitationTemplateContent.apply(caseData, caseId, caseDetails.getCreatedDate().toLocalDate()),
-                    NOTICE_OF_PROCEEDINGS_APP_2,
-                    NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
-                );
+
             } else if (isNotEmpty(applicant2.getEmail())) {
-                log.info("Generating citizen respondent(with email) AoS invitation for case id {} ", caseId);
+                log.info("Generating citizen respondent(with email) NoP for case id {} ", caseId);
                 generateDocumentAndUpdateCaseData(
                     caseDetails,
                     NFD_NOP_R1_SOLE_APP2_CIT_ONLINE,
@@ -97,7 +90,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                     NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
                 );
             } else if (isEmpty(applicant2.getEmail())) {
-                log.info("Generating citizen respondent(without email) AoS invitation for case id {} ", caseId);
+                log.info("Generating citizen respondent(without email) NoP for case id {} ", caseId);
                 generateDocumentAndUpdateCaseData(
                     caseDetails,
                     NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,

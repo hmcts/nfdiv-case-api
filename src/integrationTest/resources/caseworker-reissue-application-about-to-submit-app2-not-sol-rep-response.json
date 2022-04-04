@@ -64,7 +64,7 @@
     "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
-        "id": "Respondent Invitation",
+        "id": "Notice of proceedings respondent",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/eb90a159-4200-410b-a504-5a925be0b152",

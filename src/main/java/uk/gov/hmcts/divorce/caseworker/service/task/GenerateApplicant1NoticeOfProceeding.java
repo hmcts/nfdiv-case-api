@@ -23,7 +23,6 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_AP
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -71,7 +70,6 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
     private void generateSoleNoticeOfProceedings(CaseData caseData, Long caseId) {
 
         final boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
-        final boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
 
         if (isApplicant1Represented) {
             if (caseData.getApplicant1().getSolicitor().hasOrgId()
@@ -110,21 +108,6 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             }
         }
 
-        if (isApplicant2Represented) {
-
-            log.info("Generating notice of proceedings for respondent on sole case id {} ", caseId);
-
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                NOTICE_OF_PROCEEDINGS_APP_2,
-                templateContent.apply(caseData, caseId),
-                caseId,
-                NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE,
-                caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
-            );
-
-        }
     }
 
     private void generateJointNoticeOfProceedings(CaseData caseData, Long caseId) {

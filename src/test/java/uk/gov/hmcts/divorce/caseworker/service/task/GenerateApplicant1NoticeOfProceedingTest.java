@@ -47,7 +47,6 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_AP
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -100,26 +99,6 @@ class GenerateApplicant1NoticeOfProceedingTest {
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_A1_SOLE_APP1_CIT_CS, NOTICE_OF_PROCEEDINGS_APP_1, 1);
-
-        assertThat(result.getData()).isEqualTo(caseData);
-    }
-
-    @Test
-    void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplicationWhenRespondentIsRepresented() {
-
-        setMockClock(clock);
-
-        final CaseData caseData = caseData(SOLE_APPLICATION, NO, YES);
-        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("UK").build());
-
-        final Map<String, Object> templateContent = new HashMap<>();
-
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-
-        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
-
-        verifyInteractions(caseData, templateContent, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE, NOTICE_OF_PROCEEDINGS_APP_2, 1,
-            NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }

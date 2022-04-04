@@ -7,14 +7,13 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTemplateContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
-import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -36,14 +35,13 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICA
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
@@ -55,7 +53,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private RespondentSolicitorAosInvitationTemplateContent respondentSolicitorAosInvitationTemplateContent;
+    private NoticeOfProceedingContent noticeOfProceedingContent;
 
     @Mock
     private CitizenRespondentAosInvitationTemplateContent citizenRespondentAosInvitationTemplateContent;
@@ -88,7 +86,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
-        when(respondentSolicitorAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
@@ -100,7 +98,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
-                RESP_SOLICITOR_AOS_INVITATION,
+                NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
@@ -122,15 +120,10 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        final Map<String, Object> coversheetContent = new HashMap<>();
-        final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
-
-        assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
+        generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
@@ -144,8 +137,6 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
             );
 
         verifyNoMoreInteractions(caseDataDocumentService);
-
-        classMock.close();
     }
 
     @Test
@@ -162,15 +153,11 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
         final Map<String, Object> coversheetContent = new HashMap<>();
-        final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
         when(coversheetApplicant2TemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(coversheetContent);
 
-        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
-
-        assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
+        generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
@@ -195,8 +182,6 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
             );
 
         verifyNoMoreInteractions(caseDataDocumentService);
-
-        classMock.close();
     }
 
     @Test
@@ -274,47 +259,4 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         classMock.close();
     }
 
-    @Test
-    void shouldGenerateAosInvitationDocOfflineVersionIfApplicantAndRespondentAreNotRepresentedAndRepsondentIsOverseas() {
-        setMockClock(clock);
-
-        final var caseData = caseData();
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplication().setApplicant1KnowsApplicant2Address(YES);
-
-        caseData.getApplicant1().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        final Map<String, Object> templateContent = new HashMap<>();
-        final Map<String, Object> coversheetContent = new HashMap<>();
-        final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
-
-        when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-
-        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
-
-        assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
-
-        verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
-                caseData,
-                NOTICE_OF_PROCEEDINGS_APP_2,
-                templateContent,
-                TEST_CASE_ID,
-                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
-                ENGLISH,
-                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
-            );
-
-        verifyNoMoreInteractions(caseDataDocumentService);
-
-        classMock.close();
-    }
 }

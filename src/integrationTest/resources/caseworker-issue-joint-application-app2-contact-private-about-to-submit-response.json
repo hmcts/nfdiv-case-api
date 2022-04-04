@@ -65,7 +65,7 @@
     "accessCode": "${json-unit.any-string}",
     "confidentialDocumentsGenerated": [
       {
-        "id": "Respondent Invitation",
+        "id": "Notice of proceedings respondent",
         "value": {
           "confidentialDocumentsReceived": "noticeOfProceedingsApp2",
           "documentLink": {
