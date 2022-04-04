@@ -89,8 +89,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SER
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
@@ -389,7 +389,7 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("AOS Invitation")
             .thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID,
+        stubForDocAssemblyWith(NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS,
             "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
         stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
@@ -835,7 +835,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
+        stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
         stubAosPackSendLetter();
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
