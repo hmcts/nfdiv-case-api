@@ -145,6 +145,7 @@ public enum DocumentType implements HasLabel {
     RESPONDENT_ANSWERS("Respondent answers"),
 
     @JsonProperty("aos")
+    @Deprecated
     RESPONDENT_INVITATION("Respondent Invitation"),
 
     @JsonProperty("solicitorService")

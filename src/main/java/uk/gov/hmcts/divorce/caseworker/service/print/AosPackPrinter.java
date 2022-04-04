@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETT
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 
 @Component
@@ -55,7 +55,7 @@ public class AosPackPrinter {
         } else {
             log.warn(
                 "AoS Pack print for respondent has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(APPLICATION, RESPONDENT_INVITATION),
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_2),
                 caseId);
         }
     }
@@ -166,7 +166,7 @@ public class AosPackPrinter {
 
         final List<Letter> respondentInvitationLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
-            RESPONDENT_INVITATION);
+            NOTICE_OF_PROCEEDINGS_APP_2);
 
         final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
@@ -197,7 +197,7 @@ public class AosPackPrinter {
 
         final List<Letter> respondentInvitationLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
-            RESPONDENT_INVITATION);
+            NOTICE_OF_PROCEEDINGS_APP_2);
 
         final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),

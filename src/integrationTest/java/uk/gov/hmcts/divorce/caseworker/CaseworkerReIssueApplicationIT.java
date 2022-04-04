@@ -71,7 +71,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
@@ -871,7 +871,7 @@ public class CaseworkerReIssueApplicationIT {
             APPLICATION,
             DIVORCE_APPLICATION_TEMPLATE_ID);
         final var documentListValue2 = documentWithType(
-            RESPONDENT_INVITATION,
+            NOTICE_OF_PROCEEDINGS_APP_2,
             NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
         final var documentListValue3 = documentWithType(
             NOTICE_OF_PROCEEDINGS_APP_1,

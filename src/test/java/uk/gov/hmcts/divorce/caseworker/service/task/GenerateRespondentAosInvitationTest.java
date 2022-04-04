@@ -36,10 +36,10 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_I
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -97,12 +97,12 @@ public class GenerateRespondentAosInvitationTest {
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_INVITATION,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
                 RESP_SOLICITOR_AOS_INVITATION,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         classMock.close();
@@ -135,12 +135,12 @@ public class GenerateRespondentAosInvitationTest {
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_INVITATION,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
                 CITIZEN_RESP_AOS_INVITATION_ONLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verifyNoMoreInteractions(caseDataDocumentService);
@@ -175,12 +175,12 @@ public class GenerateRespondentAosInvitationTest {
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_INVITATION,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
                 CITIZEN_RESP_AOS_INVITATION_OFFLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verify(caseDataDocumentService)
@@ -227,12 +227,12 @@ public class GenerateRespondentAosInvitationTest {
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_INVITATION,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
                 CITIZEN_RESP_AOS_INVITATION_OFFLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verify(caseDataDocumentService)
@@ -305,12 +305,12 @@ public class GenerateRespondentAosInvitationTest {
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_INVITATION,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
                 CITIZEN_RESP_AOS_INVITATION_OFFLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verifyNoMoreInteractions(caseDataDocumentService);

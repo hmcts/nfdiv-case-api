@@ -25,12 +25,12 @@ public final class DocumentConstants {
     public static final String RESP_SOLICITOR_AOS_INVITATION = "RESP_SOLICITOR_AOS_INVITATION";
     public static final String CITIZEN_RESP_AOS_INVITATION_ONLINE = "CITIZEN_RESP_AOS_INVITATION_ONLINE";
     public static final String CITIZEN_RESP_AOS_INVITATION_OFFLINE = "CITIZEN_RESP_AOS_INVITATION_OFFLINE";
-    public static final String RESP_AOS_INVITATION_DOCUMENT_NAME = "aosinvitation";
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
 
     public static final String CERTIFICATE_OF_SERVICE_DOCUMENT_NAME = "certificateOfService";
 
     public static final String NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME = "noticeOfProceedings";
+    public static final String NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME = "noticeOfProceedingsApp2";
     public static final String NOTICE_OF_PROCEEDINGS_TEMPLATE_ID = "NOTICE_OF_PROCEEDINGS";
     public static final String NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID = "NOTICE_OF_PROCEEDINGS_RESP";
     public static final String NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID = "NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP";

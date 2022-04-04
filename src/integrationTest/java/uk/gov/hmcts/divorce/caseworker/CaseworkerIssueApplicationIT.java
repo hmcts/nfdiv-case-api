@@ -89,7 +89,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDI
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
@@ -1201,7 +1201,7 @@ public class CaseworkerIssueApplicationIT {
             APPLICATION,
             DIVORCE_APPLICATION_TEMPLATE_ID);
         final var documentListValue2 = documentWithType(
-            RESPONDENT_INVITATION,
+            NOTICE_OF_PROCEEDINGS_APP_2,
             NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
         final var documentListValue3 = documentWithType(
             NOTICE_OF_PROCEEDINGS_APP_1,
@@ -1210,7 +1210,7 @@ public class CaseworkerIssueApplicationIT {
             COVERSHEET,
             APPLICANT_COVERSHEET_TEMPLATE_ID);
         final var documentListValue5 = documentWithType(
-            RESPONDENT_INVITATION,
+            NOTICE_OF_PROCEEDINGS_APP_2,
             CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID);
 
         final List<String> documentIds = asList(

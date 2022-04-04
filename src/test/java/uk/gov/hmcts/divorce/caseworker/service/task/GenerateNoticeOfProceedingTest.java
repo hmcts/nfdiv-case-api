@@ -167,7 +167,8 @@ class GenerateNoticeOfProceedingTest {
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1);
+        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1,
+            NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -189,7 +190,8 @@ class GenerateNoticeOfProceedingTest {
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
-        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1);
+        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1,
+            NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -282,7 +284,8 @@ class GenerateNoticeOfProceedingTest {
 
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1);
+        verifyInteractions(caseData, templateContentApplicant2, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1,
+            NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -358,7 +361,8 @@ class GenerateNoticeOfProceedingTest {
         final var result = generateNoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_1, 1);
-        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1);
+        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1,
+            NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -416,7 +420,8 @@ class GenerateNoticeOfProceedingTest {
         verify(noticeOfProceedingSolicitorContent).apply(caseData, TEST_CASE_ID, true);
         verifyInteractions(caseData, templateContent, NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID,
             NOTICE_OF_PROCEEDINGS_APP_1, 1);
-        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1);
+        verifyInteractions(caseData, templateContent, JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID, NOTICE_OF_PROCEEDINGS_APP_2, 1,
+            NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
         verifyNoMoreInteractions(caseDataDocumentService);
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -480,7 +485,8 @@ class GenerateNoticeOfProceedingTest {
     private void verifyInteractions(CaseData caseData, Map<String, Object> templateContent,
                                     String templateId,
                                     DocumentType documentType,
-                                    int times) {
+                                    int times,
+                                    String documentName) {
         verify(caseDataDocumentService, times(times))
             .renderDocumentAndUpdateCaseData(
                 caseData,
@@ -489,8 +495,15 @@ class GenerateNoticeOfProceedingTest {
                 TEST_CASE_ID,
                 templateId,
                 caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
+                formatDocumentName(TEST_CASE_ID, documentName, now(clock))
             );
+    }
+
+    private void verifyInteractions(CaseData caseData, Map<String, Object> templateContent,
+                                    String templateId,
+                                    DocumentType documentType,
+                                    int times) {
+        verifyInteractions(caseData, templateContent,templateId, documentType, times, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME);
     }
 
     private CaseDetails<CaseData, State> caseDetails(CaseData caseData) {
