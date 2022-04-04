@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
@@ -24,11 +25,29 @@ class SetPostIssueStateTest {
     private SetPostIssueState setPostIssueState;
 
     @Test
-    void shouldSetStateToAwaitingServiceWhenApplicationTypeIsJointAndServiceMethodIsSolicitorService() {
+    void shouldSetStateToAwaitingServiceWhenApplicationTypeIsSoleAndServiceMethodIsSolicitorService() {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder()
-                .solServiceMethod(SOLICITOR_SERVICE)
+                .serviceMethod(SOLICITOR_SERVICE)
+                .build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final CaseDetails<CaseData, State> result = setPostIssueState.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(AwaitingService);
+    }
+
+    @Test
+    void shouldSetStateToAwaitingServiceWhenApplicationTypeIsSoleAndServiceMethodIsPersonalService() {
+
+        final CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .serviceMethod(PERSONAL_SERVICE)
                 .build())
             .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();
@@ -46,7 +65,7 @@ class SetPostIssueStateTest {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder()
-                .solServiceMethod(COURT_SERVICE)
+                .serviceMethod(COURT_SERVICE)
                 .build())
             .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();

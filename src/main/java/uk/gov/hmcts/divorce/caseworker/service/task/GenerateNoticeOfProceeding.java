@@ -95,7 +95,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
             );
 
-            if (!isApplicant2Represented && caseData.getApplicant2().isBasedOverseas()) {
+            if (caseData.getApplication().isPersonalServiceMethod()) {
                 log.info("Generating coversheet for case id {} ", caseId);
                 caseDataDocumentService.renderDocumentAndUpdateCaseData(
                     caseData,

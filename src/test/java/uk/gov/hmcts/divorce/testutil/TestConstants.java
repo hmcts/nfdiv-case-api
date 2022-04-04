@@ -76,6 +76,9 @@ public final class TestConstants {
 
     public static final String EMPTY_STRING = "";
 
+    public static final String TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID = "NFD_CP_Application_Sole_V2.docx";
+    public static final String TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID = "NFD_CP_Application_Joint_V2.docx";
+
     private TestConstants() {
     }
 }

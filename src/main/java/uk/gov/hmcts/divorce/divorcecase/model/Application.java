@@ -34,6 +34,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
@@ -122,7 +123,7 @@ public class Application {
         label = "How would you like the respondent to be served?",
         access = {DefaultAccess.class}
     )
-    private ServiceMethod solServiceMethod;
+    private ServiceMethod serviceMethod;
 
     @CCD(
         label = "I have discussed the possibility of a reconciliation with the applicant.",
@@ -500,7 +501,12 @@ public class Application {
 
     @JsonIgnore
     public boolean isSolicitorServiceMethod() {
-        return SOLICITOR_SERVICE.equals(solServiceMethod);
+        return SOLICITOR_SERVICE.equals(serviceMethod);
+    }
+
+    @JsonIgnore
+    public boolean isPersonalServiceMethod() {
+        return PERSONAL_SERVICE.equals(serviceMethod);
     }
 
     @JsonIgnore
@@ -520,8 +526,8 @@ public class Application {
 
     @JsonIgnore
     public boolean isHelpWithFeesApplication() {
-        return null != applicant1HelpWithFees
-            && null != applicant1HelpWithFees.getNeedHelp()
+        return Objects.nonNull(applicant1HelpWithFees)
+            && Objects.nonNull(applicant1HelpWithFees.getNeedHelp())
             && applicant1HelpWithFees.getNeedHelp().toBoolean()
             || FEES_HELP_WITH.equals(solPaymentHowToPay);
     }
