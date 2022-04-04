@@ -99,7 +99,7 @@ public enum State {
     @CCD(
         name = "Awaiting applicant",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccessExcludingCAA.class}
     )
     AwaitingDocuments("AwaitingDocuments"),
 
@@ -176,7 +176,7 @@ public enum State {
     @CCD(
         name = "Awaiting HWF decision",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccessExcludingCAA.class}
     )
     AwaitingHWFDecision("AwaitingHWFDecision"),
 
@@ -204,7 +204,7 @@ public enum State {
     @CCD(
         name = "Awaiting service",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccessExcludingCAA.class}
     )
     AwaitingService("AwaitingService"),
 
@@ -337,7 +337,7 @@ public enum State {
     @CCD(
         name = "Submitted",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccessExcludingCAA.class}
     )
     Submitted("Submitted");
 
