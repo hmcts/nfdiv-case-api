@@ -417,3 +417,8 @@ bootWithCCD {
         }
     }
 }
+
+tasks.withType(Test).configureEach {
+  maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+}
+
