@@ -74,6 +74,19 @@ class SubmitAosTest {
     }
 
     @Test
+    void shouldReturnCaseDataWithoutErrorsOnAboutToStart() {
+
+        final CaseData caseData = CaseData.builder().build();
+        final CaseData expectedCaseData = CaseData.builder().build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitAos.aboutToStart(caseDetails);
+
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
+    }
+
+    @Test
     void shouldReturnErrorsIfAosHasAlreadySubmitted() {
 
         setMockClock(clock);
