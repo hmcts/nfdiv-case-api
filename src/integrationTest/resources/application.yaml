@@ -95,10 +95,10 @@ docmosis:
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent.docx # fix needed for no app1 sol
-      NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: NFD_CP_Dummy_Template.docx #TODO implement
+      NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_Solicitor_Not_Linked.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint.docx
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
-      NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_CP_Dummy_Template.docx #TODO implement
+      NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
