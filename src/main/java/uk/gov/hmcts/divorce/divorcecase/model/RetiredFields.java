@@ -32,11 +32,13 @@ public class RetiredFields {
         @JsonProperty("Yes")
         I_CONFIRM("Yes");
 
+
         private final String label;
     }
 
     private Set<ThePrayer> applicant1PrayerHasBeenGivenCheckbox;
     private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
+    private ServiceMethod solServiceMethod;
 
     @JsonIgnore
     private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {
@@ -44,7 +46,8 @@ public class RetiredFields {
 
     @JsonIgnore
     private static final Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = Map.of(
-        "exampleRetiredField", moveTo("applicant1FirstName")
+        "exampleRetiredField", moveTo("applicant1FirstName"),
+        "solServiceMethod", moveTo("serviceMethod")
     );
 
     /**

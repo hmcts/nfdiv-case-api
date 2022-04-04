@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +13,10 @@ public enum ServiceMethod implements HasLabel {
     SOLICITOR_SERVICE("Solicitor Service"),
 
     @JsonProperty("courtService")
-    @JsonAlias({"personalService"})
-    COURT_SERVICE("Court Service");
+    COURT_SERVICE("Court Service"),
+
+    @JsonProperty("personalService")
+    PERSONAL_SERVICE("Personal Service");
 
     private final String label;
 }

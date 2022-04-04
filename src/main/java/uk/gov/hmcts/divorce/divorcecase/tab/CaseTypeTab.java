@@ -129,6 +129,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelPaperForm-App1PaymentHeading", PAPER_FORM_PAYMENT_OTHER_DETAILS, "### Paper Form Payment Details")
             .field("paperFormSoleOrApplicant1PaymentOtherDetail", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS)
             .field("paperFormApplicant2PaymentOtherDetail", PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS)
+            .field("generalApplicationFeeOrderSummary")
+            .field("generalApplicationFeePaymentMethod")
+            .field("generalApplicationFeeAccountNumber")
+            .field("generalApplicationFeeAccountReferenceNumber")
+            .field("generalApplicationFeeHelpWithFeesReferenceNumber")
             .field(CaseData::getPaymentHistoryField);
     }
 

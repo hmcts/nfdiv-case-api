@@ -85,7 +85,7 @@ public class CaseworkerConfirmServicePaymentIT {
 
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
-        caseData.getApplication().setSolServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
+        caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
         caseData.getApplication().setIssueDate(serviceDate);
 
         caseData.getAlternativeService().setAlternativeServiceType(AlternativeServiceType.DEEMED);
@@ -114,7 +114,7 @@ public class CaseworkerConfirmServicePaymentIT {
 
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
-        caseData.getApplication().setSolServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
+        caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
         caseData.getApplication().setIssueDate(serviceDate);
 
         caseData.getAlternativeService().setAlternativeServiceType(AlternativeServiceType.BAILIFF);

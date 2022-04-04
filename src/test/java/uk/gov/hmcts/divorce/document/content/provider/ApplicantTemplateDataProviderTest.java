@@ -4,16 +4,32 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.CHILDREN;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_APP1_CONTACT_PRIVATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_APP1_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_APP2_CONTACT_PRIVATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_APP2_REPRESENTED;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.LINE_1_LINE_2_CITY_POSTCODE;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicantTemplateDataProviderTest {
@@ -172,5 +188,78 @@ class ApplicantTemplateDataProviderTest {
 
         assertThat(applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant))
             .isEqualTo("children of the applicant and the respondent.");
+    }
+
+    @Test
+    public void shouldMapApplicantContactDetailsWhenApplicantContactIsNotPrivateAndIsRepresented() {
+        Applicant applicant1 = buildApplicant(YES, ContactDetailsType.PUBLIC);
+        Applicant applicant2 = buildApplicant(YES, ContactDetailsType.PUBLIC);
+
+        Map<String, Object> templateContent = new HashMap<>();
+
+        applicantTemplateDataProvider.mapContactDetails(applicant1, applicant2, templateContent);
+
+        assertThat(templateContent).contains(
+            entry(APPLICANT_1_EMAIL, "app@gm.com"),
+            entry(APPLICANT_1_POSTAL_ADDRESS, "sol address"),
+            entry(APPLICANT_2_EMAIL, "app@gm.com"),
+            entry(APPLICANT_2_POSTAL_ADDRESS, "sol address"),
+            entry(IS_APP1_CONTACT_PRIVATE, false),
+            entry(IS_APP1_REPRESENTED, true),
+            entry(IS_APP2_CONTACT_PRIVATE, false),
+            entry(IS_APP2_REPRESENTED, true)
+        );
+    }
+
+    @Test
+    public void shouldMapSolicitorContactDetailsWhenApplicantContactIsPrivateAndIsRepresented() {
+        Applicant applicant1 = buildApplicant(YES, ContactDetailsType.PRIVATE);
+        Applicant applicant2 = buildApplicant(YES, ContactDetailsType.PRIVATE);
+
+        Map<String, Object> templateContent = new HashMap<>();
+
+        applicantTemplateDataProvider.mapContactDetails(applicant1, applicant2, templateContent);
+
+        assertThat(templateContent).contains(
+            entry(APPLICANT_1_EMAIL, "sol@gm.com"),
+            entry(APPLICANT_1_POSTAL_ADDRESS, "sol address"),
+            entry(APPLICANT_2_EMAIL, "sol@gm.com"),
+            entry(APPLICANT_2_POSTAL_ADDRESS, "sol address"),
+            entry(IS_APP1_CONTACT_PRIVATE, true),
+            entry(IS_APP1_REPRESENTED, true),
+            entry(IS_APP2_CONTACT_PRIVATE, true),
+            entry(IS_APP2_REPRESENTED, true)
+        );
+    }
+
+    @Test
+    public void shouldMapApplicantContactDetailsWhenApplicantContactIsNotPrivateAndIsNotRepresented() {
+        Applicant applicant1 = buildApplicant(NO, ContactDetailsType.PUBLIC);
+        Applicant applicant2 = buildApplicant(NO, ContactDetailsType.PUBLIC);
+
+        Map<String, Object> templateContent = new HashMap<>();
+
+        applicantTemplateDataProvider.mapContactDetails(applicant1, applicant2, templateContent);
+
+        assertThat(templateContent).contains(
+            entry(APPLICANT_1_EMAIL, "app@gm.com"),
+            entry(APPLICANT_1_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
+            entry(APPLICANT_2_EMAIL, "app@gm.com"),
+            entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
+            entry(IS_APP1_CONTACT_PRIVATE, false),
+            entry(IS_APP1_REPRESENTED, false),
+            entry(IS_APP2_CONTACT_PRIVATE, false),
+            entry(IS_APP2_REPRESENTED, false)
+        );
+    }
+
+    private Applicant buildApplicant(YesOrNo isRepresented, ContactDetailsType contactDetailsType) {
+        return Applicant.builder()
+            .contactDetailsType(contactDetailsType)
+            .email("app@gm.com")
+            .address(APPLICANT_ADDRESS)
+            .solicitorRepresented(isRepresented)
+            .solicitor(Solicitor.builder().email("sol@gm.com").address("sol address").build())
+            .build();
     }
 }

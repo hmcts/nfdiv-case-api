@@ -89,9 +89,9 @@
         "id": "Respondent Invitation",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94",
             "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94/binary"
           },
           "documentFileName": "${json-unit.any-string}",
           "documentType": "aos"
