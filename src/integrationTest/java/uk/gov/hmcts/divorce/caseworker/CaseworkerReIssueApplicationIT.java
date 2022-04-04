@@ -169,6 +169,7 @@ public class CaseworkerReIssueApplicationIT {
     private static final String NOTICE_OF_PROCEEDINGS_APP_2_ID = "8uh725e8-f053-8745-7gbt-bb69d1905ae3";
     private static final String NOTICE_OF_PROCEEDING_TEMPLATE_ID = "c56b053e-4184-11ec-81d3-0242ac130003";
     private static final String NOP_ONLINE_SOLE_RESP_TEMPLATE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
+    private static final String APPLICANT_COVERSHEET_TEMPLATE_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
 
     @Autowired
     private MockMvc mockMvc;
@@ -596,10 +597,11 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
             .thenReturn("Notice of proceeding respondent")
             .thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -607,6 +609,26 @@ public class CaseworkerReIssueApplicationIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubAosPackSendLetter();
+
+        final var documentListValue1 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            AOS_COVER_LETTER_ID);
+
+        final var documentListValue2 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            NOTICE_OF_PROCEEDING_TEMPLATE_ID);
+
+        final var documentListValue3 = documentWithType(
+            APPLICATION,
+            MINI_APPLICATION_ID);
+
+        final List<String> documentIds = asList(
+            FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl())
+        );
+
+        stubAosPackSendLetter(documentIds);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -1170,6 +1192,10 @@ public class CaseworkerReIssueApplicationIT {
             FilenameUtils.getName(documentListValue4.getValue().getDocumentLink().getUrl()),
             FilenameUtils.getName(documentListValue5.getValue().getDocumentLink().getUrl())
         );
+        stubAosPackSendLetter(documentIds);
+    }
+
+    private void stubAosPackSendLetter(List<String> documentIds) throws IOException {
 
         final byte[] pdfAsBytes = loadPdfAsBytes();
 
