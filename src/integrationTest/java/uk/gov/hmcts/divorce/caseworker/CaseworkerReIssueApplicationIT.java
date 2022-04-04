@@ -73,11 +73,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
@@ -169,6 +167,7 @@ public class CaseworkerReIssueApplicationIT {
     private static final String NOTICE_OF_PROCEEDINGS_APP_2_ID = "8uh725e8-f053-8745-7gbt-bb69d1905ae3";
     private static final String NOTICE_OF_PROCEEDING_TEMPLATE_ID = "c56b053e-4184-11ec-81d3-0242ac130003";
     private static final String NOP_ONLINE_SOLE_RESP_TEMPLATE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
+    private static final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID = "eb780eb7-8982-40a7-b30f-902b582ded26";
 
     @Autowired
     private MockMvc mockMvc;
@@ -230,7 +229,8 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
@@ -283,7 +283,10 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant2().setSolicitorRepresented(NO);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Notice of proceedings respondent")
+            .thenReturn("Divorce application");
 
 
         stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent.docx");
@@ -340,7 +343,10 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceedings app1")
+            .thenReturn("Notice of proceedings app2")
+            .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID);
@@ -403,7 +409,7 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
-            .thenReturn("Respondent Invitation")
+            .thenReturn("Notice of proceedings app1")
             .thenReturn("Notice of proceedings app2")
             .thenReturn("Divorce application");
 
@@ -473,10 +479,11 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
-            .thenReturn("Notice of proceeding respondent")
-            .thenReturn("Respondent Invitation");
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Notice of proceeding respondent");
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -533,20 +540,38 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
             .thenReturn("Notice of proceeding respondent")
-            .thenReturn("Respondent Invitation")
             .thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
+        stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDINGS_APP_2_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubAosPackSendLetter();
+
+        final var documentListValue1 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            NOTICE_OF_PROCEEDING_ID);
+
+        final var documentListValue2 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID);
+
+        final var documentListValue3 = documentWithType(
+            APPLICATION,
+            DIVORCE_APPLICATION_TEMPLATE_ID);
+
+        final List<String> documentIds = asList(
+            FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl())
+        );
+
+        stubAosPackSendLetter(documentIds);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -598,11 +623,11 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
             .thenReturn("Notice of proceeding respondent")
-            .thenReturn("Respondent Invitation")
             .thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -610,6 +635,26 @@ public class CaseworkerReIssueApplicationIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubAosPackSendLetter();
+
+        final var documentListValue1 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            AOS_COVER_LETTER_ID);
+
+        final var documentListValue2 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            NOTICE_OF_PROCEEDING_TEMPLATE_ID);
+
+        final var documentListValue3 = documentWithType(
+            APPLICATION,
+            MINI_APPLICATION_ID);
+
+        final List<String> documentIds = asList(
+            FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl())
+        );
+
+        stubAosPackSendLetter(documentIds);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -652,8 +697,11 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation");
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Notice of proceeding respondent");
 
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
         stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_ONLINE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -708,20 +756,45 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
-            .thenReturn("Respondent Invitation")
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Notice of proceeding respondent")
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Overseas_Sole.docx");
         stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent.docx");
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(COVERSHEET_APPLICANT_ID, "NFD_Applicant_Coversheet.docx");
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubAosPackSendLetter();
 
+        final var documentListValue1 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            NOTICE_OF_PROCEEDING_ID);
+
+        final var documentListValue2 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID);
+
+        final var documentListValue3 = documentWithType(
+            APPLICATION,
+            DIVORCE_APPLICATION_TEMPLATE_ID);
+
+        final var documentListValue4 = documentWithType(
+            COVERSHEET,
+            COVERSHEET_APPLICANT_ID);
+
+        final List<String> documentIds = asList(
+            FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue4.getValue().getDocumentLink().getUrl())
+        );
+
+        stubAosPackSendLetter(documentIds);
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -764,7 +837,8 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
-            .thenReturn("Respondent Invitation")
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Notice of proceedings respondent")
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx");
@@ -854,7 +928,7 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant2().setOffline(YES);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID);
@@ -886,7 +960,7 @@ public class CaseworkerReIssueApplicationIT {
     }
 
     @Test
-    void shouldGenerateD10DocumentWhenSolicitorMethodIsSelected() throws Exception {
+    void shouldGenerateD10DocumentWhenSolicitorMethodIsSelected() throws Exception { // pass
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
@@ -898,7 +972,7 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant2().setOffline(YES);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID);
@@ -933,49 +1007,6 @@ public class CaseworkerReIssueApplicationIT {
     }
 
     @Test
-    void shouldNotGenerateD10DocumentWhenSolicitorMethodIsNotSelected() throws Exception {
-        final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getApplication().setServiceMethod(COURT_SERVICE);
-        caseData.getApplication().setReissueOption(OFFLINE_AOS);
-        caseData.getApplication().setIssueDate(LocalDate.now());
-        caseData.getApplicant1().setSolicitorRepresented(NO);
-        caseData.getApplicant1().setOffline(YES);
-        caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setOffline(YES);
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
-
-        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Joint.docx");
-
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubAosPackSendLetter();
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_REISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        verifyNoInteractions(documentUploadClientApi);
-    }
-
-    @Test
     void shouldNotGenerateD10DocumentWhenD10HasAlreadyBeenGeneratedForCase() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setApplicationType(JOINT_APPLICATION);
@@ -996,7 +1027,7 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getDocuments().setDocumentsGenerated(singletonList(d10Document));
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID);
@@ -1042,14 +1073,44 @@ public class CaseworkerReIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
             .thenReturn("Notice of proceeding applicant")
-            .thenReturn("Coversheet")
             .thenReturn("Notice of proceeding respondent")
+            .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Overseas_Sole.docx");
         stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(COVERSHEET_APPLICANT_ID, "NFD_Applicant_Coversheet.docx");
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        final var documentListValue1 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            NOTICE_OF_PROCEEDING_ID);
+
+        final var documentListValue2 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID);
+
+        final var documentListValue3 = documentWithType(
+            APPLICATION,
+            DIVORCE_APPLICATION_TEMPLATE_ID);
+
+        final var documentListValue4 = documentWithType(
+            COVERSHEET,
+            COVERSHEET_APPLICANT_ID);
+
+        final List<String> documentIds = asList(
+            FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue4.getValue().getDocumentLink().getUrl())
+        );
+
+        stubAosPackSendLetter(documentIds);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -1082,6 +1143,7 @@ public class CaseworkerReIssueApplicationIT {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YES);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setAddress(null);
         caseData.getApplicant2().setSolicitor(
@@ -1096,14 +1158,46 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
             .thenReturn("Notice of proceeding respondent")
-            .thenReturn("Respondent Invitation")
+            .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
-        stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
-        stubAosPackSendLetter();
+        stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
+        stubForDocAssemblyWith(COVERSHEET_APPLICANT_ID, "NFD_Applicant_Coversheet.docx");
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        final var documentListValue1 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            AOS_COVER_LETTER_ID);
+
+        final var documentListValue2 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID);
+
+        final var documentListValue3 = documentWithType(
+            APPLICATION,
+            DIVORCE_APPLICATION_TEMPLATE_ID);
+
+        final var documentListValue4 = documentWithType(
+            COVERSHEET,
+            COVERSHEET_APPLICANT_ID);
+
+        final List<String> documentIds = asList(
+            FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue4.getValue().getDocumentLink().getUrl())
+        );
+
+        stubAosPackSendLetter(documentIds);
+
         final String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -1173,6 +1267,10 @@ public class CaseworkerReIssueApplicationIT {
             FilenameUtils.getName(documentListValue4.getValue().getDocumentLink().getUrl()),
             FilenameUtils.getName(documentListValue5.getValue().getDocumentLink().getUrl())
         );
+        stubAosPackSendLetter(documentIds);
+    }
+
+    private void stubAosPackSendLetter(List<String> documentIds) throws IOException {
 
         final byte[] pdfAsBytes = loadPdfAsBytes();
 

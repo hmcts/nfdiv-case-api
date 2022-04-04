@@ -48,9 +48,14 @@ public class AosPackPrinter {
         if (!isEmpty(currentAosLetters)) {
             final String caseIdString = caseId.toString();
             final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_RESPONDENT_PACK);
+            final var app2 = caseData.getApplicant2();
 
-            boolean includeD10Document = StringUtils.isEmpty(caseData.getApplicant2().getEmail());
-            final UUID letterId = bulkPrintService.printAosRespondentPack(print, includeD10Document);
+            var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
+                ? !app2.getSolicitor().hasOrgId()
+                : StringUtils.isEmpty(caseData.getApplicant2().getEmail());
+
+            var d10Needed = !caseData.getApplication().isCourtServiceMethod() || app2Offline;
+            final UUID letterId = bulkPrintService.printAosRespondentPack(print, d10Needed);
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             log.warn(
@@ -80,7 +85,7 @@ public class AosPackPrinter {
         }
     }
 
-    public void sendPersonalServiceAosLetterToApplicant(final CaseData caseData, final Long caseId) {
+    public void sendAosLetterAndRespondentAosPackToApplicant(final CaseData caseData, final Long caseId) {
 
         final List<Letter> currentAosLetters = personalServiceLetters(caseData);
 
@@ -210,21 +215,23 @@ public class AosPackPrinter {
 
         final List<Letter> currentAosLetters = new ArrayList<>();
 
-        if (null != coversheetLetter) {
-            currentAosLetters.add(coversheetLetter);
-        }
-
-        if (null != divorceApplicationLetter) {
-            currentAosLetters.add(divorceApplicationLetter);
-            currentAosLetters.add(divorceApplicationLetter);
-        }
-
         if (null != notificationLetter) {
             currentAosLetters.add(notificationLetter);
         }
 
+        if (null != divorceApplicationLetter) {
+            currentAosLetters.add(divorceApplicationLetter);
+        }
+        if (null != coversheetLetter) {
+            currentAosLetters.add(coversheetLetter);
+        }
+
         if (null != respondentInvitationLetter) {
             currentAosLetters.add(respondentInvitationLetter);
+        }
+
+        if (null != divorceApplicationLetter) {
+            currentAosLetters.add(divorceApplicationLetter);
         }
 
         return currentAosLetters;

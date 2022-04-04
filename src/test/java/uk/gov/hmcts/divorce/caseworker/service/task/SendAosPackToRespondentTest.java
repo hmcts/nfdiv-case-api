@@ -20,6 +20,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -36,96 +37,11 @@ class SendAosPackToRespondentTest {
     private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Test
-    void shouldNotPrintAosIfApplicationIsJointApplication() {
-
-        final var caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        final CaseDetails<CaseData, State> result = sendAosPackToRespondent.apply(caseDetails);
-
-        assertThat(result.getData().getAcknowledgementOfService())
-            .extracting(
-                AcknowledgementOfService::getNoticeOfProceedingsEmail,
-                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
-            .contains(null, null, null);
-        verifyNoInteractions(aosPackPrinter);
-    }
-
-    @Test
-    void shouldNotPrintAosIfSoleApplicationAndApplicant2IsOverseasWhenAboutToSubmit() {
-
+    void shouldSendAosLetterToRespondentWhenSoleAndCourtService() {
         final var caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
-
-        Applicant applicant2 = respondent();
-        applicant2.setAddress(
-            AddressGlobalUK
-                .builder()
-                .country("France")
-                .postTown("Paris")
-                .addressLine1("Line 1")
-                .build()
-        );
-        caseData.setApplicant2(applicant2);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        final CaseDetails<CaseData, State> result = sendAosPackToRespondent.apply(caseDetails);
-
-        assertThat(result.getData().getAcknowledgementOfService())
-            .extracting(
-                AcknowledgementOfService::getNoticeOfProceedingsEmail,
-                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
-            .contains(null, null, null);
-        verifyNoInteractions(aosPackPrinter);
-    }
-
-    @Test
-    void shouldPrintAosAndSetDueDateIfSoleApplicationAndRespondentIsNotRepresentedAndIsNotOverseas() {
-        final var caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-
-        Applicant applicant2 = respondent();
-        applicant2.setAddress(
-            AddressGlobalUK
-                .builder()
-                .country("UK")
-                .postTown("London")
-                .addressLine1("Line 1")
-                .build()
-        );
-        caseData.setApplicant2(applicant2);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        final CaseDetails<CaseData, State> result = sendAosPackToRespondent.apply(caseDetails);
-
-        assertThat(result.getData().getAcknowledgementOfService())
-            .extracting(
-                AcknowledgementOfService::getNoticeOfProceedingsEmail,
-                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
-            .contains(null, null, null);
-        verify(aosPackPrinter).sendAosLetterToRespondent(caseData, TEST_CASE_ID);
-    }
-
-    @Test
-    void shouldPrintAosAndSetDueDateIfSoleApplicationAndApp1KnowsApp2Address() {
-        final var caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setApplicant1KnowsApplicant2Address(YES);
 
         Applicant applicant2 = respondent();
         applicant2.setAddress(
@@ -182,6 +98,59 @@ class SendAosPackToRespondentTest {
         final var caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setApplicant1KnowsApplicant2Address(NO);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        final CaseDetails<CaseData, State> result = sendAosPackToRespondent.apply(caseDetails);
+
+        assertThat(result.getData().getAcknowledgementOfService())
+            .extracting(
+                AcknowledgementOfService::getNoticeOfProceedingsEmail,
+                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
+            .contains(null, null, null);
+        verifyNoInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldNotPrintAosIfApplicationIsJointApplication() {
+
+        final var caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        final CaseDetails<CaseData, State> result = sendAosPackToRespondent.apply(caseDetails);
+
+        assertThat(result.getData().getAcknowledgementOfService())
+            .extracting(
+                AcknowledgementOfService::getNoticeOfProceedingsEmail,
+                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
+            .contains(null, null, null);
+        verifyNoInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldNotPrintAosIfSoleApplicationAndApplicant2IsOverseasWhenAboutToSubmit() {
+
+        final var caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+        Applicant applicant2 = respondent();
+        applicant2.setAddress(
+            AddressGlobalUK
+                .builder()
+                .country("France")
+                .postTown("Paris")
+                .addressLine1("Line 1")
+                .build()
+        );
+        caseData.setApplicant2(applicant2);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
