@@ -27,12 +27,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MIDDLE_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_FIRM_NAME;
@@ -47,6 +45,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_OTHER_COURT_CASES_APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JURISDICTIONS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
@@ -121,10 +120,8 @@ public class DivorceApplicationSoleTemplateContent {
         templateContent.put(APPLICANT_2_MIDDLE_NAME, applicant2.getMiddleName());
         templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
         templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
-        templateContent.put(APPLICANT_2_POSTAL_ADDRESS, applicant2.getCorrespondenceAddress());
-        if (!applicant2.isConfidentialContactDetails()) {
-            templateContent.put(APPLICANT_2_EMAIL, applicant2.getEmail());
-        }
+
+        applicantTemplateDataProvider.mapContactDetails(applicant1, applicant2, templateContent);
 
         templateContent.put(PLACE_OF_MARRIAGE, application.getMarriageDetails().getPlaceOfMarriage());
         templateContent.put(MARRIAGE_DATE,
@@ -132,7 +129,7 @@ public class DivorceApplicationSoleTemplateContent {
                 .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
                 .orElse(null));
 
-        templateContent.put("jurisdictions", applicationTemplateDataProvider.deriveJurisdictionList(application, caseId));
+        templateContent.put(JURISDICTIONS, applicationTemplateDataProvider.deriveJurisdictionList(application, caseId));
 
         return templateContent;
     }

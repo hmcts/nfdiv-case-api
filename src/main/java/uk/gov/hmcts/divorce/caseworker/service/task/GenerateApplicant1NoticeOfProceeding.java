@@ -19,13 +19,13 @@ import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A2_SOLE_APP1_CIT_PS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
@@ -81,8 +81,8 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         } else {
 
             String templateId = caseData.getApplicant2().isBasedOverseas()
-                ? NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID
-                : NOTICE_OF_PROCEEDINGS_TEMPLATE_ID;
+                ? NFD_NOP_A2_SOLE_APP1_CIT_PS
+                : NFD_NOP_A1_SOLE_APP1_CIT_CS;
 
             log.info("Generating notice of proceedings for sole case id {} ", caseId);
 
@@ -119,7 +119,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent.apply(caseData, caseId),
                 caseId,
-                NOTICE_OF_PROCEEDINGS_RESP_TEMPLATE_ID,
+                NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE,
                 caseData.getApplicant1().getLanguagePreference(),
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
             );
@@ -149,7 +149,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
                 NOTICE_OF_PROCEEDINGS_APP_1,
                 jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
                 caseId,
-                JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+                NFD_NOP_JA1_JOINT_APP1APP2_CIT,
                 caseData.getApplicant1().getLanguagePreference(),
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock)));
         }
@@ -163,7 +163,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 noticeOfProceedingSolicitorContent.apply(caseData, caseId, false),
                 caseId,
-                NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID,
+                NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS,
                 caseData.getApplicant2().getLanguagePreference(),
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
             );
@@ -176,7 +176,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseId,
-                JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID,
+                NFD_NOP_JA1_JOINT_APP1APP2_CIT,
                 caseData.getApplicant2().getLanguagePreference(),
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock)));
         }
@@ -190,7 +190,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             NOTICE_OF_PROCEEDINGS_APP_1,
             noticeOfProceedingSolicitorContent.apply(caseData, caseId, true),
             caseId,
-            NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR_TEMPLATE_ID,
+            NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS,
             caseData.getApplicant1().getLanguagePreference(),
             formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
         );

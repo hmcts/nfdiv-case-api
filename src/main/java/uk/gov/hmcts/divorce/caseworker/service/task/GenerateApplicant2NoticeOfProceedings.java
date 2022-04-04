@@ -23,10 +23,10 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_OFFLINE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -73,7 +73,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                 log.info("Generating citizen respondent(Offline) AoS invitation for case id {} ", caseId);
                 generateDocumentAndUpdateCaseData(
                     caseDetails,
-                    CITIZEN_RESP_AOS_INVITATION_OFFLINE,
+                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                     citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId),
                     NOTICE_OF_PROCEEDINGS_APP_2,
                     NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
@@ -91,7 +91,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                 log.info("Generating citizen respondent(with email) AoS invitation for case id {} ", caseId);
                 generateDocumentAndUpdateCaseData(
                     caseDetails,
-                    CITIZEN_RESP_AOS_INVITATION_ONLINE,
+                    NFD_NOP_R1_SOLE_APP2_CIT_ONLINE,
                     citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId),
                     NOTICE_OF_PROCEEDINGS_APP_2,
                     NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
@@ -100,7 +100,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                 log.info("Generating citizen respondent(without email) AoS invitation for case id {} ", caseId);
                 generateDocumentAndUpdateCaseData(
                     caseDetails,
-                    CITIZEN_RESP_AOS_INVITATION_OFFLINE,
+                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                     citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId),
                     NOTICE_OF_PROCEEDINGS_APP_2,
                     NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME

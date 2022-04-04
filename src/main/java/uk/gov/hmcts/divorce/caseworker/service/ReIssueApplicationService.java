@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
@@ -51,6 +52,9 @@ public class ReIssueApplicationService {
     @Autowired
     private SendAosPackToApplicant sendAosPackToApplicant;
 
+    @Autowired
+    private GenerateD10Form generateD10Form;
+
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
         ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
 
@@ -72,6 +76,7 @@ public class ReIssueApplicationService {
                 setReIssueAndDueDate,
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
+                generateD10Form,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else if (OFFLINE_AOS.equals(reissueOption)) {
@@ -88,6 +93,7 @@ public class ReIssueApplicationService {
                 generateDivorceApplication,
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,
+                generateD10Form,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else if (REISSUE_CASE.equals(reissueOption)) {
@@ -100,6 +106,7 @@ public class ReIssueApplicationService {
                 generateDivorceApplication,
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,
+                generateD10Form,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else {

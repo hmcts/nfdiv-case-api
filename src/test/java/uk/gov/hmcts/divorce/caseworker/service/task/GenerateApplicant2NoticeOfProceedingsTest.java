@@ -32,10 +32,10 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_OFFLINE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -138,7 +138,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
-                CITIZEN_RESP_AOS_INVITATION_ONLINE,
+                NFD_NOP_R1_SOLE_APP2_CIT_ONLINE,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
@@ -178,7 +178,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
-                CITIZEN_RESP_AOS_INVITATION_OFFLINE,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
@@ -230,7 +230,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
-                CITIZEN_RESP_AOS_INVITATION_OFFLINE,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
@@ -308,7 +308,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
-                CITIZEN_RESP_AOS_INVITATION_OFFLINE,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );

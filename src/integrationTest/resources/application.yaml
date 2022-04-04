@@ -66,37 +66,39 @@ doc_assembly:
 docmosis:
   templates:
     english:
-      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole.docx
-      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint.docx
+      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_V2.docx
+      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V2.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
       REFUSAL_ORDER: NFD_Refusal_Order.docx
-      RESP_SOLICITOR_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
-      CITIZEN_RESP_AOS_INVITATION_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx
-      CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx
-      NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx
-      JOINT_NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Joint.docx
-      NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP: NFD_Notice_Of_Proceedings_Overseas_Sole.docx
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement.docx #TODO: update content
-      DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx
-      DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx
-      DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers.docx
+      DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers_V2.docx
+      DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers_V2.docx
+      DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers_V2.docx
       SERVICE_REFUSAL: NFD_Refusal_Order_Deemed_Dispensed_Service.docx
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
+      NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
       COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
-      NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
-      NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx
       GENERAL_LETTER: NFD_General_Letter.docx
-      NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
+      RESP_SOLICITOR_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: remove, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE used instead
+      NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole.docx
+      NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole.docx
+      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx
+      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent.docx
+      NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent.docx # fix needed for no app1 sol
+      NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: NFD_CP_Dummy_Template.docx #TODO implement
+      NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint.docx
+      NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
+      NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_CP_Dummy_Template.docx #TODO implement
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available

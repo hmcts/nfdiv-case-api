@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
@@ -56,6 +57,9 @@ class CaseworkerIssueApplicationServiceTest {
     private SendAosPackToApplicant sendAosPackToApplicant;
 
     @Mock
+    private GenerateD10Form generateD10Form;
+
+    @Mock
     private SetServiceType setServiceType;
 
     @Mock
@@ -85,6 +89,7 @@ class CaseworkerIssueApplicationServiceTest {
         when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
 
