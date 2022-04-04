@@ -55,8 +55,10 @@ class DraftAosTest {
     @Test
     void shouldCallAddMiniApplicationAndReturnCaseDataOnAboutToStart() {
 
+        final CaseData caseData = CaseData.builder().build();
         final CaseData expectedCaseData = CaseData.builder().build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
         final CaseDetails<CaseData, State> updateCaseDetails = new CaseDetails<>();
         updateCaseDetails.setData(expectedCaseData);
 
@@ -67,6 +69,26 @@ class DraftAosTest {
         assertThat(response.getData()).isSameAs(expectedCaseData);
 
         verify(addMiniApplicationLink).apply(caseDetails);
+    }
+
+    @Test
+    void shouldThrowErrorAndReturnCaseDataOnAboutToStart() {
+        setMockClock(clock);
+        final CaseData caseData = CaseData.builder().build();
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .dateAosSubmitted(LocalDateTime.now(clock))
+            .build();
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingConditionalOrder);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToStart(caseDetails);
+
+        assertThat(response.getData()).isSameAs(caseData);
+        assertThat(response.getErrors())
+            .containsExactly(
+                "The Acknowledgement Of Service has already been submitted.");
     }
 
     @Test
@@ -91,25 +113,5 @@ class DraftAosTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(AwaitingConditionalOrder);
-    }
-
-    @Test
-    void shouldThrowErrorAndReturnCaseDataOnAboutToSubmit() {
-        setMockClock(clock);
-        final CaseData caseData = CaseData.builder().build();
-        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
-            .dateAosSubmitted(LocalDateTime.now(clock))
-            .build();
-        caseData.setAcknowledgementOfService(acknowledgementOfService);
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setState(AwaitingConditionalOrder);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getData()).isSameAs(caseData);
-        assertThat(response.getErrors())
-            .containsExactly(
-                "The Acknowledgement Of Service has already been submitted.");
     }
 }

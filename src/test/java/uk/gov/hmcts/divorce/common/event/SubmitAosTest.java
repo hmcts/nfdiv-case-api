@@ -74,6 +74,28 @@ class SubmitAosTest {
     }
 
     @Test
+    void shouldReturnErrorsIfAosHasAlreadySubmitted() {
+
+        setMockClock(clock);
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .dateAosSubmitted(LocalDateTime.now(clock))
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitAos.aboutToStart(caseDetails);
+
+        assertThat(response.getData()).isSameAs(caseData);
+        assertThat(response.getErrors())
+            .containsExactly(
+                "The Acknowledgement Of Service has already been submitted.");
+    }
+
+    @Test
     void shouldReturnErrorsIfAosValidationFails() {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
