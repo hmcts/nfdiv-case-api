@@ -263,6 +263,8 @@ public class ApplicationIssuedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant1(data, 1234567890123456L);
     }
 
     @Test
@@ -293,6 +295,8 @@ public class ApplicationIssuedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant1(data, 1234567890123456L);
     }
 
     @Test
