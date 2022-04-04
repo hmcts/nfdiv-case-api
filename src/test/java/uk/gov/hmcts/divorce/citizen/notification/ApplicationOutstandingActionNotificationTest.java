@@ -36,7 +36,6 @@ import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingAc
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SERVE_HUSBAND_ANOTHER_WAY;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
@@ -66,7 +65,6 @@ class ApplicationOutstandingActionNotificationTest {
     private ApplicationOutstandingActionNotification notification;
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailToApplicant1ForSupportingDocuments() {
         CaseData data = caseData();
         data.setApplicant2(getApplicant2(MALE));
@@ -185,7 +183,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForPapersServedAnotherWay() {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -223,7 +220,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForCivil() {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -257,7 +253,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForPapersServedAnotherWayAndNoDocumentsRequired() {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -292,7 +287,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void assertSendDocumentsToCourtDissolution() {
         CaseData data = caseData();
         data.setDivorceOrDissolution(DISSOLUTION);
@@ -324,7 +318,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void assertSendDocumentsToCourtDissolutionWhenNotSendingDocumentsToCourt() {
         CaseData data = caseData();
         data.setDivorceOrDissolution(DISSOLUTION);
@@ -353,7 +346,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void assertSendDocumentsToCourtDissolutionWhenNotSendingDocumentsToCour() {
         CaseData data = caseData();
         data.setDivorceOrDissolution(DISSOLUTION);
