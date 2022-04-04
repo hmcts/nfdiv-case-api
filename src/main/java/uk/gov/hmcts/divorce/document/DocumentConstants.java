@@ -33,7 +33,9 @@ public final class DocumentConstants {
     public static final String NFD_NOP_A1_SOLE_APP1_CIT_CS = "NFD_NOP_A1_SOLE_APP1_CIT_CS";
     public static final String NFD_NOP_A2_SOLE_APP1_CIT_PS = "NFD_NOP_A2_SOLE_APP1_CIT_PS";
     public static final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE = "NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE";
+    public static final String NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE = "NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE";
     public static final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS = "NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS";
+    public static final String NFD_NOP_AS2_SOLE_APP1_SOL_SS = "NFD_NOP_AS2_SOLE_APP1_SOL_SS";
     public static final String NFD_NOP_JA1_JOINT_APP1APP2_CIT = "NFD_NOP_JA1_JOINT_APP1APP2_CIT";
 
     public static final String GENERAL_ORDER = "generalOrder";

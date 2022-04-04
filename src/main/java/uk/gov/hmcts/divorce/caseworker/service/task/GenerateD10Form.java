@@ -24,6 +24,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
@@ -56,7 +57,12 @@ public class GenerateD10Form implements CaseTask {
         final boolean d10DocumentAlreadyGenerated =
             documentsWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D10);
 
-        if (caseData.getApplication().isSolicitorServiceMethod() && !d10DocumentAlreadyGenerated) {
+        var app2 = caseData.getApplicant2();
+        var d10Needed = !caseData.getApplication().isCourtServiceMethod()
+            || (app2.isRepresented() && app2.getSolicitor().getOrganisationPolicy() != null)
+            || isNotEmpty(caseData.getApplicant2().getEmail());
+
+        if (d10Needed && !d10DocumentAlreadyGenerated) {
             try {
                 log.info("Adding d10 to documents generated for case id: {}", caseId);
                 addD10FormToGeneratedDocuments(caseData);

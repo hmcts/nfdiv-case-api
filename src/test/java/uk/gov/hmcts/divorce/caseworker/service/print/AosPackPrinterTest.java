@@ -132,25 +132,25 @@ class AosPackPrinterTest {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(COVERSHEET)
+                .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
                 .build())
             .build();
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(NOTICE_OF_PROCEEDINGS_APP_2)
+                .documentType(APPLICATION)
                 .build())
             .build();
 
         final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
+                .documentType(COVERSHEET)
                 .build())
             .build();
 
         final ListValue<DivorceDocument> doc4 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
+                .documentType(NOTICE_OF_PROCEEDINGS_APP_2)
                 .build())
             .build();
 
@@ -160,7 +160,7 @@ class AosPackPrinterTest {
 
         when(bulkPrintService.printWithD10Form(printCaptor.capture())).thenReturn(randomUUID());
 
-        aosPackPrinter.sendPersonalServiceAosLetterToApplicant(caseData, TEST_CASE_ID);
+        aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -168,9 +168,9 @@ class AosPackPrinterTest {
         assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
         assertThat(print.getLetters().size()).isEqualTo(5);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
-        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc4.getValue());
-        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(doc4.getValue());
-        assertThat(print.getLetters().get(3).getDivorceDocument()).isSameAs(doc3.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
+        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(doc3.getValue());
+        assertThat(print.getLetters().get(3).getDivorceDocument()).isSameAs(doc4.getValue());
         assertThat(print.getLetters().get(4).getDivorceDocument()).isSameAs(doc2.getValue());
     }
 
@@ -255,7 +255,7 @@ class AosPackPrinterTest {
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
             .build();
 
-        aosPackPrinter.sendPersonalServiceAosLetterToApplicant(caseData, TEST_CASE_ID);
+        aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(bulkPrintService);
     }

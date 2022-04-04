@@ -21,18 +21,14 @@ public class SendAosPackToApplicant implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplicationType().isSole() && !caseData.getApplicant1().isRepresented()) {
-
-            if (caseData.getApplication().isPersonalServiceMethod()) {
-                log.info("Bulk printing NOP and application pack for personal service. Case id: {}:", caseId);
-                aosPackPrinter.sendPersonalServiceAosLetterToApplicant(caseData, caseId);
-            } else {
-                log.info("Sending NOP and application pack to bulk print as applicant 1 is not represented. Case id: {}:", caseId);
-                aosPackPrinter.sendAosLetterToApplicant(caseData, caseId);
-            }
+        if (caseData.getApplication().isCourtServiceMethod()) {
+            log.info("Sending NOP and application pack to bulk print as applicant 1 is not represented. Case id: {}:", caseId);
+            aosPackPrinter.sendAosLetterToApplicant(caseData, caseId);
         } else {
-            log.info("Not sending NOP and application pack to bulk print as applicant 1 is represented. Case id: {}:", caseId);
+            log.info("Bulk printing NOP and application pack. Case id: {}:", caseId);
+            aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, caseId);
         }
+
         return caseDetails;
     }
 }

@@ -87,7 +87,7 @@ class SendAosPackToApplicantTest {
 
         sendAosPackToApplicant.apply(caseDetails);
 
-        verify(aosPackPrinter).sendPersonalServiceAosLetterToApplicant(caseData, TEST_CASE_ID);
+        verify(aosPackPrinter).sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
 
         verifyNoMoreInteractions(aosPackPrinter);
     }
