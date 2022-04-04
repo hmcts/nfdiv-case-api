@@ -24,6 +24,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A2_SOLE_AP
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
@@ -31,7 +32,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEED
 
 @Component
 @Slf4j
-public class GenerateNoticeOfProceeding implements CaseTask {
+public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
 
     @Autowired
     private CoversheetApplicant1TemplateContent coversheetTemplateContent;
@@ -120,7 +121,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 caseId,
                 NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE,
                 caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
+                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
             );
 
         }
@@ -164,7 +165,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 caseId,
                 NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS,
                 caseData.getApplicant2().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
+                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
             );
         } else {
             // App2 not represented - generate docs for applicant2 NOP(offline/online)
@@ -177,7 +178,7 @@ public class GenerateNoticeOfProceeding implements CaseTask {
                 caseId,
                 NFD_NOP_JA1_JOINT_APP1APP2_CIT,
                 caseData.getApplicant2().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock)));
+                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock)));
         }
     }
 

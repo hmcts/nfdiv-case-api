@@ -60,7 +60,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
         throws Exception {
 
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST_DIGITAL_AOS);
-        caseData.put("solServiceMethod", SOLICITOR_SERVICE);
+        caseData.put("serviceMethod", SOLICITOR_SERVICE);
         final Response response = triggerCallback(caseData, CASEWORKER_REISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());

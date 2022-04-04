@@ -31,6 +31,8 @@ public final class DocumentConstants {
     public static final String CERTIFICATE_OF_SERVICE_DOCUMENT_NAME = "certificateOfService";
 
     public static final String NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME = "noticeOfProceedings";
+    public static final String NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME = "noticeOfProceedingsApp2";
+    public static final String JOINT_NOTICE_OF_PROCEEDINGS_TEMPLATE_ID = "JOINT_NOTICE_OF_PROCEEDINGS";
     public static final String NFD_NOP_A1_SOLE_APP1_CIT_CS = "NFD_NOP_A1_SOLE_APP1_CIT_CS";
     public static final String NFD_NOP_A2_SOLE_APP1_CIT_PS = "NFD_NOP_A2_SOLE_APP1_CIT_PS";
     public static final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE = "NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE";
