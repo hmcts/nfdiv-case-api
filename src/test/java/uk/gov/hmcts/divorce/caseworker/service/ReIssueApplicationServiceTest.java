@@ -6,9 +6,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
@@ -40,10 +41,10 @@ class ReIssueApplicationServiceTest {
     private GenerateDivorceApplication generateDivorceApplication;
 
     @Mock
-    private GenerateRespondentAosInvitation generateRespondentAosInvitation;
+    private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
     @Mock
-    private GenerateNoticeOfProceeding generateNoticeOfProceeding;
+    private GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
 
     @Mock
     private SendAosPackToRespondent sendAosPackToRespondent;
@@ -56,6 +57,9 @@ class ReIssueApplicationServiceTest {
 
     @Mock
     private SendAosPackToApplicant sendAosPackToApplicant;
+
+    @Mock
+    private GenerateD10Form generateD10Form;
 
     @InjectMocks
     private ReIssueApplicationService reIssueApplicationService;
@@ -73,8 +77,9 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -97,11 +102,12 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -125,11 +131,12 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -161,8 +168,9 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -197,11 +205,12 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -238,11 +247,12 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateNoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);

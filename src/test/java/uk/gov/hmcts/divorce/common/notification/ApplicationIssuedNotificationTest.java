@@ -263,6 +263,8 @@ public class ApplicationIssuedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant1(data, 1234567890123456L);
     }
 
     @Test
@@ -293,6 +295,8 @@ public class ApplicationIssuedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant1(data, 1234567890123456L);
     }
 
     @Test
@@ -321,6 +325,8 @@ public class ApplicationIssuedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(data, 1234567890123456L);
     }
 
     @Test
@@ -351,6 +357,8 @@ public class ApplicationIssuedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(data, 1234567890123456L);
     }
 
     @Test
@@ -467,7 +475,7 @@ public class ApplicationIssuedNotificationTest {
             .dueDate(LOCAL_DATE.plusDays(7))
             .application(Application.builder()
                 .solicitorService(SolicitorService.builder().dateOfService(LOCAL_DATE).build())
-                .solServiceMethod(SOLICITOR_SERVICE)
+                .serviceMethod(SOLICITOR_SERVICE)
                 .issueDate(LOCAL_DATE).build())
             .build();
 
@@ -487,7 +495,7 @@ public class ApplicationIssuedNotificationTest {
             .applicant2(respondentWithDigitalSolicitor())
             .divorceOrDissolution(DIVORCE)
             .dueDate(LOCAL_DATE.plusDays(7))
-            .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
+            .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
@@ -504,7 +512,7 @@ public class ApplicationIssuedNotificationTest {
             .applicant2(respondentWithDigitalSolicitor())
             .divorceOrDissolution(DIVORCE)
             .dueDate(LOCAL_DATE.plusDays(7))
-            .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
+            .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
@@ -530,7 +538,7 @@ public class ApplicationIssuedNotificationTest {
             .applicant2(respondentWithDigitalSolicitor())
             .divorceOrDissolution(DIVORCE)
             .dueDate(LOCAL_DATE.plusDays(7))
-            .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
+            .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
 
         caseData.getApplicant2().getSolicitor().setReference("TEST");
@@ -559,7 +567,7 @@ public class ApplicationIssuedNotificationTest {
             .applicationType(JOINT_APPLICATION)
             .divorceOrDissolution(DIVORCE)
             .dueDate(LOCAL_DATE.plusDays(7))
-            .application(Application.builder().solServiceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
+            .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
         caseData.getApplicant1().setGender(MALE);
 
@@ -589,11 +597,13 @@ public class ApplicationIssuedNotificationTest {
             .applicant1(getApplicant())
             .applicant2(applicant2)
             .application(Application.builder()
-                .solServiceMethod(SOLICITOR_SERVICE)
+                .serviceMethod(SOLICITOR_SERVICE)
                 .build())
             .build();
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -608,7 +618,7 @@ public class ApplicationIssuedNotificationTest {
             .applicant1(getApplicant())
             .applicant2(respondentWithDigitalSolicitor())
             .application(Application.builder()
-                .solServiceMethod(SOLICITOR_SERVICE)
+                .serviceMethod(SOLICITOR_SERVICE)
                 .build())
             .build();
 
@@ -624,7 +634,7 @@ public class ApplicationIssuedNotificationTest {
             .divorceOrDissolution(DIVORCE)
             .applicant1(applicantRepresentedBySolicitor())
             .application(Application.builder()
-                .solServiceMethod(SOLICITOR_SERVICE)
+                .serviceMethod(SOLICITOR_SERVICE)
                 .build())
             .build();
 
@@ -659,7 +669,7 @@ public class ApplicationIssuedNotificationTest {
             .divorceOrDissolution(DISSOLUTION)
             .applicant1(applicant1)
             .application(Application.builder()
-                .solServiceMethod(SOLICITOR_SERVICE)
+                .serviceMethod(SOLICITOR_SERVICE)
                 .build())
             .build();
 

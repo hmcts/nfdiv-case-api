@@ -51,7 +51,7 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
         final CaseData caseData = details.getData();
 
         log.info("Solicitor confirm service about to submit callback invoked with service method {}",
-            caseData.getApplication().getSolServiceMethod().toString());
+            caseData.getApplication().getServiceMethod().toString());
 
         final List<String> validationErrors = validateConfirmService(caseData.getApplication());
 

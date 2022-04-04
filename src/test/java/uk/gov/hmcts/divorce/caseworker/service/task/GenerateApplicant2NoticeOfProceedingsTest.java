@@ -32,14 +32,14 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_OFFLINE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -49,7 +49,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateRespondentAosInvitationTest {
+public class GenerateApplicant2NoticeOfProceedingsTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -67,7 +67,7 @@ public class GenerateRespondentAosInvitationTest {
     private Clock clock;
 
     @InjectMocks
-    private GenerateRespondentAosInvitation generateRespondentAosInvitation;
+    private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
     @Test
     void shouldReturnCaseDataWithAosInvitationDocumentIfRespondentIsRepresentedAndIsSoleApplication() {
@@ -90,19 +90,19 @@ public class GenerateRespondentAosInvitationTest {
 
         when(respondentSolicitorAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_INVITATION,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
                 RESP_SOLICITOR_AOS_INVITATION,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         classMock.close();
@@ -128,19 +128,19 @@ public class GenerateRespondentAosInvitationTest {
 
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_INVITATION,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
-                CITIZEN_RESP_AOS_INVITATION_ONLINE,
+                NFD_NOP_R1_SOLE_APP2_CIT_ONLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verifyNoMoreInteractions(caseDataDocumentService);
@@ -168,19 +168,19 @@ public class GenerateRespondentAosInvitationTest {
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
         when(coversheetApplicant2TemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(coversheetContent);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_INVITATION,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
-                CITIZEN_RESP_AOS_INVITATION_OFFLINE,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verify(caseDataDocumentService)
@@ -220,19 +220,19 @@ public class GenerateRespondentAosInvitationTest {
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
         when(coversheetApplicant2TemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(coversheetContent);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_INVITATION,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
-                CITIZEN_RESP_AOS_INVITATION_OFFLINE,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verify(caseDataDocumentService)
@@ -265,7 +265,7 @@ public class GenerateRespondentAosInvitationTest {
         final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
@@ -298,19 +298,19 @@ public class GenerateRespondentAosInvitationTest {
 
         when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        final var result = generateRespondentAosInvitation.apply(caseDetails);
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                RESPONDENT_INVITATION,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
-                CITIZEN_RESP_AOS_INVITATION_OFFLINE,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
 
         verifyNoMoreInteractions(caseDataDocumentService);

@@ -33,8 +33,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,7 +59,7 @@ class AosPackPrinterTest {
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(RESPONDENT_INVITATION)
+                .documentType(NOTICE_OF_PROCEEDINGS_APP_2)
                 .build())
             .build();
 
@@ -128,7 +128,7 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldPrintOverseasAosPackForApplicantIfRequiredDocumentsArePresent() {
+    void shouldPrintPersonalServiceAosPackForApplicantIfRequiredDocumentsArePresent() {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -138,7 +138,7 @@ class AosPackPrinterTest {
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(RESPONDENT_INVITATION)
+                .documentType(NOTICE_OF_PROCEEDINGS_APP_2)
                 .build())
             .build();
 
@@ -160,7 +160,7 @@ class AosPackPrinterTest {
 
         when(bulkPrintService.printWithD10Form(printCaptor.capture())).thenReturn(randomUUID());
 
-        aosPackPrinter.sendOverseasAosLetterToApplicant(caseData, TEST_CASE_ID);
+        aosPackPrinter.sendPersonalServiceAosLetterToApplicant(caseData, TEST_CASE_ID);
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -232,6 +232,30 @@ class AosPackPrinterTest {
             .build();
 
         aosPackPrinter.sendAosLetterToRespondent(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(bulkPrintService);
+    }
+
+    @Test
+    void shouldNotPrintPersonalServiceAosPackIfRequiredDocumentsAreNotPresent() {
+
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(RESPONDENT_ANSWERS)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NAME_CHANGE_EVIDENCE)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
+            .build();
+
+        aosPackPrinter.sendPersonalServiceAosLetterToApplicant(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(bulkPrintService);
     }

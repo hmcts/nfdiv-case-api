@@ -11,7 +11,7 @@ buildscript {
 
   }
   dependencies {
-    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.35.1025'
+    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.36.1070'
   }
 }
 
@@ -21,13 +21,13 @@ plugins {
   id 'idea'
   id 'pmd'
   id 'jacoco'
-  id 'org.owasp.dependencycheck' version '6.5.3'
+  id 'org.owasp.dependencycheck' version '7.0.4.1'
   id 'org.sonarqube' version '3.3'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.6'
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'hmcts.ccd.sdk' version '2.0.2'
-  id 'com.github.hmcts.rse-cft-lib' version '0.15.43'
+  id 'com.github.hmcts.rse-cft-lib' version '0.15.51'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -256,6 +256,7 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
   implementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.2-Categories'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.6'
+  implementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.0.1'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.10'
@@ -302,7 +303,6 @@ dependencies {
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
   testImplementation group: 'org.simplify4u', name: 'slf4j-mock', version: '2.1.1'
   testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.25'
-
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
