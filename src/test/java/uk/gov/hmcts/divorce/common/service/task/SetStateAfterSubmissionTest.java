@@ -104,6 +104,27 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
+    void shouldSetAwaitingHwfDecisionStateIfSolicitorSetHelpWithFeesForJoin() {
+
+        final var application = Application.builder()
+            .solPaymentHowToPay(FEES_HELP_WITH)
+            .build();
+
+        final var caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplication(application);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        caseDetails.setState(Draft);
+
+        final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(AwaitingHWFDecision);
+    }
+
+    @Test
     void shouldSetAwaitingPaymentStateIfApplicationHasNotBeenPaid() {
 
         final var application = Application.builder()
