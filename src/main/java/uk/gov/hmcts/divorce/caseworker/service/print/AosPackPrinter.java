@@ -80,9 +80,9 @@ public class AosPackPrinter {
         }
     }
 
-    public void sendOverseasAosLetterToApplicant(final CaseData caseData, final Long caseId) {
+    public void sendPersonalServiceAosLetterToApplicant(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> currentAosLetters = overseasLetters(caseData);
+        final List<Letter> currentAosLetters = personalServiceLetters(caseData);
 
         if (!isEmpty(currentAosLetters)) {
 
@@ -94,7 +94,7 @@ public class AosPackPrinter {
         } else {
             log.warn(
                 "AoS Pack for print applicant has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_1),
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_1, COVERSHEET, NOTICE_OF_PROCEEDINGS_APP_2),
                 caseId
             );
         }
@@ -190,7 +190,7 @@ public class AosPackPrinter {
         return currentAosLetters;
     }
 
-    private List<Letter> overseasLetters(final CaseData caseData) {
+    private List<Letter> personalServiceLetters(final CaseData caseData) {
         final List<Letter> coversheetLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
             COVERSHEET);

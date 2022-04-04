@@ -9,22 +9,20 @@
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1Gender": "female",
     "applicant1ContactDetailsType": "public",
-    "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorRepresented": "No",
     "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "No",
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
-    "applicant2Email": "test@test.com",
+    "applicant2Email": "applicant2@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
     "applicant2Address": {
-      "AddressLine1": "223b",
-      "AddressLine2": "Baker Street",
-      "PostTown": "London",
-      "County": "Greater London",
-      "PostCode": "NW1 6XE",
-      "Country": "United Kingdom"
+      "AddressLine1": "line 1",
+      "PostTown": "town",
+      "PostCode": "postcode",
+      "Country": "France"
     },
     "applicant2Gender": "male",
     "applicant2SolicitorRepresented": "No",
@@ -39,16 +37,16 @@
       "A"
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "divorceWho": "wife",
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant1StatementOfTruth": "Yes",
-    "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
-    "accessCode": "${json-unit.ignore}",
-    "issueDate": "${json-unit.ignore}",
-    "reissueDate": "2021-06-17",
+    "issueDate": "2021-06-17",
     "applicationPayments": [
       {
         "value": {
@@ -62,7 +60,7 @@
       }
     ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
-    "noticeOfProceedingsEmail": "test@test.com",
+    "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
         "id": "Divorce application",
@@ -77,21 +75,47 @@
         }
       },
       {
-        "id": "Respondent Invitation",
+        "id": "Notice of proceeding respondent",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94",
             "document_filename": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94/binary"
           },
           "documentFileName": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "noticeOfProceedingsApp2"
         }
+      },
+      {
+        "id": "Coversheet",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
+            "document_filename": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
+          },
+          "documentFileName": "coversheet-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "coversheet"
+        }
+      },
+      {
+        "id": "Notice of proceeding applicant",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+            "document_filename": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+          },
+          "documentFileName": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "noticeOfProceedings"
+        }
       }
     ],
+    "serviceMethod": "personalService",
+    "noticeOfProceedingsEmail": "applicant2@test.com",
     "dueDate": "2021-07-03",
     "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
-  "state": "AwaitingAos"
+  "state": "AwaitingService"
 }

@@ -106,14 +106,16 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                     NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
                 );
 
-                log.info("Generating coversheet for case id {} ", caseId);
-                generateDocumentAndUpdateCaseData(
-                    caseDetails,
-                    COVERSHEET_APPLICANT,
-                    coversheetApplicant2TemplateContent.apply(caseData, caseId),
-                    COVERSHEET,
-                    COVERSHEET_DOCUMENT_NAME
-                );
+                if (!caseData.getApplication().isPersonalServiceMethod()) {
+                    log.info("Generating coversheet for case id {} ", caseId);
+                    generateDocumentAndUpdateCaseData(
+                        caseDetails,
+                        COVERSHEET_APPLICANT,
+                        coversheetApplicant2TemplateContent.apply(caseData, caseId),
+                        COVERSHEET,
+                        COVERSHEET_DOCUMENT_NAME
+                    );
+                }
             } else {
                 log.info("Not generating AOS respondent invitation letter for case id {} ", caseId);
             }
