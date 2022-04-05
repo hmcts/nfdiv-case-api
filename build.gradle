@@ -377,6 +377,13 @@ functional {
   }
 }
 
+tasks.functional.configure {
+  actions.clear()
+  doLast {
+    println("Functional tests disabled")
+  }
+}
+
 generateTypeScript {
   jsonLibrary = 'jackson2'
   classPatterns = [
