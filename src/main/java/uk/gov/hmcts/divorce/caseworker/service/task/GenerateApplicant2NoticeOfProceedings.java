@@ -4,31 +4,29 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTemplateContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
-import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 
 import java.time.Clock;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
-import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
@@ -39,109 +37,107 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
 
-    //TODO: Use correct template content when application template requirements are known.
-    @Autowired
-    private RespondentSolicitorAosInvitationTemplateContent respondentSolicitorAosInvitationTemplateContent;
-
-    @Autowired
-    private CitizenRespondentAosInvitationTemplateContent citizenRespondentAosInvitationTemplateContent;
-
     @Autowired
     private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
+
+    @Autowired
+    private NoticeOfProceedingContent templateContent;
+
+    @Autowired
+    private NoticeOfProceedingSolicitorContent solicitorTemplateContent;
 
     @Autowired
     private Clock clock;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
-
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
+        final boolean isSoleApplication = caseData.getApplicationType().isSole();
 
-        log.info("Generating access code to allow the respondent to access the application");
         caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
 
-        boolean isAddressKnown = isNull(caseData.getApplication().getApplicant1KnowsApplicant2Address())
-            || YES.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address());
-
-        if (caseData.getApplicationType().isSole() && isAddressKnown) {
-
-            final Applicant applicant1 = caseData.getApplicant1();
-            final Applicant applicant2 = caseData.getApplicant2();
-
-            if (!applicant1.isRepresented() && !applicant2.isRepresented() && applicant2.isBasedOverseas()) {
-                log.info("Generating citizen respondent(Offline) AoS invitation for case id {} ", caseId);
-                generateDocumentAndUpdateCaseData(
-                    caseDetails,
-                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
-                    citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId),
-                    NOTICE_OF_PROCEEDINGS_APP_2,
-                    NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
-                );
-            } else if (applicant2.isRepresented()) {
-                log.info("Generating solicitor respondent AoS invitation for case id {} ", caseId);
-                generateDocumentAndUpdateCaseData(
-                    caseDetails,
-                    RESP_SOLICITOR_AOS_INVITATION,
-                    respondentSolicitorAosInvitationTemplateContent.apply(caseData, caseId, caseDetails.getCreatedDate().toLocalDate()),
-                    NOTICE_OF_PROCEEDINGS_APP_2,
-                    NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
-                );
-            } else if (isNotEmpty(applicant2.getEmail())) {
-                log.info("Generating citizen respondent(with email) AoS invitation for case id {} ", caseId);
-                generateDocumentAndUpdateCaseData(
-                    caseDetails,
-                    NFD_NOP_R1_SOLE_APP2_CIT_ONLINE,
-                    citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId),
-                    NOTICE_OF_PROCEEDINGS_APP_2,
-                    NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
-                );
-            } else if (isEmpty(applicant2.getEmail())) {
-                log.info("Generating citizen respondent(without email) AoS invitation for case id {} ", caseId);
-                generateDocumentAndUpdateCaseData(
-                    caseDetails,
-                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
-                    citizenRespondentAosInvitationTemplateContent.apply(caseData, caseId),
-                    NOTICE_OF_PROCEEDINGS_APP_2,
-                    NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME
-                );
-
-                if (!caseData.getApplication().isPersonalServiceMethod()) {
-                    log.info("Generating coversheet for case id {} ", caseId);
-                    generateDocumentAndUpdateCaseData(
-                        caseDetails,
-                        COVERSHEET_APPLICANT,
-                        coversheetApplicant2TemplateContent.apply(caseData, caseId),
-                        COVERSHEET,
-                        COVERSHEET_DOCUMENT_NAME
-                    );
-                }
-            } else {
-                log.info("Not generating AOS respondent invitation letter for case id {} ", caseId);
-            }
+        if (isSoleApplication) {
+            generateSoleNoticeOfProceedings(caseData, caseId);
+        } else {
+            generateJointNoticeOfProceedings(caseData, caseId);
         }
 
         return caseDetails;
     }
 
-    private void generateDocumentAndUpdateCaseData(
-        CaseDetails<CaseData, State> caseDetails,
-        String templateId,
-        Map<String, Object> templateContent,
-        DocumentType documentType,
-        String documentName
-    ) {
-        final Long caseId = caseDetails.getId();
-        final CaseData caseData = caseDetails.getData();
+    private void generateSoleNoticeOfProceedings(CaseData caseData, Long caseId) {
+        String templateId;
+
+        if (caseData.getApplicant2().isRepresented()) {
+            log.info("Generating notice of proceedings for respondent solicitor for case id {} ", caseId);
+
+            var hasSolicitor = caseData.getApplicant2().getSolicitor() != null;
+            var hasOrgPolicy = hasSolicitor && caseData.getApplicant2().getSolicitor().getOrganisationPolicy() != null;
+
+            templateId = hasOrgPolicy
+                ? NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE
+                : NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
+        } else {
+            log.info("Generating notice of proceedings for respondent for sole case id {} ", caseId);
+
+            templateId = isNotEmpty(caseData.getApplicant2().getEmail())
+                ? NFD_NOP_R1_SOLE_APP2_CIT_ONLINE
+                : NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
+        }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            documentType,
-            templateContent,
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            templateContent.apply(caseData, caseId),
             caseId,
             templateId,
-            caseData.getApplicant1().getLanguagePreference(),
-            formatDocumentName(caseId, documentName, now(clock))
+            caseData.getApplicant2().getLanguagePreference(),
+            formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
+        );
+
+        // if not court service or they are offline we need a coversheet
+        if (!caseData.getApplication().isCourtServiceMethod()
+            || templateId.equals(NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE)
+            || templateId.equals(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE)) {
+
+            log.info("Generating coversheet for sole case id {} ", caseId);
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                COVERSHEET,
+                coversheetApplicant2TemplateContent.apply(caseData, caseId),
+                caseId,
+                COVERSHEET_APPLICANT,
+                caseData.getApplicant2().getLanguagePreference(),
+                formatDocumentName(caseId, COVERSHEET_DOCUMENT_NAME, now(clock))
+            );
+        }
+
+    }
+
+    private void generateJointNoticeOfProceedings(CaseData caseData, Long caseId) {
+        String templateId;
+        Map<String, Object> content;
+
+        if (caseData.getApplicant2().isRepresented()) {
+            log.info("Generating notice of proceedings for applicant 2 solicitor for case id {} ", caseId);
+            templateId = NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
+            content = solicitorTemplateContent.apply(caseData, caseId, false);
+        } else {
+            log.info("Generating applicant 2 notice of proceedings for applicant for joint case id {} ", caseId);
+            templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+            content = templateContent.apply(caseData, caseId);
+        }
+
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            content,
+            caseId,
+            templateId,
+            caseData.getApplicant2().getLanguagePreference(),
+            formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
         );
     }
+
 }

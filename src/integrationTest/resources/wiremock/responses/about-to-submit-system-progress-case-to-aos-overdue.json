@@ -1,6 +1,7 @@
 {
   "data": {
     "applicationType": "soleApplication",
+    "serviceMethod": "courtService",
     "applicant1Email": "test@test.com",
     "applicant1FinancialOrder": "No",
     "applicant1FirstName": "test_first_name",
