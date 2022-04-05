@@ -124,7 +124,6 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                 formatDocumentName(caseId, COVERSHEET_DOCUMENT_NAME, now(clock))
             );
         }
-
     }
 
     private void generateJointNoticeOfProceedings(CaseData caseData, Long caseId) {
@@ -151,5 +150,4 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
         );
     }
-
 }
