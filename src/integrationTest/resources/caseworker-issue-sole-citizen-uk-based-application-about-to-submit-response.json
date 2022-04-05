@@ -103,7 +103,9 @@
     ],
     "dueDate": "2021-07-03",
     "dataVersion": "${json-unit.any-number}",
-    "warnings": []
+    "warnings": [],
+    "isAosDrafted": "No",
+    "isAosSubmitted": "No"
   },
   "state": "AwaitingAos"
 }
