@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -150,7 +149,6 @@ class SubmitAosTest {
         assertThat(response.getData()).isSameAs(expectedCaseData);
         assertThat(response.getState()).isEqualTo(Holding);
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getData().getAcknowledgementOfService().getIsAosSubmitted()).isEqualTo(YesOrNo.YES);
     }
 
     @Test

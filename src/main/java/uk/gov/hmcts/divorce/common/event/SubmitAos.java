@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolStatementOfTruth;
@@ -84,8 +83,6 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         }
 
         final CaseDetails<CaseData, State> updateDetails = submitAosService.submitAos(details);
-
-        updateDetails.getData().getAcknowledgementOfService().setIsAosSubmitted(YesOrNo.YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())

@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.service.task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -27,6 +28,8 @@ public class SetPostIssueState implements CaseTask {
             caseDetails.setState(AwaitingService);
         } else {
             caseDetails.setState(AwaitingAos);
+            caseDetails.getData().getAcknowledgementOfService().setIsAosDrafted(YesOrNo.NO);
+            caseDetails.getData().getAcknowledgementOfService().setIsAosSubmitted(YesOrNo.NO);
         }
 
         log.info("Setting state to {}.  Case ID: {}", caseDetails.getState(), caseDetails.getId());
