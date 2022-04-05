@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSoleApplicant2SolicitorOffline;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -66,6 +67,9 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
 
     @Mock
+    private NoticeOfProceedingSoleApplicant2SolicitorOffline noticeOfProceedingSoleApplicant2SolicitorOffline;
+
+    @Mock
     private Clock clock;
 
     @InjectMocks
@@ -82,7 +86,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(noticeOfProceedingSoleApplicant2SolicitorOffline.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
