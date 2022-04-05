@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolStatementOfTruth;
@@ -24,7 +25,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -85,6 +85,8 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
         final CaseDetails<CaseData, State> updateDetails = submitAosService.submitAos(details);
 
+        updateDetails.getData().getAcknowledgementOfService().setIsAosSubmitted(YesOrNo.YES);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())
             .state(updateDetails.getState())
@@ -121,8 +123,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .name("Submit AoS")
             .description("Submit AoS")
             .showSummary()
-            .showCondition("applicationType=\"soleApplication\"")
-            .aboutToStartCallback(this::aboutToStart)
+            .showCondition("applicationType=\"soleApplication\" AND isAosSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
@@ -130,21 +131,6 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
                 CASE_WORKER,
                 LEGAL_ADVISOR,
                 SUPER_USER));
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        final var caseData = details.getData();
-        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
-
-        if (null != acknowledgementOfService && null != acknowledgementOfService.getDateAosSubmitted()) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(Collections.singletonList("The Acknowledgement Of Service has already been submitted."))
-                .build();
-        }
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .build();
     }
 
     public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,

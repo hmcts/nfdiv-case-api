@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -24,6 +25,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -105,6 +107,11 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         }
 
         final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(details);
+
+        if (result.getState() == AwaitingAos) {
+            result.getData().getAcknowledgementOfService().setIsAosDrafted(YesOrNo.NO);
+            result.getData().getAcknowledgementOfService().setIsAosSubmitted(YesOrNo.NO);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())

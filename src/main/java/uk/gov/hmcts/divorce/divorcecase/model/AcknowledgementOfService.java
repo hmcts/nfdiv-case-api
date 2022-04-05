@@ -52,6 +52,18 @@ public class AcknowledgementOfService {
     private YesOrNo jurisdictionAgree;
 
     @CCD(
+        label = "Has the case be drafted for AoS",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo isAosDrafted;
+
+    @CCD(
+        label = "Has the case be submitted for AoS",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo isAosSubmitted;
+
+    @CCD(
         label = "Date AoS submitted to HMCTS",
         access = {DefaultAccess.class}
     )

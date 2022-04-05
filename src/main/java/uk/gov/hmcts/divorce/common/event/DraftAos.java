@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2HowToRespondToApplication;
@@ -63,10 +64,10 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue))
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
+            .showCondition("applicationType=\"soleApplication\" AND isAosDrafted=\"No\"")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
-            .showCondition("applicationType=\"soleApplication\"")
             .endButtonLabel("Save AoS Response")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
             .grantHistoryOnly(
@@ -76,16 +77,6 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        final var caseData = details.getData();
-        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
-
-        if (null != acknowledgementOfService && null != acknowledgementOfService.getDateAosSubmitted()) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(Collections.singletonList("The Acknowledgement Of Service has already been submitted."))
-                .build();
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseTasks(addMiniApplicationLink)
                 .run(details)
@@ -95,7 +86,18 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> before) {
+        final var caseData = details.getData();
+        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+
+        if (null != acknowledgementOfService && YesOrNo.YES == acknowledgementOfService.getIsAosDrafted()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList("The Acknowledgement Of Service has already been drafted."))
+                .build();
+        }
+
         var state = details.getState() == AwaitingAos || details.getState() == AosOverdue ? AosDrafted : details.getState();
+        details.getData().getAcknowledgementOfService().setIsAosDrafted(YesOrNo.YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

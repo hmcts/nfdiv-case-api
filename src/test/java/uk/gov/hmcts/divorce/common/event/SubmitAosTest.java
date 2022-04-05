@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -71,41 +72,6 @@ class SubmitAosTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(SUBMIT_AOS);
-    }
-
-    @Test
-    void shouldReturnCaseDataWithoutErrorsOnAboutToStart() {
-
-        final CaseData caseData = CaseData.builder().build();
-        final CaseData expectedCaseData = CaseData.builder().build();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = submitAos.aboutToStart(caseDetails);
-
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
-    }
-
-    @Test
-    void shouldReturnErrorsIfAosHasAlreadySubmitted() {
-
-        setMockClock(clock);
-        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
-            .dateAosSubmitted(LocalDateTime.now(clock))
-            .build();
-
-        final CaseData caseData = caseData();
-        caseData.setAcknowledgementOfService(acknowledgementOfService);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = submitAos.aboutToStart(caseDetails);
-
-        assertThat(response.getData()).isSameAs(caseData);
-        assertThat(response.getErrors())
-            .containsExactly(
-                "The Acknowledgement Of Service has already been submitted.");
     }
 
     @Test
@@ -184,6 +150,7 @@ class SubmitAosTest {
         assertThat(response.getData()).isSameAs(expectedCaseData);
         assertThat(response.getState()).isEqualTo(Holding);
         assertThat(response.getErrors()).isNull();
+        assertThat(response.getData().getAcknowledgementOfService().getIsAosSubmitted()).isEqualTo(YesOrNo.YES);
     }
 
     @Test
