@@ -320,4 +320,24 @@ public class ApplicationTransformerTest {
 
         assertThat(transformedOutput.getCaseData().getApplication().getDateSubmitted()).isEqualTo(getExpectedLocalDateTime());
     }
+
+    @Test
+    void shouldIgnoreEmptyStringPassedForHwf() {
+        final var caseData = CaseData.builder().applicationType(JOINT_APPLICATION).divorceOrDissolution(DISSOLUTION).build();
+        OcrDataFields ocrData = new OcrDataFields();
+        ocrData.setSoleOrApplicant1HWFNo("");
+        ocrData.setApplicant2HWFNo("");
+
+        final var transformationDetails =
+            TransformationDetails
+                .builder()
+                .ocrDataFields(ocrData)
+                .caseData(caseData)
+                .build();
+
+        final var transformedOutput = applicationTransformer.apply(transformationDetails);
+
+        assertThat(transformedOutput.getCaseData().getApplication().getApplicant1HelpWithFees().getReferenceNumber()).isNull();
+        assertThat(transformedOutput.getCaseData().getApplication().getApplicant2HelpWithFees().getReferenceNumber()).isNull();
+    }
 }

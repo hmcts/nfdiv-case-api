@@ -36,6 +36,8 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     public static final String DISSOLUTION_SERVED_ANOTHER_WAY = "dissolutionServedAnotherWay";
 
     public static final String SEND_DOCUMENTS_TO_COURT = "sendDocumentsToCourt";
+    public static final String SEND_DOCUMENTS_TO_COURT_DIVORCE = "sendDocumentsToCourtDivorce";
+    public static final String SEND_DOCUMENTS_TO_COURT_DISSOLUTION = "sendDocumentsToCourtDissolution";
     public static final String CONDITIONAL_REFERENCE_NUMBER = "conditional reference number";
     public static final String CONDITIONAL_COURT_EMAIL = "conditional court email";
     public static final String MISSING_MARRIAGE_CERTIFICATE = "mariageCertificate";
@@ -113,8 +115,12 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     private Map<String, String> courtDocumentDetails(CaseData caseData, String referenceNumber, String courtEmail) {
         Map<String, String> templateVars = new HashMap<>();
         boolean needsToSendDocuments = !isEmpty(caseData.getApplication().getMissingDocumentTypes());
+        boolean isDivorceAndSendDocumentsToCourt = needsToSendDocuments && caseData.isDivorce();
+        boolean isDissolutionAndSendDocumentsToCourt = needsToSendDocuments && !caseData.isDivorce();
 
         templateVars.put(SEND_DOCUMENTS_TO_COURT, needsToSendDocuments ? YES : NO);
+        templateVars.put(SEND_DOCUMENTS_TO_COURT_DIVORCE, isDivorceAndSendDocumentsToCourt ? YES : NO);
+        templateVars.put(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, isDissolutionAndSendDocumentsToCourt ? YES : NO);
         templateVars.put(CONDITIONAL_REFERENCE_NUMBER, needsToSendDocuments ? referenceNumber : "");
         templateVars.put(CONDITIONAL_COURT_EMAIL, needsToSendDocuments ? courtEmail : "");
 

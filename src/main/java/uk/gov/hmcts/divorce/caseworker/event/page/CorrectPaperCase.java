@@ -258,8 +258,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
     private void buildPrayerFields(FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>>
                                        fieldCollectionBuilder) {
         fieldCollectionBuilder
-            .label("Label-CorrectPrayerDetails",
-                "### The prayer details")
+            .label("Label-CorrectPrayerDetails-App1",
+                "### ${labelContentApplicantsOrApplicant1s} prayer details")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getApplicantPrayer)
                 .mandatory(ApplicantPrayer::getPrayerDissolveDivorce, DIVORCE_APPLICATION)
@@ -268,6 +268,9 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .optional(ApplicantPrayer::getPrayerFinancialOrdersChild)
                 .done()
             .done()
+            .label("Label-CorrectPrayerDetails-App2",
+                "### Applicant 2's prayer details",
+                JOINT_APPLICATION)
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getApplicantPrayer)
                 .mandatory(ApplicantPrayer::getPrayerDissolveDivorce, JOINT_DIVORCE_APPLICATION)

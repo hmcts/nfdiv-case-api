@@ -31,14 +31,18 @@ import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingAc
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_NAME_CHANGE_PROOF;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.PAPERS_SERVED_ANOTHER_WAY;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DISSOLUTION;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DIVORCE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SERVE_HUSBAND_ANOTHER_WAY;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
@@ -61,7 +65,6 @@ class ApplicationOutstandingActionNotificationTest {
     private ApplicationOutstandingActionNotification notification;
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailToApplicant1ForSupportingDocuments() {
         CaseData data = caseData();
         data.setApplicant2(getApplicant2(MALE));
@@ -180,7 +183,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForPapersServedAnotherWay() {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -218,7 +220,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForCivil() {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -252,7 +253,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForPapersServedAnotherWayAndNoDocumentsRequired() {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -281,6 +281,93 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SERVE_HUSBAND_ANOTHER_WAY, YES),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void assertSendDocumentsToCourtDissolution() {
+        CaseData data = caseData();
+        data.setDivorceOrDissolution(DISSOLUTION);
+
+        data.setApplicant2(getApplicant2(MALE));
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        data.setApplicationType(SOLE_APPLICATION);
+
+        Set<DocumentType> docs = new HashSet<>();
+        docs.add(MARRIAGE_CERTIFICATE);
+        docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, YES)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void assertSendDocumentsToCourtDissolutionWhenNotSendingDocumentsToCourt() {
+        CaseData data = caseData();
+        data.setDivorceOrDissolution(DISSOLUTION);
+
+        data.setApplicant2(getApplicant2(MALE));
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        data.setApplicationType(SOLE_APPLICATION);
+
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(new HashSet<>());
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(SEND_DOCUMENTS_TO_COURT, NO),
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, NO)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void assertSendDocumentsToCourtDissolutionWhenNotSendingDocumentsToCour() {
+        CaseData data = caseData();
+        data.setDivorceOrDissolution(DISSOLUTION);
+
+        data.setApplicant2(getApplicant2(MALE));
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        data.setApplicationType(SOLE_APPLICATION);
+
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(new HashSet<>());
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(SEND_DOCUMENTS_TO_COURT, NO),
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, NO)
             )),
             eq(ENGLISH)
         );

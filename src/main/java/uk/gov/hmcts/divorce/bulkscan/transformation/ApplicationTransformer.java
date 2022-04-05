@@ -159,17 +159,24 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
             HelpWithFees
                 .builder()
                 .appliedForFees(from(toBoolean(ocrDataFields.getSoleOrApplicant1HWFConfirmation())))
-                .referenceNumber(ocrDataFields.getSoleOrApplicant1HWFNo())
                 .needHelp(from(toBoolean(ocrDataFields.getSoleOrApplicant1HWFApp())))
                 .build()
         );
+
+        if (isNotEmpty(ocrDataFields.getSoleOrApplicant1HWFNo())) {
+            caseData.getApplication().getApplicant1HelpWithFees().setReferenceNumber(ocrDataFields.getSoleOrApplicant1HWFNo());
+        }
+
         caseData.getApplication().setApplicant2HelpWithFees(
             HelpWithFees
                 .builder()
                 .appliedForFees(from(toBoolean(ocrDataFields.getApplicant2HWFConfirmation())))
-                .referenceNumber(ocrDataFields.getApplicant2HWFNo())
                 .needHelp(from(toBoolean(ocrDataFields.getApplicant2HWFApp())))
                 .build()
         );
+
+        if (isNotEmpty(ocrDataFields.getApplicant2HWFNo())) {
+            caseData.getApplication().getApplicant2HelpWithFees().setReferenceNumber(ocrDataFields.getApplicant2HWFNo());
+        }
     }
 }
