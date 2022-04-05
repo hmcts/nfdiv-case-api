@@ -91,9 +91,9 @@ public class ReIssueApplicationService {
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
+                generateD10Form,
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,
-                generateD10Form,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else if (REISSUE_CASE.equals(reissueOption)) {
@@ -104,9 +104,9 @@ public class ReIssueApplicationService {
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
+                generateD10Form,
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,
-                generateD10Form,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else {

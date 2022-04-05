@@ -8,34 +8,26 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.CoversheetApplicant1TemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 
 import java.time.Clock;
+import java.util.Map;
 
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 @Component
 @Slf4j
 public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
-
-    @Autowired
-    private CoversheetApplicant1TemplateContent coversheetTemplateContent;
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -69,130 +61,61 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
     }
 
     private void generateSoleNoticeOfProceedings(CaseData caseData, Long caseId) {
+        String templateId;
+        Map<String, Object> content;
 
-        final boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
-        final boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
+        if (caseData.getApplicant1().isRepresented()) {
+            log.info("Generating notice of proceedings for applicant solicitor for case id {} ", caseId);
 
-        if (isApplicant1Represented) {
-            if (caseData.getApplicant1().getSolicitor().hasOrgId()
-                && !caseData.getApplication().isSolicitorServiceMethod()) {
-                generateApplicantSolicitorNoticeOfProceedings(caseData, caseId);
-            }
+            content = noticeOfProceedingSolicitorContent.apply(caseData, caseId, true);
+            templateId = caseData.getApplication().isCourtServiceMethod()
+                ? NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS
+                : NFD_NOP_AS2_SOLE_APP1_SOL_SS;
         } else {
+            log.info("Generating notice of proceedings for applicant for sole case id {} ", caseId);
 
-            String templateId = caseData.getApplicant2().isBasedOverseas()
-                ? NFD_NOP_A2_SOLE_APP1_CIT_PS
-                : NFD_NOP_A1_SOLE_APP1_CIT_CS;
-
-            log.info("Generating notice of proceedings for sole case id {} ", caseId);
-
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                NOTICE_OF_PROCEEDINGS_APP_1,
-                templateContent.apply(caseData, caseId),
-                caseId,
-                templateId,
-                caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
-            );
-
-            if (caseData.getApplication().isPersonalServiceMethod()) {
-                log.info("Generating coversheet for case id {} ", caseId);
-                caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                    caseData,
-                    COVERSHEET,
-                    coversheetTemplateContent.apply(caseData, caseId),
-                    caseId,
-                    COVERSHEET_APPLICANT,
-                    caseData.getApplicant1().getLanguagePreference(),
-                    formatDocumentName(caseId, COVERSHEET_DOCUMENT_NAME, now(clock))
-                );
-            }
+            content = templateContent.apply(caseData, caseId);
+            templateId = caseData.getApplication().isCourtServiceMethod()
+                ? NFD_NOP_A1_SOLE_APP1_CIT_CS
+                : NFD_NOP_A2_SOLE_APP1_CIT_PS;
         }
-
-        if (isApplicant2Represented) {
-
-            log.info("Generating notice of proceedings for respondent on sole case id {} ", caseId);
-
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                NOTICE_OF_PROCEEDINGS_APP_2,
-                templateContent.apply(caseData, caseId),
-                caseId,
-                NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE,
-                caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
-            );
-
-        }
-    }
-
-    private void generateJointNoticeOfProceedings(CaseData caseData, Long caseId) {
-
-        final boolean isApplicant1Represented = caseData.getApplicant1().isRepresented();
-        final boolean isApplicant1Offline = caseData.getApplicant1().isOffline();
-
-        final boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
-
-        if (isApplicant1Represented
-            && caseData.getApplicant1().getSolicitor().hasOrgId()
-            && !caseData.getApplication().isSolicitorServiceMethod()) {
-            generateApplicantSolicitorNoticeOfProceedings(caseData, caseId);
-        }
-
-        if (!isApplicant1Represented || isApplicant1Offline) {
-
-            log.info("Generating applicant 1 notice of proceedings for joint case id {} ", caseId);
-
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                NOTICE_OF_PROCEEDINGS_APP_1,
-                jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseId,
-                NFD_NOP_JA1_JOINT_APP1APP2_CIT,
-                caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock)));
-        }
-
-        if (isApplicant2Represented) {
-            // App2 represented - generate docs for solicitor NOP
-            log.info("Generating notice of proceedings(joint) for applicant 2 solicitor for case id {} ", caseId);
-
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                NOTICE_OF_PROCEEDINGS_APP_2,
-                noticeOfProceedingSolicitorContent.apply(caseData, caseId, false),
-                caseId,
-                NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS,
-                caseData.getApplicant2().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
-            );
-        } else {
-            // App2 not represented - generate docs for applicant2 NOP(offline/online)
-            log.info("Generating applicant 2 notice of proceedings(joint) for joint case id {} ", caseId);
-
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                NOTICE_OF_PROCEEDINGS_APP_2,
-                jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseId,
-                NFD_NOP_JA1_JOINT_APP1APP2_CIT,
-                caseData.getApplicant2().getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock)));
-        }
-    }
-
-    private void generateApplicantSolicitorNoticeOfProceedings(CaseData caseData, Long caseId) {
-        log.info("Generating notice of proceedings for applicant solicitor for case id {} ", caseId);
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             NOTICE_OF_PROCEEDINGS_APP_1,
-            noticeOfProceedingSolicitorContent.apply(caseData, caseId, true),
+            content,
             caseId,
-            NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS,
+            templateId,
             caseData.getApplicant1().getLanguagePreference(),
             formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
         );
     }
+
+    private void generateJointNoticeOfProceedings(CaseData caseData, Long caseId) {
+        String templateId;
+        Map<String, Object> content;
+
+        if (caseData.getApplicant1().isRepresented()) {
+            log.info("Generating solicitor applicant 1 notice of proceedings for joint case id {} ", caseId);
+
+            content = noticeOfProceedingSolicitorContent.apply(caseData, caseId, true);
+            templateId = NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
+        } else {
+            log.info("Generating applicant 1 notice of proceedings for joint case id {} ", caseId);
+
+            content = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+            templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+        }
+
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            content,
+            caseId,
+            templateId,
+            caseData.getApplicant1().getLanguagePreference(),
+            formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
+        );
+    }
+
 }

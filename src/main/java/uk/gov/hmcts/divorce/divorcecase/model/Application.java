@@ -34,6 +34,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
@@ -502,6 +503,11 @@ public class Application {
     @JsonIgnore
     public boolean isSolicitorServiceMethod() {
         return SOLICITOR_SERVICE.equals(serviceMethod);
+    }
+
+    @JsonIgnore
+    public boolean isCourtServiceMethod() {
+        return COURT_SERVICE.equals(serviceMethod);
     }
 
     @JsonIgnore

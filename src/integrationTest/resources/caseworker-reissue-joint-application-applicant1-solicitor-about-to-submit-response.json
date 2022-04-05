@@ -1,6 +1,7 @@
 {
   "data": {
     "applicationType": "jointApplication",
+    "serviceMethod": "courtService",
     "divorceOrDissolution": "divorce",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
@@ -75,7 +76,7 @@
         }
       },
       {
-        "id": "Respondent Invitation",
+        "id": "Notice of proceedings app2",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
@@ -84,6 +85,18 @@
           },
           "documentFileName": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "noticeOfProceedingsApp2"
+        }
+      },
+      {
+        "id": "Notice of proceedings app1",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+            "document_filename": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+          },
+          "documentFileName": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "noticeOfProceedings"
         }
       }
     ],

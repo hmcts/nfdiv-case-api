@@ -2,6 +2,7 @@
   "data": {
     "applicationType": "jointApplication",
     "divorceOrDissolution": "divorce",
+    "serviceMethod":"courtService",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -76,7 +77,7 @@
         }
       },
       {
-        "id": "Respondent Invitation",
+        "id": "Notice of proceedings respondent",
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",

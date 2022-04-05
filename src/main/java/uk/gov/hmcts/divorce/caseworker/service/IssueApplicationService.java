@@ -71,9 +71,9 @@ public class IssueApplicationService {
             generateApplicant2NoticeOfProceedings,
             divorceApplicationRemover,
             generateDivorceApplication,
+            generateD10Form,
             sendAosPackToRespondent,
             sendAosPackToApplicant,
-            generateD10Form,
             sendApplicationIssueNotifications
         ).run(caseDetails);
     }
