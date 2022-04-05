@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -65,7 +66,7 @@ class SetServiceTypeTest {
         expectedCaseData.getApplicant1().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
-        expectedCaseData.getApplication().setServiceMethod(null);
+        expectedCaseData.getApplication().setServiceMethod(COURT_SERVICE);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
@@ -89,7 +90,7 @@ class SetServiceTypeTest {
         expectedCaseData.getApplicant1().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
-        expectedCaseData.getApplication().setServiceMethod(null);
+        expectedCaseData.getApplication().setServiceMethod(COURT_SERVICE);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
@@ -113,7 +114,7 @@ class SetServiceTypeTest {
         expectedCaseData.getApplicant1().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
-        expectedCaseData.getApplication().setServiceMethod(null);
+        expectedCaseData.getApplication().setServiceMethod(COURT_SERVICE);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
