@@ -1118,7 +1118,7 @@ public class CaseworkerReIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered_V2.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent.docx");
         stubForDocAssemblyWith(COVERSHEET_APPLICANT_ID, "NFD_Applicant_Coversheet.docx");
