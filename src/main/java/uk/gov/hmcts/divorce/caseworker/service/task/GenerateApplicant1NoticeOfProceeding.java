@@ -117,5 +117,4 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
         );
     }
-
 }
