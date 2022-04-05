@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSoleApplicant2SolicitorOffline;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 
 import java.time.Clock;
@@ -41,10 +42,13 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
     private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
 
     @Autowired
-    private NoticeOfProceedingContent templateContent;
+    private NoticeOfProceedingContent noticeOfProceedingContent;
 
     @Autowired
     private NoticeOfProceedingSolicitorContent solicitorTemplateContent;
+
+    @Autowired
+    private NoticeOfProceedingSoleApplicant2SolicitorOffline noticeOfProceedingSoleApplicant2SolicitorOffline;
 
     @Autowired
     private Clock clock;
@@ -69,27 +73,35 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
     private void generateSoleNoticeOfProceedings(CaseData caseData, Long caseId) {
         String templateId;
 
+        final Map<String, Object> templateContent;
+
         if (caseData.getApplicant2().isRepresented()) {
             log.info("Generating notice of proceedings for respondent solicitor for case id {} ", caseId);
 
             var hasSolicitor = caseData.getApplicant2().getSolicitor() != null;
             var hasOrgPolicy = hasSolicitor && caseData.getApplicant2().getSolicitor().getOrganisationPolicy() != null;
 
-            templateId = hasOrgPolicy
-                ? NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE
-                : NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
+            if (hasOrgPolicy) {
+                templateId = NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
+                templateContent = noticeOfProceedingContent.apply(caseData, caseId);
+            } else {
+                templateId = NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
+                templateContent = noticeOfProceedingSoleApplicant2SolicitorOffline.apply(caseData, caseId);
+            }
         } else {
             log.info("Generating notice of proceedings for respondent for sole case id {} ", caseId);
 
             templateId = isNotEmpty(caseData.getApplicant2().getEmail())
                 ? NFD_NOP_R1_SOLE_APP2_CIT_ONLINE
                 : NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
+
+            templateContent = noticeOfProceedingContent.apply(caseData, caseId);
         }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             NOTICE_OF_PROCEEDINGS_APP_2,
-            templateContent.apply(caseData, caseId),
+            templateContent,
             caseId,
             templateId,
             caseData.getApplicant2().getLanguagePreference(),
@@ -126,7 +138,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         } else {
             log.info("Generating applicant 2 notice of proceedings for applicant for joint case id {} ", caseId);
             templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
-            content = templateContent.apply(caseData, caseId);
+            content = noticeOfProceedingContent.apply(caseData, caseId);
         }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
