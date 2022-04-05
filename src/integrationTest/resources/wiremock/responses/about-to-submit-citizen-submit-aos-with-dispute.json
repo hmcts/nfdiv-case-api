@@ -1,6 +1,7 @@
 {
   "data": {
     "applicant1Email": "test@test.com",
+    "serviceMethod": "courtService",
     "applicant1FinancialOrder": "No",
     "applicant1FirstName": "test_first_name",
     "applicant1Gender": "female",

@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.service.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -56,9 +57,16 @@ public class GenerateD10Form implements CaseTask {
         final boolean d10DocumentAlreadyGenerated =
             documentsWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D10);
 
-        if (caseData.getApplication().isSolicitorServiceMethod() && !d10DocumentAlreadyGenerated) {
+        var app2 = caseData.getApplicant2();
+        var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
+            ? !app2.getSolicitor().hasOrgId()
+            : StringUtils.isEmpty(caseData.getApplicant2().getEmail());
+
+        var d10Needed = !caseData.getApplication().isCourtServiceMethod() || app2Offline;
+
+        if (d10Needed && !d10DocumentAlreadyGenerated) {
             try {
-                log.info("Adding d10 to documents generated for case id: {}", caseId);
+                log.info("Adding D10 to list of generated documents for case id: {}", caseId);
                 addD10FormToGeneratedDocuments(caseData);
             } catch (Exception e) {
                 log.error("Error encountered whilst adding D10 document to list of generated documents for case id: {}", caseId);

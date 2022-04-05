@@ -14,6 +14,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -77,6 +78,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
     public void shouldGenerateRespondentAosAndSentAosPackAndNotSendEmailNotificationWhenReissueTypeIsOfflineAos() throws Exception {
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST_OFFLINE_AOS);
         final Response response = triggerCallback(caseData, CASEWORKER_REISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+        caseData.put("serviceMethod", COURT_SERVICE);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
@@ -93,6 +95,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
         throws Exception {
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST_REISSUE_CASE);
         final Response response = triggerCallback(caseData, CASEWORKER_REISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+        caseData.put("serviceMethod", COURT_SERVICE);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
