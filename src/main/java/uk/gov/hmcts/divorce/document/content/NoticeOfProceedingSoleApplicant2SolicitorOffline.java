@@ -56,11 +56,8 @@ public class NoticeOfProceedingSoleApplicant2SolicitorOffline {
 
         Applicant applicant1 = caseData.getApplicant1();
         Applicant applicant2 = caseData.getApplicant2();
-        Solicitor applicant1Solicitor = applicant1.getSolicitor();
         Solicitor applicant2Solicitor = applicant2.getSolicitor();
         LocalDate applicationIssueDate = caseData.getApplication().getIssueDate();
-        boolean oneSolicitorApplyingForBothParties = applicant1.isRepresented() && applicant2.isRepresented()
-            && applicant1Solicitor.equals(applicant2Solicitor);
 
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
