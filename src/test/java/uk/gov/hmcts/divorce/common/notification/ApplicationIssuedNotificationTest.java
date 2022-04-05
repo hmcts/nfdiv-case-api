@@ -5,14 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.caseworker.service.print.NoticeOfProceedingsPrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -71,12 +69,10 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
@@ -95,9 +91,6 @@ public class ApplicationIssuedNotificationTest {
 
     @Mock
     private EmailTemplatesConfig emailTemplatesConfig;
-
-    @Mock
-    private NoticeOfProceedingsPrinter noticeOfProceedingsPrinter;
 
     @Mock
     private HoldingPeriodService holdingPeriodService;
@@ -263,8 +256,6 @@ public class ApplicationIssuedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
-
-        verify(noticeOfProceedingsPrinter).sendLetterToApplicant1(data, 1234567890123456L);
     }
 
     @Test
@@ -295,8 +286,6 @@ public class ApplicationIssuedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
-
-        verify(noticeOfProceedingsPrinter).sendLetterToApplicant1(data, 1234567890123456L);
     }
 
     @Test
@@ -325,8 +314,6 @@ public class ApplicationIssuedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-
-        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(data, 1234567890123456L);
     }
 
     @Test
@@ -357,8 +344,6 @@ public class ApplicationIssuedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-
-        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(data, 1234567890123456L);
     }
 
     @Test
@@ -387,120 +372,6 @@ public class ApplicationIssuedNotificationTest {
         );
 
         verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
-    void shouldSendLettersToPrintToApplicantSolicitorWhenApplicantSolicitorIsRegisteredAndIsNotSolicitorServiceAndSole() {
-
-        Applicant applicant1 = applicantRepresentedBySolicitor();
-        applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
-
-        CaseData caseData = CaseData.builder()
-            .applicant1(applicant1)
-            .applicant2(respondent())
-            .divorceOrDissolution(DIVORCE)
-            .applicationType(SOLE_APPLICATION)
-            .dueDate(LOCAL_DATE.plusDays(7))
-            .application(Application.builder().issueDate(LOCAL_DATE).build())
-            .build();
-
-        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
-
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
-
-        notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
-
-        verify(noticeOfProceedingsPrinter).sendLetterToApplicant1Solicitor(caseData, TEST_CASE_ID);
-    }
-
-    @Test
-    void shouldSendLettersToPrintToApplicantSolicitorWhenApplicantSolicitorIsRegisteredAndIsNotSolicitorServiceAndJoint() {
-
-        Applicant applicant1 = applicantRepresentedBySolicitor();
-        applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
-
-        CaseData caseData = CaseData.builder()
-            .applicant1(applicant1)
-            .applicant2(respondent())
-            .divorceOrDissolution(DIVORCE)
-            .applicationType(JOINT_APPLICATION)
-            .dueDate(LOCAL_DATE.plusDays(7))
-            .application(Application.builder().issueDate(LOCAL_DATE).build())
-            .build();
-
-        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
-
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
-
-        notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
-
-        verify(noticeOfProceedingsPrinter).sendLetterToApplicant1Solicitor(caseData, TEST_CASE_ID);
-    }
-
-    @Test
-    void shouldNotSendLettersToPrintToApplicantSolicitorWhenApplicantSolicitorIsNotRegistered() {
-
-        Applicant applicant1 = applicantRepresentedBySolicitor();
-        applicant1.getSolicitor().setOrganisationPolicy(null);
-
-        CaseData caseData = CaseData.builder()
-            .applicant1(applicant1)
-            .applicant2(respondent())
-            .divorceOrDissolution(DIVORCE)
-            .applicationType(SOLE_APPLICATION)
-            .dueDate(LOCAL_DATE.plusDays(7))
-            .application(Application.builder().issueDate(LOCAL_DATE).build())
-            .build();
-
-        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
-
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
-
-        notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
-
-        verifyNoInteractions(noticeOfProceedingsPrinter);
-    }
-
-    @Test
-    void shouldNotSendLettersToPrintToApplicantSolicitorWhenApplicantSolicitorIsRegisteredAndIsSolicitorService() {
-
-        Applicant applicant1 = applicantRepresentedBySolicitor();
-        applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
-
-        CaseData caseData = CaseData.builder()
-            .applicant1(applicant1)
-            .applicant2(respondent())
-            .divorceOrDissolution(DIVORCE)
-            .applicationType(SOLE_APPLICATION)
-            .dueDate(LOCAL_DATE.plusDays(7))
-            .application(Application.builder()
-                .solicitorService(SolicitorService.builder().dateOfService(LOCAL_DATE).build())
-                .serviceMethod(SOLICITOR_SERVICE)
-                .issueDate(LOCAL_DATE).build())
-            .build();
-
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
-
-        notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
-
-        verifyNoInteractions(noticeOfProceedingsPrinter);
-    }
-
-    @Test
-    void shouldSendNoticeOfProceedingsAndDivorceApplicationToApplicant2Solicitor() {
-
-        final CaseData caseData = CaseData.builder()
-            .applicationType(SOLE_APPLICATION)
-            .applicant1(getApplicant())
-            .applicant2(respondentWithDigitalSolicitor())
-            .divorceOrDissolution(DIVORCE)
-            .dueDate(LOCAL_DATE.plusDays(7))
-            .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
-            .build();
-
-        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
-
-        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -603,8 +474,6 @@ public class ApplicationIssuedNotificationTest {
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
-        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2Solicitor(caseData, TEST_CASE_ID);
-
         verifyNoInteractions(notificationService);
     }
 
@@ -692,26 +561,6 @@ public class ApplicationIssuedNotificationTest {
         );
 
         verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
-    void shouldSendLetterAndApplicationToOfflineApplicant1() {
-
-        final CaseData caseData = caseData();
-
-        notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
-
-        verify(noticeOfProceedingsPrinter).sendLetterToApplicant1(caseData, TEST_CASE_ID);
-    }
-
-    @Test
-    void shouldSendLetterAndApplicationToOfflineApplicant2() {
-
-        final CaseData caseData = caseData();
-
-        notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
-
-        verify(noticeOfProceedingsPrinter).sendLetterToApplicant2(caseData, TEST_CASE_ID);
     }
 
     private Map<String, String> respondentSolicitorTemplateVars() {
