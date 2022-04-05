@@ -96,6 +96,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -420,6 +421,7 @@ public class TestDataHelper {
         caseData.setApplicant2(getApplicantWithAddress());
 
         final Application application = caseData.getApplication();
+        application.setServiceMethod(COURT_SERVICE);
         application.setDocumentUploadComplete(YES);
         application.setMarriageDetails(marriageDetails);
         application.setApplicant1StatementOfTruth(YES);

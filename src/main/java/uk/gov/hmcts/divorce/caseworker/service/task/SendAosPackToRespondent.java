@@ -9,9 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
-import static java.util.Objects.isNull;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-
 @Component
 @Slf4j
 public class SendAosPackToRespondent implements CaseTask {
@@ -25,15 +22,7 @@ public class SendAosPackToRespondent implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        boolean isAddressKnown = isNull(caseData.getApplication().getApplicant1KnowsApplicant2Address())
-            || YES.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address());
-
-        if (caseData.getApplicationType().isSole()
-            && !caseData.getApplication().isPersonalServiceMethod()
-            && !caseData.getApplicant2().isRepresented()
-            && !caseData.getApplicant2().isBasedOverseas()
-            &&  isAddressKnown
-        ) {
+        if (caseData.getApplicationType().isSole() && caseData.getApplication().isCourtServiceMethod()) {
             log.info("Sending respondent AoS pack to bulk print.  Case ID: {}", caseId);
             aosPackPrinter.sendAosLetterToRespondent(caseData, caseId);
 
