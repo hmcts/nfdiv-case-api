@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
@@ -91,6 +92,9 @@ public class NoticeOfProceedingContent {
     public static final String APPLICANT_2_ADDRESS = "applicant2Address";
     public static final String APPLICANT_1_SOLICITOR_NAME = "applicant1SolicitorName";
     public static final String DISPLAY_EMAIL_CONFIRMATION = "displayEmailConfirmation";
+    public static final String HAS_CASE_BEEN_REISSUED = "hasCaseBeenReissued";
+    public static final String REISSUE_DATE = "reissueDate";
+    public static final String SERVED_THEMSELVES = "servedThemselves";
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
     private static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
 
@@ -156,10 +160,41 @@ public class NoticeOfProceedingContent {
         boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline() || caseData.getApplicant1().getEmail() != null;
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
+        templateContent.put(
+            RESPOND_BY_DATE,
+            caseData.getApplication().getIssueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+        );
+
         if (caseData.getApplicant2().isRepresented()) {
             generateSoleRespondentRepresentedContent(templateContent, caseData);
         }
 
+        if (!isNull(caseData.getApplication().getReissueDate())) {
+            templateContent.put(HAS_CASE_BEEN_REISSUED, true);
+            templateContent.put(REISSUE_DATE, caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
+        }
+
+        templateContent.put(SERVED_THEMSELVES,
+            PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod()) || caseData.getApplicant2().isBasedOverseas());
+
+        generateDivorceOrDissolutionContent(templateContent, caseData, partner);
+
+        final var ctscContactDetails = CtscContactDetails
+            .builder()
+            .centreName(centreName)
+            .serviceCentre(serviceCentre)
+            .poBox(poBox)
+            .town(town)
+            .postcode(postcode)
+            .phoneNumber(phoneNumber)
+            .build();
+
+        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+
+        return templateContent;
+    }
+
+    private void generateDivorceOrDissolutionContent(Map<String, Object> templateContent, CaseData caseData, Applicant partner) {
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
@@ -200,19 +235,6 @@ public class NoticeOfProceedingContent {
             templateContent.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
         }
-        final var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName(centreName)
-            .serviceCentre(serviceCentre)
-            .poBox(poBox)
-            .town(town)
-            .postcode(postcode)
-            .phoneNumber(phoneNumber)
-            .build();
-
-        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
-
-        return templateContent;
     }
 
     private void generateSoleRespondentRepresentedContent(Map<String, Object> templateContent, CaseData caseData) {
@@ -234,11 +256,6 @@ public class NoticeOfProceedingContent {
         );
 
         templateContent.put(WHO_APPLIED, applicant1.isRepresented() ? "applicant's solicitor" : "applicant");
-
-        templateContent.put(
-            RESPOND_BY_DATE,
-            caseData.getApplication().getIssueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
-        );
 
         templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, !isNull(applicant2Solicitor.getOrganisationPolicy()) ? "Yes" : "No");
     }
