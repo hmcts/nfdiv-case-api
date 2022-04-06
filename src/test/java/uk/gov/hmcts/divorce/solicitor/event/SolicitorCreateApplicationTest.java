@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -113,12 +114,12 @@ class SolicitorCreateApplicationTest {
     @Test
     void shouldPopulateMissingRequirementsFieldsInCaseData() {
         final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
         details.setCreatedDate(LOCAL_DATE_TIME);
-
         when(solicitorCreateApplicationService.aboutToSubmit(details)).thenReturn(details);
 
         solicitorCreateApplication.aboutToSubmit(details, beforeDetails);
