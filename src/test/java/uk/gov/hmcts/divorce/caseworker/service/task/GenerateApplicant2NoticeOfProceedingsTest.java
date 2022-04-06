@@ -116,7 +116,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -142,7 +142,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -172,7 +172,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -203,7 +203,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -247,7 +247,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingJointContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(noticeOfProceedingJointContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
