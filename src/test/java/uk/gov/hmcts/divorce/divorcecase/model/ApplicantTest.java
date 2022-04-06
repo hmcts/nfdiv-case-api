@@ -10,6 +10,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 class ApplicantTest {
 
@@ -202,12 +203,12 @@ class ApplicantTest {
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(YES)
             .solicitor(Solicitor.builder()
-                .firmName("solicitor firm name")
+                .organisationPolicy(organisationPolicy())
                 .address("solicitor address")
                 .build())
             .build();
 
-        assertThat(applicant.getCorrespondenceAddress()).isEqualTo("solicitor firm name\nsolicitor address");
+        assertThat(applicant.getCorrespondenceAddress()).isEqualTo("Test Organisation\nsolicitor address");
     }
 
     @Test
