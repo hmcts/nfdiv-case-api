@@ -30,6 +30,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
@@ -86,6 +87,13 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("Solicitor create application about to submit callback invoked");
+
+        if (Objects.isNull(details.getData().getApplicationType())) {
+            log.error("Application type must be selected (cannot be null)");
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of("Application type must be selected (cannot be null)"))
+                .build();
+        }
 
         final CaseDetails<CaseData, State> result = solicitorCreateApplicationService.aboutToSubmit(details);
 
