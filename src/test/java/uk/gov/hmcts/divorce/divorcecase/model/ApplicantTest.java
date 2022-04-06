@@ -198,6 +198,19 @@ class ApplicantTest {
     }
 
     @Test
+    void shouldReturnSolicitorAddressWithFirmNameIfRepresentedWhenRequestingCorrespondenceAddress() {
+        final Applicant applicant = Applicant.builder()
+            .solicitorRepresented(YES)
+            .solicitor(Solicitor.builder()
+                .firmName("solicitor firm name")
+                .address("solicitor address")
+                .build())
+            .build();
+
+        assertThat(applicant.getCorrespondenceAddress()).isEqualTo("solicitor firm name\nsolicitor address");
+    }
+
+    @Test
     void shouldReturnApplicantAddressIfNotRepresentedWhenRequestingCorrespondenceAddress() {
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
