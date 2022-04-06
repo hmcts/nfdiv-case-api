@@ -42,6 +42,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WHO_APPLIED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_TO;
@@ -122,6 +124,14 @@ public class NoticeOfProceedingContentIT {
                 .country("UK")
                 .build()
         );
+        caseData.getApplicant2().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("10 the street")
+                .addressLine2("the town")
+                .country("UK")
+                .build()
+        );
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 19));
 
@@ -161,12 +171,14 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
+        expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
         expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
         expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -184,6 +196,14 @@ public class NoticeOfProceedingContentIT {
                 .builder()
                 .addressLine1("line1")
                 .addressLine2("line2")
+                .country("UK")
+                .build()
+        );
+        caseData.getApplicant2().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("10 the street")
+                .addressLine2("the town")
                 .country("UK")
                 .build()
         );
@@ -229,12 +249,14 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
+        expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
         expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
         expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, TO_END_THEIR_CIVIL_PARTNERSHIP);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -245,6 +267,7 @@ public class NoticeOfProceedingContentIT {
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
         caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
         caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
@@ -313,6 +336,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "The avenue");
+        expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "app 1 sol");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
         expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
@@ -325,7 +350,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "Yes");
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -399,6 +424,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "The avenue");
+        expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
         expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
@@ -411,7 +438,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
