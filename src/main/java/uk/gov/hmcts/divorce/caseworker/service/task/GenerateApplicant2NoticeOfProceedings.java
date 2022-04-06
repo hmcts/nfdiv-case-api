@@ -87,7 +87,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
             if (hasOrgPolicy) {
 
-                templateContent = noticeOfProceedingContent.apply(caseData, caseId);
+                templateContent = noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1());
                 templateId = NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
             } else {
 
@@ -101,7 +101,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                 ? NFD_NOP_R1_SOLE_APP2_CIT_ONLINE
                 : NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
 
-            templateContent = noticeOfProceedingContent.apply(caseData, caseId);
+            templateContent = noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1());
         }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
@@ -144,7 +144,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         } else {
             log.info("Generating applicant 2 notice of proceedings for applicant for joint case id {} ", caseId);
 
-            content = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+            content = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
             templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
         }
 
