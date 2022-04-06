@@ -57,7 +57,7 @@ public enum JurisdictionConnections implements HasLabel {
     @JsonProperty("I2")
     @JsonPropertyDescription("RESIDUAL_JURISDICTION_D")
     RESIDUAL_JURISDICTION_D("The parties married each other under the law of England and Wales and it would be in the interests "
-        + "of justice for the court to assume jurisdiction in this case"),
+        + "of justice for the court to assume jurisdiction in this case. (Applies to same-sex married couples only"),
 
     @JsonProperty("J")
     @JsonPropertyDescription("APP_1_RESIDENT_JOINT")
