@@ -74,7 +74,8 @@ public class NoticeOfProceedingSolicitorContent {
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
         templateContent.put(APPLICANT_SOLICITOR_LABEL,
             isJoint && oneSolicitorApplyingForBothParties ? "Applicants solicitor" : "Applicant's solicitor");
-        templateContent.put(APPLICANT_SOLICITOR_REGISTERED, applicant1Solicitor.hasOrgId());
+        templateContent.put(APPLICANT_SOLICITOR_REGISTERED,
+            isApplicantSolicitor ? applicant1Solicitor.hasOrgId() : applicant2Solicitor.hasOrgId());
         templateContent.put(SOLICITOR_NAME, isApplicantSolicitor ? applicant1Solicitor.getName() : applicant2Solicitor.getName());
         templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor ? applicant1Solicitor.getAddress() : applicant2Solicitor.getAddress());
 

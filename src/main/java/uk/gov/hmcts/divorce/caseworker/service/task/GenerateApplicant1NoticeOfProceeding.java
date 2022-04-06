@@ -39,7 +39,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
     private NoticeOfProceedingJointContent jointTemplateContent;
 
     @Autowired
-    private NoticeOfProceedingSolicitorContent noticeOfProceedingSolicitorContent;
+    private NoticeOfProceedingSolicitorContent solicitorContent;
 
     @Autowired
     private Clock clock;
@@ -67,14 +67,14 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         if (caseData.getApplicant1().isRepresented()) {
             log.info("Generating notice of proceedings for applicant solicitor for case id {} ", caseId);
 
-            content = noticeOfProceedingSolicitorContent.apply(caseData, caseId, true);
+            content = solicitorContent.apply(caseData, caseId, true);
             templateId = caseData.getApplication().isCourtServiceMethod()
                 ? NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS
                 : NFD_NOP_AS2_SOLE_APP1_SOL_SS;
         } else {
             log.info("Generating notice of proceedings for applicant for sole case id {} ", caseId);
 
-            content = templateContent.apply(caseData, caseId);
+            content = templateContent.apply(caseData, caseId, caseData.getApplicant2());
             templateId = caseData.getApplication().isCourtServiceMethod()
                 ? NFD_NOP_A1_SOLE_APP1_CIT_CS
                 : NFD_NOP_A2_SOLE_APP1_CIT_PS;
@@ -98,7 +98,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         if (caseData.getApplicant1().isRepresented()) {
             log.info("Generating solicitor applicant 1 notice of proceedings for joint case id {} ", caseId);
 
-            content = noticeOfProceedingSolicitorContent.apply(caseData, caseId, true);
+            content = solicitorContent.apply(caseData, caseId, true);
             templateId = NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
         } else {
             log.info("Generating applicant 1 notice of proceedings for joint case id {} ", caseId);

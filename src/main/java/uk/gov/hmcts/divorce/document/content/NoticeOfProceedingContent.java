@@ -88,6 +88,8 @@ public class NoticeOfProceedingContent {
     public static final String MARRIAGE = "marriage";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
     public static final String APPLICANT_1_ADDRESS = "applicant1Address";
+    public static final String APPLICANT_2_ADDRESS = "applicant2Address";
+    public static final String APPLICANT_1_SOLICITOR_NAME = "applicant1SolicitorName";
     public static final String DISPLAY_EMAIL_CONFIRMATION = "displayEmailConfirmation";
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
     private static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
@@ -116,7 +118,7 @@ public class NoticeOfProceedingContent {
     @Autowired
     private HoldingPeriodService holdingPeriodService;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
+    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, Applicant partner) {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -143,6 +145,13 @@ public class NoticeOfProceedingContent {
         );
 
         templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());
+        templateContent.put(APPLICANT_2_ADDRESS, caseData.getApplicant2().getPostalAddress());
+
+        templateContent.put(
+            APPLICANT_1_SOLICITOR_NAME,
+            caseData.getApplicant1().isRepresented()
+                ? caseData.getApplicant1().getSolicitor().getName()
+                : NOT_REPRESENTED);
 
         boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline() || caseData.getApplicant1().getEmail() != null;
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
@@ -156,7 +165,7 @@ public class NoticeOfProceedingContent {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
             templateContent.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
-            templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
+            templateContent.put(RELATION, commonContent.getPartner(caseData, partner));
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS, DIVORCE_PROCESS);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, YOUR_DIVORCE);
