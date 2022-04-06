@@ -194,7 +194,7 @@ public class Applicant {
     public String getCorrespondenceAddress() {
         if (isRepresented()) {
             return Stream.of(
-                solicitor.getFirmName(),
+                solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName(),
                 solicitor.getAddress()
             ).filter(value -> value != null && !value.isEmpty())
              .collect(joining("\n"));
