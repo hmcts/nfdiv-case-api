@@ -11,9 +11,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.io.File;
@@ -35,11 +37,15 @@ import static uk.gov.hmcts.divorce.common.event.InviteApplicant2.INVITE_APPLICAN
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_SOLICITOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
@@ -49,6 +55,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 public class InviteApplicant2IT {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final boolean IS_REPRESENTED = true;
 
     @Autowired
     private MockMvc mockMvc;
@@ -84,7 +91,7 @@ public class InviteApplicant2IT {
 
         assertThatJson(actualResponse)
             .when(IGNORING_EXTRA_FIELDS)
-            .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
+            .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse(!IS_REPRESENTED)));
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW), anyMap(), eq(ENGLISH));
@@ -95,9 +102,49 @@ public class InviteApplicant2IT {
         verifyNoMoreInteractions(notificationService);
     }
 
-    private String expectedCcdAboutToStartCallbackSuccessfulResponse() throws IOException {
-        File validCaseDataJsonFile = getFile(
-            "classpath:wiremock/responses/about-to-submit-invite-applicant-2.json");
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant2SolicitorWhenApplicant2IsRepresented() throws Exception {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setSolicitor(Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).build());
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        data.setDueDate(LOCAL_DATE);
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, INVITE_APPLICANT_2)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse(IS_REPRESENTED)));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW), anyMap(), eq(ENGLISH));
+
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_SOLICITOR), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    private String expectedCcdAboutToStartCallbackSuccessfulResponse(boolean isRepresented) throws IOException {
+
+        File validCaseDataJsonFile;
+
+        if (isRepresented) {
+            validCaseDataJsonFile = getFile(
+                "classpath:wiremock/responses/about-to-submit-invite-applicant-2-represented.json");
+
+        } else {
+            validCaseDataJsonFile = getFile(
+                "classpath:wiremock/responses/about-to-submit-invite-applicant-2.json");
+        }
 
         return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
     }

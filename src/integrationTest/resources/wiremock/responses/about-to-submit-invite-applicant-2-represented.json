@@ -1,0 +1,24 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriageMarriedInUk": "Yes",
+    "marriageDate": "1990-06-10",
+    "applicant1Gender": "female",
+    "applicant2Gender": "male",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1ContactDetailsType": "private",
+    "applicant2InviteEmailAddress": "applicant2@test.com",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": ["A"],
+    "applicant1FinancialOrder": "No",
+    "applicant1HWFNeedHelp": "No",
+    "dueDate": "${json-unit.ignore}"
+  }
+}

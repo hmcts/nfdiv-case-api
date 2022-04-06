@@ -82,18 +82,21 @@ public class InviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
 
             log.info("Generating access code to allow the respondent to access the joint application");
             data.setCaseInvite(data.getCaseInvite().generateAccessCode());
-            data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
+        }
 
-            notificationDispatcher.send(applicationSentForReviewNotification, data, details.getId());
+        data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
+        notificationDispatcher.send(applicationSentForReviewNotification, data, details.getId());
 
+        if (!data.getApplicant2().isRepresented()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
                 .state(AwaitingApplicant2Response)
                 .build();
+        } else {
+            log.info("Applicant 2 is represented so skipping state update");
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .build();
         }
-        log.info("Applicant 2 is represented hence skipping about to submit processing");
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
-            .build();
     }
 }
