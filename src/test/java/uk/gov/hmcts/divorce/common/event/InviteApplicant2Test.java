@@ -117,19 +117,6 @@ public class InviteApplicant2Test {
         assertThat(response.getData().getCaseInvite().accessCode()).doesNotContain("I", "O", "U", "0", "1");
     }
 
-    @Test
-    void shouldANotSetDueDateDateAndAccessCodeAndSendNotificationWhenApplicant2IsSolicitorRepresented() {
-        final CaseData caseData = CaseData.builder().applicant2(applicant2SolicitorRepresented()).build();
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = inviteApplicant2.aboutToSubmit(details, details);
-
-        assertThat(response.getData().getDueDate()).isNull();
-        assertThat(response.getData().getCaseInvite()).isNull();
-        verifyNoInteractions(notificationDispatcher);
-    }
-
     private Applicant applicant2SolicitorRepresented() {
         return Applicant
             .builder()
