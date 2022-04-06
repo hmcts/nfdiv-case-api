@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSoleApplicant2SolicitorOffline;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 
@@ -43,6 +44,9 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
     @Autowired
     private NoticeOfProceedingContent noticeOfProceedingContent;
+
+    @Autowired
+    private NoticeOfProceedingJointContent jointTemplateContent;
 
     @Autowired
     private NoticeOfProceedingSolicitorContent solicitorTemplateContent;
@@ -82,11 +86,13 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             var hasOrgPolicy = hasSolicitor && caseData.getApplicant2().getSolicitor().getOrganisationPolicy() != null;
 
             if (hasOrgPolicy) {
-                templateId = NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
+
                 templateContent = noticeOfProceedingContent.apply(caseData, caseId);
+                templateId = NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
             } else {
-                templateId = NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
+
                 templateContent = noticeOfProceedingSoleApplicant2SolicitorOffline.apply(caseData, caseId);
+                templateId = NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
             }
         } else {
             log.info("Generating notice of proceedings for respondent for sole case id {} ", caseId);
@@ -132,12 +138,14 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
         if (caseData.getApplicant2().isRepresented()) {
             log.info("Generating notice of proceedings for applicant 2 solicitor for case id {} ", caseId);
-            templateId = NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
+
             content = solicitorTemplateContent.apply(caseData, caseId, false);
+            templateId = NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
         } else {
             log.info("Generating applicant 2 notice of proceedings for applicant for joint case id {} ", caseId);
+
+            content = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
             templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
-            content = noticeOfProceedingContent.apply(caseData, caseId);
         }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
