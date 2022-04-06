@@ -23,6 +23,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
@@ -77,12 +78,15 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.EN
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENDING_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.END_A_CIVIL_PARTNERSHIP_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HAS_CASE_BEEN_REISSUED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.REISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATION;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SERVED_THEMSELVES;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SERVE_PAPERS_BEFORE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.THE_DIVORCE_SERVICE;
@@ -177,6 +181,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
         expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
         expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
+        expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
+        expectedEntries.put(SERVED_THEMSELVES, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
@@ -255,6 +261,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
         expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
         expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, TO_END_THEIR_CIVIL_PARTNERSHIP);
+        expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
+        expectedEntries.put(SERVED_THEMSELVES, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
@@ -349,6 +357,107 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(WHO_APPLIED, "applicant's solicitor");
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "Yes");
+        expectedEntries.put(SERVED_THEMSELVES, false);
+
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyContentFromCaseDataWhereServedThemselvesAndReissued() {
+        CaseData caseData = caseData();
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setReissueDate(LocalDate.of(2021, 6, 18));
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .build()
+        );
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant1().setSolicitor(
+            Solicitor.builder()
+                .name("app 1 sol")
+                .address("line1")
+                .reference("ref")
+                .build()
+        );
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .name("app 2 sol")
+                .address("The avenue")
+                .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                    .build())
+                .build()
+        );
+
+        var ctscContactDetails = CtscContactDetails
+            .builder()
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .poBox("PO Box 13226")
+            .town("Harlow")
+            .postcode("CM20 9UG")
+            .phoneNumber("0300 303 0642")
+            .build();
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
+        expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
+        expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
+        expectedEntries.put(ISSUE_DATE, "18 June 2021");
+        expectedEntries.put(DUE_DATE, "19 June 2021");
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
+        expectedEntries.put(RELATION, "wife");
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS, DIVORCE_PROCESS);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, YOUR_DIVORCE);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_URL, DIVORCE_URL);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, DIVORCE_SERVICE);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, THE_DIVORCE_SERVICE);
+        expectedEntries.put(SUBMISSION_RESPONSE_DATE, "6 November 2021");
+        expectedEntries.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, DIVORCE_PAPERS);
+        expectedEntries.put(SERVE_PAPERS_BEFORE_DATE, "16 July 2021");
+        expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
+        expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
+        expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
+        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(APPLICANT_1_ADDRESS, "line1");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "The avenue");
+        expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "app 1 sol");
+        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
+        expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
+        expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
+        expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
+        expectedEntries.put(SOLICITOR_NAME, "app 2 sol");
+        expectedEntries.put(SOLICITOR_ADDRESS, "The avenue");
+        expectedEntries.put(SOLICITOR_REFERENCE, "ref");
+        expectedEntries.put(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "app 1 sol");
+        expectedEntries.put(WHO_APPLIED, "applicant's solicitor");
+        expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
+        expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "Yes");
+        expectedEntries.put(SERVED_THEMSELVES, true);
+        expectedEntries.put(REISSUE_DATE, "18 June 2021");
+        expectedEntries.put(HAS_CASE_BEEN_REISSUED, true);
+
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
@@ -437,6 +546,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(WHO_APPLIED, "applicant");
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
+        expectedEntries.put(SERVED_THEMSELVES, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
