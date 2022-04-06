@@ -35,6 +35,7 @@ public final class ValidationUtil {
 
     public static List<String> validateBasicCase(CaseData caseData) {
         return flattenLists(
+            notNull(caseData.getApplicationType(), "ApplicationType"),
             notNull(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"),
             notNull(caseData.getApplicant1().getLastName(), "Applicant1LastName"),
             notNull(caseData.getApplicant2().getFirstName(), "Applicant2FirstName"),

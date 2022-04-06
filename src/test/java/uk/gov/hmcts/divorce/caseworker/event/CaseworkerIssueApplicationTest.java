@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
@@ -119,6 +120,7 @@ class CaseworkerIssueApplicationTest {
 
         assertThat(response.getErrors())
             .containsExactlyInAnyOrder(
+                "ApplicationType cannot be empty or null",
                 "Applicant2FirstName cannot be empty or null",
                 "Applicant2LastName cannot be empty or null",
                 "Applicant1FinancialOrder cannot be empty or null",
@@ -175,6 +177,7 @@ class CaseworkerIssueApplicationTest {
 
     private CaseData caseDataWithAllMandatoryFields() {
         var caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setApplicant2(Applicant
             .builder()
             .firstName("app2FirstName")
