@@ -9,6 +9,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,12 +21,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdv
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_MADE_BY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_HEADING;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
@@ -60,6 +63,7 @@ public class GeneralOrderTemplateContentIT {
             .build();
 
         assertThat(templateContent).contains(
+            entry(DATE, LocalDate.now().format(DATE_TIME_FORMATTER)),
             entry(CASE_REFERENCE, 1616591401473378L),
             entry(GENERAL_ORDER_DATE, "1 January 2021"),
             entry(GENERAL_ORDER_DETAILS, "some details"),
@@ -94,6 +98,7 @@ public class GeneralOrderTemplateContentIT {
             .build();
 
         assertThat(templateContent).contains(
+            entry(DATE, LocalDate.now().format(DATE_TIME_FORMATTER)),
             entry(CASE_REFERENCE, 1616591401473378L),
             entry(GENERAL_ORDER_DATE, "1 January 2021"),
             entry(GENERAL_ORDER_DETAILS, "some details"),

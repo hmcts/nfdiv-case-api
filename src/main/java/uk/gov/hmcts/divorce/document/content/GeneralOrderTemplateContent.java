@@ -1,11 +1,14 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -19,6 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdv
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_MADE_BY;
@@ -40,6 +44,9 @@ public class GeneralOrderTemplateContent {
     private static final String JUDGE_NAME = "judge %s";
     private static final String AN_ASSISTANT_JUDGES_CLERK = "an %s";
 
+    @Autowired
+    private Clock clock;
+
     @Value("${court.locations.serviceCentre.serviceCentreName}")
     private String serviceCentre;
 
@@ -60,6 +67,7 @@ public class GeneralOrderTemplateContent {
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
         var generalOrder = caseData.getGeneralOrder();
+        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(GENERAL_ORDER_DATE, generalOrder.getGeneralOrderDate().format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, ccdCaseReference);
         templateContent.put(PETITIONER_FULL_NAME, caseData.getApplicant1().getFullName());
