@@ -15,7 +15,6 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
@@ -54,25 +53,5 @@ class SetSubmissionAndDueDateTest {
 
         assertThat(result.getData().getAcknowledgementOfService().getDateAosSubmitted()).isEqualTo(getExpectedLocalDateTime());
         assertThat(result.getData().getDueDate()).isEqualTo(issueDate);
-    }
-
-    @Test
-    void shouldNotSetDueDateAndDateAosSubmittedIfStateHasNotChanged() {
-
-        setMockClock(clock);
-
-        final LocalDate dueDate = getExpectedLocalDate();
-
-        final CaseData caseData = caseData();
-        caseData.setDueDate(dueDate);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setState(AwaitingConditionalOrder);
-        caseDetails.setData(caseData);
-
-        final CaseDetails<CaseData, State> result = setSubmissionAndDueDate.apply(caseDetails);
-
-        assertThat(result.getData().getAcknowledgementOfService().getDateAosSubmitted()).isEqualTo(getExpectedLocalDateTime());
-        assertThat(result.getData().getDueDate()).isEqualTo(dueDate);
     }
 }
