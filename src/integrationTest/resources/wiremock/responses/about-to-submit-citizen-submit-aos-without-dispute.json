@@ -85,7 +85,8 @@
     },
     "dateAosSubmitted": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
-    "warnings": []
+    "warnings": [],
+    "isAosSubmitted": "Yes"
   },
   "state": "Holding"
 }
