@@ -193,7 +193,11 @@ public class Applicant {
     @JsonIgnore
     public String getCorrespondenceAddress() {
         if (isRepresented()) {
-            return solicitor.getAddress();
+            return Stream.of(
+                solicitor.getFirmName(),
+                solicitor.getAddress()
+            ).filter(value -> value != null && !value.isEmpty())
+             .collect(joining("\n"));
         } else if (!isConfidentialContactDetails() && null != address) {
             return Stream.of(
                     address.getAddressLine1(),
