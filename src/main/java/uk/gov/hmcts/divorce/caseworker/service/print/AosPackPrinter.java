@@ -54,7 +54,7 @@ public class AosPackPrinter {
                 ? !app2.getSolicitor().hasOrgId()
                 : StringUtils.isEmpty(caseData.getApplicant2().getEmail());
 
-            var d10Needed = !caseData.getApplication().isCourtServiceMethod() || app2Offline;
+            var d10Needed = caseData.getApplicationType().isSole() && app2Offline;
             final UUID letterId = bulkPrintService.printAosRespondentPack(print, d10Needed);
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
