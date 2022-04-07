@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -39,18 +38,5 @@ class SetSubmitAosStateTest {
         final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(Holding);
-    }
-
-    @Test
-    void shouldNotSetStateToHoldingIfPreviousStateIsNotAwaitingAos() {
-        final CaseData caseData = caseData();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setState(AwaitingConditionalOrder);
-        caseDetails.setData(caseData);
-
-        final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
-
-        assertThat(result.getState()).isEqualTo(AwaitingConditionalOrder);
     }
 }
