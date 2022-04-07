@@ -416,6 +416,6 @@ bootWithCCD {
 }
 
 tasks.withType(Test).configureEach {
-  maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+  maxParallelForks = Math.min(Runtime.runtime.availableProcessors().intdiv(2), 4) ?: 1
 }
 
