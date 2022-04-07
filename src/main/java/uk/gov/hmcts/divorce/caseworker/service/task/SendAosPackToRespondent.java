@@ -22,7 +22,7 @@ public class SendAosPackToRespondent implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplicationType().isSole() && caseData.getApplication().isCourtServiceMethod()) {
+        if (caseData.getApplication().isCourtServiceMethod()) {
             log.info("Sending respondent AoS pack to bulk print.  Case ID: {}", caseId);
             aosPackPrinter.sendAosLetterToRespondent(caseData, caseId);
 
