@@ -1,23 +1,33 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 
 public class SolStatementOfTruth implements CcdPageConfiguration {
 
     private static final String ALWAYS_HIDE = "applicant1StatementOfTruth=\"ALWAYS_HIDE\"";
     private static final String DIVORCE_APPLICATION = "divorceOrDissolution = \"divorce\"";
     private static final String DISSOLUTION_APPLICATION = "divorceOrDissolution = \"dissolution\"";
+    private static final String PERSONAL_SERVICE_ERROR =
+        "Solicitors cannot select personal service. Select court service or solicitor service before proceeding.";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("SolStatementOfTruth")
+            .page("SolStatementOfTruth", this::midEvent)
             .pageLabel("Statement of truth and reconciliation")
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
             .readonlyNoSummary(CaseData::getDivorceOrDissolution, ALWAYS_HIDE)
@@ -68,5 +78,21 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 .label("LabelSolStatementOfTruth-ApplicationFee",
                     "**Solicitor application fee:**  \n**£${solApplicationFeeInPounds}**")
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        CaseDetails<CaseData, State> details,
+        CaseDetails<CaseData, State> detailsBefore
+    ) {
+        CaseData data = details.getData();
+        List<String> errors = new ArrayList<>();
+
+        if (PERSONAL_SERVICE.equals(data.getApplication().getServiceMethod())) {
+            errors.add(PERSONAL_SERVICE_ERROR);
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .errors(errors)
+            .build();
     }
 }

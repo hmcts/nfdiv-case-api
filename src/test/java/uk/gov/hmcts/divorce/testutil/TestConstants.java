@@ -11,6 +11,9 @@ public final class TestConstants {
     public static final String TEST_FIRST_NAME = "test_first_name";
     public static final String TEST_MIDDLE_NAME = "test_middle_name";
     public static final String TEST_LAST_NAME = "test_last_name";
+    public static final String TEST_APP2_FIRST_NAME = "test_app2_first_name";
+    public static final String TEST_APP2_MIDDLE_NAME = "test_app2_middle_name";
+    public static final String TEST_APP2_LAST_NAME = "test_app2_last_name";
 
     public static final String APPLICANT_2_FIRST_NAME = "applicant_2_first_name";
     public static final String APPLICANT_2_LAST_NAME = "applicant_2last_name";
@@ -76,8 +79,8 @@ public final class TestConstants {
 
     public static final String EMPTY_STRING = "";
 
-    public static final String TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID = "NFD_CP_Application_Sole_V2.docx";
-    public static final String TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID = "NFD_CP_Application_Joint_V2.docx";
+    public static final String TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID = "NFD_CP_Application_Sole_V4.docx";
+    public static final String TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID = "NFD_CP_Application_Joint_V4.docx";
 
     private TestConstants() {
     }

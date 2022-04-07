@@ -20,7 +20,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_LABEL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_REGISTERED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
@@ -38,7 +37,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class NoticeOfProceedingSolicitorContent {
+public class NoticeOfProceedingSoleApplicant2SolicitorOffline {
 
     @Value("${court.locations.serviceCentre.email}")
     private String email;
@@ -49,7 +48,7 @@ public class NoticeOfProceedingSolicitorContent {
     @Autowired
     private HoldingPeriodService holdingPeriodService;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, boolean isApplicantSolicitor) {
+    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -57,12 +56,8 @@ public class NoticeOfProceedingSolicitorContent {
 
         Applicant applicant1 = caseData.getApplicant1();
         Applicant applicant2 = caseData.getApplicant2();
-        Solicitor applicant1Solicitor = applicant1.getSolicitor();
         Solicitor applicant2Solicitor = applicant2.getSolicitor();
         LocalDate applicationIssueDate = caseData.getApplication().getIssueDate();
-        boolean isJoint = !caseData.getApplicationType().isSole();
-        boolean oneSolicitorApplyingForBothParties = applicant1.isRepresented() && applicant2.isRepresented()
-            && applicant1Solicitor.equals(applicant2Solicitor);
 
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
@@ -70,31 +65,16 @@ public class NoticeOfProceedingSolicitorContent {
         templateContent.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
         templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
         templateContent.put(ISSUE_DATE, applicationIssueDate.format(DATE_TIME_FORMATTER));
-        templateContent.put(IS_JOINT, isJoint);
+        templateContent.put(IS_JOINT, false);
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
-        templateContent.put(APPLICANT_SOLICITOR_LABEL,
-            isJoint && oneSolicitorApplyingForBothParties ? "Applicants solicitor" : "Applicant's solicitor");
-        templateContent.put(APPLICANT_SOLICITOR_REGISTERED,
-            isApplicantSolicitor ? applicant1Solicitor.hasOrgId() : applicant2Solicitor.hasOrgId());
-        templateContent.put(SOLICITOR_NAME, isApplicantSolicitor ? applicant1Solicitor.getName() : applicant2Solicitor.getName());
-        templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor ? applicant1Solicitor.getAddress() : applicant2Solicitor.getAddress());
+        templateContent.put(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor");
+        templateContent.put("isApp1Represented", applicant1.isRepresented());
+        templateContent.put(SOLICITOR_NAME, applicant2Solicitor.getName());
+        templateContent.put(SOLICITOR_ADDRESS, applicant2Solicitor.getAddress());
 
-        templateContent.put(
-            SOLICITOR_REFERENCE,
-            isApplicantSolicitor ? solicitorReference(applicant1Solicitor) : solicitorReference(applicant2Solicitor)
-        );
-
-        templateContent.put(
-            SOLICITOR_NAME_WITH_DEFAULT_VALUE,
-            isApplicantSolicitor ? solicitorName(applicant1, applicant1Solicitor) : solicitorName(applicant2, applicant2Solicitor)
-        );
-
-        if (!isJoint) {
-            templateContent.put(
-                DUE_DATE,
-                holdingPeriodService.getRespondByDateFor(applicationIssueDate).format(DATE_TIME_FORMATTER)
-            );
-        }
+        templateContent.put(SOLICITOR_REFERENCE, solicitorReference(applicant2Solicitor));
+        templateContent.put(SOLICITOR_NAME_WITH_DEFAULT_VALUE, solicitorName(applicant2, applicant2Solicitor));
+        templateContent.put(DUE_DATE, holdingPeriodService.getRespondByDateFor(applicationIssueDate).format(DATE_TIME_FORMATTER));
 
         templateContent.put(CTSC_CONTACT_DETAILS, CtscContactDetails
             .builder()
