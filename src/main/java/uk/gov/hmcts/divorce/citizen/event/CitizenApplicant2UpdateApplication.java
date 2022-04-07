@@ -16,7 +16,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
@@ -34,8 +33,7 @@ public class CitizenApplicant2UpdateApplication implements CCDConfig<CaseData, S
             .description("Patch a joint divorce or dissolution as applicant 2")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, APPLICANT_2)
-            .grantHistoryOnly(SUPER_USER);
+            .grant(CREATE_READ_UPDATE, APPLICANT_2);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
