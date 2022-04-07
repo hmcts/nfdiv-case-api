@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER_V2;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
@@ -126,7 +126,7 @@ class CaseDataDocumentServiceTest {
                 templateContent,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
-                DIVORCE_GENERAL_ORDER_V2,
+                DIVORCE_GENERAL_ORDER,
                 ENGLISH,
                 filename))
             .thenReturn(new DocumentInfo(DOC_URL, PDF_FILENAME, DOC_BINARY_URL));
@@ -134,7 +134,7 @@ class CaseDataDocumentServiceTest {
         final Document result = caseDataDocumentService.renderDocument(
             templateContent,
             TEST_CASE_ID,
-            DIVORCE_GENERAL_ORDER_V2,
+            DIVORCE_GENERAL_ORDER,
             ENGLISH,
             filename);
 
