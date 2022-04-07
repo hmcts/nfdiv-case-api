@@ -25,7 +25,6 @@ import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -117,7 +116,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         log.info("Caseworker issue application submitted callback invoked for case id: {}", details.getId());
 
-        if (details.getState() == AwaitingService) {
+        if (details.getData().getApplication().isSolicitorServiceMethod()) {
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuthorization = authTokenGenerator.generate();
 
