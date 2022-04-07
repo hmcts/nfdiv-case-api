@@ -103,10 +103,12 @@ public class ApplicantTemplateDataProvider {
 
     private void mapApplicantContactDetails(Applicant applicant, String emailKey, String addressKey, Map<String, Object> templateContent) {
         templateContent.put(addressKey, applicant.getCorrespondenceAddress());
-        if (applicant.isRepresented() && applicant.isConfidentialContactDetails()) {
+        if (applicant.isRepresented()) {
             templateContent.put(emailKey, applicant.getSolicitor().getEmail());
-        } else {
+        } else if (!applicant.isConfidentialContactDetails()) {
             templateContent.put(emailKey, applicant.getEmail());
+        } else {
+            templateContent.put(emailKey, null);
         }
     }
 }
