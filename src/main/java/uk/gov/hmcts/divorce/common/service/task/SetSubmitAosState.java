@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 
 @Component
@@ -16,10 +15,9 @@ public class SetSubmitAosState implements CaseTask {
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
-        if (caseDetails.getState().equals(AosDrafted)) {
-            caseDetails.setState(Holding);
-            log.info("Setting submit AoS state to Holding for CaseID: {}", caseDetails.getId());
-        }
+        caseDetails.setState(Holding);
+
+        log.info("Setting submit AoS state to Holding for CaseID: {}", caseDetails.getId());
 
         return caseDetails;
     }

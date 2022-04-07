@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MARRIAGE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_COURT_CASE_DETAILS;
@@ -39,6 +40,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MARRIAGE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
@@ -57,6 +59,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -88,14 +93,17 @@ class DivorceApplicationJointTemplateContentTest {
             .contactDetailsType(PUBLIC)
             .build();
         final Applicant applicant2 = Applicant.builder()
-            .firstName(TEST_FIRST_NAME)
-            .middleName(TEST_MIDDLE_NAME)
-            .lastName(TEST_LAST_NAME)
+            .firstName(TEST_APP2_FIRST_NAME)
+            .middleName(TEST_APP2_MIDDLE_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
             .financialOrder(NO)
             .legalProceedings(NO)
             .email(TEST_USER_EMAIL)
             .contactDetailsType(PUBLIC)
             .build();
+
+        final String applicant1MarriageName = TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME;
+        final String applicant2MarriageName = TEST_APP2_FIRST_NAME + " " + TEST_APP2_MIDDLE_NAME + " " + TEST_APP2_LAST_NAME;
 
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
@@ -107,8 +115,8 @@ class DivorceApplicationJointTemplateContentTest {
             .applicant2(applicant2)
             .build();
 
-        caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
-        caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
+        caseData.getApplication().getMarriageDetails().setApplicant1Name(applicant1MarriageName);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name(applicant2MarriageName);
 
         final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -130,16 +138,18 @@ class DivorceApplicationJointTemplateContentTest {
             entry(APPLICANT_1_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_1, false),
             entry(APPLICANT_1_COURT_CASE_DETAILS, null),
-            entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_2_MIDDLE_NAME, TEST_MIDDLE_NAME),
-            entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_2_FIRST_NAME, TEST_APP2_FIRST_NAME),
+            entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
+            entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
             entry(APPLICANT_2_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_2, false),
             entry(APPLICANT_2_COURT_CASE_DETAILS, null),
             entry(PLACE_OF_MARRIAGE, null),
-            entry(MARRIAGE_DATE, null)
+            entry(MARRIAGE_DATE, null),
+            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
+            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
         );
 
         verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));
@@ -160,14 +170,17 @@ class DivorceApplicationJointTemplateContentTest {
             .contactDetailsType(PUBLIC)
             .build();
         final Applicant applicant2 = Applicant.builder()
-            .firstName(TEST_FIRST_NAME)
-            .middleName(TEST_MIDDLE_NAME)
-            .lastName(TEST_LAST_NAME)
+            .firstName(TEST_APP2_FIRST_NAME)
+            .middleName(TEST_APP2_MIDDLE_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
             .financialOrder(NO)
             .legalProceedings(NO)
             .email(TEST_USER_EMAIL)
             .contactDetailsType(PUBLIC)
             .build();
+
+        final String applicant1MarriageName = TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME;
+        final String applicant2MarriageName = TEST_APP2_FIRST_NAME + " " + TEST_APP2_MIDDLE_NAME + " " + TEST_APP2_LAST_NAME;
 
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
@@ -179,8 +192,8 @@ class DivorceApplicationJointTemplateContentTest {
             .applicant2(applicant2)
             .build();
 
-        caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
-        caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
+        caseData.getApplication().getMarriageDetails().setApplicant1Name(applicant1MarriageName);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name(applicant2MarriageName);
 
         final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -202,16 +215,18 @@ class DivorceApplicationJointTemplateContentTest {
             entry(APPLICANT_1_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_1, false),
             entry(APPLICANT_1_COURT_CASE_DETAILS, null),
-            entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_2_MIDDLE_NAME, TEST_MIDDLE_NAME),
-            entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_2_FIRST_NAME, TEST_APP2_FIRST_NAME),
+            entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
+            entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
             entry(APPLICANT_2_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_2, false),
             entry(APPLICANT_2_COURT_CASE_DETAILS, null),
             entry(PLACE_OF_MARRIAGE, null),
-            entry(MARRIAGE_DATE, null)
+            entry(MARRIAGE_DATE, null),
+            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
+            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
         );
 
         verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));

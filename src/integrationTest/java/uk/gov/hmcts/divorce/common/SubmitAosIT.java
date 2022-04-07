@@ -50,7 +50,6 @@ import static uk.gov.hmcts.divorce.common.event.SubmitAos.SUBMIT_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
@@ -153,7 +152,7 @@ public class SubmitAosIT {
                 .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
                 .content(
                     objectMapper.writeValueAsString(
-                        callbackRequest(caseData, SUBMIT_AOS, AosDrafted.name())))
+                        callbackRequest(caseData, SUBMIT_AOS)))
                 .accept(APPLICATION_JSON))
             .andReturn()
             .getResponse()
@@ -182,7 +181,7 @@ public class SubmitAosIT {
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
                 .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS, AosDrafted.name())))
+                .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
@@ -220,7 +219,7 @@ public class SubmitAosIT {
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS, AosDrafted.name())))
+                .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
@@ -239,6 +238,7 @@ public class SubmitAosIT {
 
         verifyNoMoreInteractions(notificationService);
     }
+
 
     @Test
     void shouldGenerateAndSendAosResponseLetterWhenApplicant1IsOfflineAndAosIsDisputed() throws Exception {
@@ -275,7 +275,7 @@ public class SubmitAosIT {
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(
                     objectMapper.writeValueAsString(
-                        callbackRequest(caseData, SUBMIT_AOS, AosDrafted.name())))
+                        callbackRequest(caseData, SUBMIT_AOS)))
                 .accept(APPLICATION_JSON))
             .andReturn()
             .getResponse()

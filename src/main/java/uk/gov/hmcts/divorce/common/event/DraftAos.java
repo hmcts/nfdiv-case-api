@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.common.event;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -22,9 +21,7 @@ import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -59,11 +56,10 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(DRAFT_AOS)
-            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue))
+            .forStateTransition(AwaitingAos, AosDrafted)
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
             .endButtonLabel("Save AoS Response")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
@@ -78,16 +74,6 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .data(caseTasks(addMiniApplicationLink)
                 .run(details)
                 .getData())
-            .build();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
-                                                                       final CaseDetails<CaseData, State> before) {
-        var state = details.getState() == AwaitingAos || details.getState() == AosOverdue ? AosDrafted : details.getState();
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(state)
             .build();
     }
 }

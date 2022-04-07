@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.common.event;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -28,8 +27,8 @@ import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -112,7 +111,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(SUBMIT_AOS)
-            .forStates(ArrayUtils.add(AOS_STATES, AosDrafted))
+            .forStateTransition(AosDrafted, Holding)
             .name("Submit AoS")
             .description("Submit AoS")
             .showSummary()
