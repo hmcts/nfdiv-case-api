@@ -50,7 +50,7 @@ public class CaseValidationTest {
         caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         caseData.setDivorceOrDissolution(DIVORCE);
         List<String> errors = validateBasicCase(caseData);
-        assertThat(errors).hasSize(13);
+        assertThat(errors).hasSize(14);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class CaseValidationTest {
         caseData.setApplicant1(applicant1);
 
         List<String> errors = validateBasicCase(caseData);
-        assertThat(errors).hasSize(10);
+        assertThat(errors).hasSize(11);
     }
 
     @Test
@@ -288,8 +288,9 @@ public class CaseValidationTest {
 
         caseData.getApplication().setNewPaperCase(YES);
         List<String> errors = validateBasicCase(caseData);
-        assertThat(errors).hasSize(10);
+        assertThat(errors).hasSize(11);
         assertThat(errors).containsExactly(
+            "ApplicationType cannot be empty or null",
             "Applicant1FirstName cannot be empty or null",
             "Applicant1LastName cannot be empty or null",
             "Applicant2FirstName cannot be empty or null",
@@ -314,8 +315,9 @@ public class CaseValidationTest {
         );
 
         List<String> errors = validateBasicCase(caseData);
-        assertThat(errors).hasSize(11);
+        assertThat(errors).hasSize(12);
         assertThat(errors).containsExactly(
+            "ApplicationType cannot be empty or null",
             "Applicant1FirstName cannot be empty or null",
             "Applicant1LastName cannot be empty or null",
             "Applicant2FirstName cannot be empty or null",

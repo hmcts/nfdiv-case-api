@@ -64,6 +64,12 @@
     ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "accessCode": "${json-unit.any-string}",
+    "noticeOfProceedingsEmail":"solicitor@test.com",
+    "applicant2SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationID": "Org"
+      }
+    },
     "documentsGenerated": [
       {
         "id": "Divorce application",
