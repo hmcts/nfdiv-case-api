@@ -27,7 +27,7 @@ plugins {
   id 'org.springframework.boot' version '2.6.6'
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'hmcts.ccd.sdk' version '2.0.3'
-  id 'com.github.hmcts.rse-cft-lib' version '0.15.55'
+  id 'com.github.hmcts.rse-cft-lib' version '0.15.58'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -401,9 +401,6 @@ ccd {
   configDir = file('build/definitions')
 }
 
-tasks.cftlibTest.dependsOn buildCCDXlsx
-integration.dependsOn cftlibTest
-
 bootWithCCD {
     group = 'ccd tasks'
     dependsOn(loadEnvSecrets, buildCCDXlsx)
@@ -417,3 +414,8 @@ bootWithCCD {
         }
     }
 }
+
+tasks.withType(Test).configureEach {
+  maxParallelForks = Math.min(Runtime.runtime.availableProcessors().intdiv(2), 4) ?: 1
+}
+
