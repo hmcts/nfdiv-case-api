@@ -401,9 +401,6 @@ ccd {
   configDir = file('build/definitions')
 }
 
-tasks.cftlibTest.dependsOn buildCCDXlsx
-integration.dependsOn cftlibTest
-
 bootWithCCD {
     group = 'ccd tasks'
     dependsOn(loadEnvSecrets, buildCCDXlsx)
