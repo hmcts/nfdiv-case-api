@@ -200,9 +200,9 @@ class ApplicantTemplateDataProviderTest {
         applicantTemplateDataProvider.mapContactDetails(applicant1, applicant2, templateContent);
 
         assertThat(templateContent).contains(
-            entry(APPLICANT_1_EMAIL, "app@gm.com"),
+            entry(APPLICANT_1_EMAIL, "sol@gm.com"),
             entry(APPLICANT_1_POSTAL_ADDRESS, "sol address"),
-            entry(APPLICANT_2_EMAIL, "app@gm.com"),
+            entry(APPLICANT_2_EMAIL, "sol@gm.com"),
             entry(APPLICANT_2_POSTAL_ADDRESS, "sol address"),
             entry(IS_APP1_CONTACT_PRIVATE, false),
             entry(IS_APP1_REPRESENTED, true),
@@ -227,6 +227,27 @@ class ApplicantTemplateDataProviderTest {
             entry(APPLICANT_2_POSTAL_ADDRESS, "sol address"),
             entry(IS_APP1_CONTACT_PRIVATE, true),
             entry(IS_APP1_REPRESENTED, true),
+            entry(IS_APP2_CONTACT_PRIVATE, true),
+            entry(IS_APP2_REPRESENTED, true)
+        );
+    }
+
+    @Test
+    public void shouldMapSolicitorContactDetailsWhenApplicantContactIsPrivateAndIsNotRepresented() {
+        Applicant applicant1 = buildApplicant(NO, ContactDetailsType.PRIVATE);
+        Applicant applicant2 = buildApplicant(YES, ContactDetailsType.PRIVATE);
+
+        Map<String, Object> templateContent = new HashMap<>();
+
+        applicantTemplateDataProvider.mapContactDetails(applicant1, applicant2, templateContent);
+
+        assertThat(templateContent).contains(
+            entry(APPLICANT_1_EMAIL, null),
+            entry(APPLICANT_1_POSTAL_ADDRESS, null),
+            entry(APPLICANT_2_EMAIL, "sol@gm.com"),
+            entry(APPLICANT_2_POSTAL_ADDRESS, "sol address"),
+            entry(IS_APP1_CONTACT_PRIVATE, true),
+            entry(IS_APP1_REPRESENTED, false),
             entry(IS_APP2_CONTACT_PRIVATE, true),
             entry(IS_APP2_REPRESENTED, true)
         );
