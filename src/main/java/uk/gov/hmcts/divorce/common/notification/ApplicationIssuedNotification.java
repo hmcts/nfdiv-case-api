@@ -274,7 +274,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(CASE_ID, caseId.toString());
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
-        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl());
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
@@ -289,7 +289,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
-        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl() + caseId);
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
         templateVars.put(APPLICATION_REFERENCE, String.valueOf(caseId));
         templateVars.put(UNION_TYPE, caseData.isDivorce() ? DIVORCE : DISSOLUTION);
         templateVars.put(SOLICITOR_REFERENCE, solicitorReference);

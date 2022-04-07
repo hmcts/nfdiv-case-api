@@ -153,7 +153,7 @@ class Applicant1ResubmitNotificationTest {
             Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).build()
         );
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl()).thenReturn("professional-sign-in-url");
+        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn("professional-sign-in-url/1234567890123456");
 
         notification.sendToApplicant2Solicitor(data, 1234567890123456L);
 
@@ -164,7 +164,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
-                hasEntry(SIGN_IN_URL, "professional-sign-in-url")
+                hasEntry(SIGN_IN_URL, "professional-sign-in-url/1234567890123456")
             )),
             eq(ENGLISH)
         );
@@ -178,7 +178,7 @@ class Applicant1ResubmitNotificationTest {
             Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).build()
         );
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl()).thenReturn("professional-sign-in-url");
+        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn("professional-sign-in-url/1234567890123456");
 
         notification.sendToApplicant2Solicitor(data, 1234567890123456L);
 
@@ -189,7 +189,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
-                hasEntry(SIGN_IN_URL, "professional-sign-in-url")
+                hasEntry(SIGN_IN_URL, "professional-sign-in-url/1234567890123456")
             )),
             eq(ENGLISH)
         );
