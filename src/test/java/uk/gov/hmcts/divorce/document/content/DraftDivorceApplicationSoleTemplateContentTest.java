@@ -40,11 +40,13 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MARRIAGE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MARRIAGE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
@@ -70,6 +72,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.LINE_1_LINE_2_CITY_POSTCODE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -115,6 +120,11 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
                 .build()
         );
 
+        final String applicant1MarriageName = TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME;
+        final String applicant2MarriageName = TEST_APP2_FIRST_NAME + " " + TEST_APP2_MIDDLE_NAME + " " + TEST_APP2_LAST_NAME;
+        caseData.getApplication().getMarriageDetails().setApplicant1Name(applicant1MarriageName);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name(applicant2MarriageName);
+
         when(applicationTemplateDataProvider.deriveJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
 
@@ -140,7 +150,9 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(RESPONDENT_SOLICITOR_NAME, "Mr Sol"),
             entry(RESPONDENT_SOLICITOR_EMAIL, "sol@solbros.com"),
             entry(RESPONDENT_SOLICITOR_FIRM_NAME, "Sol Bros"),
-            entry(RESPONDENT_SOLICITOR_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE)
+            entry(RESPONDENT_SOLICITOR_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
+            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
+            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
         );
 
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
@@ -159,6 +171,11 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
+
+        final String applicant1MarriageName = TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME;
+        final String applicant2MarriageName = TEST_APP2_FIRST_NAME + " " + TEST_APP2_MIDDLE_NAME + " " + TEST_APP2_LAST_NAME;
+        caseData.getApplication().getMarriageDetails().setApplicant1Name(applicant1MarriageName);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name(applicant2MarriageName);
 
         when(applicationTemplateDataProvider.deriveJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
@@ -188,7 +205,9 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_MIDDLE_NAME, null),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
-            entry(APPLICANT_2_LAST_NAME, null)
+            entry(APPLICANT_2_LAST_NAME, null),
+            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
+            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
         );
 
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
@@ -205,6 +224,11 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         caseData.getApplicant2().setAddress(APPLICANT_ADDRESS);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(Solicitor.builder().build());
+
+        final String applicant1MarriageName = TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME;
+        final String applicant2MarriageName = TEST_APP2_FIRST_NAME + " " + TEST_APP2_MIDDLE_NAME + " " + TEST_APP2_LAST_NAME;
+        caseData.getApplication().getMarriageDetails().setApplicant1Name(applicant1MarriageName);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name(applicant2MarriageName);
 
         when(applicationTemplateDataProvider.deriveJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
@@ -229,7 +253,9 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(RESPONDENT_SOLICITOR_NAME, NOT_GIVEN),
             entry(RESPONDENT_SOLICITOR_EMAIL, NOT_GIVEN),
             entry(RESPONDENT_SOLICITOR_FIRM_NAME, NOT_GIVEN),
-            entry(RESPONDENT_SOLICITOR_ADDRESS, NOT_GIVEN)
+            entry(RESPONDENT_SOLICITOR_ADDRESS, NOT_GIVEN),
+            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
+            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
         );
 
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
@@ -247,6 +273,11 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
+
+        final String applicant1MarriageName = TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME;
+        final String applicant2MarriageName = TEST_APP2_FIRST_NAME + " " + TEST_APP2_MIDDLE_NAME + " " + TEST_APP2_LAST_NAME;
+        caseData.getApplication().getMarriageDetails().setApplicant1Name(applicant1MarriageName);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name(applicant2MarriageName);
 
         when(applicationTemplateDataProvider.deriveJurisdictionList(any(), eq(TEST_CASE_ID)))
             .thenReturn(List.of(new ApplicationTemplateDataProvider.Connection(APP_1_APP_2_RESIDENT.getLabel())));
@@ -267,7 +298,9 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
-            entry(APPLICANT_2_LAST_NAME, null)
+            entry(APPLICANT_2_LAST_NAME, null),
+            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
+            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
         );
 
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
