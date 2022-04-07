@@ -401,9 +401,6 @@ ccd {
   configDir = file('build/definitions')
 }
 
-tasks.cftlibTest.dependsOn buildCCDXlsx
-integration.dependsOn cftlibTest
-
 bootWithCCD {
     group = 'ccd tasks'
     dependsOn(loadEnvSecrets, buildCCDXlsx)
@@ -417,3 +414,8 @@ bootWithCCD {
         }
     }
 }
+
+tasks.withType(Test).configureEach {
+  maxParallelForks = Math.min(Runtime.runtime.availableProcessors().intdiv(2), 4) ?: 1
+}
+
