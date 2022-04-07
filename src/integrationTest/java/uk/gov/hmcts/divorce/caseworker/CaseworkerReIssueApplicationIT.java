@@ -19,9 +19,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
@@ -401,7 +404,15 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant1().getSolicitor().setEmail(null);
-        caseData.getApplicant2().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                    .organisation(Organisation.builder().organisationId("Org").build())
+                    .build()
+                )
+                .build()
+        );
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
