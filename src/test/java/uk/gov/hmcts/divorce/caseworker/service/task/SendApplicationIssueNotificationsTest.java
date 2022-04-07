@@ -18,6 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -95,5 +96,21 @@ class SendApplicationIssueNotificationsTest {
 
         verify(notificationDispatcher).send(applicationIssuedNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldSendOverseasNotificationIfPersonalService() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.setCaseInvite(new CaseInvite("applicant2Invite@email.com", null, null));
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setState(AwaitingService);
+
+        underTest.apply(caseDetails);
+
+        verify(notificationDispatcher).send(applicationIssuedNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicationIssuedOverseasNotification, caseData, caseDetails.getId());
     }
 }
