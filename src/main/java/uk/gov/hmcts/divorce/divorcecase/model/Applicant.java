@@ -197,7 +197,8 @@ public class Applicant {
     public String getCorrespondenceAddress() {
         if (isRepresented()) {
             return Stream.of(
-                Optional.ofNullable(solicitor.getOrganisationPolicy()).map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
+                Optional.ofNullable(solicitor.getOrganisationPolicy())
+                    .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
                 solicitor.getAddress()
             ).filter(value -> value != null && !value.isEmpty())
              .collect(joining("\n"));
