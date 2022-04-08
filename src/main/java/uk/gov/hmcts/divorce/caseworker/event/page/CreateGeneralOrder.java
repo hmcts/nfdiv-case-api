@@ -62,7 +62,8 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
 
         final String filename = GENERAL_ORDER + LocalDateTime.now(clock).format(formatter);
 
-        log.info("Generating general order document for templateId : {} case caseId: {}", DIVORCE_GENERAL_ORDER, caseId);
+        log.info("Generating general order document for templateId : {} case caseId: {}",
+            DIVORCE_GENERAL_ORDER, caseId);
 
         Document generalOrderDocument = caseDataDocumentService.renderDocument(
             generalOrderTemplateContent.apply(caseDataCopy, caseId),
