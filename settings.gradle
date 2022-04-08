@@ -10,3 +10,5 @@ pluginManagement {
 }
 
 rootProject.name = 'nfdiv-case-api'
+
+includeBuild '../../ccd-config-generator'

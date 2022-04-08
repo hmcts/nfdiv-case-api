@@ -26,8 +26,9 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.6'
   id 'com.github.ben-manes.versions' version '0.41.0'
-  id 'hmcts.ccd.sdk' version '2.0.3'
-  id 'com.github.hmcts.rse-cft-lib' version '0.15.60'
+//  id 'hmcts.ccd.sdk' version '2.0.2'
+    id 'hmcts.ccd.sdk'
+  id 'com.github.hmcts.rse-cft-lib' version '0.15.62'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -120,7 +121,7 @@ task integration(type: Test) {
   failFast = true
 }
 
-task buildCCDXlsx(type: Exec, dependsOn: generateCCDConfig) {
+task buildCCDXlsx(type: Exec) {
   group 'ccd tasks'
   commandLine './bin/ccd-build-definition.sh'
   inputs.dir layout.buildDirectory.dir('definitions')
@@ -315,6 +316,7 @@ dependencies {
   functionalTestImplementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
 
+  cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
@@ -403,7 +405,7 @@ ccd {
 
 bootWithCCD {
     group = 'ccd tasks'
-    dependsOn(loadEnvSecrets, buildCCDXlsx)
+    dependsOn(loadEnvSecrets)
 
     doFirst() {
         project.file('./.aat-env').readLines().each() {
