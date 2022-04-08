@@ -337,7 +337,9 @@ public class ApplicationTransformerTest {
 
         final var transformedOutput = applicationTransformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getCaseData().getApplication().getApplicant1HelpWithFees().getReferenceNumber()).isNull();
-        assertThat(transformedOutput.getCaseData().getApplication().getApplicant2HelpWithFees().getReferenceNumber()).isNull();
+        assertThat(transformedOutput.getCaseData().getApplication().getApplicant1HelpWithFees().getReferenceNumber())
+            .isEqualTo("");
+        assertThat(transformedOutput.getCaseData().getApplication().getApplicant2HelpWithFees().getReferenceNumber())
+            .isEqualTo("");
     }
 }
