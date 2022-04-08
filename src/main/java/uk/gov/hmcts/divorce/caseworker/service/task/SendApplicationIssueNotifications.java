@@ -34,7 +34,8 @@ public class SendApplicationIssueNotifications implements CaseTask {
 
         if (caseDetails.getState() == AwaitingService
             && caseData.getApplicationType().isSole()
-            && caseData.getApplicant2().isBasedOverseas()) {
+            && (caseData.getApplicant2().isBasedOverseas()
+            || caseData.getApplication().isPersonalServiceMethod())) {
             notificationDispatcher.send(applicationIssuedOverseasNotification, caseData, caseId);
         }
 

@@ -70,7 +70,7 @@ docmosis:
       DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V4.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
       REFUSAL_ORDER: NFD_Refusal_Order.docx
-      DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available
+      DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
