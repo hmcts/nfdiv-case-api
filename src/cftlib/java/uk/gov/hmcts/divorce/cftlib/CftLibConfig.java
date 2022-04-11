@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.ConfigWriter;
+import uk.gov.hmcts.ccd.sdk.CCDDefinitionGenerator;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 
@@ -23,7 +23,7 @@ public class CftLibConfig implements CFTLibConfigurer {
     String defName;
 
     @Autowired
-    ConfigWriter configWriter;
+    CCDDefinitionGenerator configWriter;
 
     @Override
     public void configure(CFTLib lib) throws Exception {
@@ -59,16 +59,28 @@ public class CftLibConfig implements CFTLibConfigurer {
             .getInputStream(), Charset.defaultCharset());
         lib.configureRoleAssignments(json);
 
-        configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
-//        var code = Runtime.getRuntime().exec("./gradlew buildCCDXlsx").waitFor();
-        var code = new ProcessBuilder("./gradlew", "buildCCDXlsx")
-          .inheritIO()
-          .start().waitFor();
-      if (code != 0) {
-          throw new RuntimeException("Error converting ccd json to xlsx");
-        }
-
-        var def = Files.readAllBytes(Path.of("build/ccd-config/" + defName));
+        // Generate and import CCD definitions
+        var def = Files.readAllBytes(generateCCDDefinition());
         lib.importDefinition(def);
+    }
+
+    /**
+    * Export our JSON ccd definition and convert it to xlsx.
+    * Doing this at runtime in the CftlibConfig allows use of spring boot devtool's
+    * live reload functionality to rapidly edit and test code & definition changes.
+    * @return
+    */
+    private Path generateCCDDefinition() throws Exception {
+      // Export the JSON config.
+      configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
+      // Run the gradle task to convert to xlsx.
+      var code = new ProcessBuilder("./gradlew", "buildCCDXlsx")
+        .inheritIO()
+        .start()
+        .waitFor();
+      if (code != 0) {
+        throw new RuntimeException("Error converting ccd json to xlsx");
+      }
+      return Path.of("build/ccd-config/" + defName);
     }
 }
