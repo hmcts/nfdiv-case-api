@@ -5,7 +5,6 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 
 import java.util.stream.Stream;
 
-import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.joinWith;
 import static org.apache.commons.lang3.StringUtils.removeStart;
@@ -21,11 +20,11 @@ public final class AddressUtil {
     }
 
     public static String getPostalAddress(final AddressGlobalUK address) {
-        if (null != address) {
+        if (null != address && null != address.getAddressLine1()) {
             String formattedAddressLine1;
             String formattedAddressLine2;
             // Split the string after 25 characters so that it can fit in the address window of envelope
-            if (!isNull(address.getAddressLine1()) && address.getAddressLine1().length() > ADDRESS_LINE_MAX_CHARS) {
+            if (address.getAddressLine1().length() > ADDRESS_LINE_MAX_CHARS) {
                 formattedAddressLine1 = substringBefore(address.getAddressLine1(), COMMA_SEPARATOR);
 
                 if (StringUtils.isBlank(address.getAddressLine2())) {

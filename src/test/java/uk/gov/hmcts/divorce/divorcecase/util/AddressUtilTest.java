@@ -16,6 +16,12 @@ public class AddressUtilTest {
     @Test
     public void shouldReturnNullWhenAddressNotPresent() {
         assertNull(AddressUtil.getPostalAddress(null));
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .postTown("town")
+            .build();
+
+        assertNull(AddressUtil.getPostalAddress(addressGlobalUK));
     }
 
     @Test
