@@ -19,6 +19,7 @@ public class AddressUtilTest {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .postTown("town")
+            .postCode("postcode")
             .build();
 
         assertNull(AddressUtil.getPostalAddress(addressGlobalUK));
