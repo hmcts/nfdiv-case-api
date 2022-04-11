@@ -62,6 +62,12 @@
       }
     ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
+    "applicant2SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationID": "Org"
+      }
+    },
+    "noticeOfProceedingsEmail":"solicitor@test.com",
     "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {

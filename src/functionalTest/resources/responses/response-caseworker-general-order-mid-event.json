@@ -1,5 +1,6 @@
 {
   "data": {
+    "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",

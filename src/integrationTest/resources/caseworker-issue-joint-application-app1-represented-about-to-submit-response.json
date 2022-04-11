@@ -61,6 +61,7 @@
     ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "accessCode": "${json-unit.any-string}",
+    "noticeOfProceedingsEmail":"applicant2@test.com",
     "documentsGenerated": [
       {
         "id": "Divorce application",

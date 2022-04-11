@@ -82,8 +82,9 @@ class CitizenSubmitApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(13);
-        assertThat(response.getErrors().get(0)).isEqualTo("Applicant1FirstName cannot be empty or null");
+        assertThat(response.getErrors().size()).isEqualTo(14);
+        assertThat(response.getErrors()).contains("Applicant1FirstName cannot be empty or null");
+        assertThat(response.getErrors()).contains("ApplicationType cannot be empty or null");
     }
 
     @Test
