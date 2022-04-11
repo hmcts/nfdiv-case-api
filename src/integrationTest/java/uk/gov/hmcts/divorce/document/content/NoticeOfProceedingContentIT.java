@@ -87,6 +87,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HA
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_COURT_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_BASED_IN_UK;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP;
@@ -198,6 +199,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
@@ -285,6 +287,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, TO_END_THEIR_CIVIL_PARTNERSHIP);
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
@@ -387,6 +390,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "Yes");
         expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
@@ -493,6 +497,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(REISSUE_DATE, "18 June 2021");
         expectedEntries.put(HAS_CASE_BEEN_REISSUED, true);
         expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(IS_PERSONAL_SERVICE, true);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
@@ -593,6 +598,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
         expectedEntries.put(IS_COURT_SERVICE, true);
+        expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
