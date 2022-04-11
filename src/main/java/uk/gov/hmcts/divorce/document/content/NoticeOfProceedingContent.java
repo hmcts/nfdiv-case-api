@@ -169,11 +169,6 @@ public class NoticeOfProceedingContent {
         boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline() || caseData.getApplicant1().getEmail() != null;
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
-        templateContent.put(
-            RESPOND_BY_DATE,
-            caseData.getApplication().getIssueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
-        );
-
         if (caseData.getApplicant2().isRepresented()) {
             generateSoleRespondentRepresentedContent(templateContent, caseData);
         }
@@ -181,6 +176,15 @@ public class NoticeOfProceedingContent {
         if (!isNull(caseData.getApplication().getReissueDate())) {
             templateContent.put(HAS_CASE_BEEN_REISSUED, true);
             templateContent.put(REISSUE_DATE, caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
+            templateContent.put(
+                RESPOND_BY_DATE,
+                caseData.getApplication().getReissueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+            );
+        } else {
+            templateContent.put(
+                RESPOND_BY_DATE,
+                caseData.getApplication().getIssueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+            );
         }
 
         templateContent.put(IS_COURT_SERVICE, COURT_SERVICE.equals(caseData.getApplication().getServiceMethod()));
