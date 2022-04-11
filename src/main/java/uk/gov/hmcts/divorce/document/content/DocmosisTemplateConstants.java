@@ -51,9 +51,7 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_FINANCIAL_ORDER = "applicant2FinancialOrder";
     public static final String GENERAL_ORDER_DATE = "generalOrderDate";
     public static final String GENERAL_ORDER_DETAILS = "generalOrderDetails";
-    public static final String GENERAL_ORDER_RECITALS = "generalOrderRecitals";
-    public static final String JUDGE_NAME = "judgeName";
-    public static final String JUDGE_TYPE = "judgeType";
+    public static final String GENERAL_ORDER_MADE_BY = "generalOrderMadeBy";
     public static final String PETITIONER_FULL_NAME = "petitionerFullName";
     public static final String RESPONDENT_FULL_NAME = "respondentFullName";
     public static final String APPLICANT_1_EMAIL = "applicant1Email";

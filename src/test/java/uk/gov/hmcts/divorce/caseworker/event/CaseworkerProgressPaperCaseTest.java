@@ -118,8 +118,9 @@ public class CaseworkerProgressPaperCaseTest {
 
         assertThat(response.getErrors()).isNotNull();
         assertThat(response.getErrors()).isNotEmpty();
-        assertThat(response.getErrors()).hasSize(12);
+        assertThat(response.getErrors()).hasSize(13);
         assertThat(response.getErrors()).containsExactly(
+            "ApplicationType cannot be empty or null",
             "Applicant1FirstName cannot be empty or null",
             "Applicant1LastName cannot be empty or null",
             "Applicant2FirstName cannot be empty or null",

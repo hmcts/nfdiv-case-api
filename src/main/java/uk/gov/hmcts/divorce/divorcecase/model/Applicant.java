@@ -11,10 +11,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -193,7 +196,12 @@ public class Applicant {
     @JsonIgnore
     public String getCorrespondenceAddress() {
         if (isRepresented()) {
-            return solicitor.getAddress();
+            return Stream.of(
+                Optional.ofNullable(solicitor.getOrganisationPolicy())
+                    .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
+                solicitor.getAddress()
+            ).filter(value -> value != null && !value.isEmpty())
+             .collect(joining("\n"));
         } else if (!isConfidentialContactDetails() && null != address) {
             return Stream.of(
                     address.getAddressLine1(),
