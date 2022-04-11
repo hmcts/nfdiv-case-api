@@ -68,19 +68,18 @@ public class CftLibConfig implements CFTLibConfigurer {
     * Export our JSON ccd definition and convert it to xlsx.
     * Doing this at runtime in the CftlibConfig allows use of spring boot devtool's
     * live reload functionality to rapidly edit and test code & definition changes.
-    * @return
     */
     private Path generateCCDDefinition() throws Exception {
-      // Export the JSON config.
-      configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
-      // Run the gradle task to convert to xlsx.
-      var code = new ProcessBuilder("./gradlew", "buildCCDXlsx")
-        .inheritIO()
-        .start()
-        .waitFor();
-      if (code != 0) {
-        throw new RuntimeException("Error converting ccd json to xlsx");
-      }
-      return Path.of("build/ccd-config/" + defName);
+        // Export the JSON config.
+        configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
+        // Run the gradle task to convert to xlsx.
+        var code = new ProcessBuilder("./gradlew", "buildCCDXlsx")
+            .inheritIO()
+            .start()
+            .waitFor();
+        if (code != 0) {
+            throw new RuntimeException("Error converting ccd json to xlsx");
+        }
+        return Path.of("build/ccd-config/" + defName);
     }
 }
