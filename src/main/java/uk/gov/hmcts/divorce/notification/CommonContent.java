@@ -114,6 +114,18 @@ public class CommonContent {
         }
     }
 
+    public String getPartnersSolicitor(CaseData caseData, Applicant partner) {
+        if (caseData.isDivorce()) {
+            if (isNull(partner.getGender())) {
+                return "spouse's solicitor";
+            } else {
+                return partner.getGender() == MALE ? "husband's solicitor" : "wife's solicitor";
+            }
+        } else {
+            return "civil partners' solicitor";
+        }
+    }
+
     public Map<String, String> conditionalOrderTemplateVars(final CaseData caseData,
                                                             final Long id,
                                                             final Applicant applicant,
