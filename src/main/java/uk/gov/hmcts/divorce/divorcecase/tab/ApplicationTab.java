@@ -80,6 +80,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1Email", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
             .field("applicant1Address", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
             .field("applicant1IsApplicant2Represented")
+            .field("applicant1CannotUpload")
+            .field("applicant1CannotUploadSupportingDocument")
             .field("applicant1StatementOfTruth")
 
             //Applicant 1 Solicitor
@@ -126,6 +128,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2Email", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
             .field("applicant2Address", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
             .field("applicant2AgreedToReceiveEmails")
+            .field("applicant2CannotUpload")
+            .field("applicant2CannotUploadSupportingDocument")
             .field("applicant2StatementOfTruth", JOINT_APPLICATION)
 
             //Applicant 2 Solicitor
