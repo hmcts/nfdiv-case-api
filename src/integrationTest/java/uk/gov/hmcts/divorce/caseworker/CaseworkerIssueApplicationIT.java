@@ -99,6 +99,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLI
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
@@ -370,7 +371,6 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
         caseData.getApplication().setSolSignStatementOfTruth(null);
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant2().setSolicitorRepresented(NO);
@@ -415,7 +415,7 @@ public class CaseworkerIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_USER_EMAIL),
-                eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
+                eq(OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED),
                 anyMap(),
                 eq(ENGLISH));
 
@@ -423,13 +423,6 @@ public class CaseworkerIssueApplicationIT {
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
-                anyMap(),
-                eq(ENGLISH));
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_USER_EMAIL),
-                eq(OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED),
                 anyMap(),
                 eq(ENGLISH));
 
@@ -457,7 +450,7 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Overseas_Sole.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent_V2.docx");
+        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent_V4.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
@@ -487,7 +480,7 @@ public class CaseworkerIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_USER_EMAIL),
-                eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
+                eq(OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED),
                 anyMap(),
                 eq(ENGLISH));
 
@@ -1296,7 +1289,7 @@ public class CaseworkerIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent_V2.docx");
+        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Paper_Respondent_V4.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 

@@ -74,12 +74,14 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         if (caseData.getApplicationType().isSole()) {
             log.info("Sending sole application issued notification to applicant 1 for case : {}", caseId);
 
-            notificationService.sendEmail(
-                email,
-                SOLE_APPLICANT_APPLICATION_ACCEPTED,
-                soleApplicant1TemplateVars(caseData, caseId),
-                languagePreference
-            );
+            if (!caseData.getApplication().isPersonalServiceMethod()) {
+                notificationService.sendEmail(
+                    email,
+                    SOLE_APPLICANT_APPLICATION_ACCEPTED,
+                    soleApplicant1TemplateVars(caseData, caseId),
+                    languagePreference
+                );
+            }
         } else {
             log.info("Sending joint application issued notification to applicant 1 for case : {}", caseId);
 

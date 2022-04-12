@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
@@ -159,6 +160,21 @@ public class ApplicationIssuedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldNotSendEmailToSoleApplicant1IfPersonalService() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplication().setServiceMethod(PERSONAL_SERVICE);
+
+        Map<String, String> divorceTemplateVars = new HashMap<>();
+        divorceTemplateVars.putAll(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService, commonContent);
     }
 
     @Test

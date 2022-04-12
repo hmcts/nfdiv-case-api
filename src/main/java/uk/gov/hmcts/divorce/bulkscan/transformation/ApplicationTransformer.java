@@ -145,38 +145,36 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         CaseData caseData = transformationDetails.getCaseData();
         OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
 
-        if (isNotEmpty(ocrDataFields.getSoleOrApplicant1HWFNo())
-            && ocrDataFields.getSoleOrApplicant1HWFNo().length() != HWF_NO_VALID_LENGTH) {
-            transformationDetails.getTransformationWarnings().add("Please review HWF number for applicant1 in scanned form");
-        }
-
-        if (isNotEmpty(ocrDataFields.getApplicant2HWFNo())
-            && ocrDataFields.getApplicant2HWFNo().length() != HWF_NO_VALID_LENGTH) {
-            transformationDetails.getTransformationWarnings().add("Please review HWF number for applicant2 in scanned form");
-        }
-
         caseData.getApplication().setApplicant1HelpWithFees(
             HelpWithFees
                 .builder()
                 .appliedForFees(from(toBoolean(ocrDataFields.getSoleOrApplicant1HWFConfirmation())))
+                .referenceNumber(ocrDataFields.getSoleOrApplicant1HWFNo())
                 .needHelp(from(toBoolean(ocrDataFields.getSoleOrApplicant1HWFApp())))
                 .build()
         );
-
-        if (isNotEmpty(ocrDataFields.getSoleOrApplicant1HWFNo())) {
-            caseData.getApplication().getApplicant1HelpWithFees().setReferenceNumber(ocrDataFields.getSoleOrApplicant1HWFNo());
-        }
 
         caseData.getApplication().setApplicant2HelpWithFees(
             HelpWithFees
                 .builder()
                 .appliedForFees(from(toBoolean(ocrDataFields.getApplicant2HWFConfirmation())))
+                .referenceNumber(ocrDataFields.getApplicant2HWFNo())
                 .needHelp(from(toBoolean(ocrDataFields.getApplicant2HWFApp())))
                 .build()
         );
 
-        if (isNotEmpty(ocrDataFields.getApplicant2HWFNo())) {
-            caseData.getApplication().getApplicant2HelpWithFees().setReferenceNumber(ocrDataFields.getApplicant2HWFNo());
+        if (isNotEmpty(ocrDataFields.getSoleOrApplicant1HWFNo())
+            && ocrDataFields.getSoleOrApplicant1HWFNo().length() != HWF_NO_VALID_LENGTH) {
+
+            caseData.getApplication().getApplicant1HelpWithFees().setReferenceNumber(null);
+            transformationDetails.getTransformationWarnings().add("Please review HWF number for applicant1 in scanned form");
+        }
+
+        if (isNotEmpty(ocrDataFields.getApplicant2HWFNo())
+            && ocrDataFields.getApplicant2HWFNo().length() != HWF_NO_VALID_LENGTH) {
+
+            caseData.getApplication().getApplicant2HelpWithFees().setReferenceNumber(null);
+            transformationDetails.getTransformationWarnings().add("Please review HWF number for applicant2 in scanned form");
         }
     }
 }

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
@@ -94,12 +95,23 @@ public class NoticeOfProceedingContent {
     public static final String DISPLAY_EMAIL_CONFIRMATION = "displayEmailConfirmation";
     public static final String HAS_CASE_BEEN_REISSUED = "hasCaseBeenReissued";
     public static final String REISSUE_DATE = "reissueDate";
-    public static final String SERVED_THEMSELVES = "servedThemselves";
+    public static final String IS_COURT_SERVICE = "isCourtService";
+    public static final String ACCESS_CODE = "accessCode";
+    public static final String URL_TO_LINK_CASE = "linkCaseUrl";
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
     private static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
 
+    private static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
+    private static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
+
+    @Autowired
+    private HoldingPeriodService holdingPeriodService;
+
     @Autowired
     private CommonContent commonContent;
+
+    @Autowired
+    private DocmosisTemplatesConfig config;
 
     @Value("${court.locations.serviceCentre.serviceCentreName}")
     private String serviceCentre;
@@ -118,9 +130,6 @@ public class NoticeOfProceedingContent {
 
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
-
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, Applicant partner) {
 
@@ -160,11 +169,6 @@ public class NoticeOfProceedingContent {
         boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline() || caseData.getApplicant1().getEmail() != null;
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
-        templateContent.put(
-            RESPOND_BY_DATE,
-            caseData.getApplication().getIssueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
-        );
-
         if (caseData.getApplicant2().isRepresented()) {
             generateSoleRespondentRepresentedContent(templateContent, caseData);
         }
@@ -172,10 +176,21 @@ public class NoticeOfProceedingContent {
         if (!isNull(caseData.getApplication().getReissueDate())) {
             templateContent.put(HAS_CASE_BEEN_REISSUED, true);
             templateContent.put(REISSUE_DATE, caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
+            templateContent.put(
+                RESPOND_BY_DATE,
+                caseData.getApplication().getReissueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+            );
+        } else {
+            templateContent.put(
+                RESPOND_BY_DATE,
+                caseData.getApplication().getIssueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+            );
         }
 
-        templateContent.put(SERVED_THEMSELVES,
-            PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod()) || caseData.getApplicant2().isBasedOverseas());
+        templateContent.put(IS_COURT_SERVICE, COURT_SERVICE.equals(caseData.getApplication().getServiceMethod()));
+        templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
+        templateContent.put(URL_TO_LINK_CASE,
+            config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
 
         generateDivorceOrDissolutionContent(templateContent, caseData, partner);
 
