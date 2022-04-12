@@ -20,11 +20,11 @@ public final class AddressUtil {
     }
 
     public static String getPostalAddress(final AddressGlobalUK address) {
-        if (null != address && null != address.getAddressLine1()) {
+        if (null != address) {
             String formattedAddressLine1;
             String formattedAddressLine2;
             // Split the string after 25 characters so that it can fit in the address window of envelope
-            if (address.getAddressLine1().length() > ADDRESS_LINE_MAX_CHARS) {
+            if (null != address.getAddressLine1() && address.getAddressLine1().length() > ADDRESS_LINE_MAX_CHARS) {
                 formattedAddressLine1 = substringBefore(address.getAddressLine1(), COMMA_SEPARATOR);
 
                 if (StringUtils.isBlank(address.getAddressLine2())) {
