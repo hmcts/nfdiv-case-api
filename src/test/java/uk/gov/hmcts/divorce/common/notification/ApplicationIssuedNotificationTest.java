@@ -524,12 +524,13 @@ public class ApplicationIssuedNotificationTest {
             .build();
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl()).thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/");
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
+            .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
         Map<String, String> personalServiceTemplateVars = personalServiceTemplateVars();
-        personalServiceTemplateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl() + TEST_CASE_ID);
+        personalServiceTemplateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID));
         personalServiceTemplateVars.put(APPLICATION_REFERENCE, TEST_CASE_ID.toString());
         personalServiceTemplateVars.put("union type", "divorce");
         personalServiceTemplateVars.put("solicitor reference", "not provided");
@@ -559,12 +560,13 @@ public class ApplicationIssuedNotificationTest {
             .build();
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl()).thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/");
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
+            .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
         Map<String, String> personalServiceTemplateVars = personalServiceTemplateVars();
-        personalServiceTemplateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl() + TEST_CASE_ID);
+        personalServiceTemplateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID));
         personalServiceTemplateVars.put(APPLICATION_REFERENCE, TEST_CASE_ID.toString());
         personalServiceTemplateVars.put("union type", "dissolution");
         personalServiceTemplateVars.put("solicitor reference", "someRef");

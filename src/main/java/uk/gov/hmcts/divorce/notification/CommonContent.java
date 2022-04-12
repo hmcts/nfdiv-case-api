@@ -153,7 +153,7 @@ public class CommonContent {
         return config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL);
     }
 
-    public String getProfessionalUsersSignInUrl() {
-        return config.getTemplateVars().get(SIGN_IN_PROFESSIONAL_USERS_URL);
+    public String getProfessionalUsersSignInUrl(Long caseId) {
+        return config.getTemplateVars().get(SIGN_IN_PROFESSIONAL_USERS_URL) + caseId;
     }
 }

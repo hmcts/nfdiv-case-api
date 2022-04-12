@@ -109,7 +109,7 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
         final Applicant respondent = caseData.getApplicant2();
 
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
-        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl() + caseId);
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
         templateVars.put(APPLICANT_NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
         templateVars.put(APPLICANT_2_NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
