@@ -112,7 +112,7 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
-        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl());
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
         templateVars.put(IS_APPLICANT2_REPRESENTED, caseData.getApplicant2().isRepresented() ? YES : NO);
         templateVars.put(IS_APPLICANT2_CITIZEN, !caseData.getApplicant2().isRepresented() ? YES : NO);
 
