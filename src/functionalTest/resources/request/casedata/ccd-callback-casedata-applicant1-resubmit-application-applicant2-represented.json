@@ -1,0 +1,47 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "jointApplication",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1Gender": "male",
+  "applicant2Gender": "female",
+  "marriageApplicant1Name":"John Smith",
+  "marriageApplicant2Name":"Sarah Smith",
+  "marriageDate": "2020-01-01",
+  "applicant1FinancialOrder": "No",
+  "applicant2FinancialOrder": "No",
+  "jurisdictionApplicant1Residence": "Yes",
+  "jurisdictionApplicant2Residence": "Yes",
+  "jurisdictionConnections": ["A"],
+  "applicant2FirstName": "Sarah",
+  "applicant2LastName": "Smith",
+  "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
+  "applicant2StatementOfTruth": "YES",
+  "applicant1HWFNeedHelp": "Yes",
+  "applicant2HWFNeedHelp": "Yes",
+  "applicant2ConfirmApplicant1Information": "No",
+  "applicant2ExplainsApplicant1IncorrectInformation": "This information is incorrect.",
+  "applicant2SolicitorRepresented": "Yes",
+  "applicant2SolicitorName": "testsol",
+  "applicant2SolicitorEmail": "solicitor@test.com",
+  "applicant2SolicitorAddress": "223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom",
+  "applicant2SolicitorOrganisationPolicy": {
+    "Organisation": {
+      "OrganisationName": "Test Organisation",
+      "OrganisationID": "ABC123"
+    }
+  },
+  "notes": [
+    {
+      "id": "1",
+      "value": {
+        "author": "User Test",
+        "date": "2021-01-01",
+        "note": "Marriage date incorrect, correct date: 1/1/2020"
+      }
+    }
+  ]
+}
