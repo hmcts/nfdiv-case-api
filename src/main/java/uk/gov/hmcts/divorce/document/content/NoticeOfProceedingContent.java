@@ -18,6 +18,7 @@ import java.util.Map;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
@@ -98,6 +99,10 @@ public class NoticeOfProceedingContent {
     public static final String IS_COURT_SERVICE = "isCourtService";
     public static final String ACCESS_CODE = "accessCode";
     public static final String URL_TO_LINK_CASE = "linkCaseUrl";
+    public static final String RELATIONS_SOLICITOR = "relationsSolicitor";
+    public static final String IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE = "isRespondentSolicitorPersonalService";
+    public static final String IS_RESPONDENT_BASED_IN_UK = "isRespondentBasedInUk";
+    public static final String CAN_SERVE_BY_EMAIL = "canServeByEmail";
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
     private static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
 
@@ -187,6 +192,9 @@ public class NoticeOfProceedingContent {
             );
         }
 
+        templateContent.put(IS_RESPONDENT_BASED_IN_UK, !caseData.getApplicant2().isBasedOverseas());
+        templateContent.put(CAN_SERVE_BY_EMAIL, !caseData.getApplicant1().isOffline() && !caseData.getApplicant2().isBasedOverseas());
+
         templateContent.put(IS_COURT_SERVICE, COURT_SERVICE.equals(caseData.getApplication().getServiceMethod()));
         templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateContent.put(URL_TO_LINK_CASE,
@@ -254,8 +262,10 @@ public class NoticeOfProceedingContent {
 
     private void generateSoleRespondentRepresentedContent(Map<String, Object> templateContent, CaseData caseData) {
         final Applicant applicant1 = caseData.getApplicant1();
+        final Applicant applicant2 = caseData.getApplicant2();
         final Solicitor applicant1Solicitor = applicant1.getSolicitor();
         final Solicitor applicant2Solicitor = caseData.getApplicant2().getSolicitor();
+        final boolean personalServiceMethod = PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod());
 
         templateContent.put(SOLICITOR_NAME, applicant2Solicitor.getName());
         templateContent.put(SOLICITOR_ADDRESS, applicant2Solicitor.getAddress());
@@ -273,5 +283,10 @@ public class NoticeOfProceedingContent {
         templateContent.put(WHO_APPLIED, applicant1.isRepresented() ? "applicant's solicitor" : "applicant");
 
         templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, !isNull(applicant2Solicitor.getOrganisationPolicy()) ? "Yes" : "No");
+
+        templateContent.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, personalServiceMethod);
+        if (personalServiceMethod) {
+            templateContent.put(RELATIONS_SOLICITOR, commonContent.getPartnersSolicitor(caseData, applicant2));
+        }
     }
 }
