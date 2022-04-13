@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_APPROVED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_APPROVED_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPROVED_APPLICANT1_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
@@ -96,6 +97,27 @@ class Applicant2ApprovedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT2_APPROVED),
+            argThat(allOf(
+                hasEntry(PAYS_FEES, YES),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void shouldSendAppropriateEmailToApplicant2WhenApplicant1IsRepresented() {
+        CaseData data = validApplicant2CaseData();
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.NO);
+        data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(JOINT_APPLICANT2_APPLICANT2_APPROVED_SOLICITOR),
             argThat(allOf(
                 hasEntry(PAYS_FEES, YES),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
