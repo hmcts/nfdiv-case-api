@@ -73,7 +73,7 @@ public class Applicant {
     private YesOrNo languagePreferenceWelsh;
 
     @CCD(
-        label = "Did you change your last name when you got married?"
+        label = "Did they change their last name when they got married?"
     )
     private YesOrNo lastNameChangedWhenMarried;
 
