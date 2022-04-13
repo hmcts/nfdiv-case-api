@@ -20,7 +20,7 @@ public final class DocumentConstants {
     public static final String DIVORCE_JOINT_APPLICANT_1_ANSWERS = "DIVORCE_JOINT_APPLICANT_1_ANSWERS";
     public static final String DIVORCE_JOINT_APPLICANT_2_ANSWERS = "DIVORCE_JOINT_APPLICANT_2_ANSWERS";
     public static final String JOINT_DIVORCE_APPLICANT_1_ANSWERS_DOCUMENT_NAME = "joint-divorce-application-applicant-1-answers-";
-    public static final String JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME = "joint-divorce-application-applicant-2-answers-";
+    public static final String JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME = "draft-joint-application-";
 
     public static final String NFD_NOP_R1_SOLE_APP2_CIT_ONLINE = "NFD_NOP_R1_SOLE_APP2_CIT_ONLINE";
     public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE = "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE";
