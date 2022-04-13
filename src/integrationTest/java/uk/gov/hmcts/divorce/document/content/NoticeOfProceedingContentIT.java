@@ -85,9 +85,9 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.EN
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HAS_CASE_BEEN_REISSUED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_COURT_SERVICE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_BASED_IN_UK;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP;
