@@ -32,7 +32,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         addLegalConnectionsForSoleApplication(tabBuilder);
         addOtherProceedings(tabBuilder);
         addService(tabBuilder);
-        addSoleApplicant1StatementOfTruth(tabBuilder);
+        addOtherCourtCasesForSoleApplication(tabBuilder);
+        addApplicant1StatementOfTruthForSoleApplication(tabBuilder);
     }
 
     private void addDynamicContentHiddenFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -98,14 +99,16 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorAgreeToReceiveEmailsCheckbox", "applicant1SolicitorRepresented=\"Yes\"")
 
-            //Applicant 1 Other proceedings
+            //Applicant 1 Other proceedings for joint application
             .label("LabelApplicant1OtherProceedings-Heading",
-                null,
+                JOINT_APPLICATION,
                 "#### ${labelContentTheApplicantOrApplicant1UC}'s other proceedings:")
-            .field("applicant1LegalProceedings")
-            .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"")
-            .field("applicant1FinancialOrder")
-            .field("applicant1FinancialOrdersFor", "applicant1FinancialOrder=\"Yes\"")
+            .field("applicant1LegalProceedings", JOINT_APPLICATION)
+            .field("applicant1LegalProceedingsDetails",
+                "applicant1LegalProceedings=\"Yes\" AND applicationType=\"jointApplication\"")
+            .field("applicant1FinancialOrder", JOINT_APPLICATION)
+            .field("applicant1FinancialOrdersFor",
+                "applicant1FinancialOrder=\"Yes\" AND applicationType=\"jointApplication\"")
 
             .field("applicant1StatementOfTruth", JOINT_APPLICATION);
     }
@@ -245,7 +248,20 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("solServiceServiceSotFirm", "serviceMethod=\"solicitorService\"");
     }
 
-    private void addSoleApplicant1StatementOfTruth(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+    private void addOtherCourtCasesForSoleApplication(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+        tabBuilder
+            .label("LabelApplicant1OtherProceedings-Heading",
+                SOLE_APPLICATION,
+                "#### ${labelContentTheApplicantOrApplicant1UC}'s other proceedings:")
+            .field("applicant1LegalProceedings", SOLE_APPLICATION)
+            .field("applicant1LegalProceedingsDetails",
+                "applicant1LegalProceedings=\"Yes\" AND applicationType=\"soleApplication\"")
+            .field("applicant1FinancialOrder", SOLE_APPLICATION)
+            .field("applicant1FinancialOrdersFor",
+                "applicant1FinancialOrder=\"Yes\" AND applicationType=\"soleApplication\"");
+    }
+
+    private void addApplicant1StatementOfTruthForSoleApplication(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
             .field("applicant1StatementOfTruth", SOLE_APPLICATION);
     }
