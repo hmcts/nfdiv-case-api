@@ -1,13 +1,16 @@
 package uk.gov.hmcts.divorce.cftlib;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.CCDDefinitionGenerator;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +21,9 @@ public class CftLibConfig implements CFTLibConfigurer {
 
     @Value("ccd-NFD-${CCD_DEF_NAME:dev}.xlsx")
     String defName;
+
+    @Autowired
+    CCDDefinitionGenerator configWriter;
 
     @Override
     public void configure(CFTLib lib) throws Exception {
@@ -53,7 +59,27 @@ public class CftLibConfig implements CFTLibConfigurer {
             .getInputStream(), Charset.defaultCharset());
         lib.configureRoleAssignments(json);
 
-        var def = Files.readAllBytes(Path.of("build/ccd-config/" + defName));
+        // Generate and import CCD definitions
+        var def = Files.readAllBytes(generateCCDDefinition());
         lib.importDefinition(def);
+    }
+
+    /**
+    * Export our JSON ccd definition and convert it to xlsx.
+    * Doing this at runtime in the CftlibConfig allows use of spring boot devtool's
+    * live reload functionality to rapidly edit and test code & definition changes.
+    */
+    private Path generateCCDDefinition() throws Exception {
+        // Export the JSON config.
+        configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
+        // Run the gradle task to convert to xlsx.
+        var code = new ProcessBuilder("./gradlew", "buildCCDXlsx")
+            .inheritIO()
+            .start()
+            .waitFor();
+        if (code != 0) {
+            throw new RuntimeException("Error converting ccd json to xlsx");
+        }
+        return Path.of("build/ccd-config/" + defName);
     }
 }
