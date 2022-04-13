@@ -164,7 +164,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void addMarriageAndCertificateForSoleApplication(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
-            .label("LabelMarriage-Heading", "divorceOrDissolution = \"divorce\" AND applicationType=\"soleApplication\"", "### Marriage and certificate")
+            .label("LabelMarriage-Heading",
+                "divorceOrDissolution = \"divorce\" AND applicationType=\"soleApplication\"", "### Marriage and certificate")
             .label("LabelCivilPartnership-Heading",
                 "divorceOrDissolution = \"dissolution\" AND applicationType=\"soleApplication\"",
                 "### Civil partnership and certificate")
@@ -172,15 +173,18 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("marriageApplicant1Name", SOLE_APPLICATION)
             .field("marriageApplicant2Name", SOLE_APPLICATION)
             .field("marriageMarriedInUk", SOLE_APPLICATION)
-            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\" AND applicationType=\"soleApplication\"")
-            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\" AND applicationType=\"soleApplication\"")
+            .field("marriagePlaceOfMarriage",
+                "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\" AND applicationType=\"soleApplication\"")
+            .field("marriageCountryOfMarriage",
+                "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\" AND applicationType=\"soleApplication\"")
             .field("marriageCertificateInEnglish", SOLE_APPLICATION)
             .field("marriageCertifiedTranslation", "marriageCertificateInEnglish=\"No\" AND applicationType=\"soleApplication\"");
     }
 
     private void addMarriageAndCertificateForJointApplication(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
-            .label("LabelMarriage-Heading", "divorceOrDissolution = \"divorce\" AND applicationType=\"jointApplication\"", "### Marriage and certificate")
+            .label("LabelMarriage-Heading",
+                "divorceOrDissolution = \"divorce\" AND applicationType=\"jointApplication\"", "### Marriage and certificate")
             .label("LabelCivilPartnership-Heading",
                 "divorceOrDissolution = \"dissolution\" AND applicationType=\"jointApplication\"",
                 "### Civil partnership and certificate")
@@ -188,10 +192,13 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("marriageApplicant1Name", JOINT_APPLICATION)
             .field("marriageApplicant2Name", JOINT_APPLICATION)
             .field("marriageMarriedInUk", JOINT_APPLICATION)
-            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\" AND applicationType=\"jointApplication\"")
-            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\" AND applicationType=\"jointApplication\"")
+            .field("marriagePlaceOfMarriage",
+                "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\" AND applicationType=\"jointApplication\"")
+            .field("marriageCountryOfMarriage",
+                "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\" AND applicationType=\"jointApplication\"")
             .field("marriageCertificateInEnglish", JOINT_APPLICATION)
-            .field("marriageCertifiedTranslation", "marriageCertificateInEnglish=\"No\" AND applicationType=\"jointApplication\"");
+            .field("marriageCertifiedTranslation",
+                "marriageCertificateInEnglish=\"No\" AND applicationType=\"jointApplication\"");
     }
 
     private void addLegalConnectionsForSoleApplication(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
