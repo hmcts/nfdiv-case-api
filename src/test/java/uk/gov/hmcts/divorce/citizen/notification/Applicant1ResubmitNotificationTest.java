@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONS
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_BY_SOLICITOR;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_SOLICITOR_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
@@ -160,7 +160,7 @@ class Applicant1ResubmitNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_BY_SOLICITOR),
+            eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_SOLICITOR),
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(SIGN_IN_URL, SIGN_IN_DIVORCE_TEST_URL + app2CheckJointAnswers)
@@ -185,7 +185,7 @@ class Applicant1ResubmitNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_BY_SOLICITOR),
+            eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_SOLICITOR),
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(SIGN_IN_URL, SIGN_IN_DISSOLUTION_TEST_URL + app2CheckJointAnswers)
