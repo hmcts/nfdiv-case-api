@@ -63,6 +63,7 @@ uk:
             JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES: '356a4b59-fbaf-4367-9b47-dbd05340b073'
             JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE: 'b823559f-e421-432f-bb3f-051cdb3db007'
             JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE: 'e0398a62-8900-48d0-baf8-5d73040089ae'
+            JOINT_APPLICANT2_SOLICITOR_APPLICANT1_CHANGES_MADE: '6a6eb8ca-17e8-49a7-adf6-6f3cd4e1b546'
             JOINT_APPLICATION_ACCEPTED: '39aac458-5f31-442e-bee7-0f97bb584d98'
             JOINT_APPLICATION_OVERDUE: '63b41176-67eb-4ad7-9e3d-fa8aabd77c6a'
             JOINT_APPLICATION_SUBMITTED: '2b606152-85f4-43fc-9e2f-48edfd15f077'
@@ -129,6 +130,7 @@ uk:
             JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES: '356a4b59-fbaf-4367-9b47-dbd05340b073'
             JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE: 'b823559f-e421-432f-bb3f-051cdb3db007'
             JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE: 'e0398a62-8900-48d0-baf8-5d73040089ae'
+            JOINT_APPLICANT2_SOLICITOR_APPLICANT1_CHANGES_MADE: '6a6eb8ca-17e8-49a7-adf6-6f3cd4e1b546'
             JOINT_APPLICATION_ACCEPTED: '39aac458-5f31-442e-bee7-0f97bb584d98'
             JOINT_APPLICATION_OVERDUE: '63b41176-67eb-4ad7-9e3d-fa8aabd77c6a'
             JOINT_APPLICATION_SUBMITTED: '2b606152-85f4-43fc-9e2f-48edfd15f077'
@@ -235,7 +237,7 @@ docmosis:
       NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole.docx
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx
-      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V3.docx
+      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V4.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent.docx
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_Solicitor_Not_Linked_V2.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint.docx
@@ -246,7 +248,7 @@ docmosis:
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       CITIZEN_RESP_AOS_INVITATION_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole.docx
-      CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V3.docx
+      CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V4.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: replace template once available
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
