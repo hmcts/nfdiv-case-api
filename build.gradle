@@ -27,7 +27,7 @@ plugins {
   id 'org.springframework.boot' version '2.6.6'
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'hmcts.ccd.sdk' version '2.1.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.15.62'
+  id 'com.github.hmcts.rse-cft-lib' version '0.15.64'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
