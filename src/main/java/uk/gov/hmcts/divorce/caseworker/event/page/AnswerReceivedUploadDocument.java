@@ -12,7 +12,7 @@ public class AnswerReceivedUploadDocument implements CcdPageConfiguration {
         pageBuilder.page("answerReceivedUploadDocument")
             .pageLabel("Upload document")
             .complex(CaseData::getDocuments)
-                .mandatory(CaseDocuments::getD11Document)
+                .mandatory(CaseDocuments::getAnswerReceivedSupportingDocuments)
                 .done()
             .done();
     }

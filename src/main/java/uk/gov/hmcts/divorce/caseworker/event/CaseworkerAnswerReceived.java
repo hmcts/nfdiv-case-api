@@ -89,9 +89,11 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
 
-        caseData.getDocuments().setDocumentsUploaded(
-            addDocumentToTop(caseData.getDocuments().getDocumentsUploaded(), caseData.getDocuments().getD11Document())
-        );
+        caseData.getDocuments().getAnswerReceivedSupportingDocuments()
+            .forEach(documentListValue ->
+                caseData.getDocuments().setDocumentsUploaded(
+                    addDocumentToTop(caseData.getDocuments().getDocumentsUploaded(), documentListValue.getValue())
+                ));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

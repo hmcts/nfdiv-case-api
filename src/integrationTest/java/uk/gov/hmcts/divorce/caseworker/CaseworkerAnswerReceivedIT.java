@@ -13,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -25,6 +26,7 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
@@ -91,7 +93,13 @@ public class CaseworkerAnswerReceivedIT {
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder()
                 .documentsUploaded(new ArrayList<>())
-                .d11Document(d11)
+                .answerReceivedSupportingDocuments(
+                    List.of(
+                        ListValue.<DivorceDocument>builder()
+                            .value(d11)
+                            .build()
+                    )
+                )
                 .build()
             )
             .alternativeService(
