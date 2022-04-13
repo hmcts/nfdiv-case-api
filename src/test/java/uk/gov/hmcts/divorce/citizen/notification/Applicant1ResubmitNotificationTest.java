@@ -106,7 +106,7 @@ class Applicant1ResubmitNotificationTest {
     }
 
     @Test
-    void shouldSendEmailToApplicant2WithDivorceContent() {
+    void shouldSendSpecificNotificationToApplicant2WhenResubmittedByApplicant1WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
         data.setDueDate(LOCAL_DATE);
         data.getApplicant2().setEmail(null);
@@ -126,11 +126,58 @@ class Applicant1ResubmitNotificationTest {
     }
 
     @Test
-    void shouldSendEmailToApplicant2WithDissolutionContent() {
+    void shouldSendSpecificNotificationToApplicant2WhenResubmittedByApplicant1WithDissolutionContent() {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setDueDate(LOCAL_DATE);
         data.getApplicant2().setEmail(null);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE),
+            argThat(allOf(
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
+                hasEntry(SIGN_IN_URL, SIGN_IN_DISSOLUTION_TEST_URL + app2CheckJointAnswers)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void shouldSendSpecificNotificationToApplicant2WhenResubmittedByApplicant1SolicitorWithDivorceContent() {
+        CaseData data = validApplicant2CaseData();
+        data.getApplicant1().setSolicitor(
+            Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).build()
+        );
+        data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE),
+            argThat(allOf(
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
+                hasEntry(SIGN_IN_URL, SIGN_IN_DIVORCE_TEST_URL + app2CheckJointAnswers)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void shouldSendSpecificNotificationToApplicant2WhenResubmittedByApplicant1SolicitorWithDissolutionContent() {
+        CaseData data = validApplicant2CaseData();
+        data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        data.getApplicant1().setSolicitor(
+            Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).build()
+        );
+        data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);

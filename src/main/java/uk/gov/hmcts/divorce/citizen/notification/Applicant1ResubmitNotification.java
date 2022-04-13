@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONS
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_BY_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_SOLICITOR_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
@@ -55,14 +56,23 @@ public class Applicant1ResubmitNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Sending applicant 1 made changes notification to applicant 2 for case : {}", id);
-
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE,
-            applicant2TemplateVars(caseData, id),
-            caseData.getApplicant2().getLanguagePreference()
-        );
+        if (caseData.getApplicant1().isRepresented()) {
+            log.info("Sending applicant 1's solicitor made changes notification to applicant 2 for case : {}", id);
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_BY_SOLICITOR,
+                applicant2TemplateVars(caseData, id),
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        } else {
+            log.info("Sending applicant 1 made changes notification to applicant 2 for case : {}", id);
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE,
+                applicant2TemplateVars(caseData, id),
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        }
     }
 
     @Override
