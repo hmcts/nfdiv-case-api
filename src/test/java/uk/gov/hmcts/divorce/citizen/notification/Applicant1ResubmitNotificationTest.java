@@ -60,7 +60,7 @@ class Applicant1ResubmitNotificationTest {
     @InjectMocks
     private Applicant1ResubmitNotification notification;
 
-    private String app2CheckJointAnswers = "/applicant2/check-your-joint-application";
+    private String app2CheckJointAnswers = "applicant2/check-your-joint-application";
 
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {

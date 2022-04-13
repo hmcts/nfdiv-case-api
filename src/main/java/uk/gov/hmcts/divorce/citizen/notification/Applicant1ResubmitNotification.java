@@ -99,7 +99,7 @@ public class Applicant1ResubmitNotification implements ApplicantNotification {
     private Map<String, String> applicant2TemplateVars(CaseData caseData, Long id) {
         Map<String, String> templateVars = resubmitTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         String signInLink = configVars.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL);
-        templateVars.put(SIGN_IN_URL, signInLink + "/applicant2/check-your-joint-application");
+        templateVars.put(SIGN_IN_URL, signInLink + "applicant2/check-your-joint-application");
         return templateVars;
     }
 
