@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_APPROVED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_APPROVED_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPROVED_APPLICANT1_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
@@ -67,14 +68,23 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Sending applicant 2 approved notification to applicant 2 for case : {}", id);
-
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            JOINT_APPLICANT2_APPLICANT2_APPROVED,
-            applicant2TemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference()
-        );
+        if (caseData.getApplicant1().isRepresented()) {
+            log.info("Sending applicant 2 approved (other applicant is represented) notification to applicant 2 for case : {}", id);
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                JOINT_APPLICANT2_APPLICANT2_APPROVED_SOLICITOR,
+                applicant2TemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        } else {
+            log.info("Sending applicant 2 approved notification to applicant 2 for case : {}", id);
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                JOINT_APPLICANT2_APPLICANT2_APPROVED,
+                applicant2TemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        }
     }
 
     @Override
