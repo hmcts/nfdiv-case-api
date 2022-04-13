@@ -52,6 +52,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.AP
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_TO;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CAN_SERVE_BY_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP_EMAIL;
@@ -84,6 +85,8 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.EN
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HAS_CASE_BEEN_REISSUED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_COURT_SERVICE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_BASED_IN_UK;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP;
@@ -91,6 +94,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PR
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.REISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATION;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATIONS_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SERVE_PAPERS_BEFORE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.THE_DIVORCE_SERVICE;
@@ -196,6 +200,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
@@ -281,6 +287,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
@@ -381,6 +389,9 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
+        expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
@@ -484,6 +495,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
+        expectedEntries.put(RELATIONS_SOLICITOR, "wife's solicitor");
+        expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true);
 
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
@@ -580,6 +595,9 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, true);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
+        expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
