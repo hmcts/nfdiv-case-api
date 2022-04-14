@@ -48,7 +48,7 @@ public class DisputedApplicationAnswerReceivedNotification implements ApplicantN
             templateVars.put(SOLICITOR_REFERENCE, Objects.nonNull(solicitor.getReference()) ? solicitor.getReference() : "not provided");
 
             notificationService.sendEmail(
-                caseData.getApplicant1().getEmail(),
+                solicitor.getEmail(),
                 SOLICITOR_APPLICANT1_DISPUTE_ANSWER_RECEIVED,
                 templateVars,
                 caseData.getApplicant1().getLanguagePreference()
