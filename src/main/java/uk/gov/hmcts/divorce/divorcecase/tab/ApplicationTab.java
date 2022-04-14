@@ -15,7 +15,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String APPLICANT_2_CONTACT_DETAILS_PUBLIC = "applicant2ContactDetailsType!=\"private\"";
     private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
     private static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
-    private static final String SOLE_APPLICATION = "applicationType=\"soleApplication\"";
     private static final String NOT_NEW_PAPER_CASE = "newPaperCase!=\"Yes\"";
 
     @Override
