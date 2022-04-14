@@ -20,20 +20,40 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab("applicationDetails", "Application");
+        buildSoleApplicationTab(configBuilder);
+        buildJointApplicationTab(configBuilder);
+    }
 
-        addDynamicContentHiddenFields(tabBuilder);
-        addHeaderFields(tabBuilder);
-        addApplicant1(tabBuilder);
-        addMarriageAndCertificateForJointApplication(tabBuilder);
-        addLegalConnectionsForJointApplication(tabBuilder);
-        addApplicant2(tabBuilder);
-        addMarriageAndCertificateForSoleApplication(tabBuilder);
-        addLegalConnectionsForSoleApplication(tabBuilder);
-        addOtherProceedings(tabBuilder);
-        addService(tabBuilder);
-        addOtherCourtCasesForSoleApplication(tabBuilder);
-        addApplicant1StatementOfTruthForSoleApplication(tabBuilder);
+    private void buildSoleApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForSoleApplication = configBuilder.tab("applicationDetailsSole", "Application")
+            .showCondition("applicationType=\"soleApplication\"");
+
+        addDynamicContentHiddenFields(tabBuilderForSoleApplication);
+        addHeaderFields(tabBuilderForSoleApplication);
+        addApplicant1(tabBuilderForSoleApplication);
+        addApplicant2(tabBuilderForSoleApplication);
+        addMarriageAndCertificate(tabBuilderForSoleApplication);
+        addLegalConnections(tabBuilderForSoleApplication);
+        addOtherProceedings(tabBuilderForSoleApplication);
+        addService(tabBuilderForSoleApplication);
+        addOtherCourtCases(tabBuilderForSoleApplication);
+        addApplicant1StatementOfTruth(tabBuilderForSoleApplication);
+    }
+
+    private void buildJointApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForJointApplication = configBuilder.tab("applicationDetailsJoint", "Application")
+            .showCondition("applicationType=\"jointApplication\"");
+
+        addDynamicContentHiddenFields(tabBuilderForJointApplication);
+        addHeaderFields(tabBuilderForJointApplication);
+        addApplicant1(tabBuilderForJointApplication);
+        addOtherCourtCases(tabBuilderForJointApplication);
+        addApplicant1StatementOfTruth(tabBuilderForJointApplication);
+        addMarriageAndCertificate(tabBuilderForJointApplication);
+        addLegalConnections(tabBuilderForJointApplication);
+        addApplicant2(tabBuilderForJointApplication);
+        addOtherProceedings(tabBuilderForJointApplication);
+        addService(tabBuilderForJointApplication);
     }
 
     private void addDynamicContentHiddenFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -97,20 +117,18 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1SolicitorPhone", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorEmail", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"Yes\"")
-            .field("applicant1SolicitorAgreeToReceiveEmailsCheckbox", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorAgreeToReceiveEmailsCheckbox", "applicant1SolicitorRepresented=\"Yes\"");
+    }
 
-            //Applicant 1 Other proceedings for joint application
-            .label("LabelApplicant1OtherProceedings-Heading",
-                JOINT_APPLICATION,
-                "#### ${labelContentTheApplicantOrApplicant1UC}'s other proceedings:")
-            .field("applicant1LegalProceedings", JOINT_APPLICATION)
+    private void addOtherCourtCases(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+        tabBuilder
+            .label("LabelApplicant1OtherProceedings-Heading", null, "#### ${labelContentTheApplicantOrApplicant1UC}'s other proceedings:")
+            .field("applicant1LegalProceedings")
             .field("applicant1LegalProceedingsDetails",
-                "applicant1LegalProceedings=\"Yes\" AND applicationType=\"jointApplication\"")
-            .field("applicant1FinancialOrder", JOINT_APPLICATION)
+                "applicant1LegalProceedings=\"Yes\"")
+            .field("applicant1FinancialOrder")
             .field("applicant1FinancialOrdersFor",
-                "applicant1FinancialOrder=\"Yes\" AND applicationType=\"jointApplication\"")
-
-            .field("applicant1StatementOfTruth", JOINT_APPLICATION);
+                "applicant1FinancialOrder=\"Yes\"");
     }
 
     private void addApplicant2(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -165,55 +183,29 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2StatementOfTruth", JOINT_APPLICATION);
     }
 
-    private void addMarriageAndCertificateForSoleApplication(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+    private void addMarriageAndCertificate(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
             .label("LabelMarriage-Heading",
-                "divorceOrDissolution = \"divorce\" AND applicationType=\"soleApplication\"", "### Marriage and certificate")
+                "divorceOrDissolution = \"divorce\"", "### Marriage and certificate")
             .label("LabelCivilPartnership-Heading",
-                "divorceOrDissolution = \"dissolution\" AND applicationType=\"soleApplication\"",
+                "divorceOrDissolution = \"dissolution\"",
                 "### Civil partnership and certificate")
-            .field("marriageDate", SOLE_APPLICATION)
-            .field("marriageApplicant1Name", SOLE_APPLICATION)
-            .field("marriageApplicant2Name", SOLE_APPLICATION)
-            .field("marriageMarriedInUk", SOLE_APPLICATION)
+            .field("marriageDate")
+            .field("marriageApplicant1Name")
+            .field("marriageApplicant2Name")
+            .field("marriageMarriedInUk")
             .field("marriagePlaceOfMarriage",
-                "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\" AND applicationType=\"soleApplication\"")
+                "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\"")
             .field("marriageCountryOfMarriage",
-                "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\" AND applicationType=\"soleApplication\"")
-            .field("marriageCertificateInEnglish", SOLE_APPLICATION)
-            .field("marriageCertifiedTranslation", "marriageCertificateInEnglish=\"No\" AND applicationType=\"soleApplication\"");
+                "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\"")
+            .field("marriageCertificateInEnglish")
+            .field("marriageCertifiedTranslation", "marriageCertificateInEnglish=\"No\"");
     }
 
-    private void addMarriageAndCertificateForJointApplication(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+    private void addLegalConnections(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
-            .label("LabelMarriage-Heading",
-                "divorceOrDissolution = \"divorce\" AND applicationType=\"jointApplication\"", "### Marriage and certificate")
-            .label("LabelCivilPartnership-Heading",
-                "divorceOrDissolution = \"dissolution\" AND applicationType=\"jointApplication\"",
-                "### Civil partnership and certificate")
-            .field("marriageDate", JOINT_APPLICATION)
-            .field("marriageApplicant1Name", JOINT_APPLICATION)
-            .field("marriageApplicant2Name", JOINT_APPLICATION)
-            .field("marriageMarriedInUk", JOINT_APPLICATION)
-            .field("marriagePlaceOfMarriage",
-                "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\" AND applicationType=\"jointApplication\"")
-            .field("marriageCountryOfMarriage",
-                "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\" AND applicationType=\"jointApplication\"")
-            .field("marriageCertificateInEnglish", JOINT_APPLICATION)
-            .field("marriageCertifiedTranslation",
-                "marriageCertificateInEnglish=\"No\" AND applicationType=\"jointApplication\"");
-    }
-
-    private void addLegalConnectionsForSoleApplication(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
-        tabBuilder
-            .label("LabelJurisdiction-Heading", SOLE_APPLICATION, "### Jurisdiction")
-            .field("jurisdictionConnections", SOLE_APPLICATION);
-    }
-
-    private void addLegalConnectionsForJointApplication(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
-        tabBuilder
-            .label("LabelJurisdiction-Heading", JOINT_APPLICATION, "### Jurisdiction")
-            .field("jurisdictionConnections", JOINT_APPLICATION);
+            .label("LabelJurisdictionJoint-Heading", null, "### Jurisdiction")
+            .field("jurisdictionConnections");
     }
 
     private void addOtherProceedings(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -248,21 +240,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("solServiceServiceSotFirm", "serviceMethod=\"solicitorService\"");
     }
 
-    private void addOtherCourtCasesForSoleApplication(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+    private void addApplicant1StatementOfTruth(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
-            .label("LabelApplicant1OtherProceedings-Heading",
-                SOLE_APPLICATION,
-                "#### ${labelContentTheApplicantOrApplicant1UC}'s other proceedings:")
-            .field("applicant1LegalProceedings", SOLE_APPLICATION)
-            .field("applicant1LegalProceedingsDetails",
-                "applicant1LegalProceedings=\"Yes\" AND applicationType=\"soleApplication\"")
-            .field("applicant1FinancialOrder", SOLE_APPLICATION)
-            .field("applicant1FinancialOrdersFor",
-                "applicant1FinancialOrder=\"Yes\" AND applicationType=\"soleApplication\"");
-    }
-
-    private void addApplicant1StatementOfTruthForSoleApplication(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
-        tabBuilder
-            .field("applicant1StatementOfTruth", SOLE_APPLICATION);
+            .field("applicant1StatementOfTruth");
     }
 }
