@@ -346,7 +346,7 @@ public class TestDataHelper {
             .build());
 
         var applicant1 = getApplicant();
-        applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
+        applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).reference("testref").build());
         applicant1.setSolicitorRepresented(YES);
         applicant1.setApplicantPrayer(ApplicantPrayer.builder().prayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE)).build());
 

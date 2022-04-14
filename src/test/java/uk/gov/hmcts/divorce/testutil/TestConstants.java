@@ -60,6 +60,7 @@ public final class TestConstants {
     public static final String BEARER = "Bearer ";
     public static final String TEST_ORG_ID = "ABC123";
     public static final String TEST_ORG_NAME = "Test Organisation";
+    public static final String PROFESSIONAL_USERS_SIGN_IN_URL = "professional-sign-in-url/1234567890123456";
 
     public static final String SOLICITOR_MID_EVENT_RESPONSE = "classpath:solicitor-mid-event-response.json";
     public static final String SOLICITOR_MID_EVENT_ERROR = "classpath:solicitor-mid-event-error-response.json";
