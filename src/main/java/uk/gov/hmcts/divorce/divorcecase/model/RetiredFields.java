@@ -10,7 +10,10 @@ import org.elasticsearch.common.TriConsumer;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,6 +42,7 @@ public class RetiredFields {
     private Set<ThePrayer> applicant1PrayerHasBeenGivenCheckbox;
     private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
     private ServiceMethod solServiceMethod;
+    private DivorceDocument d11Document;
 
     @JsonIgnore
     private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {
@@ -47,7 +51,15 @@ public class RetiredFields {
     @JsonIgnore
     private static final Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = Map.of(
         "exampleRetiredField", moveTo("applicant1FirstName"),
-        "solServiceMethod", moveTo("serviceMethod")
+        "solServiceMethod", moveTo("serviceMethod"),
+        "d11Document", (data, key, val) -> data.put("answerReceivedSupportingDocuments",
+            List.of(ListValue
+                .<DivorceDocument>builder()
+                .id("1")
+                .value((DivorceDocument) val)
+                .build()
+            )
+        )
     );
 
     /**
@@ -79,5 +91,4 @@ public class RetiredFields {
     private static TriConsumer<Map<String, Object>, String, Object> moveTo(String newFieldName) {
         return (data, key, val) -> data.put(newFieldName, val);
     }
-
 }

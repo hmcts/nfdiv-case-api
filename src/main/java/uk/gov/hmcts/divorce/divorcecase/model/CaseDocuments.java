@@ -88,10 +88,12 @@ public class CaseDocuments {
     private List<ListValue<ScannedDocument>> scannedDocuments;
 
     @CCD(
-        label = "Upload D11 Document",
+        label = "Upload Answer Received supporting documents",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
         access = {CaseworkerAccessOnlyAccess.class}
     )
-    private DivorceDocument d11Document;
+    private List<ListValue<DivorceDocument>> answerReceivedSupportingDocuments;
 
     public static <T> List<ListValue<T>> addDocumentToTop(final List<ListValue<T>> documents, final T value) {
         return addDocumentToTop(documents, value, null);
