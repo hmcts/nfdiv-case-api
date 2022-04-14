@@ -1,8 +1,11 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -39,4 +42,22 @@ class RetiredFieldsTest {
         );
     }
 
+    @Test
+    void shouldMigrateD11DocumentToAnswerReceivedDocuments() {
+        DivorceDocument d11Document = DivorceDocument.builder().build();
+        final var data = new HashMap<String, Object>();
+        data.put("d11Document", d11Document);
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("answerReceivedSupportingDocuments", List.of(ListValue
+                .<DivorceDocument>builder()
+                .id("1")
+                .value(d11Document)
+                .build()
+            )),
+            entry("d11Document", null)
+        );
+    }
 }
