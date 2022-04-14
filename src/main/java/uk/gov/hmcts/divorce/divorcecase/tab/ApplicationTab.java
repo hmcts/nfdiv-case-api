@@ -203,7 +203,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void addLegalConnections(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
-            .label("LabelJurisdictionJoint-Heading", null, "### Jurisdiction")
+            .label("LabelJurisdiction-Heading", null, "### Jurisdiction")
             .field("jurisdictionConnections");
     }
 
