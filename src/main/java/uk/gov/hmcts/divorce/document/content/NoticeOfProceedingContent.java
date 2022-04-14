@@ -286,7 +286,7 @@ public class NoticeOfProceedingContent {
 
         templateContent.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, personalServiceMethod);
         if (personalServiceMethod) {
-            templateContent.put(RELATIONS_SOLICITOR, commonContent.getPartnersSolicitor(caseData, applicant2));
+            templateContent.put(RELATIONS_SOLICITOR, commonContent.getPartner(caseData, applicant2) + "'s solicitor");
         }
     }
 }
