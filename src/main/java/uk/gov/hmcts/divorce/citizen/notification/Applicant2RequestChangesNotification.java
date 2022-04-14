@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
@@ -78,7 +79,8 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         if (caseData.getApplicant1().isRepresented()) {
-            log.info("Sending notification to applicant 2 to confirm their request for changes (other applicant is represented): {}", id);
+            log.info("Sending notification to applicant 2 to confirm their request for changes (applicant 1 is represented): {}", id);
+
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
                 APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES,
@@ -87,6 +89,7 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
             );
         } else {
             log.info("Sending notification to applicant 2 to confirm their request for changes: {}", id);
+
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICANT2_REQUEST_CHANGES,
