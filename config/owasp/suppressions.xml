@@ -17,4 +17,12 @@
       <notes>jackson-databind-2.13.1.jar</notes>
       <cve>CVE-2020-36518</cve>
     </suppress>
+    <suppress>
+      <notes>
+        CVE-2013-4152, CVE-2013-7315, CVE-2014-0054 affect Spring Framework before 3.2.4 and 4.0.0.M1 through 4.0.0.M2
+      </notes>
+      <cve>CVE-2013-4152</cve>
+      <cve>CVE-2014-0054</cve>
+      <cve>CVE-2013-7315</cve>
+    </suppress>
 </suppressions>
