@@ -17,4 +17,7 @@ import javax.validation.constraints.NotNull;
 public class DocmosisTemplatesConfig {
     @NotNull
     private final Map<LanguagePreference, Map<String, String>> templates = new HashMap<>();
+
+    @NotNull
+    private final Map<String, String> templateVars = new HashMap<>();
 }

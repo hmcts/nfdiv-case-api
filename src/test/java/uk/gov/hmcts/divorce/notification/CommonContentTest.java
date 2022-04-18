@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAI
 import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_PROFESSIONAL_USERS_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
@@ -101,6 +102,25 @@ class CommonContentTest {
         caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("civil partner");
+    }
+
+    @Test
+    void shouldGetPartnersSolicitor() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setGender(FEMALE);
+        assertThat(commonContent.getPartnersSolicitor(caseData, caseData.getApplicant2())).isEqualTo("wife's solicitor");
+
+        caseData = caseData();
+        caseData.getApplicant2().setGender(Gender.MALE);
+        assertThat(commonContent.getPartnersSolicitor(caseData, caseData.getApplicant2())).isEqualTo("husband's solicitor");
+
+        caseData = caseData();
+        caseData.getApplicant2().setGender(null);
+        assertThat(commonContent.getPartnersSolicitor(caseData, caseData.getApplicant2())).isEqualTo("spouse's solicitor");
+
+        caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertThat(commonContent.getPartnersSolicitor(caseData, caseData.getApplicant2())).isEqualTo("civil partners' solicitor");
     }
 
     @Test
@@ -181,5 +201,16 @@ class CommonContentTest {
                 entry(WIFE_JOINT, "no"),
                 entry(CIVIL_PARTNER_JOINT, "yes")
             );
+    }
+
+    @Test
+    void shouldReturnProfessionalSignInUrl() {
+        Long caseId = 123456789L;
+        when(emailTemplatesConfig.getTemplateVars())
+            .thenReturn(Map.of(SIGN_IN_PROFESSIONAL_USERS_URL, "http://professional-sing-in-url/"));
+
+        String professionalSignInUrl = commonContent.getProfessionalUsersSignInUrl(caseId);
+
+        assertThat(professionalSignInUrl).isEqualTo("http://professional-sing-in-url/123456789");
     }
 }

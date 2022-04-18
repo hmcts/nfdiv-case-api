@@ -7,7 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -23,6 +25,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -42,12 +45,14 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME_WITH_DEFAULT_VALUE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WHO_APPLIED;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_TO;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CAN_SERVE_BY_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP_EMAIL;
@@ -79,6 +84,9 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.EN
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.END_A_CIVIL_PARTNERSHIP_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HAS_CASE_BEEN_REISSUED;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_COURT_SERVICE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_BASED_IN_UK;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP;
@@ -86,12 +94,13 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PR
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.REISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATION;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SERVED_THEMSELVES;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATIONS_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SERVE_PAPERS_BEFORE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.THE_DIVORCE_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_THEIR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_YOUR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.URL_TO_LINK_CASE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -107,6 +116,9 @@ public class NoticeOfProceedingContentIT {
 
     @Autowired
     private CommonContent commonContent;
+
+    @Autowired
+    private DocmosisTemplatesConfig config;
 
     @Autowired
     private NoticeOfProceedingContent noticeOfProceedingContent;
@@ -138,6 +150,9 @@ public class NoticeOfProceedingContentIT {
         );
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 19));
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
 
         var ctscContactDetails = CtscContactDetails
             .builder()
@@ -182,7 +197,11 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
         expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
-        expectedEntries.put(SERVED_THEMSELVES, false);
+        expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
@@ -218,6 +237,9 @@ public class NoticeOfProceedingContentIT {
         caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 19));
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
 
         var ctscContactDetails = CtscContactDetails
             .builder()
@@ -262,7 +284,11 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
         expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, TO_END_THEIR_CIVIL_PARTNERSHIP);
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
-        expectedEntries.put(SERVED_THEMSELVES, false);
+        expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
@@ -307,6 +333,9 @@ public class NoticeOfProceedingContentIT {
                     .build())
                 .build()
         );
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
 
         var ctscContactDetails = CtscContactDetails
             .builder()
@@ -357,7 +386,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(WHO_APPLIED, "applicant's solicitor");
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "Yes");
-        expectedEntries.put(SERVED_THEMSELVES, false);
+        expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
+        expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
@@ -365,7 +399,7 @@ public class NoticeOfProceedingContentIT {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataWhereServedThemselvesAndReissued() {
+    public void shouldSuccessfullyApplyContentFromCaseDataNotCourtServiceAndReissued() {
         CaseData caseData = caseData();
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         caseData.getApplication().setReissueDate(LocalDate.of(2021, 6, 18));
@@ -386,7 +420,9 @@ public class NoticeOfProceedingContentIT {
         );
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 19));
-
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
@@ -454,9 +490,15 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(WHO_APPLIED, "applicant's solicitor");
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "Yes");
-        expectedEntries.put(SERVED_THEMSELVES, true);
         expectedEntries.put(REISSUE_DATE, "18 June 2021");
         expectedEntries.put(HAS_CASE_BEEN_REISSUED, true);
+        expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
+        expectedEntries.put(RELATIONS_SOLICITOR, "wife's solicitor");
+        expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true);
 
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
@@ -467,6 +509,7 @@ public class NoticeOfProceedingContentIT {
     @Test
     public void shouldSuccessfullyApplyRepresentedApplicant2ContentIfDataMissing() {
         CaseData caseData = caseData();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
         caseData.getApplicant1().setGender(MALE);
@@ -495,6 +538,9 @@ public class NoticeOfProceedingContentIT {
                 .name("app 2 sol")
                 .address("The avenue")
                 .build()
+        );
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
         var ctscContactDetails = CtscContactDetails
@@ -546,7 +592,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(WHO_APPLIED, "applicant");
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
-        expectedEntries.put(SERVED_THEMSELVES, false);
+        expectedEntries.put(IS_COURT_SERVICE, true);
+        expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
+        expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
