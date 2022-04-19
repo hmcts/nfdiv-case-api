@@ -58,4 +58,15 @@ public class AddressUtilTest {
         assertThat(AddressUtil.getPostalAddress(addressGlobalUK),
             is(String.format("%s\n%s\ntown\npostcode", ADDRESS_LINE1, ADDRESS_LINE2)));
     }
+
+    @Test
+    public void shouldReturnPostalAddressWhenAddressPresentAndLine1IsNull() {
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .postTown("town")
+            .postCode("postcode")
+            .build();
+
+        assertThat(AddressUtil.getPostalAddress(addressGlobalUK), is("town\npostcode"));
+    }
 }
