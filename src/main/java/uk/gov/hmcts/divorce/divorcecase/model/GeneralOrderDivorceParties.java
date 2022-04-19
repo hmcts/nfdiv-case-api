@@ -12,7 +12,7 @@ public enum GeneralOrderDivorceParties implements HasLabel {
     APPLICANT("Applicant"),
 
     @JsonProperty("respondent")
-    RESPONDENT("Respondent");
+    RESPONDENT("Respondent / Applicant 2");
 
     private final String label;
 }
