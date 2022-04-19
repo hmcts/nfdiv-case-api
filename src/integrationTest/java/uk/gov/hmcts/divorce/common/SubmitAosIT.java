@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -244,7 +243,7 @@ public class SubmitAosIT {
     }
 
     @Test
-    public void givenValidCaseDataForRespondentRepresentedWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondentSolicitor() throws Exception {
+    public void givenValidCaseDataForRespondentRepresentedWhenCallbackIsInvokedThenSendEmailToRespondentSolicitor() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getApplicant1().setSolicitor(null);

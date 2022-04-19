@@ -58,8 +58,8 @@ public class SoleApplicationSolicitorSubmitAosNotification implements ApplicantN
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
-        templateVars.put(ISSUE_DATE_PLUS_37_DAYS, caseData.getAcknowledgementOfService().isDisputed() ?
-            caseData.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER) : "");
+        templateVars.put(ISSUE_DATE_PLUS_37_DAYS, caseData.getAcknowledgementOfService().isDisputed()
+            ? caseData.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER) : "");
 
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(ISSUE_DATE_PLUS_141_DAYS, !caseData.getAcknowledgementOfService().isDisputed()
