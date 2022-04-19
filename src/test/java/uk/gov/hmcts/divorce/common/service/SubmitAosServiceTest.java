@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.common.service.task.AddRespondentAnswersLink;
 import uk.gov.hmcts.divorce.common.service.task.GenerateAosResponseLetterDocument;
 import uk.gov.hmcts.divorce.common.service.task.GenerateRespondentAnswersDoc;
 import uk.gov.hmcts.divorce.common.service.task.SendCitizenAosNotifications;
+import uk.gov.hmcts.divorce.common.service.task.SendSolicitorAosNotifications;
 import uk.gov.hmcts.divorce.common.service.task.SetSubmissionAndDueDate;
 import uk.gov.hmcts.divorce.common.service.task.SetSubmitAosState;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -39,6 +40,9 @@ class SubmitAosServiceTest {
     private SendCitizenAosNotifications sendCitizenAosNotifications;
 
     @Mock
+    private SendSolicitorAosNotifications sendSolicitorAosNotifications;
+
+    @Mock
     private GenerateAosResponseLetterDocument generateAosResponseLetterDocument;
 
     @Mock
@@ -57,6 +61,7 @@ class SubmitAosServiceTest {
         when(respondentAnswersDoc.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(addRespondentAnswersLink.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(sendCitizenAosNotifications.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(sendSolicitorAosNotifications.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(generateAosResponseLetterDocument.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(sendAosResponseLetterPackToApplicant.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
@@ -69,6 +74,7 @@ class SubmitAosServiceTest {
         verify(respondentAnswersDoc).apply(caseDetails);
         verify(addRespondentAnswersLink).apply(caseDetails);
         verify(sendCitizenAosNotifications).apply(caseDetails);
+        verify(sendSolicitorAosNotifications).apply(caseDetails);
         verify(generateAosResponseLetterDocument).apply(caseDetails);
         verify(sendAosResponseLetterPackToApplicant).apply(caseDetails);
     }

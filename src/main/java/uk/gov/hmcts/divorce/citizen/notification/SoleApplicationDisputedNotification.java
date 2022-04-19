@@ -44,14 +44,16 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Sending Aos submitted disputed notification to respondent");
+        if (!caseData.getApplicant2().isRepresented()) {
+            log.info("Sending Aos submitted disputed notification to respondent");
 
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,
-            disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference()
-        );
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,
+                disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        }
     }
 
     private Map<String, String> disputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
