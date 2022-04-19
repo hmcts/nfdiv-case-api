@@ -75,13 +75,6 @@ public enum State {
     )
     Withdrawn("Withdrawn"),
 
-    @CCD(
-        name = "Pending hearing outcome",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
-    )
-    PendingHearingOutcome("PendingHearingOutcome"),
-
 
     @CCD(
         name = "Awaiting admin clarification",
@@ -334,6 +327,13 @@ public enum State {
         access = {DefaultStateAccess.class}
     )
     OfflineDocumentReceived("OfflineDocumentReceived"),
+
+    @CCD(
+        name = "Pending hearing outcome",
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    PendingHearingOutcome("PendingHearingOutcome"),
 
     @CCD(
         name = "Removed from bulk case",
