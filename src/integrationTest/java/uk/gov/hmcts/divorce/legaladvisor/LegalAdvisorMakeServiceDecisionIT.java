@@ -75,7 +75,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class LegalAdvisorMakeServiceDecisionIT {
 
     private static final String UUID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
-    private static final String SERVICE_ORDER_TEMPLATE_FILE = "NFD_Service_Order.docx";
+    private static final String SERVICE_ORDER_TEMPLATE_FILE = "NFD_Service_Order_V2.docx";
     private static final String SERVICE_ORDER_REFUSAL_TEMPLATE_FILE = "NFD_Refusal_Order_Deemed_Dispensed_Service.docx";
 
     @Autowired
