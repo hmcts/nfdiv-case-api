@@ -18,6 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEM
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_DEEMED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
@@ -60,14 +61,15 @@ public class ServiceOrderTemplateContent {
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference) {
 
-        Map<String, Object> templateContent = new HashMap<>();
-
-        log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
-
-        var alternativeService = caseData.getAlternativeService();
-
         String isServiceOrderTypeDeemed;
         LocalDate serviceApplicationDecisionDate;
+
+        log.info("Generating service order template content for case reference {} and application type {} ",
+            ccdCaseReference, caseData.getDivorceOrDissolution());
+
+        Map<String, Object> templateContent = new HashMap<>();
+        var alternativeService = caseData.getAlternativeService();
+
         if (DEEMED.equals(alternativeService.getAlternativeServiceType())) {
             isServiceOrderTypeDeemed = YES.getValue();
             serviceApplicationDecisionDate = alternativeService.getDeemedServiceDate();
@@ -83,13 +85,12 @@ public class ServiceOrderTemplateContent {
             alternativeService.getServiceApplicationDecisionDate().format(DATE_TIME_FORMATTER));
         templateContent.put(SERVICE_APPLICATION_RECEIVED_DATE,
             alternativeService.getReceivedServiceApplicationDate().format(DATE_TIME_FORMATTER));
+        templateContent.put(IS_SERVICE_ORDER_TYPE_DEEMED, isServiceOrderTypeDeemed);
 
         if (serviceApplicationDecisionDate != null) {
             templateContent.put(SERVICE_APPLICATION_DECISION_DATE,
                 serviceApplicationDecisionDate.format(DATE_TIME_FORMATTER));
         }
-
-        templateContent.put(IS_SERVICE_ORDER_TYPE_DEEMED, isServiceOrderTypeDeemed);
 
         var ctscContactDetails = CtscContactDetails
             .builder()
@@ -110,7 +111,7 @@ public class ServiceOrderTemplateContent {
                 caseData.isDivorce() ? CONTACT_DIVORCE_JUSTICE_GOV_UK : CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
         }
 
-        templateContent.put("ctscContactDetails", ctscContactDetails);
+        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;
     }
