@@ -13,6 +13,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.Collections;
+import java.util.List;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
@@ -57,6 +60,8 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
     ) {
         log.info("Caseworker response to service application about to submit callback invoked");
 
+        List<String> validationErrors = new java.util.ArrayList<>(Collections.emptyList());
+
         CaseData caseData = details.getData();
         AlternativeServiceType alternativeServiceType = caseData.getAlternativeService().getAlternativeServiceType();
 
@@ -67,8 +72,14 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
         } else if (BAILIFF.equals(alternativeServiceType)) {
             state = AwaitingBailiffReferral;
         } else {
-            log.error("alternate service type '{}' doesn't match any of the required options, "
-                + "defaulting to current state", alternativeServiceType);
+            validationErrors.add("alternate service type doesn't match any of the required options");
+        }
+
+        if (!validationErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(validationErrors)
+                .data(caseData)
+                .build();
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
