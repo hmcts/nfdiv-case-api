@@ -97,6 +97,7 @@ public class NoticeOfProceedingContent {
     public static final String HAS_CASE_BEEN_REISSUED = "hasCaseBeenReissued";
     public static final String REISSUE_DATE = "reissueDate";
     public static final String IS_COURT_SERVICE = "isCourtService";
+    public static final String IS_PERSONAL_SERVICE = "isPersonalService";
     public static final String ACCESS_CODE = "accessCode";
     public static final String URL_TO_LINK_CASE = "linkCaseUrl";
     public static final String RELATIONS_SOLICITOR = "relationsSolicitor";
@@ -196,6 +197,7 @@ public class NoticeOfProceedingContent {
         templateContent.put(CAN_SERVE_BY_EMAIL, !caseData.getApplicant1().isOffline() && !caseData.getApplicant2().isBasedOverseas());
 
         templateContent.put(IS_COURT_SERVICE, COURT_SERVICE.equals(caseData.getApplication().getServiceMethod()));
+        templateContent.put(IS_PERSONAL_SERVICE, caseData.getApplication().isPersonalServiceMethod());
         templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateContent.put(URL_TO_LINK_CASE,
             config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
