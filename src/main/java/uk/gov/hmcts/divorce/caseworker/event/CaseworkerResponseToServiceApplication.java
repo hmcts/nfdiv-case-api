@@ -78,6 +78,7 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
         if (!validationErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(validationErrors)
+                .state(state)
                 .data(caseData)
                 .build();
         }

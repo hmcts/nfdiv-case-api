@@ -62,7 +62,7 @@ class CaseworkerResponseToServiceApplicationTest {
             CaseDetails.<CaseData, State>builder().build()
         );
 
-        assert(response.getState().equals(State.AwaitingServiceConsideration));
+        assertThat(response.getState()).isEqualTo(State.AwaitingServiceConsideration);
     }
 
     @Test
@@ -85,7 +85,7 @@ class CaseworkerResponseToServiceApplicationTest {
             CaseDetails.<CaseData, State>builder().build()
         );
 
-        assert(response.getState().equals(State.AwaitingServiceConsideration));
+        assertThat(response.getState()).isEqualTo(State.AwaitingServiceConsideration);
     }
 
     @Test
@@ -108,11 +108,11 @@ class CaseworkerResponseToServiceApplicationTest {
             CaseDetails.<CaseData, State>builder().build()
         );
 
-        assert(response.getState().equals(State.AwaitingBailiffReferral));
+        assertThat(response.getState()).isEqualTo(State.AwaitingBailiffReferral);
     }
 
     @Test
-    void shouldNotMoveStateWhenAlternativeServiceTypeIsNull() {
+    void shouldReturnValidationErrorWhenAlternativeServiceTypeIsNull() {
 
         CaseData caseData = CaseData.builder()
             .alternativeService(AlternativeService
@@ -132,6 +132,6 @@ class CaseworkerResponseToServiceApplicationTest {
             CaseDetails.<CaseData, State>builder().build()
         );
 
-        assert(response.getState().equals(AosOverdue));
+        assertThat(response.getState()).isEqualTo(State.AosOverdue);
     }
 }
