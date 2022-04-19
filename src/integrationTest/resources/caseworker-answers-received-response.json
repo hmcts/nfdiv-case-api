@@ -4,29 +4,29 @@
     "servicePaymentFeePaymentMethod": "feePayByAccount",
     "servicePaymentFeeAccountNumber": "FEE0233",
     "servicePaymentFeeAccountReferenceNumber": "Ref1",
-    "documentsUploaded": [
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentDateAdded": "${json-unit.any-string}",
-          "documentType": "d11",
-          "documentLink": {
-            "document_url": "http://localhost:4200/assets/d11",
-            "document_filename": "d11.pdf",
-            "document_binary_url": "d11.pdf/binary"
-          }
-        }
+    "documentsUploaded": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "http://localhost:4200/assets/d11",
+          "document_filename": "d11.pdf",
+          "document_binary_url": "d11.pdf/binary"
+        },
+        "documentDateAdded": "${json-unit.any-string}",
+        "documentType": "d11"
       }
-    ],
-    "d11Document": {
-      "documentDateAdded": "${json-unit.any-string}",
-      "documentType": "d11",
-      "documentLink": {
-        "document_url": "http://localhost:4200/assets/d11",
-        "document_filename": "d11.pdf",
-        "document_binary_url": "d11.pdf/binary"
+    }],
+    "answerReceivedSupportingDocuments": [{
+      "value": {
+        "documentLink": {
+          "document_url": "http://localhost:4200/assets/d11",
+          "document_filename": "d11.pdf",
+          "document_binary_url": "d11.pdf/binary"
+        },
+        "documentDateAdded": "${json-unit.any-string}",
+        "documentType": "d11"
       }
-    },
+    }],
     "dataVersion": "${json-unit.any-number}",
     "warnings": []
   }

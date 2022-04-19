@@ -93,7 +93,13 @@ class CaseworkerAnswerReceivedTest {
             )
             .documentType(DocumentType.D11)
             .build();
-        caseData.getDocuments().setD11Document(d11);
+        caseData.getDocuments().setAnswerReceivedSupportingDocuments(
+            List.of(
+                ListValue.<DivorceDocument>builder()
+                    .value(d11)
+                    .build()
+            )
+        );
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -123,7 +129,13 @@ class CaseworkerAnswerReceivedTest {
             )
             .documentType(DocumentType.D11)
             .build();
-        caseData.getDocuments().setD11Document(d11);
+        caseData.getDocuments().setAnswerReceivedSupportingDocuments(
+            List.of(
+                ListValue.<DivorceDocument>builder()
+                    .value(d11)
+                    .build()
+            )
+        );
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
