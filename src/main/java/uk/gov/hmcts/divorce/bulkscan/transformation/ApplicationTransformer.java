@@ -89,7 +89,9 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         );
     }
 
-    private Set<JurisdictionConnections> deriveJurisdictionConnections(OcrDataFields ocrDataFields, CaseData caseData, List<String> warnings) {
+    private Set<JurisdictionConnections> deriveJurisdictionConnections(OcrDataFields ocrDataFields,
+                                                                       CaseData caseData,
+                                                                       List<String> warnings) {
         Set<JurisdictionConnections> connections = new HashSet<>();
         if (toBoolean(ocrDataFields.getJurisdictionReasonsBothPartiesHabitual())) {
             connections.add(APP_1_APP_2_RESIDENT);
