@@ -59,7 +59,7 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
-            .grantHistoryOnly(SOLICITOR))
+            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR))
             .page("uploadDocument")
             .pageLabel("Upload document")
             .complex(CaseData::getDocuments)
