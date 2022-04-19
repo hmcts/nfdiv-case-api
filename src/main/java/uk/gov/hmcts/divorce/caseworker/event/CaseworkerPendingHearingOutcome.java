@@ -11,6 +11,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingOutcome;
@@ -29,23 +31,13 @@ public class CaseworkerPendingHearingOutcome implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_PENDING_HEARING_OUTCOME)
-            .forStates(GeneralConsiderationComplete, AwaitingDwpResponse)
+            .forStateTransition(EnumSet.of(GeneralConsiderationComplete, AwaitingDwpResponse), PendingHearingOutcome)
             .name("Pending hearing outcome")
             .description("Pending hearing outcome")
             .showEventNotes()
             .showSummary()
-            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
             .grantHistoryOnly(SOLICITOR));
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
-                                                                       final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Caseworker pending hearing outcome about to submit callback invoked");
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .state(PendingHearingOutcome)
-            .build();
     }
 }
