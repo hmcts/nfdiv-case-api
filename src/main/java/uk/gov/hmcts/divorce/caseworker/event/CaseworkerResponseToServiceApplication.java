@@ -56,6 +56,9 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("Caseworker response to service application about to start callback invoked");
+
         List<String> validationErrors = new java.util.ArrayList<>(Collections.emptyList());
         CaseData caseData = details.getData();
 
