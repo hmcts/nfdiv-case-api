@@ -64,7 +64,7 @@
     ],
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "accessCode": "",
-    "documentsGenerated": [
+    "confidentialDocumentsGenerated": [
       {
         "id": "${json-unit.any-string}",
         "value": {
