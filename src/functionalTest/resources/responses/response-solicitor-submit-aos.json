@@ -6,6 +6,7 @@
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
     "applicant2SolicitorRepresented": "Yes",
+    "applicant2SolicitorName": "Solicitor",
     "applicant1FinancialOrder": "No",
     "issueDate": "2021-06-17",
     "jurisdictionAgree": "Yes",
