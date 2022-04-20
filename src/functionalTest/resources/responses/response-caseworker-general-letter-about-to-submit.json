@@ -18,6 +18,9 @@
     "applicant1ContactDetailsType": "private",
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "Yes",
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant2FirstName": "test_first_name_2",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name_2",
@@ -43,7 +46,6 @@
       "A"
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
     "applicant1StatementOfTruth": "Yes",
     "applicant2StatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
@@ -68,42 +70,18 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
+          "confidentialDocumentsReceived": "noticeOfProceedingsApp2",
           "documentLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",
             "document_binary_url": "${json-unit.any-string}"
           },
-          "documentFileName": "${json-unit.any-string}",
-          "documentType": "generalLetter"
+          "documentFileName": "${json-unit.any-string}"
         }
       }
     ],
     "dueDate": "2020-04-28",
-    "dataVersion": "${json-unit.any-number}",
-    "warnings": [],
-    "generalLetters": [
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "generalLetterDateTime": "${json-unit.any-string}",
-          "generalLetterParties": "applicant",
-          "generalLetterLink": {
-            "document_url": "${json-unit.any-string}",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "${json-unit.any-string}"
-          },
-          "generalLetterAttachmentLinks": [
-            {
-              "id": "${json-unit.any-string}",
-              "value": {
-                "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4",
-                "document_filename": "4ab5c253-44a4-4061-ab64-e58cdeae1ddd.pdf",
-                "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4/binary"
-              }
-            }
-          ]
-        }
-      }
-    ]
+    "dataVersion": 3,
+    "warnings": []
   }
 }
