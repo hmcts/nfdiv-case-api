@@ -117,7 +117,7 @@ public class CaseDataDocumentService {
         } else if (GENERAL_LETTER.equals(documentType)) {
             return ConfidentialDocumentsReceived.GENERAL_LETTER;
         } else {
-            return null;
+            return ConfidentialDocumentsReceived.OTHER;
         }
     }
 }
