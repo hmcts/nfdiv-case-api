@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 @Component
-public class SendCitizenAosNotifications implements CaseTask {
+public class SendAosNotifications implements CaseTask {
 
     @Autowired
     private SoleApplicationNotDisputedNotification soleApplicationNotDisputedNotification;

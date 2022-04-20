@@ -19,7 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DIS
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
 
 @ExtendWith(MockitoExtension.class)
-class SendCitizenAosNotificationsTest {
+class SendAosNotificationsTest {
 
     @Mock
     private SoleApplicationNotDisputedNotification soleApplicationNotDisputedNotification;
@@ -31,7 +31,7 @@ class SendCitizenAosNotificationsTest {
     private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
-    private SendCitizenAosNotifications sendCitizenAosNotifications;
+    private SendAosNotifications sendAosNotifications;
 
     @Test
     void shouldSendDisputedNotifications() {
@@ -46,7 +46,7 @@ class SendCitizenAosNotificationsTest {
         caseDetails.setId(1L);
         caseDetails.setData(caseData);
 
-        sendCitizenAosNotifications.apply(caseDetails);
+        sendAosNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(soleApplicationDisputedNotification, caseData, 1L);
         verifyNoMoreInteractions(notificationDispatcher);
@@ -65,7 +65,7 @@ class SendCitizenAosNotificationsTest {
         caseDetails.setId(1L);
         caseDetails.setData(caseData);
 
-        sendCitizenAosNotifications.apply(caseDetails);
+        sendAosNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(soleApplicationNotDisputedNotification, caseData, 1L);
         verifyNoMoreInteractions(notificationDispatcher);
