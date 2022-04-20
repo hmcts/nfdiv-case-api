@@ -54,7 +54,7 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         CaseData caseData = transformationDetails.getCaseData();
         OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
         caseData.getApplication().getJurisdiction().setConnections(
-            deriveJurisdictionConnections(ocrDataFields, transformationDetails.getTransformationWarnings())
+            deriveJurisdictionConnections(ocrDataFields, caseData, transformationDetails.getTransformationWarnings())
         );
 
         caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
@@ -89,7 +89,9 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         );
     }
 
-    private Set<JurisdictionConnections> deriveJurisdictionConnections(OcrDataFields ocrDataFields, List<String> warnings) {
+    private Set<JurisdictionConnections> deriveJurisdictionConnections(OcrDataFields ocrDataFields,
+                                                                       CaseData caseData,
+                                                                       List<String> warnings) {
         Set<JurisdictionConnections> connections = new HashSet<>();
         if (toBoolean(ocrDataFields.getJurisdictionReasonsBothPartiesHabitual())) {
             connections.add(APP_1_APP_2_RESIDENT);
@@ -100,13 +102,15 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
         if (toBoolean(ocrDataFields.getJurisdictionReasonsRespHabitual())) {
             connections.add(APP_2_RESIDENT_SOLE);
         }
-        if (APPLICANT_1.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
-            connections.add(APP_1_RESIDENT_JOINT);
-        } else if (APPLICANT_2.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
-            connections.add(APP_2_RESIDENT_JOINT);
-        } else if (APPLICANT_1_APPLICANT2.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
-            connections.add(APP_1_RESIDENT_JOINT);
-            connections.add(APP_2_RESIDENT_JOINT);
+        if (JOINT_APPLICATION.equals(caseData.getApplicationType())) {
+            if (APPLICANT_1.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
+                connections.add(APP_1_RESIDENT_JOINT);
+            } else if (APPLICANT_2.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
+                connections.add(APP_2_RESIDENT_JOINT);
+            } else if (APPLICANT_1_APPLICANT2.equalsIgnoreCase(ocrDataFields.getJurisdictionReasonsJointHabitualWho())) {
+                connections.add(APP_1_RESIDENT_JOINT);
+                connections.add(APP_2_RESIDENT_JOINT);
+            }
         }
         if (toBoolean(ocrDataFields.getJurisdictionReasons1YrHabitual())) {
             connections.add(APP_1_RESIDENT_TWELVE_MONTHS);
