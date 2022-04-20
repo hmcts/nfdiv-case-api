@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_SOLICITOR;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -73,7 +73,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
 
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
-            SOLE_AOS_SUBMITTED_SOLICITOR,
+            SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR,
             applicant1SolicitorTemplateVars(caseData, id),
             ENGLISH
         );
