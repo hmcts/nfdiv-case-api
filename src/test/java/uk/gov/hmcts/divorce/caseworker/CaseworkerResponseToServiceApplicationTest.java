@@ -28,6 +28,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 @ExtendWith(MockitoExtension.class)
 class CaseworkerResponseToServiceApplicationTest {
 
+    private static final String ALTERNATIVE_SERVICE_TYPE_NULL_ERROR = "Please set the alternative service type before using this event";
+
     @InjectMocks
     private CaseworkerResponseToServiceApplication caseworkerResponseToServiceApplication;
 
@@ -127,11 +129,9 @@ class CaseworkerResponseToServiceApplicationTest {
         updatedCaseDetails.setCreatedDate(LOCAL_DATE_TIME);
         updatedCaseDetails.setState(AosOverdue);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToSubmit(
-            updatedCaseDetails,
-            CaseDetails.<CaseData, State>builder().build()
-        );
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToStart(updatedCaseDetails);
 
-        assertThat(response.getState()).isEqualTo(State.AosOverdue);
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors().get(0)).isEqualTo(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
     }
 }

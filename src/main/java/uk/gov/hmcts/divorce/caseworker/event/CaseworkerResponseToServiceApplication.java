@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.Collections;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -34,6 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_RESPONSE_TO_SERVICE_APPLICATION = "caseworker-response-to-service-application";
+    private static final String ALTERNATIVE_SERVICE_TYPE_NULL_ERROR = "Please set the alternative service type before using this event";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -42,6 +42,7 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
             .forStates(AwaitingAos, AosOverdue)
             .name("Response to service app")
             .description("Response to service application")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
@@ -50,37 +51,41 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
             .page("uploadDocument")
             .pageLabel("Upload document")
             .complex(CaseData::getDocuments)
-            .optional(CaseDocuments::getDocumentsUploaded)
+                .optional(CaseDocuments::getDocumentsUploaded)
             .done();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
-        final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails
-    ) {
-        log.info("Caseworker response to service application about to submit callback invoked");
-
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         List<String> validationErrors = new java.util.ArrayList<>(Collections.emptyList());
-
         CaseData caseData = details.getData();
-        AlternativeServiceType alternativeServiceType = caseData.getAlternativeService().getAlternativeServiceType();
 
-        State state = details.getState();
-
-        if (DEEMED.equals(alternativeServiceType) || DISPENSED.equals(alternativeServiceType)) {
-            state = AwaitingServiceConsideration;
-        } else if (BAILIFF.equals(alternativeServiceType)) {
-            state = AwaitingBailiffReferral;
-        } else {
-            validationErrors.add("alternate service type doesn't match any of the required options");
+        if (caseData.getAlternativeService().getAlternativeServiceType() == null) {
+            validationErrors.add(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
         }
 
         if (!validationErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(validationErrors)
-                .state(state)
                 .data(caseData)
                 .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Caseworker response to service application about to submit callback invoked");
+
+        CaseData caseData = details.getData();
+        AlternativeServiceType alternativeServiceType = caseData.getAlternativeService().getAlternativeServiceType();
+
+        State state;
+        if (DEEMED.equals(alternativeServiceType) || DISPENSED.equals(alternativeServiceType)) {
+            state = AwaitingServiceConsideration;
+        } else {
+            state = AwaitingBailiffReferral;
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
