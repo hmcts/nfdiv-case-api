@@ -54,7 +54,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
                     .complex(Solicitor::getOrganisationPolicy, "applicant2SolicitorRepresented=\"Yes\"")
                         .complex(OrganisationPolicy::getOrganisation)
-                            .mandatory(Organisation::getOrganisationId)
+                            .optional(Organisation::getOrganisationId)
                             .done()
                         .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_2_SOLICITOR)
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
