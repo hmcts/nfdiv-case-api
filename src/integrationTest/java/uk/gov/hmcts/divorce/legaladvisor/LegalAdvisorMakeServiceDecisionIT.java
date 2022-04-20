@@ -130,6 +130,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
+            .dueDate(LocalDate.of(2021, 6, 20))
             .build();
         caseData.getApplication().setIssueDate(LocalDate.now());
 
@@ -182,6 +183,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
+            .dueDate(LocalDate.of(2021, 6, 20))
             .build();
         caseData.getApplication().setIssueDate(LocalDate.now());
 
@@ -233,6 +235,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
+            .dueDate(LocalDate.of(2021, 6, 20))
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
 
@@ -284,6 +287,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
+            .dueDate(LocalDate.of(2021, 6, 20))
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
 

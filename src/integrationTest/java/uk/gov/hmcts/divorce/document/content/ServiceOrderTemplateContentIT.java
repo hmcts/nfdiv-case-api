@@ -196,6 +196,7 @@ public class ServiceOrderTemplateContentIT {
         caseData.getApplicant1().setLastName("name");
         caseData.getApplicant2().setFirstName("resp full");
         caseData.getApplicant2().setLastName("name");
+        caseData.setDueDate(LocalDate.of(2021, 6, 20));
         return caseData;
     }
 
