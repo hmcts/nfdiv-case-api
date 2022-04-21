@@ -23,6 +23,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
@@ -36,6 +38,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME_WITH_DEFAULT_VALUE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HAS_CASE_BEEN_REISSUED;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_COURT_SERVICE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.REISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
@@ -49,6 +54,7 @@ class NoticeOfProceedingSoleApplicant2SolicitorOfflineTest {
 
     private static final String ADDRESS = "line 1\ntown\npostcode";
     private static final LocalDate APPLICATION_ISSUE_DATE = LocalDate.of(2022, 3, 30);
+    private static final LocalDate APPLICATION_REISSUE_DATE = LocalDate.of(2022, 4, 30);
     private static final CtscContactDetails CTSC_CONTACT = CtscContactDetails
         .builder()
         .emailAddress("divorcecase@justice.gov.uk")
@@ -68,7 +74,7 @@ class NoticeOfProceedingSoleApplicant2SolicitorOfflineTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForSoleDivorceApplication() {
+    public void shouldMapTemplateContentForSoleDivorceApplicationSolicitorService() {
         Applicant applicant2 = applicantRepresentedBySolicitor();
         applicant2.getSolicitor().setOrganisationPolicy(organisationPolicy());
         applicant2.getSolicitor().setAddress(ADDRESS);
@@ -81,6 +87,7 @@ class NoticeOfProceedingSoleApplicant2SolicitorOfflineTest {
             .applicationType(SOLE_APPLICATION)
             .application(Application.builder()
                 .issueDate(APPLICATION_ISSUE_DATE)
+                .serviceMethod(SOLICITOR_SERVICE)
                 .build())
             .build();
 
@@ -105,7 +112,99 @@ class NoticeOfProceedingSoleApplicant2SolicitorOfflineTest {
             entry(IS_JOINT, false),
             entry(IS_DIVORCE, true),
             entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
-            entry("isApp1Represented", true)
+            entry("isApp1Represented", true),
+            entry(IS_COURT_SERVICE, false)
+        );
+    }
+
+    @Test
+    public void shouldMapTemplateContentForSoleDivorceApplicationCourtService() {
+        Applicant applicant2 = applicantRepresentedBySolicitor();
+        applicant2.getSolicitor().setOrganisationPolicy(organisationPolicy());
+        applicant2.getSolicitor().setAddress(ADDRESS);
+        applicant2.getSolicitor().setReference("12345");
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicantRepresentedBySolicitor())
+            .applicant2(applicant2)
+            .divorceOrDissolution(DIVORCE)
+            .applicationType(SOLE_APPLICATION)
+            .application(Application.builder()
+                .issueDate(APPLICATION_ISSUE_DATE)
+                .serviceMethod(COURT_SERVICE)
+                .build())
+            .build();
+
+        when(holdingPeriodService.getRespondByDateFor(APPLICATION_ISSUE_DATE))
+            .thenReturn(APPLICATION_ISSUE_DATE.plusDays(16));
+
+        final Map<String, Object> templateContent = noticeOfProceedingSoleApplicant2SolicitorOffline.apply(caseData, TEST_CASE_ID);
+
+        assertThat(templateContent).contains(
+            entry(ISSUE_DATE, "30 March 2022"),
+            entry(DUE_DATE, "15 April 2022"),
+            entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+            entry(APPLICANT_1_FIRST_NAME, "test_first_name"),
+            entry(APPLICANT_1_LAST_NAME, "test_last_name"),
+            entry(APPLICANT_2_FIRST_NAME, "test_first_name"),
+            entry(APPLICANT_2_LAST_NAME, "test_last_name"),
+            entry(SOLICITOR_NAME, "The Solicitor"),
+            entry(SOLICITOR_ADDRESS, ADDRESS),
+            entry(SOLICITOR_REFERENCE, "12345"),
+            entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
+            entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
+            entry(IS_JOINT, false),
+            entry(IS_DIVORCE, true),
+            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
+            entry("isApp1Represented", true),
+            entry(IS_COURT_SERVICE, true)
+        );
+    }
+
+    @Test
+    public void shouldMapTemplateContentForSoleDivorceApplicationReissue() {
+        Applicant applicant2 = applicantRepresentedBySolicitor();
+        applicant2.getSolicitor().setOrganisationPolicy(organisationPolicy());
+        applicant2.getSolicitor().setAddress(ADDRESS);
+        applicant2.getSolicitor().setReference("12345");
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicantRepresentedBySolicitor())
+            .applicant2(applicant2)
+            .divorceOrDissolution(DIVORCE)
+            .applicationType(SOLE_APPLICATION)
+            .application(Application.builder()
+                .issueDate(APPLICATION_ISSUE_DATE)
+                .reissueDate(APPLICATION_REISSUE_DATE)
+                .serviceMethod(SOLICITOR_SERVICE)
+                .build())
+            .build();
+
+        when(holdingPeriodService.getRespondByDateFor(APPLICATION_ISSUE_DATE))
+            .thenReturn(APPLICATION_ISSUE_DATE.plusDays(16));
+
+        final Map<String, Object> templateContent = noticeOfProceedingSoleApplicant2SolicitorOffline.apply(caseData, TEST_CASE_ID);
+
+        assertThat(templateContent).contains(
+            entry(ISSUE_DATE, "30 March 2022"),
+            entry(DUE_DATE, "15 April 2022"),
+            entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+            entry(APPLICANT_1_FIRST_NAME, "test_first_name"),
+            entry(APPLICANT_1_LAST_NAME, "test_last_name"),
+            entry(APPLICANT_2_FIRST_NAME, "test_first_name"),
+            entry(APPLICANT_2_LAST_NAME, "test_last_name"),
+            entry(SOLICITOR_NAME, "The Solicitor"),
+            entry(SOLICITOR_ADDRESS, ADDRESS),
+            entry(SOLICITOR_REFERENCE, "12345"),
+            entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
+            entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
+            entry(IS_JOINT, false),
+            entry(IS_DIVORCE, true),
+            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
+            entry("isApp1Represented", true),
+            entry(IS_COURT_SERVICE, false),
+            entry(HAS_CASE_BEEN_REISSUED, true),
+            entry(REISSUE_DATE, "30 April 2022")
         );
     }
 
