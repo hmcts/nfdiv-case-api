@@ -142,7 +142,7 @@ public class ApplicationTransformerTest {
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
-        expectedApplication.getJurisdiction().setConnections(Set.of(APP_1_DOMICILED, APP_1_RESIDENT_JOINT, RESIDUAL_JURISDICTION_CP));
+        expectedApplication.getJurisdiction().setConnections(Set.of(APP_1_DOMICILED, RESIDUAL_JURISDICTION_CP));
 
         assertThat(transformedOutput.getCaseData().getApplication())
             .usingRecursiveComparison()
@@ -202,8 +202,6 @@ public class ApplicationTransformerTest {
         });
 
         OcrDataFields dataFields = transformOcrMapToObject(ocrDataFields);
-        dataFields.setJurisdictionReasonsJointHabitual("true");
-        dataFields.setJurisdictionReasonsJointHabitualWho("applicant2");
         dataFields.setJurisdictionReasonsOnePartyDomiciled("true");
         dataFields.setJurisdictionReasonsOnePartyDomiciledWho("applicant2");
         dataFields.setJurisdictionReasonsSameSex(EMPTY);
@@ -227,7 +225,7 @@ public class ApplicationTransformerTest {
 
         final var expectedApplication =
             jsonToObject("src/test/resources/transformation/output/application-transformed.json", Application.class);
-        expectedApplication.getJurisdiction().setConnections(Set.of(APP_2_RESIDENT_JOINT, APP_2_DOMICILED));
+        expectedApplication.getJurisdiction().setConnections(Set.of(APP_2_DOMICILED));
 
         assertThat(transformedOutput.getCaseData().getApplication())
             .usingRecursiveComparison()
