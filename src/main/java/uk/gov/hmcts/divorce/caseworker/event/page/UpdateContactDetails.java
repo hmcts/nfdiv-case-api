@@ -48,7 +48,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     public static final String SOLICITOR_PHONE_NUMBER_LABEL = "${%s} solicitor phone number";
     public static final String SOLICITOR_EMAIL_LABEL = "${%s} solicitor email";
     public static final String SOLICITOR_S_FIRM_ADDRESS_LABEL = "${%s} solicitor's firm address/DX address";
-
+    public static final String SOLICITOR_REFERENCE_LABEL = "${%s} solicitor's reference";
+    public static final String RESPONDENT_SOLICITOR_EMAIL_LABEL = "${%s} solicitor's email address they used to link the case";
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder
@@ -78,14 +79,15 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         fieldCollectionBuilder
             .label("applicantSolicitorDetailsLabel", getLabel(SOLICITOR_DETAILS_LABEL, APPLICANTS_OR_APPLICANT1S))
             .complex(CaseData::getApplicant1)
-            .complex(Applicant::getSolicitor)
-                .optionalWithLabel(Solicitor::getReference, "Reference number")
-                .optionalWithLabel(Solicitor::getName, getLabel(SOLICITOR_NAME_LABEL, APPLICANTS_OR_APPLICANT1S))
-                .optionalWithLabel(Solicitor::getFirmName, getLabel(SOLICITOR_FIRM_LABEL, APPLICANTS_OR_APPLICANT1S))
-                .optionalWithLabel(Solicitor::getPhone, getLabel(SOLICITOR_PHONE_NUMBER_LABEL, APPLICANTS_OR_APPLICANT1S))
-                .optionalWithLabel(Solicitor::getEmail, getLabel(SOLICITOR_EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
-                .optionalWithLabel(Solicitor::getAddress, getLabel(SOLICITOR_S_FIRM_ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
-                .optional(Solicitor::getAgreeToReceiveEmailsCheckbox)
+                .complex(Applicant::getSolicitor)
+                    .optionalWithLabel(Solicitor::getReference, "Reference number")
+                    .optionalWithLabel(Solicitor::getName, getLabel(SOLICITOR_NAME_LABEL, APPLICANTS_OR_APPLICANT1S))
+                    .optionalWithLabel(Solicitor::getFirmName, getLabel(SOLICITOR_FIRM_LABEL, APPLICANTS_OR_APPLICANT1S))
+                    .optionalWithLabel(Solicitor::getPhone, getLabel(SOLICITOR_PHONE_NUMBER_LABEL, APPLICANTS_OR_APPLICANT1S))
+                    .optionalWithLabel(Solicitor::getEmail, getLabel(SOLICITOR_EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
+                    .optionalWithLabel(Solicitor::getAddress, getLabel(SOLICITOR_S_FIRM_ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
+                    .optional(Solicitor::getAgreeToReceiveEmailsCheckbox)
+                .done()
             .done();
     }
 
@@ -94,13 +96,19 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         fieldCollectionBuilder
             .label("respondentSolicitorDetailsLabel", getLabel(SOLICITOR_DETAILS_LABEL, RESPONDENTS_OR_APPLICANT2S))
             .complex(CaseData::getApplicant2)
-            .complex(Applicant::getSolicitor)
-                .optionalWithLabel(Solicitor::getReference, "Reference number")
-                .optionalWithLabel(Solicitor::getName, getLabel(SOLICITOR_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S))
-                .optionalWithLabel(Solicitor::getFirmName, getLabel(SOLICITOR_FIRM_LABEL, RESPONDENTS_OR_APPLICANT2S))
-                .optionalWithLabel(Solicitor::getPhone, getLabel(SOLICITOR_PHONE_NUMBER_LABEL, RESPONDENTS_OR_APPLICANT2S))
-                .optionalWithLabel(Solicitor::getEmail, getLabel(SOLICITOR_EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
-                .optionalWithLabel(Solicitor::getAddress, getLabel(SOLICITOR_S_FIRM_ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                .complex(Applicant::getSolicitor)
+                    .optionalWithLabel(Solicitor::getReference,  getLabel(SOLICITOR_REFERENCE_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                    .optionalWithLabel(Solicitor::getEmail,  getLabel(RESPONDENT_SOLICITOR_EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                .done()
+                .mandatoryWithLabel(Applicant::getSolicitorRepresented,
+                    "Is ${labelContentTheApplicant2} represented by a solicitor?")
+                .complex(Applicant::getSolicitor)
+                    .optionalWithLabel(Solicitor::getName, getLabel(SOLICITOR_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                    .optionalWithLabel(Solicitor::getFirmName, getLabel(SOLICITOR_FIRM_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                    .optionalWithLabel(Solicitor::getPhone, getLabel(SOLICITOR_PHONE_NUMBER_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                    .optionalWithLabel(Solicitor::getEmail, getLabel(SOLICITOR_EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                    .optionalWithLabel(Solicitor::getAddress, getLabel(SOLICITOR_S_FIRM_ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                .done()
             .done();
     }
 
