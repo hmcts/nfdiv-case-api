@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPLICANT2_REQUESTED_CHANGES;
@@ -76,13 +77,24 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Sending notification to applicant 2 to confirm their request for changes: {}", id);
+        if (caseData.getApplicant1().isRepresented()) {
+            log.info("Sending notification to applicant 2 to confirm their request for changes (applicant 1 is represented): {}", id);
 
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            JOINT_APPLICANT2_REQUEST_CHANGES,
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference()
-        );
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES,
+                commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        } else {
+            log.info("Sending notification to applicant 2 to confirm their request for changes (applicant 1 is not represented): {}", id);
+
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                JOINT_APPLICANT2_REQUEST_CHANGES,
+                commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        }
     }
 }
