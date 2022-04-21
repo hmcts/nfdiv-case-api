@@ -70,7 +70,7 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "confidentialDocumentsReceived": "noticeOfProceedingsApp2",
+          "confidentialDocumentsReceived": "generalLetter",
           "documentLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",
