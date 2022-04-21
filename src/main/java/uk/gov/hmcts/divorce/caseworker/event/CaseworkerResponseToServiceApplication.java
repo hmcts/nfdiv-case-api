@@ -61,8 +61,11 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
 
         List<String> validationErrors = new java.util.ArrayList<>(Collections.emptyList());
         CaseData caseData = details.getData();
+        var altServiceTypeList = caseData.getAlternativeServiceOutcomes();
 
-        if (caseData.getAlternativeService().getAlternativeServiceType() == null) {
+        // We get the alternative service outcome from index 0 as the latest alternative service outcome is always added to index 0 on the
+        // alternative outcomes list.
+        if (altServiceTypeList.isEmpty() || altServiceTypeList.get(0).getValue().getAlternativeServiceType() == null) {
             validationErrors.add(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
         }
 
@@ -82,10 +85,10 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
         log.info("Caseworker response to service application about to submit callback invoked");
 
         CaseData caseData = details.getData();
-        AlternativeServiceType alternativeServiceType = caseData.getAlternativeService().getAlternativeServiceType();
+        AlternativeServiceType altServiceType = caseData.getAlternativeServiceOutcomes().get(0).getValue().getAlternativeServiceType();
 
         State state;
-        if (DEEMED.equals(alternativeServiceType) || DISPENSED.equals(alternativeServiceType)) {
+        if (DEEMED.equals(altServiceType) || DISPENSED.equals(altServiceType)) {
             state = AwaitingServiceConsideration;
         } else {
             state = AwaitingBailiffReferral;

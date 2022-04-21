@@ -8,11 +8,17 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.event.CaseworkerResponseToServiceApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceOutcome;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerResponseToServiceApplication.CASEWORKER_RESPONSE_TO_SERVICE_APPLICATION;
@@ -51,8 +57,17 @@ class CaseworkerResponseToServiceApplicationTest {
             .alternativeService(AlternativeService
                 .builder()
                 .alternativeServiceType(DEEMED)
-                .build()
-            ).build();
+                .build())
+            .build();
+
+        var alternativeServiceOutcomeListValue = ListValue
+            .<AlternativeServiceOutcome>builder()
+            .value(caseData.getAlternativeService().getOutcome())
+            .build();
+
+        List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes = new ArrayList<>();
+        alternativeServiceOutcomes.add(0, alternativeServiceOutcomeListValue);
+        caseData.setAlternativeServiceOutcomes(alternativeServiceOutcomes);
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         updatedCaseDetails.setData(caseData);
@@ -74,8 +89,17 @@ class CaseworkerResponseToServiceApplicationTest {
             .alternativeService(AlternativeService
                 .builder()
                 .alternativeServiceType(DISPENSED)
-                .build()
-            ).build();
+                .build())
+            .build();
+
+        var alternativeServiceOutcomeListValue = ListValue
+            .<AlternativeServiceOutcome>builder()
+            .value(caseData.getAlternativeService().getOutcome())
+            .build();
+
+        List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes = new ArrayList<>();
+        alternativeServiceOutcomes.add(0, alternativeServiceOutcomeListValue);
+        caseData.setAlternativeServiceOutcomes(alternativeServiceOutcomes);
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         updatedCaseDetails.setData(caseData);
@@ -97,8 +121,17 @@ class CaseworkerResponseToServiceApplicationTest {
             .alternativeService(AlternativeService
                 .builder()
                 .alternativeServiceType(BAILIFF)
-                .build()
-            ).build();
+                .build())
+            .build();
+
+        var alternativeServiceOutcomeListValue = ListValue
+            .<AlternativeServiceOutcome>builder()
+            .value(caseData.getAlternativeService().getOutcome())
+            .build();
+
+        List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes = new ArrayList<>();
+        alternativeServiceOutcomes.add(0, alternativeServiceOutcomeListValue);
+        caseData.setAlternativeServiceOutcomes(alternativeServiceOutcomes);
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         updatedCaseDetails.setData(caseData);
@@ -116,12 +149,10 @@ class CaseworkerResponseToServiceApplicationTest {
     @Test
     void shouldReturnValidationErrorWhenAlternativeServiceTypeIsNull() {
 
+        List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes = Collections.emptyList();
         CaseData caseData = CaseData.builder()
-            .alternativeService(AlternativeService
-                .builder()
-                .alternativeServiceType(null)
-                .build()
-            ).build();
+            .alternativeServiceOutcomes(alternativeServiceOutcomes)
+            .build();
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         updatedCaseDetails.setData(caseData);
