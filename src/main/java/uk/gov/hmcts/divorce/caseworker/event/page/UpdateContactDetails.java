@@ -50,6 +50,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     public static final String SOLICITOR_S_FIRM_ADDRESS_LABEL = "${%s} solicitor's firm address/DX address";
     public static final String SOLICITOR_REFERENCE_LABEL = "${%s} solicitor's reference";
     public static final String RESPONDENT_SOLICITOR_EMAIL_LABEL = "${%s} solicitor's email address they used to link the case";
+    
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder
