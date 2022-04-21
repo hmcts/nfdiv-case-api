@@ -87,7 +87,7 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
                 caseData.getApplicant2().getLanguagePreference()
             );
         } else {
-            log.info("Sending notification to applicant 2 to confirm their request for changes: {}", id);
+            log.info("Sending notification to applicant 2 to confirm their request for changes (applicant 1 is not represented): {}", id);
 
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
