@@ -28,6 +28,7 @@
     <suppress>
       <notes>spring-retry-1.3.3.jar</notes>
       <cve>CVE-2016-1000027</cve>
+      <cve>CVE-2022-22965</cve>
     </suppress>
     <suppress>
       <notes>elasticsearch-7.16.3.jar</notes>
