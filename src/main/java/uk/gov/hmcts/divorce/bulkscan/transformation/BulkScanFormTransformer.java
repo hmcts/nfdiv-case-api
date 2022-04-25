@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
+import uk.gov.hmcts.divorce.divorcecase.model.ScannedDocument;
 import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
 import uk.gov.hmcts.divorce.endpoint.model.input.TransformationInput;
 
