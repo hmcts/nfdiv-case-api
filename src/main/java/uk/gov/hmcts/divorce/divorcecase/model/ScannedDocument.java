@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
@@ -49,13 +50,15 @@ public class ScannedDocument {
     @CCD(
         label = "Scanned date"
     )
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime scannedDate;
 
     @CCD(
         label = "Delivery date"
     )
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime deliveryDate;
 
     @CCD(
