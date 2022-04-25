@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.common.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.common.service.task.SendCitizenSubmissionNotifications;
+import uk.gov.hmcts.divorce.common.service.task.SendSubmissionNotifications;
 import uk.gov.hmcts.divorce.common.service.task.SetApplicant2Email;
 import uk.gov.hmcts.divorce.common.service.task.SetApplicantOfflineStatus;
 import uk.gov.hmcts.divorce.common.service.task.SetDateSubmitted;
@@ -28,7 +28,7 @@ public class SubmissionService {
     private SetApplicant2Email setApplicant2Email;
 
     @Autowired
-    private SendCitizenSubmissionNotifications sendCitizenSubmissionNotifications;
+    private SendSubmissionNotifications sendSubmissionNotifications;
 
     public CaseDetails<CaseData, State> submitApplication(final CaseDetails<CaseData, State> caseDetails) {
 
@@ -37,7 +37,7 @@ public class SubmissionService {
             setDateSubmitted,
             setApplicant2Email,
             setApplicantOfflineStatus,
-            sendCitizenSubmissionNotifications
+            sendSubmissionNotifications
         ).run(caseDetails);
     }
 }
