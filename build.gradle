@@ -326,9 +326,16 @@ task loadEnvSecrets() {
   doLast {
     if (!project.file('./.aat-env').exists()) {
       new ByteArrayOutputStream().withStream { os ->
-        exec {
-          commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', 'nfdiv-aat', '-o', 'tsv', '--query', 'value', '--name', 'nfdiv-case-api-dot-env'
-          standardOutput = os
+        if (project.file('/mnt/secrets/nfdiv/nfdiv-case-api-dot-env').exists()) {
+          exec {
+            commandLine 'cat', '/mnt/secrets/nfdiv/nfdiv-case-api-dot-env'
+            standardOutput = os
+          }
+        } else {
+          exec {
+            commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', 'nfdiv-aat', '-o', 'tsv', '--query', 'value', '--name', 'nfdiv-case-api-dot-env'
+            standardOutput = os
+          }
         }
         project.file('./.aat-env').write(new String(os.toString().replace('\n', '').decodeBase64(), java.nio.charset.StandardCharsets.UTF_8))
       }
@@ -416,6 +423,16 @@ bootWithCCD {
             environment key, value
         }
     }
+}
+
+tasks.bootRun.configure {
+  project.afterEvaluate {
+    if (System.getenv('BOOT_WITH_CCD') != null) {
+      environment
+      actions.clear()
+      dependsOn(bootWithCCD)
+    }
+  }
 }
 
 tasks.withType(Test).configureEach {
