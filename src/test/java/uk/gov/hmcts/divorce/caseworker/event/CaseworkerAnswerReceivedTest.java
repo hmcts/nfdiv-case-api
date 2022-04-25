@@ -11,12 +11,15 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.citizen.notification.DisputedApplicationAnswerReceivedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.time.LocalDate;
@@ -25,6 +28,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAnswerReceived.CASEWORKER_ADD_ANSWER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
@@ -42,6 +46,12 @@ class CaseworkerAnswerReceivedTest {
 
     @Mock
     private PaymentService paymentService;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private DisputedApplicationAnswerReceivedNotification answerReceivedNotification;
 
     @InjectMocks
     private CaseworkerAnswerReceived caseworkerAnswerReceived;
@@ -147,5 +157,31 @@ class CaseworkerAnswerReceivedTest {
 
         assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue()).isSameAs(d11);
+    }
+
+    @Test
+    void shouldSendNotificationOnSubmittedIfApplicationDisputed() {
+        final var caseData = caseData();
+        caseData.setAcknowledgementOfService(
+            AcknowledgementOfService.builder().howToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE).build()
+        );
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
+
+        caseworkerAnswerReceived.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(answerReceivedNotification, caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldNotSendNotificationOnSubmittedIfApplicationNotDisputed() {
+        final var caseData = caseData();
+        caseData.setAcknowledgementOfService(
+            AcknowledgementOfService.builder().howToRespondApplication(HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE).build()
+        );
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
+
+        caseworkerAnswerReceived.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
     }
 }
