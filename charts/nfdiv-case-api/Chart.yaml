@@ -10,3 +10,15 @@ dependencies:
   - name: java
     version: 3.7.2
     repository: '@hmctspublic'
+  - name: postgresql
+    version: 8.9.8
+    repository: https://charts.bitnami.com/bitnami
+    condition: ccd.postgresql.enabled
+  - name: elasticsearch
+    version: 7.8.1
+    repository: '@hmctspublic'
+    condition: ccd.elastic.enabled
+  - name: logstash
+    version: 2.4.1
+    repository: '@hmctspublic'
+    condition: ccd.elastic.enabled

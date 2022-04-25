@@ -1,3 +1,9 @@
+ccd:
+  postgres:
+    enabled: false
+  elastic:
+    enabled: false
+
 java:
   applicationPort: 4013
   image: 'hmctspublic.azurecr.io/nfdiv/case-api:latest'
