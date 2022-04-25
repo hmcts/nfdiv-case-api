@@ -28,7 +28,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_DECISION_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_ORDER_TITLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -90,8 +89,6 @@ public class ServiceOrderTemplateContent {
         templateContent.put(SERVICE_APPLICATION_RECEIVED_DATE,
             alternativeService.getReceivedServiceApplicationDate().format(DATE_TIME_FORMATTER));
         templateContent.put(IS_SERVICE_ORDER_TYPE_DEEMED, isServiceOrderTypeDeemed);
-        templateContent.put(SERVICE_ORDER_TITLE, isServiceOrderTypeDeemed.equals(YES.getValue())
-            ? "Deemed service order" : "Order to dispense with service");
         templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
         if (serviceApplicationDecisionDate != null) {
