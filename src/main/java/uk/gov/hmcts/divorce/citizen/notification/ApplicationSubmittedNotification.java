@@ -64,7 +64,8 @@ public class ApplicationSubmittedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
 
-        if (!caseData.getApplicationType().isSole()) {
+        String solicitorEmail = caseData.getApplicant1().getSolicitor().getEmail();
+        if (!caseData.getApplicationType().isSole() && solicitorEmail != null && !solicitorEmail.isBlank()) {
             log.info("Sending joint application submitted notification to applicant 1 solicitor for case : {}", caseId);
 
             notificationService.sendEmail(
@@ -79,7 +80,8 @@ public class ApplicationSubmittedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
 
-        if (!caseData.getApplicationType().isSole()) {
+        String solicitorEmail = caseData.getApplicant2().getSolicitor().getEmail();
+        if (!caseData.getApplicationType().isSole() && solicitorEmail != null && !solicitorEmail.isBlank()) {
             log.info("Sending joint application submitted notification to applicant 2 solicitor for case : {}", caseId);
 
             notificationService.sendEmail(
