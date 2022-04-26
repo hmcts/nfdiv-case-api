@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.common.config.jackson;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
@@ -20,10 +21,11 @@ public class JacksonConfiguration {
     @Primary
     @Bean
     public ObjectMapper getMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(ACCEPT_CASE_INSENSITIVE_ENUMS, true);
-        mapper.enable(INFER_BUILDER_TYPE_BINDINGS);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ObjectMapper mapper = JsonMapper.builder()
+            .configure(ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+            .enable(INFER_BUILDER_TYPE_BINDINGS)
+            .serializationInclusion(JsonInclude.Include.NON_NULL)
+            .build();
 
         SimpleModule deserialization = new SimpleModule();
         deserialization.addDeserializer(HasRole.class, new HasRoleDeserializer());
