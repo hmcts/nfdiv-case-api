@@ -2,12 +2,15 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AosAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
@@ -120,6 +123,24 @@ public class AcknowledgementOfService {
         access = {AosAccess.class}
     )
     private String additionalComments;
+
+    @CCD(
+        label = "What type of document was attached?"
+    )
+    private OfflineDocumentReceived typeOfDocumentAttached;
+
+    @Getter
+    @AllArgsConstructor
+    public enum OfflineDocumentReceived implements HasLabel {
+
+        @JsonProperty("D10")
+        AOS_D10("Acknowledgement of service (D10)"),
+
+        @JsonProperty("Other")
+        OTHER("Other");
+
+        private final String label;
+    }
 
     @JsonUnwrapped(prefix = "disputingFee")
     @Builder.Default

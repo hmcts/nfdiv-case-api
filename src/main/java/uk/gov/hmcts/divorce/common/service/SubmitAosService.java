@@ -52,4 +52,15 @@ public class SubmitAosService {
             sendAosResponseLetterPackToApplicant
         ).run(caseDetails);
     }
+
+    public CaseDetails<CaseData, State> submitOfflineAos(final CaseDetails<CaseData, State> caseDetails) {
+        return caseTasks(
+            setSubmitAosState,
+            setSubmissionAndDueDate,
+            addRespondentAnswersLink,
+            sendCitizenAosNotifications,
+            generateAosResponseLetterDocument,
+            sendAosResponseLetterPackToApplicant
+        ).run(caseDetails);
+    }
 }
