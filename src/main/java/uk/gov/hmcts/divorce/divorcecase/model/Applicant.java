@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 
 import java.util.Objects;
@@ -47,7 +48,10 @@ public class Applicant {
     )
     private String middleName;
 
-    @CCD(label = "Last name")
+    @CCD(
+        label = "Last name",
+        access = {CaseworkerWithCAAAccess.class}
+    )
     private String lastName;
 
     @CCD(
@@ -197,11 +201,11 @@ public class Applicant {
     public String getCorrespondenceAddress() {
         if (isRepresented()) {
             return Stream.of(
-                Optional.ofNullable(solicitor.getOrganisationPolicy())
-                    .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
-                solicitor.getAddress()
-            ).filter(value -> value != null && !value.isEmpty())
-             .collect(joining("\n"));
+                    Optional.ofNullable(solicitor.getOrganisationPolicy())
+                        .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
+                    solicitor.getAddress()
+                ).filter(value -> value != null && !value.isEmpty())
+                .collect(joining("\n"));
         } else if (!isConfidentialContactDetails() && null != address) {
             return Stream.of(
                     address.getAddressLine1(),
