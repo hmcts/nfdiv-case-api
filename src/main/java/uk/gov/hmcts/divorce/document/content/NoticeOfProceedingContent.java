@@ -175,8 +175,12 @@ public class NoticeOfProceedingContent {
         boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline() || caseData.getApplicant1().getEmail() != null;
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
+        final boolean personalServiceMethod = PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod());
+        final boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
+        templateContent.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, personalServiceMethod && isApplicant2Represented);
+
         if (caseData.getApplicant2().isRepresented()) {
-            generateSoleRespondentRepresentedContent(templateContent, caseData);
+            generateSoleRespondentRepresentedContent(templateContent, caseData, personalServiceMethod);
         }
 
         if (!isNull(caseData.getApplication().getReissueDate())) {
@@ -262,31 +266,33 @@ public class NoticeOfProceedingContent {
         }
     }
 
-    private void generateSoleRespondentRepresentedContent(Map<String, Object> templateContent, CaseData caseData) {
+    private void generateSoleRespondentRepresentedContent(Map<String, Object> templateContent,
+                                                          CaseData caseData,
+                                                          boolean personalServiceMethod) {
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
         final Solicitor applicant1Solicitor = applicant1.getSolicitor();
         final Solicitor applicant2Solicitor = caseData.getApplicant2().getSolicitor();
-        final boolean personalServiceMethod = PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod());
 
         templateContent.put(SOLICITOR_NAME, applicant2Solicitor.getName());
         templateContent.put(SOLICITOR_ADDRESS, applicant2Solicitor.getAddress());
 
         templateContent.put(
             SOLICITOR_REFERENCE,
-            isNotEmpty(applicant1Solicitor.getReference()) ? applicant1Solicitor.getReference() : NOT_PROVIDED
+            !isNull(applicant1Solicitor) && isNotEmpty(applicant1Solicitor.getReference())
+                ? applicant1Solicitor.getReference()
+                : NOT_PROVIDED
         );
 
         templateContent.put(
                 SOLICITOR_NAME_WITH_DEFAULT_VALUE,
-            applicant1.isRepresented() ? applicant1Solicitor.getName() : NOT_REPRESENTED
+            !isNull(applicant1Solicitor) && applicant1.isRepresented() ? applicant1Solicitor.getName() : NOT_REPRESENTED
         );
 
         templateContent.put(WHO_APPLIED, applicant1.isRepresented() ? "applicant's solicitor" : "applicant");
 
         templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, !isNull(applicant2Solicitor.getOrganisationPolicy()) ? "Yes" : "No");
 
-        templateContent.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, personalServiceMethod);
         if (personalServiceMethod) {
             templateContent.put(RELATIONS_SOLICITOR, commonContent.getPartner(caseData, applicant2) + "'s solicitor");
         }
