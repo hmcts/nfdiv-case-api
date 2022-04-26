@@ -18,6 +18,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.ofNullable;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 public final class DocumentUtil {
 
@@ -51,7 +56,7 @@ public final class DocumentUtil {
     }
 
     public static boolean documentsWithDocumentType(final List<ListValue<DivorceDocument>> documents,
-                                                       final DocumentType documentType) {
+                                                    final DocumentType documentType) {
 
         return ofNullable(documents)
             .flatMap(Collection::stream)
@@ -73,7 +78,7 @@ public final class DocumentUtil {
     }
 
     public static List<Letter> lettersWithConfidentialDocumentType(final List<ListValue<ConfidentialDivorceDocument>> documents,
-                                                       final ConfidentialDocumentsReceived documentType) {
+                                                                   final ConfidentialDocumentsReceived documentType) {
 
         final AtomicInteger letterIndex = new AtomicInteger();
 
@@ -113,17 +118,14 @@ public final class DocumentUtil {
     }
 
     public static boolean isApplicableForConfidentiality(final DocumentType documentType, final Boolean isApplicant1) {
-        List<DocumentType> documentsForApplicant1 = Lists.newArrayList(
-            DocumentType.NOTICE_OF_PROCEEDINGS_APP_1
-        );
+        List<DocumentType> documentsForApplicant1 = Lists.newArrayList(NOTICE_OF_PROCEEDINGS_APP_1);
 
-        List<DocumentType> documentsForApplicant2 = Lists.newArrayList(
-            DocumentType.NOTICE_OF_PROCEEDINGS_APP_2
-        );
+        List<DocumentType> documentsForApplicant2 = Lists.newArrayList(NOTICE_OF_PROCEEDINGS_APP_2);
 
         List<DocumentType> documentsForBothApplicants = Lists.newArrayList(
-            DocumentType.NOTICE_OF_PROCEEDINGS_APP_1,
-            DocumentType.NOTICE_OF_PROCEEDINGS_APP_2
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            GENERAL_LETTER
         );
 
         return isApplicant1 == null ? documentsForBothApplicants.contains(documentType)
@@ -143,13 +145,19 @@ public final class DocumentUtil {
     }
 
     public static boolean isConfidential(final CaseData caseData, final DocumentType documentType) {
-        return DocumentType.NOTICE_OF_PROCEEDINGS_APP_1.equals(documentType)
-            ? caseData.getApplicant1().isConfidentialContactDetails()
-            : caseData.getApplicant2().isConfidentialContactDetails();
+        if (NOTICE_OF_PROCEEDINGS_APP_1.equals(documentType)
+            || GENERAL_LETTER.equals(documentType) && APPLICANT.equals(caseData.getGeneralLetter().getGeneralLetterParties())) {
+            return caseData.getApplicant1().isConfidentialContactDetails();
+        } else if (NOTICE_OF_PROCEEDINGS_APP_2.equals(documentType)
+            || GENERAL_LETTER.equals(documentType) && RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())) {
+            return caseData.getApplicant2().isConfidentialContactDetails();
+        } else {
+            return false;
+        }
     }
 
     public static ConfidentialDocumentsReceived getConfidentialDocumentType(final DocumentType documentType) {
-        return DocumentType.NOTICE_OF_PROCEEDINGS_APP_1.equals(documentType)
+        return NOTICE_OF_PROCEEDINGS_APP_1.equals(documentType)
             ? ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1
             : ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2;
     }

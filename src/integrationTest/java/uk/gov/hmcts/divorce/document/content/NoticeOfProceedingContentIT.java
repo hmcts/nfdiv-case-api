@@ -85,6 +85,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.EN
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HAS_CASE_BEEN_REISSUED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_COURT_SERVICE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_BASED_IN_UK;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
@@ -198,16 +199,109 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
+        expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
 
+    @Test
+    public void shouldSuccessfullyApplyContentFromCaseDataForPersonalServiceApplicant2Represented() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .build()
+        );
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .name("App2 Sol")
+                .address("10 the street the town UK")
+                .build()
+        );
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
+
+        var ctscContactDetails = CtscContactDetails
+            .builder()
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .poBox("PO Box 13226")
+            .town("Harlow")
+            .postcode("CM20 9UG")
+            .phoneNumber("0300 303 0642")
+            .build();
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
+        expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
+        expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
+        expectedEntries.put(ISSUE_DATE, "18 June 2021");
+        expectedEntries.put(DUE_DATE, "19 June 2021");
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
+        expectedEntries.put(RELATION, "wife");
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS, DIVORCE_PROCESS);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, YOUR_DIVORCE);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_URL, DIVORCE_URL);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, DIVORCE_SERVICE);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, THE_DIVORCE_SERVICE);
+        expectedEntries.put(SUBMISSION_RESPONSE_DATE, "6 November 2021");
+        expectedEntries.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, DIVORCE_PAPERS);
+        expectedEntries.put(SERVE_PAPERS_BEFORE_DATE, "16 July 2021");
+        expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
+        expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
+        expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
+        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
+        expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
+        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
+        expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
+        expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
+        expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
+        expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
+        expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(IS_PERSONAL_SERVICE, false);
+        expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
+        expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
+        expectedEntries.put(SOLICITOR_NAME, "App2 Sol");
+        expectedEntries.put(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "Not represented");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street the town UK");
+        expectedEntries.put(SOLICITOR_REFERENCE, "Not provided");
+        expectedEntries.put(WHO_APPLIED, "applicant");
+        expectedEntries.put(SOLICITOR_ADDRESS, "10 the street the town UK");
+        expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
+
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingNoticeOfProceedingDocumentForDissolution() {
@@ -285,10 +379,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, TO_END_THEIR_CIVIL_PARTNERSHIP);
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
+        expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
@@ -387,6 +483,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "Yes");
         expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
@@ -493,6 +590,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(REISSUE_DATE, "18 June 2021");
         expectedEntries.put(HAS_CASE_BEEN_REISSUED, true);
         expectedEntries.put(IS_COURT_SERVICE, false);
+        expectedEntries.put(IS_PERSONAL_SERVICE, true);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
@@ -593,6 +691,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
         expectedEntries.put(IS_COURT_SERVICE, true);
+        expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);

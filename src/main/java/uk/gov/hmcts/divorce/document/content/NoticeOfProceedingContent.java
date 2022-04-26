@@ -97,6 +97,7 @@ public class NoticeOfProceedingContent {
     public static final String HAS_CASE_BEEN_REISSUED = "hasCaseBeenReissued";
     public static final String REISSUE_DATE = "reissueDate";
     public static final String IS_COURT_SERVICE = "isCourtService";
+    public static final String IS_PERSONAL_SERVICE = "isPersonalService";
     public static final String ACCESS_CODE = "accessCode";
     public static final String URL_TO_LINK_CASE = "linkCaseUrl";
     public static final String RELATIONS_SOLICITOR = "relationsSolicitor";
@@ -174,8 +175,12 @@ public class NoticeOfProceedingContent {
         boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline() || caseData.getApplicant1().getEmail() != null;
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
+        final boolean personalServiceMethod = PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod());
+        final boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
+        templateContent.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, personalServiceMethod && isApplicant2Represented);
+
         if (caseData.getApplicant2().isRepresented()) {
-            generateSoleRespondentRepresentedContent(templateContent, caseData);
+            generateSoleRespondentRepresentedContent(templateContent, caseData, personalServiceMethod);
         }
 
         if (!isNull(caseData.getApplication().getReissueDate())) {
@@ -196,6 +201,7 @@ public class NoticeOfProceedingContent {
         templateContent.put(CAN_SERVE_BY_EMAIL, !caseData.getApplicant1().isOffline() && !caseData.getApplicant2().isBasedOverseas());
 
         templateContent.put(IS_COURT_SERVICE, COURT_SERVICE.equals(caseData.getApplication().getServiceMethod()));
+        templateContent.put(IS_PERSONAL_SERVICE, caseData.getApplication().isPersonalServiceMethod());
         templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateContent.put(URL_TO_LINK_CASE,
             config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
@@ -260,19 +266,22 @@ public class NoticeOfProceedingContent {
         }
     }
 
-    private void generateSoleRespondentRepresentedContent(Map<String, Object> templateContent, CaseData caseData) {
+    private void generateSoleRespondentRepresentedContent(Map<String, Object> templateContent,
+                                                          CaseData caseData,
+                                                          boolean personalServiceMethod) {
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
         final Solicitor applicant1Solicitor = applicant1.getSolicitor();
         final Solicitor applicant2Solicitor = caseData.getApplicant2().getSolicitor();
-        final boolean personalServiceMethod = PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod());
 
         templateContent.put(SOLICITOR_NAME, applicant2Solicitor.getName());
         templateContent.put(SOLICITOR_ADDRESS, applicant2Solicitor.getAddress());
 
         templateContent.put(
             SOLICITOR_REFERENCE,
-            isNotEmpty(applicant1Solicitor.getReference()) ? applicant1Solicitor.getReference() : NOT_PROVIDED
+            !isNull(applicant1Solicitor) && isNotEmpty(applicant1Solicitor.getReference())
+                ? applicant1Solicitor.getReference()
+                : NOT_PROVIDED
         );
 
         templateContent.put(
@@ -284,9 +293,8 @@ public class NoticeOfProceedingContent {
 
         templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, !isNull(applicant2Solicitor.getOrganisationPolicy()) ? "Yes" : "No");
 
-        templateContent.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, personalServiceMethod);
         if (personalServiceMethod) {
-            templateContent.put(RELATIONS_SOLICITOR, commonContent.getPartnersSolicitor(caseData, applicant2));
+            templateContent.put(RELATIONS_SOLICITOR, commonContent.getPartner(caseData, applicant2) + "'s solicitor");
         }
     }
 }

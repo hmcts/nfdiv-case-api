@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTIO
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPLICANT2_REQUESTED_CHANGES;
@@ -208,6 +209,51 @@ class Applicant2RequestChangesNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT2_REQUEST_CHANGES),
+            any(),
+            eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2WhenApplicant1RepresentedWithDivorceContent() {
+        CaseData data = caseData();
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.setApplicant2(getApplicant(Gender.FEMALE));
+        data.setCaseInvite(new CaseInvite(TEST_USER_EMAIL, null, null));
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES),
+            any(),
+            eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2WhenApplicant1RepresentedWithDissolutionContent() {
+        CaseData data = caseData();
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        data.setApplicant2(getApplicant(Gender.MALE));
+        data.setCaseInvite(new CaseInvite(TEST_USER_EMAIL, null, null));
+
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateVars);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES),
             any(),
             eq(ENGLISH)
         );
