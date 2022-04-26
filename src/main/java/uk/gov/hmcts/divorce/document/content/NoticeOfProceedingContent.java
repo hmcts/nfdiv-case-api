@@ -286,7 +286,7 @@ public class NoticeOfProceedingContent {
 
         templateContent.put(
                 SOLICITOR_NAME_WITH_DEFAULT_VALUE,
-            applicant1.isRepresented() ? applicant1Solicitor.getName() : NOT_REPRESENTED
+            !isNull(applicant1Solicitor) && applicant1.isRepresented() ? applicant1Solicitor.getName() : NOT_REPRESENTED
         );
 
         templateContent.put(WHO_APPLIED, applicant1.isRepresented() ? "applicant's solicitor" : "applicant");
