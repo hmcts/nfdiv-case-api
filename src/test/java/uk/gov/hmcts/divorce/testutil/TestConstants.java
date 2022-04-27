@@ -14,6 +14,7 @@ public final class TestConstants {
     public static final String TEST_APP2_FIRST_NAME = "test_app2_first_name";
     public static final String TEST_APP2_MIDDLE_NAME = "test_app2_middle_name";
     public static final String TEST_APP2_LAST_NAME = "test_app2_last_name";
+    public static final String TEST_REFERENCE = "test_ref";
 
     public static final String APPLICANT_2_FIRST_NAME = "applicant_2_first_name";
     public static final String APPLICANT_2_LAST_NAME = "applicant_2last_name";
@@ -60,6 +61,7 @@ public final class TestConstants {
     public static final String BEARER = "Bearer ";
     public static final String TEST_ORG_ID = "ABC123";
     public static final String TEST_ORG_NAME = "Test Organisation";
+    public static final String PROFESSIONAL_USERS_SIGN_IN_URL = "professional-sign-in-url/1234567890123456";
 
     public static final String SOLICITOR_MID_EVENT_RESPONSE = "classpath:solicitor-mid-event-response.json";
     public static final String SOLICITOR_MID_EVENT_ERROR = "classpath:solicitor-mid-event-error-response.json";

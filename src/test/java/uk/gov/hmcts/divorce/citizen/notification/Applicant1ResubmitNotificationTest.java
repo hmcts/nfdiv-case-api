@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_SOLICITOR_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
@@ -201,7 +202,7 @@ class Applicant1ResubmitNotificationTest {
             Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).build()
         );
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn("professional-sign-in-url/1234567890123456");
+        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
         notification.sendToApplicant2Solicitor(data, 1234567890123456L);
 
@@ -212,7 +213,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
-                hasEntry(SIGN_IN_URL, "professional-sign-in-url/1234567890123456")
+                hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
             eq(ENGLISH)
         );
@@ -226,7 +227,7 @@ class Applicant1ResubmitNotificationTest {
             Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).build()
         );
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn("professional-sign-in-url/1234567890123456");
+        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
         notification.sendToApplicant2Solicitor(data, 1234567890123456L);
 
@@ -237,7 +238,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
-                hasEntry(SIGN_IN_URL, "professional-sign-in-url/1234567890123456")
+                hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
             eq(ENGLISH)
         );
