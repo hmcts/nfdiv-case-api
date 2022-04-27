@@ -6,8 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.citizen.notification.SoleApplicationDisputedNotification;
-import uk.gov.hmcts.divorce.citizen.notification.SoleApplicationNotDisputedNotification;
+import uk.gov.hmcts.divorce.common.notification.SoleApplicationDisputedNotification;
+import uk.gov.hmcts.divorce.common.notification.SoleApplicationNotDisputedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -19,7 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DIS
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
 
 @ExtendWith(MockitoExtension.class)
-class SendCitizenAosNotificationsTest {
+class SendAosNotificationsTest {
 
     @Mock
     private SoleApplicationNotDisputedNotification soleApplicationNotDisputedNotification;
@@ -31,7 +31,7 @@ class SendCitizenAosNotificationsTest {
     private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
-    private SendCitizenAosNotifications sendCitizenAosNotifications;
+    private SendAosNotifications sendAosNotifications;
 
     @Test
     void shouldSendDisputedNotifications() {
@@ -46,7 +46,7 @@ class SendCitizenAosNotificationsTest {
         caseDetails.setId(1L);
         caseDetails.setData(caseData);
 
-        sendCitizenAosNotifications.apply(caseDetails);
+        sendAosNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(soleApplicationDisputedNotification, caseData, 1L);
         verifyNoMoreInteractions(notificationDispatcher);
@@ -65,7 +65,7 @@ class SendCitizenAosNotificationsTest {
         caseDetails.setId(1L);
         caseDetails.setData(caseData);
 
-        sendCitizenAosNotifications.apply(caseDetails);
+        sendAosNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(soleApplicationNotDisputedNotification, caseData, 1L);
         verifyNoMoreInteractions(notificationDispatcher);
