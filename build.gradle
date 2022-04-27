@@ -26,8 +26,9 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.7'
   id 'com.github.ben-manes.versions' version '0.41.0'
-  id 'hmcts.ccd.sdk' version '2.2.1'
+  id 'hmcts.ccd.sdk' version '2.3.1'
   id 'com.github.hmcts.rse-cft-lib' version '0.15.62'
+
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -422,3 +423,7 @@ tasks.withType(Test).configureEach {
   maxParallelForks = Math.min(Runtime.runtime.availableProcessors().intdiv(2), 4) ?: 1
 }
 
+// exclude the logback binding is coming in via cftlib
+configurations.cftlibTestImplementation {
+  exclude group: 'ch.qos.logback', module: 'logback-classic'
+}
