@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.Permission;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.ORGANISATION_CASE_ACCESS_ADMINISTRATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -26,6 +27,7 @@ public class CaseworkerWithCAAAccess implements HasAccessControl {
         grants.putAll(SOLICITOR, READ);
         grants.putAll(SUPER_USER, READ);
 
+        grants.putAll(CREATOR, CREATE_READ_UPDATE);
         grants.putAll(CASE_WORKER, CREATE_READ_UPDATE);
         grants.putAll(LEGAL_ADVISOR, CREATE_READ_UPDATE);
         grants.putAll(SYSTEMUPDATE, CREATE_READ_UPDATE_DELETE);
