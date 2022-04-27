@@ -226,8 +226,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
             .complex(CaseData::getApplication)
                 .label("Label-CorrectApplicant1SOTDetails",
                 "### ${labelContentApplicantsOrApplicant1s} statement of truth details")
-                .mandatory(Application::getSolSignStatementOfTruth)
                 .mandatory(Application::getApplicant1StatementOfTruth)
+                .mandatory(Application::getSolSignStatementOfTruth)
                 .label("Label-CorrectApplicant2SOTDetails",
                 "### ${labelContentRespondentsOrApplicant2s} statement of truth details", JOINT_APPLICATION)
                 .mandatory(Application::getApplicant2StatementOfTruth, JOINT_APPLICATION)
