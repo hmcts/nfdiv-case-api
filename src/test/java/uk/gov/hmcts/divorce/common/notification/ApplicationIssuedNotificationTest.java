@@ -5,6 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.Address;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -579,6 +581,27 @@ public class ApplicationIssuedNotificationTest {
         );
 
         verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendEmailToSoleRespondentWhenBasedOverseas() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant2().setEmail(TEST_USER_EMAIL);
+        data.getApplicant2().setAddress(AddressGlobalUK.builder()
+            .addressLine1("223b")
+            .addressLine2("Baker Street")
+            .postTown("Tampa")
+            .county("Florida")
+            .country("United States")
+            .build());
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
     }
 
     private Map<String, String> respondentSolicitorTemplateVars() {
