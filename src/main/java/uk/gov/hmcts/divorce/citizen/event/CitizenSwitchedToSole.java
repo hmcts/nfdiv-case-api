@@ -127,7 +127,6 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         caseData.getApplication().setApplicant2StatementOfTruth(null);
         caseData.getApplication().setApplicant2AgreeToReceiveEmails(null);
         caseData.getApplication().setApplicant2CannotUploadSupportingDocument(null);
-        caseData.getApplication().setApplicant2CannotUpload(null);
         caseData.getApplication().setApplicant2ConfirmApplicant1Information(null);
         caseData.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation(null);
         caseData.getApplication().setApplicant2ReminderSent(null);

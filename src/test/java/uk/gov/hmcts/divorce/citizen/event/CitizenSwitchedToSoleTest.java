@@ -40,7 +40,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSole.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
@@ -275,7 +274,6 @@ class CitizenSwitchedToSoleTest {
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
         caseData.getApplication().setApplicant2AgreeToReceiveEmails(YES);
         caseData.getApplication().setApplicant2CannotUploadSupportingDocument(new HashSet<>());
-        caseData.getApplication().setApplicant2CannotUpload(NO);
         caseData.getApplication().setApplicant2ConfirmApplicant1Information(YES);
         caseData.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct");
         caseData.getApplication().setApplicant2ReminderSent(YES);
@@ -311,7 +309,7 @@ class CitizenSwitchedToSoleTest {
         assertThat(response.getData().getApplication().getApplicant2StatementOfTruth()).isNull();
         assertThat(response.getData().getApplication().getApplicant2AgreeToReceiveEmails()).isNull();
         assertThat(response.getData().getApplication().getApplicant2CannotUploadSupportingDocument()).isNull();
-        assertThat(response.getData().getApplication().getApplicant2CannotUpload()).isNull();
+        assertThat(response.getData().getApplication().getApplicant2CannotUploadSupportingDocument()).isNull();
         assertThat(response.getData().getApplication().getApplicant2ConfirmApplicant1Information()).isNull();
         assertThat(response.getData().getApplication().getApplicant2ReminderSent()).isNull();
 
@@ -368,13 +366,13 @@ class CitizenSwitchedToSoleTest {
 
         caseData.getApplication().getJurisdiction().setApplicant1Domicile(YesOrNo.YES);
         caseData.getApplication().getJurisdiction().setApplicant2Domicile(YesOrNo.YES);
-        caseData.getApplication().getJurisdiction().setResidualEligible(NO);
+        caseData.getApplication().getJurisdiction().setResidualEligible(YesOrNo.NO);
         caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_RESIDENT_JOINT));
-        caseData.getApplication().getJurisdiction().setApplicant1Residence(NO);
-        caseData.getApplication().getJurisdiction().setApplicant2Residence(NO);
-        caseData.getApplication().getJurisdiction().setBothLastHabituallyResident(NO);
-        caseData.getApplication().getJurisdiction().setApp1HabituallyResLastTwelveMonths(NO);
-        caseData.getApplication().getJurisdiction().setApp1HabituallyResLastSixMonths(NO);
+        caseData.getApplication().getJurisdiction().setApplicant1Residence(YesOrNo.NO);
+        caseData.getApplication().getJurisdiction().setApplicant2Residence(YesOrNo.NO);
+        caseData.getApplication().getJurisdiction().setBothLastHabituallyResident(YesOrNo.NO);
+        caseData.getApplication().getJurisdiction().setApp1HabituallyResLastTwelveMonths(YesOrNo.NO);
+        caseData.getApplication().getJurisdiction().setApp1HabituallyResLastSixMonths(YesOrNo.NO);
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(caseId).build();
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");

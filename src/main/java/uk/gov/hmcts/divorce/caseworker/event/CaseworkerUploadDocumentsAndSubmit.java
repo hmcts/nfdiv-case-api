@@ -18,7 +18,6 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -130,6 +129,5 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
     private void allowCaseToBeSubmitted(final Application application) {
         application.setApplicant1WantsToHavePapersServedAnotherWay(null);
         application.setApplicant1CannotUploadSupportingDocument(null);
-        application.setApplicant1CannotUpload(NO);
     }
 }
