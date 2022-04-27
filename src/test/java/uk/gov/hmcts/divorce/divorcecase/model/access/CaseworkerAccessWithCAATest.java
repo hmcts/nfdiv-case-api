@@ -13,6 +13,7 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.ORGANISATION_CASE_ACCESS_ADMINISTRATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -44,7 +45,10 @@ class CaseworkerAccessWithCAATest {
                 entry(SYSTEMUPDATE, D),
                 entry(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, C),
                 entry(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, R),
-                entry(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, U)
+                entry(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, U),
+                entry(CREATOR, C),
+                entry(CREATOR, R),
+                entry(CREATOR, U)
             );
     }
 }
