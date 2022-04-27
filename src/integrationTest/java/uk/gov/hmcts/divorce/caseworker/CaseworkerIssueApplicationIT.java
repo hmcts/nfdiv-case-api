@@ -366,7 +366,7 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
-    void shouldSendApplicationIssueNotificationsForSoleCitizenApplicationWhenRespondentIsOverseasBased() throws Exception {
+    void shouldSendApplicationIssueNotificationToApplicant1ForSoleCitizenApplicationWhenRespondentIsOverseasBased() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
@@ -416,13 +416,6 @@ public class CaseworkerIssueApplicationIT {
             .sendEmail(
                 eq(TEST_USER_EMAIL),
                 eq(OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED),
-                anyMap(),
-                eq(ENGLISH));
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_APPLICANT_2_USER_EMAIL),
-                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
                 anyMap(),
                 eq(ENGLISH));
 
