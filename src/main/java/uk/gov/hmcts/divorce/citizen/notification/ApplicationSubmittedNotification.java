@@ -69,7 +69,7 @@ public class ApplicationSubmittedNotification implements ApplicantNotification {
             log.info("Sending joint application submitted notification to applicant 1 solicitor for case : {}", caseId);
 
             notificationService.sendEmail(
-                caseData.getApplicant1().getSolicitor().getEmail(),
+                solicitorEmail,
                 SOLICITOR_JOINT_APPLICATION_SUBMITTED,
                 solicitorTemplateVars(caseData, caseId, caseData.getApplicant1()),
                 caseData.getApplicant1().getLanguagePreference()
@@ -85,7 +85,7 @@ public class ApplicationSubmittedNotification implements ApplicantNotification {
             log.info("Sending joint application submitted notification to applicant 2 solicitor for case : {}", caseId);
 
             notificationService.sendEmail(
-                caseData.getApplicant2().getSolicitor().getEmail(),
+                solicitorEmail,
                 SOLICITOR_JOINT_APPLICATION_SUBMITTED,
                 solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
                 caseData.getApplicant2().getLanguagePreference()
