@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendAosResponseLetterPackToA
 import uk.gov.hmcts.divorce.common.service.task.AddRespondentAnswersLink;
 import uk.gov.hmcts.divorce.common.service.task.GenerateAosResponseLetterDocument;
 import uk.gov.hmcts.divorce.common.service.task.GenerateRespondentAnswersDoc;
-import uk.gov.hmcts.divorce.common.service.task.SendCitizenAosNotifications;
+import uk.gov.hmcts.divorce.common.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.common.service.task.SetSubmissionAndDueDate;
 import uk.gov.hmcts.divorce.common.service.task.SetSubmitAosState;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -33,7 +33,7 @@ public class SubmitAosService {
     private AddRespondentAnswersLink addRespondentAnswersLink;
 
     @Autowired
-    private SendCitizenAosNotifications sendCitizenAosNotifications;
+    private SendAosNotifications sendAosNotifications;
 
     @Autowired
     private GenerateAosResponseLetterDocument generateAosResponseLetterDocument;
@@ -47,7 +47,7 @@ public class SubmitAosService {
             setSubmissionAndDueDate,
             generateRespondentAnswersDoc,
             addRespondentAnswersLink,
-            sendCitizenAosNotifications,
+            sendAosNotifications,
             generateAosResponseLetterDocument,
             sendAosResponseLetterPackToApplicant
         ).run(caseDetails);
