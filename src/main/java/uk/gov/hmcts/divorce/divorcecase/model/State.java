@@ -252,13 +252,6 @@ public enum State {
     ConditionalOrderRefused("ConditionalOrderRefused"),
 
     @CCD(
-        name = "Disputed divorce",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
-    )
-    Disputed("Disputed"),
-
-    @CCD(
         name = "Final order complete",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
