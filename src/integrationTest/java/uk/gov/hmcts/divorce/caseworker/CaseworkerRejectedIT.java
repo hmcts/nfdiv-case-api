@@ -19,11 +19,17 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
+import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,6 +40,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejected.CASEWORKER_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -44,6 +52,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -57,6 +67,9 @@ public class CaseworkerRejectedIT {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private CcdAccessService ccdAccessService;
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
@@ -78,8 +91,11 @@ public class CaseworkerRejectedIT {
     }
 
     @Test
-    void givenRejectEventWhenAboutToSubmitCallbackIsInvokedPreviousStateIsSet() throws Exception {
+    void givenRejectEventWhenAboutToSubmitCallbackIsInvokedRemoveApplicantsAndSetPreviousState() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        CaseData caseData = validCaseDataForIssueApplication();
+        caseData.setDivorceUnit(Court.SERVICE_CENTRE);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -87,7 +103,7 @@ public class CaseworkerRejectedIT {
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(
                 objectMapper.writeValueAsString(
-                    callbackRequest(caseDataWithoutDivorceApplication(),
+                    callbackRequest(caseData,
                         CASEWORKER_REJECTED,
                         Submitted.getName())))
             .accept(APPLICATION_JSON))
@@ -97,34 +113,12 @@ public class CaseworkerRejectedIT {
             )
             .andExpect(jsonPath("$.data.previousState")
                 .value(Submitted.getName()));
-    }
 
-
-    private CaseData caseDataWithoutDivorceApplication() {
-        var application = Application.builder()
-            .build();
-
-        return CaseData
-            .builder()
-            .applicant1(getApplicant())
-            .divorceOrDissolution(DIVORCE)
-            .application(application)
-            .divorceUnit(Court.SERVICE_CENTRE)
-            .build();
-    }
-
-    private Applicant getApplicant() {
-        return Applicant.builder()
-            .firstName(TEST_FIRST_NAME)
-            .middleName(TEST_MIDDLE_NAME)
-            .lastName(TEST_LAST_NAME)
-            .email(TEST_USER_EMAIL)
-            .languagePreferenceWelsh(NO)
-            .address(AddressGlobalUK.builder()
-                .addressLine1("line 1")
-                .postTown("town")
-                .postCode("postcode")
-                .build())
-            .build();
+        verify(ccdAccessService).removeUsersWithRole(anyLong(), eq(
+            List.of(
+                CREATOR.getRole(),
+                APPLICANT_2.getRole()
+            )
+        ));
     }
 }
