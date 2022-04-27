@@ -28,7 +28,7 @@ class CaseworkerAccessWithCAATest {
         final SetMultimap<HasRole, Permission> grants = new CaseworkerWithCAAAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(16)
+            .hasSize(19)
             .contains(
                 entry(CITIZEN, R),
                 entry(SOLICITOR, R),
