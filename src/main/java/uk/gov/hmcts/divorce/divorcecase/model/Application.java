@@ -261,13 +261,25 @@ public class Application {
     private YesOrNo app2ContactMethodIsDigital;
 
     @CCD(
-        label = "Applicant 1 cannot upload supporting documents",
+        label = "Supporting documents need posting?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1CannotUpload;
+
+    @CCD(
+        label = "Which documents need posting",
         access = {DefaultAccess.class}
     )
     private Set<DocumentType> applicant1CannotUploadSupportingDocument;
 
     @CCD(
-        label = "Applicant 2 cannot upload supporting documents",
+        label = "Supporting documents need posting?",
+        access = {DefaultAccess.class, Applicant2Access.class}
+    )
+    private YesOrNo applicant2CannotUpload;
+
+    @CCD(
+        label = "Which documents need posting",
         access = {DefaultAccess.class, Applicant2Access.class}
     )
     private Set<DocumentType> applicant2CannotUploadSupportingDocument;

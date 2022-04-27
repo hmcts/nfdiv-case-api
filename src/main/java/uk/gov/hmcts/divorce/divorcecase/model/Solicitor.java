@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.OrganisationPolicyAccess;
 
@@ -33,14 +34,14 @@ public class Solicitor {
 
     @CCD(
         label = "Solicitor’s name",
-        access = {DefaultAccess.class, Applicant2Access.class}
+        access = {DefaultAccess.class, Applicant2Access.class, CaseworkerWithCAAAccess.class}
     )
     private String name;
 
     @CCD(
         label = "Solicitor’s reference number",
         hint = "This is your internal reference that your firm uses to identify the case.",
-        access = {DefaultAccess.class, Applicant2Access.class}
+        access = {DefaultAccess.class, Applicant2Access.class, CaseworkerWithCAAAccess.class}
     )
     private String reference;
 
