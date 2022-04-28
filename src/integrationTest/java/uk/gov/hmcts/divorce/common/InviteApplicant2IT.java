@@ -37,12 +37,14 @@ import static uk.gov.hmcts.divorce.common.event.InviteApplicant2.INVITE_APPLICAN
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_APPLICANT1_REPRESENTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_SOLICITOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
@@ -100,6 +102,36 @@ public class InviteApplicant2IT {
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedThenEnsureCorrectEmailSentTpApplicant2WhenApplicant1Represented() throws Exception {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitor(Solicitor.builder().firmName(TEST_SOLICITOR_FIRM_NAME).build());
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, INVITE_APPLICANT_2)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse(!IS_REPRESENTED)));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_APPLICANT1_REPRESENTED),
+                anyMap(),
+                eq(ENGLISH)
+            );
     }
 
     @Test

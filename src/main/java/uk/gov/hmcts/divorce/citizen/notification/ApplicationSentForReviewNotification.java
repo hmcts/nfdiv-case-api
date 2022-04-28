@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
@@ -26,11 +27,13 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_FIRM;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_APPLICANT1_REPRESENTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -72,9 +75,13 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending application sent for review notification to applicant 2 for case : {}", id);
 
+        final EmailTemplateName emailTemplate = caseData.getApplicant1().isRepresented()
+            ? JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_APPLICANT1_REPRESENTED
+            : JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
+
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
-            JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
+            emailTemplate,
             templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), false),
             caseData.getApplicant2().getLanguagePreference()
         );
@@ -99,6 +106,10 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateVars.put(CREATE_ACCOUNT_LINK,
             config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
+
+        if (caseData.getApplicant1().isRepresented()) {
+            templateVars.put(SOLICITOR_FIRM, caseData.getApplicant1().getSolicitor().getFirmName());
+        }
         return templateVars;
     }
 
