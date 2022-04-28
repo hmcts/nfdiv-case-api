@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
-import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSoleApplicant2SolicitorOffline;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 
 import java.time.Clock;
@@ -52,9 +51,6 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
     private NoticeOfProceedingSolicitorContent solicitorTemplateContent;
 
     @Autowired
-    private NoticeOfProceedingSoleApplicant2SolicitorOffline noticeOfProceedingSoleApplicant2SolicitorOffline;
-
-    @Autowired
     private Clock clock;
 
     @Override
@@ -76,8 +72,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
     private void generateSoleNoticeOfProceedings(CaseData caseData, Long caseId) {
         String templateId;
-
-        final Map<String, Object> templateContent;
+        boolean requiresCoverSheet = false;
 
         if (caseData.getApplicant2().isRepresented()) {
             log.info("Generating notice of proceedings for respondent solicitor for case id {} ", caseId);
@@ -86,28 +81,26 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             var hasOrgPolicy = hasSolicitor && caseData.getApplicant2().getSolicitor().getOrganisationPolicy() != null;
 
             if (hasOrgPolicy) {
-
-                templateContent = noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1());
                 templateId = NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
             } else {
-
-                templateContent = noticeOfProceedingSoleApplicant2SolicitorOffline.apply(caseData, caseId);
                 templateId = NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
+                requiresCoverSheet = true;
             }
         } else {
             log.info("Generating notice of proceedings for respondent for sole case id {} ", caseId);
 
-            templateId = isNotEmpty(caseData.getApplicant2().getEmail())
-                ? NFD_NOP_R1_SOLE_APP2_CIT_ONLINE
-                : NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
-
-            templateContent = noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1());
+            if (isNotEmpty(caseData.getApplicant2().getEmail())) {
+                templateId = NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
+            } else {
+                templateId = NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
+                requiresCoverSheet = true;
+            }
         }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             NOTICE_OF_PROCEEDINGS_APP_2,
-            templateContent,
+            noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1()),
             caseId,
             templateId,
             caseData.getApplicant2().getLanguagePreference(),
@@ -115,9 +108,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         );
 
         // if not court service or they are offline we need a coversheet
-        if (!caseData.getApplication().isCourtServiceMethod()
-            || templateId.equals(NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE)
-            || templateId.equals(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE)) {
+        if (!caseData.getApplication().isCourtServiceMethod() || requiresCoverSheet) {
 
             log.info("Generating coversheet for sole case id {} ", caseId);
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
