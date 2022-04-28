@@ -11,6 +11,9 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.D;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -28,7 +31,7 @@ class CaseworkerAccessWithCAATest {
         final SetMultimap<HasRole, Permission> grants = new CaseworkerWithCAAAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(19)
+            .hasSize(28)
             .contains(
                 entry(CITIZEN, R),
                 entry(SOLICITOR, R),
@@ -48,7 +51,16 @@ class CaseworkerAccessWithCAATest {
                 entry(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, U),
                 entry(CREATOR, C),
                 entry(CREATOR, R),
-                entry(CREATOR, U)
+                entry(CREATOR, U),
+                entry(APPLICANT_1_SOLICITOR, C),
+                entry(APPLICANT_1_SOLICITOR, R),
+                entry(APPLICANT_1_SOLICITOR, U),
+                entry(APPLICANT_2, C),
+                entry(APPLICANT_2, R),
+                entry(APPLICANT_2, U),
+                entry(APPLICANT_2_SOLICITOR, C),
+                entry(APPLICANT_2_SOLICITOR, R),
+                entry(APPLICANT_2_SOLICITOR, U)
             );
     }
 }
