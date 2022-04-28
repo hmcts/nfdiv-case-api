@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_PAID;
@@ -65,7 +66,7 @@ public class ApplicationSubmittedNotification implements ApplicantNotification {
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
 
         String solicitorEmail = caseData.getApplicant1().getSolicitor().getEmail();
-        if (!caseData.getApplicationType().isSole() && solicitorEmail != null && !solicitorEmail.isBlank()) {
+        if (!caseData.getApplicationType().isSole() && isNotEmpty(solicitorEmail)) {
             log.info("Sending joint application submitted notification to applicant 1 solicitor for case : {}", caseId);
 
             notificationService.sendEmail(
@@ -81,7 +82,7 @@ public class ApplicationSubmittedNotification implements ApplicantNotification {
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
 
         String solicitorEmail = caseData.getApplicant2().getSolicitor().getEmail();
-        if (!caseData.getApplicationType().isSole() && solicitorEmail != null && !solicitorEmail.isBlank()) {
+        if (!caseData.getApplicationType().isSole() && isNotEmpty(solicitorEmail)) {
             log.info("Sending joint application submitted notification to applicant 2 solicitor for case : {}", caseId);
 
             notificationService.sendEmail(
