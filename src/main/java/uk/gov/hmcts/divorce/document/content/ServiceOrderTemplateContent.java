@@ -81,19 +81,17 @@ public class ServiceOrderTemplateContent {
                 serviceApplicationDecisionDate.format(DATE_TIME_FORMATTER));
         }
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .emailAddress(email)
-            .phoneNumber(phoneNumber)
-            .build();
-
         if (NO.equals(alternativeService.getServiceApplicationGranted())) {
             templateContent.put(REFUSAL_REASON, alternativeService.getServiceApplicationRefusalReason());
             templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
             templateContent.put(IS_DIVORCE, caseData.isDivorce() ? YES.getValue() : NO.getValue());
         }
 
-        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+        templateContent.put(CTSC_CONTACT_DETAILS, CtscContactDetails
+            .builder()
+            .emailAddress(email)
+            .phoneNumber(phoneNumber)
+            .build());
 
         return templateContent;
     }
