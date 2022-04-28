@@ -44,13 +44,15 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER))
             .page("documentTypeReceived")
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
+            .showCondition("applicationType=\"soleApplication\"")
             .complex(CaseData::getAcknowledgementOfService)
                 .mandatory(AcknowledgementOfService::getTypeOfDocumentAttached)
                 .mandatory(AcknowledgementOfService::getHowToRespondApplication, "typeOfDocumentAttached=\"D10\"")
             .done()
+            .page("stateToTransitionTo")
+            .showCondition("applicationType=\"jointApplication\" OR typeOfDocumentAttached=\"Other\"")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getStateToTransitionApplicationTo,
-                    "applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
+                .mandatory(Application::getStateToTransitionApplicationTo)
             .done();
     }
 
