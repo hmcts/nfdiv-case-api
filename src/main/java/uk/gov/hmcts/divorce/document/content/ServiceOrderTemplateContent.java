@@ -91,8 +91,6 @@ public class ServiceOrderTemplateContent {
             templateContent.put(REFUSAL_REASON, alternativeService.getServiceApplicationRefusalReason());
             templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
             templateContent.put(IS_DIVORCE, caseData.isDivorce() ? YES.getValue() : NO.getValue());
-            ctscContactDetails.setEmailAddress(
-                caseData.isDivorce() ? CONTACT_DIVORCE_JUSTICE_GOV_UK : CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
         }
 
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
