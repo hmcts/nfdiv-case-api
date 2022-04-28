@@ -58,7 +58,7 @@ public class SubmitAosService {
             setSubmitAosState,
             setSubmissionAndDueDate,
             addRespondentAnswersLink,
-            sendCitizenAosNotifications,
+            sendAosNotifications,
             generateAosResponseLetterDocument,
             sendAosResponseLetterPackToApplicant
         ).run(caseDetails);
