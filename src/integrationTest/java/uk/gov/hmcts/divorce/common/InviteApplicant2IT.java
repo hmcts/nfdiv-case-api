@@ -105,7 +105,7 @@ public class InviteApplicant2IT {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenEnsureCorrectEmailSentTpApplicant2WhenApplicant1Represented() throws Exception {
+    public void givenValidCaseDataWhenCallbackIsInvokedThenEnsureCorrectEmailSentToApplicant2WhenApplicant1Represented() throws Exception {
         CaseData data = validJointApplicant1CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
