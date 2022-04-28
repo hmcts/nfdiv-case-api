@@ -5,9 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -15,6 +17,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,10 +31,9 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_WHEN_APPLICANT1ISREPRESENTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.*;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
@@ -95,6 +97,32 @@ class ApplicationRemindApplicant2NotificationTest {
                 hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL),
                 hasEntry(IS_REMINDER, YES)
             )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+
+
+    @Test
+    void shouldSendEmailToApplicant2WhileInAwaitingApplicant2ResponseStateWhenSendingReminderWhenApp1IsRepresented() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.setDueDate(LOCAL_DATE);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_WHEN_APPLICANT1ISREPRESENTED),
+            anyMap(),
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
