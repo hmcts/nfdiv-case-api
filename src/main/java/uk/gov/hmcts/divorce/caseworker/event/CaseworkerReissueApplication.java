@@ -21,9 +21,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefused;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Disputed;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
@@ -50,7 +50,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .forStates(
                 AwaitingAos, AosDrafted, AosOverdue,
                 Rejected, ConditionalOrderRefused, Withdrawn,
-                Disputed, Holding, AwaitingDocuments, AwaitingService)
+                Holding, AwaitingDocuments, AwaitingService, AwaitingDwpResponse)
             .name("Reissue")
             .description("Application reissued")
             .showSummary()
