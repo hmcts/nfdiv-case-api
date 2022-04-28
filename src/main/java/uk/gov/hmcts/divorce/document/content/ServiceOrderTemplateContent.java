@@ -36,21 +36,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Slf4j
 public class ServiceOrderTemplateContent {
 
-    @Value("${court.locations.serviceCentre.serviceCentreName}")
-    private String serviceCentre;
-
-    @Value("${court.locations.serviceCentre.centreName}")
-    private String centreName;
-
-    @Value("${court.locations.serviceCentre.poBox}")
-    private String poBox;
-
-    @Value("${court.locations.serviceCentre.town}")
-    private String town;
-
-    @Value("${court.locations.serviceCentre.postCode}")
-    private String postcode;
-
     @Value("${court.locations.serviceCentre.email}")
     private String email;
 
@@ -98,12 +83,7 @@ public class ServiceOrderTemplateContent {
 
         var ctscContactDetails = CtscContactDetails
             .builder()
-            .centreName(centreName)
             .emailAddress(email)
-            .serviceCentre(serviceCentre)
-            .poBox(poBox)
-            .town(town)
-            .postcode(postcode)
             .phoneNumber(phoneNumber)
             .build();
 
