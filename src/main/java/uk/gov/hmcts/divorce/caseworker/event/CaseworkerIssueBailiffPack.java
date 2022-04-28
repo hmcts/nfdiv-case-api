@@ -79,9 +79,6 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
             caseId
         );
 
-        // AARON: If Lalita confirms she wants the document added to the doc tab also, then change this method to the
-        // renderDocumentAndUpdateCaseData version. OR check on line 100 where we add the document to the certificate of service,
-        // and also add it to the documents tab.
         var certificateOfServiceDoc = caseDataDocumentService.renderDocument(
             certificateOfServiceContent.apply(caseDataCopy, caseId),
             caseId,
