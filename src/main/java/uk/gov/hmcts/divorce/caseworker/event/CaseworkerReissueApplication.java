@@ -48,7 +48,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .event(CASEWORKER_REISSUE_APPLICATION)
             .forStates(
                 AwaitingAos, AosDrafted, AosOverdue,
-                Rejected, ConditionalOrderRefused, Withdrawn,
+                Rejected, ConditionalOrderRefused,
                 Holding, AwaitingDocuments, AwaitingService)
             .name("Reissue")
             .description("Application reissued")
