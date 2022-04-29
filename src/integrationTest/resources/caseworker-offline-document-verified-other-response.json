@@ -1,0 +1,21 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Gender": "female",
+    "applicant1ContactDetailsType": "public",
+    "applicant1FinancialOrder": "No",
+    "applicant2LegalProceedings": "Yes",
+    "applicant2LegalProceedingsDetails": "some description",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "stateToTransitionApplicationTo": "IssuedToBailiff",
+    "typeOfDocumentAttached": "Other",
+    "dataVersion": 3,
+    "warnings": []
+  },
+  "state": "IssuedToBailiff"
+}
