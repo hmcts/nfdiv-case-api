@@ -13,6 +13,7 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
 
 @Component
 @Slf4j
@@ -55,10 +56,10 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
         }
 
         notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
+            caseData.getApplicant2().getEmail(),
             CITIZEN_APPLICATION_WITHDRAWN,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference()
         );
     }
 }

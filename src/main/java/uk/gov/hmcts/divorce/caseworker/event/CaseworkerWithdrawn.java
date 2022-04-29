@@ -8,11 +8,13 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.notification.ApplicationWithdrawnNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
@@ -32,6 +34,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_WITHDRAWN = "caseworker-withdrawn";
+
+    @Autowired
+    private ApplicationWithdrawnNotification applicationWithdrawnNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Autowired
     private CcdAccessService ccdAccessService;
@@ -69,6 +77,8 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
         removeSolicitorOrganisationPolicy(caseData.getApplicant2());
 
         ccdAccessService.removeUsersWithRole(details.getId(), roles);
+
+        notificationDispatcher.send(applicationWithdrawnNotification, caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
