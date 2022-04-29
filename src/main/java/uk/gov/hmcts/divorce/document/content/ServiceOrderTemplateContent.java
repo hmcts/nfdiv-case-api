@@ -63,7 +63,7 @@ public class ServiceOrderTemplateContent {
             serviceApplicationDecisionDate = alternativeService.getServiceApplicationDecisionDate();
         }
 
-        templateContent.put(CASE_REFERENCE, ccdCaseReference);
+        templateContent.put(CASE_REFERENCE, caseData.formatCaseRef(ccdCaseReference));
         templateContent.put(DIVORCE_OR_DISSOLUTION, caseData.isDivorce() ? "divorce process" : "process to end your civil partnership");
         templateContent.put(PETITIONER_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplicant2().getFullName());
