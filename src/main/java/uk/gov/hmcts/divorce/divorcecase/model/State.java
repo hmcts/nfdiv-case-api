@@ -14,6 +14,7 @@ import java.util.EnumSet;
 public enum State {
 
     @CCD(
+        name = "Draft",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class, SolicitorAccess.class}
     )
