@@ -13,7 +13,6 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
 
 @Component
 @Slf4j
@@ -30,7 +29,8 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Sending application withdrawn notification to applicant 1 for: {}", id);
-        final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+        final Map<String, String> templateVars =
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(IS_RESPONDENT, NO);
         templateVars.put(RESPONDENT_PARTNER, "");
 
@@ -45,7 +45,8 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
-        final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+        final Map<String, String> templateVars =
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
 
         if (caseData.getApplicationType().isSole()) {
             templateVars.put(IS_RESPONDENT, YES);
