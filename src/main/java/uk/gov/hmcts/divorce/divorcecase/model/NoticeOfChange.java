@@ -44,7 +44,7 @@ public class NoticeOfChange {
         @JsonProperty("applicant1")
         APPLICANT_1("Applicant 1"),
         @JsonProperty("applicant2")
-        APPLICANT_2("Applicant 2");
+        APPLICANT_2("Respondent / Applicant 2");
 
         private final String label;
     }
