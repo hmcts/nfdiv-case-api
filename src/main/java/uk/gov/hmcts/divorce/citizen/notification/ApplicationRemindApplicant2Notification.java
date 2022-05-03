@@ -12,10 +12,15 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.notification.CommonContent.*;
+import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_WHEN_APPLICANT1ISREPRESENTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 
 @Component
 @Slf4j
@@ -59,7 +64,11 @@ public class ApplicationRemindApplicant2Notification implements ApplicantNotific
 
     }
 
-    private Map<String, String> citizenTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, boolean isReminder) {
+    private Map<String, String> citizenTemplateVars(CaseData caseData,
+                                                    Long id,
+                                                    Applicant applicant,
+                                                    Applicant partner,
+                                                    boolean isReminder) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(IS_REMINDER, isReminder ? YES : NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
