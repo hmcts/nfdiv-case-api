@@ -11,11 +11,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.io.File;
@@ -109,7 +112,15 @@ public class InviteApplicant2IT {
         CaseData data = validJointApplicant1CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
-        data.getApplicant1().setSolicitor(Solicitor.builder().firmName(TEST_SOLICITOR_FIRM_NAME).build());
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .organisationPolicy(
+                OrganisationPolicy.<UserRole>builder()
+                    .organisation(
+                        Organisation.builder()
+                            .organisationName(TEST_SOLICITOR_FIRM_NAME)
+                            .build())
+                    .build())
+            .build());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

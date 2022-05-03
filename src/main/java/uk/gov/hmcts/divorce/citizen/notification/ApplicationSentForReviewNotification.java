@@ -108,7 +108,8 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
             config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
 
         if (caseData.getApplicant1().isRepresented()) {
-            templateVars.put(SOLICITOR_FIRM, caseData.getApplicant1().getSolicitor().getFirmName());
+            templateVars.put(SOLICITOR_FIRM,
+                caseData.getApplicant1().getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationName());
         }
         return templateVars;
     }

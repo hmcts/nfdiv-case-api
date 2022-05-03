@@ -5,12 +5,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -114,7 +117,15 @@ class ApplicationSentForReviewNotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
-        data.getApplicant1().setSolicitor(Solicitor.builder().firmName(TEST_SOLICITOR_FIRM_NAME).build());
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .organisationPolicy(
+                OrganisationPolicy.<UserRole>builder()
+                    .organisation(
+                        Organisation.builder()
+                            .organisationName(TEST_SOLICITOR_FIRM_NAME)
+                            .build())
+                    .build())
+            .build());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
