@@ -3,24 +3,38 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.common.service.SubmitAosService;
+import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
+import static uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService.OfflineDocumentReceived.AOS_D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService.OfflineDocumentReceived.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerOfflineDocumentVerifiedTest {
+
+    @Mock
+    private SubmitAosService submitAosService;
 
     @InjectMocks
     private CaseworkerOfflineDocumentVerified caseworkerOfflineDocumentVerified;
@@ -37,11 +51,42 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
-    void shouldSetStateToUserValueProvided() {
+    void shouldSetStateToHoldingIfD10DocumentSelected() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .acknowledgementOfService(AcknowledgementOfService.builder()
+                .typeOfDocumentAttached(AOS_D10)
+                .howToRespondApplication(DISPUTE_DIVORCE)
+                .build())
+            .build();
+        details.setData(caseData);
+
+        final CaseDetails<CaseData, State> updatedDetails = new CaseDetails<>();
+        updatedDetails.setData(CaseData.builder()
+            .applicant2(Applicant.builder()
+                .build())
+            .build());
+        updatedDetails.setState(Holding);
+
+        when(submitAosService.submitOfflineAos(details)).thenReturn(updatedDetails);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        verify(submitAosService).submitOfflineAos(details);
+        assertThat(response.getState().getName()).isEqualTo(Holding.getName());
+        assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
+    }
+
+    @Test
+    void shouldSetStateToUserValueProvidedIfTypeOfDocumentSelectedIsOther() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         CaseData caseData = CaseData.builder()
             .application(Application.builder()
                 .stateToTransitionApplicationTo(AwaitingAmendedApplication)
+                .build())
+            .acknowledgementOfService(AcknowledgementOfService.builder()
+                .typeOfDocumentAttached(OTHER)
                 .build())
             .build();
         details.setData(caseData);

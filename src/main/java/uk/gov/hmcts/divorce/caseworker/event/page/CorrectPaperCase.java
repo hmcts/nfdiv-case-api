@@ -36,6 +36,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
     private static final String APPLICANT_2_SOLICITOR_REPRESENTED_YES = "applicant2SolicitorRepresented=\"Yes\"";
     private static final String DIVORCE_APPLICATION = "divorceOrDissolution = \"divorce\"";
     private static final String DISSOLUTION_APPLICATION = "divorceOrDissolution = \"dissolution\"";
+    private static final String JOINT_APPLICATION_APP2_REPRESENTED
+        = "applicationType=\"jointApplication\" AND applicant2SolicitorRepresented=\"Yes\"";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -233,7 +235,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Application::getApplicant2StatementOfTruth, JOINT_APPLICATION)
                 .mandatory(Application::getApplicant2SolSignStatementOfTruth, JOINT_APPLICATION)
                 .mandatory(Application::getApplicant2SolStatementOfReconciliationName, JOINT_APPLICATION)
-                .mandatory(Application::getApplicant2SolStatementOfReconciliationFirm, JOINT_APPLICATION)
+                .mandatory(Application::getApplicant2SolStatementOfReconciliationFirm, JOINT_APPLICATION_APP2_REPRESENTED)
             .done();
     }
 
