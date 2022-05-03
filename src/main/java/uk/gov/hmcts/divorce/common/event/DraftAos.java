@@ -18,10 +18,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -56,7 +58,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(DRAFT_AOS)
-            .forStateTransition(AwaitingAos, AosDrafted)
+            .forStateTransition(EnumSet.of(AwaitingAos, AosOverdue), AosDrafted)
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
