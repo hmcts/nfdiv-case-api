@@ -182,7 +182,6 @@ public class ApplicationIssuedNotificationTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant2().setEmail(null);
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
@@ -215,7 +214,6 @@ public class ApplicationIssuedNotificationTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setDivorceOrDissolution(DISSOLUTION);
         data.setDueDate(LocalDate.now().plusDays(141));
-        data.getApplication().setIssueDate(LocalDate.now());
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant2().setEmail(null);
 
