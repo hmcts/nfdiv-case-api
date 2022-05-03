@@ -3,21 +3,38 @@ ccd:
     enabled: true
   elastic:
     enabled: true
+  xui:
+    enabled: true
+idam-pr:
+  enabled: true
+redis:
+  enabled: true
 
 java:
-  # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
   environment:
-    CASE_DATA_STORE_BASEURL: "http://localhost:4452"
-    CITIZEN_UPDATE_CASE_STATE_ENABLED: true
     BOOT_WITH_CCD: true
     CFT_LIB_NO_DOCKER: true
     CFT_LIB_DB_HOST: "{{ .Release.Name }}-postgresql"
+    ROLE_ASSIGNMENT_URL: http://localhost:4096
+    CASE_DATA_STORE_BASEURL: http://localhost:4452
+    IDAM_API_URL_BASE: https://idam-api.aat.platform.hmcts.net
+    IDAM_API_BASEURL: https://idam-api.aat.platform.hmcts.net
+    IDAM_API_BASE_URL: https://idam-api.aat.platform.hmcts.net
+    IDAM_USER_URL: https://idam-api.aat.platform.hmcts.net
+    IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+    IDAM_S2S-AUTH_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+    CASE_DOCUMENT_AM_URL: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
+    S2S_AUTHORISED_SERVICES: ccd_definition,ccd_data,xui_webapp,nfdiv_case_api,ccd_gw,divorce_frontend
+    CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES: nfdiv_case_api
+    CCD_DOCUMENT_URL_PATTERN: .*
+    ROLE_ASSIGNMENT_S2S_AUTHORISED_SERVICES: ccd_gw,am_role_assignment_service,am_org_role_mapping_service,xui_webapp,aac_manage_case_assignment,ccd_data,nfdiv_case_api
+    DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,fpl_case_service,ccd_data,ccd_ps,divorce_frontend,payment-api,xui_webapp,nfdiv_case_api,ccd_case_document_am_api,am_role_assignment_service
+    CITIZEN_UPDATE_CASE_STATE_ENABLED: true
   keyVaults:
     nfdiv:
       secrets:
-        - name: nfdiv-case-api-dot-env
         - name: AppInsightsInstrumentationKey-Preview
           alias: APP_INSIGHTS_KEY
         - name: uk-gov-notify-api-key
@@ -30,6 +47,18 @@ java:
           alias: IDAM_SYSTEM_UPDATE_USERNAME
         - name: idam-systemupdate-password
           alias: IDAM_SYSTEM_UPDATE_PASSWORD
+    ccd:
+      secrets:
+        - name: ccd-data-s2s-secret
+          alias: DATA_STORE_IDAM_KEY
+        - name: ccd-definition-s2s-secret
+          alias: DEFINITION_STORE_IDAM_KEY
+        - name: idam-data-store-system-user-username
+          alias: IDAM_DATA_STORE_SYSTEM_USER_USERNAME
+        - name: idam-data-store-system-user-password
+          alias: IDAM_DATA_STORE_SYSTEM_USER_PASSWORD
+        - name: idam-data-store-client-secret
+          alias: IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET
 
 postgresql:
   persistence:
@@ -47,40 +76,55 @@ postgresql:
   postgresqlPassword: postgres
   postgresqlDatabase: ccd
 
-#elasticsearch:
-#  clusterName: "es"
-#  imageTag: "6.4.2"
-#  replicas: 1
-#  minimumMasterNodes: 1
-#  antiAffinity: "soft"
-#  esJavaOpts: "-Xmx512m -Xms512m"
-#  persistence:
-#    enabled: false
-#  ingress:
-#    enabled: true
-#    annotations:
-#      kubernetes.io/ingress.class: traefik
-#    path: /
-#    hosts:
-#      - ""
-#
-#logstash:
-#  image:
-#    repository: hmctspublic.azurecr.io/ccd/logstash
-#    tag: latest
-#    pullPolicy: IfNotPresent
-#  logstashJavaOpts: -Xmx1g -Xms512M
-#  persistence:
-#    enabled: false
-#  volumeMounts:
-#    - name: pipeline
-#      mountPath: /usr/share/logstash/files # hack to prevent override of default pipeline in the custom image hmcts/ccd-logstash
-#  elasticsearch:
-#    host: "{{ .Release.Name }}-es-master"
-#    port: 9200
-#  configTpl:
-#    xpack.monitoring.enabled: "false"
-#    db.url: "jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/data-store?stringtype=unspecified"
-#    db.user: "hmcts"
-#    db.pwd: "hmcts"
-#    es.data.nodes.url: "http://{{ .Release.Name }}-es-master:9200"
+elasticsearch:
+  clusterName: "es"
+  imageTag: "6.4.2"
+  replicas: 1
+  minimumMasterNodes: 1
+  antiAffinity: "soft"
+  esJavaOpts: "-Xmx512m -Xms512m"
+  persistence:
+    enabled: false
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: traefik
+    path: /
+    hosts:
+      - ""
+
+logstash:
+  image:
+    repository: hmctspublic.azurecr.io/ccd/logstash
+    tag: latest
+    pullPolicy: IfNotPresent
+  logstashJavaOpts: -Xmx1g -Xms512M
+  persistence:
+    enabled: false
+  volumeMounts:
+    - name: pipeline
+      mountPath: /usr/share/logstash/files # hack to prevent override of default pipeline in the custom image hmcts/ccd-logstash
+  elasticsearch:
+    host: "{{ .Release.Name }}-es-master"
+    port: 9200
+  configTpl:
+    xpack.monitoring.enabled: "false"
+    db.url: "jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/data-store?stringtype=unspecified"
+    db.user: "hmcts"
+    db.pwd: "hmcts"
+    es.data.nodes.url: "http://{{ .Release.Name }}-es-master:9200"
+
+xui-webapp:
+  enabled: true
+  nodejs:
+    imagePullPolicy: Always
+    releaseNameOverride: ${SERVICE_NAME}-xui-webapp
+    image: hmctspublic.azurecr.io/xui/webapp:latest
+    ingressHost: xui-${SERVICE_FQDN}
+    environment:
+      SERVICES_CCD_COMPONENT_API: http://${SERVICE_FQDN}
+      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
+      SERVICES_DOCUMENTS_API_V2: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
+      SERVICES_CCD_CASE_ASSIGNMENT_API: http://${SERVICE_FQDN}
+      JURISDICTIONS: DIVORCE
+

@@ -22,3 +22,7 @@ dependencies:
     version: 2.4.1
     repository: '@hmctspublic'
     condition: ccd.elastic.enabled
+  - name: xui-webapp
+    version: ~0.2.28
+    repository: '@hmctspublic'
+    condition: ccd.xui.enabled

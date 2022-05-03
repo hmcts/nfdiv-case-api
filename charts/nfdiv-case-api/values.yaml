@@ -3,6 +3,12 @@ ccd:
     enabled: false
   elastic:
     enabled: false
+  xui:
+    enabled: false
+idam-pr:
+  enabled: false
+redis:
+  enabled: false
 
 java:
   applicationPort: 4013
