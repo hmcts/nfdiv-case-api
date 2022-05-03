@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 public enum ProgressPaperCase implements HasLabel {
 
     @JsonProperty("awaitingDocuments")
-    AWAITING_DOCUMENTS("Awaiting documents"),
+    AWAITING_DOCUMENTS("Awaiting applicant"),
 
     @JsonProperty("awaitingPayment")
     AWAITING_PAYMENT("Awaiting payment"),

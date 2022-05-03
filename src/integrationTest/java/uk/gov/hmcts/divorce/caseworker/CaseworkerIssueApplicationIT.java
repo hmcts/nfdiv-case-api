@@ -253,7 +253,7 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V3.docx");
+        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V4.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -320,7 +320,7 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V3.docx");
+        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V4.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -386,7 +386,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Overseas_Sole_V2.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V3.docx");
+        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V4.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -912,74 +912,6 @@ public class CaseworkerIssueApplicationIT {
             );
     }
 
-    //    @Test
-    //    void shouldRemoveDraftApplicationDocumentIfCaseDataContainsDraftApplicationDocument() throws Exception {
-    //
-    //        final CaseData caseData = validCaseDataForIssueApplication();
-    //        caseData.getApplicant2().setSolicitorRepresented(NO);
-    //        caseData.getApplicant2().setAddress(applicantAddress());
-    //        caseData.getApplicant2().setEmail("test@test.com");
-    //
-    //        final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-    //        stubDeleteFromDocumentManagementForSystem(documentUuid, OK);
-    //
-    //        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-    //        when(documentIdProvider.documentId())
-    //            .thenReturn("Notice of proceeding applicant")
-    //            .thenReturn("Notice of proceeding respondent")
-    //            .thenReturn("Divorce application")
-    //            .thenReturn("Coversheet");
-    //
-    //        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, "NFD_CP_Dummy_Template.docx");
-    //        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
-    //        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V3.docx");
-    //        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
-    //
-    //        stubAosPackSendLetterToApplicant1CourtService(AOS_COVER_LETTER_TEMPLATE_ID);
-    //        stubAosPackSendLetterToApplicant2();
-    //        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-    //        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-    //        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
-    //        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-    //
-    //        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-    //                .contentType(APPLICATION_JSON)
-    //                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-    //                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-    //                .content(objectMapper.writeValueAsString(
-    //                    callbackRequest(
-    //                        caseData,
-    //                        CASEWORKER_ISSUE_APPLICATION)))
-    //                .accept(APPLICATION_JSON))
-    //            .andExpect(
-    //                status().isOk())
-    //            .andReturn()
-    //            .getResponse()
-    //            .getContentAsString();
-    //
-    //        assertThatJson(response)
-    //            .when(IGNORING_ARRAY_ORDER)
-    //            .isEqualTo(json(
-    //                TestResourceUtil.expectedResponse("classpath:caseworker-issue-application-draft-application-removal-response.json"))
-    //            );
-    //
-    //        verify(notificationService)
-    //            .sendEmail(
-    //                eq(TEST_SOLICITOR_EMAIL),
-    //                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
-    //                anyMap(),
-    //                eq(ENGLISH));
-    //
-    //        verify(notificationService)
-    //            .sendEmail(
-    //                eq(TEST_USER_EMAIL),
-    //                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
-    //                anyMap(),
-    //                eq(ENGLISH));
-    //
-    //        verifyNoMoreInteractions(notificationService);
-    //    }
-
     @Test
     void shouldRespondWithForbiddenStatusIfCaseDataHasDraftApplicationAndServiceNotWhiteListedWithDocStore()
         throws Exception {
@@ -1243,7 +1175,7 @@ public class CaseworkerIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_CP_Dummy_Template.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V3.docx");
+        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V4.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
@@ -1364,7 +1296,7 @@ public class CaseworkerIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V3.docx");
+        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V4.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
