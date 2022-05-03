@@ -110,8 +110,8 @@ logstash:
   configTpl:
     xpack.monitoring.enabled: "false"
     db.url: "jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/data-store?stringtype=unspecified"
-    db.user: "hmcts"
-    db.pwd: "hmcts"
+    db.user: postgres
+    db.pwd: postgres
     es.data.nodes.url: "http://{{ .Release.Name }}-es-master:9200"
 
 xui-webapp:
