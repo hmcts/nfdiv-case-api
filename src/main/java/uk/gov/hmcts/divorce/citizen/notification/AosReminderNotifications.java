@@ -59,7 +59,8 @@ public class AosReminderNotifications implements ApplicantNotification {
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         if (isNotBlank(caseData.getApplicant2EmailAddress())
             && isNotBlank(caseData.getCaseInvite().accessCode())
-            && !caseData.getApplication().isSolicitorServiceMethod()) {
+            && !caseData.getApplication().isSolicitorServiceMethod()
+            && !caseData.getApplicant2().isBasedOverseas()) {
             log.info("Sending reminder to respondent to register for case : {}", id);
 
             notificationService.sendEmail(

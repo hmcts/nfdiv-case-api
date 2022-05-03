@@ -35,6 +35,27 @@ class AcknowledgementOfServiceTest {
     }
 
     @Test
+    void shouldSetNoticeOfProceedingsToSolicitorWithNoOrganisationPolicy() {
+
+        final Solicitor solicitor = Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .firmName(TEST_ORG_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build();
+        final Applicant applicant = Applicant.builder()
+            .solicitor(solicitor)
+            .solicitorRepresented(YES)
+            .build();
+
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder().build();
+
+        acknowledgementOfService.setNoticeOfProceedings(applicant);
+
+        assertThat(acknowledgementOfService.getNoticeOfProceedingsEmail()).isEqualTo(TEST_SOLICITOR_EMAIL);
+        assertThat(acknowledgementOfService.getNoticeOfProceedingsSolicitorFirm()).isEqualTo(TEST_ORG_NAME);
+    }
+
+    @Test
     void shouldSetNoticeOfProceedingsEmailToApplicantIfApplicantNotIsRepresented() {
 
         final Solicitor solicitor = Solicitor.builder()

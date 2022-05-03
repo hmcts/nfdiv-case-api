@@ -318,4 +318,155 @@ public class DivorceApplicationSoleTemplateContentTest {
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
+
+    @Test
+    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithNullSolicitorAddress() {
+
+        final Applicant applicant1 = Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .middleName(TEST_MIDDLE_NAME)
+            .lastName(TEST_LAST_NAME)
+            .financialOrder(NO)
+            .legalProceedings(NO)
+            .email(TEST_USER_EMAIL)
+            .contactDetailsType(PUBLIC)
+            .build();
+        final Applicant applicant2 = Applicant.builder()
+            .firstName(TEST_APP2_FIRST_NAME)
+            .middleName(TEST_APP2_MIDDLE_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
+            .email(TEST_USER_EMAIL)
+            .contactDetailsType(PUBLIC)
+            .solicitor(Solicitor.builder()
+                .build())
+            .build();
+
+        final String applicant1MarriageName = TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME;
+        final String applicant2MarriageName = TEST_APP2_FIRST_NAME + " " + TEST_APP2_MIDDLE_NAME + " " + TEST_APP2_LAST_NAME;
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .application(Application.builder()
+                .issueDate(LocalDate.of(2021, 4, 28))
+                .applicant1IsApplicant2Represented(Applicant2Represented.YES)
+                .build())
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
+
+        caseData.getApplication().getMarriageDetails().setApplicant1Name(applicant1MarriageName);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name(applicant2MarriageName);
+
+        final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(result).contains(
+            entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce from"),
+            entry(DIVORCE_OR_DISSOLUTION, "divorce application"),
+            entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
+            entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
+            entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+            entry(ISSUE_DATE, "28 April 2021"),
+            entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
+            entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
+            entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_1_FULL_NAME, applicant1.getFullName()),
+            entry(APPLICANT_1_POSTAL_ADDRESS, null),
+            entry(APPLICANT_1_EMAIL, TEST_USER_EMAIL),
+            entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
+            entry(APPLICANT_1_FINANCIAL_ORDER, null),
+            entry(HAS_OTHER_COURT_CASES_APPLICANT_1, false),
+            entry(APPLICANT_1_COURT_CASE_DETAILS, null),
+            entry(APPLICANT_2_FIRST_NAME, TEST_APP2_FIRST_NAME),
+            entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
+            entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
+            entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
+            entry(PLACE_OF_MARRIAGE, null),
+            entry(MARRIAGE_DATE, null),
+            entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, false),
+            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
+            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
+        );
+
+        verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
+        verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
+        verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithBlankSolicitorAddress() {
+
+        final Applicant applicant1 = Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .middleName(TEST_MIDDLE_NAME)
+            .lastName(TEST_LAST_NAME)
+            .financialOrder(NO)
+            .legalProceedings(NO)
+            .email(TEST_USER_EMAIL)
+            .contactDetailsType(PUBLIC)
+            .build();
+        final Applicant applicant2 = Applicant.builder()
+            .firstName(TEST_APP2_FIRST_NAME)
+            .middleName(TEST_APP2_MIDDLE_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
+            .email(TEST_USER_EMAIL)
+            .contactDetailsType(PUBLIC)
+            .solicitor(Solicitor.builder()
+                .address("\n\n")
+                .build())
+            .build();
+
+        final String applicant1MarriageName = TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME;
+        final String applicant2MarriageName = TEST_APP2_FIRST_NAME + " " + TEST_APP2_MIDDLE_NAME + " " + TEST_APP2_LAST_NAME;
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .application(Application.builder()
+                .issueDate(LocalDate.of(2021, 4, 28))
+                .applicant1IsApplicant2Represented(Applicant2Represented.YES)
+                .build())
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
+
+        caseData.getApplication().getMarriageDetails().setApplicant1Name(applicant1MarriageName);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name(applicant2MarriageName);
+
+        final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(result).contains(
+            entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce from"),
+            entry(DIVORCE_OR_DISSOLUTION, "divorce application"),
+            entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
+            entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
+            entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+            entry(ISSUE_DATE, "28 April 2021"),
+            entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
+            entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
+            entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_1_FULL_NAME, applicant1.getFullName()),
+            entry(APPLICANT_1_POSTAL_ADDRESS, null),
+            entry(APPLICANT_1_EMAIL, TEST_USER_EMAIL),
+            entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
+            entry(APPLICANT_1_FINANCIAL_ORDER, null),
+            entry(HAS_OTHER_COURT_CASES_APPLICANT_1, false),
+            entry(APPLICANT_1_COURT_CASE_DETAILS, null),
+            entry(APPLICANT_2_FIRST_NAME, TEST_APP2_FIRST_NAME),
+            entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
+            entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
+            entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
+            entry(PLACE_OF_MARRIAGE, null),
+            entry(MARRIAGE_DATE, null),
+            entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, false),
+            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
+            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
+        );
+
+        verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
+        verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
+        verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
+    }
 }
