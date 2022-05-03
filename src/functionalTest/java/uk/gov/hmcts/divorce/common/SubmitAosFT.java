@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor;
+package uk.gov.hmcts.divorce.common;
 
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -21,9 +21,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class SubmitAosFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-solicitor-submit-aos.json";
-
-    private static final String RESPONSE =
-        "classpath:responses/response-solicitor-submit-aos.json";
+    private static final String RESPONSE = "classpath:responses/response-solicitor-submit-aos.json";
 
     @Test
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
