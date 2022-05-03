@@ -23,7 +23,6 @@ public class ApplicationRemindApplicant2Notification implements ApplicantNotific
 
     public static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
     public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
-    public static final String SOLICITOR_FIRM = "solicitor firm"; // make sure to add "solicitor firm" on the template where we want the solicitor firm address to be added
 
     @Autowired
     private NotificationService notificationService;
@@ -38,17 +37,16 @@ public class ApplicationRemindApplicant2Notification implements ApplicantNotific
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending reminder to applicant 2 to review case : {}", id);
 
-        if (caseData.getApplicant1().isRepresented()) { // here app1 is represented hence we will need to send reminder email with the new template
+        if (caseData.getApplicant1().isRepresented()) {
 
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
-                JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_WHEN_APPLICANT1ISREPRESENTED,//solicitor email template
+                JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_WHEN_APPLICANT1ISREPRESENTED,
                 solicitorTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseData.getApplicant1().getLanguagePreference()
-                // solicitor email template variables
             );
 
-        } else { // applicant 1 is a citizen in this scenario and send email template to app2
+        } else {
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
