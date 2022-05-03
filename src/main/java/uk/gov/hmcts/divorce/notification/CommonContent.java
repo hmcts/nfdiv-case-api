@@ -41,6 +41,9 @@ public class CommonContent {
 
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";
+    public static final String IS_UNDISPUTED = "isUndisputed";
+    public static final String IS_DISPUTED = "isDisputed";
+    public static final String DATE_OF_ISSUE = "date of issue";
 
     public static final String ACCESS_CODE = "access code";
 
@@ -111,18 +114,6 @@ public class CommonContent {
             }
         } else {
             return "civil partner";
-        }
-    }
-
-    public String getPartnersSolicitor(CaseData caseData, Applicant partner) {
-        if (caseData.isDivorce()) {
-            if (isNull(partner.getGender())) {
-                return "spouse's solicitor";
-            } else {
-                return partner.getGender() == MALE ? "husband's solicitor" : "wife's solicitor";
-            }
-        } else {
-            return "civil partners' solicitor";
         }
     }
 

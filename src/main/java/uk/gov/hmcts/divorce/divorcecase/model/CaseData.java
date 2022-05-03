@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDate;
@@ -45,7 +46,7 @@ public class CaseData {
 
     @CCD(
         label = "Application type",
-        access = {DefaultAccess.class},
+        access = {DefaultAccess.class, CaseworkerWithCAAAccess.class},
         typeOverride = FixedRadioList,
         typeParameterOverride = "ApplicationType"
     )
@@ -154,7 +155,7 @@ public class CaseData {
 
     @CCD(
         label = "Due Date",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, CaseworkerWithCAAAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;

@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.divorce.common.event.Applicant2RequestChanges.APPLICANT_2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPLICANT2_REQUESTED_CHANGES;
@@ -126,10 +127,18 @@ public class Applicant2RequestChangesNotificationIT {
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLICITOR_APPLICANT2_REQUESTED_CHANGES), anyMap(), eq(ENGLISH));
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(SOLICITOR_APPLICANT2_REQUESTED_CHANGES),
+                anyMap(),
+                eq(ENGLISH));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT2_REQUEST_CHANGES), anyMap(), eq(ENGLISH));
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES),
+                anyMap(),
+                eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }

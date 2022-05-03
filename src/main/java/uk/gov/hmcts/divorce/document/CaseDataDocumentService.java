@@ -18,6 +18,9 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isApplicableForConfidentiality;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 @Service
 @Slf4j
@@ -90,9 +93,7 @@ public class CaseDataDocumentService {
 
             caseData.getDocuments().setConfidentialDocumentsGenerated(addDocumentToTop(
                 caseData.getDocuments().getConfidentialDocumentsGenerated(),
-                divorceDocumentFrom(documentInfo, DocumentType.NOTICE_OF_PROCEEDINGS_APP_1.equals(documentType)
-                    ? ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1
-                    : ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2),
+                divorceDocumentFrom(documentInfo, getConfidentialDocumentType(documentType)),
                 documentIdProvider.documentId())
             );
 
@@ -105,6 +106,18 @@ public class CaseDataDocumentService {
                 divorceDocumentFrom(documentInfo, documentType),
                 documentIdProvider.documentId()
             ));
+        }
+    }
+
+    private ConfidentialDocumentsReceived getConfidentialDocumentType(DocumentType documentType) {
+        if (NOTICE_OF_PROCEEDINGS_APP_1.equals(documentType)) {
+            return ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1;
+        } else if (NOTICE_OF_PROCEEDINGS_APP_2.equals(documentType)) {
+            return ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2;
+        } else if (GENERAL_LETTER.equals(documentType)) {
+            return ConfidentialDocumentsReceived.GENERAL_LETTER;
+        } else {
+            return ConfidentialDocumentsReceived.OTHER;
         }
     }
 }
