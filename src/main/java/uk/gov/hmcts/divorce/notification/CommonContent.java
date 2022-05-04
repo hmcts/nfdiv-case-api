@@ -51,6 +51,7 @@ public class CommonContent {
     public static final String RESPONDENT_NAME = "respondent name";
     public static final String SOLICITOR_NAME = "solicitor name";
     public static final String SOLICITOR_REFERENCE = "solicitor reference";
+    public static final String SOLICITOR_FIRM = "solicitor firm";
 
     public static final String REVIEW_DEADLINE_DATE = "review deadline date";
 
