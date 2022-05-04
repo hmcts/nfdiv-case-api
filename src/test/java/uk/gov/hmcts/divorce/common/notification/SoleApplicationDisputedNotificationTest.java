@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.notification;
+package uk.gov.hmcts.divorce.common.notification;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,18 +21,32 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISPUTED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_UNDISPUTED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAosSubmitted;
 
@@ -40,6 +54,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAosSu
 class SoleApplicationDisputedNotificationTest {
 
     private static final int DISPUTE_DUE_DATE_OFFSET_DAYS = 37;
+    private static final String ISSUE_DATE_PLUS_37_DAYS = "issue date plus 37 days";
+    private static final String ISSUE_DATE_PLUS_141_DAYS = "issue date plus 141 days";
 
     @Mock
     private NotificationService notificationService;
@@ -160,5 +176,100 @@ class SoleApplicationDisputedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendAosDisputedEmailToApplicant1SolicitorWithCorrectContent() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.getApplicant1().getSolicitor().setName(TEST_SOLICITOR_NAME);
+        data.getApplicant1().getSolicitor().setReference(TEST_REFERENCE);
+        data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
+
+        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getMainTemplateVars());
+        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
+
+        soleApplicationDisputedNotification.sendToApplicant1Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(SOLICITOR_NAME, data.getApplicant1().getSolicitor().getName()),
+                hasEntry(SOLICITOR_REFERENCE, data.getApplicant1().getSolicitor().getReference()),
+                hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL),
+                hasEntry(IS_UNDISPUTED, NO),
+                hasEntry(IS_DISPUTED, YES),
+                hasEntry(ISSUE_DATE_PLUS_37_DAYS,
+                    LocalDate.of(2021, 6, 18).plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
+                hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).basicTemplateVars(data, 1234567890123456L);
+    }
+
+    @Test
+    void shouldSendAosSubmittedEmailToRespondentSolicitorWithDivorceAndDisputedContent() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.setApplicant2(applicantRepresentedBySolicitor());
+        data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
+
+        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getMainTemplateVars());
+
+        soleApplicationDisputedNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(SOLICITOR_NAME, data.getApplicant2().getSolicitor().getName()),
+                hasEntry(SOLICITOR_REFERENCE, NOT_PROVIDED),
+                hasEntry(IS_UNDISPUTED, NO),
+                hasEntry(IS_DISPUTED, YES),
+                hasEntry(ISSUE_DATE_PLUS_37_DAYS, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(ISSUE_DATE_PLUS_141_DAYS, ""),
+                hasEntry(DATE_OF_ISSUE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void shouldSendAosSubmittedEmailToRespondentSolicitorWithDissolutionAndDisputedContent() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.setApplicant2(applicantRepresentedBySolicitor());
+        data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
+
+        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getMainTemplateVars());
+
+        soleApplicationDisputedNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DIVORCE, NO),
+                hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(SOLICITOR_NAME, data.getApplicant2().getSolicitor().getName()),
+                hasEntry(SOLICITOR_REFERENCE, NOT_PROVIDED),
+                hasEntry(IS_UNDISPUTED, NO),
+                hasEntry(IS_DISPUTED, YES),
+                hasEntry(ISSUE_DATE_PLUS_37_DAYS, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(ISSUE_DATE_PLUS_141_DAYS, ""),
+                hasEntry(DATE_OF_ISSUE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
     }
 }
