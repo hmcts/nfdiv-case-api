@@ -41,7 +41,7 @@ public class FeeDetails {
     private String accountNumber;
 
     @CCD(
-        label = "Account number"
+        label = "Select your account number"
     )
     private DynamicList pbaNumbers;
 
