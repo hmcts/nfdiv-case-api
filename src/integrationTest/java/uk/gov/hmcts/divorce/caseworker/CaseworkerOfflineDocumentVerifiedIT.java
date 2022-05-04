@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,6 +162,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
+    @Disabled
     void shouldTriggerAboutToStartAndSetDocumentNamesInDynamicListWhenThereAreScannedDocuments() throws Exception {
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
