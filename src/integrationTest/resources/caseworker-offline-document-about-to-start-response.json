@@ -1,0 +1,30 @@
+{
+  "data": {
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "scannedDocuments": [
+      {
+        "value": {
+          "type": "other",
+          "subtype": "aos",
+          "fileName": "doc1.pdf"
+        }
+      }
+    ],
+    "scannedDocumentNames": {
+      "value": {
+        "code": "bd4e1f85-7239-4c0e-9c54-1945bcbcde01",
+        "label": "scannedDocumentName"
+      },
+      "list_items": [
+        {
+          "code": "9ce7fb8b-431e-46dd-8faa-ad542b1c923a",
+          "label": "doc1.pdf"
+        }
+      ],
+      "valueLabel": "scannedDocumentName",
+      "valueCode": "bd4e1f85-7239-4c0e-9c54-1945bcbcde01"
+    },
+    "dataVersion": 3,
+    "warnings": []
+  }
+}
