@@ -5,8 +5,6 @@ ccd:
     enabled: true
   xui:
     enabled: true
-redis:
-  enabled: true
 
 java:
   image: ${IMAGE_NAME}
@@ -122,7 +120,18 @@ xui-webapp:
       SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
       SERVICES_DOCUMENTS_API_V2: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
       SERVICES_CCD_CASE_ASSIGNMENT_API: http://${SERVICE_FQDN}
+      REDISCLOUD_URL: redis://${SERVICE_NAME}-redis-master:6379
       JURISDICTIONS: DIVORCE
+
+redis:
+  enabled: true
+  cluster:
+    enabled: false
+    slaveCount: 0
+  usePassword: false
+  master:
+    persistence:
+      enabled: false
 
 idam-pr:
   enabled: true
