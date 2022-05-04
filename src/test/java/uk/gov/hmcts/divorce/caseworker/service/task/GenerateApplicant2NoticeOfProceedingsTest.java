@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
@@ -38,6 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
@@ -70,13 +72,16 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
 
     @Mock
+    private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
+
+    @Mock
     private Clock clock;
 
     @InjectMocks
     private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
     @Test
-    void shouldGenerateRS2WhenSoleWithAppRepresentedAndOffline() {
+    void shouldGenerateRS2AndCoversheetWhenSoleWithAppRepresentedAndOffline() {
         setMockClock(clock);
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
@@ -87,10 +92,20 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         final Map<String, Object> templateContent = new HashMap<>();
 
         when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
+        when(coversheetSolicitorTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE);
+        verify(caseDataDocumentService)
+            .renderDocumentAndUpdateCaseData(
+                caseData,
+                COVERSHEET,
+                templateContent,
+                TEST_CASE_ID,
+                COVERSHEET_APPLICANT2_SOLICITOR,
+                caseData.getApplicant2().getLanguagePreference(),
+                formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock)));
 
         assertThat(result.getData()).isEqualTo(caseData);
         classMock.close();
