@@ -195,6 +195,6 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)
-            .isEqualTo(expectedResponse("classpath:caseworker-offline-document-verified-about-to-start-response.json"));
+            .isEqualTo(expectedResponse("classpath:caseworker-offline-document-about-to-start-response.json"));
     }
 }
