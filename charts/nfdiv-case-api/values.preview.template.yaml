@@ -122,6 +122,8 @@ xui-webapp:
       SERVICES_CCD_CASE_ASSIGNMENT_API: http://${SERVICE_FQDN}
       REDISCLOUD_URL: redis://${SERVICE_NAME}-redis-master:6379
       JURISDICTIONS: DIVORCE
+  redis:
+    enabled: true
 
 redis:
   enabled: true
