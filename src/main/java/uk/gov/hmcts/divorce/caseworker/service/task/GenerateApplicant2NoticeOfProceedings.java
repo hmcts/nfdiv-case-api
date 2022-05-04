@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingsWithAddressContent;
 
 import java.time.Clock;
 import java.util.Map;
@@ -45,6 +46,9 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
     @Autowired
     private NoticeOfProceedingContent noticeOfProceedingContent;
+
+    @Autowired
+    private NoticeOfProceedingsWithAddressContent noticeOfProceedingsWithAddressContent;
 
     @Autowired
     private NoticeOfProceedingJointContent jointTemplateContent;
@@ -84,16 +88,18 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             var hasOrgPolicy = hasSolicitor && caseData.getApplicant2().getSolicitor().getOrganisationPolicy() != null;
 
             if (hasOrgPolicy) {
-                generateNoticeOfProceedings(caseData, caseId, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
                 if (!caseData.getApplication().isCourtServiceMethod()) {
+                    generateNoticeOfProceedingsWithoutAddress(caseData, caseId, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
                     generateCoversheet(
                         caseData,
                         caseId,
-                        COVERSHEET_APPLICANT,
-                        coversheetApplicant2TemplateContent.apply(caseData, caseId));
+                        COVERSHEET_APPLICANT2_SOLICITOR,
+                        coversheetSolicitorTemplateContent.apply(caseData, caseId));
+                } else {
+                    generateNoticeOfProceedingsWithAddress(caseData, caseId);
                 }
             } else {
-                generateNoticeOfProceedings(caseData, caseId, NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE);
+                generateNoticeOfProceedingsWithoutAddress(caseData, caseId, NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE);
                 generateCoversheet(
                     caseData,
                     caseId,
@@ -104,7 +110,11 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             log.info("Generating notice of proceedings for respondent for sole case id {} ", caseId);
 
             if (isNotEmpty(caseData.getApplicant2().getEmail())) {
-                generateNoticeOfProceedings(caseData, caseId, NFD_NOP_R1_SOLE_APP2_CIT_ONLINE);
+                generateNoticeOfProceedings(
+                    caseData,
+                    caseId,
+                    NFD_NOP_R1_SOLE_APP2_CIT_ONLINE,
+                    noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1()));
                 if (!caseData.getApplication().isCourtServiceMethod()) {
                     generateCoversheet(
                         caseData,
@@ -113,7 +123,11 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                         coversheetApplicant2TemplateContent.apply(caseData, caseId));
                 }
             } else {
-                generateNoticeOfProceedings(caseData, caseId, NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE);
+                generateNoticeOfProceedings(
+                    caseData,
+                    caseId,
+                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
+                    noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1()));
                 generateCoversheet(
                     caseData,
                     caseId,
@@ -125,36 +139,49 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
     private void generateJointNoticeOfProceedings(final CaseData caseData, final Long caseId) {
         final String templateId;
-        final Map<String, Object> content;
+        final Map<String, Object> templateContent;
 
         if (caseData.getApplicant2().isRepresented()) {
             log.info("Generating notice of proceedings for applicant 2 solicitor for case id {} ", caseId);
 
-            content = solicitorTemplateContent.apply(caseData, caseId, false);
+            templateContent = solicitorTemplateContent.apply(caseData, caseId, false);
             templateId = NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
         } else {
             log.info("Generating applicant 2 notice of proceedings for applicant for joint case id {} ", caseId);
 
-            content = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
+            templateContent = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
             templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
         }
 
-        caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            NOTICE_OF_PROCEEDINGS_APP_2,
-            content,
-            caseId,
-            templateId,
-            caseData.getApplicant2().getLanguagePreference(),
-            formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
-        );
+        generateNoticeOfProceedings(caseData, caseId, templateId, templateContent);
     }
 
-    private void generateNoticeOfProceedings(final CaseData caseData, final Long caseId, final String templateId) {
+    private void generateNoticeOfProceedingsWithAddress(final CaseData caseData, final Long caseId) {
+
+        final Map<String, Object> templateContent = noticeOfProceedingsWithAddressContent
+            .apply(caseData, caseId, caseData.getApplicant1());
+
+        generateNoticeOfProceedings(caseData, caseId, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE, templateContent);
+    }
+
+    private void generateNoticeOfProceedingsWithoutAddress(final CaseData caseData,
+                                                           final Long caseId,
+                                                           final String templateId) {
+        generateNoticeOfProceedings(
+            caseData,
+            caseId,
+            templateId,
+            noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1()));
+    }
+
+    private void generateNoticeOfProceedings(final CaseData caseData,
+                                             final Long caseId,
+                                             final String templateId,
+                                             final Map<String, Object> templateContent) {
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             NOTICE_OF_PROCEEDINGS_APP_2,
-            noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1()),
+            templateContent,
             caseId,
             templateId,
             caseData.getApplicant2().getLanguagePreference(),

@@ -17,7 +17,7 @@ import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingsWithAddressContent;
 
 import java.time.Clock;
 import java.util.HashMap;
@@ -48,7 +48,9 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_AP
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISPLAY_HEADER_ADDRESS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -60,16 +62,19 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
+    private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
+
+    @Mock
     private NoticeOfProceedingContent noticeOfProceedingContent;
+
+    @Mock
+    private NoticeOfProceedingsWithAddressContent noticeOfProceedingsWithAddressContent;
 
     @Mock
     private NoticeOfProceedingJointContent noticeOfProceedingJointContent;
 
     @Mock
     private NoticeOfProceedingSolicitorContent noticeOfProceedingSolicitorContent;
-
-    @Mock
-    private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
 
     @Mock
     private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
@@ -127,7 +132,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
+        when(noticeOfProceedingsWithAddressContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -152,19 +157,21 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         );
 
         final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> expectedTemplateContent = new HashMap<>();
+        expectedTemplateContent.put(DISPLAY_HEADER_ADDRESS, false);
 
         when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
-        verify(caseDataDocumentService, times(1))
+        verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
                 COVERSHEET,
                 templateContent,
                 TEST_CASE_ID,
-                COVERSHEET_APPLICANT,
+                COVERSHEET_APPLICANT2_SOLICITOR,
                 caseData.getApplicant2().getLanguagePreference(),
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock)));
         assertThat(result.getData()).isEqualTo(caseData);
@@ -274,7 +281,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         verify(caseDataDocumentService, times(1))
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                DocumentType.NOTICE_OF_PROCEEDINGS_APP_2,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
                 templateId,

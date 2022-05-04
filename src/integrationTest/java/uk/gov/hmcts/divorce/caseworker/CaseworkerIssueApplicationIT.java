@@ -762,7 +762,7 @@ public class CaseworkerIssueApplicationIT {
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered_V3.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID, "NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx");
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant2_Solicitor_Coversheet.docx");
         stubAosPackSendLetterToApplicant1NotCourtService(AOS_COVER_LETTER_TEMPLATE_ID, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
