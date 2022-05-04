@@ -64,6 +64,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
@@ -80,6 +81,9 @@ public class SolicitorGeneralApplicationIT {
 
     private static final String SOLICITOR_GENERAL_APPLICATION_RESPONSE =
         "classpath:solicitor-general-application-response.json";
+
+    private static final String SOLICITOR_GENERAL_APPLICATION_PAYMENT_RESPONSE =
+        "classpath:solicitor-general-application-payment-response.json";
 
     private static final String SOLICITOR_GENERAL_APPLICATION_ERRORS_RESPONSE =
         "classpath:solicitor-general-application-errors-response.json";
@@ -177,12 +181,13 @@ public class SolicitorGeneralApplicationIT {
                     FeeDetails.builder()
                         .orderSummary(
                             OrderSummary.builder()
-                                .paymentTotal("500")
+                                .paymentTotal("55000")
                                 .fees(List.of(ListValue
                                     .<Fee>builder()
                                     .id("1")
                                     .value(Fee.builder()
-                                        .code("fee code")
+                                        .code("FEE002")
+                                        .description("fees for divorce")
                                         .build())
                                     .build())
                                 )
@@ -206,6 +211,7 @@ public class SolicitorGeneralApplicationIT {
                 OrganisationPolicy.<UserRole>builder()
                     .organisation(Organisation.builder()
                         .organisationId("App1OrgPolicy")
+                        .organisationName(TEST_ORG_NAME)
                         .build())
                     .build()
             )
@@ -246,10 +252,9 @@ public class SolicitorGeneralApplicationIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
-        System.out.println(actualResponse);
 
         assertThatJson(actualResponse)
-            .isEqualTo(json(expectedResponse(SOLICITOR_GENERAL_APPLICATION_RESPONSE)));
+            .isEqualTo(json(expectedResponse(SOLICITOR_GENERAL_APPLICATION_PAYMENT_RESPONSE)));
     }
 
     @Test

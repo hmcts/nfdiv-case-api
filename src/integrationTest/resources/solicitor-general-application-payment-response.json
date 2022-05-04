@@ -1,0 +1,66 @@
+{
+  "data": {
+    "applicant1SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test Organisation",
+        "OrganisationID": "App1OrgPolicy"
+      }
+    },
+    "applicant2SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationID": "App2OrgPolicy"
+      }
+    },
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "applicationPayments": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "feeCode": "FEE002",
+        "amount": 55000,
+        "status": "success",
+        "channel": "online"
+      }
+    }],
+    "generalApplicationDocument": {
+      "documentLink": {
+        "document_url": "http://localhost:4200/assets/d11",
+        "document_filename": "GA.pdf",
+        "document_binary_url": "GA.pdf/binary"
+      },
+      "documentDateAdded": "2022-05-04",
+      "documentType": "d11"
+    },
+    "generalApplicationFeeOrderSummary": {
+      "Fees": [{
+        "id": "1",
+        "value": {
+          "FeeCode": "FEE002",
+          "FeeDescription": "fees for divorce"
+        }
+      }],
+      "PaymentTotal": "55000"
+    },
+    "generalApplicationFeePaymentMethod": "feePayByAccount",
+    "generalApplicationFeePbaNumbers": {
+      "value": {
+        "label": "PBA0012345"
+      },
+      "valueLabel": "PBA0012345"
+    },
+    "documentsUploaded": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "http://localhost:4200/assets/d11",
+          "document_filename": "GA.pdf",
+          "document_binary_url": "GA.pdf/binary"
+        },
+        "documentDateAdded": "2022-05-04",
+        "documentType": "d11"
+      }
+    }],
+    "dataVersion": 3,
+    "warnings": []
+  },
+  "state": "GeneralApplicationReceived"
+}
