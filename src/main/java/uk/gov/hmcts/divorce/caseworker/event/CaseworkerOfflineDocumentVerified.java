@@ -46,7 +46,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .name("Offline Document Verified")
             .description("Offline Document Verified")
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .aboutToStartCallback(this::aboutToStart)
+            //.aboutToStartCallback(this::aboutToStart)
             .showEventNotes()
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER))
