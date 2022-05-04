@@ -5,8 +5,6 @@ ccd:
     enabled: true
   xui:
     enabled: true
-idam-pr:
-  enabled: true
 redis:
   enabled: true
 
@@ -126,3 +124,9 @@ xui-webapp:
       SERVICES_CCD_CASE_ASSIGNMENT_API: http://${SERVICE_FQDN}
       JURISDICTIONS: DIVORCE
 
+idam-pr:
+  enabled: true
+  releaseNameOverride: ${SERVICE_NAME}-xui-idam-pr
+  redirect_uris:
+    XUI:
+      - https://xui-${SERVICE_FQDN}/oauth2/callback
