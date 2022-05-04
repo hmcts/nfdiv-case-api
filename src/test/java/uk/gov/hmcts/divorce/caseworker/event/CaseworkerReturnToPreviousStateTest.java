@@ -16,11 +16,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReturnToPreviousState.CASEWORKER_RETURN_TO_PREVIOUS_STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerReturnToPreviousStateTest {
+
+    private static final String INVALID_STATE_ERROR
+        = "You cannot move this case into a pre-submission state. Select another state before continuing.";
 
     @InjectMocks
     private CaseworkerReturnToPreviousState caseworkerReturnToPreviousState;
@@ -50,5 +54,22 @@ class CaseworkerReturnToPreviousStateTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReturnToPreviousState.aboutToSubmit(details, null);
 
         assertThat(response.getState()).isEqualTo(AosDrafted);
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenPreSubmissionStateSelectedByCaseworker() {
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .stateToTransitionApplicationTo(AwaitingApplicant1Response)
+                .build()
+            ).build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReturnToPreviousState.midEvent(details, null);
+
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors().get(0)).isEqualTo(INVALID_STATE_ERROR);
     }
 }

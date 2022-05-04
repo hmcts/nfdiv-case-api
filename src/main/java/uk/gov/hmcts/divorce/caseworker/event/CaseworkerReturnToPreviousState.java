@@ -12,6 +12,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_RETURN_TO_PREVIOUS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -23,6 +27,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_RETURN_TO_PREVIOUS_STATE = "caseworker-return-to-previous-state";
+    private static final String INVALID_STATE_ERROR
+        = "You cannot move this case into a pre-submission state. Select another state before continuing.";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -36,15 +42,31 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR))
-            .page("returnToPreviousState")
+            .page("returnToPreviousState", this::midEvent)
             .pageLabel("Return to previous state")
             .complex(CaseData::getApplication)
             .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "State to transfer case to")
             .done();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
-                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                  CaseDetails<CaseData, State> detailsBefore) {
+        CaseData caseData = details.getData();
+        List<String> validationErrors = new ArrayList<>();
+
+        State state = caseData.getApplication().getStateToTransitionApplicationTo();
+        if (!POST_SUBMISSION_STATES.contains(state)) {
+            validationErrors.add(INVALID_STATE_ERROR);
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .errors(validationErrors)
+            .build();
+
+    }
+
+        public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                           final CaseDetails<CaseData, State> beforeDetails) {
         log.info("Caseworker return to previous state about to submit callback invoked");
 
         CaseData caseData = details.getData();
