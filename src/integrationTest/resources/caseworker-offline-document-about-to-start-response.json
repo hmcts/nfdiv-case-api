@@ -1,0 +1,30 @@
+{
+  "data": {
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "scannedDocuments": [
+      {
+        "value": {
+          "type": "other",
+          "subtype": "aos",
+          "fileName": "doc1.pdf"
+        }
+      }
+    ],
+    "scannedDocumentNames": {
+      "value": {
+        "code": "${json-unit.ignore}",
+        "label": "scannedDocumentName"
+      },
+      "list_items": [
+        {
+          "code": "${json-unit.ignore}",
+          "label": "doc1.pdf"
+        }
+      ],
+      "valueLabel": "scannedDocumentName",
+      "valueCode": "${json-unit.ignore}"
+    },
+    "dataVersion": 3,
+    "warnings": []
+  }
+}

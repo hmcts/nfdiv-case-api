@@ -12,15 +12,20 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.Mockito.when;
@@ -33,6 +38,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService.Of
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -102,13 +108,13 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-            .content(
-                objectMapper.writeValueAsString(
-                    callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
+                .accept(APPLICATION_JSON))
             .andReturn()
             .getResponse()
             .getContentAsString();
@@ -138,20 +144,57 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-            .content(
-                objectMapper.writeValueAsString(
-                    callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
+                .accept(APPLICATION_JSON))
             .andReturn()
             .getResponse()
             .getContentAsString();
-        System.out.println(jsonStringResponse);
 
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(expectedResponse(CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_OTHER_RESPONSE));
+    }
+
+    @Test
+    void shouldTriggerAboutToStartAndSetDocumentNamesInDynamicListWhenThereAreScannedDocuments() throws Exception {
+        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
+            .value(
+                ScannedDocument
+                    .builder()
+                    .fileName("doc1.pdf")
+                    .type(ScannedDocumentType.OTHER)
+                    .subtype("aos")
+                    .build()
+            )
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder()
+                .scannedDocuments(singletonList(doc1))
+                .build())
+            .build();
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_START_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
+                .accept(APPLICATION_JSON))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(jsonStringResponse)
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(expectedResponse("classpath:caseworker-offline-document-about-to-start-response.json"));
     }
 }
