@@ -148,7 +148,6 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
-        System.out.println(jsonStringResponse);
 
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)

@@ -57,7 +57,6 @@ public class SolicitorGeneralApplicationFT extends FunctionalTestSuite {
 
         final Response response = triggerCallback(request, ABOUT_TO_SUBMIT_URL);
 
-        System.out.println(response.asString());
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertThatJson(response.asString())
