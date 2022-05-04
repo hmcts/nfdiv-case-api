@@ -70,6 +70,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 @ExtendWith(MockitoExtension.class)
@@ -79,6 +80,7 @@ public class PaymentServiceTest {
     private static final String FAMILY = "family";
     private static final String FAMILY_COURT = "family court";
     private static final String KEYWORD_INVALID = "invalid-keyword";
+    private static final String PBA_NUMBER = "PBA0012345";
 
     @Mock
     private FeesAndPaymentsClient feesAndPaymentsClient;
@@ -219,7 +221,7 @@ public class PaymentServiceTest {
 
         when(responseEntity.getStatusCode()).thenReturn(CREATED);
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee());
 
         assertThat(response.getErrorMessage()).isNull();
         assertThat(response.getHttpStatus()).isEqualTo(CREATED);
@@ -256,7 +258,7 @@ public class PaymentServiceTest {
                 any(CreditAccountPaymentRequest.class)
             );
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee());
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -290,7 +292,7 @@ public class PaymentServiceTest {
                 any(CreditAccountPaymentRequest.class)
             );
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee());
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -314,7 +316,7 @@ public class PaymentServiceTest {
             any(CreditAccountPaymentRequest.class)
         )).thenReturn(null);
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee());
 
         assertThat(response.getHttpStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
         assertThat(response.getErrorMessage())
@@ -349,7 +351,7 @@ public class PaymentServiceTest {
                 any(CreditAccountPaymentRequest.class)
             );
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee());
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -384,7 +386,7 @@ public class PaymentServiceTest {
                 any(CreditAccountPaymentRequest.class)
             );
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee());
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -414,7 +416,7 @@ public class PaymentServiceTest {
                 any(CreditAccountPaymentRequest.class)
             );
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee());
 
         assertThat(response.getHttpStatus()).isEqualTo(NOT_FOUND);
         assertThat(response.getErrorMessage())
@@ -449,7 +451,7 @@ public class PaymentServiceTest {
                 any(CreditAccountPaymentRequest.class)
             );
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee());
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
