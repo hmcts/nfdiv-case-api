@@ -124,20 +124,9 @@ xui-webapp:
       JURISDICTIONS: DIVORCE
   redis:
     enabled: true
-
-redis:
-  enabled: true
-  cluster:
-    enabled: false
-    slaveCount: 0
-  usePassword: false
-  master:
-    persistence:
-      enabled: false
-
-idam-pr:
-  enabled: true
-  releaseNameOverride: ${SERVICE_NAME}-xui-idam-pr
-  redirect_uris:
-    XUI:
-      - https://xui-${SERVICE_FQDN}/oauth2/callback
+  idam-pr:
+    enabled: true
+    releaseNameOverride: ${SERVICE_NAME}-xui-idam-pr
+    redirect_uris:
+      XUI:
+        - https://xui-${SERVICE_FQDN}/oauth2/callback
