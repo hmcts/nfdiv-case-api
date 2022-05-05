@@ -19,7 +19,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_WHEN_APPLICANT1ISREPRESENTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REMINDER_WHEN_APPLICANT1_REPRESENTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -46,7 +46,7 @@ public class ApplicationRemindApplicant2Notification implements ApplicantNotific
 
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
-                JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_WHEN_APPLICANT1ISREPRESENTED,
+                JOINT_APPLICANT2_REMINDER_WHEN_APPLICANT1_REPRESENTED,
                 solicitorTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseData.getApplicant1().getLanguagePreference()
             );
