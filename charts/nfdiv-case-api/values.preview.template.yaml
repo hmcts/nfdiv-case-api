@@ -135,10 +135,10 @@ xui-webapp:
     image: hmctspublic.azurecr.io/xui/webapp:latest
     ingressHost: xui-${SERVICE_FQDN}
     environment:
-      SERVICES_CCD_COMPONENT_API: http://${SERVICE_FQDN}
-      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
+      SERVICES_CCD_COMPONENT_API: http://${SERVICE_FQDN}:4452
+      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}:4452
       SERVICES_DOCUMENTS_API_V2: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
-      SERVICES_CCD_CASE_ASSIGNMENT_API: http://${SERVICE_FQDN}
+      SERVICES_CCD_CASE_ASSIGNMENT_API: http://${SERVICE_FQDN}:4096
       FEATURE_REDIS_ENABLED: false
       JURISDICTIONS: DIVORCE
 
