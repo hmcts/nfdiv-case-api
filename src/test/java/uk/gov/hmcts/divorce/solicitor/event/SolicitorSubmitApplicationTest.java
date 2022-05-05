@@ -65,6 +65,7 @@ public class SolicitorSubmitApplicationTest {
     private static final String STATEMENT_OF_TRUTH_ERROR_MESSAGE =
         "Statement of truth must be accepted by the person making the application";
     private static final String PBA_NUMBER = "PBA0012345";
+    private static final String FEE_ACCOUNT_REF = "REF01";
 
     private static final OrderSummary orderSummary = OrderSummary
         .builder()
@@ -142,6 +143,7 @@ public class SolicitorSubmitApplicationTest {
                 .value(DynamicListElement.builder().label(PBA_NUMBER).build())
                 .build()
         );
+        caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
@@ -149,7 +151,8 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary)).thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+            .thenReturn(pbaResponse);
 
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
         expectedCaseDetails.setId(TEST_CASE_ID);
@@ -265,6 +268,7 @@ public class SolicitorSubmitApplicationTest {
                 .value(DynamicListElement.builder().label(PBA_NUMBER).build())
                 .build()
         );
+        caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -281,7 +285,8 @@ public class SolicitorSubmitApplicationTest {
         when(submissionService.submitApplication(caseDetails)).thenReturn(expectedCaseDetails);
 
         var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary)).thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+            .thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, beforeCaseDetails);
@@ -437,13 +442,15 @@ public class SolicitorSubmitApplicationTest {
                 .value(DynamicListElement.builder().label(PBA_NUMBER).build())
                 .build()
         );
+        caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary)).thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+            .thenReturn(pbaResponse);
 
         mockExpectedCaseDetails(caseDetails, caseData, Submitted);
 
@@ -466,13 +473,15 @@ public class SolicitorSubmitApplicationTest {
                 .value(DynamicListElement.builder().label(PBA_NUMBER).build())
                 .build()
         );
+        caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary)).thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+            .thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToSubmit(caseDetails, beforeCaseDetails);

@@ -61,6 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 public class SolicitorGeneralApplicationTest {
 
     private static final String PBA_NUMBER = "PBA0012345";
+    private static final String FEE_ACCOUNT_REF = "REF01";
 
     @Mock
     private GeneralApplicationSelectFee generalApplicationSelectFee;
@@ -150,6 +151,7 @@ public class SolicitorGeneralApplicationTest {
                 .generalApplicationFee(
                     FeeDetails.builder()
                         .orderSummary(generalApplicationOrderSummary)
+                        .accountReferenceNumber(FEE_ACCOUNT_REF)
                         .pbaNumbers(
                             DynamicList.builder()
                                 .value(
@@ -198,8 +200,14 @@ public class SolicitorGeneralApplicationTest {
         when(organisationsResponse.getOrganisationIdentifier()).thenReturn("App1OrgPolicy");
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, 1L, applicant1Solicitor, PBA_NUMBER, generalApplicationOrderSummary))
-            .thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(
+            caseData,
+            1L,
+            applicant1Solicitor,
+            PBA_NUMBER,
+            generalApplicationOrderSummary,
+            FEE_ACCOUNT_REF)
+        ).thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorGeneralApplication.aboutToSubmit(details, details);
@@ -312,6 +320,7 @@ public class SolicitorGeneralApplicationTest {
                 .generalApplicationFee(
                     FeeDetails.builder()
                         .orderSummary(generalApplicationOrderSummary)
+                        .accountReferenceNumber(FEE_ACCOUNT_REF)
                         .pbaNumbers(
                             DynamicList.builder()
                                 .value(
@@ -350,8 +359,14 @@ public class SolicitorGeneralApplicationTest {
         when(organisationsResponse.getOrganisationIdentifier()).thenReturn("App2OrgPolicy");
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
-        when(paymentService.processPbaPayment(caseData, 1L, applicant2Solicitor, PBA_NUMBER, generalApplicationOrderSummary))
-            .thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(
+            caseData,
+            1L,
+            applicant2Solicitor,
+            PBA_NUMBER,
+            generalApplicationOrderSummary,
+            FEE_ACCOUNT_REF
+        )).thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorGeneralApplication.aboutToSubmit(details, details);

@@ -18,7 +18,7 @@
     "howToRespondApplication": "disputeDivorce",
     "typeOfDocumentAttached": "D10",
     "dueDate": "${json-unit.any-string}",
-    "dataVersion": 3,
+    "dataVersion": 4,
     "warnings": []
   },
   "state": "Holding"

@@ -113,7 +113,8 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
                 details.getId(),
                 invokingSolicitor,
                 generalApplication.getGeneralApplicationFee().getPbaNumber(),
-                generalApplication.getGeneralApplicationFee().getOrderSummary()
+                generalApplication.getGeneralApplicationFee().getOrderSummary(),
+                generalApplication.getGeneralApplicationFee().getAccountReferenceNumber()
             );
 
             final OrderSummary generalApplicationFeeOrderSummary = generalApplication.getGeneralApplicationFee().getOrderSummary();

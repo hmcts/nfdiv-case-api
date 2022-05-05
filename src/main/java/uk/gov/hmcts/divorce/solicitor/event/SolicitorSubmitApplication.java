@@ -125,7 +125,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 caseId,
                 caseData.getApplicant1().getSolicitor(),
                 application.getPbaNumber(),
-                caseData.getApplication().getApplicationFeeOrderSummary()
+                caseData.getApplication().getApplicationFeeOrderSummary(),
+                caseData.getApplication().getFeeAccountReference()
             );
 
             if (response.getHttpStatus() == CREATED) {

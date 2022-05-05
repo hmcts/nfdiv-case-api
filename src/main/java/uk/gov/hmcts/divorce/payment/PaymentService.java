@@ -100,7 +100,8 @@ public class PaymentService {
                                          Long caseId,
                                          Solicitor solicitor,
                                          String pbaNumber,
-                                         OrderSummary orderSummary) {
+                                         OrderSummary orderSummary,
+                                         String feeAccountReference) {
 
         log.info("Processing PBA payment for case id {}", caseId);
 
@@ -110,7 +111,7 @@ public class PaymentService {
             paymentResponseEntity = paymentPbaClient.creditAccountPayment(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
-                creditAccountPaymentRequest(caseData, caseId, solicitor, pbaNumber, orderSummary)
+                creditAccountPaymentRequest(caseData, caseId, solicitor, pbaNumber, orderSummary, feeAccountReference)
             );
 
             String paymentReference = Optional.ofNullable(paymentResponseEntity)
@@ -253,7 +254,8 @@ public class PaymentService {
                                                                     Long caseId,
                                                                     Solicitor solicitor,
                                                                     String pbaNumber,
-                                                                    OrderSummary orderSummary) {
+                                                                    OrderSummary orderSummary,
+                                                                    String feeAccountReference) {
 
         var creditAccountPaymentRequest = new CreditAccountPaymentRequest();
         creditAccountPaymentRequest.setService(DIVORCE_SERVICE);
@@ -263,7 +265,7 @@ public class PaymentService {
 
         creditAccountPaymentRequest.setOrganisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
 
-        creditAccountPaymentRequest.setCustomerReference(caseData.getApplication().getFeeAccountReference());
+        creditAccountPaymentRequest.setCustomerReference(feeAccountReference);
 
         final Fee fee = getFeeValue(orderSummary);
         creditAccountPaymentRequest.setDescription(fee.getDescription());
