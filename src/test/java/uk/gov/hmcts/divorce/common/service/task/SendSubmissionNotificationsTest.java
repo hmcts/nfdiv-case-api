@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-class SendCitizenSubmissionNotificationsTest {
+class SendSubmissionNotificationsTest {
 
     @Mock
     private ApplicationOutstandingActionNotification applicationOutstandingActionNotification;
@@ -37,7 +37,7 @@ class SendCitizenSubmissionNotificationsTest {
     private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
-    private SendCitizenSubmissionNotifications sendCitizenSubmissionNotifications;
+    private SendSubmissionNotifications sendSubmissionNotifications;
 
     @Test
     void shouldDispatchSubmittedNotificationsAndOutstandingActionNotificationsIfSubmittedState() {
@@ -47,7 +47,7 @@ class SendCitizenSubmissionNotificationsTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
 
-        sendCitizenSubmissionNotifications.apply(caseDetails);
+        sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
         verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
@@ -61,7 +61,7 @@ class SendCitizenSubmissionNotificationsTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingHWFDecision);
 
-        sendCitizenSubmissionNotifications.apply(caseDetails);
+        sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
         verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
@@ -76,7 +76,7 @@ class SendCitizenSubmissionNotificationsTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingHWFDecision);
 
-        sendCitizenSubmissionNotifications.apply(caseDetails);
+        sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
@@ -90,7 +90,7 @@ class SendCitizenSubmissionNotificationsTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingDocuments);
 
-        sendCitizenSubmissionNotifications.apply(caseDetails);
+        sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
@@ -104,7 +104,7 @@ class SendCitizenSubmissionNotificationsTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingPayment);
 
-        sendCitizenSubmissionNotifications.apply(caseDetails);
+        sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
