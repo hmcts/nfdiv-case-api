@@ -63,7 +63,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .page("stateToTransitionTo")
             .showCondition("applicationType=\"jointApplication\" OR typeOfDocumentAttached=\"Other\"")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getStateToTransitionApplicationTo)
+                .mandatory(Application::getStateToTransitionApplicationTo, "typeOfDocumentAttached=\"D10\"")
             .done();
     }
 

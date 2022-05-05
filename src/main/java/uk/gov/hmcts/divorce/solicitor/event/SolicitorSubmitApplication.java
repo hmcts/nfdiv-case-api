@@ -148,11 +148,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .build();
     }
 
-    private void updateCaseDataWithPaymentDetails(
-        OrderSummary applicationFeeOrderSummary,
-        CaseData caseData,
-        String paymentReference
-    ) {
+    private void updateCaseDataWithPaymentDetails(OrderSummary applicationFeeOrderSummary, CaseData caseData, String paymentReference) {
+
         var payment = Payment
             .builder()
             .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
@@ -161,7 +158,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .reference(paymentReference)
             .status(SUCCESS)
             .build();
-
 
         var application = caseData.getApplication();
 
