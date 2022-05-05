@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.common.service.task.SendCitizenSubmissionNotifications;
+import uk.gov.hmcts.divorce.common.service.task.SendSubmissionNotifications;
 import uk.gov.hmcts.divorce.common.service.task.SetApplicant2Email;
 import uk.gov.hmcts.divorce.common.service.task.SetApplicantOfflineStatus;
 import uk.gov.hmcts.divorce.common.service.task.SetDateSubmitted;
@@ -34,7 +34,7 @@ class SubmissionServiceTest {
     private SetApplicantOfflineStatus setApplicantOfflineStatus;
 
     @Mock
-    private SendCitizenSubmissionNotifications sendCitizenSubmissionNotifications;
+    private SendSubmissionNotifications sendSubmissionNotifications;
 
     @InjectMocks
     private SubmissionService submissionService;
@@ -49,7 +49,7 @@ class SubmissionServiceTest {
         when(setDateSubmitted.apply(caseDetails)).thenReturn(caseDetails);
         when(setApplicant2Email.apply(caseDetails)).thenReturn(caseDetails);
         when(setApplicantOfflineStatus.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendCitizenSubmissionNotifications.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(sendSubmissionNotifications.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submissionService.submitApplication(caseDetails);
 
@@ -59,6 +59,6 @@ class SubmissionServiceTest {
         verify(setDateSubmitted).apply(caseDetails);
         verify(setApplicant2Email).apply(caseDetails);
         verify(setApplicantOfflineStatus).apply(caseDetails);
-        verify(sendCitizenSubmissionNotifications).apply(caseDetails);
+        verify(sendSubmissionNotifications).apply(caseDetails);
     }
 }

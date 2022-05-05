@@ -41,6 +41,9 @@ public class CommonContent {
 
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";
+    public static final String IS_UNDISPUTED = "isUndisputed";
+    public static final String IS_DISPUTED = "isDisputed";
+    public static final String DATE_OF_ISSUE = "date of issue";
 
     public static final String ACCESS_CODE = "access code";
 
@@ -48,6 +51,7 @@ public class CommonContent {
     public static final String RESPONDENT_NAME = "respondent name";
     public static final String SOLICITOR_NAME = "solicitor name";
     public static final String SOLICITOR_REFERENCE = "solicitor reference";
+    public static final String SOLICITOR_FIRM = "solicitor firm";
 
     public static final String REVIEW_DEADLINE_DATE = "review deadline date";
 

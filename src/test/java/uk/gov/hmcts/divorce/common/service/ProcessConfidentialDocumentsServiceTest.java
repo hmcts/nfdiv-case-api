@@ -89,36 +89,6 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentsShouldMoveNOPDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForBothApplicants() {
-        CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
-            .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
-            .documents(CaseDocuments.builder()
-                .confidentialDocumentsGenerated(Lists.newArrayList(applicant1NopConfidential, applicant2NopConfidential))
-                .documentsGenerated(Lists.newArrayList(applicationDoc))
-                .build())
-            .build();
-
-        documentsService.processDocuments(caseData, TEST_CASE_ID);
-
-        List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
-        List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
-
-        assertEquals(3, nonConfidentialDocuments.size());
-        assertEquals(0, confidentialDocuments.size());
-
-        assertThat(
-            nonConfidentialDocuments.stream()
-                .map(doc -> doc.getValue().getDocumentType())
-                .collect(Collectors.toList()),
-            containsInAnyOrder(
-                DocumentType.NOTICE_OF_PROCEEDINGS_APP_1,
-                DocumentType.NOTICE_OF_PROCEEDINGS_APP_2,
-                DocumentType.APPLICATION)
-        );
-    }
-
-    @Test
     public void processDocumentsShouldMoveNOPDocumentsToConfidentialDocumentsGeneratedWhenContactIsPrivateForApplicant1() {
 
         CaseData caseData = CaseData.builder()
@@ -181,7 +151,7 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentsShouldMoveNOPDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant1() {
+    public void processDocumentsShouldNotMoveConfidentialDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant1() {
 
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
@@ -196,24 +166,24 @@ public class ProcessConfidentialDocumentsServiceTest {
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
 
-        assertEquals(2, nonConfidentialDocuments.size());
-        assertEquals(1, confidentialDocuments.size());
-
-        assertEquals(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
-            confidentialDocuments.get(0).getValue().getConfidentialDocumentsReceived());
+        assertEquals(1, nonConfidentialDocuments.size());
+        assertEquals(2, confidentialDocuments.size());
 
         assertThat(
-            nonConfidentialDocuments.stream()
-                .map(doc -> doc.getValue().getDocumentType())
+            confidentialDocuments.stream()
+                .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
                 .collect(Collectors.toList()),
             containsInAnyOrder(
-                DocumentType.NOTICE_OF_PROCEEDINGS_APP_1,
-                DocumentType.APPLICATION)
+                ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
+                ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
         );
+
+        assertEquals(DocumentType.APPLICATION,
+            nonConfidentialDocuments.get(0).getValue().getDocumentType());
     }
 
     @Test
-    public void processDocumentsShouldMoveNOPDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant2() {
+    public void processDocumentsShouldNotMoveConfidentialDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant2() {
 
         CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
@@ -228,20 +198,20 @@ public class ProcessConfidentialDocumentsServiceTest {
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
 
-        assertEquals(2, nonConfidentialDocuments.size());
-        assertEquals(1, confidentialDocuments.size());
-
-        assertEquals(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
-            confidentialDocuments.get(0).getValue().getConfidentialDocumentsReceived());
+        assertEquals(1, nonConfidentialDocuments.size());
+        assertEquals(2, confidentialDocuments.size());
 
         assertThat(
-            nonConfidentialDocuments.stream()
-                .map(doc -> doc.getValue().getDocumentType())
+            confidentialDocuments.stream()
+                .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
                 .collect(Collectors.toList()),
             containsInAnyOrder(
-                DocumentType.NOTICE_OF_PROCEEDINGS_APP_2,
-                DocumentType.APPLICATION)
+                ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
+                ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
         );
+
+        assertEquals(DocumentType.APPLICATION,
+            nonConfidentialDocuments.get(0).getValue().getDocumentType());
     }
 
     private DivorceDocument buildDivorceDocument(final DocumentType documentType) {
