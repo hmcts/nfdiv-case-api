@@ -41,6 +41,7 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
             .pageLabel("Upload document")
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getDocumentsUploaded)
+                .optional(CaseDocuments::getScannedDocuments)
                 .done();
     }
 
