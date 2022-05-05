@@ -152,8 +152,8 @@ xui-mo-webapp:
     environment:
       MANAGE_CASE_LINK: https://xui-${SERVICE_FQDN}/cases
       MANAGE_ORG_LINK: https://xui-mo-${SERVICE_FQDN}
-      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
-      SERVICES_MCA_PROXY_API: http://${SERVICE_FQDN}
+      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}:4452
+      SERVICES_MCA_PROXY_API: http://${SERVICE_FQDN}:4096
       CASE_TYPES: NFD
 
 idam-pr:
