@@ -56,7 +56,7 @@ public class AosResponseLetterTemplateContent {
         templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
-        templateContent.put(DUE_DATE, caseData.getDueDate());
+        templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(
             WAIT_UNTIL_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
