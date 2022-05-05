@@ -5,6 +5,8 @@ ccd:
     enabled: false
   xui:
     enabled: false
+  mo:
+    enabled: false
 idam-pr:
   enabled: false
 

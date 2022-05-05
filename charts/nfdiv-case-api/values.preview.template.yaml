@@ -73,7 +73,7 @@ postgresql:
 
 elasticsearch:
   clusterName: "es"
-  imageTag: "6.4.2"
+  imageTag: "7.17.0"
   replicas: 1
   minimumMasterNodes: 1
   antiAffinity: "soft"
@@ -89,9 +89,13 @@ elasticsearch:
       - ""
 
 logstash:
+  devmemoryRequests: 512Mi
+  devcpuRequests: "1000m"
+  devmemoryLimits: 1024Mi
+  devcpuLimits: "2500m"
   image:
     repository: hmctspublic.azurecr.io/ccd/logstash
-    tag: latest
+    tag: latest #ccd-divorce-logstash-latest
     pullPolicy: IfNotPresent
   logstashJavaOpts: -Xmx1g -Xms512M
   persistence:
@@ -124,9 +128,25 @@ xui-webapp:
       FEATURE_REDIS_ENABLED: false
       JURISDICTIONS: DIVORCE
 
+xui-mo-webapp:
+  enabled: true
+  nodejs:
+    imagePullPolicy: Always
+    releaseNameOverride: ${SERVICE_NAME}-xui-mo-webapp
+    image: hmctspublic.azurecr.io/xui/mo-webapp:latest
+    ingressHost: xui-mo-${SERVICE_FQDN}
+    environment:
+      MANAGE_CASE_LINK: https://xui-${SERVICE_FQDN}/cases
+      MANAGE_ORG_LINK: https://xui-mo-${SERVICE_FQDN}
+      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
+      SERVICES_MCA_PROXY_API: http://${SERVICE_FQDN}
+      CASE_TYPES: NFD
+
 idam-pr:
   enabled: true
   releaseNameOverride: ${SERVICE_NAME}-xui-idam-pr
   redirect_uris:
     XUI:
       - https://xui-${SERVICE_FQDN}/oauth2/callback
+    XUIMO:
+      - https://xui-mo-${SERVICE_FQDN}/oauth2/callback
