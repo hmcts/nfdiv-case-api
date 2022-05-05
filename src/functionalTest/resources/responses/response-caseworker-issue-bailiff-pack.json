@@ -1,22 +1,47 @@
 {
   "data": {
-    "divorceOrDissolution": "divorce",
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
-    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
-    "divorceWho": "wife",
+    "divorceOrDissolution": "divorce",
     "marriageFormationType": "oppositeSexCouple",
-    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "solPaymentHowToPay": "feePayByAccount",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "divorceWho": "wife",
     "certificateOfServiceDocument": {
       "documentFileName": "certificateOfService.pdf",
-      "documentType": "certificateOfService",
       "documentLink": {
-        "document_url": "${json-unit.any-string}",
+        "document_binary_url": "${json-unit.any-string}",
         "document_filename": "certificateOfService.pdf",
-        "document_binary_url": "${json-unit.any-string}"
-      }
+        "document_url": "${json-unit.any-string}"
+      },
+      "documentType": "certificateOfService"
     },
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "certificateOfService.pdf",
+          "documentLink": {
+            "document_binary_url": "${json-unit.any-string}",
+            "document_filename": "certificateOfService.pdf",
+            "document_url": "${json-unit.any-string}"
+          },
+          "documentType": "certificateOfService"
+        }
+      },
+      {
+        "id": "V1",
+        "value": {
+          "documentFileName": "draft-divorce-application-1234567890123456.pdf",
+          "documentLink": {
+            "document_binary_url": "${json-unit.any-string}",
+            "document_filename": "draft-divorce-application-1234567890123456.pdf",
+            "document_url": "${json-unit.any-string}"
+          },
+          "documentType": "application"
+        }
+      }
+    ],
     "dataVersion": "${json-unit.any-number}",
     "warnings": []
   }
