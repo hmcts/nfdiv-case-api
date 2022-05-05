@@ -14,12 +14,6 @@ import java.util.EnumSet;
 public enum State {
 
     @CCD(
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class, SolicitorAccess.class}
-    )
-    Draft("Draft"),
-
-    @CCD(
         name = "20 week holding period",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -250,6 +244,13 @@ public enum State {
         access = {DefaultStateAccess.class}
     )
     ConditionalOrderRefused("ConditionalOrderRefused"),
+
+    @CCD(
+        name = "Draft",
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class, SolicitorAccess.class}
+    )
+    Draft("Draft"),
 
     @CCD(
         name = "Final order complete",
