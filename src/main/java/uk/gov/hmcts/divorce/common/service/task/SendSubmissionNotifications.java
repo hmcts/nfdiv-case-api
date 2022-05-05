@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 
 @Component
 @Slf4j
-public class SendCitizenSubmissionNotifications implements CaseTask {
+public class SendSubmissionNotifications implements CaseTask {
 
     @Autowired
     private ApplicationOutstandingActionNotification applicationOutstandingActionNotification;
