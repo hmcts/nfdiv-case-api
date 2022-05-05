@@ -12,7 +12,8 @@ java:
   environment:
     BOOT_WITH_CCD: true
     CFT_LIB_NO_DOCKER: true
-    CFT_LIB_DB_HOST: "{{ .Release.Name }}-postgresql"
+    CFT_LIB_DB_HOST: http://{{ .Release.Name }}-postgresql
+    ELASTIC_SEARCH_HOSTS: ${SERVICE_NAME}-es-master:9200
     ROLE_ASSIGNMENT_URL: http://localhost:4096
     CASE_DATA_STORE_BASEURL: http://localhost:4452
     IDAM_API_URL_BASE: https://idam-api.aat.platform.hmcts.net
@@ -120,13 +121,12 @@ xui-webapp:
       SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
       SERVICES_DOCUMENTS_API_V2: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
       SERVICES_CCD_CASE_ASSIGNMENT_API: http://${SERVICE_FQDN}
-      REDISCLOUD_URL: redis://${SERVICE_NAME}-redis-master:6379
+      FEATURE_REDIS_ENABLED: false
       JURISDICTIONS: DIVORCE
-  redis:
-    enabled: true
-  idam-pr:
-    enabled: true
-    releaseNameOverride: ${SERVICE_NAME}-xui-idam-pr
-    redirect_uris:
-      XUI:
-        - https://xui-${SERVICE_FQDN}/oauth2/callback
+
+idam-pr:
+  enabled: true
+  releaseNameOverride: ${SERVICE_NAME}-xui-idam-pr
+  redirect_uris:
+    XUI:
+      - https://xui-${SERVICE_FQDN}/oauth2/callback

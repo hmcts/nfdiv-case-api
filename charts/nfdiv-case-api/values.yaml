@@ -7,8 +7,6 @@ ccd:
     enabled: false
 idam-pr:
   enabled: false
-redis:
-  enabled: false
 
 java:
   applicationPort: 4013

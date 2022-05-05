@@ -26,3 +26,7 @@ dependencies:
     version: ~0.2.28
     repository: '@hmctspublic'
     condition: ccd.xui.enabled
+  - name: idam-pr
+    version: 2.2.7
+    repository: '@hmctspublic'
+    condition: idam-pr.enabled
