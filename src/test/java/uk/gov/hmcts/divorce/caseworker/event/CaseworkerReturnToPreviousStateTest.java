@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReturnToPreviousState.CASEWORKER_RETURN_TO_PREVIOUS_STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -38,6 +39,21 @@ class CaseworkerReturnToPreviousStateTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_RETURN_TO_PREVIOUS_STATE);
+    }
+
+    @Test
+    void shouldSetCurrentStateInAboutToStartCallback() {
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder().build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setState(Submitted);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReturnToPreviousState.aboutToStart(details);
+
+        assertThat(response.getData().getApplication().getCurrentState()).isEqualTo(Submitted);
     }
 
     @Test

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStart;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -38,6 +39,7 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
             .name("Return to previous state")
             .description("Return to previous state")
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
@@ -45,7 +47,8 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
             .page("returnToPreviousState", this::midEvent)
             .pageLabel("Return to previous state")
             .complex(CaseData::getApplication)
-            .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "State to transfer case to")
+                .readonly(Application::getCurrentState)
+                .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "State to transfer case to")
             .done();
     }
 
@@ -65,7 +68,18 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
 
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("Caseworker return to previous state about to start callback invoked");
+
+        CaseData caseData = details.getData();
+        caseData.getApplication().setCurrentState(details.getState());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
+        public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         log.info("Caseworker return to previous state about to submit callback invoked");
 
