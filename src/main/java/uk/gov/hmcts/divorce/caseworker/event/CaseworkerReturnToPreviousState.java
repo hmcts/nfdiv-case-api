@@ -78,7 +78,7 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
             .build();
     }
 
-        public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         log.info("Caseworker return to previous state about to submit callback invoked");
 
