@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
@@ -18,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.ScannedDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -106,7 +106,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     void shouldSetDynamicListWithScannedDocumentNamesForAllTheScannedDocuments() {
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
-                ScannedDocument
+                uk.gov.hmcts.divorce.divorcecase.model.ScannedDocument
                     .builder()
                     .fileName("doc1.pdf")
                     .type(ScannedDocumentType.OTHER)
