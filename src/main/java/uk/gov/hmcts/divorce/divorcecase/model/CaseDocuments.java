@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
@@ -93,6 +94,13 @@ public class CaseDocuments {
         access = {CaseworkerAccessOnlyAccess.class}
     )
     private List<ListValue<DivorceDocument>> answerReceivedSupportingDocuments;
+
+    @CCD(
+        label = "Select respondent answers document",
+        access = {CaseworkerAccessOnlyAccess.class}
+    )
+    private DynamicList scannedDocumentNames;
+
 
     public static <T> List<ListValue<T>> addDocumentToTop(final List<ListValue<T>> documents, final T value) {
         return addDocumentToTop(documents, value, null);
