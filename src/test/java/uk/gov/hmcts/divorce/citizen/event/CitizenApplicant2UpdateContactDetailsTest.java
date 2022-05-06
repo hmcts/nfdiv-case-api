@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
@@ -29,6 +30,10 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2UpdateContactDetails.CITIZEN_APPLICANT2_UPDATE_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -78,114 +83,129 @@ public class CitizenApplicant2UpdateContactDetailsTest {
     }
 
     @Test
-    void shouldUpdateApplicant2AddressAndRegenerateDivorceApplicationWithChangedAddressBeforeSubmittingAOSWhenContactIsNotPrivate() {
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
-        caseData.getApplicant2().setAddress(ADDRESS1);
-
-        final CaseData updatedData = CaseData.builder().build();
-        updatedData.getApplicant2().setAddress(ADDRESS2);
-        updatedData.getApplicant2().setContactDetailsType(PUBLIC);
-        updatedData.setCaseInvite(
-            CaseInvite.builder()
-                .applicant2UserId("app2")
-                .build()
-        );
-        updatedCaseDetails.setData(updatedData);
-        updatedCaseDetails.setId(123456789L);
-        updatedCaseDetails.setState(State.AwaitingAos);
-        previousCaseDetails.setData(caseData);
-        previousCaseDetails.setState(State.AwaitingAos);
-        when(request.getHeader(AUTHORIZATION)).thenReturn("token");
-        when(ccdAccessService.isApplicant1("token", 123456789L)).thenReturn(false);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            citizenApplicant2UpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
-
-        assertThat(response.getData().getApplicant2().getAddress()).isEqualTo(ADDRESS2);
-        assertThat(response.getData().getApplicant2().getContactDetailsType()).isEqualTo(PUBLIC);
-
+    void shouldUpdateApplicant2AddressAndRegenerateDivorceApplicationWithChangedAddressWhenContactIsNotPrivateAndAwaitingAos() {
+        verifyAddressUpdate(AwaitingAos);
         verify(divorceApplicationRemover).apply(any());
         verify(generateDivorceApplication).apply(any());
     }
 
     @Test
-    void shouldUpdateApplicant2PhoneNumberAndShouldNotRegenerateDivorceApplicationBeforeSubmittingAOSWhenContactIsNotPrivate() {
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
-        caseData.getApplicant2().setPhoneNumber("1122334455");
+    void shouldUpdateApplicant2AddressAndRegenerateDivorceApplicationWithChangedAddressWhenContactIsNotPrivateAndAosOverdue() {
+        verifyAddressUpdate(AosOverdue);
+        verify(divorceApplicationRemover).apply(any());
+        verify(generateDivorceApplication).apply(any());
+    }
 
-        final CaseData updatedData = CaseData.builder().build();
-        updatedData.getApplicant2().setPhoneNumber("01234567890");
-        updatedData.getApplicant2().setContactDetailsType(PUBLIC);
-        updatedData.setCaseInvite(
-            CaseInvite.builder()
-                .applicant2UserId("app2")
-                .build()
-        );
-        updatedCaseDetails.setData(updatedData);
-        updatedCaseDetails.setId(123456789L);
-        updatedCaseDetails.setState(State.AwaitingAos);
-        previousCaseDetails.setData(caseData);
-        previousCaseDetails.setState(State.AwaitingAos);
-        when(request.getHeader(AUTHORIZATION)).thenReturn("token");
-        when(ccdAccessService.isApplicant1("token", 123456789L)).thenReturn(false);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            citizenApplicant2UpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
-
-        assertThat(response.getData().getApplicant2().getPhoneNumber()).isEqualTo("01234567890");
-        assertThat(response.getData().getApplicant2().getContactDetailsType()).isEqualTo(PUBLIC);
-
-        verifyNoInteractions(divorceApplicationRemover);
-        verifyNoInteractions(generateDivorceApplication);
+    @Test
+    void shouldUpdateApplicant2AddressAndRegenerateDivorceApplicationWithChangedAddressWhenContactIsNotPrivateAndAosDrafted() {
+        verifyAddressUpdate(AosDrafted);
+        verify(divorceApplicationRemover).apply(any());
+        verify(generateDivorceApplication).apply(any());
     }
 
     @Test
     void shouldUpdateApplicant2AddressAndShouldNotRegenerateDivorceApplicationWithChangedAddressAfterSubmittingAOSWhenContactIsNotPrivate(
     ) {
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
-        caseData.getApplicant2().setAddress(ADDRESS1);
+        verifyAddressUpdate(Holding);
+        verifyNoInteractions(divorceApplicationRemover);
+        verifyNoInteractions(generateDivorceApplication);
+    }
 
-        final CaseData updatedData = CaseData.builder().build();
-        updatedData.getApplicant2().setAddress(ADDRESS2);
-        updatedData.getApplicant2().setContactDetailsType(PUBLIC);
-        updatedData.setCaseInvite(
-            CaseInvite.builder()
-                .applicant2UserId("app2")
-                .build()
-        );
-        updatedCaseDetails.setData(updatedData);
-        updatedCaseDetails.setId(123456789L);
-        updatedCaseDetails.setState(State.Holding);
-        previousCaseDetails.setData(caseData);
-        previousCaseDetails.setState(State.Holding);
-        when(request.getHeader(AUTHORIZATION)).thenReturn("token");
-        when(ccdAccessService.isApplicant1("token", 123456789L)).thenReturn(false);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            citizenApplicant2UpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
-
-        assertThat(response.getData().getApplicant2().getAddress()).isEqualTo(ADDRESS2);
-        assertThat(response.getData().getApplicant2().getContactDetailsType()).isEqualTo(PUBLIC);
-
+    @Test
+    void shouldUpdateApplicant2PhoneNumberAndShouldNotRegenerateDivorceApplicationBeforeSubmittingAOSWhenContactIsNotPrivate() {
+        verifyPhoneNumberUpdate(AwaitingAos);
         verifyNoInteractions(divorceApplicationRemover);
         verifyNoInteractions(generateDivorceApplication);
     }
 
     @Test
     void shouldUpdateApplicant2PhoneNumberAndShouldNotRegenerateDivorceApplicationAfterSubmittingAOSWhenContactIsNotPrivate() {
+        verifyPhoneNumberUpdate(Holding);
+        verifyNoInteractions(divorceApplicationRemover);
+        verifyNoInteractions(generateDivorceApplication);
+    }
+
+    @Test
+    void shouldRegenerateDivorceApplicationWhenContactPrivacyIsChangedBeforeSubmittingAOS() {
+        verifyContactPrivacyUpdate(PRIVATE, PUBLIC, AwaitingAos);
+        verify(divorceApplicationRemover).apply(any());
+        verify(generateDivorceApplication).apply(any());
+    }
+
+    @Test
+    void shouldNotRegenerateDivorceApplicationWhenContactPrivacyIsChangedAfterSubmittingAOS() {
+        verifyContactPrivacyUpdate(PRIVATE, PUBLIC, Holding);
+        verifyNoInteractions(divorceApplicationRemover);
+        verifyNoInteractions(generateDivorceApplication);
+    }
+
+    @Test
+    void shouldNotRegenerateDivorceApplicationWhenContactPrivacyIsNotChanged() {
+        verifyContactPrivacyUpdate(PUBLIC, PUBLIC, AwaitingAos);
+        verifyNoInteractions(divorceApplicationRemover);
+        verifyNoInteractions(generateDivorceApplication);
+    }
+
+    private void verifyAddressUpdate(State state) {
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
+
+        setupData(updatedCaseDetails, previousCaseDetails, state);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            citizenApplicant2UpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
+
+        assertThat(response.getData().getApplicant2().getAddress()).isEqualTo(ADDRESS2);
+        assertThat(response.getData().getApplicant2().getContactDetailsType()).isEqualTo(PUBLIC);
+    }
+
+    private void verifyPhoneNumberUpdate(State state) {
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
+
+        setupData(updatedCaseDetails, previousCaseDetails, state);
+
+        previousCaseDetails.getData().getApplicant2().setAddress(ADDRESS1);
+        updatedCaseDetails.getData().getApplicant2().setAddress(ADDRESS1);
+        previousCaseDetails.getData().getApplicant2().setPhoneNumber("1122334455");
+        updatedCaseDetails.getData().getApplicant2().setPhoneNumber("01234567890");
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            citizenApplicant2UpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
+
+        assertThat(response.getData().getApplicant2().getPhoneNumber()).isEqualTo("01234567890");
+        assertThat(response.getData().getApplicant2().getContactDetailsType()).isEqualTo(PUBLIC);
+    }
+
+    private void verifyContactPrivacyUpdate(ContactDetailsType oldContactDetailsType, ContactDetailsType newContactDetailsType,
+                                            State state) {
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
+
+        setupData(updatedCaseDetails, previousCaseDetails, state);
+
+        previousCaseDetails.getData().getApplicant2().setAddress(ADDRESS1);
+        updatedCaseDetails.getData().getApplicant2().setAddress(ADDRESS1);
+        previousCaseDetails.getData().getApplicant2().setPhoneNumber("1122334455");
+        updatedCaseDetails.getData().getApplicant2().setPhoneNumber("1122334455");
+
+        previousCaseDetails.getData().getApplicant2().setContactDetailsType(oldContactDetailsType);
+        updatedCaseDetails.getData().getApplicant2().setContactDetailsType(newContactDetailsType);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            citizenApplicant2UpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
+
+        assertThat(response.getData().getApplicant2().getContactDetailsType()).isEqualTo(newContactDetailsType);
+    }
+
+    private void setupData(final CaseDetails<CaseData, State> updatedCaseDetails,
+                           final CaseDetails<CaseData, State> previousCaseDetails,
+                           final State state) {
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplicant2().setPhoneNumber("1122334455");
+        caseData.getApplicant2().setAddress(ADDRESS1);
 
         final CaseData updatedData = CaseData.builder().build();
-        updatedData.getApplicant2().setPhoneNumber("01234567890");
+        updatedData.getApplicant2().setAddress(ADDRESS2);
         updatedData.getApplicant2().setContactDetailsType(PUBLIC);
         updatedData.setCaseInvite(
             CaseInvite.builder()
@@ -194,87 +214,10 @@ public class CitizenApplicant2UpdateContactDetailsTest {
         );
         updatedCaseDetails.setData(updatedData);
         updatedCaseDetails.setId(123456789L);
-        updatedCaseDetails.setState(State.Holding);
+        updatedCaseDetails.setState(state);
         previousCaseDetails.setData(caseData);
-        previousCaseDetails.setState(State.Holding);
+        previousCaseDetails.setState(state);
         when(request.getHeader(AUTHORIZATION)).thenReturn("token");
         when(ccdAccessService.isApplicant1("token", 123456789L)).thenReturn(false);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            citizenApplicant2UpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
-
-        assertThat(response.getData().getApplicant2().getPhoneNumber()).isEqualTo("01234567890");
-        assertThat(response.getData().getApplicant2().getContactDetailsType()).isEqualTo(PUBLIC);
-
-        verifyNoInteractions(divorceApplicationRemover);
-        verifyNoInteractions(generateDivorceApplication);
-    }
-
-    @Test
-    void shouldRegenerateDivorceApplicationWhenContactPrivacyIsChangedBeforeSubmittingAOS() {
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
-        caseData.getApplicant2().setAddress(ADDRESS1);
-        caseData.getApplicant2().setContactDetailsType(PUBLIC);
-
-        final CaseData updatedData = CaseData.builder().build();
-        updatedData.getApplicant2().setAddress(ADDRESS2);
-        updatedData.getApplicant2().setContactDetailsType(PRIVATE);
-        updatedData.setCaseInvite(
-            CaseInvite.builder()
-                .applicant2UserId("app2")
-                .build()
-        );
-        updatedCaseDetails.setData(updatedData);
-        updatedCaseDetails.setId(123456789L);
-        updatedCaseDetails.setState(State.AwaitingAos);
-        previousCaseDetails.setData(caseData);
-        previousCaseDetails.setState(State.AwaitingAos);
-        when(request.getHeader(AUTHORIZATION)).thenReturn("token");
-        when(ccdAccessService.isApplicant1("token", 123456789L)).thenReturn(false);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            citizenApplicant2UpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
-
-        assertThat(response.getData().getApplicant2().getAddress()).isEqualTo(ADDRESS2);
-        assertThat(response.getData().getApplicant2().getContactDetailsType()).isEqualTo(PRIVATE);
-
-        verify(divorceApplicationRemover).apply(any());
-        verify(generateDivorceApplication).apply(any());
-    }
-
-    @Test
-    void shouldNotRegenerateDivorceApplicationWhenContactPrivacyIsNotChanged() {
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
-        caseData.getApplicant2().setAddress(ADDRESS1);
-        caseData.getApplicant2().setContactDetailsType(PRIVATE);
-
-        final CaseData updatedData = CaseData.builder().build();
-        updatedData.getApplicant2().setAddress(ADDRESS1);
-        updatedData.getApplicant2().setContactDetailsType(PRIVATE);
-        updatedData.setCaseInvite(
-            CaseInvite.builder()
-                .applicant2UserId("app2")
-                .build()
-        );
-        updatedCaseDetails.setData(updatedData);
-        updatedCaseDetails.setId(123456789L);
-        updatedCaseDetails.setState(State.AwaitingAos);
-        previousCaseDetails.setData(caseData);
-        previousCaseDetails.setState(State.AwaitingAos);
-        when(request.getHeader(AUTHORIZATION)).thenReturn("token");
-        when(ccdAccessService.isApplicant1("token", 123456789L)).thenReturn(false);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            citizenApplicant2UpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
-
-        assertThat(response.getData().getApplicant2().getAddress()).isEqualTo(ADDRESS1);
-        assertThat(response.getData().getApplicant2().getContactDetailsType()).isEqualTo(PRIVATE);
-
-        verifyNoInteractions(divorceApplicationRemover);
-        verifyNoInteractions(generateDivorceApplication);
     }
 }

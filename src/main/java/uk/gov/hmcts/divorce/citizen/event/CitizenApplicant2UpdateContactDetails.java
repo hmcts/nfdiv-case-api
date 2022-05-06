@@ -18,6 +18,9 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -69,13 +72,12 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
 
             boolean contactPrivacyChanged = updatedData.getApplicant2().isConfidentialContactDetails()
                 != data.getApplicant2().isConfidentialContactDetails();
-
             data.getApplicant2().setContactDetailsType(updatedData.getApplicant2().getContactDetailsType());
 
             boolean addressChanged = isAddressChanged(data, updatedData);
             data.getApplicant2().setAddress(updatedData.getApplicant2().getAddress());
 
-            if ((addressChanged || contactPrivacyChanged) && details.getState().equals(State.AwaitingAos)) {
+            if ((addressChanged || contactPrivacyChanged) && isValidState(details.getState())) {
                 log.info("Regenerating divorce application");
                 caseTasks(
                     divorceApplicationRemover,
@@ -101,5 +103,9 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
         }
 
         return oldAddress != null && !oldAddress.equalsIgnoreCase(newAddress);
+    }
+
+    private boolean isValidState(State state) {
+        return AwaitingAos.equals(state) || AosOverdue.equals(state) || AosDrafted.equals(state);
     }
 }
