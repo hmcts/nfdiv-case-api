@@ -10,10 +10,34 @@ java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
   environment:
-    BOOT_WITH_CCD: true
-    CFT_LIB_NO_DOCKER: true
-    CFT_LIB_DB_HOST: http://{{ .Release.Name }}-postgresql
-    ELASTIC_SEARCH_HOSTS: ${SERVICE_NAME}-es-master:9200
+#    BOOT_WITH_CCD: true
+#    CFT_LIB_NO_DOCKER: true
+#    CFT_LIB_DB_HOST: http://{{ .Release.Name }}-postgresql
+    USER_PROFILE_DB_HOST: http://{{ .Release.Name }}-postgresql
+    USER_PROFILE_DB_PORT: 5432
+    USER_PROFILE_DB_USERNAME: postgres
+    USER_PROFILE_DB_PASSWORD: postgres
+    USER_PROFILE_DB_NAME: userprofile
+    DATA_STORE_DB_HOST: http://{{ .Release.Name }}-postgresql
+    DATA_STORE_DB_PORT: 5432
+    DATA_STORE_DB_USERNAME: postgres
+    DATA_STORE_DB_PASSWORD: postgres
+    DATA_STORE_DB_NAME: datastore
+    DEFINITION_STORE_DB_HOST: http://{{ .Release.Name }}-postgresql
+    DEFINITION_STORE_DB_PORT: 5432
+    DEFINITION_STORE_DB_USERNAME: postgres
+    DEFINITION_STORE_DB_PASSWORD: postgres
+    DEFINITION_STORE_DB_NAME: definitionstore
+    ROLE_ASSIGNMENT_DB_HOST: http://{{ .Release.Name }}-postgresql
+    ROLE_ASSIGNMENT_DB_PORT: 5432
+    ROLE_ASSIGNMENT_DB_NAME: am
+    ROLE_ASSIGNMENT_DB_USERNAME: postgres
+    ROLE_ASSIGNMENT_DB_PASSWORD: postgres
+    SEARCH_ELASTIC_HOSTS: http://${SERVICE_NAME}-es-master:9200
+    SEARCH_ELASTIC_DATA_HOSTS: http://${SERVICE_NAME}-es-master:9200
+    ELASTICSEARCH_ENABLED: true
+    ELASTICSEARCH_FAILIMPORTIFERROR: true
+    CCD_TX-TIMEOUT_DEFAULT: 120
     ROLE_ASSIGNMENT_URL: http://localhost:4096
     CASE_DATA_STORE_BASEURL: http://localhost:4452
     IDAM_API_URL_BASE: https://idam-api.aat.platform.hmcts.net

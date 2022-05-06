@@ -27,7 +27,7 @@ plugins {
   id 'org.springframework.boot' version '2.6.7'
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'hmcts.ccd.sdk' version '3.0.0'
-  id 'com.github.hmcts.rse-cft-lib' version 'preview-hack-SNAPSHOT'
+  id 'com.github.hmcts.rse-cft-lib' version 'gigajar-v2-SNAPSHOT'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -316,8 +316,9 @@ dependencies {
   functionalTestImplementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
 
+  // TODO: have the cftlib exclude this automatically. Breaks the gigajar.
   // Provides fast-reload of just the NFDIV service.
-  cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
+  //  cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
@@ -425,4 +426,41 @@ tasks.withType(Test).configureEach {
 // exclude the logback binding is coming in via cftlib
 configurations.cftlibTestImplementation {
   exclude group: 'ch.qos.logback', module: 'logback-classic'
+}
+
+// TODO: this will slow down a first boot during local dev and should be reworked.
+// Bundle the definition into the cftlib resources.
+processCftlibResources {
+    from buildCCDXlsx
+}
+
+// Just for illustration.
+// Copies the environment setup from the existing bootWithCCD task but changes the arguments to launch the gigajar.
+task testGigaJar(type: uk.gov.hmcts.rse.LibRunnerTask, dependsOn: cftlibExecutableJar) {
+    dependsOn(loadEnvSecrets)
+    workingDir project.layout.buildDirectory.dir('gigatest')
+    mkdir workingDir
+    environment 'gigajar', 'true'
+    environment 'spring.devtools.livereload.enabled', 'false'
+    main = "-jar"
+    args cftlibExecutableJar.archiveFile.get()
+    doFirst() {
+        project.file('./.aat-env').readLines().each() {
+            def index = it.indexOf("=")
+            def key = it.substring(0, index)
+            def value = it.substring(index + 1)
+            environment key, value
+        }
+    }
+}
+
+cftlibExecutableJar {
+  archiveName = 'nfdiv-case-api.jar'
+}
+
+tasks.assemble.configure {
+  project.afterEvaluate {
+    actions.clear()
+    dependsOn(cftlibExecutableJar)
+  }
 }

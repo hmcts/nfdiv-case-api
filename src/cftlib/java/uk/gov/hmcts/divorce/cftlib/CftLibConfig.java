@@ -22,6 +22,9 @@ public class CftLibConfig implements CFTLibConfigurer {
     @Value("ccd-NFD-${CCD_DEF_NAME:dev}.xlsx")
     String defName;
 
+    @Value("${gigajar}")
+    boolean gigajar;
+
     @Autowired
     CCDDefinitionGenerator configWriter;
 
@@ -60,7 +63,7 @@ public class CftLibConfig implements CFTLibConfigurer {
         lib.configureRoleAssignments(json);
 
         // Generate and import CCD definitions
-        var def = Files.readAllBytes(generateCCDDefinition());
+        var def = getCCDDefinition();
         lib.importDefinition(def);
     }
 
@@ -69,7 +72,11 @@ public class CftLibConfig implements CFTLibConfigurer {
     * Doing this at runtime in the CftlibConfig allows use of spring boot devtool's
     * live reload functionality to rapidly edit and test code & definition changes.
     */
-    private Path generateCCDDefinition() throws Exception {
+    private byte[] getCCDDefinition() throws Exception {
+        // Gigajar embeds the ccd definition.
+        if (gigajar) {
+            return this.getClass().getResourceAsStream("/" + defName).readAllBytes();
+        }
         // Export the JSON config.
         configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
         // Run the gradle task to convert to xlsx.
@@ -80,6 +87,6 @@ public class CftLibConfig implements CFTLibConfigurer {
         if (code != 0) {
             throw new RuntimeException("Error converting ccd json to xlsx");
         }
-        return Path.of("build/ccd-config/" + defName);
+        return Files.readAllBytes(Path.of("../ccd-config/" + defName));
     }
 }
