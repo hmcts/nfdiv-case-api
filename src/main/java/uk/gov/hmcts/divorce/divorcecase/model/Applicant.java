@@ -24,13 +24,13 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.isEnglandOrWales;
 
 @Data
 @AllArgsConstructor
@@ -185,11 +185,7 @@ public class Applicant {
 
     @JsonIgnore
     public boolean isBasedOverseas() {
-        return !isRepresented()
-            && nonNull(address)
-            && !isBlank(address.getCountry())
-            && !("UK").equalsIgnoreCase(address.getCountry())
-            && !("United Kingdom").equalsIgnoreCase(address.getCountry());
+        return !isRepresented() && !isEnglandOrWales(address);
     }
 
     @JsonIgnore

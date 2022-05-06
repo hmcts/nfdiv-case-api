@@ -30,6 +30,7 @@ public class SetServiceType implements CaseTask {
         } else if (caseData.getApplication().getServiceMethod() == null) {
             caseData.getApplication().setServiceMethod(COURT_SERVICE);
         }
+        log.info("Service method set to: {}", caseData.getApplication().getServiceMethod());
 
         return details;
     }

@@ -3,8 +3,13 @@ package uk.gov.hmcts.divorce.divorcecase.util;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.joinWith;
 import static org.apache.commons.lang3.StringUtils.removeStart;
@@ -56,5 +61,25 @@ public final class AddressUtil {
         }
 
         return null;
+    }
+
+    public static boolean isEnglandOrWales(AddressGlobalUK address) {
+        if (isNull(address) || isNull(address.getCountry())) {
+            throw new IllegalArgumentException("Cannot assert whether address is overseas or not due to null address or country");
+        }
+
+        final List<String> ukTerms = Arrays.asList("unitedkingdom", "uk", "england", "wales");
+        final List<String> scottishPostcodePrefixes = Arrays.asList("ab", "dd", "dg", "eh", "fk", "g", "hs", "iv", "ka", "kw", "ky", "ml", "pa", "ph", "td", "ze");
+
+        final String sanitisedCountry = address.getCountry().replaceAll("\\s","").replaceAll("\\.", "").toLowerCase(Locale.ROOT);
+        final String postcode = Optional.ofNullable(address.getPostCode()).orElse("");
+
+        var isScottishPostcode = false;
+        if (postcode.matches(".*[a-zA-Z]+.*")) {
+            final String sanitisedPostcodePrefix = postcode.split("[0-9]")[0].toLowerCase(Locale.ROOT);
+            isScottishPostcode = scottishPostcodePrefixes.contains(sanitisedPostcodePrefix);
+        }
+
+        return ukTerms.contains(sanitisedCountry) && !isScottishPostcode;
     }
 }
