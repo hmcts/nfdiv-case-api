@@ -127,17 +127,6 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnTrueIfCountryIsUnitedKingdomAndPostcodeIsNull() {
-
-        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
-            .country("United Kingdom")
-            .postCode(null)
-            .build();
-
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(true));
-    }
-
-    @Test
     public void shouldReturnTrueIfCountryIsUkAndPostcodeIsNotScottish() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
