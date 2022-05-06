@@ -433,6 +433,8 @@ configurations.cftlibTestImplementation {
 processCftlibResources {
     from buildCCDXlsx
 }
+processCftlibResources.dependsOn generateCCDConfig
+buildCCDXlsx.mustRunAfter generateCCDConfig
 
 // Just for illustration.
 // Copies the environment setup from the existing bootWithCCD task but changes the arguments to launch the gigajar.
