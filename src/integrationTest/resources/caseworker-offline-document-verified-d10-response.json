@@ -27,7 +27,7 @@
             "document_filename": "doc1.pdf",
             "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
           },
-          "documentDateAdded": "2022-05-05",
+          "documentDateAdded": "${json-unit.any-string}",
           "documentComment": "Reclassified scanned document",
           "documentFileName": "doc1.pdf",
           "documentType": "respondentAnswers"
