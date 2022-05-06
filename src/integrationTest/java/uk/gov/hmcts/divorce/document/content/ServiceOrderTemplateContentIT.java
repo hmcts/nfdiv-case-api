@@ -49,7 +49,7 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, 1616591401473378L),
+            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
@@ -68,7 +68,7 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, 1616591401473378L),
+            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(SERVICE_APPLICATION_DECISION_DATE, "20 June 2021"),
@@ -90,7 +90,7 @@ public class ServiceOrderTemplateContentIT {
         ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, 1616591401473378L),
+            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
@@ -116,7 +116,7 @@ public class ServiceOrderTemplateContentIT {
         ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, 1616591401473378L),
+            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
@@ -141,7 +141,7 @@ public class ServiceOrderTemplateContentIT {
         ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, 1616591401473378L),
+            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
@@ -166,7 +166,7 @@ public class ServiceOrderTemplateContentIT {
         ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, 1616591401473378L),
+            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
             entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
@@ -196,18 +196,14 @@ public class ServiceOrderTemplateContentIT {
         caseData.getApplicant1().setLastName("name");
         caseData.getApplicant2().setFirstName("resp full");
         caseData.getApplicant2().setLastName("name");
+        caseData.setDueDate(LocalDate.of(2021, 6, 20));
         return caseData;
     }
 
     private CtscContactDetails buildCtscContactDetails() {
         return CtscContactDetails
             .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
             .emailAddress("divorcecase@justice.gov.uk")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
             .phoneNumber("0300 303 0642")
             .build();
     }
