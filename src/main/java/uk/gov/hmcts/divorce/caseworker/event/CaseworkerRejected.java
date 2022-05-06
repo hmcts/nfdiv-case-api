@@ -46,10 +46,10 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
             .page("reject")
             .pageLabel(REJECT)
             .complex(CaseData::getApplication)
-            .complex(Application::getRejectReason)
-            .mandatory(RejectReason::getRejectReasonType)
-            .mandatory(RejectReason::getRejectDetails)
-            .done()
+                .complex(Application::getRejectReason)
+                    .mandatory(RejectReason::getRejectReasonType)
+                    .mandatory(RejectReason::getRejectDetails)
+                .done()
             .done();
     }
 
