@@ -111,7 +111,7 @@ public class AosPackPrinter {
             caseData.getDocuments().getDocumentsGenerated(),
             AOS_RESPONSE_LETTER);
 
-        final List<Letter> aosLetters = lettersWithAosScannedDocument(caseData.getDocuments().getScannedDocuments());
+        final List<Letter> aosLetters = lettersWithAosScannedDocument(caseData.getDocuments().getDocumentsUploaded());
 
         final Letter aosResponseLetter = firstElement(aosResponseLetters);
 
