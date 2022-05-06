@@ -69,7 +69,8 @@ public final class AddressUtil {
         }
 
         final List<String> ukTerms = Arrays.asList("unitedkingdom", "uk", "england", "wales");
-        final List<String> scottishPostcodePrefixes = Arrays.asList("ab", "dd", "dg", "eh", "fk", "g", "hs", "iv", "ka", "kw", "ky", "ml", "pa", "ph", "td", "ze");
+        final List<String> scottishPostcodePrefixes =
+            Arrays.asList("ab", "dd", "dg", "eh", "fk", "g", "hs", "iv", "ka", "kw", "ky", "ml", "pa", "ph", "td", "ze");
 
         final String sanitisedCountry = address.getCountry().replaceAll("[^a-zA-Z0-9]+", "").toLowerCase(Locale.ROOT);
         final String postcode = Optional.ofNullable(address.getPostCode()).orElse("");

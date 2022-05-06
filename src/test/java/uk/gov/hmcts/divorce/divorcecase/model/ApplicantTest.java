@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
@@ -146,6 +147,23 @@ class ApplicantTest {
     }
 
     @Test
+    void shouldReturnTrueIfScottishAddress() {
+        final Applicant applicant1 = Applicant.builder()
+            .address(AddressGlobalUK.builder().country("UK").postCode("KA27 8AB").build())
+            .build();
+        final Applicant applicant2 = Applicant.builder()
+            .address(AddressGlobalUK.builder().country("United Kingdom").postCode("TD11 3AA").build())
+            .build();
+        final Applicant applicant3 = Applicant.builder()
+            .address(AddressGlobalUK.builder().country("Scotland").build())
+            .build();
+
+        assertThat(applicant1.isBasedOverseas()).isTrue();
+        assertThat(applicant2.isBasedOverseas()).isTrue();
+        assertThat(applicant3.isBasedOverseas()).isTrue();
+    }
+
+    @Test
     void shouldReturnFalseIfApplicantIsRepresentedWhenCheckingIsBasedOverseas() {
         final Applicant applicant = Applicant.builder()
             .address(AddressGlobalUK.builder().country("France").build())
@@ -159,19 +177,25 @@ class ApplicantTest {
     }
 
     @Test
-    void shouldReturnFalseIfAddressNotSet() {
+    void shouldReturnThrowErrorIfAddressNotSet() {
         final Applicant applicant = Applicant.builder().build();
 
-        assertThat(applicant.isBasedOverseas()).isFalse();
+        assertThrows(
+            IllegalArgumentException.class,
+            applicant::isBasedOverseas,
+            "Cannot assert whether address is overseas or not due to null address or country");
     }
 
     @Test
-    void shouldReturnFalseIfCountryIsBlank() {
+    void shouldReturnThrowErrorIfCountryIsBlank() {
         final Applicant applicant = Applicant.builder()
             .address(AddressGlobalUK.builder().build())
             .build();
 
-        assertThat(applicant.isBasedOverseas()).isFalse();
+        assertThrows(
+            IllegalArgumentException.class,
+            applicant::isBasedOverseas,
+            "Cannot assert whether address is overseas or not due to null address or country");
     }
 
     @Test

@@ -229,7 +229,7 @@ public class AddressUtilTest {
     public void shouldThrowIllegalArgumentExceptionIfAddressIsNull() {
         assertThatThrownBy(() -> AddressUtil.isEnglandOrWales(null))
             .isExactlyInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Cannot assert whether address is overseas or not due to null value(s)");
+            .hasMessageContaining("Cannot assert whether address is overseas or not due to null address or country");
     }
 
     @Test
@@ -241,6 +241,6 @@ public class AddressUtilTest {
 
         assertThatThrownBy(() -> AddressUtil.isEnglandOrWales(addressGlobalUK))
             .isExactlyInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Cannot assert whether address is overseas or not due to null value(s)");
+            .hasMessageContaining("Cannot assert whether address is overseas or not due to null address or country");
     }
 }
