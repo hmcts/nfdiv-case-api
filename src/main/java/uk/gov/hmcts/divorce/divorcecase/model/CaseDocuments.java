@@ -138,7 +138,7 @@ public class CaseDocuments {
     private static <T> List<ListValue<T>> sortDocuments(final Map<Boolean, List<ListValue<T>>> documentsWithoutIds) {
         final List<ListValue<T>> sortedDocuments = new ArrayList<>();
         final var newDocuments = documentsWithoutIds.get(true);
-        final var previousDocuments = documentsWithoutIds.get(false);
+        final var previousDocuments = documentsWithoutIds.getOrDefault(false, new ArrayList<>());
 
         if (null != newDocuments) {
             sortedDocuments.addAll(0, newDocuments); // add new documents to start of the list
