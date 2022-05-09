@@ -75,8 +75,8 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class LegalAdvisorMakeServiceDecisionIT {
 
     private static final String UUID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
-    private static final String SERVICE_ORDER_TEMPLATE_FILE = "NFD_Service_Order.docx";
-    private static final String SERVICE_ORDER_REFUSAL_TEMPLATE_FILE = "NFD_Refusal_Order_Deemed_Dispensed_Service.docx";
+    private static final String SERVICE_ORDER_TEMPLATE_FILE = "NFD_Service_Order_V2.docx";
+    private static final String SERVICE_ORDER_REFUSAL_TEMPLATE_FILE = "NFD_Refusal_Order_Deemed_Dispensed_Service_V2.docx";
 
     @Autowired
     private MockMvc mockMvc;
@@ -130,6 +130,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
+            .dueDate(LocalDate.of(2021, 6, 20))
             .build();
         caseData.getApplication().setIssueDate(LocalDate.now());
 
@@ -182,6 +183,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
+            .dueDate(LocalDate.of(2021, 6, 20))
             .build();
         caseData.getApplication().setIssueDate(LocalDate.now());
 
@@ -233,6 +235,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
+            .dueDate(LocalDate.of(2021, 6, 20))
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
 
@@ -284,6 +287,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
+            .dueDate(LocalDate.of(2021, 6, 20))
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
 
