@@ -473,9 +473,3 @@ tasks.integration.configure {
     println "skipped"
   }
 }
-tasks.cftlibTest.configure {
-  actions.clear()
-  project.afterEvaluate {
-    println "skipped"
-  }
-}
