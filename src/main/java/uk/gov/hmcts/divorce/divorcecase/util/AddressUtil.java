@@ -69,7 +69,7 @@ public final class AddressUtil {
     }
 
     public static boolean isEnglandOrWales(AddressGlobalUK address) {
-        if (isNull(address) || isNull(address.getCountry())) {
+        if (isNull(address) || StringUtils.isBlank(address.getCountry())) {
             throw new IllegalArgumentException(OVERSEAS_EXCEPTION_MESSAGE);
         }
 
