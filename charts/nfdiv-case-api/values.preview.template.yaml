@@ -45,6 +45,7 @@ java:
     ROLE_ASSIGNMENT_DB_PASSWORD: postgres
     OPEN_ID_API_BASE_URI: https://idam-web-public.aat.platform.hmcts.net/o
     IDAM_OIDC_URL: https://idam-web-public.aat.platform.hmcts.net/o
+    SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI: https://idam-web-public.aat.platform.hmcts.net/o
     SEARCH_ELASTIC_HOSTS: ${SERVICE_NAME}-es-master:9200
     SEARCH_ELASTIC_DATA_HOSTS: http://${SERVICE_NAME}-es-master:9200
     ELASTICSEARCH_ENABLED: true
