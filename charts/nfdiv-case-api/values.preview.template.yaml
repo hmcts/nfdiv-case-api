@@ -22,17 +22,17 @@ java:
     USER_PROFILE_DB_PORT: 5432
     USER_PROFILE_DB_USERNAME: postgres
     USER_PROFILE_DB_PASSWORD: postgres
-    USER_PROFILE_DB_NAME: userprofile
+    USER_PROFILE_DB_NAME: user-profile
     DATA_STORE_DB_HOST: http://{{ .Release.Name }}-postgresql
     DATA_STORE_DB_PORT: 5432
     DATA_STORE_DB_USERNAME: postgres
     DATA_STORE_DB_PASSWORD: postgres
-    DATA_STORE_DB_NAME: datastore
+    DATA_STORE_DB_NAME: data-store
     DEFINITION_STORE_DB_HOST: http://{{ .Release.Name }}-postgresql
     DEFINITION_STORE_DB_PORT: 5432
     DEFINITION_STORE_DB_USERNAME: postgres
     DEFINITION_STORE_DB_PASSWORD: postgres
-    DEFINITION_STORE_DB_NAME: definitionstore
+    DEFINITION_STORE_DB_NAME: definition-store
     ROLE_ASSIGNMENT_DB_HOST: http://{{ .Release.Name }}-postgresql
     ROLE_ASSIGNMENT_DB_PORT: 5432
     ROLE_ASSIGNMENT_DB_NAME: am
