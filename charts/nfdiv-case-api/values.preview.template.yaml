@@ -9,6 +9,11 @@ ccd:
 java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
+  devcpuRequests: 500m
+  cpuLimits: 4
+  cpuRequests: 500m
+  memoryRequests:   1Gi
+  memoryLimits: 3Gi
   environment:
 #    BOOT_WITH_CCD: true
 #    CFT_LIB_DB_HOST: http://{{ .Release.Name }}-postgresql
