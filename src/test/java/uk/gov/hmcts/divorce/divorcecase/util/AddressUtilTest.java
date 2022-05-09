@@ -13,6 +13,8 @@ public class AddressUtilTest {
 
     private static final String ADDRESS_LINE1 = RandomStringUtils.random(20, true, false);
     private static final String ADDRESS_LINE2 = RandomStringUtils.random(10, true, false);
+    public static final String TEST_OVERSEAS_EXCEPTION_MESSAGE =
+        "Cannot assert whether address is overseas or not due to null address or blank/null country";
 
     @Test
     public void shouldReturnNullWhenAddressNotPresent() {
@@ -218,7 +220,7 @@ public class AddressUtilTest {
     public void shouldThrowIllegalArgumentExceptionIfAddressIsNull() {
         assertThatThrownBy(() -> AddressUtil.isEnglandOrWales(null))
             .isExactlyInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Cannot assert whether address is overseas or not due to null address or country");
+            .hasMessageContaining(TEST_OVERSEAS_EXCEPTION_MESSAGE);
     }
 
     @Test
@@ -230,6 +232,6 @@ public class AddressUtilTest {
 
         assertThatThrownBy(() -> AddressUtil.isEnglandOrWales(addressGlobalUK))
             .isExactlyInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Cannot assert whether address is overseas or not due to null address or country");
+            .hasMessageContaining(TEST_OVERSEAS_EXCEPTION_MESSAGE);
     }
 }

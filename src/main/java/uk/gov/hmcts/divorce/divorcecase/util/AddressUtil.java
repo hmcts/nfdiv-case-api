@@ -21,6 +21,11 @@ public final class AddressUtil {
 
     private static final String COMMA_SEPARATOR = ",";
     private static final int ADDRESS_LINE_MAX_CHARS = 25;
+    private static final List<String> UK_TERMS = Arrays.asList("unitedkingdom", "uk", "england", "wales");
+    private static final List<String> SCOTTISH_POSTCODE_PREFIXES =
+        Arrays.asList("ab", "dd", "dg", "eh", "fk", "g", "hs", "iv", "ka", "kw", "ky", "ml", "pa", "ph", "td", "ze");
+    private static final String OVERSEAS_EXCEPTION_MESSAGE =
+        "Cannot assert whether address is overseas or not due to null address or blank/null country";
 
     private AddressUtil() {
     }
@@ -66,12 +71,8 @@ public final class AddressUtil {
 
     public static boolean isEnglandOrWales(AddressGlobalUK address) {
         if (isNull(address) || isBlank(address.getCountry())) {
-            throw new IllegalArgumentException("Cannot assert whether address is overseas or not due to null address or country");
+            throw new IllegalArgumentException(OVERSEAS_EXCEPTION_MESSAGE);
         }
-
-        final List<String> ukTerms = Arrays.asList("unitedkingdom", "uk", "england", "wales");
-        final List<String> scottishPostcodePrefixes =
-            Arrays.asList("ab", "dd", "dg", "eh", "fk", "g", "hs", "iv", "ka", "kw", "ky", "ml", "pa", "ph", "td", "ze");
 
         final String sanitisedCountry = address.getCountry().replaceAll("[^a-zA-Z0-9]+", "").toLowerCase(Locale.ROOT);
         final String postcode = Optional.ofNullable(address.getPostCode()).orElse("");
@@ -79,9 +80,9 @@ public final class AddressUtil {
         var isScottishPostcode = false;
         if (postcode.matches(".*[a-zA-Z]+.*")) {
             final String sanitisedPostcodePrefix = postcode.split("[0-9]")[0].toLowerCase(Locale.ROOT);
-            isScottishPostcode = scottishPostcodePrefixes.contains(sanitisedPostcodePrefix);
+            isScottishPostcode = SCOTTISH_POSTCODE_PREFIXES.contains(sanitisedPostcodePrefix);
         }
 
-        return ukTerms.contains(sanitisedCountry) && !isScottishPostcode;
+        return UK_TERMS.contains(sanitisedCountry) && !isScottishPostcode;
     }
 }

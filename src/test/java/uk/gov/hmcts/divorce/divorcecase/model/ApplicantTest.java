@@ -11,6 +11,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtilTest.TEST_OVERSEAS_EXCEPTION_MESSAGE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 class ApplicantTest {
@@ -183,7 +184,7 @@ class ApplicantTest {
         assertThrows(
             IllegalArgumentException.class,
             applicant::isBasedOverseas,
-            "Cannot assert whether address is overseas or not due to null address or country");
+            TEST_OVERSEAS_EXCEPTION_MESSAGE);
     }
 
     @Test
@@ -195,7 +196,7 @@ class ApplicantTest {
         assertThrows(
             IllegalArgumentException.class,
             applicant::isBasedOverseas,
-            "Cannot assert whether address is overseas or not due to null address or country");
+            TEST_OVERSEAS_EXCEPTION_MESSAGE);
     }
 
     @Test
