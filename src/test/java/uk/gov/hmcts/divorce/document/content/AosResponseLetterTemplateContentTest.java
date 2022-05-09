@@ -74,7 +74,7 @@ public class AosResponseLetterTemplateContentTest {
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put("ccdCaseReference", formatId(TEST_CASE_ID));
+        expectedEntries.put("caseReference", formatId(TEST_CASE_ID));
         expectedEntries.put("applicant1FirstName", TEST_FIRST_NAME);
         expectedEntries.put("applicant1LastName", TEST_LAST_NAME);
         expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");
@@ -124,7 +124,7 @@ public class AosResponseLetterTemplateContentTest {
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put("ccdCaseReference", formatId(TEST_CASE_ID));
+        expectedEntries.put("caseReference", formatId(TEST_CASE_ID));
         expectedEntries.put("applicant1FirstName", TEST_FIRST_NAME);
         expectedEntries.put("applicant1LastName", TEST_LAST_NAME);
         expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");

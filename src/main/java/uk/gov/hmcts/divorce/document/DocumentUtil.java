@@ -22,7 +22,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
 public final class DocumentUtil {
 
@@ -87,18 +86,6 @@ public final class DocumentUtil {
             .map(ListValue::getValue)
             .filter(document -> documentType.equals(document.getConfidentialDocumentsReceived()))
             .map(confidentialDivorceDocument -> new Letter(confidentialDivorceDocument, letterIndex.incrementAndGet()))
-            .collect(toList());
-    }
-
-    public static List<Letter> lettersWithAosScannedDocument(final List<ListValue<DivorceDocument>> documents) {
-
-        final AtomicInteger letterIndex = new AtomicInteger();
-
-        return ofNullable(documents)
-            .flatMap(Collection::stream)
-            .map(ListValue::getValue)
-            .filter(document -> RESPONDENT_ANSWERS.equals(document.getDocumentType()))
-            .map(scannedDocument -> new Letter(scannedDocument, letterIndex.incrementAndGet()))
             .collect(toList());
     }
 

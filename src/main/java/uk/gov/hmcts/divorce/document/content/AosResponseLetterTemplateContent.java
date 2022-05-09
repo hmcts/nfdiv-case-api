@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
@@ -55,7 +55,7 @@ public class AosResponseLetterTemplateContent {
         templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
-        templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
+        templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(
             WAIT_UNTIL_DATE,

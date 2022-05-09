@@ -111,10 +111,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         if (AOS_D10.equals(caseData.getAcknowledgementOfService().getTypeOfDocumentAttached())) {
 
+            reclassifyAosScannedDocumentToRespondentAnswers(caseData);
+
             final CaseDetails<CaseData, State> response = submitAosService.submitOfflineAos(details);
             response.getData().getApplicant2().setOffline(YES);
-
-            reclassifyAosScannedDocumentToRespondentAnswers(response.getData());
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(response.getData())

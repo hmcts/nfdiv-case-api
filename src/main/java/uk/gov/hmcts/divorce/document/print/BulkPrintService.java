@@ -116,8 +116,6 @@ public class BulkPrintService {
 
         if (letter.getDivorceDocument() != null) {
             docUrl = letter.getDivorceDocument().getDocumentLink().getUrl();
-        } else if (letter.getScannedDocument() != null) {
-            docUrl = letter.getScannedDocument().getUrl().getUrl();
         } else if (letter.getConfidentialDivorceDocument() != null) {
             docUrl = letter.getConfidentialDivorceDocument().getDocumentLink().getUrl();
         } else {

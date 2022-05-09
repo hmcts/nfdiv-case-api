@@ -26,6 +26,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -92,17 +93,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
 
         CaseData caseData = CaseData.builder()
-            .acknowledgementOfService(AcknowledgementOfService.builder()
-                .typeOfDocumentAttached(AOS_D10)
-                .howToRespondApplication(DISPUTE_DIVORCE)
-                .build())
-            .build();
-        details.setData(caseData);
-
-        final CaseDetails<CaseData, State> updatedDetails = new CaseDetails<>();
-        updatedDetails.setData(CaseData.builder()
-            .applicant2(Applicant.builder()
-                .build())
             .documents(
                 CaseDocuments.builder()
                     .scannedDocuments(singletonList(doc1))
@@ -119,6 +109,42 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                     )
                     .build()
             )
+            .acknowledgementOfService(AcknowledgementOfService.builder()
+                .typeOfDocumentAttached(AOS_D10)
+                .howToRespondApplication(DISPUTE_DIVORCE)
+                .build())
+            .build();
+
+        details.setData(caseData);
+
+        final ListValue<DivorceDocument> doc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(RESPONDENT_ANSWERS)
+                .documentFileName("doc1.pdf")
+                .documentComment("Reclassified scanned document")
+                .documentDateAdded(getExpectedLocalDate())
+                .documentLink(Document
+                    .builder()
+                    .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                    .filename("doc1.pdf")
+                    .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                    .build()
+                )
+                .build())
+            .build();
+
+        List<ListValue<DivorceDocument>> documentsUploaded = new ArrayList<>();
+        documentsUploaded.add(doc);
+
+        final CaseDetails<CaseData, State> updatedDetails = new CaseDetails<>();
+        updatedDetails.setData(CaseData.builder()
+            .documents(
+                CaseDocuments.builder()
+                    .documentsUploaded(documentsUploaded)
+                    .build()
+            )
+            .applicant2(Applicant.builder()
+                .build())
             .build());
         updatedDetails.setState(Holding);
 
