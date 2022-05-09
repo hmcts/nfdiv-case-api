@@ -466,22 +466,3 @@ tasks.assemble.configure {
     dependsOn(cftlibExecutableJar)
   }
 }
-
-tasks.test.configure {
-  actions.clear()
-  project.afterEvaluate {
-    println "skipped"
-  }
-}
-tasks.integration.configure {
-  actions.clear()
-  project.afterEvaluate {
-    println "skipped"
-  }
-}
-tasks.cftlibTest.configure {
-  actions.clear()
-  project.afterEvaluate {
-    println "skipped"
-  }
-}

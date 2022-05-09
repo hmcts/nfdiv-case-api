@@ -65,7 +65,7 @@ withPipeline(type, product, component) {
 
     after('test') {
       // builder.gradle('cftlibTest integration')
-      // builder.gradle('jacocoTestReport')
+      builder.gradle('jacocoTestReport')
 
       publishHTML target: [
         allowMissing         : true,
