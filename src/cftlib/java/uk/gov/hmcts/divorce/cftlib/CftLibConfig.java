@@ -22,7 +22,7 @@ public class CftLibConfig implements CFTLibConfigurer {
     @Value("ccd-NFD-${CCD_DEF_NAME:dev}.xlsx")
     String defName;
 
-    @Value("${gigajar}")
+    @Value("${gigajar:true}")
     boolean gigajar;
 
     @Autowired
