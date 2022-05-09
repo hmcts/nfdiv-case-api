@@ -37,6 +37,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME_WITH_DEFAULT_VALUE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HAS_CASE_BEEN_REISSUED;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.REISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
@@ -51,6 +53,7 @@ public class NoticeOfProceedingSolicitorContentTest {
 
     private static final String ADDRESS = "line 1\ntown\npostcode";
     private static final LocalDate APPLICATION_ISSUE_DATE = LocalDate.of(2022, 3, 30);
+    private static final LocalDate APPLICATION_REISSUE_DATE = LocalDate.of(2022, 4, 30);
     private static final CtscContactDetails CTSC_CONTACT = CtscContactDetails
         .builder()
         .emailAddress("divorcecase@justice.gov.uk")
@@ -91,6 +94,52 @@ public class NoticeOfProceedingSolicitorContentTest {
 
         final Map<String, Object> templateContent = applicantSolicitorNopContent.apply(caseData, TEST_CASE_ID, true);
 
+        assertThat(templateContent)
+            .contains(
+                entry(ISSUE_DATE, "30 March 2022"),
+                entry(DUE_DATE, "15 April 2022"),
+                entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+                entry(APPLICANT_1_FIRST_NAME, "test_first_name"),
+                entry(APPLICANT_1_LAST_NAME, "test_last_name"),
+                entry(APPLICANT_2_FIRST_NAME, "applicant_2_first_name"),
+                entry(APPLICANT_2_LAST_NAME, "test_last_name"),
+                entry(SOLICITOR_NAME, "The Solicitor"),
+                entry(SOLICITOR_ADDRESS, ADDRESS),
+                entry(SOLICITOR_REFERENCE, "12345"),
+                entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
+                entry(APPLICANT_SOLICITOR_REGISTERED, true),
+                entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
+                entry(IS_JOINT, false),
+                entry(IS_DIVORCE, true),
+                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT))
+            .doesNotContain(
+                entry(HAS_CASE_BEEN_REISSUED, true),
+                entry(REISSUE_DATE, "30 April 2022"));
+    }
+
+    @Test
+    public void shouldMapTemplateContentForReissueSoleDivorceApplication() {
+        Applicant applicant1 = applicantRepresentedBySolicitor();
+        applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
+        applicant1.getSolicitor().setAddress(ADDRESS);
+        applicant1.getSolicitor().setReference("12345");
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant1)
+            .applicant2(respondent())
+            .divorceOrDissolution(DIVORCE)
+            .applicationType(SOLE_APPLICATION)
+            .application(Application.builder()
+                .issueDate(APPLICATION_ISSUE_DATE)
+                .reissueDate(APPLICATION_REISSUE_DATE)
+                .build())
+            .build();
+
+        when(holdingPeriodService.getRespondByDateFor(APPLICATION_ISSUE_DATE))
+            .thenReturn(APPLICATION_ISSUE_DATE.plusDays(16));
+
+        final Map<String, Object> templateContent = applicantSolicitorNopContent.apply(caseData, TEST_CASE_ID, true);
+
         assertThat(templateContent).contains(
             entry(ISSUE_DATE, "30 March 2022"),
             entry(DUE_DATE, "15 April 2022"),
@@ -107,7 +156,9 @@ public class NoticeOfProceedingSolicitorContentTest {
             entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
             entry(IS_JOINT, false),
             entry(IS_DIVORCE, true),
-            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
+            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
+            entry(HAS_CASE_BEEN_REISSUED, true),
+            entry(REISSUE_DATE, "30 April 2022")
         );
     }
 
