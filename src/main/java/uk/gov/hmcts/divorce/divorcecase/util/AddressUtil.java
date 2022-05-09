@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.joinWith;
 import static org.apache.commons.lang3.StringUtils.removeStart;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
@@ -70,7 +69,7 @@ public final class AddressUtil {
     }
 
     public static boolean isEnglandOrWales(AddressGlobalUK address) {
-        if (isNull(address) || isBlank(address.getCountry())) {
+        if (isNull(address) || isNull(address.getCountry())) {
             throw new IllegalArgumentException(OVERSEAS_EXCEPTION_MESSAGE);
         }
 
