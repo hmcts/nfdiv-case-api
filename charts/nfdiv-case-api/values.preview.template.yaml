@@ -11,8 +11,8 @@ java:
   ingressHost: ${SERVICE_FQDN}
   environment:
 #    BOOT_WITH_CCD: true
-#    CFT_LIB_NO_DOCKER: true
 #    CFT_LIB_DB_HOST: http://{{ .Release.Name }}-postgresql
+    CFT_LIB_NO_DOCKER: true
     USER_PROFILE_DB_HOST: http://{{ .Release.Name }}-postgresql
     USER_PROFILE_DB_PORT: 5432
     USER_PROFILE_DB_USERNAME: postgres
@@ -159,8 +159,8 @@ xui-webapp:
     image: hmctspublic.azurecr.io/xui/webapp:latest
     ingressHost: xui-${SERVICE_FQDN}
     environment:
-      SERVICES_CCD_COMPONENT_API: http://${SERVICE_FQDN}:4452
-      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}:4452
+      SERVICES_CCD_COMPONENT_API: http://${SERVICE_FQDN}
+      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
       SERVICES_DOCUMENTS_API_V2: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
       SERVICES_CCD_CASE_ASSIGNMENT_API: http://${SERVICE_FQDN}:4096
       FEATURE_REDIS_ENABLED: false
@@ -176,8 +176,8 @@ xui-mo-webapp:
     environment:
       MANAGE_CASE_LINK: https://xui-${SERVICE_FQDN}/cases
       MANAGE_ORG_LINK: https://xui-mo-${SERVICE_FQDN}
-      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}:4452
-      SERVICES_MCA_PROXY_API: http://${SERVICE_FQDN}:4096
+      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
+      SERVICES_MCA_PROXY_API: http://${SERVICE_FQDN}
       CASE_TYPES: NFD
 
 idam-pr:
