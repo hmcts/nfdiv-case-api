@@ -38,7 +38,8 @@
         }
       }
     ],
-    "divorceOrDissolution": "divorce"
+    "divorceOrDissolution": "divorce",
+    "dueDate": "${json-unit.any-string}"
   },
   "state": "AwaitingAos"
 }
