@@ -49,6 +49,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COUNTRY_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
@@ -148,6 +149,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
             entry(PLACE_OF_MARRIAGE, null),
+            entry(COUNTRY_OF_MARRIAGE, null),
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
             entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
@@ -225,6 +227,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
             entry(PLACE_OF_MARRIAGE, null),
+            entry(COUNTRY_OF_MARRIAGE, null),
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, true),
             entry(APPLICANT_2_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
@@ -307,6 +310,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
             entry(PLACE_OF_MARRIAGE, null),
+            entry(COUNTRY_OF_MARRIAGE, null),
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, true),
             entry(APPLICANT_2_SOLICITOR_ADDRESS, solAddressWithCleanUp),
@@ -383,6 +387,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
             entry(PLACE_OF_MARRIAGE, null),
+            entry(COUNTRY_OF_MARRIAGE, null),
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, false),
             entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
@@ -433,6 +438,8 @@ public class DivorceApplicationSoleTemplateContentTest {
 
         caseData.getApplication().getMarriageDetails().setApplicant1Name(applicant1MarriageName);
         caseData.getApplication().getMarriageDetails().setApplicant2Name(applicant2MarriageName);
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Dublin");
+        caseData.getApplication().getMarriageDetails().setCountryOfMarriage("Ireland");
 
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -458,7 +465,8 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
-            entry(PLACE_OF_MARRIAGE, null),
+            entry(PLACE_OF_MARRIAGE, "Dublin"),
+            entry(COUNTRY_OF_MARRIAGE, "Ireland"),
             entry(MARRIAGE_DATE, null),
             entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, false),
             entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
