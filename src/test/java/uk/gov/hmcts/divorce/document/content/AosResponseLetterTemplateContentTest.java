@@ -86,6 +86,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("divorceOrEndCivilPartnershipProcess", "divorce process");
         expectedEntries.put("divorceOrCivilPartnershipProceedings", "divorce proceedings");
         expectedEntries.put("dueDate", "21 May 2020");
+        expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "The Divorce Service");
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -136,6 +137,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("divorceOrEndCivilPartnershipProcess", "process to end your civil partnership");
         expectedEntries.put("divorceOrCivilPartnershipProceedings", "proceedings to end your civil partnership");
         expectedEntries.put("dueDate", "21 May 2020");
+        expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "End A Civil Partnership Service");
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
