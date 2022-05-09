@@ -15,8 +15,7 @@ java:
   devmemoryRequests:   4Gi
   devmemoryLimits: 4Gi
   environment:
-#    BOOT_WITH_CCD: true
-#    CFT_LIB_DB_HOST: http://{{ .Release.Name }}-postgresql
+    CFT_LIB_DB_HOST: "{{ .Release.Name }}-postgresql"
     CFT_LIB_NO_DOCKER: true
     ENABLE_DB_MIGRATE: true
     USER_PROFILE_DB_HOST: "{{ .Release.Name }}-postgresql"
