@@ -23,16 +23,20 @@ java:
     USER_PROFILE_DB_USERNAME: postgres
     USER_PROFILE_DB_PASSWORD: postgres
     USER_PROFILE_DB_NAME: user-profile
+    USER_PROFILE_DB_OPTIONS: "?stringtype=unspecified"
     DATA_STORE_DB_HOST: "{{ .Release.Name }}-postgresql"
     DATA_STORE_DB_PORT: 5432
     DATA_STORE_DB_USERNAME: postgres
     DATA_STORE_DB_PASSWORD: postgres
     DATA_STORE_DB_NAME: data-store
+    DATA_STORE_DB_OPTIONS: "?stringtype=unspecified"
     DEFINITION_STORE_DB_HOST: "{{ .Release.Name }}-postgresql"
     DEFINITION_STORE_DB_PORT: 5432
     DEFINITION_STORE_DB_USERNAME: postgres
     DEFINITION_STORE_DB_PASSWORD: postgres
     DEFINITION_STORE_DB_NAME: definition-store
+    DEFINITION_STORE_DB_OPTIONS: ""
+    AZURE_STORAGE_DEFINITION_UPLOAD_ENABLED: false
     ROLE_ASSIGNMENT_DB_HOST: "{{ .Release.Name }}-postgresql"
     ROLE_ASSIGNMENT_DB_PORT: 5432
     ROLE_ASSIGNMENT_DB_NAME: am
