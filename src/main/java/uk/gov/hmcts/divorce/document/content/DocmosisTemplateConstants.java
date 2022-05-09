@@ -137,6 +137,8 @@ public final class DocmosisTemplateConstants {
     public static final String IS_APP2_REPRESENTED = "isApplicant2Represented";
     public static final String JURISDICTIONS = "jurisdictions";
 
+    public static final String DISPLAY_HEADER_ADDRESS = "displayHeaderAddress";
+
     private DocmosisTemplateConstants() {
     }
 }
