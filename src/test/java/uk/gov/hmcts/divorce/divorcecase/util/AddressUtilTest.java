@@ -225,7 +225,7 @@ public class AddressUtilTest {
     public void shouldThrowIllegalArgumentExceptionIfCountryIsNull() {
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country(null)
-            .postCode(null)
+            .postCode("SW1A1BB")
             .build();
 
         assertThatThrownBy(() -> AddressUtil.isEnglandOrWales(addressGlobalUK))
