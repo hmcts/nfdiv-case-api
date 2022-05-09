@@ -18,6 +18,7 @@ java:
 #    BOOT_WITH_CCD: true
 #    CFT_LIB_DB_HOST: http://{{ .Release.Name }}-postgresql
     CFT_LIB_NO_DOCKER: true
+    ENABLE_DB_MIGRATE: true
     USER_PROFILE_DB_HOST: "{{ .Release.Name }}-postgresql"
     USER_PROFILE_DB_PORT: 5432
     USER_PROFILE_DB_USERNAME: postgres
