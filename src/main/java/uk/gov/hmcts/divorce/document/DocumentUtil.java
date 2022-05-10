@@ -90,18 +90,6 @@ public final class DocumentUtil {
             .collect(toList());
     }
 
-    public static List<Letter> lettersWithAosScannedDocument(final List<ListValue<ScannedDocument>> documents) {
-
-        final AtomicInteger letterIndex = new AtomicInteger();
-
-        return ofNullable(documents)
-            .flatMap(Collection::stream)
-            .map(ListValue::getValue)
-            .filter(document -> "aos".equals(document.getSubtype()))
-            .map(scannedDocument -> new Letter(scannedDocument, letterIndex.incrementAndGet()))
-            .collect(toList());
-    }
-
     public static List<Letter> mapToLetters(final List<ListValue<Document>> documents, final DocumentType documentType) {
 
         final AtomicInteger letterIndex = new AtomicInteger();
