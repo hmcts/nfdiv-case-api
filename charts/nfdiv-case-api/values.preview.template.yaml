@@ -28,6 +28,8 @@ idam-pr:
   enabled: true
   releaseNameOverride: ${SERVICE_NAME}-ccd-idam-pr
   redirect_uris:
+    CCD Admin:
+      - https://admin-web-${SERVICE_FQDN}/oauth2redirect
     XUI:
       - https://xui-${SERVICE_FQDN}/oauth2/callback
       - http://xui-${SERVICE_FQDN}/oauth2/callback
@@ -75,9 +77,7 @@ ccd:
         DATA_STORE_DEFAULT_LOG_LEVEL: info
         DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_gw,ccd_admin,ccd_ps,divorce_ccd_submission,divorce_frontend,nfdiv_case_api
         CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES: nfdiv_case_api
-        ELASTIC_SEARCH_ENABLED: true
-        SEARCH_ELASTIC_HOSTS: http://${SERVICE_NAME}-es-master:9200
-        SEARCH_ELASTIC_DATA_HOSTS: http://${SERVICE_NAME}-es-master:9200
+        ELASTIC_SEARCH_ENABLED: false
         CCD_DM_DOMAIN: http://dm-store-aat.service.core-compute-aat.internal
         CCD_DOCUMENT_URL_PATTERN: ^https?://(((?:api-gateway\.preprod\.dm\.reform\.hmcts\.net|dm-store-aat\.service\.core-compute-aat\.internal(?::\d+)?)\/documents\/[A-Za-z0-9-]+(?:\/binary)?)|(em-hrs-api-aat\.service\.core-compute-aat\.internal(?::\d+)?\/hearing-recordings\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/segments\/[0-9]))
         IDAM_API_BASE_URL: https://idam-api.aat.platform.hmcts.net
@@ -162,63 +162,3 @@ xui-webapp:
       SERVICES_CCD_CASE_ASSIGNMENT_API: http://aac-${SERVICE_FQDN}
       SERVICES_TERMS_AND_CONDITIONS: http://xui-terms-and-conditions-${SERVICE_FQDN}.service.core-compute-preview.internal
       JURISDICTIONS: DIVORCE
-      FEATURE_REDIS_ENABLED: false
-
-elastic:
-  enabled: true
-
-elasticsearch:
-  clusterName: "es"
-  imageTag: "7.17.0"
-  replicas: 1
-  initResources:
-    limits:
-      cpu: "500m"
-      memory: "512Mi"
-    requests:
-      cpu: "25m"
-      memory: "512Mi"
-  minimumMasterNodes: 1
-  antiAffinity: "soft"
-  esJavaOpts: "-Xmx512m -Xms512m"
-  extraEnvs:
-    - name: discovery.type
-      value: single-node
-    - name: cluster.initial_master_nodes
-      value: ""
-    - name: action.auto_create_index
-      value: .security*,.watches,.triggered_watches,.watcher-history-*,.logstash_dead_letter,.ml*
-  persistence:
-    enabled: false
-  ingress:
-    enabled: true
-    annotations:
-      kubernetes.io/ingress.class: traefik
-    path: /
-    hosts:
-      - es-${SERVICE_FQDN}
-
-logstash:
-  devmemoryRequests: 512Mi
-  devcpuRequests: "1000m"
-  devmemoryLimits: 1024Mi
-  devcpuLimits: "2500m"
-  image:
-    repository: hmctspublic.azurecr.io/ccd/logstash
-    tag: latest #ccd-divorce-logstash-latest
-    pullPolicy: IfNotPresent
-  logstashJavaOpts: -Xmx1g -Xms512M
-  persistence:
-    enabled: false
-  volumeMounts:
-    - name: pipeline
-      mountPath: /usr/share/logstash/files # hack to prevent override of default pipeline in the custom image hmcts/ccd-logstash
-  elasticsearch:
-    host: "{{ .Release.Name }}-es-master"
-    port: 9200
-  configTpl:
-    xpack.monitoring.enabled: "false"
-    db.url: "jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/data-store?stringtype=unspecified"
-    db.user: ccd
-    db.pwd: ccd
-    es.data.nodes.url: "http://{{ .Release.Name }}-es-master:9200"
