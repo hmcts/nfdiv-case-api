@@ -4,6 +4,9 @@ tags:
 xui-webapp:
   enabled: false
 
+elastic:
+  enabled: false
+
 idam-pr:
   enabled: false
 
