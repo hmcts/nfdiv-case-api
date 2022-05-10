@@ -10,13 +10,13 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.ScannedDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -135,7 +135,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         log.info("Reclassifying scanned doc {} to respondent answers doc type", aosFileName);
 
-        ListValue<ScannedDocument> aosScannedDocument =
+        ListValue<uk.gov.hmcts.divorce.divorcecase.model.ScannedDocument> aosScannedDocument =
             emptyIfNull(caseData.getDocuments().getScannedDocuments())
                 .stream()
                 .filter(scannedDoc -> scannedDoc.getValue().getFileName().equals(aosFileName))
