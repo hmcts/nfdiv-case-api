@@ -61,7 +61,9 @@ public class CftLibConfig implements CFTLibConfigurer {
         var json = IOUtils.toString(resourceLoader.getResource("classpath:cftlib-am-role-assignments.json")
             .getInputStream(), Charset.defaultCharset());
         lib.configureRoleAssignments(json);
-
+        if (gigajar) {
+            return;
+        }
         // Generate and import CCD definitions
         var def = getCCDDefinition();
         lib.importDefinition(def);
