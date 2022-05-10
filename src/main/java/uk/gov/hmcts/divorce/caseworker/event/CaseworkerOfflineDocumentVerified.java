@@ -25,6 +25,7 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
@@ -135,19 +136,20 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         log.info("Reclassifying scanned doc {} to respondent answers doc type", aosFileName);
 
-        ListValue<ScannedDocument> aosScannedDocument =
+        Optional<ListValue<ScannedDocument>> aosScannedDocumentOptional =
             emptyIfNull(caseData.getDocuments().getScannedDocuments())
                 .stream()
                 .filter(scannedDoc -> scannedDoc.getValue().getFileName().equals(aosFileName))
-                .findFirst()
-                .get();
+                .findFirst();
 
-        List<ListValue<DivorceDocument>> updatedDocumentsUploaded = caseData.getDocuments().addDocumentToTop(
-            caseData.getDocuments().getDocumentsUploaded(),
-            mapScannedDocumentToDivorceDocument(aosScannedDocument.getValue())
-        );
+        if (aosScannedDocumentOptional.isPresent()) {
+            List<ListValue<DivorceDocument>> updatedDocumentsUploaded = caseData.getDocuments().addDocumentToTop(
+                caseData.getDocuments().getDocumentsUploaded(),
+                mapScannedDocumentToDivorceDocument(aosScannedDocumentOptional.get().getValue())
+            );
 
-        caseData.getDocuments().setDocumentsUploaded(updatedDocumentsUploaded);
+            caseData.getDocuments().setDocumentsUploaded(updatedDocumentsUploaded);
+        }
     }
 
     private DivorceDocument mapScannedDocumentToDivorceDocument(final ScannedDocument scannedDocument) {
