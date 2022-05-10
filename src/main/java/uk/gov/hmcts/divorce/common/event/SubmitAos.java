@@ -24,6 +24,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -66,6 +67,22 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
         pages.forEach(page -> page.addTo(pageBuilder));
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        final var caseData = details.getData();
+        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+
+        if (null != acknowledgementOfService && null != acknowledgementOfService.getDateAosSubmitted()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList("The Acknowledgement Of Service has already been submitted."))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -115,7 +132,9 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .forStates(ArrayUtils.add(AOS_STATES, AosDrafted))
             .name("Submit AoS")
             .description("Submit AoS")
+            .showCondition("applicationType=\"soleApplication\"")
             .showSummary()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)

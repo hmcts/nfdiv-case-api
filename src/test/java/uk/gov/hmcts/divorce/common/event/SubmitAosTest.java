@@ -19,6 +19,8 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -177,5 +179,24 @@ class SubmitAosTest {
         submitAos.submitted(caseDetails, beforeDetails);
 
         verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_AOS_UNDISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
+    }
+
+    @Test
+    void shouldThrowErrorAndReturnCaseDataOnAboutToSubmit() {
+        final CaseData caseData = CaseData.builder().build();
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .dateAosSubmitted(LocalDateTime.now())
+            .build();
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Holding);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitAos.aboutToStart(caseDetails);
+
+        assertThat(response.getData()).isSameAs(caseData);
+        assertThat(response.getErrors())
+            .containsExactly(
+                "The Acknowledgement Of Service has already been submitted.");
     }
 }
