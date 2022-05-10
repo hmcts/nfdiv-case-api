@@ -135,7 +135,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         log.info("Reclassifying scanned doc {} to respondent answers doc type", aosFileName);
 
-        ListValue<uk.gov.hmcts.divorce.divorcecase.model.ScannedDocument> aosScannedDocument =
+        ListValue<ScannedDocument> aosScannedDocument =
             emptyIfNull(caseData.getDocuments().getScannedDocuments())
                 .stream()
                 .filter(scannedDoc -> scannedDoc.getValue().getFileName().equals(aosFileName))
