@@ -163,6 +163,9 @@ aos_overdue:
 applicant:
   response_offset_days: ${APPLICANT_RESPOND_BY_OFFSET_DAYS:16}
 
+respondent_solicitor:
+  response_offset_days: ${RESPONDENT_SOLICITOR_RESPOND_BY_OFFSET_DAYS:10}
+
 court:
   locations:
     serviceCentre:
