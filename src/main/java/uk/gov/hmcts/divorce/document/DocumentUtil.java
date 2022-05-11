@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.document;
 import com.google.common.collect.Lists;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
@@ -87,18 +86,6 @@ public final class DocumentUtil {
             .map(ListValue::getValue)
             .filter(document -> documentType.equals(document.getConfidentialDocumentsReceived()))
             .map(confidentialDivorceDocument -> new Letter(confidentialDivorceDocument, letterIndex.incrementAndGet()))
-            .collect(toList());
-    }
-
-    public static List<Letter> lettersWithAosScannedDocument(final List<ListValue<ScannedDocument>> documents) {
-
-        final AtomicInteger letterIndex = new AtomicInteger();
-
-        return ofNullable(documents)
-            .flatMap(Collection::stream)
-            .map(ListValue::getValue)
-            .filter(document -> "aos".equals(document.getSubtype()))
-            .map(scannedDocument -> new Letter(scannedDocument, letterIndex.incrementAndGet()))
             .collect(toList());
     }
 
