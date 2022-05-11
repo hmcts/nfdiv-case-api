@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -15,6 +17,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
+@Component
+@Slf4j
 public class CaseworkerResponseToJudge implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_RESPONSE_TO_JUDGE = "caseworker-response-to-judge";
@@ -24,9 +28,9 @@ public class CaseworkerResponseToJudge implements CCDConfig<CaseData, State, Use
         new PageBuilder(configBuilder
             .event(CASEWORKER_RESPONSE_TO_JUDGE)
             .forStateTransition(AwaitingJudgeClarification, AwaitingGeneralConsideration)
-            .showEventNotes()
             .name("Response to judge")
             .description("Response to judge")
+            .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR));
     }
