@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
+import feign.FeignException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -26,10 +29,13 @@ import java.util.Map;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindRespondentSolicitor.SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.APPLICANT2_REPRESENTED;
@@ -117,5 +123,66 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
         remindRespondentSolicitorToRespondTask.run();
 
         verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    public void shouldNotSendReminderEmailToRespondentSolicitorWhenCcdSearchCaseExceptionIsThrown() {
+
+        doThrow(new CcdSearchCaseException("Failed elastic search", mock(FeignException.class)))
+            .when(ccdSearchService).searchForAllCasesWithQuery(AwaitingAos, query, user, SERVICE_AUTHORIZATION);
+
+        remindRespondentSolicitorToRespondTask.run();
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldContinueToNextCaseIfCcdManagementExceptionIsThrownWhileProcessingPreviousCase() {
+        CaseDetails details1 = CaseDetails.builder()
+            .id(1L)
+            .data(Map.of("applicant2SolicitorOrganisationPolicy", OrganisationPolicy.builder().build()))
+            .build();
+
+        CaseDetails details2 = CaseDetails.builder()
+            .id(2L)
+            .data(Map.of("applicant2SolicitorOrganisationPolicy", OrganisationPolicy.builder().build()))
+            .build();
+
+        List<CaseDetails> caseDetailsList = List.of(details1, details2);
+
+        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
+            .when(ccdUpdateService).submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+
+        remindRespondentSolicitorToRespondTask.run();
+
+        verify(ccdUpdateService).submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(details2, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldContinueToNextCaseIfIllegalArgumentExceptionIsThrownWhileProcessingPreviousCase() {
+        CaseDetails details1 = CaseDetails.builder()
+            .id(1L)
+            .data(Map.of("applicant2SolicitorOrganisationPolicy", OrganisationPolicy.builder().build()))
+            .build();
+
+        CaseDetails details2 = CaseDetails.builder()
+            .id(2L)
+            .data(Map.of("applicant2SolicitorOrganisationPolicy", OrganisationPolicy.builder().build()))
+            .build();
+
+        List<CaseDetails> caseDetailsList = List.of(details1, details2);
+
+        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+        doThrow(new IllegalArgumentException())
+            .when(ccdUpdateService).submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+
+        remindRespondentSolicitorToRespondTask.run();
+
+        verify(ccdUpdateService).submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(details2, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
     }
 }
