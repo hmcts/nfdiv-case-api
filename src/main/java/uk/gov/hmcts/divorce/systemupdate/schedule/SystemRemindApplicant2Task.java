@@ -38,7 +38,6 @@ public class SystemRemindApplicant2Task implements Runnable {
     private static final int FOUR_DAYS = 4;
     private static final String NOTIFICATION_FLAG = "applicant2ReminderSent";
 
-
     @Autowired
     private CcdSearchService ccdSearchService;
 
