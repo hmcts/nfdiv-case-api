@@ -18,7 +18,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-@Slf4j
 public class CaseworkerResponseToJudge implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_RESPONSE_TO_JUDGE = "caseworker-response-to-judge";
