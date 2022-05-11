@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.citizen.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -49,14 +50,16 @@ public class RespondentSolicitorReminderNotification implements ApplicantNotific
     private Map<String, String> respondentSolicitorTemplateVars(CaseData caseData, Long id) {
         var templateVars = commonContent.basicTemplateVars(caseData, id);
 
+        Applicant respondent = caseData.getApplicant2();
+
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
-        templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+        templateVars.put(SOLICITOR_NAME, respondent.getSolicitor().getName());
         templateVars.put(SOLICITOR_REFERENCE,
-            isNotEmpty(caseData.getApplicant1().getSolicitor().getReference())
-                ? caseData.getApplicant1().getSolicitor().getReference()
+            isNotEmpty(respondent.getSolicitor().getReference())
+                ? respondent.getSolicitor().getReference()
                 : NOT_PROVIDED);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
