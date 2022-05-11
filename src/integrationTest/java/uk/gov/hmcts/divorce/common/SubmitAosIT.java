@@ -262,7 +262,7 @@ public class SubmitAosIT {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
             .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS)))
+            .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS, AosDrafted.name())))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
