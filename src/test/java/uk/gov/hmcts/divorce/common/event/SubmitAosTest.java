@@ -182,6 +182,17 @@ class SubmitAosTest {
     }
 
     @Test
+    void shouldNotThrowErrorAndReturnCaseDataOnAboutToSubmit() {
+        final CaseData caseData = CaseData.builder().build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitAos.aboutToStart(caseDetails);
+
+        assertThat(response.getData()).isSameAs(caseData);
+    }
+
+    @Test
     void shouldThrowErrorAndReturnCaseDataOnAboutToSubmit() {
         final CaseData caseData = CaseData.builder().build();
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
