@@ -8,6 +8,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -22,7 +25,7 @@ public class CaseworkerGeneralApplicationReceived implements CCDConfig<CaseData,
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_APPLICATION_RECEIVED)
-            .forStates(POST_SUBMISSION_STATES)
+            .forStateTransition(POST_SUBMISSION_STATES, EnumSet.of(GeneralApplicationReceived))
             .name("General application received")
             .description("General application received")
             .showEventNotes()
