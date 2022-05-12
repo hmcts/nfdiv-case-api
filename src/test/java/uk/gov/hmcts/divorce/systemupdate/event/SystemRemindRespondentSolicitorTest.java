@@ -124,6 +124,15 @@ public class SystemRemindRespondentSolicitorTest {
         verifyInvalidCaseData(details);
     }
 
+    @Test
+    void shouldNotSendNotificationToRespondentSolicitorWhenRespondentSolicitorEmailIdIsNotGiven() {
+
+        CaseDetails<CaseData, State> details = buildCaseDetails(ISSUE_DATE, YesOrNo.YES, ServiceMethod.COURT_SERVICE);
+        details.getData().getApplicant2().getSolicitor().setEmail(null);
+
+        verifyInvalidCaseData(details);
+    }
+
     private CaseDetails<CaseData, State> buildCaseDetails(LocalDate issueDate, YesOrNo isRepresented, ServiceMethod serviceMethod) {
         final CaseData caseData = caseDataWithOrderSummary();
         caseData.getApplication().setIssueDate(issueDate);
@@ -134,6 +143,7 @@ public class SystemRemindRespondentSolicitorTest {
             .organisationPolicy(OrganisationPolicy.<UserRole>builder()
                 .organisation(Organisation.builder().organisationId("ORG").build())
                 .build())
+            .email("sol@gm.com")
             .build();
 
         caseData.getApplicant2().setSolicitor(solicitor);

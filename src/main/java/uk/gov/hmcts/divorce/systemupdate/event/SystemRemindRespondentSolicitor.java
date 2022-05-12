@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -63,7 +64,7 @@ public class SystemRemindRespondentSolicitor implements CCDConfig<CaseData, Stat
 
         CaseData data = details.getData();
 
-        //to avoid incorrect event submission in case of caseworker manually submits this event
+        //to avoid incorrect event submission in case of system user manually submits this event
         if (isCaseValidForThisSubmission(data)) {
             notificationDispatcher.send(respondentSolicitorReminderNotification, data, details.getId());
             data.getApplication().setRespondentSolicitorReminderSent(YesOrNo.YES);
@@ -87,6 +88,7 @@ public class SystemRemindRespondentSolicitor implements CCDConfig<CaseData, Stat
             && COURT_SERVICE.equals(application.getServiceMethod())
             && respondent.isRepresented()
             && respondent.getSolicitor().hasOrgId()
+            && StringUtils.isNotBlank(respondent.getSolicitor().getEmail())
             && !LocalDate.now(clock).minusDays(responseReminderOffsetDays).isBefore(application.getIssueDate());
     }
 }
