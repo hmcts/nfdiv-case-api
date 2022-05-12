@@ -7,6 +7,7 @@ ccd:
     enabled: true
 
 java:
+  applicationPort: 8489
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
   devcpuRequests: 500m
