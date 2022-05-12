@@ -94,7 +94,7 @@ ccd:
         am:
           secrets:
             - role-assignment-service-LD-SDK-KEY
-  ccd-definition-store-api:g
+  ccd-definition-store-api:
     java:
       imagePullPolicy: Always
       environment:
