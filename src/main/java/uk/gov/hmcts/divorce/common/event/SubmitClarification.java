@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -56,10 +57,9 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             .pageLabel("Submit clarification for conditional order")
             .complex(CaseData::getConditionalOrder)
                 .readonly(ConditionalOrder::getRefusalDecision)
-                .readonly(ConditionalOrder::getRefusalRejectionReason)
+                .readonly(ConditionalOrder::getRefusalOrderDocument)
                 .readonly(ConditionalOrder::getRefusalClarificationAdditionalInfo)
                 .mandatory(ConditionalOrder::getClarificationResponses)
-                .mandatory(ConditionalOrder::getCannotUploadClarificationDocuments)
                 .optional(ConditionalOrder::getClarificationUploadDocuments)
             .done();
     }
@@ -71,9 +71,20 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
 
         final CaseData data = details.getData();
         final boolean cannotUploadDocuments = data.getConditionalOrder().cannotUploadClarificationDocumentsBoolean();
+        final boolean clarificationDocumentsUploaded =
+            data.getConditionalOrder().getClarificationUploadDocuments() != null
+                && !data.getConditionalOrder().getClarificationUploadDocuments().isEmpty();
 
         if (cannotUploadDocuments) {
             notificationDispatcher.send(postInformationToCourtNotification, data, details.getId());
+        }
+
+        if (clarificationDocumentsUploaded) {
+            data.getConditionalOrder().getClarificationUploadDocuments()
+                .forEach(documentListValue ->
+                    data.getDocuments().setDocumentsUploaded(
+                        addDocumentToTop(data.getDocuments().getDocumentsUploaded(), documentListValue.getValue())
+                    ));
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
