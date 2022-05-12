@@ -68,6 +68,7 @@ java:
     ROLE_ASSIGNMENT_S2S_AUTHORISED_SERVICES: ccd_gw,am_role_assignment_service,am_org_role_mapping_service,xui_webapp,aac_manage_case_assignment,ccd_data,nfdiv_case_api
     DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,fpl_case_service,ccd_data,ccd_ps,divorce_frontend,payment-api,xui_webapp,nfdiv_case_api,ccd_case_document_am_api,am_role_assignment_service
     CITIZEN_UPDATE_CASE_STATE_ENABLED: true
+    SPRING_CLOUD_PROPERTIESVOLUME_PATH: /mnt/secrets/nfdiv
   keyVaults:
     nfdiv:
       secrets:
