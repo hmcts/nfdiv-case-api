@@ -66,6 +66,7 @@ ccd:
       ingressHost: gateway-${SERVICE_FQDN}
       ingressIP: ${INGRESS_IP}
       keyVaults: []
+
   ccd-data-store-api:
     java:
       imagePullPolicy: Always
@@ -88,12 +89,14 @@ ccd:
         IDAM_DATA_STORE_SYSTEM_USER_PASSWORD: ${IDAM_DATA_STORE_SYSTEM_USER_PASSWORD}
       keyVaults: []
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
+
   am-role-assignment-service:
     java:
       keyVaults:
         am:
           secrets:
             - role-assignment-service-LD-SDK-KEY
+
   ccd-definition-store-api:
     java:
       imagePullPolicy: Always
@@ -103,6 +106,7 @@ ccd:
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
       keyVaults: []
       ingressHost: ccd-definition-store-${SERVICE_FQDN}
+
   ccd-user-profile-api:
     java:
       imagePullPolicy: Always
@@ -187,7 +191,7 @@ elasticsearch:
     - name: cluster.initial_master_nodes
       value: ""
     - name: action.auto_create_index
-      value: .security*,.watches,.triggered_watches,.watcher-history-*,.logstash_dead_letter,.ml*
+      value: .security*,.watches,.triggered_watches,.watcher-history-*,.logstash_dead_letter,.ml*,nfd_cases
   persistence:
     enabled: false
   ingress:
