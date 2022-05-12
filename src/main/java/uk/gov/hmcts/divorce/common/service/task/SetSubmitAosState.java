@@ -19,6 +19,8 @@ public class SetSubmitAosState implements CaseTask {
         if (caseDetails.getState() == AosDrafted) {
             caseDetails.setState(Holding);
             log.info("Setting submit AoS state to Holding for CaseID: {}", caseDetails.getId());
+        } else {
+            log.info("State not changed for AOS submission task for CaseID: {}", caseDetails.getId());
         }
 
         return caseDetails;
