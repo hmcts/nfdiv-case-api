@@ -20,10 +20,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -83,7 +83,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         if (null != acknowledgementOfService && acknowledgementOfService.getConfirmReadPetition() == YesOrNo.YES) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(Collections.singletonList("The Acknowledgement Of Service has already been drafted."))
+                .errors(singletonList("The Acknowledgement Of Service has already been drafted."))
                 .build();
         }
 
