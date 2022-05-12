@@ -19,15 +19,14 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isApplicableForConfidentiality;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithAosScannedDocument;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithConfidentialDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.ACKNOWLEDGEMENT_OF_SERVICE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
 
 @Component
@@ -111,7 +110,7 @@ public class AosPackPrinter {
             caseData.getDocuments().getDocumentsGenerated(),
             AOS_RESPONSE_LETTER);
 
-        final List<Letter> aosLetters = lettersWithAosScannedDocument(caseData.getDocuments().getScannedDocuments());
+        final List<Letter> aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsUploaded(), RESPONDENT_ANSWERS);
 
         final Letter aosResponseLetter = firstElement(aosResponseLetters);
 
@@ -136,7 +135,7 @@ public class AosPackPrinter {
         } else {
             log.warn(
                 "Aos response letter for applicant has missing documents. Expected documents with type {} , for case id: {}",
-                List.of(AOS_RESPONSE_LETTER, ACKNOWLEDGEMENT_OF_SERVICE),
+                List.of(AOS_RESPONSE_LETTER, RESPONDENT_ANSWERS),
                 caseId
             );
         }
