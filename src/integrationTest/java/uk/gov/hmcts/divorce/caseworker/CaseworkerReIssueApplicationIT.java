@@ -91,7 +91,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPO
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
@@ -326,7 +326,7 @@ public class CaseworkerReIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
-                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE),
                 anyMap(),
                 eq(ENGLISH));
 
@@ -518,7 +518,7 @@ public class CaseworkerReIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
-                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE),
                 anyMap(),
                 eq(ENGLISH));
         verify(notificationService)
@@ -602,7 +602,7 @@ public class CaseworkerReIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
-                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE),
                 anyMap(),
                 eq(ENGLISH));
         verify(notificationService)
@@ -686,7 +686,7 @@ public class CaseworkerReIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
-                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE),
                 anyMap(),
                 eq(ENGLISH));
         verify(notificationService)
@@ -743,7 +743,7 @@ public class CaseworkerReIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
-                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE),
                 anyMap(),
                 eq(ENGLISH));
         verify(notificationService)
@@ -830,7 +830,7 @@ public class CaseworkerReIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
-                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE),
                 anyMap(),
                 eq(ENGLISH));
 
@@ -887,7 +887,7 @@ public class CaseworkerReIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
-                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE),
                 anyMap(),
                 eq(ENGLISH));
         verify(notificationService)
