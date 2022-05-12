@@ -169,6 +169,7 @@ xui-webapp:
       SERVICES_TERMS_AND_CONDITIONS: http://xui-terms-and-conditions-${SERVICE_FQDN}.service.core-compute-preview.internal
       JURISDICTIONS: DIVORCE
       FEATURE_REDIS_ENABLED: false
+      FEATURE_HELMET_ENABLED: false
 
 elastic:
   enabled: true
