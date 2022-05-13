@@ -12,6 +12,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
@@ -98,12 +101,47 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .howToRespondApplication(DISPUTE_DIVORCE)
             .build();
 
+        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
+            .value(
+                ScannedDocument
+                    .builder()
+                    .url(
+                        Document
+                            .builder()
+                            .filename("doc1.pdf")
+                            .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                            .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                            .build()
+                    )
+                    .fileName("doc1.pdf")
+                    .type(ScannedDocumentType.OTHER)
+                    .subtype("aos")
+                    .build()
+            )
+            .build();
+
         final CaseData caseData = caseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
 
         caseData.getApplicant2().setLegalProceedings(YES);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");
+        caseData.setDocuments(
+            CaseDocuments.builder()
+                .scannedDocuments(singletonList(doc1))
+                .scannedDocumentNames(
+                    DynamicList
+                        .builder()
+                        .value(
+                            DynamicListElement
+                                .builder()
+                                .label("doc1.pdf")
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        );
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
