@@ -1,0 +1,64 @@
+{
+  "data": {
+    "applicationType": "soleApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Gender": "female",
+    "applicant1ContactDetailsType": "private",
+    "applicant1FinancialOrder": "No",
+    "applicant1LegalProceedings": "Yes",
+    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant2FirstName": "test_first_name_2",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name_2",
+    "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2Gender": "male",
+    "applicant2ContactDetailsType": "public",
+    "applicant2FinancialOrder": "No",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": ["A"],
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "applicant1StatementOfTruth": "Yes",
+    "applicant2StatementOfTruth": "Yes",
+    "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000"
+    },
+    "documentUploadComplete": "Yes",
+    "issueDate": "2020-05-28",
+    "coClarificationUploadDocuments": [{
+      "id": "Clarification Document",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+          "document_filename": "clarification-document.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+        },
+        "documentFileName": "clarification-document.pdf",
+        "documentType": "other"
+      }
+    }],
+    "documentsUploaded": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+          "document_filename": "clarification-document.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+        },
+        "documentFileName": "clarification-document.pdf",
+        "documentType": "other"
+      }
+    }]
+  },
+  "state": "ClarificationSubmitted"
+}
