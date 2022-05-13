@@ -106,7 +106,28 @@ class LegalAdvisorMakeDecisionTest {
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        String documentUrl = "http://localhost:8080/4567";
+        var refusalConditionalOrderDoc = new Document(
+            documentUrl,
+            REFUSAL_ORDER_DOCUMENT_NAME,
+            documentUrl + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                REFUSAL_ORDER_TEMPLATE_ID,
+                ENGLISH,
+                REFUSAL_ORDER_DOCUMENT_NAME
+            ))
+            .thenReturn(refusalConditionalOrderDoc);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             legalAdvisorMakeDecision.aboutToSubmit(caseDetails, null);
@@ -180,11 +201,31 @@ class LegalAdvisorMakeDecisionTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(12345L);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        String documentUrl = "http://localhost:8080/4567";
+        var refusalConditionalOrderDoc = new Document(
+            documentUrl,
+            REFUSAL_ORDER_DOCUMENT_NAME,
+            documentUrl + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                REFUSAL_ORDER_TEMPLATE_ID,
+                ENGLISH,
+                REFUSAL_ORDER_DOCUMENT_NAME
+            ))
+            .thenReturn(refusalConditionalOrderDoc);
 
         legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(notificationDispatcher).send(notification, caseData, 12345L);
+        verify(notificationDispatcher).send(notification, caseData, TEST_CASE_ID);
     }
 
     @Test

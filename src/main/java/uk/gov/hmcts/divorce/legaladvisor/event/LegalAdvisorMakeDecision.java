@@ -21,7 +21,6 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -41,7 +40,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_REFUSAL_OF_ENTITLEMENT;
 
 @Component
 @Slf4j
@@ -148,6 +146,10 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             );
             endState = AwaitingClarification;
         } else {
+            generateAndSetConditionalOrderRefusedDocument(
+                caseData,
+                details.getId()
+            );
             endState = AwaitingAmendedApplication;
         }
 
@@ -179,6 +181,8 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .documentFileName(document.getFilename())
             .documentType(CONDITIONAL_ORDER_REFUSAL)
             .build();
+
+        caseData.getConditionalOrder().setRefusalOrderDocument(refusalConditionalOrderDoc);
 
         caseData.getDocuments().setDocumentsGenerated(addDocumentToTop(
             caseData.getDocuments().getDocumentsGenerated(),
