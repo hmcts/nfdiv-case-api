@@ -13,13 +13,9 @@
     "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
     "applicant1LanguagePreferenceWelsh": "No",
     "coRefusalOrderDocument": {
-      "documentLink": {
-        "document_url": "${json-unit.any-string}",
-        "document_filename": "NoticeOfRefusalDocument.pdf",
-        "document_binary_url": "${json-unit.any-string}"
-      },
-      "documentFileName": "NoticeOfRefusalDocument.pdf",
-      "documentType": "conditionalOrderRefusal"
+      "document_url": "${json-unit.any-string}",
+      "document_filename": "NoticeOfRefusalDocument.pdf",
+      "document_binary_url": "${json-unit.any-string}"
     },
     "documentsGenerated": [{
       "id": "${json-unit.any-string}",

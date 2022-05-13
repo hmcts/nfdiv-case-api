@@ -182,7 +182,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .documentType(CONDITIONAL_ORDER_REFUSAL)
             .build();
 
-        caseData.getConditionalOrder().setRefusalOrderDocument(refusalConditionalOrderDoc);
+        caseData.getConditionalOrder().setRefusalOrderDocument(refusalConditionalOrderDoc.getDocumentLink());
 
         caseData.getDocuments().setDocumentsGenerated(addDocumentToTop(
             caseData.getDocuments().getDocumentsGenerated(),

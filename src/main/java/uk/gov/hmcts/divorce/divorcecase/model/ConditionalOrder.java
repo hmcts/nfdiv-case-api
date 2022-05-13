@@ -188,7 +188,7 @@ public class ConditionalOrder {
     @CCD(
         label = "Refusal Rejection reasons"
     )
-    private DivorceDocument refusalOrderDocument;
+    private Document refusalOrderDocument;
 
     @JsonIgnore
     public boolean areClaimsGranted() {
