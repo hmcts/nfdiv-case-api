@@ -1083,7 +1083,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
