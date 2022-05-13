@@ -8,7 +8,7 @@ maintainers:
   - name: HMCTS nfdiv team
 dependencies:
   - name: java
-    version: 3.7.2
+    version: 3.7.6
     repository: '@hmctspublic'
   - name: postgresql
     version: 8.9.8
