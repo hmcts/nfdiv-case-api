@@ -60,7 +60,7 @@ public class GenerateD10Form implements CaseTask {
         var app2 = caseData.getApplicant2();
         var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
             ? !app2.getSolicitor().hasOrgId()
-            : StringUtils.isEmpty(caseData.getApplicant2().getEmail());
+            : StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isOffline();
 
         var d10Needed = !caseData.getApplication().isCourtServiceMethod() || app2Offline;
 
