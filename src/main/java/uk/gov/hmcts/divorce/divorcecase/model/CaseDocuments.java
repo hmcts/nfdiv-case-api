@@ -157,13 +157,10 @@ public class CaseDocuments {
 
     public static <T> boolean hasAddedDocuments(final List<ListValue<T>> after,
                                                 final List<ListValue<T>> before) {
-        if (isNull(after)) {
-            return false;
-        }
 
         if (isNull(before) && !after.isEmpty()) {
             return true;
-        } else if (isNull(before)) {
+        } else if (isNull(before) || isNull(after)) {
             return false;
         }
 
