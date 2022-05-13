@@ -45,8 +45,8 @@ public class CaseworkerRemoveScannedDocument implements CCDConfig<CaseData, Stat
             .page("removeScannedDocument")
             .pageLabel("Remove scanned document")
             .complex(CaseData::getDocuments)
-            .optional(CaseDocuments::getScannedDocuments)
-            .done();
+                .optional(CaseDocuments::getScannedDocuments)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
