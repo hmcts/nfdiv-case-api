@@ -249,6 +249,13 @@ public class CaseData {
     }
 
     @JsonIgnore
+    public boolean isSoleApplicationAndApplicant1HasAgreedHwf() {
+        return nonNull(applicationType)
+            && applicationType.isSole()
+            && application.isHelpWithFeesApplication();
+    }
+
+    @JsonIgnore
     public String getApplicant2EmailAddress() {
         final String applicant2Email = applicant2.getEmail();
 
