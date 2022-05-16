@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Bailiff;
@@ -16,6 +17,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CertificateOfServiceContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+
+import java.util.UUID;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
@@ -33,6 +36,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_SE
 @Slf4j
 public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_ISSUE_BAILIFF_PACK = "caseworker-issue-bailiff-pack";
+    private static final int FIRST = 0;
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -93,8 +97,13 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
             .documentFileName(certificateOfServiceDoc.getFilename())
             .documentType(CERTIFICATE_OF_SERVICE)
             .build();
-
         caseDataCopy.getAlternativeService().getBailiff().setCertificateOfServiceDocument(cosDivorceDocument);
+
+        final ListValue<DivorceDocument> cosDocumentForDocumentTab = ListValue.<DivorceDocument>builder()
+            .id(UUID.randomUUID().toString())
+            .value(cosDivorceDocument)
+            .build();
+        caseDataCopy.getDocuments().getDocumentsGenerated().add(FIRST, cosDocumentForDocumentTab);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDataCopy)
