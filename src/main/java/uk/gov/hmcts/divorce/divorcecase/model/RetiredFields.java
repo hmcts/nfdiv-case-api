@@ -11,11 +11,15 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 
 @Data
 @NoArgsConstructor
@@ -76,6 +80,47 @@ public class RetiredFields {
             if (data.containsKey(key) && null != data.get(key)) {
                 migrations.get(key).apply(data, key, data.get(key));
                 data.put(key, null);
+            }
+        }
+
+        var updateCaseStateEnabled = Boolean.parseBoolean(System.getenv().get("CITIZEN_UPDATE_CASE_STATE_ENABLED"));
+        String key = "applicant2StatementOfTruth";
+
+        if (updateCaseStateEnabled
+            && Optional.ofNullable(data.get("applicationType")).orElse("").equals("soleApplication")
+            && Optional.ofNullable(data.get(key)).orElse("").equals(YesOrNo.YES.getValue())) {
+            Map<String, TriConsumer<Map<String, Object>, String, Object>> customMigrations = Map.of(
+                key, moveTo("statementOfTruth")
+            );
+
+            if (data.containsKey(key) && null != data.get(key)) {
+                customMigrations.get(key).apply(data, key, data.get(key));
+                data.put(key, null);
+            }
+        }
+
+
+        data.put("dataVersion", getVersion());
+
+        return data;
+    }
+
+    public static Map<String, Object> migrateSOT(Map<String, Object> data) {
+
+        var isAatEnv = Boolean.parseBoolean(System.getenv().get("CITIZEN_UPDATE_CASE_STATE_ENABLED"));
+        String applicant2StatementOfTruthKey = "applicant2StatementOfTruth";
+
+        if (isAatEnv
+            && Optional.ofNullable(data.get("applicationType")).orElse("").equals("soleApplication")
+            && Optional.ofNullable(data.get(applicant2StatementOfTruthKey)).orElse("").equals(YesOrNo.YES.getValue())) {
+            Map<String, TriConsumer<Map<String, Object>, String, Object>> customMigrations = Map.of(
+                applicant2StatementOfTruthKey, moveTo("statementOfTruth")
+            );
+
+            if (data.containsKey(applicant2StatementOfTruthKey) && null != data.get(applicant2StatementOfTruthKey)) {
+                customMigrations.get(applicant2StatementOfTruthKey)
+                    .apply(data, applicant2StatementOfTruthKey, data.get(applicant2StatementOfTruthKey));
+                data.put(applicant2StatementOfTruthKey, null);
             }
         }
 

@@ -63,6 +63,7 @@ public class SystemMigrateCasesTask implements Runnable {
 
         try {
             final var data = RetiredFields.migrate(caseDetails.getData());
+            RetiredFields.migrateSOT(data);
             verifyData(data, caseId);
 
             caseDetails.setData(data);
