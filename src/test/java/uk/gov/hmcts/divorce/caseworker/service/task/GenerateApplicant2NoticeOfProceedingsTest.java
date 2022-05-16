@@ -13,11 +13,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
-import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSoleApplicant2SolicitorOffline;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingsWithAddressContent;
 
 import java.time.Clock;
 import java.util.HashMap;
@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
@@ -47,7 +48,9 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_AP
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISPLAY_HEADER_ADDRESS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -59,7 +62,13 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
+    private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
+
+    @Mock
     private NoticeOfProceedingContent noticeOfProceedingContent;
+
+    @Mock
+    private NoticeOfProceedingsWithAddressContent noticeOfProceedingsWithAddressContent;
 
     @Mock
     private NoticeOfProceedingJointContent noticeOfProceedingJointContent;
@@ -68,10 +77,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     private NoticeOfProceedingSolicitorContent noticeOfProceedingSolicitorContent;
 
     @Mock
-    private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
-
-    @Mock
-    private NoticeOfProceedingSoleApplicant2SolicitorOffline noticeOfProceedingSoleApplicant2SolicitorOffline;
+    private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
 
     @Mock
     private Clock clock;
@@ -80,7 +86,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
     @Test
-    void shouldGenerateRS2WhenSoleWithAppRepresentedAndOffline() {
+    void shouldGenerateRS2AndCoversheetWhenSoleWithAppRepresentedAndOffline() {
         setMockClock(clock);
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
@@ -90,11 +96,21 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingSoleApplicant2SolicitorOffline.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
+        when(coversheetSolicitorTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE);
+        verify(caseDataDocumentService)
+            .renderDocumentAndUpdateCaseData(
+                caseData,
+                COVERSHEET,
+                templateContent,
+                TEST_CASE_ID,
+                COVERSHEET_APPLICANT2_SOLICITOR,
+                caseData.getApplicant2().getLanguagePreference(),
+                formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock)));
 
         assertThat(result.getData()).isEqualTo(caseData);
         classMock.close();
@@ -116,7 +132,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
+        when(noticeOfProceedingsWithAddressContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -141,19 +157,21 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         );
 
         final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> expectedTemplateContent = new HashMap<>();
+        expectedTemplateContent.put(DISPLAY_HEADER_ADDRESS, false);
 
         when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
-        verify(caseDataDocumentService, times(1))
+        verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
                 COVERSHEET,
                 templateContent,
                 TEST_CASE_ID,
-                COVERSHEET_APPLICANT,
+                COVERSHEET_APPLICANT2_SOLICITOR,
                 caseData.getApplicant2().getLanguagePreference(),
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock)));
         assertThat(result.getData()).isEqualTo(caseData);
@@ -263,7 +281,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         verify(caseDataDocumentService, times(1))
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                DocumentType.NOTICE_OF_PROCEEDINGS_APP_2,
+                NOTICE_OF_PROCEEDINGS_APP_2,
                 templateContent,
                 TEST_CASE_ID,
                 templateId,

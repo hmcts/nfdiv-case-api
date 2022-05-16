@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -226,19 +225,9 @@ class AosPackPrinterTest {
                 .build())
             .build();
 
-        final ListValue<ScannedDocument> doc2 = ListValue.<ScannedDocument>builder()
-            .value(
-                ScannedDocument
-                    .builder()
-                    .subtype("aos")
-                    .build()
-            )
-            .build();
-
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder()
                 .documentsGenerated(singletonList(doc1))
-                .scannedDocuments(singletonList(doc2))
                 .build())
             .build();
 
@@ -250,9 +239,8 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("aos-response-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().size()).isEqualTo(1);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
-        assertThat(print.getLetters().get(1).getScannedDocument()).isSameAs(doc2.getValue());
     }
 
     @Test
