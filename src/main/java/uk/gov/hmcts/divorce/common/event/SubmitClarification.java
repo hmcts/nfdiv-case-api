@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
@@ -71,9 +72,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
 
         final CaseData data = details.getData();
         final boolean cannotUploadDocuments = data.getConditionalOrder().cannotUploadClarificationDocumentsBoolean();
-        final boolean clarificationDocumentsUploaded =
-            data.getConditionalOrder().getClarificationUploadDocuments() != null
-                && !data.getConditionalOrder().getClarificationUploadDocuments().isEmpty();
+        final boolean clarificationDocumentsUploaded = isNotEmpty(data.getConditionalOrder().getClarificationUploadDocuments());
 
         if (cannotUploadDocuments) {
             notificationDispatcher.send(postInformationToCourtNotification, data, details.getId());
