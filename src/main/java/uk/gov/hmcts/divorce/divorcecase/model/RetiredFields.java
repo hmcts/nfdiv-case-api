@@ -83,23 +83,6 @@ public class RetiredFields {
             }
         }
 
-        var updateCaseStateEnabled = Boolean.parseBoolean(System.getenv().get("CITIZEN_UPDATE_CASE_STATE_ENABLED"));
-        String key = "applicant2StatementOfTruth";
-
-        if (updateCaseStateEnabled
-            && Optional.ofNullable(data.get("applicationType")).orElse("").equals("soleApplication")
-            && Optional.ofNullable(data.get(key)).orElse("").equals(YesOrNo.YES.getValue())) {
-            Map<String, TriConsumer<Map<String, Object>, String, Object>> customMigrations = Map.of(
-                key, moveTo("statementOfTruth")
-            );
-
-            if (data.containsKey(key) && null != data.get(key)) {
-                customMigrations.get(key).apply(data, key, data.get(key));
-                data.put(key, null);
-            }
-        }
-
-
         data.put("dataVersion", getVersion());
 
         return data;
