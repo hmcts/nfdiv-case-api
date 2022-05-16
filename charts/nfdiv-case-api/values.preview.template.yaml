@@ -188,7 +188,6 @@ xui-webapp:
       SERVICES_CCD_CASE_ASSIGNMENT_API: http://aac-${SERVICE_FQDN}
       FEATURE_REDIS_ENABLED: false
       JURISDICTIONS: DIVORCE
-      DEBUG: *:*
 
 xui-mo-webapp:
   enabled: true
