@@ -98,6 +98,8 @@ java:
           alias: DATA_STORE_IDAM_KEY
         - name: s2s-definition-store-secret
           alias: DEFINITION_STORE_IDAM_KEY
+        - name: s2s-role-assignment-store-secret
+          alias: AM_ROLE_ASSIGNMENT_SERVICE_SECRET
 
 postgresql:
   persistence:
