@@ -72,6 +72,7 @@ java:
     DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,fpl_case_service,ccd_data,ccd_ps,divorce_frontend,payment-api,xui_webapp,nfdiv_case_api,ccd_case_document_am_api,am_role_assignment_service
     CITIZEN_UPDATE_CASE_STATE_ENABLED: true
     SPRING_CLOUD_PROPERTIESVOLUME_PATHS: /mnt/secrets/nfdiv
+    LOG_LEVEL: debug
   keyVaults:
     nfdiv:
       secrets:
