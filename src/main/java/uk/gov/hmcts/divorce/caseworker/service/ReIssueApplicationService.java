@@ -83,7 +83,6 @@ public class ReIssueApplicationService {
             log.info("For case id {} processing reissue for offline aos ", caseDetails.getId());
 
             caseDetails.getData().getApplicant2().setOffline(YES);
-            caseDetails.getData().getApplicant2().setEmail(null);
 
             return caseTasks(
                 setPostIssueState,
