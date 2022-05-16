@@ -57,8 +57,4 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
             .state(state)
             .build();
     }
-
-    public boolean isCitizenUpdateCaseStateEnabled() {
-        return Boolean.parseBoolean(System.getenv().get("CITIZEN_UPDATE_CASE_STATE_ENABLED"));
-    }
 }

@@ -159,6 +159,7 @@ withPipeline(type, product, component) {
       env.CASE_DATA_STORE_BASEURL = "http://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
       env.TEST_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
       env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
+      env.SOT_MIGRATION_ENABLED=true
       env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
       env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
 
@@ -171,6 +172,7 @@ withPipeline(type, product, component) {
         env.CCD_DEF_NAME="aat"
         env.ELASTIC_SEARCH_ENABLED=true
         env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
+        env.SOT_MIGRATION_ENABLED=true
         env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
         env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
         setCommonEnvVariables()
@@ -182,6 +184,7 @@ withPipeline(type, product, component) {
         env.CCD_DEF_NAME="prod"
         env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-prod.service.core-compute-prod.internal"
         env.CITIZEN_UPDATE_CASE_STATE_ENABLED=false
+        env.SOT_MIGRATION_ENABLED=false
         env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
         env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
         env.IDAM_API_URL_BASE = "https://idam-api.platform.hmcts.net"
