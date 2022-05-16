@@ -17,8 +17,6 @@ import java.util.List;
 import static java.util.stream.Stream.ofNullable;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isApplicableForConfidentiality;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 @Service
 @Slf4j
@@ -37,30 +35,6 @@ public class ProcessConfidentialDocumentsService {
                                                          final boolean isApplicant1) {
         if (applicant.isConfidentialContactDetails()) {
             moveToConfidentialDocumentsTab(caseData.getDocuments(), isApplicant1);
-        } else {
-            moveToDocumentsTab(caseData.getDocuments(), isApplicant1);
-        }
-    }
-
-    private void moveToDocumentsTab(final CaseDocuments caseDocuments, final Boolean isApplicant1) {
-        log.info("Moving documents to non confidential list for : applicant {}", isApplicant1 ? "1" : "2");
-
-        List<ListValue<ConfidentialDivorceDocument>> documentsToMove
-            = ofNullable(caseDocuments.getConfidentialDocumentsGenerated())
-            .flatMap(Collection::stream)
-            .filter(document -> isApplicableForConfidentiality(document.getValue().getConfidentialDocumentsReceived(), isApplicant1))
-            .toList();
-
-        if (!CollectionUtils.isEmpty(documentsToMove)) {
-
-            documentsToMove.forEach(documentListValue ->
-                caseDocuments.setDocumentsGenerated(addDocumentToTop(
-                    caseDocuments.getDocumentsGenerated(),
-                    mapToDivorceDocument(documentListValue.getValue(), isApplicant1),
-                    documentListValue.getId()
-                )));
-
-            caseDocuments.getConfidentialDocumentsGenerated().removeAll(documentsToMove);
         }
     }
 
@@ -84,18 +58,6 @@ public class ProcessConfidentialDocumentsService {
 
             caseDocuments.getDocumentsGenerated().removeAll(documentsToMove);
         }
-    }
-
-    private DivorceDocument mapToDivorceDocument(final ConfidentialDivorceDocument confidentialDivorceDocument,
-                                                 final boolean isApplicant1) {
-        return DivorceDocument.builder()
-            .documentLink(confidentialDivorceDocument.getDocumentLink())
-            .documentComment(confidentialDivorceDocument.getDocumentComment())
-            .documentFileName(confidentialDivorceDocument.getDocumentFileName())
-            .documentDateAdded(confidentialDivorceDocument.getDocumentDateAdded())
-            .documentEmailContent(confidentialDivorceDocument.getDocumentEmailContent())
-            .documentType(isApplicant1 ? NOTICE_OF_PROCEEDINGS_APP_1 : NOTICE_OF_PROCEEDINGS_APP_2)
-            .build();
     }
 
     private ConfidentialDivorceDocument mapToConfidentialDivorceDocument(final DivorceDocument divorceDocument,

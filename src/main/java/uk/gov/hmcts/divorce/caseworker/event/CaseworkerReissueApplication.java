@@ -26,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefused;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -49,7 +48,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .event(CASEWORKER_REISSUE_APPLICATION)
             .forStates(
                 AwaitingAos, AosDrafted, AosOverdue,
-                Rejected, ConditionalOrderRefused, Withdrawn,
+                Rejected, ConditionalOrderRefused,
                 Holding, AwaitingDocuments, AwaitingService, AwaitingDwpResponse)
             .name("Reissue")
             .description("Application reissued")
@@ -65,7 +64,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .pageLabel("Reissue Application")
             .complex(CaseData::getApplication)
                 .mandatory(Application::getReissueOption)
-                .mandatoryWithoutDefaultValue(Application::getServiceMethod, "reissueOption=\"reissueCase\"", BLANK_LABEL)
+                .mandatoryWithoutDefaultValue(Application::getServiceMethod, "reissueOption=\"reissueCase\"", BLANK_LABEL, true)
                 .done()
             .done();
     }

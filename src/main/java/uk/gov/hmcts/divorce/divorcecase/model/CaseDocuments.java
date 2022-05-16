@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
@@ -95,6 +96,13 @@ public class CaseDocuments {
     )
     private List<ListValue<DivorceDocument>> answerReceivedSupportingDocuments;
 
+    @CCD(
+        label = "Select respondent answers document",
+        access = {CaseworkerAccessOnlyAccess.class}
+    )
+    private DynamicList scannedDocumentNames;
+
+
     public static <T> List<ListValue<T>> addDocumentToTop(final List<ListValue<T>> documents, final T value) {
         return addDocumentToTop(documents, value, null);
     }
@@ -131,7 +139,7 @@ public class CaseDocuments {
     private static <T> List<ListValue<T>> sortDocuments(final Map<Boolean, List<ListValue<T>>> documentsWithoutIds) {
         final List<ListValue<T>> sortedDocuments = new ArrayList<>();
         final var newDocuments = documentsWithoutIds.get(true);
-        final var previousDocuments = documentsWithoutIds.get(false);
+        final var previousDocuments = documentsWithoutIds.getOrDefault(false, new ArrayList<>());
 
         if (null != newDocuments) {
             sortedDocuments.addAll(0, newDocuments); // add new documents to start of the list

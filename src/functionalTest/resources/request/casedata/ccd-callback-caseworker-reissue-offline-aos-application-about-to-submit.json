@@ -23,6 +23,7 @@
   "applicant2FirstName": "test_first_name",
   "applicant2MiddleName": "test_middle_name",
   "applicant2LastName": "test_last_name",
+  "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
   "applicant2LanguagePreferenceWelsh": "No",
   "applicant2ContactDetailsType": "public",
