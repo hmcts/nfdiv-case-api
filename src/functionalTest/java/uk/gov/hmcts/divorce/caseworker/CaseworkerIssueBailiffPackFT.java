@@ -22,7 +22,8 @@ public class CaseworkerIssueBailiffPackFT extends FunctionalTestSuite {
 
     @Test
     public void shouldCertificateOfServiceDocumentAndUpdateCaseDataWhenAboutToSubmitIsTriggered() throws Exception {
-        final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-casedata.json");
+        final Map<String, Object> caseData =
+            caseData("classpath:request/casedata/ccd-callback-casedata-caseworker-issue-bailiff-pack.json");
 
         final Response aboutToSubmitResponse = triggerCallback(caseData, CASEWORKER_ISSUE_BAILIFF_PACK, ABOUT_TO_SUBMIT_URL);
         assertThat(aboutToSubmitResponse.getStatusCode()).isEqualTo(OK.value());

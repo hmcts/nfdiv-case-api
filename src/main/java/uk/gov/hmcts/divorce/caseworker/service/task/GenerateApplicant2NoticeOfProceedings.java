@@ -19,7 +19,7 @@ import java.time.Clock;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
@@ -109,7 +109,18 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         } else {
             log.info("Generating notice of proceedings for respondent for sole case id {} ", caseId);
 
-            if (isNotEmpty(caseData.getApplicant2().getEmail())) {
+            if (isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isOffline()) {
+                generateNoticeOfProceedings(
+                    caseData,
+                    caseId,
+                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
+                    noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1()));
+                generateCoversheet(
+                    caseData,
+                    caseId,
+                    COVERSHEET_APPLICANT,
+                    coversheetApplicant2TemplateContent.apply(caseData, caseId));
+            } else {
                 generateNoticeOfProceedings(
                     caseData,
                     caseId,
@@ -122,17 +133,6 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                         COVERSHEET_APPLICANT,
                         coversheetApplicant2TemplateContent.apply(caseData, caseId));
                 }
-            } else {
-                generateNoticeOfProceedings(
-                    caseData,
-                    caseId,
-                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
-                    noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1()));
-                generateCoversheet(
-                    caseData,
-                    caseId,
-                    COVERSHEET_APPLICANT,
-                    coversheetApplicant2TemplateContent.apply(caseData, caseId));
             }
         }
     }
