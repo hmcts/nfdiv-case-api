@@ -120,7 +120,7 @@ public class CcdSearchService {
             .query(
                 boolQuery()
                     .must(boolQuery()
-                        .must(matchQuery("reference", "1652687259123787"))
+                        .must(matchQuery("reference", "1652709478473080"))
                     )
             )
             .from(0)

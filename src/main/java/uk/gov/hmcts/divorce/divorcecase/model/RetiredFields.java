@@ -14,12 +14,11 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 
 @Data
 @NoArgsConstructor
@@ -53,7 +52,7 @@ public class RetiredFields {
     };
 
     @JsonIgnore
-    private static final Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = Map.of(
+    private static Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = new HashMap<>(Map.of(
         "exampleRetiredField", moveTo("applicant1FirstName"),
         "solServiceMethod", moveTo("serviceMethod"),
         "d11Document", (data, key, val) -> data.put("answerReceivedSupportingDocuments",
@@ -64,7 +63,7 @@ public class RetiredFields {
                 .build()
             )
         )
-    );
+    ));
 
     /**
      * This function will iterate over the properties in the given map and check for a migration. If one is found
@@ -76,34 +75,14 @@ public class RetiredFields {
      */
     public static Map<String, Object> migrate(Map<String, Object> data) {
 
+        if (shouldMigrateSOT(data)) {
+            migrations.put("applicant2StatementOfTruth", moveTo("statementOfTruth"));
+        }
+
         for (String key : migrations.keySet()) {
             if (data.containsKey(key) && null != data.get(key)) {
                 migrations.get(key).apply(data, key, data.get(key));
                 data.put(key, null);
-            }
-        }
-
-        data.put("dataVersion", getVersion());
-
-        return data;
-    }
-
-    public static Map<String, Object> migrateSOT(Map<String, Object> data) {
-
-        var isAatEnv = Boolean.parseBoolean(System.getenv().get("CITIZEN_UPDATE_CASE_STATE_ENABLED"));
-        String applicant2StatementOfTruthKey = "applicant2StatementOfTruth";
-
-        if (isAatEnv
-            && Optional.ofNullable(data.get("applicationType")).orElse("").equals("soleApplication")
-            && Optional.ofNullable(data.get(applicant2StatementOfTruthKey)).orElse("").equals(YesOrNo.YES.getValue())) {
-            Map<String, TriConsumer<Map<String, Object>, String, Object>> customMigrations = Map.of(
-                applicant2StatementOfTruthKey, moveTo("statementOfTruth")
-            );
-
-            if (data.containsKey(applicant2StatementOfTruthKey) && null != data.get(applicant2StatementOfTruthKey)) {
-                customMigrations.get(applicant2StatementOfTruthKey)
-                    .apply(data, applicant2StatementOfTruthKey, data.get(applicant2StatementOfTruthKey));
-                data.put(applicant2StatementOfTruthKey, null);
             }
         }
 
@@ -118,5 +97,11 @@ public class RetiredFields {
 
     private static TriConsumer<Map<String, Object>, String, Object> moveTo(String newFieldName) {
         return (data, key, val) -> data.put(newFieldName, val);
+    }
+
+    private static boolean shouldMigrateSOT(Map<String, Object> data) {
+        return Boolean.parseBoolean(System.getenv().get("SOT_MIGRATION_ENABLED"))
+            && Optional.ofNullable(data.get("applicationType")).orElse("").equals("soleApplication")
+            && Optional.ofNullable(data.get("applicant2StatementOfTruth")).orElse("").equals(YesOrNo.YES.getValue());
     }
 }
