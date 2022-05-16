@@ -53,6 +53,7 @@ java:
     CCD_TX-TIMEOUT_DEFAULT: 120
     ROLE_ASSIGNMENT_URL: http://localhost:4096
     CASE_DATA_STORE_BASEURL: http://localhost:4452
+    DEFINITION_STORE_HOST: http://localhost:4451
     IDAM_API_URL_BASE: https://idam-api.aat.platform.hmcts.net
     IDAM_API_BASEURL: https://idam-api.aat.platform.hmcts.net
     IDAM_API_BASE_URL: https://idam-api.aat.platform.hmcts.net
