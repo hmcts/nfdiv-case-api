@@ -224,7 +224,5 @@ idam-pr:
     XUIMO:
       - https://xui-mo-${SERVICE_FQDN}/oauth2/callback
     divorce:
-      - https://${SERVICE_FQDN}/oauth2/callback
-      - https://civil-${SERVICE_FQDN}/oauth2/callback
-      - https://${SERVICE_FQDN}/oauth2/callback-applicant2
-      - https://civil-${SERVICE_FQDN}/oauth2/callback-applicant2
+      - https://frontend-${SERVICE_FQDN}/oauth2/callback
+      - https://frontend-${SERVICE_FQDN}/oauth2/callback-applicant2
