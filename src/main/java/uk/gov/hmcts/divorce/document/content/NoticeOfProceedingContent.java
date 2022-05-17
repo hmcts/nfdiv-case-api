@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -172,7 +173,7 @@ public class NoticeOfProceedingContent {
                 ? caseData.getApplicant1().getSolicitor().getName()
                 : NOT_REPRESENTED);
 
-        boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline() || caseData.getApplicant1().getEmail() != null;
+        boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline() || ObjectUtils.isNotEmpty(caseData.getApplicant1().getEmail());
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
         final boolean personalServiceMethod = PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod());
@@ -285,7 +286,7 @@ public class NoticeOfProceedingContent {
         );
 
         templateContent.put(
-                SOLICITOR_NAME_WITH_DEFAULT_VALUE,
+            SOLICITOR_NAME_WITH_DEFAULT_VALUE,
             !isNull(applicant1Solicitor) && applicant1.isRepresented() ? applicant1Solicitor.getName() : NOT_REPRESENTED
         );
 
