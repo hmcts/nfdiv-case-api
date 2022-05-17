@@ -48,7 +48,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             details.getState(), details.getId()
         );
         var caseData = details.getData();
-        caseData.getApplication().setPreviousState(details.getState());
+        caseData.getApplication().setPreviousState(beforeDetails.getState());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
