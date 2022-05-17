@@ -23,8 +23,12 @@ public class SetStateAfterSubmission implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final Application application = caseData.getApplication();
 
-        if (caseData.isSoleApplicationAndApplicant1HasAgreedHwf() && application.getApplicant1CannotUpload().toBoolean()) {
-            caseDetails.setState(AwaitingDocuments);
+        if (application.isHelpWithFeesApplication()) {
+            if (application.getApplicant1CannotUpload().toBoolean()) {
+                caseDetails.setState(AwaitingDocuments);
+            } else {
+                caseDetails.setState(AwaitingHWFDecision);
+            }
         } else if (caseData.isSoleApplicationOrApplicant2HasAgreedHwf() && application.isHelpWithFeesApplication()) {
             caseDetails.setState(AwaitingHWFDecision);
         } else if (!application.hasBeenPaidFor()) {
