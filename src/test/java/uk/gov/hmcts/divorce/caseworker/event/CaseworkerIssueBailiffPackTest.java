@@ -10,16 +10,20 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Bailiff;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CertificateOfServiceContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -35,6 +39,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerIssueBailiffPackTest {
+
+    private static final int FIRST = 0;
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -59,6 +65,8 @@ class CaseworkerIssueBailiffPackTest {
     @Test
     void shouldUpdateCaseWithCertificateOfServiceDocumentWhenAboutToSubmitCallbackIsTriggered() {
         final CaseData caseData = caseData();
+        caseData.setDocuments(CaseDocuments.builder().build());
+        caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -96,8 +104,20 @@ class CaseworkerIssueBailiffPackTest {
             .documentFileName(certificateOfServiceDocument.getFilename())
             .documentType(CERTIFICATE_OF_SERVICE)
             .build();
-
         assertThat(bailiff.getCertificateOfServiceDocument()).isEqualTo(cosDivorceDocument);
+
+        final ListValue<DivorceDocument> cosDocumentForDocumentTab = ListValue.<DivorceDocument>builder()
+            .id(UUID.randomUUID().toString())
+            .value(cosDivorceDocument)
+            .build();
+
+        var generatedDoc = aboutToStartOrSubmitResponse
+            .getData()
+            .getDocuments()
+            .getDocumentsGenerated()
+            .get(FIRST);
+
+        assertThat(generatedDoc.getValue()).isEqualTo(cosDocumentForDocumentTab.getValue());
 
         verify(certificateOfServiceContent).apply(caseData, TEST_CASE_ID);
         verify(caseDataDocumentService).renderDocument(
