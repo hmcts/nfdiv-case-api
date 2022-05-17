@@ -17,7 +17,7 @@ java:
   devcpuRequests: 500m
   cpuLimits: 4
   cpuRequests: 500m
-  devmemoryRequests:   4Gi
+  devmemoryRequests: 4Gi
   devmemoryLimits: 4Gi
   environment:
     CFT_LIB_DB_HOST: "{{ .Release.Name }}-postgresql"
@@ -183,10 +183,14 @@ xui-webapp:
     releaseNameOverride: ${SERVICE_NAME}-xui-webapp
     image: hmctspublic.azurecr.io/xui/webapp:latest
     ingressHost: xui-${SERVICE_FQDN}
+    devcpuRequests: 250m
+    devmemoryRequests: 1024Mi
+    devmemoryLimits: 2048Mi
     environment:
       SERVICES_CCD_COMPONENT_API: http://${SERVICE_FQDN}
       SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
       SERVICES_DOCUMENTS_API_V2: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
+      NODE_OPTIONS: --max-old-space-size=900
       # TODO: aac-manage-case-assignment
       SERVICES_CCD_CASE_ASSIGNMENT_API: http://aac-${SERVICE_FQDN}
       FEATURE_REDIS_ENABLED: false
