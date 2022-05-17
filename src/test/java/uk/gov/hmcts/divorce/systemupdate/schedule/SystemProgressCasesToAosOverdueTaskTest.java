@@ -33,6 +33,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -65,7 +66,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
     private static final BoolQueryBuilder query =
         boolQuery()
             .must(matchQuery(STATE, AwaitingAos))
-            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
+            .filter(rangeQuery(DUE_DATE).lt(LocalDate.now()));
 
     @BeforeEach
     void setUp() {
@@ -75,7 +76,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
     }
 
     @Test
-    void shouldTriggerAosOverdueTaskOnEachCaseWhenCaseDueDateIsBeforeOrSameAsCurrentDate() {
+    void shouldTriggerAosOverdueTaskOnEachCaseWhenCaseDueDateIsBeforeCurrentDateOnly() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
@@ -88,8 +89,8 @@ class SystemProgressCasesToAosOverdueTaskTest {
 
         progressCasesToAosOverdueTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verifyNoMoreInteractions(ccdUpdateService);
     }
 
     @Test
@@ -139,7 +140,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().toString()));
+        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().minusDays(5).toString()));
 
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
@@ -165,11 +166,11 @@ class SystemProgressCasesToAosOverdueTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
 
         progressCasesToAosOverdueTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verifyNoMoreInteractions(ccdUpdateService);
     }
 }
