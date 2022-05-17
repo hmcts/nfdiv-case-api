@@ -45,6 +45,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
@@ -184,7 +185,9 @@ public class SolicitorGeneralApplicationTest {
                     .build()
             )
             .build();
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(applicant1Solicitor);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(applicant2Solicitor);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -246,6 +249,7 @@ public class SolicitorGeneralApplicationTest {
                         .build())
                 .build()
         );
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
             Solicitor.builder()
                 .organisationPolicy(
@@ -257,6 +261,7 @@ public class SolicitorGeneralApplicationTest {
                 )
                 .build()
         );
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder()
                 .organisationPolicy(
@@ -333,6 +338,7 @@ public class SolicitorGeneralApplicationTest {
                         .build())
                 .build()
         );
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
             Solicitor.builder()
                 .organisationPolicy(
@@ -344,6 +350,7 @@ public class SolicitorGeneralApplicationTest {
                 )
                 .build()
         );
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(applicant2Solicitor);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

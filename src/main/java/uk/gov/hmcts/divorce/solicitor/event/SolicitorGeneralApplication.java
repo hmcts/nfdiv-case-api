@@ -141,6 +141,14 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
     private Solicitor getInvokingSolicitor(final CaseData caseData, final String userAuth) {
 
+        if (!caseData.getApplicant2().isRepresented()) {
+            return caseData.getApplicant1().getSolicitor();
+        }
+
+        if (!caseData.getApplicant1().isRepresented()) {
+            return caseData.getApplicant2().getSolicitor();
+        }
+
         String applicant1SolicitorSelectedOrgId =
             caseData
                 .getApplicant1()
