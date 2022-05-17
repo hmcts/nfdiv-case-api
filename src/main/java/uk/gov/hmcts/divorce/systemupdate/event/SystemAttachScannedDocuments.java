@@ -43,7 +43,10 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("[aboutToSubmit]: saving currentState({}) into caseData to retain it post state transition", details.getState());
+        log.info(
+            "[aboutToSubmit]: saving currentState({}) into caseData({}) to retain it post state transition",
+            details.getState(), details.getId()
+        );
         var caseData = details.getData();
         caseData.getApplication().setPreviousState(details.getState());
 
