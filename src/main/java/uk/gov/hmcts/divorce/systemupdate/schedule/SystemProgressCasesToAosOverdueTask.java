@@ -57,7 +57,7 @@ public class SystemProgressCasesToAosOverdueTask implements Runnable {
             final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingAos))
-                    .filter(rangeQuery(CcdSearchService.DUE_DATE).lte(LocalDate.now()));
+                    .filter(rangeQuery(CcdSearchService.DUE_DATE).lt(LocalDate.now()));
 
             final List<CaseDetails> casesInAwaitingAosState =
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, serviceAuth);
@@ -77,8 +77,8 @@ public class SystemProgressCasesToAosOverdueTask implements Runnable {
                     } else {
                         LocalDate aosDueDate = LocalDate.parse(dueDate);
 
-                        if (aosDueDate.isEqual(LocalDate.now()) || aosDueDate.isBefore(LocalDate.now())) {
-                            log.info("Due date {} for Case id {} is on/before current date hence moving state to AosOverdue",
+                        if (aosDueDate.isBefore(LocalDate.now())) {
+                            log.info("Due date {} for Case id {} is before current date hence moving state to AosOverdue",
                                 aosDueDate,
                                 caseDetails.getId()
                             );
