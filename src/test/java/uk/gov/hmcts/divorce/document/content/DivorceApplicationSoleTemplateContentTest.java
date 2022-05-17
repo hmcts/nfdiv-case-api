@@ -34,13 +34,11 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MARRIAGE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MARRIAGE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_EMAIL;
@@ -56,10 +54,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_OTHER_COURT_CASES_APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
@@ -146,16 +142,13 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_FIRST_NAME, TEST_APP2_FIRST_NAME),
             entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
-            entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
-            entry(PLACE_OF_MARRIAGE, null),
-            entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
-            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
+            entry(APPLICANT_2_FULL_NAME, applicant2.getFullName())
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
+        verify(applicationTemplateDataProvider).mapMarriageDetails(anyMap(), any(Application.class));
     }
 
     @Test
@@ -224,20 +217,17 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
-            entry(PLACE_OF_MARRIAGE, null),
-            entry(MARRIAGE_DATE, null),
             entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, true),
             entry(APPLICANT_2_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
             entry(APPLICANT_2_SOLICITOR_EMAIL, TEST_SOLICITOR_EMAIL),
             entry(APPLICANT_2_SOLICITOR_FIRM_NAME, TEST_SOLICITOR_NAME),
-            entry(APPLICANT_2_SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS),
-            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
-            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
+            entry(APPLICANT_2_SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS)
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
+        verify(applicationTemplateDataProvider).mapMarriageDetails(anyMap(), any(Application.class));
     }
 
     @Test
@@ -306,17 +296,14 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
-            entry(PLACE_OF_MARRIAGE, null),
-            entry(MARRIAGE_DATE, null),
             entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, true),
-            entry(APPLICANT_2_SOLICITOR_ADDRESS, solAddressWithCleanUp),
-            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
-            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
+            entry(APPLICANT_2_SOLICITOR_ADDRESS, solAddressWithCleanUp)
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
+        verify(applicationTemplateDataProvider).mapMarriageDetails(anyMap(), any(Application.class));
     }
 
     @Test
@@ -382,16 +369,13 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
-            entry(PLACE_OF_MARRIAGE, null),
-            entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, false),
-            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
-            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
+            entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, false)
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
+        verify(applicationTemplateDataProvider).mapMarriageDetails(anyMap(), any(Application.class));
     }
 
     @Test
@@ -433,6 +417,8 @@ public class DivorceApplicationSoleTemplateContentTest {
 
         caseData.getApplication().getMarriageDetails().setApplicant1Name(applicant1MarriageName);
         caseData.getApplication().getMarriageDetails().setApplicant2Name(applicant2MarriageName);
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Dublin");
+        caseData.getApplication().getMarriageDetails().setCountryOfMarriage("Ireland");
 
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -458,15 +444,12 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
-            entry(PLACE_OF_MARRIAGE, null),
-            entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, false),
-            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
-            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
+            entry(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, false)
         );
 
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
+        verify(applicationTemplateDataProvider).mapMarriageDetails(anyMap(), any(Application.class));
     }
 }
