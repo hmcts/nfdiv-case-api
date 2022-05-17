@@ -217,7 +217,7 @@ nfdiv-frontend:
 
 idam-pr:
   enabled: true
-  releaseNameOverride: ${SERVICE_NAME}-idam-pr-nfdiv
+  releaseNameOverride: ${SERVICE_NAME}-idam-pr
   redirect_uris:
     XUI:
       - https://xui-${SERVICE_FQDN}/oauth2/callback
