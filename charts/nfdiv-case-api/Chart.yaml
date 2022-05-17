@@ -35,6 +35,6 @@ dependencies:
     repository: '@hmctspublic'
     condition: idam-pr.enabled
   - name: nfdiv-frontend
-    version: ~0.0.69
+    version: ~0.0.68
     repository: '@hmctspublic'
     condition: nfdiv-frontend.enabled
