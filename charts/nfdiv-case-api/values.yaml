@@ -9,6 +9,8 @@ ccd:
     enabled: false
 idam-pr:
   enabled: false
+nfdiv-frontend:
+  enabled: false
 
 java:
   applicationPort: 4013

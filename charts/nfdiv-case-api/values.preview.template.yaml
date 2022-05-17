@@ -5,6 +5,8 @@ ccd:
     enabled: true
   xui:
     enabled: true
+  mo:
+    enabled: true
 
 java:
   applicationPort: 8489
@@ -174,7 +176,6 @@ logstash:
     initialDelaySeconds: 90
 
 xui-webapp:
-  enabled: true
   nodejs:
     imagePullPolicy: Always
     releaseNameOverride: ${SERVICE_NAME}-xui-webapp
@@ -190,7 +191,6 @@ xui-webapp:
       JURISDICTIONS: DIVORCE
 
 xui-mo-webapp:
-  enabled: true
   nodejs:
     imagePullPolicy: Always
     releaseNameOverride: ${SERVICE_NAME}-xui-mo-webapp
@@ -204,11 +204,27 @@ xui-mo-webapp:
       SERVICES_MCA_PROXY_API: http://aac-${SERVICE_FQDN}
       CASE_TYPES: NFD
 
+nfdiv-frontend:
+  enabled: true
+  nodejs:
+    imagePullPolicy: Always
+    releaseNameOverride: ${SERVICE_NAME}-frontend
+    image: hmctspublic.azurecr.io/nfdiv/frontend:latest #pr-xxxx
+    ingressHost: frontend-${SERVICE_FQDN}
+    environment:
+      CCD_URL: http://${SERVICE_FQDN}
+      SKIP_DIV_CASE_CHECK: true
+
 idam-pr:
   enabled: true
-  releaseNameOverride: ${SERVICE_NAME}-xui-idam-pr
+  releaseNameOverride: ${SERVICE_NAME}-idam-pr
   redirect_uris:
     XUI:
       - https://xui-${SERVICE_FQDN}/oauth2/callback
     XUIMO:
       - https://xui-mo-${SERVICE_FQDN}/oauth2/callback
+    divorce:
+      - https://${SERVICE_FQDN}/oauth2/callback
+      - https://civil-${SERVICE_FQDN}/oauth2/callback
+      - https://${SERVICE_FQDN}/oauth2/callback-applicant2
+      - https://civil-${SERVICE_FQDN}/oauth2/callback-applicant2
