@@ -78,7 +78,6 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
     public void shouldGenerateRespondentAosAndSentAosPackAndNotSendEmailNotificationWhenReissueTypeIsOfflineAos() throws Exception {
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST_OFFLINE_AOS);
         final Response response = triggerCallback(caseData, CASEWORKER_REISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
-        caseData.put("serviceMethod", COURT_SERVICE);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
