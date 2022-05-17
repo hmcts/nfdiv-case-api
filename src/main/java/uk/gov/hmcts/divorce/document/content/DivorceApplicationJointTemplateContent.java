@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataPro
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FINANCIAL_ORDER;
@@ -42,10 +41,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JURISDICTIONS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -125,11 +122,7 @@ public class DivorceApplicationJointTemplateContent {
             templateContent.put(APPLICANT_2_COURT_CASE_DETAILS, applicant2.getLegalProceedingsDetails());
         }
 
-        templateContent.put(PLACE_OF_MARRIAGE, application.getMarriageDetails().getPlaceOfMarriage());
-        templateContent.put(MARRIAGE_DATE,
-            ofNullable(application.getMarriageDetails().getDate())
-                .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
-                .orElse(null));
+        applicationTemplateDataProvider.mapMarriageDetails(templateContent, application);
 
         templateContent.put(JURISDICTIONS, applicationTemplateDataProvider.deriveJurisdictionList(application, caseId));
 
