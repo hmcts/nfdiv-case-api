@@ -31,6 +31,8 @@ public class CitizenSubmitApplicationFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-casedata-applicant1-joint-application.json";
     private static final String REQUEST_JOINT_HWF =
         "classpath:request/casedata/ccd-callback-casedata-joint-application-help-with-fees-awaiting-documents.json";
+    private static final String REQUEST_WELSH_EMAIL_NOTIFICATION =
+        "classpath:request/casedata/ccd-callback-casedata-joint-application-welsh-email-notification.json";
     private static final String RESPONSE = "classpath:responses/response-applicant1-statement-of-truth.json";
     private static final String RESPONSE_JOINT = "classpath:responses/response-applicant1-joint-application.json";
     private static final String RESPONSE_JOINT_HWF =
@@ -98,5 +100,14 @@ public class CitizenSubmitApplicationFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(RESPONSE_JOINT_HWF)));
+    }
+
+    @Test
+    public void shouldPassValidationAndSendWelshEmailsToApplicant1AndApplicant2() throws IOException {
+        Map<String, Object> request = caseData(REQUEST_WELSH_EMAIL_NOTIFICATION);
+
+        Response response = triggerCallback(request, CITIZEN_SUBMIT, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 }
