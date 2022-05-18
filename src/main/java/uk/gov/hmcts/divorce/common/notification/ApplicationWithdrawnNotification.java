@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
@@ -44,23 +45,25 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
-        final Map<String, String> templateVars =
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+        if (nonNull(caseData.getApplicant2().getEmail())) {
+            log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
+            final Map<String, String> templateVars =
+                commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
 
-        if (caseData.getApplicationType().isSole()) {
-            templateVars.put(IS_RESPONDENT, YES);
-            templateVars.put(RESPONDENT_PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
-        } else {
-            templateVars.put(IS_RESPONDENT, NO);
-            templateVars.put(RESPONDENT_PARTNER, "");
+            if (caseData.getApplicationType().isSole()) {
+                templateVars.put(IS_RESPONDENT, YES);
+                templateVars.put(RESPONDENT_PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
+            } else {
+                templateVars.put(IS_RESPONDENT, NO);
+                templateVars.put(RESPONDENT_PARTNER, "");
+            }
+
+            notificationService.sendEmail(
+                caseData.getApplicant2().getEmail(),
+                CITIZEN_APPLICATION_WITHDRAWN,
+                templateVars,
+                caseData.getApplicant2().getLanguagePreference()
+            );
         }
-
-        notificationService.sendEmail(
-            caseData.getApplicant2().getEmail(),
-            CITIZEN_APPLICATION_WITHDRAWN,
-            templateVars,
-            caseData.getApplicant2().getLanguagePreference()
-        );
     }
 }
