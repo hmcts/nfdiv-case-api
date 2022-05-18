@@ -22,7 +22,6 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_MARRIAGE_NAME = "applicant2MarriageName";
     public static final String MARRIAGE_DATE = "marriageDate";
     public static final String PLACE_OF_MARRIAGE = "placeOfMarriage";
-    public static final String COUNTRY_OF_MARRIAGE = "countryOfMarriage";
     public static final String APPLICANT_1_POSTAL_ADDRESS = "applicant1PostalAddress";
     public static final String APPLICANT_2_POSTAL_ADDRESS = "applicant2PostalAddress";
     public static final String APPLICANT_1_ADDRESS = "applicant1Address";
