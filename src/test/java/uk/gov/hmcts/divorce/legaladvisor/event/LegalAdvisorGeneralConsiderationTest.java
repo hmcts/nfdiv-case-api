@@ -14,14 +14,19 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorGeneralReferralDecisionNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralDecision.APPROVE;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralDecision.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralDecision.REFUSE;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorGeneralConsideration.LEGAL_ADVISOR_GENERAL_CONSIDERATION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -33,6 +38,12 @@ class LegalAdvisorGeneralConsiderationTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private LegalAdvisorGeneralReferralDecisionNotification notification;
 
     @InjectMocks
     private LegalAdvisorGeneralConsideration legalAdvisorGeneralConsideration;
@@ -63,6 +74,7 @@ class LegalAdvisorGeneralConsiderationTest {
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
@@ -75,6 +87,40 @@ class LegalAdvisorGeneralConsiderationTest {
         assertThat(responseGeneralReferral.getGeneralReferralDecision()).isEqualTo(APPROVE);
         assertThat(responseGeneralReferral.getGeneralReferralDecisionReason()).isEqualTo("approved");
         assertThat(responseData.getGeneralReferral()).isNull();
+
+        verify(notificationDispatcher).send(notification, caseData, 12345L);
+    }
+
+    @Test
+    void shouldNotSendEmailNotificationsIfGeneralReferralIsNotApproved() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData
+            .builder()
+            .generalReferral(
+                GeneralReferral.builder()
+                    .generalReferralDecision(REFUSE)
+                    .generalReferralDecisionReason("rejected")
+                    .build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorGeneralConsideration.aboutToSubmit(caseDetails, null);
+
+        final CaseData responseData = response.getData();
+        final GeneralReferral responseGeneralReferral = responseData.getGeneralReferrals().get(0).getValue();
+        assertThat(responseData.getGeneralReferrals()).hasSize(1);
+        assertThat(responseGeneralReferral.getGeneralReferralDecisionDate()).isEqualTo(getExpectedLocalDate());
+        assertThat(responseGeneralReferral.getGeneralReferralDecision()).isEqualTo(REFUSE);
+        assertThat(responseGeneralReferral.getGeneralReferralDecisionReason()).isEqualTo("rejected");
+        assertThat(responseData.getGeneralReferral()).isNull();
+
+        verifyNoInteractions(notificationDispatcher);
     }
 
     @Test
