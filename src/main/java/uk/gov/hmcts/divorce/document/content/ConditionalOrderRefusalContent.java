@@ -4,22 +4,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.RejectionReason;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
@@ -87,8 +89,7 @@ public class ConditionalOrderRefusalContent {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
         }
 
-        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrder.getRefusalRejectionAdditionalInfo());
-        // refusalClarificationReason (join them together in formatted string). If free text (OTHER) shows then add refusalClarificationAdditionalInfo
+        templateContent.put(LEGAL_ADVISOR_COMMENTS, generateLegalAdvisorComments(conditionalOrder));
 
         templateContent.put(IS_CLARIFICATION, MORE_INFO.equals(conditionalOrder.getRefusalDecision()));
         templateContent.put(IS_AMENDED_APPLICATION, REJECT.equals(conditionalOrder.getRefusalDecision()));
@@ -107,5 +108,54 @@ public class ConditionalOrderRefusalContent {
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;
+    }
+
+    private String generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
+
+        if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
+
+            Set<ClarificationReason> refusalClarificationReason = conditionalOrder.getRefusalClarificationReason();
+
+            if (isEmpty(refusalClarificationReason)) {
+                return "";
+            }
+
+            StringBuilder legalAdvisorComments = new StringBuilder();
+            legalAdvisorComments.append(
+                refusalClarificationReason.stream()
+                    .map(ClarificationReason::getLabel)
+                    .collect(Collectors.joining(". ", "", "."))
+            );
+
+            String refusalClarificationAdditionalInfo = conditionalOrder.getRefusalClarificationAdditionalInfo();
+            if (isNotEmpty(refusalClarificationAdditionalInfo)) {
+                legalAdvisorComments.append(String.format(" %s.", refusalClarificationAdditionalInfo));
+            }
+
+            return legalAdvisorComments.toString();
+
+        } else {
+
+            Set<RejectionReason> refusalRejectionReason = conditionalOrder.getRefusalRejectionReason();
+
+            if (isEmpty(refusalRejectionReason)) {
+                return "";
+            }
+
+            StringBuilder legalAdvisorComments = new StringBuilder();
+            legalAdvisorComments.append(
+                refusalRejectionReason.stream()
+                    .map(RejectionReason::getLabel)
+                    .collect(Collectors.joining(". ", "", "."))
+            );
+
+            String refusalRejectionAdditionalInfo = conditionalOrder.getRefusalRejectionAdditionalInfo();
+            if (isNotEmpty(refusalRejectionAdditionalInfo)) {
+                legalAdvisorComments.append(String.format(" %s.", refusalRejectionAdditionalInfo));
+            }
+
+            return legalAdvisorComments.toString();
+
+        }
     }
 }

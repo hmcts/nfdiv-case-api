@@ -231,7 +231,7 @@ class LegalAdvisorMakeDecisionTest {
     @Test
     void shouldNotSendEmailIfConditionalOrderIsRejectedForMoreInfoAndIsNotSolicitorApplication() {
         final CaseData caseData = CaseData.builder()
-            .conditionalOrder(ConditionalOrder.builder().granted(NO).build())
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(REJECT).build())
             .application(Application.builder().solSignStatementOfTruth(NO).build())
             .build();
 
