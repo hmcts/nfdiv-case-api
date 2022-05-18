@@ -1,0 +1,14 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "soleApplication",
+  "applicant1FirstName": "test_first_name",
+  "applicant1LastName": "test_last_name",
+  "applicant2FirstName": "test_first_name",
+  "applicant2LastName": "test_last_name",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2Email": "applicant2@example.com",
+  "applicant1LanguagePreferenceWelsh": "No",
+  "applicant2LanguagePreferenceWelsh": "No",
+  "generalReferralDecision": "approve",
+  "generalReferralDecisionReason": "Accepted"
+}
