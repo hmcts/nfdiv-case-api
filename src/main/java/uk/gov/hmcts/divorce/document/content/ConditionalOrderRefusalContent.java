@@ -15,8 +15,10 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
@@ -74,11 +76,8 @@ public class ConditionalOrderRefusalContent {
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
 
-        templateContent.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
-        templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
-
-        templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
-        templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
+        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
+        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
@@ -89,6 +88,7 @@ public class ConditionalOrderRefusalContent {
         }
 
         templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrder.getRefusalRejectionAdditionalInfo());
+        // refusalClarificationReason (join them together in formatted string). If free text (OTHER) shows then add refusalClarificationAdditionalInfo
 
         templateContent.put(IS_CLARIFICATION, MORE_INFO.equals(conditionalOrder.getRefusalDecision()));
         templateContent.put(IS_AMENDED_APPLICATION, REJECT.equals(conditionalOrder.getRefusalDecision()));
