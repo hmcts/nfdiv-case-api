@@ -1,0 +1,25 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "divorceWho": "wife",
+  "marriageFormationType": "oppositeSexCouple",
+  "solPaymentHowToPay": "feePayByAccount",
+  "documentsGenerated": [
+    {
+      "id": "V1",
+      "value": {
+        "documentDateAdded": null,
+        "documentComment": null,
+        "documentFileName": "draft-divorce-application-1234567890123456.pdf",
+        "documentType": "application",
+        "documentEmailContent": null,
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/18fe3e5e-bd24-41f9-9267-f91d7551d03a",
+          "document_filename": "draft-divorce-application-1234567890123456.pdf",
+          "document_binary_url": "url"
+        }
+      }
+    }
+  ]
+}
