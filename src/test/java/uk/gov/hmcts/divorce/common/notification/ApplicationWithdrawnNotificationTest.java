@@ -213,9 +213,19 @@ public class ApplicationWithdrawnNotificationTest {
     }
 
     @Test
-    void shouldNotEmailApplicant2IfEmailIsNotProvided() {
+    void shouldNotSendEmailApplicant2IfEmailIsNull() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant2().setEmail(null);
+
+        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendEmailApplicant2IfEmailIsEmptyString() {
+        CaseData data = validApplicant1CaseData();
+        data.getApplicant2().setEmail("");
 
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
