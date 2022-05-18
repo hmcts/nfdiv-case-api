@@ -12,13 +12,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.RejectionReason;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -111,53 +112,45 @@ public class ConditionalOrderRefusalContent {
         return templateContent;
     }
 
-    private String generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
+    private List<String> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
 
         if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
 
             Set<ClarificationReason> refusalClarificationReason = conditionalOrder.getRefusalClarificationReason();
 
             if (isEmpty(refusalClarificationReason)) {
-                return "";
+                return emptyList();
             }
 
-            StringBuilder legalAdvisorComments = new StringBuilder();
-            legalAdvisorComments.append(
-                refusalClarificationReason.stream()
-                    .filter(clarificationReason -> !clarificationReason.equals(ClarificationReason.OTHER))
-                    .map(ClarificationReason::getLabel)
-                    .collect(Collectors.joining(". ", "", "."))
-            );
+            List<String> legalAdvisorComments = refusalClarificationReason.stream()
+                .filter(clarificationReason -> !clarificationReason.equals(ClarificationReason.OTHER))
+                .map(ClarificationReason::getLabel).collect(Collectors.toList());
 
             String refusalClarificationAdditionalInfo = conditionalOrder.getRefusalClarificationAdditionalInfo();
             if (isNotEmpty(refusalClarificationAdditionalInfo)) {
-                legalAdvisorComments.append(String.format(" %s.", refusalClarificationAdditionalInfo));
+                legalAdvisorComments.add(refusalClarificationAdditionalInfo);
             }
 
-            return legalAdvisorComments.toString();
+            return legalAdvisorComments;
 
         } else {
 
             Set<RejectionReason> refusalRejectionReason = conditionalOrder.getRefusalRejectionReason();
 
             if (isEmpty(refusalRejectionReason)) {
-                return "";
+                return emptyList();
             }
 
-            StringBuilder legalAdvisorComments = new StringBuilder();
-            legalAdvisorComments.append(
-                refusalRejectionReason.stream()
-                    .filter(rejectionReason -> !rejectionReason.equals(RejectionReason.OTHER))
-                    .map(RejectionReason::getLabel)
-                    .collect(Collectors.joining(". ", "", "."))
-            );
+            List<String> legalAdvisorComments = refusalRejectionReason.stream()
+                .filter(rejectionReason -> !rejectionReason.equals(RejectionReason.OTHER))
+                .map(RejectionReason::getLabel).collect(Collectors.toList());
 
             String refusalRejectionAdditionalInfo = conditionalOrder.getRefusalRejectionAdditionalInfo();
             if (isNotEmpty(refusalRejectionAdditionalInfo)) {
-                legalAdvisorComments.append(String.format(" %s.", refusalRejectionAdditionalInfo));
+                legalAdvisorComments.add(refusalRejectionAdditionalInfo);
             }
 
-            return legalAdvisorComments.toString();
+            return legalAdvisorComments;
 
         }
     }

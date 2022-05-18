@@ -11,9 +11,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -86,7 +88,7 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
-        expectedEntries.put("legalAdvisorComments", "");
+        expectedEntries.put("legalAdvisorComments", emptyList());
         expectedEntries.put("isAmendedApplication", false);
         expectedEntries.put("isClarification", true);
         expectedEntries.put("isOffline", true);
@@ -135,7 +137,7 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
-        expectedEntries.put("legalAdvisorComments", "");
+        expectedEntries.put("legalAdvisorComments", emptyList());
         expectedEntries.put("isAmendedApplication", true);
         expectedEntries.put("isClarification", false);
         expectedEntries.put("isOffline", false);
@@ -187,7 +189,7 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
-        expectedEntries.put("legalAdvisorComments", "Court does not have jurisdiction. Rejected comments.");
+        expectedEntries.put("legalAdvisorComments", List.of(NO_JURISDICTION.getLabel(), "Rejected comments"));
         expectedEntries.put("isAmendedApplication", true);
         expectedEntries.put("isClarification", false);
         expectedEntries.put("isOffline", false);
@@ -239,7 +241,7 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
-        expectedEntries.put("legalAdvisorComments", "Marriage certificate. Clarification comments.");
+        expectedEntries.put("legalAdvisorComments", List.of(MARRIAGE_CERTIFICATE.getLabel(), "Clarification comments"));
         expectedEntries.put("isAmendedApplication", false);
         expectedEntries.put("isClarification", true);
         expectedEntries.put("isOffline", false);
