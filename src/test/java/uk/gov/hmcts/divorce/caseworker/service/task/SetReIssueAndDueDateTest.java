@@ -39,12 +39,12 @@ class SetReIssueAndDueDateTest {
     }
 
     @Test
-    void shouldSetDueDateAndReIssueDate() {
+    void shouldSetDueDateAndReIssueDateIfSoleApplication() {
         setMockClock(clock);
         final var caseData = caseData();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
@@ -56,5 +56,24 @@ class SetReIssueAndDueDateTest {
 
         assertThat(result.getData().getDueDate()).isEqualTo(expectedDueDate);
         assertThat(result.getData().getApplication().getReissueDate()).isEqualTo(expectedReIssueDate);
+    }
+
+    @Test
+    void shouldNotChangeDueDateAndReIssueDateIfJointApplication() {
+        setMockClock(clock);
+
+        final LocalDate expectedDueDate = getExpectedLocalDate().plusDays(121);
+        final var caseData = caseData();
+        caseData.setDueDate(expectedDueDate);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        final CaseDetails<CaseData, State> result = setReIssueAndDueDate.apply(caseDetails);
+
+        assertThat(result.getData().getDueDate()).isEqualTo(expectedDueDate);
     }
 }
