@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorGeneralReferralDecisionNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -20,6 +22,7 @@ import java.util.UUID;
 
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralDecision.APPROVE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -32,6 +35,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String LEGAL_ADVISOR_GENERAL_CONSIDERATION = "legal-advisor-general-consideration";
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private LegalAdvisorGeneralReferralDecisionNotification notification;
 
     @Autowired
     private Clock clock;
@@ -77,6 +86,10 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
             caseData.setGeneralReferrals(singletonList(generalReferralListValue));
         } else {
             caseData.getGeneralReferrals().add(0, generalReferralListValue);
+        }
+
+        if (APPROVE.equals(caseData.getGeneralReferral().getGeneralReferralDecision())) {
+            notificationDispatcher.send(notification, caseData, details.getId());
         }
 
         caseData.setGeneralReferral(null);
