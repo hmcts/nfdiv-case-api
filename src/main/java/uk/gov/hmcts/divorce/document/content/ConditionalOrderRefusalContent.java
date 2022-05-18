@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -123,6 +124,7 @@ public class ConditionalOrderRefusalContent {
             StringBuilder legalAdvisorComments = new StringBuilder();
             legalAdvisorComments.append(
                 refusalClarificationReason.stream()
+                    .filter(clarificationReason -> !clarificationReason.equals(ClarificationReason.OTHER))
                     .map(ClarificationReason::getLabel)
                     .collect(Collectors.joining(". ", "", "."))
             );
@@ -145,6 +147,7 @@ public class ConditionalOrderRefusalContent {
             StringBuilder legalAdvisorComments = new StringBuilder();
             legalAdvisorComments.append(
                 refusalRejectionReason.stream()
+                    .filter(rejectionReason -> !rejectionReason.equals(RejectionReason.OTHER))
                     .map(RejectionReason::getLabel)
                     .collect(Collectors.joining(". ", "", "."))
             );
