@@ -1,5 +1,8 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -112,7 +115,7 @@ public class ConditionalOrderRefusalContent {
         return templateContent;
     }
 
-    private List<String> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
+    private List<RefusalReason> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
 
         if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
 
@@ -122,13 +125,14 @@ public class ConditionalOrderRefusalContent {
                 return emptyList();
             }
 
-            List<String> legalAdvisorComments = refusalClarificationReason.stream()
+            List<RefusalReason> legalAdvisorComments = refusalClarificationReason.stream()
                 .filter(clarificationReason -> !clarificationReason.equals(ClarificationReason.OTHER))
-                .map(ClarificationReason::getLabel).collect(Collectors.toList());
+                .map(reason -> new RefusalReason(reason.getLabel()))
+                .collect(Collectors.toList());
 
             String refusalClarificationAdditionalInfo = conditionalOrder.getRefusalClarificationAdditionalInfo();
             if (isNotEmpty(refusalClarificationAdditionalInfo)) {
-                legalAdvisorComments.add(refusalClarificationAdditionalInfo);
+                legalAdvisorComments.add(new RefusalReason(refusalClarificationAdditionalInfo));
             }
 
             return legalAdvisorComments;
@@ -141,17 +145,25 @@ public class ConditionalOrderRefusalContent {
                 return emptyList();
             }
 
-            List<String> legalAdvisorComments = refusalRejectionReason.stream()
+            List<RefusalReason> legalAdvisorComments = refusalRejectionReason.stream()
                 .filter(rejectionReason -> !rejectionReason.equals(RejectionReason.OTHER))
-                .map(RejectionReason::getLabel).collect(Collectors.toList());
+                .map(reason -> new RefusalReason(reason.getLabel()))
+                .collect(Collectors.toList());
 
             String refusalRejectionAdditionalInfo = conditionalOrder.getRefusalRejectionAdditionalInfo();
             if (isNotEmpty(refusalRejectionAdditionalInfo)) {
-                legalAdvisorComments.add(refusalRejectionAdditionalInfo);
+                legalAdvisorComments.add(new RefusalReason(refusalRejectionAdditionalInfo));
             }
 
             return legalAdvisorComments;
 
         }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    public static class RefusalReason {
+        private String comment;
     }
 }
