@@ -59,7 +59,7 @@ class SetReIssueAndDueDateTest {
     }
 
     @Test
-    void shouldNotChangeDueDateAndReIssueDateIfJointApplication() {
+    void shouldNotChangeDueDateIfJointApplication() {
         setMockClock(clock);
 
         final LocalDate expectedDueDate = getExpectedLocalDate().plusDays(121);
