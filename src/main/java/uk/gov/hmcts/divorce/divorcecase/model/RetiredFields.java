@@ -86,6 +86,7 @@ public class RetiredFields {
             }
         }
 
+        migrations.remove("applicant2StatementOfTruth");
         data.put("dataVersion", getVersion());
 
         return data;
