@@ -316,9 +316,8 @@ dependencies {
   functionalTestImplementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
 
-  // TODO: have the cftlib exclude this automatically. Breaks the gigajar.
   // Provides fast-reload of just the NFDIV service.
-  //  cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
+  cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
