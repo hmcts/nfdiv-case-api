@@ -16,7 +16,7 @@
     "applicant2LastName": "test_last_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
-    "statementOfTruth": "Yes",
+    "applicant2StatementOfTruth": "Yes",
     "divorceOrDissolution": "divorce",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
