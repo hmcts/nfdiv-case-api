@@ -75,19 +75,18 @@ public class RetiredFields {
      */
     public static Map<String, Object> migrate(Map<String, Object> data) {
 
-        Map<String, TriConsumer<Map<String, Object>, String, Object>> migrationCopy = new HashMap<>(migrations);
-
         if (shouldMigrateSOT(data)) {
-            migrationCopy.put("applicant2StatementOfTruth", moveTo("statementOfTruth"));
+            migrations.put("applicant2StatementOfTruth", moveTo("statementOfTruth"));
         }
 
-        for (String key : migrationCopy.keySet()) {
+        for (String key : migrations.keySet()) {
             if (data.containsKey(key) && null != data.get(key)) {
-                migrationCopy.get(key).apply(data, key, data.get(key));
+                migrations.get(key).apply(data, key, data.get(key));
                 data.put(key, null);
             }
         }
 
+        migrations.remove("applicant2StatementOfTruth");
         data.put("dataVersion", getVersion());
 
         return data;
