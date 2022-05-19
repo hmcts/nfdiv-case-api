@@ -21,64 +21,27 @@ java:
   devmemoryLimits: 4Gi
   environment:
     CFT_LIB_DB_HOST: "{{ .Release.Name }}-postgresql"
+    CFT_LIB_DB_PORT: 5432
     CFT_LIB_NO_DOCKER: true
-    ENABLE_DB_MIGRATE: true
-    USER_PROFILE_DB_HOST: "{{ .Release.Name }}-postgresql"
-    USER_PROFILE_DB_PORT: 5432
-    USER_PROFILE_DB_USERNAME: postgres
-    USER_PROFILE_DB_PASSWORD: postgres
-    USER_PROFILE_DB_NAME: user-profile
-    USER_PROFILE_DB_OPTIONS: "?stringtype=unspecified"
-    DATA_STORE_DB_HOST: "{{ .Release.Name }}-postgresql"
-    DATA_STORE_DB_PORT: 5432
-    DATA_STORE_DB_USERNAME: postgres
-    DATA_STORE_DB_PASSWORD: postgres
-    DATA_STORE_DB_NAME: data-store
-    DATA_STORE_DB_OPTIONS: "?stringtype=unspecified"
-    DEFINITION_STORE_DB_HOST: "{{ .Release.Name }}-postgresql"
-    DEFINITION_STORE_DB_PORT: 5432
-    DEFINITION_STORE_DB_USERNAME: postgres
-    DEFINITION_STORE_DB_PASSWORD: postgres
-    DEFINITION_STORE_DB_NAME: definition-store
-    DEFINITION_STORE_DB_OPTIONS: ""
-    AZURE_STORAGE_DEFINITION_UPLOAD_ENABLED: false
-    ROLE_ASSIGNMENT_DB_HOST: "{{ .Release.Name }}-postgresql"
-    ROLE_ASSIGNMENT_DB_PORT: 5432
-    ROLE_ASSIGNMENT_DB_NAME: am
-    ROLE_ASSIGNMENT_DB_USERNAME: postgres
-    ROLE_ASSIGNMENT_DB_PASSWORD: postgres
     OPEN_ID_API_BASE_URI: https://idam-web-public.aat.platform.hmcts.net/o
     IDAM_OIDC_URL: https://idam-web-public.aat.platform.hmcts.net/o
     SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI: https://idam-web-public.aat.platform.hmcts.net/o
-    SEARCH_ELASTIC_HOSTS: ${SERVICE_NAME}-es-master:9200
-    SEARCH_ELASTIC_DATA_HOSTS: http://${SERVICE_NAME}-es-master:9200
-    ELASTICSEARCH_ENABLED: true
-    ELASTICSEARCH_FAILIMPORTIFERROR: true
-    CCD_TX-TIMEOUT_DEFAULT: 120
-    ROLE_ASSIGNMENT_URL: http://localhost:4096
-    CASE_DATA_STORE_BASEURL: http://localhost:4452
-    DEFINITION_STORE_HOST: http://localhost:4451
     IDAM_API_URL_BASE: https://idam-api.aat.platform.hmcts.net
     IDAM_API_BASEURL: https://idam-api.aat.platform.hmcts.net
     IDAM_API_BASE_URL: https://idam-api.aat.platform.hmcts.net
     IDAM_USER_URL: https://idam-web-public.{{ .Values.global.environment }}.platform.hmcts.net
     IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
     OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-{{ .Values.global.environment }}.internal:8443/openam/oauth2/hmcts
-    USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_data,ccd_definition,ccd_admin,rd_professional_api,nfdiv_case_api
-    DEFINITION_STORE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_gw,ccd_admin,jui_webapp,pui_webapp,aac_manage_case_assignment,nfdiv_case_api
-    USER_PROFILE_HOST: http://localhost:4453
-    ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
     IDAM_S2S-AUTH_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
     CASE_DOCUMENT_AM_URL: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
+    CCD_DOCUMENT_URL_PATTERN: .*
     S2S_AUTHORISED_SERVICES: ccd_definition,ccd_data,xui_webapp,nfdiv_case_api,ccd_gw,divorce_frontend
     CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES: nfdiv_case_api
-    CCD_DOCUMENT_URL_PATTERN: .*
-    ROLE_ASSIGNMENT_S2S_AUTHORISED_SERVICES: ccd_gw,am_role_assignment_service,am_org_role_mapping_service,xui_webapp,aac_manage_case_assignment,ccd_data,nfdiv_case_api
     DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,fpl_case_service,ccd_data,ccd_ps,divorce_frontend,payment-api,xui_webapp,nfdiv_case_api,ccd_case_document_am_api,am_role_assignment_service
-    CITIZEN_UPDATE_CASE_STATE_ENABLED: true
+    ROLE_ASSIGNMENT_S2S_AUTHORISED_SERVICES: ccd_gw,am_role_assignment_service,am_org_role_mapping_service,xui_webapp,aac_manage_case_assignment,ccd_data,nfdiv_case_api
     SPRING_CLOUD_PROPERTIESVOLUME_PATHS: /mnt/secrets/nfdiv
     SPRING_CONFIG_IMPORT: optional:configtree:/mnt/secrets/nfdiv/
-    LOG_LEVEL: debug
+    CITIZEN_UPDATE_CASE_STATE_ENABLED: true
   keyVaults:
     nfdiv:
       secrets:
@@ -185,7 +148,7 @@ xui-webapp:
     ingressHost: xui-${SERVICE_FQDN}
     devcpuRequests: 250m
     devmemoryRequests: 1024Mi
-    devmemoryLimits: 2048Mi
+    devmemoryLimits: 1024Mi
     environment:
       SERVICES_CCD_COMPONENT_API: http://${SERVICE_FQDN}
       SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
