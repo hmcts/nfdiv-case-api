@@ -153,23 +153,22 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
                 "#### ${labelContentTheApplicant2UC}'s contact details are confidential")
             .field("applicant2PhoneNumber", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
             .field("applicant2Email", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
-            .field("applicant1IsApplicant2Represented")
+            .field("applicant2SolicitorRepresented")
             .field("applicant2Address", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
             .field("applicant2AgreedToReceiveEmails")
             .field("applicant2CannotUpload")
             .field("applicant2CannotUploadSupportingDocument")
 
             //Applicant 2 Solicitor
-            .field("applicant2SolicitorRepresented", NEVER_SHOW)
             .label("LabelApplicant2sSolicitor-Heading",
                 "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"",
                 "#### ${labelContentTheApplicant2UC}'s solicitor")
             .field("applicant2SolicitorReference", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
-            .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
+            .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
-            .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
+            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented=\"Yes\"")
 
