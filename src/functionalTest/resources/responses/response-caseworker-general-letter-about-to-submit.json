@@ -47,7 +47,7 @@
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant1StatementOfTruth": "Yes",
-    "applicant2StatementOfTruth": "Yes",
+    "statementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000"
     },

@@ -48,7 +48,7 @@
   "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
   "applicant1StatementOfTruth": "Yes",
   "applicant2PrayerHasBeenGiven": "Yes",
-  "applicant2StatementOfTruth": "Yes",
+  "statementOfTruth": "Yes",
   "applicationFeeOrderSummary": {
     "PaymentReference": null,
     "Fees": null,
