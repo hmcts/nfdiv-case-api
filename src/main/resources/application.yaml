@@ -233,8 +233,8 @@ core_case_data:
 docmosis:
   templates:
     english:
-      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_V4.docx
-      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V4.docx
+      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_V5.docx
+      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V5.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
