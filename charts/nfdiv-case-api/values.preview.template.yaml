@@ -169,8 +169,7 @@ xui-mo-webapp:
     environment:
       MANAGE_CASE_LINK: https://xui-${SERVICE_FQDN}/cases
       MANAGE_ORG_LINK: https://xui-mo-${SERVICE_FQDN}
-      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
-      # TODO: aac-manage-case-assignment
+      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_NAME}-ccd-data-store-api
       SERVICES_MCA_PROXY_API: http://aac-${SERVICE_FQDN}
       CASE_TYPES: NFD
 
@@ -182,7 +181,7 @@ nfdiv-frontend:
     image: hmctspublic.azurecr.io/nfdiv/frontend:latest #pr-xxxx
     ingressHost: frontend-${SERVICE_FQDN}
     environment:
-      CCD_URL: http://${SERVICE_FQDN}
+      CCD_URL: http://${SERVICE_NAME}-ccd-data-store-api
       SKIP_DIV_CASE_CHECK: true
 
 aac-manage-case-assignment:
@@ -200,8 +199,8 @@ aac-manage-case-assignment:
       MCA_DS_PROXY_URLS_ALLOWED_LIST: /searchCases.*,/internal/searchCases.*,/internal/cases.*
       MCA_DEF_STORE_PROXY_URLS_ALLOWED_LIST: /api/display/challenge-questions.*
       MANAGE_CASE_S2S_AUTHORISED_SERVICES: xui_webapp,ccd_data,fpl_case_service,divorce_frontend,divorce_ccd_submission,finrem_case_orchestration
-      CCD_DATA_STORE_API_BASE_URL: http://${SERVICE_NAME}
-      CCD_DEFINITION_STORE_API_BASE_URL: http://${SERVICE_NAME}
+      CCD_DATA_STORE_API_BASE_URL: http://${SERVICE_NAME}-ccd-data-store-api
+      CCD_DEFINITION_STORE_API_BASE_URL: http://${SERVICE_NAME}-ccd-definition-store-api
       PRD_HOST: http://rd-professional-api-aat.service.core-compute-aat.internal
     autoscaling:
       enabled: false
