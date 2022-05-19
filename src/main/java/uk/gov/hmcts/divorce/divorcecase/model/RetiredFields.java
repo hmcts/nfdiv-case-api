@@ -52,7 +52,7 @@ public class RetiredFields {
     };
 
     @JsonIgnore
-    private static Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = new HashMap<>(Map.of(
+    private static final Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = new HashMap<>(Map.of(
         "exampleRetiredField", moveTo("applicant1FirstName"),
         "solServiceMethod", moveTo("serviceMethod"),
         "d11Document", (data, key, val) -> data.put("answerReceivedSupportingDocuments",
@@ -86,8 +86,10 @@ public class RetiredFields {
             }
         }
 
-        migrations.remove("applicant2StatementOfTruth");
         data.put("dataVersion", getVersion());
+
+        // This must be done to prevent the conditionally-added key-value pair from being persisted into other migrations:
+        migrations.remove("applicant2StatementOfTruth");
 
         return data;
     }
