@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
+import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -22,19 +23,27 @@ public class SetStateAfterSubmission implements CaseTask {
 
         final CaseData caseData = caseDetails.getData();
         final Application application = caseData.getApplication();
+        final boolean isHWFApplicant1 = application.isHelpWithFeesApplication();
+        final boolean isHWFApplicant2 = application.isHelpWithFeesApplicationApplicant2();
+        final boolean isSoleApplication =  nonNull(caseData.getApplicationType())
+            && caseData.getApplicationType().isSole();
 
-        if (application.isHelpWithFeesApplication()) {
-            if (application.getApplicant1CannotUpload().toBoolean()) {
+        if (isSoleApplication && isHWFApplicant1) {
+            if (application.hasAwaitingApplicant1Documents()) {
                 caseDetails.setState(AwaitingDocuments);
             } else {
                 caseDetails.setState(AwaitingHWFDecision);
             }
-        } else if (caseData.isSoleApplicationOrApplicant2HasAgreedHwf() && application.isHelpWithFeesApplication()) {
-            caseDetails.setState(AwaitingHWFDecision);
+        } else if (!isSoleApplication && isHWFApplicant1 && isHWFApplicant2) {
+            if (application.hasAwaitingApplicant1Documents() || application.hasAwaitingApplicant2Documents()) {
+                caseDetails.setState(AwaitingDocuments);
+            } else {
+                caseDetails.setState(AwaitingHWFDecision);
+            }
+        } else if (application.hasAwaitingApplicant1Documents() || !isSoleApplication && application.hasAwaitingApplicant2Documents()) {
+            caseDetails.setState(AwaitingDocuments);
         } else if (!application.hasBeenPaidFor()) {
             caseDetails.setState(AwaitingPayment);
-        } else if (application.hasAwaitingApplicant1Documents()) {
-            caseDetails.setState(AwaitingDocuments);
         } else {
             caseDetails.setState(Submitted);
         }

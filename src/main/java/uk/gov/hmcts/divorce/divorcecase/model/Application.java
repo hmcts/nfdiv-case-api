@@ -557,6 +557,14 @@ public class Application {
     }
 
     @JsonIgnore
+    public boolean isHelpWithFeesApplicationApplicant2() {
+        return Objects.nonNull(applicant2HelpWithFees)
+            && Objects.nonNull(applicant2HelpWithFees.getNeedHelp())
+            && applicant2HelpWithFees.getNeedHelp().toBoolean()
+            || FEES_HELP_WITH.equals(solPaymentHowToPay);
+    }
+
+    @JsonIgnore
     public boolean isSolicitorPaymentMethodPba() {
         return FEE_PAY_BY_ACCOUNT.equals(this.getSolPaymentHowToPay());
     }
