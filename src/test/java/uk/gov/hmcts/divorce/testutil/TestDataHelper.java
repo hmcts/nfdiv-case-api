@@ -20,6 +20,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
@@ -622,6 +623,30 @@ public class TestDataHelper {
 
         return ListValue
             .<DivorceDocument>builder()
+            .id(APPLICATION.getLabel())
+            .value(divorceDocument)
+            .build();
+    }
+
+    public static ListValue<ScannedDocument> scannedDocumentWithType(final ScannedDocumentType documentType,
+                                                                     final String documentId) {
+        final String documentUrl = "http://localhost:8080/" + documentId;
+
+        final Document ccdDocument = new Document(
+            documentUrl,
+            "test-draft-divorce-application.pdf",
+            documentUrl + "/binary"
+        );
+
+        final ScannedDocument divorceDocument = ScannedDocument
+            .builder()
+            .url(ccdDocument)
+            .fileName("test-draft-divorce-application-12345.pdf")
+            .type(documentType)
+            .build();
+
+        return ListValue
+            .<ScannedDocument>builder()
             .id(APPLICATION.getLabel())
             .value(divorceDocument)
             .build();
