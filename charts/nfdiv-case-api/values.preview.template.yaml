@@ -75,9 +75,9 @@ postgresql:
       cpu: 25m
   initdbScripts:
     init.sql: |-
-      CREATE DATABASE "data-store" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-      CREATE DATABASE "definition-store" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-      CREATE DATABASE "user-profile" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+      CREATE DATABASE "datastore" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+      CREATE DATABASE "definitionstore" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+      CREATE DATABASE "userprofile" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
       CREATE DATABASE "am" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
   postgresqlUsername: postgres
   postgresqlPassword: postgres
@@ -130,7 +130,7 @@ logstash:
     port: 9200
   configTpl:
     xpack.monitoring.enabled: "false"
-    db.url: jdbc:postgresql://${SERVICE_NAME}-postgresql:5432/data-store?ssl=disable&stringtype=unspecified
+    db.url: jdbc:postgresql://${SERVICE_NAME}-postgresql:5432/datastore?ssl=disable&stringtype=unspecified
     db.user: postgres
     db.pwd: postgres
     es.data.nodes.url: http://${SERVICE_NAME}-es-master:9200
