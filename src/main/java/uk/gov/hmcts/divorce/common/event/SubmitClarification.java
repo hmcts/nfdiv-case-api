@@ -87,14 +87,14 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
 
         final CaseData data = details.getData();
         final ConditionalOrder conditionalOrder = data.getConditionalOrder();
-        final boolean cannotUploadDocuments = data.getConditionalOrder().cannotUploadClarificationDocumentsBoolean();
+        final boolean cannotUploadDocuments = conditionalOrder.cannotUploadClarificationDocumentsBoolean();
 
         if (cannotUploadDocuments) {
             notificationDispatcher.send(postInformationToCourtNotification, data, details.getId());
         }
 
-        if (isNotEmpty(data.getConditionalOrder().getClarificationUploadDocuments())) {
-            data.getConditionalOrder().getClarificationUploadDocuments()
+        if (isNotEmpty(conditionalOrder.getClarificationUploadDocuments())) {
+            conditionalOrder.getClarificationUploadDocuments()
                 .forEach(documentListValue ->
                     data.getDocuments().setDocumentsUploaded(
                         addDocumentToTop(data.getDocuments().getDocumentsUploaded(), documentListValue.getValue())
@@ -109,8 +109,8 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 .cannotUploadClarificationDocuments(conditionalOrder.getCannotUploadClarificationDocuments())
                 .build();
 
-        data.getConditionalOrder().setClarificationResponsesSubmitted(
-            data.getConditionalOrder().addAuditRecord(
+        conditionalOrder.setClarificationResponsesSubmitted(
+            conditionalOrder.addAuditRecord(
                 conditionalOrder.getClarificationResponsesSubmitted(),
                 clarificationResponse
             )
