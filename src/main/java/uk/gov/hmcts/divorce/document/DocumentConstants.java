@@ -43,7 +43,7 @@ public final class DocumentConstants {
     public static final String SERVICE_ORDER_TEMPLATE_ID = "SERVICE_ORDER";
 
     public static final String REFUSAL_ORDER_TEMPLATE_ID = "REFUSAL_ORDER";
-    public static final String REFUSAL_ORDER_DOCUMENT_NAME = "NFD_Refusal_Order";
+    public static final String REFUSAL_ORDER_DOCUMENT_NAME = "NoticeOfRefusalDocument";
 
     public static final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID = "CERTIFICATE_OF_SERVICE";
 

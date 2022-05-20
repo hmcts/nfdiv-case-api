@@ -120,6 +120,7 @@ uk:
             RESPONDENT_APPLY_FOR_FINAL_ORDER: '33b20df5-0967-490b-ac94-daa1569468d7'
             POST_INFORMATION_TO_COURT: '03d15445-c91d-44b0-a8b0-a7755864381e'
             GENERAL_APPLICATION_RECEIVED: '97a51838-789b-4c18-b4b8-9b4ff32e831f'
+            GENERAL_APPLICATION_SUCCESSFUL: 'b22ad794-a768-4b1a-86a8-3bf5c713ea2b'
             SERVICE_APPLICATION_REJECTED: 'db7f376b-ab61-4316-b59f-83fe570b8f23'
             SERVICE_APPLICATION_GRANTED: '2b7cc04e-2c21-4c06-9ae4-e7109a3efde4'
           welsh:
@@ -194,6 +195,7 @@ uk:
             RESPONDENT_APPLY_FOR_FINAL_ORDER: '33b20df5-0967-490b-ac94-daa1569468d7'
             POST_INFORMATION_TO_COURT: '03d15445-c91d-44b0-a8b0-a7755864381e'
             GENERAL_APPLICATION_RECEIVED: '97a51838-789b-4c18-b4b8-9b4ff32e831f'
+            GENERAL_APPLICATION_SUCCESSFUL: 'b22ad794-a768-4b1a-86a8-3bf5c713ea2b'
             SERVICE_APPLICATION_REJECTED: 'db7f376b-ab61-4316-b59f-83fe570b8f23'
             SERVICE_APPLICATION_GRANTED: '2b7cc04e-2c21-4c06-9ae4-e7109a3efde4'
 
@@ -231,10 +233,10 @@ core_case_data:
 docmosis:
   templates:
     english:
-      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_V4.docx
-      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V4.docx
+      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_V5.docx
+      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V5.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
-      REFUSAL_ORDER: NFD_Refusal_Order.docx
+      REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
@@ -292,6 +294,7 @@ docmosis:
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
       GENERAL_LETTER: NFD_General_Letter.docx
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
+      REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
   templateVars:
     applicant2SignInDivorceUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2}
     applicant2SignInDissolutionUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2}

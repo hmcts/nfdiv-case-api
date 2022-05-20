@@ -26,7 +26,9 @@ public class SetReIssueAndDueDate implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> details) {
         details.getData().getApplication().setReissueDate(now(clock));
-        details.getData().setDueDate(now(clock).plusDays(dueDateOffsetDays));
+        if (details.getData().getApplicationType().isSole()) {
+            details.getData().setDueDate(now(clock).plusDays(dueDateOffsetDays));
+        }
 
         return details;
     }
