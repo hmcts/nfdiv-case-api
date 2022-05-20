@@ -63,6 +63,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("labelContentApplicantsOrApplicant1s", NEVER_SHOW)
             .field("labelContentTheApplicant2", NEVER_SHOW)
             .field("labelContentTheApplicant2UC", NEVER_SHOW)
+            .field("labelContentApplicant2UC", NEVER_SHOW)
             .field("labelContentGotMarriedOrFormedCivilPartnership", NEVER_SHOW)
             .field("labelContentMarriageOrCivilPartnership", NEVER_SHOW)
             .field("labelContentMarriageOrCivilPartnershipUC", NEVER_SHOW);
@@ -157,12 +158,13 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2AgreedToReceiveEmails")
             .field("applicant2CannotUpload")
             .field("applicant2CannotUploadSupportingDocument")
+            .field("applicant1IsApplicant2Represented", "applicant2SolicitorRepresented!=\"*\"")
             .field("applicant2SolicitorRepresented")
 
             //Applicant 2 Solicitor
             .label("LabelApplicant2sSolicitor-Heading",
                 "applicant2SolicitorRepresented=\"Yes\"",
-                "#### ${labelContentTheApplicant2UC}'s solicitor")
+                "#### ${labelContentApplicant2UC}'s solicitor details")
             .field("applicant2SolicitorReference", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented=\"Yes\"")
