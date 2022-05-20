@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
+import static com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
@@ -47,7 +47,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
     public static final String CASEWORKER_CREATE_GENERAL_EMAIL = "caseworker-create-general-email";
 
-    private static final String NO_VALID_EMAIL_ERROR = "Cannot send email as no valid email was found for chosen party";
+    private static final String NO_VALID_EMAIL_ERROR = "You cannot send an email because no email address has been provided for this party.";
 
     @Autowired
     private GeneralEmailNotification generalEmailNotification;
@@ -151,23 +151,23 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         if (APPLICANT.equals(choice)) {
             Applicant applicant = caseData.getApplicant1();
             if (applicant.isRepresented()) {
-                if (StringUtils.isNotEmpty(applicant.getSolicitor().getEmail())) {
+                if (isNotEmpty(applicant.getSolicitor().getEmail())) {
                     validEmailExists = true;
                 }
-            } else if (StringUtils.isNotEmpty(applicant.getEmail())) {
+            } else if (isNotEmpty(applicant.getEmail())) {
                 validEmailExists = true;
             }
         } else if (RESPONDENT.equals(choice)) {
             Applicant respondent = caseData.getApplicant2();
             if (respondent.isRepresented()) {
-                if (StringUtils.isNotEmpty(respondent.getSolicitor().getEmail())) {
+                if (isNotEmpty(respondent.getSolicitor().getEmail())) {
                     validEmailExists = true;
                 }
-            } else if (StringUtils.isNotEmpty(respondent.getEmail())) {
+            } else if (isNotEmpty(respondent.getEmail())) {
                 validEmailExists = true;
             }
         } else {
-            if (StringUtils.isNotEmpty(caseData.getGeneralEmail().getGeneralEmailOtherRecipientEmail())) {
+            if (isNotEmpty(caseData.getGeneralEmail().getGeneralEmailOtherRecipientEmail())) {
                 validEmailExists = true;
             }
         }
