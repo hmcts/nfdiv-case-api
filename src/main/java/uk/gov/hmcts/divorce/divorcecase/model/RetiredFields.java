@@ -103,7 +103,8 @@ public class RetiredFields {
     }
 
     private static boolean shouldMigrateSOT(Map<String, Object> data) {
-        return Optional.ofNullable(data.get("applicationType")).orElse("").equals("soleApplication")
+        return Boolean.parseBoolean(System.getenv().getOrDefault("SOT_MIGRATION_ENABLED","false"))
+            && Optional.ofNullable(data.get("applicationType")).orElse("").equals("soleApplication")
             && Optional.ofNullable(data.get("applicant2StatementOfTruth")).orElse("").equals(YesOrNo.YES.getValue());
     }
 }
