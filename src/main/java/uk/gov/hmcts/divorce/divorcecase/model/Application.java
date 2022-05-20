@@ -345,6 +345,12 @@ public class Application {
     private RejectReason rejectReason;
 
     @CCD(
+        label = "Current state",
+        access = {CaseworkerAccess.class}
+    )
+    private State currentState;
+
+    @CCD(
         label = "Previous state",
         access = {CaseworkerAccess.class}
     )
