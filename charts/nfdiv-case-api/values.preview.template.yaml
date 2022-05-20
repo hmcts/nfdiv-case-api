@@ -84,6 +84,9 @@ ccd:
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
   am-role-assignment-service:
     java:
+      environment:
+        AM_ROLE_ASSIGNMENT_SERVICE_SECRET:
+        CCD_DATA_STORE_URL: http://${SERVICE_NAME}-ccd-data-store-api
       keyVaults:
         am:
           secrets:
