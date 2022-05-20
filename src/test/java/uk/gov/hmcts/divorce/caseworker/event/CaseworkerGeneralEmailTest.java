@@ -52,7 +52,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerGeneralEmailTest {
 
-    private static final String NO_VALID_EMAIL_ERROR = "You cannot send an email because no email address has been provided for this party.";
+    private static final String NO_VALID_EMAIL_ERROR
+        = "You cannot send an email because no email address has been provided for this party.";
 
     @Mock
     private GeneralEmailNotification generalEmailNotification;

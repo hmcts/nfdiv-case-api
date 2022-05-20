@@ -47,7 +47,8 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
     public static final String CASEWORKER_CREATE_GENERAL_EMAIL = "caseworker-create-general-email";
 
-    private static final String NO_VALID_EMAIL_ERROR = "You cannot send an email because no email address has been provided for this party.";
+    private static final String NO_VALID_EMAIL_ERROR
+        = "You cannot send an email because no email address has been provided for this party.";
 
     @Autowired
     private GeneralEmailNotification generalEmailNotification;
