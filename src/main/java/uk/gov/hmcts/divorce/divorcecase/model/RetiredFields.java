@@ -62,7 +62,8 @@ public class RetiredFields {
                 .value((DivorceDocument) val)
                 .build()
             )
-        )
+        ),
+        "applicant2StatementOfTruth", moveTo("statementOfTruth")
     ));
 
     /**
@@ -75,8 +76,10 @@ public class RetiredFields {
      */
     public static Map<String, Object> migrate(Map<String, Object> data) {
 
-        if (shouldMigrateSOT(data)) {
-            migrations.put("applicant2StatementOfTruth", moveTo("statementOfTruth"));
+        var version = getVersion();
+
+        if (!shouldMigrateSOT(data)) {
+            migrations.remove("applicant2StatementOfTruth");
         }
 
         for (String key : migrations.keySet()) {
@@ -86,10 +89,10 @@ public class RetiredFields {
             }
         }
 
-        data.put("dataVersion", getVersion());
+        data.put("dataVersion", version);
 
         // This must be done to prevent the conditionally-added key-value pair from being persisted into other migrations:
-        migrations.remove("applicant2StatementOfTruth");
+        migrations.put("applicant2StatementOfTruth", moveTo("statementOfTruth"));
 
         return data;
     }
