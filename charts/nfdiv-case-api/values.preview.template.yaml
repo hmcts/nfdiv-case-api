@@ -85,12 +85,9 @@ ccd:
   am-role-assignment-service:
     java:
       environment:
-        AM_ROLE_ASSIGNMENT_SERVICE_SECRET:
         CCD_DATA_STORE_URL: http://${SERVICE_NAME}-ccd-data-store-api
-      keyVaults:
-        am:
-          secrets:
-            - role-assignment-service-LD-SDK-KEY
+      keyVaults: []
+
   ccd-definition-store-api:
     java:
       imagePullPolicy: Always
