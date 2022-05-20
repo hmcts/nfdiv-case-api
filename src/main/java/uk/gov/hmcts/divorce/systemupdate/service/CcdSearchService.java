@@ -120,13 +120,8 @@ public class CcdSearchService {
             .query(
                 boolQuery()
                     .must(boolQuery()
-                        .mustNot(matchQuery("data.dataVersion", 0))
-                    )
-                    .must(boolQuery()
-                        .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
-                        .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
-                    )
-            )
+                        .must(matchQuery("reference", "1653034120699217"))
+            ))
             .from(0)
             .size(500);
 
