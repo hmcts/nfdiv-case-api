@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -10,9 +11,11 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -21,12 +24,15 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -38,7 +44,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @Slf4j
 public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRole> {
+
     public static final String CASEWORKER_CREATE_GENERAL_EMAIL = "caseworker-create-general-email";
+
+    private static final String NO_VALID_EMAIL_ERROR = "Cannot send email as no valid email was found for chosen party";
 
     @Autowired
     private GeneralEmailNotification generalEmailNotification;
@@ -64,7 +73,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
-            .page("createGeneralEmail")
+            .page("createGeneralEmail", this::midEvent)
             .pageLabel("Create general email")
             .complex(CaseData::getGeneralEmail)
             .mandatory(GeneralEmail::getGeneralEmailParties)
@@ -72,6 +81,23 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .mandatory(GeneralEmail::getGeneralEmailOtherRecipientName, "generalEmailParties=\"other\"")
             .mandatory(GeneralEmail::getGeneralEmailDetails)
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                  CaseDetails<CaseData, State> detailsBefore) {
+
+
+        final CaseData caseData = details.getData();
+
+        if (!validEmailExists(caseData)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(NO_VALID_EMAIL_ERROR))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -115,5 +141,37 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
+    }
+
+    private boolean validEmailExists(CaseData caseData) {
+
+        GeneralParties choice = caseData.getGeneralEmail().getGeneralEmailParties();
+        boolean validEmailExists = false;
+
+        if (APPLICANT.equals(choice)) {
+            Applicant applicant = caseData.getApplicant1();
+            if (applicant.isRepresented()) {
+                if (StringUtils.isNotEmpty(applicant.getSolicitor().getEmail())) {
+                    validEmailExists = true;
+                }
+            } else if (StringUtils.isNotEmpty(applicant.getEmail())) {
+                validEmailExists = true;
+            }
+        } else if (RESPONDENT.equals(choice)) {
+            Applicant respondent = caseData.getApplicant2();
+            if (respondent.isRepresented()) {
+                if (StringUtils.isNotEmpty(respondent.getSolicitor().getEmail())) {
+                    validEmailExists = true;
+                }
+            } else if (StringUtils.isNotEmpty(respondent.getEmail())) {
+                validEmailExists = true;
+            }
+        } else {
+            if (StringUtils.isNotEmpty(caseData.getGeneralEmail().getGeneralEmailOtherRecipientEmail())) {
+                validEmailExists = true;
+            }
+        }
+
+        return validEmailExists;
     }
 }
