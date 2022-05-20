@@ -161,7 +161,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
             //Applicant 2 Solicitor
             .label("LabelApplicant2sSolicitor-Heading",
-                "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"",
+                "applicant2SolicitorRepresented=\"Yes\"",
                 "#### ${labelContentTheApplicant2UC}'s solicitor")
             .field("applicant2SolicitorReference", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"Yes\"")
