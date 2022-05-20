@@ -32,6 +32,8 @@ import java.time.Clock;
 import java.util.HashMap;
 import java.util.Map;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
@@ -79,6 +81,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -160,6 +163,8 @@ public class LegalAdvisorMakeDecisionIT {
     public void shouldSetStateToAwaitingClarificationIfConditionalOrderIsNotGrantedAndRefusalIsDueToMoreInformationRequired()
         throws Exception {
 
+        setMockClock(clock);
+
         final CaseData caseData = validApplicant1CaseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
@@ -188,6 +193,8 @@ public class LegalAdvisorMakeDecisionIT {
     @Test
     public void givenConditionalOrderIsNotGrantedAndRefusalIsDueToMoreInformationRequiredThenShouldSendNotification()
         throws Exception {
+
+        setMockClock(clock);
 
         final CaseData caseData = validApplicant1CaseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -225,6 +232,8 @@ public class LegalAdvisorMakeDecisionIT {
     public void shouldSetStateToAwaitingAdminClarificationIfConditionalOrderIsNotGrantedAndRefusalIsDueToAdminError()
         throws Exception {
 
+        setMockClock(clock);
+
         final CaseData caseData = caseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
@@ -252,6 +261,8 @@ public class LegalAdvisorMakeDecisionIT {
 
     @Test
     public void shouldSetStateToAwaitingAmendedApplicationIfConditionalOrderIsRejected() throws Exception {
+
+        setMockClock(clock);
 
         final Map<String, Object> templateContent = new HashMap<>();
         final CaseData caseData = caseData();
@@ -303,5 +314,41 @@ public class LegalAdvisorMakeDecisionIT {
             .andExpect(
                 jsonPath("$.state").value(AwaitingAmendedApplication.getName())
             );
+    }
+
+    @Test
+    public void shouldAddLegalAdvisorDecisionToAuditList() throws Exception {
+
+        setMockClock(clock);
+
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .granted(NO)
+            .refusalDecision(MORE_INFO)
+            .build());
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    LEGAL_ADVISOR_MAKE_DECISION)
+                )
+            )
+            .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk()
+            )
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(expectedResponse(("classpath:legal-advisor-make-decision-response.json")));
+
     }
 }
