@@ -9,12 +9,21 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.PostInformationToCourtNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ClarificationResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.time.Clock;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -24,8 +33,11 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitClarification.SUBMIT_CLARIFICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +52,9 @@ class SubmitClarificationTest {
     @Mock
     private PostInformationToCourtNotification postInformationToCourtNotification;
 
+    @Mock
+    private Clock clock;
+
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
@@ -52,7 +67,50 @@ class SubmitClarificationTest {
     }
 
     @Test
+    void shouldResetClarificationFieldsWhenAboutToStartCallbackIsInvoked() {
+
+        final ListValue<String> listValue1 =
+            ListValue.<String>builder()
+                .value("Clarification")
+                .build();
+        final List<ListValue<String>> clarifications = new ArrayList<>();
+        clarifications.add(listValue1);
+
+        final ListValue<DivorceDocument> listValue2 =
+            ListValue.<DivorceDocument>builder()
+                .value(DivorceDocument.builder().build())
+                .build();
+        final List<ListValue<DivorceDocument>> clarificationDocuments = new ArrayList<>();
+        clarificationDocuments.add(listValue2);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .clarificationResponses(clarifications)
+                    .cannotUploadClarificationDocuments(YES)
+                    .clarificationUploadDocuments(clarificationDocuments)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            submitClarification.aboutToStart(caseDetails);
+
+        ConditionalOrder actualConditionalOrder = response.getData().getConditionalOrder();
+        assertThat(actualConditionalOrder.getClarificationResponses()).isEmpty();
+        assertThat(actualConditionalOrder.getCannotUploadClarificationDocuments()).isNull();
+        assertThat(actualConditionalOrder.getClarificationUploadDocuments()).isEmpty();
+    }
+
+    @Test
     void sendNotificationIfCannotUploadDocuments() {
+
+        setMockClock(clock);
+
         CaseData caseData = validApplicant1CaseData();
         caseData.getConditionalOrder().setCannotUploadClarificationDocuments(YES);
 
@@ -66,6 +124,9 @@ class SubmitClarificationTest {
 
     @Test
     void shouldNotSendNotificationIfCannotUploadDocumentsSetAsNo() {
+
+        setMockClock(clock);
+
         CaseData caseData = validApplicant1CaseData();
         caseData.getConditionalOrder().setCannotUploadClarificationDocuments(NO);
 
@@ -79,6 +140,9 @@ class SubmitClarificationTest {
 
     @Test
     void shouldNotSendNotificationIfNoConditionalOrder() {
+
+        setMockClock(clock);
+
         CaseData caseData = validApplicant1CaseData();
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
@@ -90,6 +154,9 @@ class SubmitClarificationTest {
 
     @Test
     void shouldSetStateOnAboutToSubmit() {
+
+        setMockClock(clock);
+
         CaseData caseData = validApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(AwaitingClarification).id(1L).build();
@@ -97,5 +164,88 @@ class SubmitClarificationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(ClarificationSubmitted);
+    }
+
+    @Test
+    void shouldAddClarificationDocumentsToDocumentsUploadedList() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .clarificationResponses(emptyList())
+                    .cannotUploadClarificationDocuments(NO)
+                    .clarificationUploadDocuments(List.of(documentWithType(MARRIAGE_CERTIFICATE)))
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            submitClarification.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(1);
+    }
+
+    @Test
+    void shouldCreateNewClarificationResponsesSubmittedListIfNotExist() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .clarificationResponses(emptyList())
+                    .cannotUploadClarificationDocuments(NO)
+                    .clarificationUploadDocuments(List.of(documentWithType(MARRIAGE_CERTIFICATE)))
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            submitClarification.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getConditionalOrder().getClarificationResponsesSubmitted()).hasSize(1);
+    }
+
+    @Test
+    void shouldAddClarificationResponseSubmittedToTopOfListIfExistsAlready() {
+
+        setMockClock(clock);
+
+        final ListValue<ClarificationResponse> listValue =
+            ListValue.<ClarificationResponse>builder()
+                .value(ClarificationResponse.builder().build())
+                .build();
+        final List<ListValue<ClarificationResponse>> clarificationResponsesSubmitted = new ArrayList<>();
+        clarificationResponsesSubmitted.add(listValue);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .clarificationResponses(emptyList())
+                    .cannotUploadClarificationDocuments(NO)
+                    .clarificationUploadDocuments(List.of(documentWithType(MARRIAGE_CERTIFICATE)))
+                    .clarificationResponsesSubmitted(clarificationResponsesSubmitted)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            submitClarification.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getConditionalOrder().getClarificationResponsesSubmitted()).hasSize(2);
     }
 }

@@ -10,9 +10,11 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.LegalAdvisorDecision;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -21,7 +23,9 @@ import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisi
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -101,6 +105,8 @@ class LegalAdvisorMakeDecisionTest {
     @Test
     void shouldSetStateToAwaitingClarificationIfConditionalOrderIsNotGrantedAndRefusalIsDueToMoreInformationRequired() {
 
+        setMockClock(clock);
+
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(MORE_INFO).build())
             .build();
@@ -119,6 +125,8 @@ class LegalAdvisorMakeDecisionTest {
     @Test
     void shouldSetStateToAwaitingAdminClarificationIfConditionalOrderIsNotGrantedAndRefusalIsDueToAdminError() {
 
+        setMockClock(clock);
+
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(ADMIN_ERROR).build())
             .build();
@@ -135,6 +143,8 @@ class LegalAdvisorMakeDecisionTest {
 
     @Test
     void shouldSetStateToAwaitingAmendedApplicationIfConditionalOrderIsRejected() {
+
+        setMockClock(clock);
 
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(REJECT).build())
@@ -173,6 +183,9 @@ class LegalAdvisorMakeDecisionTest {
 
     @Test
     void shouldSendEmailIfConditionalOrderIsRejectedForMoreInfoAndIsSolicitorApplication() {
+
+        setMockClock(clock);
+
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(MORE_INFO).build())
             .application(Application.builder().solSignStatementOfTruth(YES).build())
@@ -189,6 +202,9 @@ class LegalAdvisorMakeDecisionTest {
 
     @Test
     void shouldNotSendEmailIfConditionalOrderIsRejectedForMoreInfoAndIsNotSolicitorApplication() {
+
+        setMockClock(clock);
+
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().granted(NO).build())
             .application(Application.builder().solSignStatementOfTruth(NO).build())
@@ -225,6 +241,7 @@ class LegalAdvisorMakeDecisionTest {
 
     @Test
     void shouldResetConditionalOrderRefusalFieldsWhenAboutToStartCallbackIsInvoked() {
+
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(
                 ConditionalOrder
@@ -246,5 +263,63 @@ class LegalAdvisorMakeDecisionTest {
         assertThat(actualConditionalOrder.getRefusalDecision()).isNull();
         assertThat(actualConditionalOrder.getRefusalClarificationAdditionalInfo()).isNull();
         assertThat(actualConditionalOrder.getGranted()).isNull();
+    }
+
+    @Test
+    void shouldCreateNewClarificationResponsesSubmittedListIfNotExist() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .granted(NO)
+                    .refusalDecision(MORE_INFO)
+                    .refusalClarificationAdditionalInfo("some info")
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getConditionalOrder().getLegalAdvisorDecisions()).hasSize(1);
+    }
+
+    @Test
+    void shouldAddClarificationResponseSubmittedToTopOfListIfExistsAlready() {
+
+        setMockClock(clock);
+
+        final ListValue<LegalAdvisorDecision> listValue =
+            ListValue.<LegalAdvisorDecision>builder()
+                .value(LegalAdvisorDecision.builder().build())
+                .build();
+        final List<ListValue<LegalAdvisorDecision>> legalAdvisorDecisions = new ArrayList<>();
+        legalAdvisorDecisions.add(listValue);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .granted(NO)
+                    .refusalDecision(MORE_INFO)
+                    .refusalClarificationAdditionalInfo("some info")
+                    .legalAdvisorDecisions(legalAdvisorDecisions)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getConditionalOrder().getLegalAdvisorDecisions()).hasSize(2);
     }
 }

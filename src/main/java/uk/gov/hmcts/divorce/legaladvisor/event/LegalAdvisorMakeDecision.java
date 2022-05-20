@@ -150,6 +150,13 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingAmendedApplication;
         }
 
+        conditionalOrder.setLegalAdvisorDecisions(
+            conditionalOrder.addAuditRecord(
+                conditionalOrder.getLegalAdvisorDecisions(),
+                conditionalOrder.populateLegalAdvisorDecision(LocalDate.now(clock))
+            )
+        );
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .state(endState)
