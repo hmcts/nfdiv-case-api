@@ -76,7 +76,7 @@ public class RetiredFields {
      */
     public static Map<String, Object> migrate(Map<String, Object> data) {
 
-        var version = getVersion();
+        final int version = getVersion();
 
         if (!shouldMigrateSOT(data)) {
             migrations.remove("applicant2StatementOfTruth");
