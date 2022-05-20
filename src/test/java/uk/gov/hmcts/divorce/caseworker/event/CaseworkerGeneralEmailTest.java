@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -248,6 +249,30 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
+    void shouldReturnNoErrorsDuringMidEventValidationWhenValidEmailForApplicantSolicitor() {
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
+
+        assertThat(response.getErrors()).isEqualTo(null);
+    }
+
+    @Test
     void shouldReturnAnErrorWhenNoValidEmailIsFoundDuringMidEventValidationWhenRespondent() {
 
         final CaseData caseData = caseData();
@@ -318,6 +343,53 @@ public class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
         assertThat(response.getErrors()).isEqualTo(null);
+    }
+
+    @Test
+    void shouldReturnNoErrorsDuringMidEventValidationWhenValidEmailForRespondentSolicitor() {
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(RESPONDENT)
+                .generalEmailDetails("some details")
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
+
+        assertThat(response.getErrors()).isEqualTo(null);
+    }
+
+    @Test
+    void shouldReturnAnErrorWhenNoValidEmailIsFoundDuringMidEventValidationWhenOther() {
+
+        final CaseData caseData = caseData();
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(OTHER)
+                .generalEmailDetails("some details")
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
+
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors().get(0)).isEqualTo(NO_VALID_EMAIL_ERROR);
     }
 
     @Test
