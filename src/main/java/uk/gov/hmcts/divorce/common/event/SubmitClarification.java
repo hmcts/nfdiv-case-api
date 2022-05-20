@@ -19,7 +19,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
@@ -66,10 +66,9 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             .pageLabel("Submit clarification for conditional order")
             .complex(CaseData::getConditionalOrder)
                 .readonly(ConditionalOrder::getRefusalDecision)
-                .readonly(ConditionalOrder::getRefusalRejectionReason)
+                .readonly(ConditionalOrder::getRefusalOrderDocument)
                 .readonly(ConditionalOrder::getRefusalClarificationAdditionalInfo)
                 .mandatory(ConditionalOrder::getClarificationResponses)
-                .mandatory(ConditionalOrder::getCannotUploadClarificationDocuments)
                 .optional(ConditionalOrder::getClarificationUploadDocuments)
             .done();
     }
@@ -88,12 +87,13 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
         final CaseData data = details.getData();
         final ConditionalOrder conditionalOrder = data.getConditionalOrder();
         final boolean cannotUploadDocuments = conditionalOrder.cannotUploadClarificationDocumentsBoolean();
+        final boolean clarificationDocumentsUploaded = isNotEmpty(conditionalOrder.getClarificationUploadDocuments());
 
         if (cannotUploadDocuments) {
             notificationDispatcher.send(postInformationToCourtNotification, data, details.getId());
         }
 
-        if (isNotEmpty(conditionalOrder.getClarificationUploadDocuments())) {
+        if (clarificationDocumentsUploaded) {
             conditionalOrder.getClarificationUploadDocuments()
                 .forEach(documentListValue ->
                     data.getDocuments().setDocumentsUploaded(

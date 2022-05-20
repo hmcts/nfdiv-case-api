@@ -325,7 +325,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
             .showCondition("coGranted=\"*\"")
             .label("labelLegalAdvisorDecision", null, "## Legal advisor decision")
-            .field("coGranted", "applicationType=\"NEVER_SHOW\"")
+            .field("coDecisionDate")
+            .field("coGranted")
+            .field("coClaimsGranted")
+            .field("coClaimsCostsOrderInformation")
             .field("coLegalAdvisorDecisions")
             .label("labelCoClarificationResponses",
                 "coGranted=\"*\" AND coClarificationResponsesSubmitted=\"*\"",

@@ -33,6 +33,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitClarification.SUBMIT_CLARIFICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -167,28 +168,20 @@ class SubmitClarificationTest {
     }
 
     @Test
-    void shouldAddClarificationDocumentsToDocumentsUploadedList() {
+    void shouldAddClarificationDocumentsToUploadedDocumentsList() {
 
         setMockClock(clock);
 
-        final CaseData caseData = CaseData.builder()
-            .conditionalOrder(
-                ConditionalOrder
-                    .builder()
-                    .clarificationResponses(emptyList())
-                    .cannotUploadClarificationDocuments(NO)
-                    .clarificationUploadDocuments(List.of(documentWithType(MARRIAGE_CERTIFICATE)))
-                    .build()
-            )
-            .build();
+        final List<ListValue<DivorceDocument>> clarificationDocuments =
+            List.of(documentWithType(CONDITIONAL_ORDER_REFUSAL), documentWithType(CONDITIONAL_ORDER_REFUSAL));
+        CaseData caseData = validApplicant1CaseData();
+        caseData.getConditionalOrder().setClarificationUploadDocuments(clarificationDocuments);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(AwaitingClarification).id(1L).build();
 
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToSubmit(caseDetails, caseDetails);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            submitClarification.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(1);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(2);
     }
 
     @Test

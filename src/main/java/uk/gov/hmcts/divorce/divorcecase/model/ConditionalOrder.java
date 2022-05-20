@@ -191,6 +191,11 @@ public class ConditionalOrder {
     private DivorceDocument certificateOfEntitlementDocument;
 
     @CCD(
+        label = "Refusal Rejection reasons"
+    )
+    private Document refusalOrderDocument;
+
+    @CCD(
         label = "Legal Advisor Decisions Submitted",
         typeOverride = Collection,
         typeParameterOverride = "LegalAdvisorDecision"
