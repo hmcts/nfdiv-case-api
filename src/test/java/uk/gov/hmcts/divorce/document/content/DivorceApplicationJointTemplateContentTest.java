@@ -53,10 +53,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_OTHER_COURT_CASES_APPLICANT_2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
@@ -146,8 +144,6 @@ class DivorceApplicationJointTemplateContentTest {
             entry(APPLICANT_2_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_2, false),
             entry(APPLICANT_2_COURT_CASE_DETAILS, null),
-            entry(PLACE_OF_MARRIAGE, null),
-            entry(MARRIAGE_DATE, null),
             entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
             entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
         );
@@ -155,6 +151,7 @@ class DivorceApplicationJointTemplateContentTest {
         verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
+        verify(applicationTemplateDataProvider).mapMarriageDetails(anyMap(), any(Application.class));
     }
 
     @Test
@@ -222,15 +219,12 @@ class DivorceApplicationJointTemplateContentTest {
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
             entry(APPLICANT_2_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_2, false),
-            entry(APPLICANT_2_COURT_CASE_DETAILS, null),
-            entry(PLACE_OF_MARRIAGE, null),
-            entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
-            entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
+            entry(APPLICANT_2_COURT_CASE_DETAILS, null)
         );
 
         verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider).mapContactDetails(any(Applicant.class), any(Applicant.class), anyMap());
         verify(applicationTemplateDataProvider).deriveJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
+        verify(applicationTemplateDataProvider).mapMarriageDetails(anyMap(), any(Application.class));
     }
 }
