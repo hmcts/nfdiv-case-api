@@ -314,8 +314,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         final Application application = data.getApplication();
         final List<String> errors = new ArrayList<>();
 
-        if (data.isDivorce() && !MARRIAGE_BROKEN.equals(application.getApplicant1HasMarriageBroken())
-        || !data.isDivorce() && !CIVIL_PARTNERSHIP_BROKEN.equals(application.getApplicant1HasCivilPartnershipBroken())) {
+        if (data.isDivorce() && !(application.getApplicant1HasMarriageBroken().contains(MARRIAGE_BROKEN))
+        || !data.isDivorce() && !(application.getApplicant1HasCivilPartnershipBroken().contains(CIVIL_PARTNERSHIP_BROKEN))) {
             errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
         }
 

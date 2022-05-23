@@ -56,7 +56,7 @@ public class Application {
         typeOverride = MultiSelectList,
         typeParameterOverride = "MarriageBroken"
     )
-    private MarriageBroken applicant1HasMarriageBroken;
+    private Set<MarriageBroken> applicant1HasMarriageBroken;
 
     @CCD(
         label = "Has the applicant's civil partnership broken down irretrievably?",
@@ -64,7 +64,7 @@ public class Application {
         typeOverride = MultiSelectList,
         typeParameterOverride = "CivilPartnershipBroken"
     )
-    private CivilPartnershipBroken applicant1HasCivilPartnershipBroken;
+    private Set<CivilPartnershipBroken> applicant1HasCivilPartnershipBroken;
 
     @CCD(
         label = "Has applicant 2's marriage broken down irretrievably?",

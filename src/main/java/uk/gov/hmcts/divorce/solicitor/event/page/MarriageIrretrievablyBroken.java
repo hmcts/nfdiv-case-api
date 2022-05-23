@@ -31,18 +31,16 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
             .done();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
-        CaseDetails<CaseData, State> details,
-        CaseDetails<CaseData, State> detailsBefore
-    ) {
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                  CaseDetails<CaseData, State> detailsBefore) {
         log.info("Mid-event callback triggered for MarriageIrretrievablyBroken");
 
         CaseData data = details.getData();
         List<String> errors = new ArrayList<>();
         Application application = data.getApplication();
 
-        if (data.isDivorce() && !MARRIAGE_BROKEN.equals(application.getApplicant1HasMarriageBroken())
-            || !data.isDivorce() && !CIVIL_PARTNERSHIP_BROKEN.equals(application.getApplicant1HasCivilPartnershipBroken())) {
+        if (data.isDivorce() && !(application.getApplicant1HasMarriageBroken().contains(MARRIAGE_BROKEN))
+            || !data.isDivorce() && !(application.getApplicant1HasCivilPartnershipBroken().contains(CIVIL_PARTNERSHIP_BROKEN))) {
             errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
         }
 

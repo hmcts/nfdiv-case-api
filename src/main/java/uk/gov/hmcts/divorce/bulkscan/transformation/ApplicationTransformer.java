@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CivilPartnershipBroken;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
+import uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -86,9 +88,13 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
 
         if (toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown())) {
             if (caseData.isDivorce()) {
-                caseData.getApplication().setApplicant1HasMarriageBroken(MARRIAGE_BROKEN);
+                var marriageBroken = new HashSet<MarriageBroken>();
+                marriageBroken.add(MARRIAGE_BROKEN);
+                caseData.getApplication().setApplicant1HasMarriageBroken(marriageBroken);
             } else {
-                caseData.getApplication().setApplicant1HasCivilPartnershipBroken(CIVIL_PARTNERSHIP_BROKEN);
+                var civilPartnershipBroken = new HashSet<CivilPartnershipBroken>();
+                civilPartnershipBroken.add(CIVIL_PARTNERSHIP_BROKEN);
+                caseData.getApplication().setApplicant1HasCivilPartnershipBroken(civilPartnershipBroken);
             }
         }
 
