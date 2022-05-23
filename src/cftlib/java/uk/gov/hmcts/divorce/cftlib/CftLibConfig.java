@@ -67,7 +67,7 @@ public class CftLibConfig implements CFTLibConfigurer {
         lib.configureRoleAssignments(json);
 
         // Generate and import CCD definitions
-        var def = Files.readAllBytes(getCCDDefinition());
+        var def = Files.readAllBytes(generateCCDDefinition());
         lib.importDefinition(def);
     }
 
@@ -76,7 +76,7 @@ public class CftLibConfig implements CFTLibConfigurer {
     * Doing this at runtime in the CftlibConfig allows use of spring boot devtool's
     * live reload functionality to rapidly edit and test code & definition changes.
     */
-    private Path getCCDDefinition() throws Exception {
+    private Path generateCCDDefinition() throws Exception {
         // Export the JSON config.
         configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
         // Run the gradle task to convert to xlsx.
@@ -87,6 +87,6 @@ public class CftLibConfig implements CFTLibConfigurer {
         if (code != 0) {
             throw new RuntimeException("Error converting ccd json to xlsx");
         }
-        return Path.of("../ccd-config/" + defName);
+        return Path.of("build/ccd-config/" + defName);
     }
 }
