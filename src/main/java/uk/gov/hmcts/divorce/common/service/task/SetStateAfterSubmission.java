@@ -3,12 +3,14 @@ package uk.gov.hmcts.divorce.common.service.task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -27,20 +29,23 @@ public class SetStateAfterSubmission implements CaseTask {
         final boolean isHWFApplicant2 = application.isHelpWithFeesApplicationApplicant2();
         final boolean isSoleApplication =  nonNull(caseData.getApplicationType())
             && caseData.getApplicationType().isSole();
+        final boolean isApplicant1AwaitingDocuments = YES.equals(application.getApplicant1CannotUpload())
+            || isSoleApplication && application.isPersonalServiceMethod();
+        final boolean isApplicant2AwaitingDocuments = YES.equals(application.getApplicant2CannotUpload());
 
         if (isSoleApplication && isHWFApplicant1) {
-            if (application.hasAwaitingApplicant1Documents()) {
+            if (isApplicant1AwaitingDocuments) {
                 caseDetails.setState(AwaitingDocuments);
             } else {
                 caseDetails.setState(AwaitingHWFDecision);
             }
         } else if (!isSoleApplication && isHWFApplicant1 && isHWFApplicant2) {
-            if (application.hasAwaitingApplicant1Documents() || application.hasAwaitingApplicant2Documents()) {
+            if (isApplicant1AwaitingDocuments  || isApplicant2AwaitingDocuments) {
                 caseDetails.setState(AwaitingDocuments);
             } else {
                 caseDetails.setState(AwaitingHWFDecision);
             }
-        } else if (application.hasAwaitingApplicant1Documents() || !isSoleApplication && application.hasAwaitingApplicant2Documents()) {
+        } else if (isApplicant1AwaitingDocuments || !isSoleApplication && isApplicant2AwaitingDocuments) {
             caseDetails.setState(AwaitingDocuments);
         } else if (!application.hasBeenPaidFor()) {
             caseDetails.setState(AwaitingPayment);

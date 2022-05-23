@@ -164,6 +164,7 @@ class SetStateAfterSubmissionTest {
                 .paymentTotal("55000")
                 .build())
             .applicationPayments(singletonList(payment))
+            .applicant1CannotUpload(YES)
             .applicant1WantsToHavePapersServedAnotherWay(YES)
             .build();
 
