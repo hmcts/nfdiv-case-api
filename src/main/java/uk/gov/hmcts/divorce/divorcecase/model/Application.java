@@ -577,4 +577,9 @@ public class Application {
     public boolean isPaperCase() {
         return YES.equals(newPaperCase);
     }
+
+    @JsonIgnore
+    public String getPbaNumber() {
+        return this.getPbaNumbers().getValue().getLabel();
+    }
 }
