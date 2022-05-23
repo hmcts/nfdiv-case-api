@@ -15,12 +15,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -55,8 +53,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarific
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -104,9 +100,6 @@ public class LegalAdvisorMakeDecisionIT {
 
     @MockBean
     private NotificationService notificationService;
-
-    @Mock
-    private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
     private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
@@ -160,11 +153,15 @@ public class LegalAdvisorMakeDecisionIT {
     public void shouldSetStateToAwaitingClarificationIfConditionalOrderIsNotGrantedAndRefusalIsDueToMoreInformationRequired()
         throws Exception {
 
+        setMockClock(clock);
+
         final CaseData caseData = validApplicant1CaseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
             .refusalDecision(MORE_INFO)
             .build());
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -189,11 +186,22 @@ public class LegalAdvisorMakeDecisionIT {
     public void givenConditionalOrderIsNotGrantedAndRefusalIsDueToMoreInformationRequiredThenShouldSendNotification()
         throws Exception {
 
+        setMockClock(clock);
+
+        final Map<String, Object> templateContent = new HashMap<>();
         final CaseData caseData = validApplicant1CaseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
             .refusalDecision(MORE_INFO)
             .build());
+
+        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -219,6 +227,7 @@ public class LegalAdvisorMakeDecisionIT {
             )),
             eq(ENGLISH)
         );
+        // test that document has been created and added
     }
 
     @Test
@@ -253,6 +262,8 @@ public class LegalAdvisorMakeDecisionIT {
     @Test
     public void shouldSetStateToAwaitingAmendedApplicationIfConditionalOrderIsRejected() throws Exception {
 
+        setMockClock(clock);
+
         final Map<String, Object> templateContent = new HashMap<>();
         final CaseData caseData = caseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -266,25 +277,15 @@ public class LegalAdvisorMakeDecisionIT {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
-        final Document document = Document.builder()
-            .filename("filename")
-            .build();
 
         when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
-
-        when(caseDataDocumentService.renderDocument(
-            templateContent,
-            TEST_CASE_ID,
-            REFUSAL_ORDER_TEMPLATE_ID,
-            ENGLISH,
-            REFUSAL_ORDER_DOCUMENT_NAME)).thenReturn(document);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order.docx");
+        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
