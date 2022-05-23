@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
@@ -33,6 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class SubmitClarification implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_CLARIFICATION = "submit-clarification";
+    private static final String NEVER_SHOW = "coRefusalDecision=\"NEVER_SHOW\"";
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
