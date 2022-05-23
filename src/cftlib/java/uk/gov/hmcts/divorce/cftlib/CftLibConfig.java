@@ -22,7 +22,7 @@ public class CftLibConfig implements CFTLibConfigurer {
     @Value("ccd-NFD-${CCD_DEF_NAME:dev}.xlsx")
     String defName;
 
-    @Value("${gigajar:true}")
+    @Value("${CFT_LIB_NO_DOCKER:false}")
     boolean gigajar;
 
     @Autowired
@@ -30,6 +30,10 @@ public class CftLibConfig implements CFTLibConfigurer {
 
     @Override
     public void configure(CFTLib lib) throws Exception {
+        if (gigajar) {
+            return;
+        }
+
         for (String p : List.of(
             "DivCaseWorkerUser@AAT.com",
             "TEST_CASE_WORKER_USER@mailinator.com",
@@ -61,11 +65,9 @@ public class CftLibConfig implements CFTLibConfigurer {
         var json = IOUtils.toString(resourceLoader.getResource("classpath:cftlib-am-role-assignments.json")
             .getInputStream(), Charset.defaultCharset());
         lib.configureRoleAssignments(json);
-        if (gigajar) {
-            return;
-        }
+
         // Generate and import CCD definitions
-        var def = getCCDDefinition();
+        var def = Files.readAllBytes(getCCDDefinition());
         lib.importDefinition(def);
     }
 
@@ -74,11 +76,7 @@ public class CftLibConfig implements CFTLibConfigurer {
     * Doing this at runtime in the CftlibConfig allows use of spring boot devtool's
     * live reload functionality to rapidly edit and test code & definition changes.
     */
-    private byte[] getCCDDefinition() throws Exception {
-        // Gigajar embeds the ccd definition.
-        if (gigajar) {
-            return this.getClass().getResourceAsStream("/" + defName).readAllBytes();
-        }
+    private Path getCCDDefinition() throws Exception {
         // Export the JSON config.
         configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
         // Run the gradle task to convert to xlsx.
@@ -89,6 +87,6 @@ public class CftLibConfig implements CFTLibConfigurer {
         if (code != 0) {
             throw new RuntimeException("Error converting ccd json to xlsx");
         }
-        return Files.readAllBytes(Path.of("../ccd-config/" + defName));
+        return Path.of("../ccd-config/" + defName);
     }
 }
