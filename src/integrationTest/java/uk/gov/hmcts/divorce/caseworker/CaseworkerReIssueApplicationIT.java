@@ -337,6 +337,7 @@ public class CaseworkerReIssueApplicationIT {
     void shouldSetReIssueDateAndSendApplicationIssueNotificationsForJointAppReissueCaseApplicant1Solicitor() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setDueDate(LocalDate.now().plusDays(121));
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
         caseData.getApplication().setReissueOption(REISSUE_CASE);
         caseData.getApplication().setIssueDate(LocalDate.now());
@@ -401,6 +402,7 @@ public class CaseworkerReIssueApplicationIT {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setReissueOption(REISSUE_CASE);
+        caseData.setDueDate(LocalDate.now().plusDays(121));
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
         caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(YES);
         caseData.getApplication().setIssueDate(LocalDate.now());
@@ -938,6 +940,7 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().setOffline(YES);
+        caseData.setDueDate(LocalDate.now().plusDays(121));
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
@@ -978,6 +981,7 @@ public class CaseworkerReIssueApplicationIT {
     void shouldNotGenerateD10DocumentWhenD10HasAlreadyBeenGeneratedForCase() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setDueDate(LocalDate.now().plusDays(121));
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
