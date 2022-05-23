@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
@@ -57,6 +58,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             .page("submitClarificationForCO")
             .pageLabel("Submit clarification for conditional order")
             .complex(CaseData::getConditionalOrder)
+                .readonly(ConditionalOrder::getCannotUploadClarificationDocuments, NEVER_SHOW)
                 .readonly(ConditionalOrder::getRefusalDecision)
                 .readonly(ConditionalOrder::getRefusalOrderDocument)
                 .readonly(ConditionalOrder::getRefusalClarificationAdditionalInfo)
