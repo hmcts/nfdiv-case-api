@@ -20,6 +20,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.from;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.CivilPartnershipBroken.CIVIL_PARTNERSHIP_BROKEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_DOMICILED;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
@@ -32,6 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_CP;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_D;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken.MARRIAGE_BROKEN;
 
 @Component
 public class ApplicationTransformer implements Function<TransformationDetails, TransformationDetails> {
@@ -81,9 +83,15 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
                 "Please review confirmation of breakdown for joint application in the scanned form"
             );
         }
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(
-            from(toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown()))
-        );
+
+        if (toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown())) {
+            if (caseData.isDivorce()) {
+                caseData.getApplication().setApplicant1HasMarriageBroken(MARRIAGE_BROKEN);
+            } else {
+                caseData.getApplication().setApplicant1HasCivilPartnershipBroken(CIVIL_PARTNERSHIP_BROKEN);
+            }
+        }
+
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(
             from(toBoolean(ocrDataFields.getApplicant2ConfirmationOfBreakdown()))
         );

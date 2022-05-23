@@ -23,6 +23,8 @@ import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import static uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
+import static uk.gov.hmcts.divorce.divorcecase.model.CivilPartnershipBroken.CIVIL_PARTNERSHIP_BROKEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken.MARRIAGE_BROKEN;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SOT_REQUIRED;
 
 public class CorrectPaperCase implements CcdPageConfiguration {
@@ -205,7 +207,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         fieldCollectionBuilder
             .label("Label-CorrectStatementOfIrretrievableBreakdown", "### Statement of irretrievable breakdown")
             .complex(CaseData::getApplication)
-                .mandatoryWithLabel(Application::getApplicant1ScreenHasMarriageBroken,
+                .mandatoryWithLabel(Application::getApplicant1HasMarriageBroken,
                 "Has the ${labelContentApplicantsOrApplicant1s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
                 .mandatory(Application::getApplicant2ScreenHasMarriageBroken, JOINT_APPLICATION, null,
                 "Has the ${labelContentRespondentsOrApplicant2s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
@@ -312,7 +314,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         final Application application = data.getApplication();
         final List<String> errors = new ArrayList<>();
 
-        if (!application.getApplicant1ScreenHasMarriageBroken().toBoolean()) {
+        if (data.isDivorce() && !MARRIAGE_BROKEN.equals(application.getApplicant1HasMarriageBroken())
+        || !data.isDivorce() && !CIVIL_PARTNERSHIP_BROKEN.equals(application.getApplicant1HasCivilPartnershipBroken())) {
             errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
         }
 

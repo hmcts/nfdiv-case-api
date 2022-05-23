@@ -13,6 +13,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.CivilPartnershipBroken.CIVIL_PARTNERSHIP_BROKEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken.MARRIAGE_BROKEN;
+
 @Slf4j
 @Component
 public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
@@ -23,14 +26,9 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
             .page("MarriageIrretrievablyBroken", this::midEvent)
             .pageLabel("Statement of irretrievable breakdown")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getApplicant1ScreenHasMarriageBroken)
-            .done()
-            .label(
-                "MarriageNotIrretrievablyBroken",
-                "The ${labelContentMarriageOrCivilPartnership} must have broken down irretrievably "
-                    + "for the applicant to ${labelContentDivorceOrLegallyEnd}.",
-                "applicant1ScreenHasMarriageBroken=\"No\""
-            );
+            .mandatory(Application::getApplicant1HasMarriageBroken, "divorceOrDissolution=\"divorce\"")
+            .mandatory(Application::getApplicant1HasCivilPartnershipBroken, "divorceOrDissolution=\"dissolution\"")
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
@@ -43,7 +41,8 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
         List<String> errors = new ArrayList<>();
         Application application = data.getApplication();
 
-        if (!application.getApplicant1ScreenHasMarriageBroken().toBoolean()) {
+        if (data.isDivorce() && !MARRIAGE_BROKEN.equals(application.getApplicant1HasMarriageBroken())
+            || !data.isDivorce() && !CIVIL_PARTNERSHIP_BROKEN.equals(application.getApplicant1HasCivilPartnershipBroken())) {
             errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
         }
 

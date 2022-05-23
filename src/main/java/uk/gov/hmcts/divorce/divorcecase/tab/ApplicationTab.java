@@ -96,7 +96,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameChangedHowOtherDetails")
             .field("applicant1ContactDetailsType", NEVER_SHOW)
             .field("divorceWho")
-            .field("applicant1ScreenHasMarriageBroken")
+            .field("applicant1HasMarriageBroken", "divorceOrDissolution=\"divorce\"")
+            .field("applicant1HasCivilPartnershipBroken", "divorceOrDissolution=\"dissolution\"")
             .field("applicant1PcqId")
             .field("applicant1Offline")
             .label("LabelApplicant1DetailsAreConfidential-Heading",

@@ -11,11 +11,15 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.CivilPartnershipBroken.CIVIL_PARTNERSHIP_BROKEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken.MARRIAGE_BROKEN;
 
 @Data
 @NoArgsConstructor
@@ -42,6 +46,7 @@ public class RetiredFields {
     private Set<ThePrayer> applicant1PrayerHasBeenGivenCheckbox;
     private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
     private ServiceMethod solServiceMethod;
+    private YesOrNo applicant1ScreenHasMarriageBroken;
     private DivorceDocument d11Document;
 
     @JsonIgnore
@@ -52,6 +57,7 @@ public class RetiredFields {
     private static final Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = Map.of(
         "exampleRetiredField", moveTo("applicant1FirstName"),
         "solServiceMethod", moveTo("serviceMethod"),
+        "applicant1ScreenHasMarriageBroken", transformMarriageBroken(),
         "d11Document", (data, key, val) -> data.put("answerReceivedSupportingDocuments",
             List.of(ListValue
                 .<DivorceDocument>builder()
@@ -90,5 +96,22 @@ public class RetiredFields {
 
     private static TriConsumer<Map<String, Object>, String, Object> moveTo(String newFieldName) {
         return (data, key, val) -> data.put(newFieldName, val);
+    }
+
+    private static TriConsumer<Map<String, Object>, String, Object> transformMarriageBroken() {
+
+        return (data, key, val) -> {
+
+            YesOrNo applicant1ScreenHasMarriageBroken = (YesOrNo)data.get("applicant1ScreenHasMarriageBroken");
+
+            if (applicant1ScreenHasMarriageBroken.toBoolean()) {
+                DivorceOrDissolution divorceOrDissolution = (DivorceOrDissolution) data.get("divorceOrDissolution");
+                if (divorceOrDissolution.isDivorce()) {
+                    data.put("applicant1HasMarriageBroken", MARRIAGE_BROKEN);
+                } else {
+                    data.put("applicant1HasCivilPartnershipBroken", CIVIL_PARTNERSHIP_BROKEN);
+                }
+            }
+        };
     }
 }

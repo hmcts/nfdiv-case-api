@@ -32,6 +32,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -50,10 +51,20 @@ public class Application {
     private static final int SUBMISSION_RESPONSE_DAYS = 14;
 
     @CCD(
-        label = "Has the applicant's ${labelContentMarriageOrCivilPartnership} broken down irretrievably?",
-        access = {DefaultAccess.class}
+        label = "Has the applicant's marriage broken down irretrievably?",
+        access = {DefaultAccess.class},
+        typeOverride = MultiSelectList,
+        typeParameterOverride = "MarriageBroken"
     )
-    private YesOrNo applicant1ScreenHasMarriageBroken;
+    private MarriageBroken applicant1HasMarriageBroken;
+
+    @CCD(
+        label = "Has the applicant's civil partnership broken down irretrievably?",
+        access = {DefaultAccess.class},
+        typeOverride = MultiSelectList,
+        typeParameterOverride = "CivilPartnershipBroken"
+    )
+    private CivilPartnershipBroken applicant1HasCivilPartnershipBroken;
 
     @CCD(
         label = "Has applicant 2's marriage broken down irretrievably?",
