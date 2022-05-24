@@ -207,9 +207,10 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         fieldCollectionBuilder
             .label("Label-CorrectStatementOfIrretrievableBreakdown", "### Statement of irretrievable breakdown")
             .complex(CaseData::getApplication)
-                .mandatoryWithLabel(Application::getApplicant1HasMarriageBroken,
-                "Has the ${labelContentApplicantsOrApplicant1s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
-                .mandatory(Application::getApplicant2ScreenHasMarriageBroken, JOINT_APPLICATION, null,
+                .mandatory(Application::getApplicant1HasMarriageBroken, "divorceOrDissolution=\"divorce\"")
+                .mandatory(Application::getApplicant1HasCivilPartnershipBroken, "divorceOrDissolution=\"dissolution\"")
+
+            .mandatory(Application::getApplicant2ScreenHasMarriageBroken, JOINT_APPLICATION, null,
                 "Has the ${labelContentRespondentsOrApplicant2s} ${labelContentMarriageOrCivilPartnership} broken down irretrievably?")
             .done();
     }
