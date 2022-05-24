@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant1;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.service.task.AddLastAlternativeServiceDocumentLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.util.List;
@@ -38,13 +39,16 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
 
     public static final String DRAFT_CONDITIONAL_ORDER = "draft-conditional-order";
 
-    @Autowired
-    private AddMiniApplicationLink addMiniApplicationLink;
-
     private final List<CcdPageConfiguration> pages = asList(
         new ConditionalOrderReviewAoS(),
         new ConditionalOrderReviewApplicant1()
     );
+
+    @Autowired
+    private AddMiniApplicationLink addMiniApplicationLink;
+
+    @Autowired
+    private AddLastAlternativeServiceDocumentLink addLastAlternativeServiceDocumentLink;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -86,7 +90,7 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseTasks(addMiniApplicationLink)
+            .data(caseTasks(addMiniApplicationLink, addLastAlternativeServiceDocumentLink)
                 .run(details)
                 .getData())
             .build();

@@ -6,6 +6,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -18,14 +19,22 @@ import java.util.List;
 @Component
 public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
 
+    private static final String NEVER_SHOW = "coApplicant1ConfirmInformationStillCorrect=\"NEVER_SHOW\"";
+
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
             .page("ConditionalOrderReviewAoS", this::midEvent)
             .pageLabel("Review Acknowledgement of Service - Draft Conditional Order Application")
-            .readonly(CaseData::getApplicationType, "coApplicant1ConfirmInformationStillCorrect=\"NEVER_SHOW\"")
+            .readonlyNoSummary(CaseData::getApplicationType, NEVER_SHOW)
+            .complex(CaseData::getAcknowledgementOfService)
+                .readonlyNoSummary(AcknowledgementOfService::getDateAosSubmitted, NEVER_SHOW)
+                .done()
             .complex(CaseData::getConditionalOrder)
-                .readonly(ConditionalOrder::getRespondentAnswersLink, "applicationType=\"soleApplication\"")
+                .readonly(ConditionalOrder::getLastAlternativeServiceDocumentLink,
+                " applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\"")
+                .readonly(ConditionalOrder::getRespondentAnswersLink,
+                    "applicationType=\"soleApplication\" AND dateAosSubmitted=\"*\"")
                 .done()
             .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)

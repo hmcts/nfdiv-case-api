@@ -5,8 +5,11 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.emptyList;
@@ -14,6 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.CHERISHED;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.COVERSHEET;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.OTHER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DEEMED_AS_SERVICE_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_GRANTED;
 
 class CaseDocumentsTest {
 
@@ -152,6 +158,35 @@ class CaseDocumentsTest {
         assertThat(CaseDocuments.hasAddedDocuments(after, before)).isFalse();
     }
 
+    @Test
+    void shouldReturnFirstGeneratedDocumentOfGivenType() {
+
+        final Document documentLink1 = Document.builder()
+            .filename("dispensedDocument1.pdf")
+            .build();
+        final Document documentLink2 = Document.builder()
+            .filename("deemedDocument1.pdf")
+            .build();
+        final Document documentLink3 = Document.builder()
+            .filename("dispensedDocument2.pdf")
+            .build();
+        final Document documentLink4 = Document.builder()
+            .filename("deemedDocument2.pdf")
+            .build();
+
+        final ListValue<DivorceDocument> documentListValue1 = documentWithType(DISPENSE_WITH_SERVICE_GRANTED, documentLink1);
+        final ListValue<DivorceDocument> documentListValue2 = documentWithType(DEEMED_AS_SERVICE_GRANTED, documentLink2);
+        final ListValue<DivorceDocument> documentListValue3 = documentWithType(DISPENSE_WITH_SERVICE_GRANTED, documentLink3);
+        final ListValue<DivorceDocument> documentListValue4 = documentWithType(DEEMED_AS_SERVICE_GRANTED, documentLink4);
+
+        final CaseDocuments caseDocuments = CaseDocuments.builder()
+            .documentsGenerated(List.of(documentListValue4, documentListValue2, documentListValue3, documentListValue1))
+            .build();
+
+        assertThat(caseDocuments.getFirstGeneratedDocumentLinkWith(DISPENSE_WITH_SERVICE_GRANTED)).isEqualTo(Optional.of(documentLink3));
+        assertThat(caseDocuments.getFirstGeneratedDocumentLinkWith(DEEMED_AS_SERVICE_GRANTED)).isEqualTo(Optional.of(documentLink4));
+    }
+
     private ListValue<ScannedDocument> getDocumentListValue(final String url,
                                                             final String filename,
                                                             final ScannedDocumentType scannedDocumentType) {
@@ -163,6 +198,19 @@ class CaseDocumentsTest {
                     .url(url)
                     .filename(filename)
                     .build())
+                .build())
+            .build();
+    }
+
+    private ListValue<DivorceDocument> documentWithType(final DocumentType documentType, final Document document) {
+
+        return ListValue.<DivorceDocument>builder()
+            .id(APPLICATION.getLabel())
+            .value(DivorceDocument
+                .builder()
+                .documentLink(document)
+                .documentFileName("test-draft-divorce-application-12345.pdf")
+                .documentType(documentType)
                 .build())
             .build();
     }

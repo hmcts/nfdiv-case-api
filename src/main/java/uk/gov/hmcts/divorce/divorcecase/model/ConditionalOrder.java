@@ -63,6 +63,11 @@ public class ConditionalOrder {
     private Document onlinePetitionLink;
 
     @CCD(
+        label = "Link to alternative service document"
+    )
+    private Document lastAlternativeServiceDocumentLink;
+
+    @CCD(
         label = "Grant Conditional Order?"
     )
     private YesOrNo granted;
