@@ -8,9 +8,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -18,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken.MARRIAGE_BROKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,7 +36,8 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
     @Test
     public void shouldPreventProgressIfMarriageNotBroken() {
         final CaseData caseData = caseData();
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
+        Set<MarriageBroken> marriageBroken = new HashSet<>();
+        caseData.getApplication().setApplicant1HasMarriageBroken(marriageBroken);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -57,7 +62,9 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
     @Test
     public void shouldPreventProgressIfMarriageNotBrokenForBothApplicants() {
         final CaseData caseData = caseData();
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
+        Set<MarriageBroken> marriageBroken = new HashSet<>();
+        caseData.getApplication().setApplicant1HasMarriageBroken(marriageBroken);
+
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -82,7 +89,6 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
         assertThat(actualResponse.getErrors()).containsExactlyInAnyOrder(
             "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken",
             "To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
-
     }
 
     @Test
@@ -111,7 +117,11 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
     @Test
     public void shouldAllowProgressIfMarriageIsBrokenForBothApplicants() {
         final CaseData caseData = caseData();
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
+
+        Set<MarriageBroken> marriageBroken = new HashSet<>();
+        marriageBroken.add(MARRIAGE_BROKEN);
+        caseData.getApplication().setApplicant1HasMarriageBroken(marriageBroken);
+
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

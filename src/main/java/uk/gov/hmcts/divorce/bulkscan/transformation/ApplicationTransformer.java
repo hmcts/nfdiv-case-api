@@ -96,6 +96,14 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
                 civilPartnershipBroken.add(CIVIL_PARTNERSHIP_BROKEN);
                 caseData.getApplication().setApplicant1HasCivilPartnershipBroken(civilPartnershipBroken);
             }
+        } else {
+            if (caseData.isDivorce()) {
+                var marriageBroken = new HashSet<MarriageBroken>();
+                caseData.getApplication().setApplicant1HasMarriageBroken(marriageBroken);
+            } else {
+                var civilPartnershipBroken = new HashSet<CivilPartnershipBroken>();
+                caseData.getApplication().setApplicant1HasCivilPartnershipBroken(civilPartnershipBroken);
+            }
         }
 
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(

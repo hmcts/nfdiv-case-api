@@ -1,6 +1,6 @@
 {
-  "applicant1HasMarriageBroken": ["marriageBroken"],
-  "applicant2ScreenHasMarriageBroken": "Yes",
+  "applicant1HasCivilPartnershipBroken": ["civilPartnershipBroken"],
+  "applicant2ScreenHasMarriageBroken": "No",
   "screenHasMarriageCert": null,
   "marriageApplicant1Name": null,
   "marriageApplicant2Name": null,
@@ -26,7 +26,6 @@
     "A",
     "B",
     "C",
-    "J",
     "E",
     "F",
     "I2"
@@ -100,6 +99,5 @@
   "applicant1IsApplicant2Represented": null,
   "applicant1SolicitorAnswersLink": null,
   "applicant2SolicitorAnswersLink": null,
-  "progressPaperCase": null,
-  "soleOrApplicant1ConfirmationOfBreakdown": "true"
+  "progressPaperCase": null
 }

@@ -1,5 +1,5 @@
 {
-  "applicant1ScreenHasMarriageBroken": "Yes",
+  "applicant1HasMarriageBroken": ["marriageBroken"],
   "applicant2ScreenHasMarriageBroken": "No",
   "screenHasMarriageCert": null,
   "marriageApplicant1Name": null,

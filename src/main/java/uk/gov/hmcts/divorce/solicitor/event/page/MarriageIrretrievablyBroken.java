@@ -39,8 +39,13 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
         List<String> errors = new ArrayList<>();
         Application application = data.getApplication();
 
-        if (data.isDivorce() && !(application.getApplicant1HasMarriageBroken().contains(MARRIAGE_BROKEN))
-            || !data.isDivorce() && !(application.getApplicant1HasCivilPartnershipBroken().contains(CIVIL_PARTNERSHIP_BROKEN))) {
+        if (data.isDivorce()
+            && application.getApplicant1HasMarriageBroken() != null
+            && !(application.getApplicant1HasMarriageBroken().contains(MARRIAGE_BROKEN))
+
+            || !data.isDivorce()
+            && application.getApplicant1HasCivilPartnershipBroken() != null
+            && !(application.getApplicant1HasCivilPartnershipBroken().contains(CIVIL_PARTNERSHIP_BROKEN))) {
             errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
         }
 
