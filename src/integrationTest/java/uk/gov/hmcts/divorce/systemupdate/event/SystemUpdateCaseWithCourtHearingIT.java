@@ -32,6 +32,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -173,7 +174,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
     }
 
     @Test
-    public void givenBothApplicantsAreRepresentedSendEmailToBothApplicantSolicitors() throws Exception {
+    public void givenBothApplicantsAreRepresentedAndIsDigitalApplicationSendEmailToBothApplicantSolicitors() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -217,6 +218,50 @@ public class SystemUpdateCaseWithCourtHearingIT {
             .sendEmail(eq("app2-solicitor@test.com"), eq(SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenBothApplicantsAreRepresentedAndIsPaperApplicationThenNoEmailsSent() throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Certificate_Of_Entitlement.docx");
+
+        CaseData data = validCaseWithCourtHearing();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant1().setOffline(YES);
+        data.getApplicant1().setSolicitorRepresented(YES);
+        data.getApplicant1().setSolicitor(
+            Solicitor.builder()
+                .name("App1 Sol")
+                .email(TEST_SOLICITOR_EMAIL)
+                .reference("App1 Ref")
+                .build()
+        );
+        data.getApplicant2().setOffline(YES);
+        data.getApplicant2().setEmail("");
+        data.getApplicant2().setSolicitorRepresented(YES);
+        data.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .name("App2 Sol")
+                .email("app2-solicitor@test.com")
+                .reference("App2 Ref")
+                .build()
+        );
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        verifyNoInteractions(notificationService);
     }
 
     private String expectedCcdAboutToSubmitCallbackSuccess() throws IOException {

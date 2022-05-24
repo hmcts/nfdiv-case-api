@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -60,13 +61,15 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
-        log.info("Sending entitlement granted on conditional order notification to applicant 1 solicitor for case : {}", id);
+        if (!caseData.getApplicant1().isOffline()) {
+            log.info("Sending entitlement granted on conditional order notification to applicant 1 solicitor for case : {}", id);
 
-        notificationService.sendEmail(
-            caseData.getApplicant1().getSolicitor().getEmail(),
-            SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
-            templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference());
+            notificationService.sendEmail(
+                caseData.getApplicant1().getSolicitor().getEmail(),
+                SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
+                templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+                caseData.getApplicant1().getLanguagePreference());
+        }
     }
 
     @Override
@@ -86,13 +89,15 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
 
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
-        log.info("Sending entitlement granted on conditional order notification to applicant 2 solicitor for case : {}", id);
+        if (!StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || !caseData.getApplicant2().isOffline()) {
+            log.info("Sending entitlement granted on conditional order notification to applicant 2 solicitor for case : {}", id);
 
-        notificationService.sendEmail(
-            caseData.getApplicant2().getSolicitor().getEmail(),
-            SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
-            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference());
+            notificationService.sendEmail(
+                caseData.getApplicant2().getSolicitor().getEmail(),
+                SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
+                templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+                caseData.getApplicant2().getLanguagePreference());
+        }
     }
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {

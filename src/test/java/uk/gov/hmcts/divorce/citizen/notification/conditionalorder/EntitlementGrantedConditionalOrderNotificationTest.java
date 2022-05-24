@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
@@ -143,6 +144,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
     void shouldSendEmailToApplicant1SolicitorWithCourtHearingContent() {
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.getApplicant1().setOffline(YesOrNo.NO);
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.getApplicant1().setSolicitor(
             Solicitor.builder()
@@ -178,7 +180,18 @@ class EntitlementGrantedConditionalOrderNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
 
+    @Test
+    void shouldNotSendEmailToApplicant1SolicitorIfNotDigitalApplication() {
+        CaseData data = validCaseWithCourtHearing();
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.getApplicant1().setOffline(YesOrNo.YES);
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+
+        entitlementGrantedConditionalOrderNotification.sendToApplicant1Solicitor(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
     }
 
     @Test
@@ -220,6 +233,22 @@ class EntitlementGrantedConditionalOrderNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendEmailToApplicant2SolicitorIfNotDigitalApplication() {
+        CaseData data = validCaseWithCourtHearing();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.getApplicant2().setOffline(YesOrNo.YES);
+        data.getApplicant2().setEmail("");
+        data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        entitlementGrantedConditionalOrderNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
     }
 
     @Test
