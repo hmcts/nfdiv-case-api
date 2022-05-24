@@ -163,7 +163,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION,
             isMissingTranslatedMarriageCertificate && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION,
-            missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && !caseData.isDivorce() ? YES : NO);
+            isMissingTranslatedMarriageCertificate && !caseData.isDivorce() ? YES : NO);
 
         templateVars.put(MISSING_NAME_CHANGE_PROOF, missingDocTypes.contains(NAME_CHANGE_EVIDENCE) && !isNull(nameChangedHowSet(caseData))
             && !nameChangedHowSet(caseData).contains(ChangedNameHow.MARRIAGE_CERTIFICATE) ? YES : NO);
