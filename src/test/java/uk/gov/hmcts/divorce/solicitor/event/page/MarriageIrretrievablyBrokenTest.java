@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.CivilPartnershipBroken.CIVIL_PARTNERSHIP_BROKEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken.MARRIAGE_BROKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -49,6 +50,7 @@ class MarriageIrretrievablyBrokenTest {
     @Test
     public void shouldPreventProgressIfCivilPartnershipNotBroken() {
         final CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
         Set<CivilPartnershipBroken> civilPartnershipBroken = new HashSet<>();
         caseData.getApplication().setApplicant1HasCivilPartnershipBroken(civilPartnershipBroken);
 
