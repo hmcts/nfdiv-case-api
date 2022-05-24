@@ -345,6 +345,12 @@ public class Application {
     private RejectReason rejectReason;
 
     @CCD(
+        label = "Current state",
+        access = {CaseworkerAccess.class}
+    )
+    private State currentState;
+
+    @CCD(
         label = "Previous state",
         access = {CaseworkerAccess.class}
     )
@@ -570,5 +576,10 @@ public class Application {
     @JsonIgnore
     public boolean isPaperCase() {
         return YES.equals(newPaperCase);
+    }
+
+    @JsonIgnore
+    public String getPbaNumber() {
+        return this.getPbaNumbers().getValue().getLabel();
     }
 }

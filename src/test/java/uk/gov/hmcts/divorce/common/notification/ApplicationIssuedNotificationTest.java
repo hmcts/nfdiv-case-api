@@ -58,6 +58,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITO
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -183,7 +184,6 @@ public class ApplicationIssuedNotificationTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant2().setEmail(null);
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
@@ -216,7 +216,6 @@ public class ApplicationIssuedNotificationTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setDivorceOrDissolution(DISSOLUTION);
         data.setDueDate(LocalDate.now().plusDays(141));
-        data.getApplication().setIssueDate(LocalDate.now());
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant2().setEmail(null);
 
@@ -384,6 +383,34 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+            nopSolicitorTemplateVars(),
+            ENGLISH
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendNotificationToApplicantSolicitorOnReissue() {
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicantRepresentedBySolicitor())
+            .applicant2(respondent())
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().issueDate(LOCAL_DATE).reissueDate(LOCAL_DATE.plusDays(2)).build())
+            .build();
+
+        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+
+        notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            TEST_SOLICITOR_EMAIL,
+            SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE,
             nopSolicitorTemplateVars(),
             ENGLISH
         );

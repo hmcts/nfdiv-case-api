@@ -66,10 +66,10 @@ doc_assembly:
 docmosis:
   templates:
     english:
-      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_V4.docx
-      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V4.docx
+      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_V5.docx
+      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V5.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
-      REFUSAL_ORDER: NFD_Refusal_Order.docx
+      REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
@@ -83,7 +83,7 @@ docmosis:
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
-      NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx
+      NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed_V2.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
       COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
@@ -120,7 +120,7 @@ docmosis:
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx #TODO: update content
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx #TODO: update content
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx #TODO: update content
-      NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed.docx #TODO: update content
+      NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed_V2.docx #TODO: update content
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx #TODO: update content
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx #TODO: update content
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx

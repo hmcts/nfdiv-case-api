@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REMINDER_WHEN_APPLICANT1_REPRESENTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -41,21 +42,49 @@ public class ApplicationRemindApplicant2Notification implements ApplicantNotific
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending reminder to applicant 2 to review case : {}", id);
 
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
-            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), true),
-            caseData.getApplicant1().getLanguagePreference()
-        );
+        if (caseData.getApplicant1().isRepresented()) {
+
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                JOINT_APPLICANT2_REMINDER_WHEN_APPLICANT1_REPRESENTED,
+                solicitorTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+
+        } else {
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
+                citizenTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), true),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+
+        }
+
+
     }
 
-    private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, boolean isReminder) {
+    private Map<String, String> citizenTemplateVars(CaseData caseData,
+                                                    Long id,
+                                                    Applicant applicant,
+                                                    Applicant partner,
+                                                    boolean isReminder) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(IS_REMINDER, isReminder ? YES : NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateVars.put(CREATE_ACCOUNT_LINK,
             config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
+        return templateVars;
+    }
+
+    private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
+        templateVars.put(CREATE_ACCOUNT_LINK,
+            config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
+
         return templateVars;
     }
 }

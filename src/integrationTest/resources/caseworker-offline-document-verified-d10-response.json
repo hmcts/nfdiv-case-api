@@ -18,7 +18,43 @@
     "howToRespondApplication": "disputeDivorce",
     "typeOfDocumentAttached": "D10",
     "dueDate": "${json-unit.any-string}",
-    "dataVersion": 3,
+    "documentsUploaded": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
+            "document_filename": "doc1.pdf",
+            "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
+          },
+          "documentDateAdded": "${json-unit.any-string}",
+          "documentComment": "Reclassified scanned document",
+          "documentFileName": "doc1.pdf",
+          "documentType": "respondentAnswers"
+        }
+      }
+    ],
+    "scannedDocuments": [
+      {
+        "value": {
+          "type": "other",
+          "subtype": "aos",
+          "url": {
+            "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
+            "document_filename": "doc1.pdf",
+            "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
+          },
+          "fileName": "doc1.pdf"
+        }
+      }
+    ],
+    "scannedDocumentNames": {
+      "value": {
+        "label": "doc1.pdf"
+      },
+      "valueLabel": "doc1.pdf"
+    },
+    "dataVersion": 4,
     "warnings": []
   },
   "state": "Holding"

@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -30,6 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class SubmitClarification implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_CLARIFICATION = "submit-clarification";
+    private static final String NEVER_SHOW = "coRefusalDecision=\"NEVER_SHOW\"";
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -55,11 +58,11 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             .page("submitClarificationForCO")
             .pageLabel("Submit clarification for conditional order")
             .complex(CaseData::getConditionalOrder)
+                .readonly(ConditionalOrder::getCannotUploadClarificationDocuments, NEVER_SHOW)
                 .readonly(ConditionalOrder::getRefusalDecision)
-                .readonly(ConditionalOrder::getRefusalRejectionReason)
+                .readonly(ConditionalOrder::getRefusalOrderDocument)
                 .readonly(ConditionalOrder::getRefusalClarificationAdditionalInfo)
                 .mandatory(ConditionalOrder::getClarificationResponses)
-                .mandatory(ConditionalOrder::getCannotUploadClarificationDocuments)
                 .optional(ConditionalOrder::getClarificationUploadDocuments)
             .done();
     }
@@ -71,9 +74,18 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
 
         final CaseData data = details.getData();
         final boolean cannotUploadDocuments = data.getConditionalOrder().cannotUploadClarificationDocumentsBoolean();
+        final boolean clarificationDocumentsUploaded = isNotEmpty(data.getConditionalOrder().getClarificationUploadDocuments());
 
         if (cannotUploadDocuments) {
             notificationDispatcher.send(postInformationToCourtNotification, data, details.getId());
+        }
+
+        if (clarificationDocumentsUploaded) {
+            data.getConditionalOrder().getClarificationUploadDocuments()
+                .forEach(documentListValue ->
+                    data.getDocuments().setDocumentsUploaded(
+                        addDocumentToTop(data.getDocuments().getDocumentsUploaded(), documentListValue.getValue())
+                    ));
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
