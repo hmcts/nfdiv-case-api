@@ -368,6 +368,14 @@ public enum State {
         Applicant2Approved
     ));
 
+    public static final EnumSet<State> PRE_RETURN_TO_PREVIOUS_STATES = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
+        Applicant2Approved,
+        AwaitingPronouncement
+    ));
+
     public static final EnumSet<State> POST_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
         Draft,
         AwaitingApplicant1Response,
