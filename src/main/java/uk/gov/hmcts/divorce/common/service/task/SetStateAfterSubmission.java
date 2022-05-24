@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static java.util.Objects.nonNull;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -28,9 +28,9 @@ public class SetStateAfterSubmission implements CaseTask {
         final boolean isHWFApplicant2 = application.isHelpWithFeesApplicationApplicant2();
         final boolean isSoleApplication =  nonNull(caseData.getApplicationType())
             && caseData.getApplicationType().isSole();
-        final boolean isApplicant1AwaitingDocuments = YES.equals(application.getApplicant1CannotUpload())
+        final boolean isApplicant1AwaitingDocuments = !isEmpty(application.getApplicant1CannotUploadSupportingDocument())
             || isSoleApplication && application.isPersonalServiceMethod();
-        final boolean isApplicant2AwaitingDocuments = YES.equals(application.getApplicant2CannotUpload());
+        final boolean isApplicant2AwaitingDocuments = application.hasAwaitingApplicant2Documents();
 
         if (isSoleApplication && isHWFApplicant1) {
             if (isApplicant1AwaitingDocuments) {

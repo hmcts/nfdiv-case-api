@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
+import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 
@@ -165,11 +166,12 @@ class SetStateAfterSubmissionTest {
                 .build())
             .applicationPayments(singletonList(payment))
             .applicant1CannotUpload(YES)
-            .applicant1WantsToHavePapersServedAnotherWay(YES)
+            .serviceMethod(ServiceMethod.PERSONAL_SERVICE)
             .build();
 
         final var caseData = caseData();
         caseData.setApplication(application);
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
