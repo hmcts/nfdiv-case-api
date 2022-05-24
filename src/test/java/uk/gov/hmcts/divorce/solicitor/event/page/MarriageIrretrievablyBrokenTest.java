@@ -48,11 +48,48 @@ class MarriageIrretrievablyBrokenTest {
     }
 
     @Test
+    public void shouldPreventProgressIfMarriageNotBrokenNull() {
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(1L);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertEquals(response.getErrors().size(), 1);
+        assertEquals(
+            response.getErrors().get(0),
+            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken"
+        );
+    }
+
+    @Test
     public void shouldPreventProgressIfCivilPartnershipNotBroken() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         Set<CivilPartnershipBroken> civilPartnershipBroken = new HashSet<>();
         caseData.getApplication().setApplicant1HasCivilPartnershipBroken(civilPartnershipBroken);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(1L);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertEquals(response.getErrors().size(), 1);
+        assertEquals(
+            response.getErrors().get(0),
+            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken"
+        );
+    }
+
+    @Test
+    public void shouldPreventProgressIfCivilPartnershipNotBrokenNull() {
+        final CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -114,6 +151,7 @@ class MarriageIrretrievablyBrokenTest {
     @Test
     public void shouldAllowProgressIfCivilPartnershipIsBroken() {
         final CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
         Set<CivilPartnershipBroken> civilPartnershipBroken = new HashSet<>();
         civilPartnershipBroken.add(CIVIL_PARTNERSHIP_BROKEN);
         caseData.getApplication().setApplicant1HasCivilPartnershipBroken(civilPartnershipBroken);

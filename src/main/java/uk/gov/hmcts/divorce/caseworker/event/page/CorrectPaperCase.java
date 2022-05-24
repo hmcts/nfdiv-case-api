@@ -312,14 +312,16 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         final Application application = data.getApplication();
         final List<String> errors = new ArrayList<>();
 
-        if (data.isDivorce()
-            && application.getApplicant1HasMarriageBroken() != null
-            && !(application.getApplicant1HasMarriageBroken().contains(MARRIAGE_BROKEN))
-
-            || !data.isDivorce()
-            && application.getApplicant1HasCivilPartnershipBroken() != null
-            && !(application.getApplicant1HasCivilPartnershipBroken().contains(CIVIL_PARTNERSHIP_BROKEN))) {
-            errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
+        if (data.isDivorce()) {
+            if (application.getApplicant1HasMarriageBroken() == null
+                || !(application.getApplicant1HasMarriageBroken().contains(MARRIAGE_BROKEN))) {
+                errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
+            }
+        } else {
+            if (application.getApplicant1HasCivilPartnershipBroken() == null
+                || !(application.getApplicant1HasCivilPartnershipBroken().contains(CIVIL_PARTNERSHIP_BROKEN))) {
+                errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
+            }
         }
 
         if (!data.getApplicationType().isSole()

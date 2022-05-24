@@ -68,12 +68,49 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
+    public void shouldReturnErrorsIfScreenHasMarriageBrokenIsNull() {
+        final CaseData caseData = validApplicant2CaseData();
+
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors())
+            .contains("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
+        assertThat(response.getErrors())
+            .contains("To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
+    }
+
+    @Test
     public void shouldReturnErrorsIfScreenHasCivilPartnershipBrokenIsNo() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
 
         Set<CivilPartnershipBroken> civilPartnershipBroken = new HashSet<>();
         caseData.getApplication().setApplicant1HasCivilPartnershipBroken(civilPartnershipBroken);
+
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors())
+            .contains("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
+        assertThat(response.getErrors())
+            .contains("To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
+    }
+
+    @Test
+    public void shouldReturnErrorsIfScreenHasCivilPartnershipBrokenIsNull() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
 
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
 
