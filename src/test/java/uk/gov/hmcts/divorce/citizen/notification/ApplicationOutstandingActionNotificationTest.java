@@ -82,6 +82,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(MARRIAGE_CERTIFICATE_TRANSLATION);
         docs.add(NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -202,6 +203,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -238,6 +240,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
