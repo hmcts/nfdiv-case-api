@@ -141,16 +141,16 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         boolean ukMarriage = caseData.getApplication().getMarriageDetails().getMarriedInUk().toBoolean();
 
         boolean isMissingMarriageCertificate = missingDocTypes.contains(MARRIAGE_CERTIFICATE)
-            || (missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
+            || missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
                 && Optional.ofNullable(nameChangedHowSet(caseData)).orElse(Set.of()).contains(ChangedNameHow.MARRIAGE_CERTIFICATE)
                 && Optional.ofNullable(
-                    caseData.getApplication().getMarriageDetails().getCertifiedTranslation()).orElse(YesOrNo.NO).equals(YesOrNo.NO));
+                    caseData.getApplication().getMarriageDetails().getCertifiedTranslation()).orElse(YesOrNo.NO).equals(YesOrNo.NO);
 
         boolean isMissingTranslatedMarriageCertificate = missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION)
-            || (missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
+            || missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
                 && Optional.ofNullable(nameChangedHowSet(caseData)).orElse(Set.of()).contains(ChangedNameHow.MARRIAGE_CERTIFICATE)
                 && Optional.ofNullable(
-                    caseData.getApplication().getMarriageDetails().getCertifiedTranslation()).orElse(YesOrNo.NO).equals(YesOrNo.YES));
+                    caseData.getApplication().getMarriageDetails().getCertifiedTranslation()).orElse(YesOrNo.NO).equals(YesOrNo.YES);
 
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE,
             isMissingMarriageCertificate && ukMarriage && caseData.isDivorce() ? YES : NO);
