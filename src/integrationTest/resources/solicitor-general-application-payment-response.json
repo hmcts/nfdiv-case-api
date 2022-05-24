@@ -59,7 +59,7 @@
         "documentType": "d11"
       }
     }],
-    "dataVersion": 4,
+    "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
   "state": "GeneralApplicationReceived"

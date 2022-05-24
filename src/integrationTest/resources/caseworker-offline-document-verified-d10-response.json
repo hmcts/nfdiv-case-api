@@ -54,7 +54,7 @@
       },
       "valueLabel": "doc1.pdf"
     },
-    "dataVersion": 4,
+    "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
   "state": "Holding"
