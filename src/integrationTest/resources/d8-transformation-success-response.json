@@ -121,7 +121,7 @@
         "PostCode": "",
         "Country": ""
       },
-      "applicant1ScreenHasMarriageBroken": "Yes",
+      "applicant1HasMarriageBroken": ["marriageBroken"],
       "paperFormApplicant2LegalRepSigningSOT": "No",
       "warnings": [],
       "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],

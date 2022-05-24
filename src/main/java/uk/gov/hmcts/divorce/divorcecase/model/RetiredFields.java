@@ -57,7 +57,7 @@ public class RetiredFields {
     private static final Map<String, TriConsumer<Map<String, Object>, String, Object>> migrations = Map.of(
         "exampleRetiredField", moveTo("applicant1FirstName"),
         "solServiceMethod", moveTo("serviceMethod"),
-        "applicant1ScreenHasMarriageBroken", transformMarriageBroken(),
+        "applicant1ScreenHasMarriageBroken", migrateMarriageBroken(),
         "d11Document", (data, key, val) -> data.put("answerReceivedSupportingDocuments",
             List.of(ListValue
                 .<DivorceDocument>builder()
@@ -98,7 +98,7 @@ public class RetiredFields {
         return (data, key, val) -> data.put(newFieldName, val);
     }
 
-    private static TriConsumer<Map<String, Object>, String, Object> transformMarriageBroken() {
+    private static TriConsumer<Map<String, Object>, String, Object> migrateMarriageBroken() {
 
         return (data, key, val) -> {
 

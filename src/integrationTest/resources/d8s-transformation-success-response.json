@@ -76,7 +76,7 @@
       "applicant2SolSignStatementOfTruth": "No",
       "applicant1PhoneNumber": "",
       "applicant2HWFNeedHelp": "Yes",
-      "applicant1ScreenHasMarriageBroken": "Yes",
+      "applicant1HasMarriageBroken": ["marriageBroken"],
       "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
       "jurisdictionConnections": [
         "A"
