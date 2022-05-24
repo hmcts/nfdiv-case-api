@@ -24,7 +24,7 @@
       "valueLabel": "scannedDocumentName",
       "valueCode": "${json-unit.ignore}"
     },
-    "dataVersion": 4,
+    "dataVersion": "${json-unit.any-number}",
     "warnings": []
   }
 }
