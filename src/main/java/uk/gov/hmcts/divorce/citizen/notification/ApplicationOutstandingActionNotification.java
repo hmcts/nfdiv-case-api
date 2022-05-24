@@ -140,14 +140,14 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         Set<DocumentType> missingDocTypes = caseData.getApplication().getMissingDocumentTypes();
         boolean ukMarriage = caseData.getApplication().getMarriageDetails().getMarriedInUk().toBoolean();
 
-        boolean isMissingMarriageCertificate = missingDocTypes.contains(MARRIAGE_CERTIFICATE) ||
-            (missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
+        boolean isMissingMarriageCertificate = missingDocTypes.contains(MARRIAGE_CERTIFICATE)
+            || (missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
                 && Optional.ofNullable(nameChangedHowSet(caseData)).orElse(Set.of()).contains(ChangedNameHow.MARRIAGE_CERTIFICATE)
                 && Optional.ofNullable(
                     caseData.getApplication().getMarriageDetails().getCertifiedTranslation()).orElse(YesOrNo.NO).equals(YesOrNo.NO));
 
-        boolean isMissingTranslatedMarriageCertificate = missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) ||
-            (missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
+        boolean isMissingTranslatedMarriageCertificate = missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION)
+            || (missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
                 && Optional.ofNullable(nameChangedHowSet(caseData)).orElse(Set.of()).contains(ChangedNameHow.MARRIAGE_CERTIFICATE)
                 && Optional.ofNullable(
                     caseData.getApplication().getMarriageDetails().getCertifiedTranslation()).orElse(YesOrNo.NO).equals(YesOrNo.YES));
@@ -161,7 +161,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE,
             isMissingMarriageCertificate && !ukMarriage && !caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION,
-            isMissingTranslatedMarriageCertificate && caseData.isDivorce() ? YES : NO );
+            isMissingTranslatedMarriageCertificate && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION,
             missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && !caseData.isDivorce() ? YES : NO);
 
