@@ -390,6 +390,12 @@ public class Application {
     private YesOrNo applicant2ReminderSent;
 
     @CCD(
+        label = "Reminder that respondent solicitor needs to respond to the application",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo respondentSolicitorReminderSent;
+
+    @CCD(
         label = "Reminder sent to Applicants indicating they can apply for Conditional Order",
         access = {DefaultAccess.class}
     )
