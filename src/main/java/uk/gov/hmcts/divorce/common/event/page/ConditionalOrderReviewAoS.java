@@ -20,23 +20,22 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-
         pageBuilder
             .page("ConditionalOrderReviewAoS", this::midEvent)
             .pageLabel("Review Acknowledgement of Service - Draft Conditional Order Application")
+            .readonly(CaseData::getApplicationType, "coApplicant1ConfirmInformationStillCorrect=\"NEVER_SHOW\"")
             .complex(CaseData::getConditionalOrder)
-                .readonly(ConditionalOrder::getRespondentAnswersLink)
-            .done()
+                .readonly(ConditionalOrder::getRespondentAnswersLink, "applicationType=\"soleApplication\"")
+                .done()
             .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                 .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
                 .done()
-                .label(
-                    "ConditionalOrderReviewAoSNo",
-                    "You must select yes to apply for a conditional order",
-                    "coApplicant1ApplyForConditionalOrder=\"No\""
-                )
-            .done();
+            .label(
+                "ConditionalOrderReviewAoSNo",
+                "You must select yes to apply for a conditional order",
+                "coApplicant1ApplyForConditionalOrder=\"No\""
+            );
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
