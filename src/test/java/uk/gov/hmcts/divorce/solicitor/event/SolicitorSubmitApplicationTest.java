@@ -9,6 +9,8 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
@@ -62,6 +64,14 @@ public class SolicitorSubmitApplicationTest {
 
     private static final String STATEMENT_OF_TRUTH_ERROR_MESSAGE =
         "Statement of truth must be accepted by the person making the application";
+    private static final String PBA_NUMBER = "PBA0012345";
+    private static final String FEE_ACCOUNT_REF = "REF01";
+
+    private static final OrderSummary orderSummary = OrderSummary
+        .builder()
+        .paymentTotal("55000")
+        .fees(singletonList(getFeeListValue()))
+        .build();
 
     @Mock
     private PaymentService paymentService;
@@ -107,7 +117,6 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldAddPaymentIfPaymentsExists() {
 
-        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
@@ -129,17 +138,21 @@ public class SolicitorSubmitApplicationTest {
         final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicationPayments(payments);
         caseData.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        caseData.getApplication().setPbaNumbers(
+            DynamicList.builder()
+                .value(DynamicListElement.builder().label(PBA_NUMBER).build())
+                .build()
+        );
+        caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder()
-                    .paymentTotal("55000")
-                    .fees(singletonList(getFeeListValue()))
-                    .build());
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null)).thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+            .thenReturn(pbaResponse);
 
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
         expectedCaseDetails.setId(TEST_CASE_ID);
@@ -247,15 +260,15 @@ public class SolicitorSubmitApplicationTest {
 
         final var caseData = validApplicant1CaseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setApplicationFeeOrderSummary(
-            OrderSummary
-                .builder()
-                .paymentTotal("55000")
-                .fees(singletonList(getFeeListValue()))
-                .build()
-        );
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         caseData.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        caseData.getApplication().setPbaNumbers(
+            DynamicList.builder()
+                .value(DynamicListElement.builder().label(PBA_NUMBER).build())
+                .build()
+        );
+        caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -272,7 +285,8 @@ public class SolicitorSubmitApplicationTest {
         when(submissionService.submitApplication(caseDetails)).thenReturn(expectedCaseDetails);
 
         var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null)).thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+            .thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, beforeCaseDetails);
@@ -423,19 +437,20 @@ public class SolicitorSubmitApplicationTest {
         final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
-        caseData.getApplication().setApplicationFeeOrderSummary(
-            OrderSummary
-                .builder()
-                .paymentTotal("55000")
-                .fees(singletonList(getFeeListValue()))
+        caseData.getApplication().setPbaNumbers(
+            DynamicList.builder()
+                .value(DynamicListElement.builder().label(PBA_NUMBER).build())
                 .build()
         );
+        caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null)).thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+            .thenReturn(pbaResponse);
 
         mockExpectedCaseDetails(caseDetails, caseData, Submitted);
 
@@ -453,19 +468,20 @@ public class SolicitorSubmitApplicationTest {
         final var caseData = validApplicant1CaseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
-        caseData.getApplication().setApplicationFeeOrderSummary(
-            OrderSummary
-                .builder()
-                .paymentTotal("55000")
-                .fees(singletonList(getFeeListValue()))
+        caseData.getApplication().setPbaNumbers(
+            DynamicList.builder()
+                .value(DynamicListElement.builder().label(PBA_NUMBER).build())
                 .build()
         );
+        caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null)).thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+            .thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToSubmit(caseDetails, beforeCaseDetails);

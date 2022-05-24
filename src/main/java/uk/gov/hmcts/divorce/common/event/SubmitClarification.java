@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class SubmitClarification implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_CLARIFICATION = "submit-clarification";
+    private static final String NEVER_SHOW = "coRefusalDecision=\"NEVER_SHOW\"";
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -57,6 +58,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             .page("submitClarificationForCO")
             .pageLabel("Submit clarification for conditional order")
             .complex(CaseData::getConditionalOrder)
+                .readonly(ConditionalOrder::getCannotUploadClarificationDocuments, NEVER_SHOW)
                 .readonly(ConditionalOrder::getRefusalDecision)
                 .readonly(ConditionalOrder::getRefusalOrderDocument)
                 .readonly(ConditionalOrder::getRefusalClarificationAdditionalInfo)
