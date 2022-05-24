@@ -185,6 +185,11 @@ public class ConditionalOrder {
     )
     private DivorceDocument certificateOfEntitlementDocument;
 
+    @CCD(
+        label = "Refusal Rejection reasons"
+    )
+    private Document refusalOrderDocument;
+
     @JsonIgnore
     public boolean areClaimsGranted() {
         return nonNull(claimsGranted) && claimsGranted.toBoolean();

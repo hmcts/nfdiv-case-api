@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVer
 import static uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService.OfflineDocumentReceived.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
@@ -151,7 +152,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
                 .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
                 .content(
                     objectMapper.writeValueAsString(
-                        callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
+                        callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, AosDrafted.name())))
                 .accept(APPLICATION_JSON))
             .andReturn()
             .getResponse()
