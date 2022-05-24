@@ -18,6 +18,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.CivilPartnershipBroken.CIVIL_PARTNERSHIP_BROKEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken.MARRIAGE_BROKEN;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SOT_REQUIRED;
@@ -35,6 +36,25 @@ public class CorrectPaperCaseTest {
         Set<MarriageBroken> marriageBroken = new HashSet<>();
         marriageBroken.add(MARRIAGE_BROKEN);
         caseData.getApplication().setApplicant1HasMarriageBroken(marriageBroken);
+
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).isEmpty();
+    }
+
+    @Test
+    public void shouldSuccessfullyValidateValuesPassedByUserDissolution() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+
+        Set<CivilPartnershipBroken> civilPartnershipBroken = new HashSet<>();
+        civilPartnershipBroken.add(CIVIL_PARTNERSHIP_BROKEN);
+        caseData.getApplication().setApplicant1HasCivilPartnershipBroken(civilPartnershipBroken);
 
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
 
