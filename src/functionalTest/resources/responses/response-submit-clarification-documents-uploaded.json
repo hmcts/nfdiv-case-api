@@ -7,32 +7,16 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1Address": {
-      "AddressLine1": "221a Baker Street",
-      "PostTown": "London",
-      "County": "Greater London",
-      "PostCode": "NW1 6XE",
-      "Country": "United Kingdom"
-    },
     "applicant1Gender": "female",
     "applicant1ContactDetailsType": "private",
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "Yes",
-    "applicant1PrayerDissolveDivorce": [
-      "dissolveDivorce"
-    ],
+    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
     "applicant2FirstName": "test_first_name_2",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name_2",
     "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2LanguagePreferenceWelsh": "No",
-    "applicant2Address": {
-      "AddressLine1": "221a Baker Street",
-      "PostTown": "London",
-      "County": "Greater London",
-      "PostCode": "NW1 6XE",
-      "Country": "United Kingdom"
-    },
     "applicant2Gender": "male",
     "applicant2ContactDetailsType": "public",
     "applicant2FinancialOrder": "No",
@@ -42,46 +26,39 @@
     "marriageDate": "1990-06-10",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
-    "jurisdictionConnections": [
-      "A"
-    ],
+    "jurisdictionConnections": ["A"],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant1StatementOfTruth": "Yes",
     "applicant2StatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000"
     },
+    "documentUploadComplete": "Yes",
     "issueDate": "2020-05-28",
-    "applicationPayments": [
-      {
-        "value": {
-          "feeCode": "FEE0001",
-          "amount": 55000,
-          "status": "success",
-          "channel": "online",
-          "reference": "paymentRef",
-          "transactionId": "ge7po9h5bhbtbd466424src9tk"
-        }
+    "coClarificationUploadDocuments": [{
+      "id": "Clarification Document",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+          "document_filename": "clarification-document.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+        },
+        "documentFileName": "clarification-document.pdf",
+        "documentType": "other"
       }
-    ],
-    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
-    "accessCode": "",
-    "confidentialDocumentsGenerated": [
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "confidentialDocumentsReceived": "generalLetter",
-          "documentLink": {
-            "document_url": "${json-unit.any-string}",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "${json-unit.any-string}"
-          },
-          "documentFileName": "${json-unit.any-string}"
-        }
+    }],
+    "documentsUploaded": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+          "document_filename": "clarification-document.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+        },
+        "documentFileName": "clarification-document.pdf",
+        "documentType": "other"
       }
-    ],
-    "dueDate": "2020-04-28",
-    "dataVersion": 4,
-    "warnings": []
-  }
+    }]
+  },
+  "state": "ClarificationSubmitted"
 }
