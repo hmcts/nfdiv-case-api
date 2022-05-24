@@ -10,6 +10,8 @@ import org.elasticsearch.common.TriConsumer;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -59,6 +61,13 @@ public class RetiredFields {
                 .value((DivorceDocument) val)
                 .build()
             )
+        ),
+        "generalApplicationFeeAccountNumber", (data, key, val) -> data.put("generalApplicationFeePbaNumbers",
+            DynamicList
+                .builder()
+                .value(DynamicListElement.builder().label(String.valueOf(val)).build())
+                .listItems(List.of(DynamicListElement.builder().label(String.valueOf(val)).build()))
+                .build()
         )
     );
 
