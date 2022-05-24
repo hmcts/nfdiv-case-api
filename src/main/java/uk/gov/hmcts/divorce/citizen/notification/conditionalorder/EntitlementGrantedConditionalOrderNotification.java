@@ -65,7 +65,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
             log.info("Sending entitlement granted on conditional order notification to applicant 1 solicitor for case : {}", id);
 
             notificationService.sendEmail(
-                caseData.getApplicant1().getSolicitor().getEmail(),
+                caseData.getApplicant1().getCorrespondenceEmail(),
                 SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
                 templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
                 caseData.getApplicant1().getLanguagePreference());
@@ -93,7 +93,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
             log.info("Sending entitlement granted on conditional order notification to applicant 2 solicitor for case : {}", id);
 
             notificationService.sendEmail(
-                caseData.getApplicant2().getSolicitor().getEmail(),
+                caseData.getApplicant2().getCorrespondenceEmail(),
                 SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
                 templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseData.getApplicant2().getLanguagePreference());
