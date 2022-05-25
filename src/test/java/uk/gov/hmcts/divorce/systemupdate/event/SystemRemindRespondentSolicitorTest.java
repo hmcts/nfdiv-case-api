@@ -15,7 +15,6 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.RespondentSolicitorReminderNotification;
-import uk.gov.hmcts.divorce.common.exception.InvalidOperationException;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
@@ -28,7 +27,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindRespondentSolicitor.SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND;
@@ -156,11 +154,11 @@ public class SystemRemindRespondentSolicitorTest {
     }
 
     private void verifyInvalidCaseData(CaseDetails<CaseData, State> details) {
-        Exception exception = assertThrows(
-            InvalidOperationException.class, () -> remindRespondentSolicitor.aboutToSubmit(details, details));
 
-        assertThat(exception.getMessage())
-            .isEqualTo("Invalid case data for Remind Respondent Solicitor event submission for case 1");
+        AboutToStartOrSubmitResponse<CaseData, State> result = remindRespondentSolicitor.aboutToSubmit(details, details);
+
+        assertThat(result.getErrors()).contains("Case data is not valid to submit this event");
+
         verifyNoInteractions(notificationDispatcher);
     }
 }

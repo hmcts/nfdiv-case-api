@@ -85,6 +85,8 @@ public class SystemRemindRespondentSolicitorToRespondTask implements Runnable {
                 .filter(caseDetails -> caseDetails.getData().get("applicant2SolicitorOrganisationPolicy") != null)
                 .forEach(caseDetails -> sendReminderToRespondentSolicitor(caseDetails, user, serviceAuthorization));
 
+            log.info("Remind respondent solicitor to respond task completed");
+
         } catch (final CcdSearchCaseException e) {
             log.error("SystemRemindRespondentSolicitorToRespondTask schedule task stopped after search error", e);
         } catch (final CcdConflictException e) {

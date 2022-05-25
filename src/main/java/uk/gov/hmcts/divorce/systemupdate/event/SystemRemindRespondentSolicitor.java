@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.RespondentSolicitorReminderNotification;
-import uk.gov.hmcts.divorce.common.exception.InvalidOperationException;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -22,6 +21,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -69,10 +69,13 @@ public class SystemRemindRespondentSolicitor implements CCDConfig<CaseData, Stat
             notificationDispatcher.send(respondentSolicitorReminderNotification, data, details.getId());
             data.getApplication().setRespondentSolicitorReminderSent(YesOrNo.YES);
         } else {
-            String errorMessage = String.format("Invalid case data for Remind Respondent Solicitor event submission for case %s",
-                details.getId());
-            log.error(errorMessage);
-            throw new InvalidOperationException(errorMessage);
+
+            log.error("Case data validation failed for this event for case {}", details.getId());
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList("Case data is not valid to submit this event"))
+                .data(data)
+                .build();
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
