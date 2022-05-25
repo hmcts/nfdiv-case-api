@@ -174,7 +174,8 @@ public class NoticeOfProceedingContent {
                 : NOT_REPRESENTED);
 
         boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline()
-            || ObjectUtils.isNotEmpty(caseData.getApplicant1().getEmail());
+            && ObjectUtils.isNotEmpty(caseData.getApplicant1().getEmail());
+
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
         final boolean personalServiceMethod = PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod());
