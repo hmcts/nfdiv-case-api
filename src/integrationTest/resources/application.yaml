@@ -75,7 +75,7 @@ docmosis:
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
       SERVICE_ORDER: NFD_Service_Order_V2.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx
-      CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement_V2.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement_V2.docx
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers_V3.docx
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers_V3.docx
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers_V3.docx
