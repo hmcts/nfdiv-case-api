@@ -178,13 +178,10 @@ class ApplicantTest {
     }
 
     @Test
-    void shouldReturnThrowErrorIfAddressNotSet() {
+    void shouldReturnReturnFalseIfAddressNotSet() {
         final Applicant applicant = Applicant.builder().build();
 
-        assertThrows(
-            IllegalArgumentException.class,
-            applicant::isBasedOverseas,
-            TEST_OVERSEAS_EXCEPTION_MESSAGE);
+        assertThat(applicant.isBasedOverseas()).isFalse();
     }
 
     @Test
@@ -193,10 +190,7 @@ class ApplicantTest {
             .address(AddressGlobalUK.builder().build())
             .build();
 
-        assertThrows(
-            IllegalArgumentException.class,
-            applicant::isBasedOverseas,
-            TEST_OVERSEAS_EXCEPTION_MESSAGE);
+        assertThat(applicant.isBasedOverseas()).isFalse();
     }
 
     @Test

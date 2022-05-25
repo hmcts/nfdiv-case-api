@@ -22,8 +22,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -185,7 +187,7 @@ public class Applicant {
 
     @JsonIgnore
     public boolean isBasedOverseas() {
-        return !isRepresented() && !isEnglandOrWales(address);
+        return !isRepresented() && nonNull(address) && !isBlank(address.getCountry()) && !isEnglandOrWales(address);
     }
 
     @JsonIgnore
