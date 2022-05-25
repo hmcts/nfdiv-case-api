@@ -169,13 +169,13 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
                 "applicant1IsApplicant2Represented=\"Yes\" AND applicant2SolicitorRepresented!=\"*\"",
                 "#### ${labelContentApplicant2UC}'s solicitor details")
             .field("applicant2SolicitorReference", "applicant2SolicitorRepresented!=\"No\"")
-            .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"No\"")
-            .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented=\"No\"")
-            .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented=\"No\"")
-            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"No\"")
-            .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented=\"No\"")
-            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented=\"No\"")
-            .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented=\"No\"")
+            .field("applicant2SolicitorName", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented!=\"No\"")
 
             //Applicant 2 Other proceedings
             .label("LabelApplicant2OtherProceedings-Heading",
