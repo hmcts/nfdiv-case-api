@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -16,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolConfirmJointApplication;
@@ -27,15 +25,11 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -48,7 +42,6 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Slf4j
 @Component
@@ -126,10 +119,18 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         final var applicationFeeOrderSummary = application.getApplicationFeeOrderSummary();
 
         if (caseData.getApplication().isSolicitorPaymentMethodPba()) {
-            PbaResponse response = paymentService.processPbaPayment(caseData, caseId, caseData.getApplicant1().getSolicitor());
+
+            PbaResponse response = paymentService.processPbaPayment(
+                caseData,
+                caseId,
+                caseData.getApplicant1().getSolicitor(),
+                application.getPbaNumber(),
+                caseData.getApplication().getApplicationFeeOrderSummary(),
+                caseData.getApplication().getFeeAccountReference()
+            );
 
             if (response.getHttpStatus() == CREATED) {
-                updateCaseDataWithPaymentDetails(applicationFeeOrderSummary, caseData, response.getPaymentReference());
+                caseData.updateCaseDataWithPaymentDetails(applicationFeeOrderSummary, caseData, response.getPaymentReference());
             } else {
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(details.getData())
@@ -146,29 +147,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .data(updatedCaseDetails.getData())
             .state(updatedCaseDetails.getState())
             .build();
-    }
-
-    private void updateCaseDataWithPaymentDetails(OrderSummary applicationFeeOrderSummary, CaseData caseData, String paymentReference) {
-
-        var payment = Payment
-            .builder()
-            .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
-            .channel("online")
-            .feeCode(applicationFeeOrderSummary.getFees().get(0).getValue().getCode())
-            .reference(paymentReference)
-            .status(SUCCESS)
-            .build();
-
-        var application = caseData.getApplication();
-
-        if (isEmpty(application.getApplicationPayments())) {
-            List<ListValue<Payment>> payments = new ArrayList<>();
-            payments.add(new ListValue<>(UUID.randomUUID().toString(), payment));
-            application.setApplicationPayments(payments);
-        } else {
-            application.getApplicationPayments()
-                .add(new ListValue<>(UUID.randomUUID().toString(), payment));
-        }
     }
 
     private void updateApplicant2DigitalDetails(CaseData caseData) {
