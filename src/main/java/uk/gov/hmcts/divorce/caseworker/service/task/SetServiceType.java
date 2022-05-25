@@ -23,7 +23,7 @@ public class SetServiceType implements CaseTask {
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
 
-        log.info("Setting service method for case id {}...", details.getId());
+        log.info("Setting service method for case id {}", details.getId());
 
         // TODO cater for overseas solicitors
         if (!applicant1.isRepresented() && !applicant2.isRepresented() && (
