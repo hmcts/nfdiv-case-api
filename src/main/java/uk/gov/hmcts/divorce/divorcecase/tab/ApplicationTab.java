@@ -158,15 +158,16 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2AgreedToReceiveEmails")
             .field("applicant2CannotUpload")
             .field("applicant2CannotUploadSupportingDocument")
-            .field("applicant1IsApplicant2Represented")
+            .field("applicant1IsApplicant2Represented", "applicant2SolicitorRepresented!=\"*\"")
+            .field("applicant2SolicitorRepresented")
 
             //Applicant 2 Solicitor
-            .label("LabelApplicant2sSolicitor-Heading",
-                "applicant1IsApplicant2Represented=\"Yes\"",
+            .label("LabelApplicant2sSolicitorNewCases-Heading",
+                "applicant2SolicitorRepresented=\"Yes\"",
                 "#### ${labelContentApplicant2UC}'s solicitor details")
-            .label("LabelApplicant2sSolicitor-NotEnoughInformation",
-                "applicant1IsApplicant2Represented=\"Yes\" AND applicant2SolicitorRepresented=\"No\"",
-                "##### Not enough information")
+            .label("LabelApplicant2sSolicitorOldCases-Heading",
+                "applicant1IsApplicant2Represented=\"Yes\" AND applicant2SolicitorRepresented!=\"*\"",
+                "#### ${labelContentApplicant2UC}'s solicitor details")
             .field("applicant2SolicitorReference", "applicant2SolicitorRepresented!=\"No\"")
             .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"No\"")
             .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented=\"No\"")
