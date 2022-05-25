@@ -1,12 +1,13 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -23,11 +24,14 @@ import java.util.List;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindRespondentSolicitor.SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.APPLICANT2_REPRESENTED;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.APPLICANT2_SOL_EMAIL;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.APPLICANT2_SOL_ORG_POLICY;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.APPLICATION_TYPE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
@@ -60,6 +64,9 @@ public class SystemRemindRespondentSolicitorToRespondTask implements Runnable {
     @Autowired
     private Clock clock;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Override
     public void run() {
         log.info("Remind respondent solicitor to respond task started");
@@ -72,17 +79,17 @@ public class SystemRemindRespondentSolicitorToRespondTask implements Runnable {
                 .must(matchQuery(STATE, AwaitingAos))
                 .must(matchQuery(String.format(DATA, APPLICATION_TYPE), SOLE_APPLICATION))
                 .must(matchQuery(String.format(DATA, APPLICANT2_REPRESENTED), YesOrNo.YES))
+                .must(existsQuery(String.format(DATA, APPLICANT2_SOL_EMAIL)))
+                .must(existsQuery(String.format(DATA, APPLICANT2_SOL_ORG_POLICY)))
                 .must(matchQuery(String.format(DATA, SERVICE_METHOD), COURT_SERVICE))
                 .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now(clock).minusDays(responseReminderOffsetDays)))
                 .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
             List<CaseDetails> result = ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, serviceAuthorization);
 
-            log.info("Number of cases found for reminder : {}", CollectionUtils.isEmpty(result) ? 0 : result.size());
-
             emptyIfNull(result)
                 .stream()
-                .filter(caseDetails -> caseDetails.getData().get("applicant2SolicitorOrganisationPolicy") != null)
+                .filter(this::filterOnlineCases)
                 .forEach(caseDetails -> sendReminderToRespondentSolicitor(caseDetails, user, serviceAuthorization));
 
             log.info("Remind respondent solicitor to respond task completed");
@@ -94,6 +101,15 @@ public class SystemRemindRespondentSolicitorToRespondTask implements Runnable {
                 + "due to conflict with another running task"
             );
         }
+    }
+
+    private boolean filterOnlineCases(CaseDetails caseDetails) {
+        var caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
+
+        return caseData != null
+            && caseData.getApplicant2() != null
+            && caseData.getApplicant2().getSolicitor() != null
+            && caseData.getApplicant2().getSolicitor().hasOrgId();
     }
 
     private void sendReminderToRespondentSolicitor(CaseDetails caseDetails, User user, String serviceAuthorization) {

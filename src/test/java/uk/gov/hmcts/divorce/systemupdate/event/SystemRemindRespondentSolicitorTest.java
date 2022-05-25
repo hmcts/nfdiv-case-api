@@ -1,12 +1,10 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -15,7 +13,6 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.RespondentSolicitorReminderNotification;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -23,14 +20,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
-import java.time.Clock;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindRespondentSolicitor.SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
@@ -46,17 +40,8 @@ public class SystemRemindRespondentSolicitorTest {
     @Mock
     private NotificationDispatcher notificationDispatcher;
 
-    @Mock
-    private Clock clock;
-
     @InjectMocks
     private SystemRemindRespondentSolicitor remindRespondentSolicitor;
-
-    @BeforeEach
-    void setUp() {
-        ReflectionTestUtils.setField(remindRespondentSolicitor, "responseReminderOffsetDays", 10);
-        setMockClock(clock);
-    }
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -72,70 +57,10 @@ public class SystemRemindRespondentSolicitorTest {
     @Test
     void shouldSendNotificationToRespondentSolicitorWhenCaseDataIsValid() {
 
-        CaseDetails<CaseData, State> details = buildCaseDetails(ISSUE_DATE, YesOrNo.YES, ServiceMethod.COURT_SERVICE);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = remindRespondentSolicitor.aboutToSubmit(details, details);
-
-        verify(notificationDispatcher).send(respondentSolicitorReminderNotification, details.getData(), details.getId());
-        assertThat(response.getData().getApplication().getRespondentSolicitorReminderSent()).isEqualTo(YesOrNo.YES);
-    }
-
-    @Test
-    void shouldNotSendNotificationToRespondentSolicitorWhenNotASoleApplication() {
-
-        CaseDetails<CaseData, State> details = buildCaseDetails(ISSUE_DATE, YesOrNo.YES, ServiceMethod.COURT_SERVICE);
-        details.getData().setApplicationType(ApplicationType.JOINT_APPLICATION);
-
-        verifyInvalidCaseData(details);
-    }
-
-    @Test
-    void shouldNotSendNotificationToRespondentSolicitorWhenRespondentSolicitorIsOffline() {
-
-        CaseDetails<CaseData, State> details = buildCaseDetails(ISSUE_DATE, YesOrNo.YES, ServiceMethod.COURT_SERVICE);
-        details.getData().getApplicant2().getSolicitor().setOrganisationPolicy(null);
-
-        verifyInvalidCaseData(details);
-    }
-
-    @Test
-    void shouldNotSendNotificationToRespondentSolicitorWhenRespondentIsNotRepresented() {
-
-        CaseDetails<CaseData, State> details = buildCaseDetails(ISSUE_DATE, YesOrNo.NO, ServiceMethod.COURT_SERVICE);
-
-        verifyInvalidCaseData(details);
-    }
-
-    @Test
-    void shouldNotSendNotificationToRespondentSolicitorWhenNotACourtService() {
-
-        CaseDetails<CaseData, State> details = buildCaseDetails(ISSUE_DATE, YesOrNo.YES, ServiceMethod.SOLICITOR_SERVICE);
-
-        verifyInvalidCaseData(details);
-    }
-
-    @Test
-    void shouldNotSendNotificationToRespondentSolicitorWhen10DaysAfterIssueHasNotPassedYet() {
-
-        CaseDetails<CaseData, State> details = buildCaseDetails(ISSUE_DATE.plusDays(1), YesOrNo.YES, ServiceMethod.COURT_SERVICE);
-
-        verifyInvalidCaseData(details);
-    }
-
-    @Test
-    void shouldNotSendNotificationToRespondentSolicitorWhenRespondentSolicitorEmailIdIsNotGiven() {
-
-        CaseDetails<CaseData, State> details = buildCaseDetails(ISSUE_DATE, YesOrNo.YES, ServiceMethod.COURT_SERVICE);
-        details.getData().getApplicant2().getSolicitor().setEmail(null);
-
-        verifyInvalidCaseData(details);
-    }
-
-    private CaseDetails<CaseData, State> buildCaseDetails(LocalDate issueDate, YesOrNo isRepresented, ServiceMethod serviceMethod) {
         final CaseData caseData = caseDataWithOrderSummary();
-        caseData.getApplication().setIssueDate(issueDate);
-        caseData.getApplication().setServiceMethod(serviceMethod);
-        caseData.getApplicant2().setSolicitorRepresented(isRepresented);
+        caseData.getApplication().setIssueDate(ISSUE_DATE);
+        caseData.getApplication().setServiceMethod(ServiceMethod.COURT_SERVICE);
+        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
 
         Solicitor solicitor = Solicitor.builder()
             .organisationPolicy(OrganisationPolicy.<UserRole>builder()
@@ -150,15 +75,10 @@ public class SystemRemindRespondentSolicitorTest {
         details.setId(1L);
         details.setData(caseData);
         details.setState(State.AwaitingAos);
-        return details;
-    }
 
-    private void verifyInvalidCaseData(CaseDetails<CaseData, State> details) {
+        final AboutToStartOrSubmitResponse<CaseData, State> response = remindRespondentSolicitor.aboutToSubmit(details, details);
 
-        AboutToStartOrSubmitResponse<CaseData, State> result = remindRespondentSolicitor.aboutToSubmit(details, details);
-
-        assertThat(result.getErrors()).contains("Case data is not valid to submit this event");
-
-        verifyNoInteractions(notificationDispatcher);
+        verify(notificationDispatcher).send(respondentSolicitorReminderNotification, details.getData(), details.getId());
+        assertThat(response.getData().getApplication().getRespondentSolicitorReminderSent()).isEqualTo(YesOrNo.YES);
     }
 }
