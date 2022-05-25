@@ -32,6 +32,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService.OfflineDocumentReceived.AOS_D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
@@ -113,6 +114,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         if (AOS_D10.equals(caseData.getAcknowledgementOfService().getTypeOfDocumentAttached())) {
 
             reclassifyAosScannedDocumentToRespondentAnswers(caseData);
+            // setting the status as drafted as AOS answers has been received and is being classified by caseworker
+            details.setState(AosDrafted);
 
             final CaseDetails<CaseData, State> response = submitAosService.submitOfflineAos(details);
             response.getData().getApplicant2().setOffline(YES);
