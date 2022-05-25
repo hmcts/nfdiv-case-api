@@ -158,21 +158,23 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2AgreedToReceiveEmails")
             .field("applicant2CannotUpload")
             .field("applicant2CannotUploadSupportingDocument")
-            .field("applicant1IsApplicant2Represented", "applicant2SolicitorRepresented!=\"*\"")
-            .field("applicant2SolicitorRepresented")
+            .field("applicant1IsApplicant2Represented")
 
             //Applicant 2 Solicitor
             .label("LabelApplicant2sSolicitor-Heading",
-                "applicant2SolicitorRepresented=\"Yes\"",
+                "applicant1IsApplicant2Represented=\"Yes\"",
                 "#### ${labelContentApplicant2UC}'s solicitor details")
-            .field("applicant2SolicitorReference", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented=\"Yes\"")
+            .label("LabelApplicant2sSolicitor-NotEnoughInformation",
+                "applicant1IsApplicant2Represented=\"Yes\" AND applicant2SolicitorRepresented=\"No\"",
+                "##### Not enough information")
+            .field("applicant2SolicitorReference", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"No\"")
+            .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented=\"No\"")
+            .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented=\"No\"")
+            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"No\"")
+            .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented=\"No\"")
+            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented=\"No\"")
+            .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented=\"No\"")
 
             //Applicant 2 Other proceedings
             .label("LabelApplicant2OtherProceedings-Heading",
