@@ -32,7 +32,6 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState
 @Component
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
-    private static final String CO_GRANTED_NO = "coGranted=\"No\"";
     private static final String IS_JOINT = "applicationType=\"jointApplication\"";
     private static final String IS_JOINT_AND_HWF_ENTERED = "applicationType=\"jointApplication\" AND applicant2HWFReferenceNumber=\"*\"";
     private static final String IS_NEW_PAPER_CASE = "newPaperCase=\"Yes\"";
@@ -330,22 +329,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coGranted")
             .field("coClaimsGranted")
             .field("coClaimsCostsOrderInformation")
-            .field("coRefusalDecision", CO_GRANTED_NO)
-            .field("coRefusalAdminErrorInfo", CO_GRANTED_NO)
-            .field("coRefusalRejectionReason", CO_GRANTED_NO)
-            .field("coRefusalRejectionAdditionalInfo", CO_GRANTED_NO)
-            .field("coRefusalClarificationReason", CO_GRANTED_NO)
-            .field("coRefusalClarificationAdditionalInfo", CO_GRANTED_NO)
+            .field("coLegalAdvisorDecisions")
             .label("labelCoClarificationResponses",
-                "coGranted=\"*\" AND coClarificationResponses=\"*\"",
+                "coGranted=\"*\" AND coClarificationResponsesSubmitted=\"*\"",
                 "## Clarification Responses")
-            .field("coRefusalDecision", CO_GRANTED_NO)
-            .field("coRefusalRejectionReason", CO_GRANTED_NO)
-            .field("coRefusalClarificationAdditionalInfo", CO_GRANTED_NO)
-            .field("coRefusalAdminErrorInfo", CO_GRANTED_NO)
-            .field("coRefusalRejectionAdditionalInfo", CO_GRANTED_NO)
-            .field("coClarificationResponses", CO_GRANTED_NO)
-            .field("coClarificationUploadDocuments", CO_GRANTED_NO)
+            .field("coClarificationResponsesSubmitted")
             .label("labelCoPronouncementDetails", null, "## Pronouncement Details")
             .field("bulkListCaseReference")
             .field("coCourt")
