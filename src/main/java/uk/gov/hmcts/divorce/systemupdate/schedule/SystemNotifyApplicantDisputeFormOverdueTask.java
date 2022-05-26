@@ -70,7 +70,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
                     .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(disputeDueDateOffsetDays)))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
-            ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, serviceAuth)
+            ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, Holding)
                 .forEach(caseDetails -> notifyApplicant(caseDetails, user, serviceAuth));
 
             log.info("NotifyApplicantDisputeFormOverdue scheduled task complete.");
