@@ -140,6 +140,11 @@ public final class DocmosisTemplateConstants {
 
     public static final String DISPLAY_HEADER_ADDRESS = "displayHeaderAddress";
 
+    public static final String IS_SOLE = "isSole";
+    public static final String JUDGE_NAME = "judgeName";
+    public static final String CO_PRONOUNCED_DATE = "coPronouncedDate";
+    public static final String DATE_FO_ELIGIBLE_FROM = "dateFinalOrderEligibleFrom";
+
     private DocmosisTemplateConstants() {
     }
 }
