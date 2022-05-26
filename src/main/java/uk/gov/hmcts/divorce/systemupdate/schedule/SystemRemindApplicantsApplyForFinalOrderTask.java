@@ -68,7 +68,7 @@ public class SystemRemindApplicantsApplyForFinalOrderTask implements Runnable {
                 .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
             final List<CaseDetails> casesInAwaitingFinalOrderNeedingReminder =
-                ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, serviceAuthorization);
+                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, AwaitingFinalOrder);
 
             for (final CaseDetails caseDetails : casesInAwaitingFinalOrderNeedingReminder) {
                 sendReminderToApplicantsIfEligible(caseDetails, user, serviceAuthorization);

@@ -62,7 +62,7 @@ public class SystemProgressCasesToAwaitingFinalOrderTask implements Runnable {
                     .filter(rangeQuery(DATA_DATE_FINAL_ORDER_ELIGIBLE_FROM).lte(LocalDate.now()));
 
             final List<CaseDetails> casesInConditionalOrderPronouncedState =
-                ccdSearchService.searchForAllCasesWithQuery(ConditionalOrderPronounced, query, user, serviceAuth);
+                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, ConditionalOrderPronounced);
 
             for (final CaseDetails caseDetails : casesInConditionalOrderPronouncedState) {
                 progressCaseToAwaitingFinalOrderIfEligible(user, serviceAuth, caseDetails);
