@@ -25,6 +25,7 @@ public class CaseworkerRejectedFT extends FunctionalTestSuite {
     @Test
     public void shouldSetPreviousStateWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
 
+        // This caseId will need to be updated if the cases in AAT are cleared
         CallbackRequest request = CallbackRequest
             .builder()
             .eventId(CASEWORKER_REJECTED)
