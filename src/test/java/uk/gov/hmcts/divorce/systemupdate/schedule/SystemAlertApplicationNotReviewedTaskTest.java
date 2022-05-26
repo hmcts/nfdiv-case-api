@@ -109,7 +109,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(caseDetailsList);
 
         systemAlertApplicationNotReviewedTask.run();
@@ -135,7 +135,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(caseDetailsList);
 
         systemAlertApplicationNotReviewedTask.run();
@@ -154,7 +154,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         when(caseDetails.getId()).thenReturn(1L);
         when(caseDetails.getData()).thenReturn(caseDataMap);
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(List.of(caseDetails));
 
         systemAlertApplicationNotReviewedTask.run();
@@ -172,7 +172,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         when(caseDetails.getData()).thenReturn(caseDataMap);
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(singletonList(caseDetails));
 
         systemAlertApplicationNotReviewedTask.run();
@@ -182,7 +182,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
 
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
@@ -203,7 +203,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         when(caseDetails1.getData()).thenReturn(data);
         when(mapper.convertValue(data, CaseData.class)).thenReturn(caseData1);
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
@@ -235,7 +235,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
