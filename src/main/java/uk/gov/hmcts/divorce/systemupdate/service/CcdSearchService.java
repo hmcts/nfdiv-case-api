@@ -22,6 +22,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,6 +52,11 @@ public class CcdSearchService {
     public static final String AOS_RESPONSE = "data.howToRespondApplication";
     public static final String FINAL_ORDER_ELIGIBLE_FROM_DATE = "data.dateFinalOrderEligibleFrom";
     public static final String FINAL_ORDER_ELIGIBLE_TO_RESPONDENT_DATE = "data.dateFinalOrderEligibleToRespondent";
+    public static final String APPLICATION_TYPE = "applicationType";
+    public static final String SOLE_APPLICATION = "soleApplication";
+    public static final String APPLICANT2_REPRESENTED = "applicant2SolicitorRepresented";
+    public static final String SERVICE_METHOD = "serviceMethod";
+    public static final String COURT_SERVICE = "courtService";
 
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
@@ -68,7 +74,8 @@ public class CcdSearchService {
     @Autowired
     private CaseDetailsListConverter caseDetailsListConverter;
 
-    public List<CaseDetails> searchForAllCasesWithQuery(final State state, final BoolQueryBuilder query, User user, String serviceAuth) {
+    public List<CaseDetails> searchForAllCasesWithQuery(
+        final BoolQueryBuilder query, User user, String serviceAuth, final State... states) {
 
         final List<CaseDetails> allCaseDetails = new ArrayList<>();
         int from = 0;
@@ -85,7 +92,7 @@ public class CcdSearchService {
                 totalResults = searchResult.getTotal();
             }
         } catch (final FeignException e) {
-            final String message = String.format("Failed to complete search for Cases with state of %s", state);
+            final String message = String.format("Failed to complete search for Cases with state of %s", Arrays.toString(states));
             log.info(message, e);
             throw new CcdSearchCaseException(message, e);
         }
@@ -174,7 +181,7 @@ public class CcdSearchService {
             .must(stateQuery)
             .mustNot(bulkListingCaseId);
 
-        final List<CaseDetails> allCaseDetails = searchForAllCasesWithQuery(AwaitingPronouncement, query, user, serviceAuth);
+        final List<CaseDetails> allCaseDetails = searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPronouncement);
 
         return new LinkedList<>(partition(
             caseDetailsListConverter.convertToListOfValidCaseDetails(allCaseDetails),

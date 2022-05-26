@@ -65,7 +65,7 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
             final List<CaseDetails> casesInAwaitingApplicant1Response =
-                ccdSearchService.searchForAllCasesWithQuery(Applicant2Approved, query, user, serviceAuthorization);
+                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, Applicant2Approved);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant1Response) {
                 try {
