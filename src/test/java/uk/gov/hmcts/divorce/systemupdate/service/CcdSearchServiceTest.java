@@ -134,7 +134,7 @@ class CcdSearchServiceTest {
             getSourceBuilder(PAGE_SIZE, PAGE_SIZE).toString()))
             .thenReturn(expected2);
 
-        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(Submitted, query, user, SERVICE_AUTHORIZATION);
+        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Submitted);
 
         assertThat(searchResult.size()).isEqualTo(101);
     }
@@ -184,7 +184,7 @@ class CcdSearchServiceTest {
             sourceBuilder2.toString()))
             .thenReturn(expected2);
 
-        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION);
+        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding);
 
         assertThat(searchResult.size()).isEqualTo(101);
     }
@@ -230,7 +230,7 @@ class CcdSearchServiceTest {
             .thenReturn(expected2);
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(
-            AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION);
+            query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response);
 
         assertThat(searchResult.size()).isEqualTo(101);
     }
@@ -317,9 +317,9 @@ class CcdSearchServiceTest {
 
         final CcdSearchCaseException exception = assertThrows(
             CcdSearchCaseException.class,
-            () -> ccdSearchService.searchForAllCasesWithQuery(Submitted, query, user, SERVICE_AUTHORIZATION));
+            () -> ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Submitted));
 
-        assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of Submitted");
+        assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of [Submitted]");
     }
 
     @Test
@@ -372,7 +372,7 @@ class CcdSearchServiceTest {
             CcdSearchCaseException.class,
             () -> ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION));
 
-        assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of AwaitingPronouncement");
+        assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of [AwaitingPronouncement]");
     }
 
     @SuppressWarnings("unchecked")

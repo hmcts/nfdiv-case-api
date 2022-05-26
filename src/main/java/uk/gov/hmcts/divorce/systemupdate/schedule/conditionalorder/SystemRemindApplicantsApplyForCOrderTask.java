@@ -74,7 +74,8 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().minusDays(submitCOrderReminderOffsetDays)))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
-            ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, serviceAuthorization)
+            ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization,
+                AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted)
                     .forEach(caseDetails -> remindJointApplicants(caseDetails, user, serviceAuthorization));
 
             log.info("SystemRemindApplicantsApplyForCOrderTask scheduled task complete.");
