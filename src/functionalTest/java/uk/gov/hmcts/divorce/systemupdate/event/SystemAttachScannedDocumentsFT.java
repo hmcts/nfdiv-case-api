@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -20,6 +21,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 public class SystemAttachScannedDocumentsFT extends FunctionalTestSuite {
 
     @Test
+    @Disabled("Callback is temporarily disabled due to an issue on prod")
     public void shouldSetPreviousState() throws IOException {
         Map<String, Object> request = new HashMap<>();
         State currentState = Holding;
