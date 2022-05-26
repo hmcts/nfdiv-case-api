@@ -85,7 +85,7 @@ public class SystemRemindRespondentSolicitorToRespondTask implements Runnable {
                 .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now(clock).minusDays(responseReminderOffsetDays)))
                 .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
-            List<CaseDetails> result = ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, serviceAuthorization);
+            List<CaseDetails> result = ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, AwaitingAos);
 
             emptyIfNull(result)
                 .stream()

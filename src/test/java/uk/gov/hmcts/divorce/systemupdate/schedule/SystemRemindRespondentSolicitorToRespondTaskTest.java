@@ -118,7 +118,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
 
         List<CaseDetails> caseDetailsList = List.of(details1);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos))
             .thenReturn(caseDetailsList);
 
         mockObjectMapper();
@@ -132,7 +132,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
     @Test
     public void shouldNotSendReminderEmailToRespondentSolicitorWhenNoCasesFound() {
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos))
             .thenReturn(null);
 
         remindRespondentSolicitorToRespondTask.run();
@@ -144,7 +144,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
     public void shouldNotSendReminderEmailToRespondentSolicitorWhenCcdSearchCaseExceptionIsThrown() {
 
         doThrow(new CcdSearchCaseException("Failed elastic search", mock(FeignException.class)))
-            .when(ccdSearchService).searchForAllCasesWithQuery(AwaitingAos, query, user, SERVICE_AUTHORIZATION);
+            .when(ccdSearchService).searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos);
 
         remindRespondentSolicitorToRespondTask.run();
 
@@ -167,7 +167,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
 
         mockObjectMapper();
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos))
             .thenReturn(caseDetailsList);
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
@@ -194,8 +194,9 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
 
         mockObjectMapper();
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos))
             .thenReturn(caseDetailsList);
+
         doThrow(new IllegalArgumentException())
             .when(ccdUpdateService).submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
 
