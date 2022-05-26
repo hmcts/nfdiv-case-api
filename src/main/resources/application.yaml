@@ -269,6 +269,7 @@ docmosis:
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2.docx
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered_V3.docx
+      CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -299,6 +300,7 @@ docmosis:
       GENERAL_LETTER: NFD_General_Letter.docx
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
+      CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
   templateVars:
     applicant2SignInDivorceUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2}
     applicant2SignInDissolutionUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2}
