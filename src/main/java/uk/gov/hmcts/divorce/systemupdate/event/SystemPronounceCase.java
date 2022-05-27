@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -37,6 +38,9 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
+    @Autowired
+    private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -58,10 +62,14 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         final CaseData caseData = details.getData();
         final Long caseId = details.getId();
 
-        log.info("Conditional order pronounced for Case({}), notifying Applicants their conditional order has been pronounced", caseId);
+        log.info("Conditional order pronounced for Case({})", caseId);
 
         try {
+
             notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, caseId);
+
+            generateConditionalOrderPronouncedDocument.apply(details);
+
         } catch (final NotificationTemplateException e) {
             log.error("Notification failed with message: {}", e.getMessage(), e);
         }

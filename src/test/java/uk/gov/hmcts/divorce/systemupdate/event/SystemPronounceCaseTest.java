@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,6 +45,9 @@ public class SystemPronounceCaseTest {
     @Mock
     private NotificationDispatcher notificationDispatcher;
 
+    @Mock
+    private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
+
     @InjectMocks
     private SystemPronounceCase underTest;
 
@@ -70,6 +74,8 @@ public class SystemPronounceCaseTest {
         underTest.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(notification, caseData, details.getId());
+
+        verify(generateConditionalOrderPronouncedDocument).apply(details);
     }
 
     @Test
@@ -91,7 +97,7 @@ public class SystemPronounceCaseTest {
         verify(logger)
             .error("Notification failed with message: {}", "Message", notificationTemplateException);
         verify(logger)
-            .info("Conditional order pronounced for Case({}), notifying Applicants their conditional order has been pronounced", 1L);
+            .info("Conditional order pronounced for Case({})", 1L);
         verifyNoMoreInteractions(logger);
     }
 }

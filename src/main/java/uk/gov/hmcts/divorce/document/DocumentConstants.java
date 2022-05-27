@@ -82,7 +82,7 @@ public final class DocumentConstants {
     public static final String GENERAL_LETTER_DOCUMENT_NAME = "GeneralLetter";
     public static final String GENERAL_LETTER_TEMPLATE_ID = "GENERAL_LETTER";
 
-    public static final String CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME = "conditionalOrderPronounced";
+    public static final String CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME = "conditionalOrderGranted";
     public static final String CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID = "CONDITIONAL_ORDER_PRONOUNCED";
 
     private DocumentConstants() {
