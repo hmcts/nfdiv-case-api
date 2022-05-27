@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -33,6 +34,7 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
@@ -45,6 +47,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
     @Autowired
     private SubmitAosService submitAosService;
+
+    @Autowired
+    private HoldingPeriodService holdingPeriodService;
 
     @Autowired
     private Clock clock;
@@ -126,6 +131,13 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .build();
         } else {
             final State state = caseData.getApplication().getStateToTransitionApplicationTo();
+
+            if (Holding.equals(state)) {
+                log.info("Setting due date(Issue date + 20 weeks+ 1 day) as state selected is Holding for case id {}",
+                    details.getId()
+                );
+                details.getData().setDueDate(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()));
+            }
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
