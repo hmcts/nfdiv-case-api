@@ -66,6 +66,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConditionalOrderTab(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
         buildFinalOrderTab(configBuilder);
+        buildAmendedApplicationTab(configBuilder);
     }
 
     private void buildWarningsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -375,5 +376,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "### Respondent")
             .field("doesApplicant2WantToApplyForFinalOrder")
             .field("applicant2FinalOrderExplanation");
+    }
+
+    private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("amendedApplication", "Amended application")
+            .forRoles(CASE_WORKER, SUPER_USER)
+            .showCondition("amendedApplications=\"*\"")
+            .field("amendedApplications");
     }
 }
