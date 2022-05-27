@@ -28,7 +28,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
         new PageBuilder(configBuilder
             .attachScannedDocEvent()
             .forStateTransition(POST_SUBMISSION_STATES, OfflineDocumentReceived)
-            //.aboutToSubmitCallback(this::aboutToSubmit)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE_DELETE, SYSTEMUPDATE, CASE_WORKER))
             .page("attachScannedDocs")
             .pageLabel("Correspondence")
