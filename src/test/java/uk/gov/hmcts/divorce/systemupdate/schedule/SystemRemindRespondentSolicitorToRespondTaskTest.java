@@ -113,7 +113,8 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
     public void shouldSendReminderEmailToRespondentSolicitor() {
 
         CaseDetails details1 = CaseDetails.builder()
-            .data(Map.of("applicant2SolicitorOrganisationPolicy", organisationPolicy()))
+            .data(Map.of("applicant2SolicitorOrganisationPolicy", organisationPolicy(),
+                "applicant2SolicitorEmail", "abc@gm.com"))
             .build();
 
         List<CaseDetails> caseDetailsList = List.of(details1);
@@ -155,12 +156,14 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
     void shouldContinueToNextCaseIfCcdManagementExceptionIsThrownWhileProcessingPreviousCase() {
         CaseDetails details1 = CaseDetails.builder()
             .id(1L)
-            .data(Map.of("applicant2SolicitorOrganisationPolicy", OrganisationPolicy.builder().build()))
+            .data(Map.of("applicant2SolicitorOrganisationPolicy", organisationPolicy(),
+                "applicant2SolicitorEmail", "abc@gm.com"))
             .build();
 
         CaseDetails details2 = CaseDetails.builder()
             .id(2L)
-            .data(Map.of("applicant2SolicitorOrganisationPolicy", OrganisationPolicy.builder().build()))
+            .data(Map.of("applicant2SolicitorOrganisationPolicy", organisationPolicy(),
+                "applicant2SolicitorEmail", "xyz@gm.com"))
             .build();
 
         List<CaseDetails> caseDetailsList = List.of(details1, details2);
@@ -182,12 +185,14 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
     void shouldContinueToNextCaseIfIllegalArgumentExceptionIsThrownWhileProcessingPreviousCase() {
         CaseDetails details1 = CaseDetails.builder()
             .id(1L)
-            .data(Map.of("applicant2SolicitorOrganisationPolicy", OrganisationPolicy.builder().build()))
+            .data(Map.of("applicant2SolicitorOrganisationPolicy", organisationPolicy(),
+                "applicant2SolicitorEmail", "abc@gm.com"))
             .build();
 
         CaseDetails details2 = CaseDetails.builder()
             .id(2L)
-            .data(Map.of("applicant2SolicitorOrganisationPolicy", OrganisationPolicy.builder().build()))
+            .data(Map.of("applicant2SolicitorOrganisationPolicy", organisationPolicy(),
+                "applicant2SolicitorEmail", "xyz@gm.com"))
             .build();
 
         List<CaseDetails> caseDetailsList = List.of(details1, details2);
@@ -222,6 +227,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
                 .applicant2(Applicant.builder()
                     .solicitor(Solicitor.builder()
                         .organisationPolicy(organisationPolicy())
+                        .email("abc@gm.com")
                         .build())
                     .build())
                 .build()

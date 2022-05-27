@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -109,7 +110,8 @@ public class SystemRemindRespondentSolicitorToRespondTask implements Runnable {
         return caseData != null
             && caseData.getApplicant2() != null
             && caseData.getApplicant2().getSolicitor() != null
-            && caseData.getApplicant2().getSolicitor().hasOrgId();
+            && caseData.getApplicant2().getSolicitor().hasOrgId()
+            && StringUtils.isNotBlank(caseData.getApplicant2().getSolicitor().getEmail());
     }
 
     private void sendReminderToRespondentSolicitor(CaseDetails caseDetails, User user, String serviceAuthorization) {
