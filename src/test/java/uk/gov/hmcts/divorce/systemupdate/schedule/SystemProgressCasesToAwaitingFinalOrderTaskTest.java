@@ -87,7 +87,7 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(ConditionalOrderPronounced, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
             .thenReturn(caseDetailsList);
 
         task.run();
@@ -105,7 +105,7 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
 
         when(caseDetails.getData()).thenReturn(caseDataMap);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(ConditionalOrderPronounced, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
             .thenReturn(List.of(caseDetails));
 
         task.run();
@@ -120,7 +120,7 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
 
         when(caseDetails.getData()).thenReturn(Map.of("dateFinalOrderEligibleFrom", LocalDate.now().plusDays(5).toString()));
 
-        when(ccdSearchService.searchForAllCasesWithQuery(ConditionalOrderPronounced, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
             .thenReturn(singletonList(caseDetails));
 
         task.run();
@@ -130,7 +130,7 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithQuery(ConditionalOrderPronounced, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         task.run();
@@ -146,7 +146,7 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
 
         when(caseDetails1.getData()).thenReturn(Map.of("dateFinalOrderEligibleFrom", LocalDate.now().toString()));
 
-        when(ccdSearchService.searchForAllCasesWithQuery(ConditionalOrderPronounced, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
@@ -170,7 +170,7 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(ConditionalOrderPronounced, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))

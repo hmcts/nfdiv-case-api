@@ -83,7 +83,7 @@ class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     @Test
     void shouldSubmitNotificationEventIfNotAlreadyDone() {
         final CaseDetails case1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
-        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding))
             .thenReturn(List.of(case1));
 
         underTest.run();
@@ -93,7 +93,7 @@ class SystemNotifyApplicantDisputeFormOverdueTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         underTest.run();
@@ -105,7 +105,7 @@ class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     void shouldStopProcessingIfThereIsConflictDuringSubmission() {
         CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
         CaseDetails caseDetails2 = CaseDetails.builder().data(new HashMap<>()).id(2L).build();
-        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding))
             .thenReturn(List.of(caseDetails1, caseDetails2));
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
@@ -122,7 +122,7 @@ class SystemNotifyApplicantDisputeFormOverdueTaskTest {
         CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
         CaseDetails caseDetails2 = CaseDetails.builder().data(new HashMap<>()).id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
-        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding))
             .thenReturn(caseDetailsList);
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);

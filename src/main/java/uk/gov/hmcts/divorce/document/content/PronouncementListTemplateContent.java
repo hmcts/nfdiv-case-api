@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -25,6 +24,7 @@ import java.util.Map;
 import static java.lang.String.format;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BULK_LIST;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -96,7 +96,7 @@ public class PronouncementListTemplateContent {
 
         log.info("Starting to search for cases with BulkList reference {}", bulkListCaseReference);
         final List<CaseDetails> bulkListCases =
-            ccdSearchService.searchForAllCasesWithQuery(State.AwaitingPronouncement, query, user, serviceAuthorization);
+            ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, AwaitingPronouncement);
 
         for (final CaseDetails caseDetails : bulkListCases) {
             final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
