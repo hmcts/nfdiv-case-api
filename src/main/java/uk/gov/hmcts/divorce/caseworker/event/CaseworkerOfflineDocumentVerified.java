@@ -87,6 +87,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
         var caseData = details.getData();
         List<DynamicListElement> scannedDocumentNames =
             emptyIfNull(caseData.getDocuments().getScannedDocuments())
@@ -114,6 +115,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
         var caseData = details.getData();
 
         if (AOS_D10.equals(caseData.getAcknowledgementOfService().getTypeOfDocumentAttached())) {

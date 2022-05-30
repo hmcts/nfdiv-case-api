@@ -58,7 +58,7 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Caseworker create general letter about to submit callback invoked");
+        log.info("Caseworker create general letter about to submit callback invoked for Case Id: {}", details.getId());
 
         generalLetterService.processGeneralLetter(details);
 
