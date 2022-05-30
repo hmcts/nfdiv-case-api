@@ -186,10 +186,10 @@ public abstract class FunctionalTestSuite {
 
     protected List<CaseDetails> searchForCasesWithQuery(BoolQueryBuilder query) {
         return searchService.searchForAllCasesWithQuery(
-            Holding,
             query,
             idamService.retrieveSystemUpdateUserDetails(),
-            serviceAuthenticationGenerator.generate()
+            serviceAuthenticationGenerator.generate(),
+            Holding
         );
     }
 
