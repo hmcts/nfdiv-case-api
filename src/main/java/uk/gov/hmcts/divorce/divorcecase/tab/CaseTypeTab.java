@@ -32,7 +32,6 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState
 @Component
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
-    private static final String CO_GRANTED_NO = "coGranted=\"No\"";
     private static final String IS_JOINT = "applicationType=\"jointApplication\"";
     private static final String IS_JOINT_AND_HWF_ENTERED = "applicationType=\"jointApplication\" AND applicant2HWFReferenceNumber=\"*\"";
     private static final String IS_NEW_PAPER_CASE = "newPaperCase=\"Yes\"";
@@ -67,6 +66,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConditionalOrderTab(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
         buildFinalOrderTab(configBuilder);
+        buildAmendedApplicationTab(configBuilder);
     }
 
     private void buildWarningsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -290,7 +290,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("conditionalOrder", "Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, SUPER_USER)
-            .showCondition("coApplicant1SubmittedDate=\"*\"")
+            .showCondition("coApplicant1SubmittedDate=\"*\" OR coApplicant2SubmittedDate=\"*\"")
             .label("labelConditionalOrderDetails-Applicant1",
                 "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
                 "### Applicant 1")
@@ -329,22 +329,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coGranted")
             .field("coClaimsGranted")
             .field("coClaimsCostsOrderInformation")
-            .field("coRefusalDecision", CO_GRANTED_NO)
-            .field("coRefusalAdminErrorInfo", CO_GRANTED_NO)
-            .field("coRefusalRejectionReason", CO_GRANTED_NO)
-            .field("coRefusalRejectionAdditionalInfo", CO_GRANTED_NO)
-            .field("coRefusalClarificationReason", CO_GRANTED_NO)
-            .field("coRefusalClarificationAdditionalInfo", CO_GRANTED_NO)
+            .field("coLegalAdvisorDecisions")
             .label("labelCoClarificationResponses",
-                "coGranted=\"*\" AND coClarificationResponses=\"*\"",
+                "coGranted=\"*\" AND coClarificationResponsesSubmitted=\"*\"",
                 "## Clarification Responses")
-            .field("coRefusalDecision", CO_GRANTED_NO)
-            .field("coRefusalRejectionReason", CO_GRANTED_NO)
-            .field("coRefusalClarificationAdditionalInfo", CO_GRANTED_NO)
-            .field("coRefusalAdminErrorInfo", CO_GRANTED_NO)
-            .field("coRefusalRejectionAdditionalInfo", CO_GRANTED_NO)
-            .field("coClarificationResponses", CO_GRANTED_NO)
-            .field("coClarificationUploadDocuments", CO_GRANTED_NO)
+            .field("coClarificationResponsesSubmitted")
             .label("labelCoPronouncementDetails", null, "## Pronouncement Details")
             .field("bulkListCaseReference")
             .field("coCourt")
@@ -386,5 +375,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "### Respondent")
             .field("doesApplicant2WantToApplyForFinalOrder")
             .field("applicant2FinalOrderExplanation");
+    }
+
+    private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("amendedApplication", "Amended application")
+            .forRoles(CASE_WORKER, SUPER_USER)
+            .showCondition("amendedApplications=\"*\"")
+            .field("amendedApplications");
     }
 }
