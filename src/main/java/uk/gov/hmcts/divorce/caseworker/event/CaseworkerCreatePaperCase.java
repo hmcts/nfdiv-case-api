@@ -39,7 +39,7 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Bulk scan create paper case about to submit callback invoked");
+        log.info("Bulk scan create paper case about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
         data.getApplicant1().setOffline(YES);
