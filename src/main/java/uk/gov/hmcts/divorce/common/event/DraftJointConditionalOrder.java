@@ -59,7 +59,7 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
             .description("Draft conditional order")
             .showSummary()
             .endButtonLabel("Save conditional order")
-            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted=\"No\"")
+            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted!=\"Yes\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .aboutToStartCallback(this::aboutToStart)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, CREATOR, CITIZEN)
