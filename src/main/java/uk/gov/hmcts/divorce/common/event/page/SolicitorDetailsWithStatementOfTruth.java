@@ -17,7 +17,8 @@ public class SolicitorDetailsWithStatementOfTruth implements CcdPageConfiguratio
             .pageLabel("Statement of Truth - Solicitor")
             .complex(CaseData::getAcknowledgementOfService)
                 .label("labelApplicant2SolStatementOfTruth-SOT", "## Statement of truth")
-                .mandatoryWithLabel(AcknowledgementOfService::getStatementOfTruth, "I am duly authorised by the respondent to sign this statement.")
+                .mandatoryWithLabel(AcknowledgementOfService::getStatementOfTruth,
+                    "I am duly authorised by the respondent to sign this statement.")
                 .mandatory(AcknowledgementOfService::getSolicitorName)
                 .mandatory(AcknowledgementOfService::getSolicitorFirm)
                 .optional(AcknowledgementOfService::getAdditionalComments)
