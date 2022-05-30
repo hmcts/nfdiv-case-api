@@ -22,6 +22,7 @@ import static java.util.Arrays.asList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -54,12 +55,12 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(DRAFT_JOINT_CONDITIONAL_ORDER)
-            .forStates(AwaitingConditionalOrder, ConditionalOrderDrafted)
+            .forStates(AwaitingConditionalOrder, ConditionalOrderDrafted, ConditionalOrderPending)
             .name("Draft conditional order")
             .description("Draft conditional order")
             .showSummary()
             .endButtonLabel("Save conditional order")
-            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted!=\"Yes\"")
+            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .aboutToStartCallback(this::aboutToStart)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, CREATOR, CITIZEN)
