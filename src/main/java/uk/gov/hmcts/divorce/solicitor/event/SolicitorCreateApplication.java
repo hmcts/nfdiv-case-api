@@ -86,7 +86,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Solicitor create application about to submit callback invoked");
+        log.info("Solicitor create application about to submit callback invoked for Case Id: {}", details.getId());
 
         if (Objects.isNull(details.getData().getApplicationType())) {
             log.error("Application type must be selected (cannot be null)");
