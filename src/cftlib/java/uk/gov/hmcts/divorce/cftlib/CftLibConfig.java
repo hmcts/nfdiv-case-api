@@ -74,7 +74,7 @@ public class CftLibConfig implements CFTLibConfigurer {
     }
 
     /**
-     * Export our JSON ccd definition and convert it to xlsx.
+     * Generate our JSON ccd definition and convert it to xlsx.
      * Doing this at runtime in the CftlibConfig allows use of spring boot devtool's
      * live reload functionality to rapidly edit and test code & definition changes.
      */
