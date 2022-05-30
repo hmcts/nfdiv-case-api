@@ -60,7 +60,7 @@ public class SystemFinalOrderOverdueTask implements Runnable {
                     .must(matchQuery(STATE, AwaitingFinalOrder));
 
             final List<CaseDetails> casesInAwaitingFinalOrderState =
-                ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, serviceAuth);
+                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingFinalOrder);
 
             for (final CaseDetails caseDetails : casesInAwaitingFinalOrderState) {
                 triggerFinalOrderEventForEligibleCases(user, serviceAuth, caseDetails);

@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITO
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
@@ -115,7 +116,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
             notificationService.sendEmail(
                 email,
-                SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+                caseData.getApplication().getReissueDate() != null
+                    ? SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE
+                    : SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
                 ENGLISH);
         } else if (!caseData.getApplicationType().isSole()) {
