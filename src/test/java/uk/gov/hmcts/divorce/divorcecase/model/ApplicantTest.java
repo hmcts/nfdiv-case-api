@@ -146,6 +146,23 @@ class ApplicantTest {
     }
 
     @Test
+    void shouldReturnTrueIfScottishAddress() {
+        final Applicant applicant1 = Applicant.builder()
+            .address(AddressGlobalUK.builder().country("UK").postCode("KA27 8AB").build())
+            .build();
+        final Applicant applicant2 = Applicant.builder()
+            .address(AddressGlobalUK.builder().country("United Kingdom").postCode("TD11 3AA").build())
+            .build();
+        final Applicant applicant3 = Applicant.builder()
+            .address(AddressGlobalUK.builder().country("Scotland").build())
+            .build();
+
+        assertThat(applicant1.isBasedOverseas()).isTrue();
+        assertThat(applicant2.isBasedOverseas()).isTrue();
+        assertThat(applicant3.isBasedOverseas()).isTrue();
+    }
+
+    @Test
     void shouldReturnFalseIfApplicantIsRepresentedWhenCheckingIsBasedOverseas() {
         final Applicant applicant = Applicant.builder()
             .address(AddressGlobalUK.builder().country("France").build())
@@ -159,14 +176,14 @@ class ApplicantTest {
     }
 
     @Test
-    void shouldReturnFalseIfAddressNotSet() {
+    void shouldReturnReturnFalseIfAddressNotSet() {
         final Applicant applicant = Applicant.builder().build();
 
         assertThat(applicant.isBasedOverseas()).isFalse();
     }
 
     @Test
-    void shouldReturnFalseIfCountryIsBlank() {
+    void shouldReturnThrowErrorIfCountryIsBlank() {
         final Applicant applicant = Applicant.builder()
             .address(AddressGlobalUK.builder().build())
             .build();

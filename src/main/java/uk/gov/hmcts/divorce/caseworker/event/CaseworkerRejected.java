@@ -69,7 +69,7 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker rejected about to submit callback invoked: {}", details.getState());
+        log.info("Caseworker rejected about to submit callback invoked: {}, Case Id: {}", details.getState(), details.getId());
         var caseData = details.getData();
 
         final var roles = List.of(CREATOR.getRole(), APPLICANT_2.getRole());
