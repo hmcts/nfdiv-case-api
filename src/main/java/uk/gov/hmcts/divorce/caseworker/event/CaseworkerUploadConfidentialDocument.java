@@ -47,7 +47,7 @@ public class CaseworkerUploadConfidentialDocument implements CCDConfig<CaseData,
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Callback invoked for {}", CASEWORKER_UPLOAD_CONFIDENTIAL_DOCUMENT);
+        log.info("Callback invoked for {}, Case Id: {}", CASEWORKER_UPLOAD_CONFIDENTIAL_DOCUMENT, details.getId());
 
         var caseData = details.getData();
 
