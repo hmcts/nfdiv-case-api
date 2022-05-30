@@ -14,6 +14,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemAlertApplicationNotReviewed.SYSTEM_APPLICATION_NOT_REVIEWED;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -27,7 +28,7 @@ public class SystemAlertApplicationNotReviewedFT extends FunctionalTestSuite {
 
 
     @Test
-    public void shouldPassValidationAndSendEmailsToApplicantAndRespondent() throws IOException {
+    public void shouldPassValidationAndSendEmailToApplicant() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
         Response response = triggerCallback(request, SYSTEM_APPLICATION_NOT_REVIEWED, ABOUT_TO_SUBMIT_URL);
@@ -40,4 +41,13 @@ public class SystemAlertApplicationNotReviewedFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(RESPONSE)));
     }
 
+    @Test
+    public void shouldPassValidationAndSendEmailToApplicantWhenLanguagePreferenceWelsh() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("applicant1LanguagePreferenceWelsh", YES);
+
+        Response response = triggerCallback(request, SYSTEM_APPLICATION_NOT_REVIEWED, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
 }
