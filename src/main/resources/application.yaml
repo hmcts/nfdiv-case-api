@@ -154,7 +154,7 @@ uk:
             JOINT_APPLICATION_OVERDUE: '63b41176-67eb-4ad7-9e3d-fa8aabd77c6a'
             JOINT_APPLICATION_SUBMITTED: '2b606152-85f4-43fc-9e2f-48edfd15f077'
             JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER: '59ab58b7-b102-4b17-b023-226ce399668b'
-            SOLE_APPLICANT_APPLICATION_ACCEPTED: '5f9d4cbe-623e-4066-ae87-76f9afeae884'
+            SOLE_APPLICANT_APPLICATION_ACCEPTED: '80ec944d-2791-42ec-9551-1f76da6f7eb4'
             SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED: 'fe1a2a4c-68ac-4887-8557-7be338399a34'
             SOLE_RESPONDENT_APPLICATION_ACCEPTED: '1726bcfb-95c7-4afd-b789-8072551febd1'
             OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED: '248d19a5-b00b-4c57-a283-10054558003c'
@@ -299,6 +299,15 @@ docmosis:
       GENERAL_LETTER: NFD_General_Letter.docx
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
+      NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2.docx #TODO: update content
+      NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V2.docx #TODO: update content
+      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V4.docx #TODO: update content
+      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx #TODO: update content
+      NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx #TODO: update content
+      NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx #TODO: update content
+      NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2.docx #TODO: update content
+      NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx #TODO: update content
+      NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered_V3.docx #TODO: update content
   templateVars:
     applicant2SignInDivorceUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2}
     applicant2SignInDissolutionUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2}

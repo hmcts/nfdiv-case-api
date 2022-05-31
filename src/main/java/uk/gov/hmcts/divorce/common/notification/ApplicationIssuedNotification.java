@@ -17,6 +17,7 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -27,6 +28,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -73,13 +75,13 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
 
         if (caseData.getApplicationType().isSole()) {
-            log.info("Sending sole application issued notification to applicant 1 for case : {}", caseId);
-
             if (!caseData.getApplication().isPersonalServiceMethod()) {
+                log.info("Sending sole application issued notification to applicant 1 for case : {}", caseId);
+
                 notificationService.sendEmail(
                     email,
                     SOLE_APPLICANT_APPLICATION_ACCEPTED,
-                    soleApplicant1TemplateVars(caseData, caseId),
+                    soleApplicant1TemplateVars(caseData, caseId, languagePreference),
                     languagePreference
                 );
             }
@@ -189,12 +191,17 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         }
     }
 
-    private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id) {
+    private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id, LanguagePreference languagePreference) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(
             REVIEW_DEADLINE_DATE,
             holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
         );
+
+        if (WELSH.equals(languagePreference)) {
+            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant1()));
+        }
+
         return templateVars;
     }
 
