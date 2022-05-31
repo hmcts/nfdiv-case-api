@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -43,6 +44,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
+@Slf4j
 @Component
 public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, UserRole> {
 
@@ -86,6 +88,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
+        log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_GENERAL_APPLICATION, details.getId());
         final CaseData data = details.getData();
 
         if (AwaitingPronouncement == details.getState()

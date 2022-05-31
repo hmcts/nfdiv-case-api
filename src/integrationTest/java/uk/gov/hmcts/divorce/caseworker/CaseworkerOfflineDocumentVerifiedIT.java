@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,8 @@ import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.time.LocalDate;
+
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
@@ -39,8 +43,9 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVer
 import static uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService.OfflineDocumentReceived.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -152,7 +157,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
                 .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
                 .content(
                     objectMapper.writeValueAsString(
-                        callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, AosDrafted.name())))
+                        callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
                 .accept(APPLICATION_JSON))
             .andReturn()
             .getResponse()
@@ -164,7 +169,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    void shouldTriggerAosSubmissionAndMoveCaseStateToUserSelectedStateIfDocumentTypeOtherSelected()
+    void shouldTriggerCallbackAndMoveCaseStateToUserSelectedStateIfDocumentTypeOtherSelected()
         throws Exception {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
@@ -197,6 +202,50 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(expectedResponse(CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_OTHER_RESPONSE));
+    }
+
+    @Test
+    void shouldTriggerCallbackAndSetDueDateAndMoveCaseStateToUserSelectedStateIfDocumentTypeOtherAndIsTransitioningToHolding()
+        throws Exception {
+
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .typeOfDocumentAttached(OTHER)
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setApplication(Application.builder()
+            .issueDate(LocalDate.of(2022, 01, 01))
+            .stateToTransitionApplicationTo(Holding)
+            .build());
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+
+        caseData.getApplicant2().setLegalProceedings(YES);
+        caseData.getApplicant2().setLegalProceedingsDetails("some description");
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
+                .accept(APPLICATION_JSON))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_OTHER_RESPONSE));
+        jsonDocument.set("data.stateToTransitionApplicationTo", "Holding");
+        jsonDocument.set("state", "Holding");
+        jsonDocument.put("data", "dueDate", "2022-05-22");
+        jsonDocument.put("data", "issueDate", "2022-01-01");
+
+
+        assertThatJson(jsonStringResponse)
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(jsonDocument.json());
     }
 
     @Test
