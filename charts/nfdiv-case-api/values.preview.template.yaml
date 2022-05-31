@@ -63,6 +63,8 @@ java:
           alias: IDAM_DATA_STORE_SYSTEM_USER_USERNAME
         - name: idam-systemupdate-password
           alias: IDAM_DATA_STORE_SYSTEM_USER_PASSWORD
+        - name: idam-data-store-client-secret
+          alias: IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET
         - name: s2s-data-store-secret
           alias: DATA_STORE_IDAM_KEY
         - name: s2s-definition-store-secret
