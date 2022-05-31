@@ -7,6 +7,12 @@
   "applicant1MiddleName": "test_middle_name",
   "applicant1LastName": "test_last_name",
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1Address": {
+    "AddressLine1": "line 1",
+    "PostTown": "town",
+    "PostCode": "postcode",
+    "Country": "UK"
+  },
   "applicant1LanguagePreferenceWelsh": "No",
   "applicant1ContactDetailsType": "public",
   "applicant1Gender": "female",
@@ -24,6 +30,12 @@
   "applicant2MiddleName": "test_middle_name",
   "applicant2LastName": "test_last_name",
   "applicant2Email": "applicant2@example.com",
+  "applicant2Address": {
+    "AddressLine1": "line 1",
+    "PostTown": "town",
+    "PostCode": "postcode",
+    "Country": "UK"
+  },
   "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
   "applicant2LanguagePreferenceWelsh": "No",
   "applicant2ContactDetailsType": "public",

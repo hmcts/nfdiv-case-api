@@ -112,8 +112,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendReIssueEmailNotificationWhenSoleApplicationAndApplicantIsRepresented()
-        throws Exception {
+    public void shouldSendReIssueEmailNotificationWhenSoleApplicationAndApplicantIsRepresented() throws Exception {
         final Map<String, Object> caseData = caseData(RE_ISSUE_SOLE_APPLICATION_REQUEST);
         final Response response = triggerCallback(caseData, CASEWORKER_REISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
         caseData.put("serviceMethod", COURT_SERVICE);
