@@ -348,7 +348,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "## Judge costs decision")
             .field("coJudgeCostsClaimGranted")
             .field("coJudgeCostsOrderAdditionalInfo")
-            .field("coCertificateOfEntitlementDocument");
+            .field("coCertificateOfEntitlementDocument")
+            .field("coConditionalOrderGrantedDocument");
     }
 
     private void buildFinalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

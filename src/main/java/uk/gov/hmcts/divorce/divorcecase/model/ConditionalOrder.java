@@ -196,6 +196,11 @@ public class ConditionalOrder {
     private Document refusalOrderDocument;
 
     @CCD(
+        label = "Conditional Order Granted"
+    )
+    private DivorceDocument conditionalOrderGrantedDocument;
+
+    @CCD(
         label = "Legal Advisor Decisions Submitted",
         typeOverride = Collection,
         typeParameterOverride = "LegalAdvisorDecision"

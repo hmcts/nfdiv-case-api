@@ -64,12 +64,10 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
 
         log.info("Conditional order pronounced for Case({})", caseId);
 
+        generateConditionalOrderPronouncedDocument.apply(details);
+
         try {
-
             notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, caseId);
-
-            generateConditionalOrderPronouncedDocument.apply(details);
-
         } catch (final NotificationTemplateException e) {
             log.error("Notification failed with message: {}", e.getMessage(), e);
         }

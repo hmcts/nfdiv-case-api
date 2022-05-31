@@ -1,0 +1,46 @@
+{
+  "data":{
+    "applicationType":"jointApplication",
+    "divorceOrDissolution":"divorce",
+    "applicant1FirstName":"test_first_name",
+    "applicant1LastName":"test_last_name",
+    "applicant1Email":"simulate-delivered@notifications.service.gov.uk",
+    "applicant1Gender":"female",
+    "applicant2FirstName":"test_first_name",
+    "applicant2LastName":"test_last_name",
+    "applicant2Email":"applicant2@example.com",
+    "applicant2LanguagePreferenceWelsh":"No",
+    "applicant2Gender":"female",
+    "solServiceTruthStatement":"I believe that the facts stated in the application are true.",
+    "issueDate":"2020-05-28",
+    "coGrantedDate":"2022-01-06",
+    "coCourt":"birmingham",
+    "coDateAndTimeOfHearing":"2022-01-06T10:30",
+    "coConditionalOrderGrantedDocument":{
+      "documentLink":{
+        "document_url":"${json-unit.any-string}",
+        "document_filename":"conditionalOrderGranted.pdf",
+        "document_binary_url":"${json-unit.any-string}"
+      },
+      "documentFileName":"conditionalOrderGranted.pdf",
+      "documentType":"conditionalOrderGranted"
+    },
+    "documentsGenerated":[
+      {
+        "id":"${json-unit.any-string}",
+        "value":{
+          "documentLink":{
+            "document_url":"${json-unit.any-string}",
+            "document_filename":"conditionalOrderGranted.pdf",
+            "document_binary_url":"${json-unit.any-string}"
+          },
+          "documentFileName":"conditionalOrderGranted.pdf",
+          "documentType":"conditionalOrderGranted"
+        }
+      }
+    ],
+    "dueDate":"2020-04-28",
+    "dataVersion":4,
+    "warnings":[]
+  }
+}

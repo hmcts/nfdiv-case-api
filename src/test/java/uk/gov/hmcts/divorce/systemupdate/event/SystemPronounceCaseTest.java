@@ -63,7 +63,7 @@ public class SystemPronounceCaseTest {
     }
 
     @Test
-    void shouldSendNotification() {
+    void shouldSendNotificationAndGenerateConditionalOrderGrantedDoc() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .id(1L)
