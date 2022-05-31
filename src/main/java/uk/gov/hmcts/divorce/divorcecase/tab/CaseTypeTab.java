@@ -107,6 +107,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("noticeOfProceedingsSolicitorFirm")
             .field("applicant2SolicitorRepresented", NEVER_SHOW)
             .field("statementOfTruth")
+            .field("applicant2StatementOfTruth", "statementOfTruth!=\"*\"")
             .field("dateAosSubmitted");
     }
 
