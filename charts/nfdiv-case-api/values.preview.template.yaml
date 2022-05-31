@@ -23,8 +23,8 @@ java:
     RSE_LIB_DB_HOST: "{{ .Release.Name }}-postgresql"
     RSE_LIB_DB_PORT: 5432
     CFT_LIB_NO_DOCKER: true
-    SEARCH_ELASTIC_HOSTS: "${SERVICE_NAME}-es-master"
-    ELASTIC_SEARCH_HOST: "${SERVICE_NAME}-es-master"
+    SEARCH_ELASTIC_HOSTS: ${SERVICE_NAME}-es-master
+    ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
     OPEN_ID_API_BASE_URI: https://idam-web-public.aat.platform.hmcts.net/o
     IDAM_OIDC_URL: https://idam-web-public.aat.platform.hmcts.net/o
     SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI: https://idam-web-public.aat.platform.hmcts.net/o
