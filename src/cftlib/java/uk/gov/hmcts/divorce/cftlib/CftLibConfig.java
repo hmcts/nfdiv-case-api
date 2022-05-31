@@ -25,6 +25,9 @@ public class CftLibConfig implements CFTLibConfigurer {
     @Value("${CFT_LIB_NO_DOCKER:false}")
     boolean gigajar;
 
+    @Value("ccd-NO_FAULT_DIVORCE_BulkAction-${CCD_DEF_NAME:dev}.xlsx")
+    String bulkCaseDefName;
+
     @Autowired
     CCDDefinitionGenerator configWriter;
 
@@ -67,16 +70,21 @@ public class CftLibConfig implements CFTLibConfigurer {
         lib.configureRoleAssignments(json);
 
         // Generate and import CCD definitions
-        var def = Files.readAllBytes(generateCCDDefinition());
-        lib.importDefinition(def);
+        generateCCDDefinition();
+
+        var nfdDefinition = Files.readAllBytes(Path.of("build/ccd-config/" + defName));
+        lib.importDefinition(nfdDefinition);
+
+        var bulkCasesDefinition = Files.readAllBytes(Path.of("build/ccd-config/" + bulkCaseDefName));
+        lib.importDefinition(bulkCasesDefinition);
     }
 
     /**
-    * Export our JSON ccd definition and convert it to xlsx.
-    * Doing this at runtime in the CftlibConfig allows use of spring boot devtool's
-    * live reload functionality to rapidly edit and test code & definition changes.
-    */
-    private Path generateCCDDefinition() throws Exception {
+     * Generate our JSON ccd definition and convert it to xlsx.
+     * Doing this at runtime in the CftlibConfig allows use of spring boot devtool's
+     * live reload functionality to rapidly edit and test code & definition changes.
+     */
+    private void generateCCDDefinition() throws Exception {
         // Export the JSON config.
         configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
         // Run the gradle task to convert to xlsx.
@@ -87,6 +95,5 @@ public class CftLibConfig implements CFTLibConfigurer {
         if (code != 0) {
             throw new RuntimeException("Error converting ccd json to xlsx");
         }
-        return Path.of("build/ccd-config/" + defName);
     }
 }
