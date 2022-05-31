@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ChangedNameHow;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
@@ -20,7 +19,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Objects.isNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
@@ -138,19 +136,19 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     private Map<String, String> missingDocsTemplateVars(CaseData caseData) {
         Map<String, String> templateVars = new HashMap<>();
         Set<DocumentType> missingDocTypes = caseData.getApplication().getMissingDocumentTypes();
+        Set<ChangedNameHow> nameChangedHowSet = getNameChangedHowSet(caseData);
+
+        boolean hasCertifiedTranslation = Optional.ofNullable(
+            caseData.getApplication().getMarriageDetails().getCertifiedTranslation()).orElse(YesOrNo.NO).toBoolean();
         boolean ukMarriage = caseData.getApplication().getMarriageDetails().getMarriedInUk().toBoolean();
+        boolean isMissingMarriageCertificateNameChangeEvidence = missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
+            && nameChangedHowSet.contains(ChangedNameHow.MARRIAGE_CERTIFICATE);
 
         boolean isMissingMarriageCertificate = missingDocTypes.contains(MARRIAGE_CERTIFICATE)
-            || missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
-                && Optional.ofNullable(nameChangedHowSet(caseData)).orElse(Set.of()).contains(ChangedNameHow.MARRIAGE_CERTIFICATE)
-                && Optional.ofNullable(
-                    caseData.getApplication().getMarriageDetails().getCertifiedTranslation()).orElse(YesOrNo.NO).equals(YesOrNo.NO);
+            || isMissingMarriageCertificateNameChangeEvidence && !hasCertifiedTranslation;
 
         boolean isMissingTranslatedMarriageCertificate = missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION)
-            || missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
-                && Optional.ofNullable(nameChangedHowSet(caseData)).orElse(Set.of()).contains(ChangedNameHow.MARRIAGE_CERTIFICATE)
-                && Optional.ofNullable(
-                    caseData.getApplication().getMarriageDetails().getCertifiedTranslation()).orElse(YesOrNo.NO).equals(YesOrNo.YES);
+            || isMissingMarriageCertificateNameChangeEvidence && hasCertifiedTranslation;
 
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE,
             isMissingMarriageCertificate && ukMarriage && caseData.isDivorce() ? YES : NO);
@@ -165,15 +163,14 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION,
             isMissingTranslatedMarriageCertificate && !caseData.isDivorce() ? YES : NO);
 
-        templateVars.put(MISSING_NAME_CHANGE_PROOF, missingDocTypes.contains(NAME_CHANGE_EVIDENCE) && !isNull(nameChangedHowSet(caseData))
-            && !nameChangedHowSet(caseData).contains(ChangedNameHow.MARRIAGE_CERTIFICATE) ? YES : NO);
+        templateVars.put(MISSING_NAME_CHANGE_PROOF, missingDocTypes.contains(NAME_CHANGE_EVIDENCE) && !isEmpty(nameChangedHowSet)
+            && !nameChangedHowSet.contains(ChangedNameHow.MARRIAGE_CERTIFICATE) ? YES : NO);
 
         return templateVars;
     }
 
-    private Set<ChangedNameHow> nameChangedHowSet(CaseData caseData) {
-        return caseData.getApplicationType().equals(ApplicationType.SOLE_APPLICATION) ? caseData.getApplicant1().getNameChangedHow() :
-            Stream.concat(Optional.ofNullable(caseData.getApplicant1().getNameChangedHow()).orElse(Set.of()).stream(),
+    private Set<ChangedNameHow> getNameChangedHowSet(CaseData caseData) {
+        return Stream.concat(Optional.ofNullable(caseData.getApplicant1().getNameChangedHow()).orElse(Set.of()).stream(),
                 Optional.ofNullable(caseData.getApplicant2().getNameChangedHow()).orElse(Set.of()).stream())
                 .collect(Collectors.toSet());
     }
