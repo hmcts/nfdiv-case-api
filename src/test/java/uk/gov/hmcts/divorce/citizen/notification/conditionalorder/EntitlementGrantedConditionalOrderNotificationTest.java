@@ -1,10 +1,12 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -56,6 +58,11 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
     @InjectMocks
     private EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
+
+    @BeforeEach
+    void setPageSize() {
+        ReflectionTestUtils.setField(entitlementGrantedConditionalOrderNotification, "enableSolicitorEntitlementEmail", true);
+    }
 
     @Test
     void shouldSendEmailToApplicant1WithCourtHearingContent() {
