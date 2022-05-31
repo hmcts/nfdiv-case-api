@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import static java.util.Objects.isNull;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
@@ -102,6 +104,14 @@ public class CaseDocuments {
     )
     private DynamicList scannedDocumentNames;
 
+    @CCD(
+        label = "Amended applications",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<DivorceDocument>> amendedApplications;
+
 
     public static <T> List<ListValue<T>> addDocumentToTop(final List<ListValue<T>> documents, final T value) {
         return addDocumentToTop(documents, value, null);
@@ -153,4 +163,17 @@ public class CaseDocuments {
         return previousDocuments;
     }
 
+    public static <T> boolean hasAddedDocuments(final List<ListValue<T>> after,
+                                                final List<ListValue<T>> before) {
+
+        if (isNull(before) && !after.isEmpty()) {
+            return true;
+        } else if (isNull(before) || isNull(after)) {
+            return false;
+        }
+
+        return !after.stream()
+            .allMatch(afterValue -> before.stream()
+                .anyMatch(beforeValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
+    }
 }

@@ -365,7 +365,24 @@ public enum State {
         Draft,
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
-        Applicant2Approved
+        Applicant2Approved,
+        Withdrawn,
+        Rejected
+    ));
+
+    public static final EnumSet<State> STATES_NOT_WITHDRAWN_OR_REJECTED = EnumSet.complementOf(EnumSet.of(
+        Withdrawn,
+        Rejected
+    ));
+
+    public static final EnumSet<State> PRE_RETURN_TO_PREVIOUS_STATES = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
+        Applicant2Approved,
+        AwaitingPronouncement,
+        Withdrawn,
+        Rejected
     ));
 
     public static final EnumSet<State> POST_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
@@ -376,8 +393,17 @@ public enum State {
         AwaitingPayment,
         AwaitingHWFDecision,
         AwaitingDocuments,
-        Submitted
+        Submitted,
+        Withdrawn,
+        Rejected
     ));
+
+    public static final State[] AOS_STATES = {
+        Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral,
+        AwaitingServiceConsideration, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
+        AwaitingJudgeClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
+        GeneralApplicationReceived, PendingHearingOutcome
+    };
 
     private final String name;
 

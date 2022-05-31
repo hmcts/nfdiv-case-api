@@ -48,6 +48,7 @@ public class CaseworkerCorrectPaperCase implements CCDConfig<CaseData, State, Us
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("{} about to start callback invoked for Case Id: {}", CORRECT_PAPER_CASE, details.getId());
         CaseData caseData = details.getData();
 
         caseData.getLabelContent().setApplicationType(caseData.getApplicationType());
@@ -60,7 +61,7 @@ public class CaseworkerCorrectPaperCase implements CCDConfig<CaseData, State, Us
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
-
+        log.info("{} about to submit callback invoked for Case Id: {}", CORRECT_PAPER_CASE, details.getId());
         CaseData caseData = details.getData();
         caseData.getBulkScanMetaInfo().setWarnings(null);
 

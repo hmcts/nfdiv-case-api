@@ -74,7 +74,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen switched to sole about to submit callback invoked");
+        log.info("Citizen switched to sole about to submit callback invoked for Case Id: {}", details.getId());
         CaseData data = details.getData();
 
         if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), details.getId())) {

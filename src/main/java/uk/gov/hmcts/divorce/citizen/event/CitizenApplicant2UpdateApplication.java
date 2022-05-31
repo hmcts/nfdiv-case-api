@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -10,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
@@ -18,6 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPendi
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
+@Slf4j
 @Component
 public class CitizenApplicant2UpdateApplication implements CCDConfig<CaseData, State, UserRole> {
 
@@ -28,7 +32,8 @@ public class CitizenApplicant2UpdateApplication implements CCDConfig<CaseData, S
 
         configBuilder
             .event(CITIZEN_APPLICANT2_UPDATE)
-            .forStates(AwaitingApplicant2Response, AosDrafted, ConditionalOrderDrafted, ConditionalOrderPending, AwaitingClarification)
+            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingApplicant2Response, AosDrafted, ConditionalOrderDrafted,
+                ConditionalOrderPending, AwaitingClarification))
             .name("Patch a joint case")
             .description("Patch a joint divorce or dissolution as applicant 2")
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -38,6 +43,8 @@ public class CitizenApplicant2UpdateApplication implements CCDConfig<CaseData, S
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("{} about to submit callback invoked for Case Id: {}", CITIZEN_APPLICANT2_UPDATE, details.getId());
         CaseData data = details.getData();
 
         if (details.getState() == AosDrafted

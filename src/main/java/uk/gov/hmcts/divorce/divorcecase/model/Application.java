@@ -345,6 +345,12 @@ public class Application {
     private RejectReason rejectReason;
 
     @CCD(
+        label = "Current state",
+        access = {CaseworkerAccess.class}
+    )
+    private State currentState;
+
+    @CCD(
         label = "Previous state",
         access = {CaseworkerAccess.class}
     )
@@ -382,6 +388,12 @@ public class Application {
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant2ReminderSent;
+
+    @CCD(
+        label = "Reminder that respondent solicitor needs to respond to the application",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo respondentSolicitorReminderSent;
 
     @CCD(
         label = "Reminder sent to Applicants indicating they can apply for Conditional Order",
@@ -570,5 +582,10 @@ public class Application {
     @JsonIgnore
     public boolean isPaperCase() {
         return YES.equals(newPaperCase);
+    }
+
+    @JsonIgnore
+    public String getPbaNumber() {
+        return this.getPbaNumbers().getValue().getLabel();
     }
 }
