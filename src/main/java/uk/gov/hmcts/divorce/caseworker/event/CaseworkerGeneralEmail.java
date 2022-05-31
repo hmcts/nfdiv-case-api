@@ -105,7 +105,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker create general email about to submit callback invoked");
+        log.info("Caseworker create general email about to submit callback invoked for Case Id: {}", details.getId());
 
         var caseData = details.getData();
         var generalEmail = caseData.getGeneralEmail();
