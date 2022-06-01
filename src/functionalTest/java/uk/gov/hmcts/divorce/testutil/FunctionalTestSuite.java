@@ -146,6 +146,16 @@ public abstract class FunctionalTestSuite {
         CallbackRequest request = CallbackRequest
             .builder()
             .eventId(eventId)
+            .caseDetailsBefore(
+                CaseDetails
+                    .builder()
+                    .id(1234567890123456L)
+                    .data(caseData)
+                    .createdDate(LOCAL_DATE_TIME)
+                    .caseTypeId(CASE_TYPE)
+                    .state(state.getName())
+                    .build()
+            )
             .caseDetails(
                 CaseDetails
                     .builder()
@@ -176,10 +186,10 @@ public abstract class FunctionalTestSuite {
 
     protected List<CaseDetails> searchForCasesWithQuery(BoolQueryBuilder query) {
         return searchService.searchForAllCasesWithQuery(
-            Holding,
             query,
             idamService.retrieveSystemUpdateUserDetails(),
-            serviceAuthenticationGenerator.generate()
+            serviceAuthenticationGenerator.generate(),
+            Holding
         );
     }
 

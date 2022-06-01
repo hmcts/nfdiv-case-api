@@ -68,7 +68,7 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("Caseworker return to previous state about to start callback invoked");
+        log.info("Caseworker return to previous state about to start callback invoked for Case Id: {}", details.getId());
 
         CaseData caseData = details.getData();
         caseData.getApplication().setCurrentState(details.getState());
@@ -80,7 +80,7 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Caseworker return to previous state about to submit callback invoked");
+        log.info("Caseworker return to previous state about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData caseData = details.getData();
         State state = caseData.getApplication().getStateToTransitionApplicationTo();

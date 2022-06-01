@@ -63,6 +63,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("labelContentApplicantsOrApplicant1s", NEVER_SHOW)
             .field("labelContentTheApplicant2", NEVER_SHOW)
             .field("labelContentTheApplicant2UC", NEVER_SHOW)
+            .field("labelContentApplicant2UC", NEVER_SHOW)
             .field("labelContentGotMarriedOrFormedCivilPartnership", NEVER_SHOW)
             .field("labelContentMarriageOrCivilPartnership", NEVER_SHOW)
             .field("labelContentMarriageOrCivilPartnershipUC", NEVER_SHOW);
@@ -153,25 +154,28 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
                 "#### ${labelContentTheApplicant2UC}'s contact details are confidential")
             .field("applicant2PhoneNumber", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
             .field("applicant2Email", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
-            .field("applicant1IsApplicant2Represented")
             .field("applicant2Address", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
             .field("applicant2AgreedToReceiveEmails")
             .field("applicant2CannotUpload")
             .field("applicant2CannotUploadSupportingDocument")
+            .field("applicant1IsApplicant2Represented", "applicant2SolicitorRepresented!=\"*\"")
+            .field("applicant2SolicitorRepresented")
 
             //Applicant 2 Solicitor
-            .field("applicant2SolicitorRepresented", NEVER_SHOW)
-            .label("LabelApplicant2sSolicitor-Heading",
-                "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"",
-                "#### ${labelContentTheApplicant2UC}'s solicitor")
-            .field("applicant2SolicitorReference", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
-            .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
-            .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
-            .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented=\"Yes\" OR applicant1IsApplicant2Represented=\"Yes\"")
-            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented=\"Yes\"")
-            .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented=\"Yes\"")
+            .label("LabelApplicant2sSolicitorNewCases-Heading",
+                "applicant2SolicitorRepresented=\"Yes\"",
+                "#### ${labelContentApplicant2UC}'s solicitor details")
+            .label("LabelApplicant2sSolicitorOldCases-Heading",
+                "applicant1IsApplicant2Represented=\"Yes\" AND applicant2SolicitorRepresented!=\"*\"",
+                "#### ${labelContentApplicant2UC}'s solicitor details")
+            .field("applicant2SolicitorReference", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorName", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented!=\"No\"")
 
             //Applicant 2 Other proceedings
             .label("LabelApplicant2OtherProceedings-Heading",

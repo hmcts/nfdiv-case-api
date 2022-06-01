@@ -89,7 +89,7 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker make bailiff decision about to submit callback invoked");
+        log.info("Caseworker make bailiff decision about to submit callback invoked for Case Id: {}", details.getId());
 
         var caseDataCopy = details.getData().toBuilder().build();
         var serviceApplication = caseDataCopy.getAlternativeService();
