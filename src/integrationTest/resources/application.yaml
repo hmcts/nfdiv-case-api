@@ -206,3 +206,6 @@ bulk-action:
   page-size: 50
 
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
+
+toggle:
+  enable_entitlement_email: ${ENABLE_ENTITLEMENT_EMAIL:true}
