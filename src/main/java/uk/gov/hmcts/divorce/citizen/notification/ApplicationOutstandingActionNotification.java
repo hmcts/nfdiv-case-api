@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -89,22 +88,21 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.putAll(courtDocumentDetails(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars.get(COURT_EMAIL)));
+        courtDocumentDetails(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars);
         boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
             && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
-        templateVars.putAll(serveAnotherWayTemplateVars(soleServingAnotherWay, caseData));
+        serveAnotherWayTemplateVars(soleServingAnotherWay, caseData, templateVars);
         return templateVars;
     }
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.putAll(courtDocumentDetails(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars.get(COURT_EMAIL)));
-        templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
+        courtDocumentDetails(caseData, templateVars.get(APPLICATION_REFERENCE), templateVars);
+        serveAnotherWayTemplateVars(false, caseData, templateVars);
         return templateVars;
     }
 
-    private Map<String, String> serveAnotherWayTemplateVars(boolean soleServingAnotherWay, CaseData caseData) {
-        Map<String, String> templateVars = new HashMap<>();
+    private void serveAnotherWayTemplateVars(boolean soleServingAnotherWay, CaseData caseData, Map<String, String> templateVars) {
 
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY, soleServingAnotherWay ? YES : NO);
         templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, soleServingAnotherWay && caseData.isDivorce() ? YES : NO);
@@ -113,11 +111,9 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(SERVE_HUSBAND_ANOTHER_WAY,
             soleServingAnotherWay && caseData.isDivorce() && caseData.getApplicant2().getGender().equals(Gender.MALE) ? YES : NO);
         templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, soleServingAnotherWay && !caseData.isDivorce() ? YES : NO);
-        return templateVars;
     }
 
-    private Map<String, String> courtDocumentDetails(CaseData caseData, String referenceNumber, String courtEmail) {
-        Map<String, String> templateVars = new HashMap<>();
+    private void courtDocumentDetails(CaseData caseData, String referenceNumber, Map<String, String> templateVars) {
         boolean needsToSendDocuments = !isEmpty(caseData.getApplication().getMissingDocumentTypes());
         boolean isDivorceAndSendDocumentsToCourt = needsToSendDocuments && caseData.isDivorce();
         boolean isDissolutionAndSendDocumentsToCourt = needsToSendDocuments && !caseData.isDivorce();
@@ -126,15 +122,12 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(SEND_DOCUMENTS_TO_COURT_DIVORCE, isDivorceAndSendDocumentsToCourt ? YES : NO);
         templateVars.put(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, isDissolutionAndSendDocumentsToCourt ? YES : NO);
         templateVars.put(CONDITIONAL_REFERENCE_NUMBER, needsToSendDocuments ? referenceNumber : "");
-        templateVars.put(CONDITIONAL_COURT_EMAIL, needsToSendDocuments ? courtEmail : "");
+        templateVars.put(CONDITIONAL_COURT_EMAIL, needsToSendDocuments ? templateVars.get(COURT_EMAIL) : "");
 
-        templateVars.putAll(missingDocsTemplateVars(caseData));
-
-        return templateVars;
+        missingDocsTemplateVars(caseData, templateVars);
     }
 
-    private Map<String, String> missingDocsTemplateVars(CaseData caseData) {
-        Map<String, String> templateVars = new HashMap<>();
+    private void missingDocsTemplateVars(CaseData caseData, Map<String, String> templateVars) {
         Set<DocumentType> missingDocTypes = caseData.getApplication().getMissingDocumentTypes();
         Set<ChangedNameHow> nameChangedHowSet = getNameChangedHowSet(caseData);
 
@@ -165,8 +158,6 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
         templateVars.put(MISSING_NAME_CHANGE_PROOF, missingDocTypes.contains(NAME_CHANGE_EVIDENCE) && !isEmpty(nameChangedHowSet)
             && !nameChangedHowSet.contains(ChangedNameHow.MARRIAGE_CERTIFICATE) ? YES : NO);
-
-        return templateVars;
     }
 
     private Set<ChangedNameHow> getNameChangedHowSet(CaseData caseData) {
