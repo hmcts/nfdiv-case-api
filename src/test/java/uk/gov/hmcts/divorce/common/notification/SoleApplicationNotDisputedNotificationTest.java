@@ -168,7 +168,7 @@ public class SoleApplicationNotDisputedNotificationTest {
     }
 
     @Test
-    void SendAosNotDisputedEmailToSoleRespondentWithWelshPartnerContent() {
+    void shouldSendAosNotDisputedEmailToSoleRespondentWithWelshPartnerContent() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplicant2().setEmail(null);
