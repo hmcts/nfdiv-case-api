@@ -115,7 +115,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .label("LabelApplicant1-PaymentHeading", IS_JOINT, "### The applicant")
-            .field("applicant1HWFReferenceNumber")
+            .field("applicant1HWFReferenceNumber","applicationType=\"soleApplication\" OR applicationType=\"jointApplication\" AND applicant2HWFNeedHelp=\"Yes\"")
             .label("LabelApplicant2-PaymentHeading", IS_JOINT_AND_HWF_ENTERED, "### ${labelContentTheApplicant2UC}")
             .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED)
             .field("newPaperCase", "applicationType=\"NEVER_SHOW\"")
