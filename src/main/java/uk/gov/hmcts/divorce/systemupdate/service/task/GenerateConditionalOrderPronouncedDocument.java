@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderPronouncedTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -29,13 +30,15 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
     @Autowired
     private ConditionalOrderPronouncedTemplateContent conditionalOrderPronouncedTemplateContent;
 
+    @Autowired
+    private DocumentRemovalService documentRemovalService;
+
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
-
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        log.info("Generating Conditional Order pronounced pdf for CaseID: {}", caseDetails.getId());
+        log.info("Generating Conditional Order granted pdf for CaseID: {}", caseDetails.getId());
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
@@ -52,15 +55,28 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
         return caseDetails;
     }
 
+    public Optional<ListValue<DivorceDocument>> getConditionalOrderGrantedDoc(final CaseData caseData) {
+        return !CollectionUtils.isEmpty(caseData.getDocuments().getDocumentsGenerated())
+            ? caseData.getDocuments().getDocumentsGenerated().stream()
+            .filter(document -> CONDITIONAL_ORDER_GRANTED.equals(document.getValue().getDocumentType())).findFirst()
+            : Optional.empty();
+    }
+
+    public void removeExistingAndGenerateNewConditionalOrderGrantedDoc(CaseDetails<CaseData, State> caseDetails) {
+        final Long caseId = caseDetails.getId();
+        final CaseData caseData = caseDetails.getData();
+
+        //remove existing doc
+        documentRemovalService.deleteDocumentFromDocumentStore(
+            caseData.getDocuments().getDocumentsGenerated(), CONDITIONAL_ORDER_GRANTED, caseId);
+
+        //generate new doc
+        apply(caseDetails);
+    }
+
     private void addConditionalOrderGrantedDocument(CaseData caseData) {
-
-        Optional<ListValue<DivorceDocument>> conditionalOrderDoc =
-            !CollectionUtils.isEmpty(caseData.getDocuments().getDocumentsGenerated())
-                ? caseData.getDocuments().getDocumentsGenerated().stream().filter(
-                    document -> CONDITIONAL_ORDER_GRANTED.equals(document.getValue().getDocumentType())).findFirst()
-                : Optional.empty();
-
-        conditionalOrderDoc.ifPresent(divorceDocumentListValue -> caseData.getConditionalOrder()
+        getConditionalOrderGrantedDoc(caseData)
+            .ifPresent(divorceDocumentListValue -> caseData.getConditionalOrder()
             .setConditionalOrderGrantedDocument(divorceDocumentListValue.getValue()));
     }
 }
