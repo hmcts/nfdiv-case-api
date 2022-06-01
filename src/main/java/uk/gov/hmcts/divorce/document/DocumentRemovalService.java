@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -40,7 +39,7 @@ public class DocumentRemovalService {
                 .filter(document -> documentTypeToRemove.equals(document.getValue().getDocumentType()))
                 .toList();
 
-            if (!CollectionUtils.isEmpty(documentsToRemove)) {
+            if (!isEmpty(documentsToRemove)) {
                 final User systemUser = idamService.retrieveSystemUpdateUserDetails();
                 final String rolesCsv = String.join(",", systemUser.getUserDetails().getRoles());
 
