@@ -12,7 +12,10 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitAos.SUBMIT_AOS;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -36,5 +39,18 @@ public class SubmitAosFT extends FunctionalTestSuite {
         assertThatJson(response.asString())
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedResponse(RESPONSE)));
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulWhenApplicant2LanguageIsWelsh() throws Exception {
+
+        final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("applicant2LanguagePreferenceWelsh", YES);
+        caseData.put("applicant2SolicitorRepresented", NO);
+        caseData.put("acknowledgementOfServiceHowToRespondApplication", WITHOUT_DISPUTE_DIVORCE);
+
+        final Response response = triggerCallback(caseData, SUBMIT_AOS, ABOUT_TO_SUBMIT_URL, AosDrafted);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 }
