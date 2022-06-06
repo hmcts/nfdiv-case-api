@@ -104,6 +104,7 @@ uk:
             CITIZEN_CONDITIONAL_ORDER_REFUSED: 'ab76d32c-ee27-4b4b-aeaa-9b781bd0dfe2'
             CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: '4d0e2dca-1af3-446d-997d-70b46f99bd73'
             SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: '8b532824-0b6b-4970-95be-3a659f257aa8'
+            SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: '351edcb3-5193-4883-9095-19ef6617fa8a'
             SOLE_APPLICANT_AOS_SUBMITTED: '28139c85-180d-456c-b40c-36c4e04afa5d'
             SOLE_RESPONDENT_AOS_SUBMITTED: '61a8ec4f-b0cf-45d9-a419-29cae2c811c7'
             SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED: '98960794-a1a9-4761-a495-2eca16f4c81e'
@@ -184,6 +185,7 @@ uk:
             CITIZEN_CONDITIONAL_ORDER_REFUSED: 'ab76d32c-ee27-4b4b-aeaa-9b781bd0dfe2'
             CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: '4d0e2dca-1af3-446d-997d-70b46f99bd73'
             SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: '8b532824-0b6b-4970-95be-3a659f257aa8'
+            SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: '351edcb3-5193-4883-9095-19ef6617fa8a'
             SOLE_APPLICANT_AOS_SUBMITTED: '28139c85-180d-456c-b40c-36c4e04afa5d'
             SOLE_RESPONDENT_AOS_SUBMITTED: '61a8ec4f-b0cf-45d9-a419-29cae2c811c7'
             SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED: '98960794-a1a9-4761-a495-2eca16f4c81e'
@@ -262,7 +264,7 @@ docmosis:
       GENERAL_LETTER: NFD_General_Letter.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V2.docx
-      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V4.docx
+      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx
@@ -273,7 +275,7 @@ docmosis:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
-      CITIZEN_RESP_AOS_INVITATION_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V4.docx
+      CITIZEN_RESP_AOS_INVITATION_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
       CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: replace template once available
@@ -380,3 +382,6 @@ bulk-action:
   page-size: ${BULK_ACTION_BATCH_SIZE_MAX:50}
 
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
+
+toggle:
+  enable_entitlement_email: ${ENABLE_ENTITLEMENT_EMAIL:true}

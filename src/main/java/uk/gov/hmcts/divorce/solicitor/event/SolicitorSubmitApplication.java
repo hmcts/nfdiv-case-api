@@ -75,7 +75,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
-        log.info("Submit application about to start callback invoked");
+        log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_SUBMIT, details.getId());
 
         log.info("Retrieving order summary");
         final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
@@ -101,6 +101,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
+        log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_SUBMIT, details.getId());
         final Long caseId = details.getId();
         final var caseData = details.getData();
 
