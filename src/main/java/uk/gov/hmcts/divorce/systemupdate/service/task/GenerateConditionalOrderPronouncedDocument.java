@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.systemupdate.service.task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -57,7 +56,7 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
     }
 
     public Optional<ListValue<DivorceDocument>> getConditionalOrderGrantedDoc(final CaseData caseData) {
-        return !CollectionUtils.isEmpty(caseData.getDocuments().getDocumentsGenerated())
+        return !isEmpty(caseData.getDocuments().getDocumentsGenerated())
             ? caseData.getDocuments().getDocumentsGenerated().stream()
             .filter(document -> CONDITIONAL_ORDER_GRANTED.equals(document.getValue().getDocumentType())).findFirst()
             : Optional.empty();
