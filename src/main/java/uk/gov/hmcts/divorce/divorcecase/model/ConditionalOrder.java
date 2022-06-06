@@ -20,15 +20,20 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.UUID.randomUUID;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 
 @Data
 @AllArgsConstructor
@@ -185,6 +190,26 @@ public class ConditionalOrder {
     )
     private DivorceDocument certificateOfEntitlementDocument;
 
+    @CCD(
+        label = "Refusal Rejection reasons"
+    )
+    private Document refusalOrderDocument;
+
+    @CCD(
+        label = "Legal Advisor Decisions Submitted",
+        typeOverride = Collection,
+        typeParameterOverride = "LegalAdvisorDecision"
+    )
+    private List<ListValue<LegalAdvisorDecision>> legalAdvisorDecisions;
+
+    @CCD(
+        label = "Clarification Responses Submitted",
+        typeOverride = Collection,
+        typeParameterOverride = "ClarificationResponse"
+    )
+    private List<ListValue<ClarificationResponse>> clarificationResponsesSubmitted;
+
+
     @JsonIgnore
     public boolean areClaimsGranted() {
         return nonNull(claimsGranted) && claimsGranted.toBoolean();
@@ -204,7 +229,13 @@ public class ConditionalOrder {
         this.setRefusalAdminErrorInfo(null);
         this.setRefusalRejectionReason(null);
         this.setRefusalRejectionAdditionalInfo(null);
+    }
 
+    @JsonIgnore
+    public void resetClarificationFields() {
+        this.setClarificationResponses(new ArrayList<>());
+        this.setCannotUploadClarificationDocuments(null);
+        this.setClarificationUploadDocuments(new ArrayList<>());
     }
 
     @JsonIgnore
@@ -215,5 +246,62 @@ public class ConditionalOrder {
     @JsonIgnore
     public boolean cannotUploadClarificationDocumentsBoolean() {
         return nonNull(cannotUploadClarificationDocuments) && cannotUploadClarificationDocuments.toBoolean();
+    }
+
+    @JsonIgnore
+    public <T> List<ListValue<T>> addAuditRecord(final List<ListValue<T>> auditRecords,
+                                                 final T value) {
+
+        final var listItemId = String.valueOf(randomUUID());
+        final var listValue = new ListValue<>(listItemId, value);
+        final List<ListValue<T>> list = isEmpty(auditRecords)
+            ? new ArrayList<>()
+            : auditRecords;
+
+        list.add(0, listValue);
+
+        return list;
+    }
+
+    @JsonIgnore
+    public LegalAdvisorDecision populateLegalAdvisorDecision(LocalDate decisionDate) {
+
+        if (hasConditionalOrderBeenGranted()) {
+
+            return LegalAdvisorDecision.builder()
+                .granted(getGranted())
+                .decisionDate(getDecisionDate())
+                .build();
+
+        } else if (MORE_INFO.equals(getRefusalDecision())) {
+
+            return LegalAdvisorDecision.builder()
+                .granted(getGranted())
+                .decisionDate(decisionDate)
+                .refusalDecision(getRefusalDecision())
+                .refusalClarificationReason(getRefusalClarificationReason())
+                .refusalClarificationAdditionalInfo(getRefusalClarificationAdditionalInfo())
+                .build();
+
+        } else if (REJECT.equals(getRefusalDecision())) {
+
+            return LegalAdvisorDecision.builder()
+                .granted(getGranted())
+                .decisionDate(decisionDate)
+                .refusalDecision(getRefusalDecision())
+                .refusalRejectionReason(getRefusalRejectionReason())
+                .refusalRejectionAdditionalInfo(getRefusalRejectionAdditionalInfo())
+                .build();
+
+        } else {
+
+            return LegalAdvisorDecision.builder()
+                .granted(getGranted())
+                .decisionDate(decisionDate)
+                .refusalDecision(getRefusalDecision())
+                .refusalAdminErrorInfo(getRefusalAdminErrorInfo())
+                .build();
+
+        }
     }
 }

@@ -24,8 +24,8 @@ import java.time.LocalDate;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.ADMIN_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
@@ -137,18 +137,31 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             conditionalOrder.setDecisionDate(LocalDate.now(clock));
             endState = AwaitingPronouncement;
 
-        } else if (ADMIN_ERROR.equals(conditionalOrder.getRefusalDecision())) {
-            endState = AwaitingAdminClarification;
-        } else if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
-            notificationDispatcher.send(notification, caseData, details.getId());
-            endState = AwaitingClarification;
-        } else {
+        } else if (REJECT.equals(conditionalOrder.getRefusalDecision())) {
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
                 details.getId()
             );
             endState = AwaitingAmendedApplication;
+
+        } else if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
+            notificationDispatcher.send(notification, caseData, details.getId());
+            generateAndSetConditionalOrderRefusedDocument(
+                caseData,
+                details.getId()
+            );
+            endState = AwaitingClarification;
+
+        } else {
+            endState = AwaitingAdminClarification;
         }
+
+        conditionalOrder.setLegalAdvisorDecisions(
+            conditionalOrder.addAuditRecord(
+                conditionalOrder.getLegalAdvisorDecisions(),
+                conditionalOrder.populateLegalAdvisorDecision(LocalDate.now(clock))
+            )
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -178,6 +191,8 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .documentFileName(document.getFilename())
             .documentType(CONDITIONAL_ORDER_REFUSAL)
             .build();
+
+        caseData.getConditionalOrder().setRefusalOrderDocument(refusalConditionalOrderDoc.getDocumentLink());
 
         caseData.getDocuments().setDocumentsGenerated(addDocumentToTop(
             caseData.getDocuments().getDocumentsGenerated(),
