@@ -60,6 +60,8 @@ public class CommonContent {
     public static final String WIFE_JOINT = "wifeJoint";
     public static final String CIVIL_PARTNER_JOINT = "civilPartnerJoint";
 
+    public static final String ISSUE_DATE = " issue date";
+
     public static final String COURT_NAME = "court name";
     public static final String COURT_EMAIL = "court email";
     public static final String DATE_OF_HEARING = "date of hearing";
@@ -69,6 +71,7 @@ public class CommonContent {
 
     public static final String DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS = "date final order eligible from plus 3 months";
 
+    public static final String IS_SOLE = "isSole";
     public static final String IS_JOINT = "isJoint";
 
     @Autowired
@@ -115,6 +118,18 @@ public class CommonContent {
             }
         } else {
             return "civil partner";
+        }
+    }
+
+    public String getPartnerWelshContent(CaseData caseData, Applicant partner) {
+        if (caseData.isDivorce()) {
+            if (isNull(partner.getGender())) {
+                return "priod";
+            } else {
+                return partner.getGender() == MALE ? "gŵr" : "gwraig";
+            }
+        } else {
+            return "partner sifil";
         }
     }
 
