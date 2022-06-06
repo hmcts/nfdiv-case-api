@@ -140,7 +140,7 @@ class ApplicationRemindApplicant2NotificationTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("gŵr");
+        when(commonContent.getPartnerWelshContent(data, data.getApplicant1())).thenReturn("gŵr");
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -152,6 +152,6 @@ class ApplicationRemindApplicant2NotificationTest {
             )),
             eq(WELSH)
         );
-        verify(commonContent).getPartnerWelshContent(data, data.getApplicant2());
+        verify(commonContent).getPartnerWelshContent(data, data.getApplicant1());
     }
 }

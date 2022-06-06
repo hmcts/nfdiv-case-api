@@ -77,7 +77,7 @@ public class ApplicationRemindApplicant2Notification implements ApplicantNotific
             config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
 
         if (WELSH.equals(applicant.getLanguagePreference())) {
-            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
+            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, partner));
         }
 
         return templateVars;

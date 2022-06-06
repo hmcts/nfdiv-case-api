@@ -115,7 +115,7 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
         }
 
         if (WELSH.equals(applicant.getLanguagePreference())) {
-            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
+            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, partner));
         }
 
         return templateVars;
