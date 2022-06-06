@@ -318,7 +318,7 @@ public class ApplicationIssuedNotificationTest {
             .thenReturn(data.getApplication().getIssueDate().plusDays(16));
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant1())).thenReturn("gŵr");
+        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("gŵr");
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -330,7 +330,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(WELSH)
         );
-        verify(commonContent).getPartnerWelshContent(data, data.getApplicant1());
+        verify(commonContent).getPartnerWelshContent(data, data.getApplicant2());
     }
 
     @Test

@@ -199,7 +199,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         );
 
         if (WELSH.equals(languagePreference)) {
-            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant1()));
+            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
         }
 
         return templateVars;
