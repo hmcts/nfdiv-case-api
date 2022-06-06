@@ -71,7 +71,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
             notDisputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
 
         if (WELSH.equals(caseData.getApplicant2().getLanguagePreference())) {
-            templateContent.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
+            templateContent.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant1()));
         }
 
         notificationService.sendEmail(
