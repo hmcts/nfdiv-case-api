@@ -24,7 +24,7 @@ dependencies:
     repository: '@hmctspublic'
     condition: xui-mo-webapp.enabled
   - name: aac-manage-case-assignment
-    version: ~0.1.6
+    version: ~0.2.0
     repository: '@hmctspublic'
     condition: aac-manage-case-assignment.enabled
   - name: idam-pr
