@@ -34,4 +34,8 @@
       <notes>elasticsearch-7.16.3.jar</notes>
       <vulnerabilityName>CVE-2022-23708</vulnerabilityName>
     </suppress>
+    <suppress>
+      <notes>False positive: https://github.com/jeremylong/DependencyCheck/issues/4563</notes>
+      <vulnerabilityName>CVE-2022-22976</vulnerabilityName>
+    </suppress>
 </suppressions>

@@ -104,6 +104,14 @@ public class CaseDocuments {
     )
     private DynamicList scannedDocumentNames;
 
+    @CCD(
+        label = "Amended applications",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<DivorceDocument>> amendedApplications;
+
 
     public static <T> List<ListValue<T>> addDocumentToTop(final List<ListValue<T>> documents, final T value) {
         return addDocumentToTop(documents, value, null);

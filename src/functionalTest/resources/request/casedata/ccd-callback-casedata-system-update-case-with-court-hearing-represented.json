@@ -1,51 +1,42 @@
 {
   "divorceOrDissolution": "divorce",
-  "applicationType": "soleApplication",
-  "reissueOption": "reissueCase",
-  "issueDate": "2022-01-01",
+  "applicationType": "jointApplication",
   "applicant1FirstName": "test_first_name",
   "applicant1MiddleName": "test_middle_name",
   "applicant1LastName": "test_last_name",
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant1Address": {
-    "AddressLine1": "line 1",
-    "PostTown": "town",
-    "PostCode": "postcode",
-    "Country": "UK"
+    "addressLine1": "221a Baker Street",
+    "postTown": "London",
+    "county": "Greater London",
+    "postCode": "NW1 6XE",
+    "country": "United Kingdom"
   },
-  "applicant1LanguagePreferenceWelsh": "No",
-  "applicant1ContactDetailsType": "public",
-  "applicant1Gender": "female",
-  "applicant1SolicitorRepresented": "Yes",
-  "applicant1SolicitorName": "Applicant 1 Solicitor",
-  "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
-  "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
-  "applicant1SolicitorOrganisationPolicy": {
-    "Organisation": {
-      "OrganisationName": "Test 1 Organisation",
-      "OrganisationID": "ABC456"
-    }
-  },
-  "applicant2FirstName": "test_first_name",
-  "applicant2MiddleName": "test_middle_name",
-  "applicant2LastName": "test_last_name",
-  "applicant2Email": "applicant2@example.com",
   "applicant2Address": {
-    "AddressLine1": "line 1",
-    "PostTown": "town",
-    "PostCode": "postcode",
-    "Country": "UK"
+    "addressLine1": "221a Baker Street",
+    "postTown": "London",
+    "county": "Greater London",
+    "postCode": "NW1 6XE",
+    "country": "United Kingdom"
   },
+  "dueDate": "2020-04-28",
+  "issueDate": "2020-05-28",
+  "accessCode": "",
+  "applicant1LanguagePreferenceWelsh": "No",
+  "applicant1ContactDetailsType": "private",
+  "applicant1Gender": "female",
+  "applicant2FirstName": "test_first_name_2",
+  "applicant2MiddleName": "test_middle_name",
+  "applicant2LastName": "test_last_name_2",
+  "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
   "applicant2LanguagePreferenceWelsh": "No",
   "applicant2ContactDetailsType": "public",
-  "applicant2Gender": "female",
-  "applicant2SolicitorRepresented": "No",
+  "applicant2Gender": "male",
   "marriageApplicant1Name": "test_first_name test_last_name",
   "marriageApplicant2Name": "test_first_name test_last_name",
   "marriagePlaceOfMarriage": "Somewhere",
   "marriageDate": "1990-06-10",
-  "marriageFormationType": null,
   "jurisdictionApplicant1Residence": "Yes",
   "jurisdictionApplicant2Residence": "Yes",
   "jurisdictionConnections": [
@@ -56,7 +47,16 @@
   "applicant2FinancialOrder": "No",
   "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
   "applicant1StatementOfTruth": "Yes",
-  "solSignStatementOfTruth": "Yes",
+  "applicant1SolicitorRepresented": "Yes",
+  "applicant1SolicitorName": "App1 Sol",
+  "applicant1SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1SolicitorReference": "App1 Sol Reference",
+  "applicant2SolicitorRepresented": "Yes",
+  "applicant2SolicitorName": "App2 Sol",
+  "applicant2SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2SolicitorReference": "App2 Sol Reference",
+  "applicant2PrayerHasBeenGiven": "Yes",
+  "applicant2StatementOfTruth": "Yes",
   "applicationFeeOrderSummary": {
     "PaymentReference": null,
     "Fees": null,
@@ -76,5 +76,9 @@
       }
     }
   ],
-  "documentUploadComplete": "Yes"
+  "documentUploadComplete": "Yes",
+  "coDecisionDate": "2021-05-10",
+  "coDateAndTimeOfHearing": "2013-09-29T18:46",
+  "coClaimsGranted": "No",
+  "coCourt": "birmingham"
 }

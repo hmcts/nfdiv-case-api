@@ -64,7 +64,7 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker withdrawn about to submit callback invoked");
+        log.info("Caseworker withdrawn about to submit callback invoked for Case Id: {}", details.getId());
         final CaseData caseData = details.getData();
 
         final var roles = List.of(CREATOR.getRole(), APPLICANT_2.getRole());

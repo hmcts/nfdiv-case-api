@@ -30,6 +30,8 @@ import java.time.Clock;
 import java.util.HashMap;
 import java.util.Map;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
@@ -75,6 +77,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -234,6 +237,8 @@ public class LegalAdvisorMakeDecisionIT {
     public void shouldSetStateToAwaitingAdminClarificationIfConditionalOrderIsNotGrantedAndRefusalIsDueToAdminError()
         throws Exception {
 
+        setMockClock(clock);
+
         final CaseData caseData = caseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
@@ -304,5 +309,51 @@ public class LegalAdvisorMakeDecisionIT {
             .andExpect(
                 jsonPath("$.state").value(AwaitingAmendedApplication.getName())
             );
+    }
+
+    @Test
+    public void shouldAddLegalAdvisorDecisionToAuditList() throws Exception {
+
+        setMockClock(clock);
+
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .granted(NO)
+            .refusalDecision(MORE_INFO)
+            .build());
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    LEGAL_ADVISOR_MAKE_DECISION)
+                )
+            )
+            .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk()
+            )
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(expectedResponse(("classpath:legal-advisor-make-decision-response.json")));
+
     }
 }
