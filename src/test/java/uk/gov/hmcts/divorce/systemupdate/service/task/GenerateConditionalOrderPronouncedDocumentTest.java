@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.service.task;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -137,6 +139,21 @@ class GenerateConditionalOrderPronouncedDocumentTest {
             .applicant1(Applicant.builder()
                 .languagePreferenceWelsh(NO)
                 .build())
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(Lists.newArrayList(
+                    ListValue.<DivorceDocument>builder()
+                        .id("1")
+                        .value(DivorceDocument.builder()
+                            .documentType(CONDITIONAL_ORDER_GRANTED)
+                            .build())
+                        .build(),
+                    ListValue.<DivorceDocument>builder()
+                        .id("2")
+                        .value(DivorceDocument.builder()
+                            .documentType(APPLICATION)
+                            .build()).build()
+                ))
+                .build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -163,6 +180,9 @@ class GenerateConditionalOrderPronouncedDocumentTest {
             CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
             ENGLISH,
             CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME);
+
+        assertEquals(1, caseData.getDocuments().getDocumentsGenerated().size());
+        assertEquals(APPLICATION, caseData.getDocuments().getDocumentsGenerated().get(0).getValue().getDocumentType());
     }
 
 }

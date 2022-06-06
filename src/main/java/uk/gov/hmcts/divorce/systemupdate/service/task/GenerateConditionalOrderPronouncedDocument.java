@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.Optional;
 
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
@@ -66,9 +67,15 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        //remove existing doc
+        //remove existing doc from doc store
         documentRemovalService.deleteDocumentFromDocumentStore(
             caseData.getDocuments().getDocumentsGenerated(), CONDITIONAL_ORDER_GRANTED, caseId);
+
+        //remove existing doc from case data
+        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
+            caseData.getDocuments().getDocumentsGenerated()
+                .removeIf(document -> CONDITIONAL_ORDER_GRANTED.equals(document.getValue().getDocumentType()));
+        }
 
         //generate new doc
         apply(caseDetails);
