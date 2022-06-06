@@ -21,6 +21,7 @@ import java.util.Map;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAosOverdue.SYSTEM_PROGRESS_TO_AOS_OVERDUE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
@@ -56,11 +57,16 @@ public class SystemProgressCasesToAosOverdueTask implements Runnable {
         try {
             final BoolQueryBuilder query =
                 boolQuery()
-                    .must(matchQuery(STATE, AwaitingAos))
+                    .must(
+                        boolQuery()
+                            .should(matchQuery(STATE, AwaitingAos))
+                            .should(matchQuery(STATE, AosDrafted))
+                            .minimumShouldMatch(1)
+                    )
                     .filter(rangeQuery(CcdSearchService.DUE_DATE).lt(LocalDate.now()));
 
             final List<CaseDetails> casesInAwaitingAosState =
-                ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, serviceAuth);
+                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingAos, AosDrafted);
 
             for (final CaseDetails caseDetails : casesInAwaitingAosState) {
                 try {

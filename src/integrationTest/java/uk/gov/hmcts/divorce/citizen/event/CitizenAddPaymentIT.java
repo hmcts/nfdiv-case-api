@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotificatio
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -150,6 +151,7 @@ public class CitizenAddPaymentIT {
         CaseData data = caseDataWithOrderSummary();
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
+        data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
         data.getApplication().setDateSubmitted(LocalDateTime.now());
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
