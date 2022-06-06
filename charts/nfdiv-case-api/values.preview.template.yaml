@@ -24,16 +24,6 @@ java:
         - name: idam-systemupdate-password
           alias: IDAM_SYSTEM_UPDATE_PASSWORD
 
-idam-pr:
-  enabled: true
-  releaseNameOverride: ${SERVICE_NAME}-ccd-idam-pr
-  redirect_uris:
-    CCD Admin:
-      - https://admin-web-${SERVICE_FQDN}/oauth2redirect
-    XUI:
-      - https://xui-${SERVICE_FQDN}/oauth2/callback
-      - http://xui-${SERVICE_FQDN}/oauth2/callback
-
 ccd:
   ccd:
     definitionImporter:
@@ -42,6 +32,8 @@ ccd:
       enabled: true
     s2s:
       enabled: false
+    elastic:
+      enabled: true
 
   ingressHost: ${SERVICE_FQDN}
   ingressIP: ${INGRESS_IP}
@@ -75,9 +67,11 @@ ccd:
         DATA_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
         DATA_STORE_IDAM_KEY: ${DATA_STORE_S2S_KEY}
         DATA_STORE_DEFAULT_LOG_LEVEL: info
-        DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_gw,ccd_admin,ccd_ps,divorce_ccd_submission,divorce_frontend,nfdiv_case_api
-        CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES: nfdiv_case_api
-        ELASTIC_SEARCH_ENABLED: false
+        DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data,aac_manage_case_assignment,xui_webapp,ccd_case_document_am_api,divorce_frontend,nfdiv_case_api
+        CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES: aac_manage_case_assignment,fpl_case_service,finrem_case_orchestration,iac,divorce_frontend,civil_service,nfdiv_case_api
+        ELASTIC_SEARCH_ENABLED: true
+        ELASTIC_SEARCH_HOSTS: ${SERVICE_NAME}-es-master:9200
+        ELASTIC_SEARCH_DATA_NODES_HOSTS: http://${SERVICE_NAME}-es-master:9200
         CCD_DM_DOMAIN: http://dm-store-aat.service.core-compute-aat.internal
         CCD_DOCUMENT_URL_PATTERN: ^https?://(((?:api-gateway\.preprod\.dm\.reform\.hmcts\.net|dm-store-aat\.service\.core-compute-aat\.internal(?::\d+)?)\/documents\/[A-Za-z0-9-]+(?:\/binary)?)|(em-hrs-api-aat\.service\.core-compute-aat\.internal(?::\d+)?\/hearing-recordings\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/segments\/[0-9]))
         IDAM_API_BASE_URL: https://idam-api.aat.platform.hmcts.net
@@ -90,10 +84,10 @@ ccd:
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
   am-role-assignment-service:
     java:
-      keyVaults:
-        am:
-          secrets:
-            - role-assignment-service-LD-SDK-KEY
+      environment:
+        CCD_DATA_STORE_URL: http://${SERVICE_NAME}-ccd-data-store-api
+      keyVaults: []
+
   ccd-definition-store-api:
     java:
       imagePullPolicy: Always
@@ -101,6 +95,8 @@ ccd:
         DEFINITION_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
         DEFINITION_STORE_IDAM_KEY: ${DEFINITION_STORE_S2S_KEY}
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
+        ELASTIC_SEARCH_ENABLED: true
+        ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
       keyVaults: []
       ingressHost: ccd-definition-store-${SERVICE_FQDN}
   ccd-user-profile-api:
@@ -144,6 +140,60 @@ ccd:
     persistence:
       enabled: false
 
+  elasticsearch:
+    clusterName: "es"
+    imageTag: "7.17.0"
+    replicas: 1
+    initResources:
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+      requests:
+        cpu: "25m"
+        memory: "512Mi"
+    minimumMasterNodes: 1
+    antiAffinity: "soft"
+    esJavaOpts: "-Xmx512m -Xms512m"
+    extraEnvs:
+      - name: discovery.type
+        value: single-node
+      - name: cluster.initial_master_nodes
+        value: ""
+      - name: action.auto_create_index
+        value: .security*,.watches,.triggered_watches,.watcher-history-*,.logstash_dead_letter,.ml*
+    persistence:
+      enabled: false
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: traefik
+      path: /
+      hosts:
+        - es-${SERVICE_FQDN}
+
+  logstash:
+    image:
+      repository: hmctspublic.azurecr.io/ccd/logstash
+      tag: ccd-divorce-logstash-latest
+      pullPolicy: Always
+    logstashJavaOpts: -Xmx1g -Xms512M
+    persistence:
+      enabled: false
+    volumeMounts:
+      - name: pipeline
+        mountPath: /usr/share/logstash/files
+    elasticsearch:
+      host: ${SERVICE_NAME}-es-master
+      port: 9200
+    configTpl:
+      xpack.monitoring.enabled: "false"
+      db.url: jdbc:postgresql://${SERVICE_NAME}-postgresql:5432/data-store?ssl=disable&stringtype=unspecified
+      db.user: hmcts
+      db.pwd: hmcts
+      es.data.nodes.url: http://${SERVICE_NAME}-es-master:9200
+    livenessProbe:
+      initialDelaySeconds: 90
+
 
 xui-webapp:
   enabled: true
@@ -152,13 +202,74 @@ xui-webapp:
     releaseNameOverride: ${SERVICE_NAME}-xui-webapp
     image: hmctspublic.azurecr.io/xui/webapp:latest
     ingressHost: xui-${SERVICE_FQDN}
+    devcpuRequests: 250m
+    devmemoryRequests: 1024Mi
+    devmemoryLimits: 1024Mi
     environment:
-      HEALTH_CCD_COMPONENT_API: http://gateway-${SERVICE_FQDN}/health
-      HEALTH_CCD_DATA_API: http://${SERVICE_NAME}-ccd-data-store-api/health
-      HEALTH_TERMS_AND_CONDITIONS_API: http://xui-terms-and-conditions-${SERVICE_FQDN}.service.core-compute-preview.internal/health
       SERVICES_CCD_COMPONENT_API: http://gateway-${SERVICE_FQDN}
       SERVICES_CCD_DATA_STORE_API: http://${SERVICE_NAME}-ccd-data-store-api
       SERVICES_DOCUMENTS_API_V2: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
       SERVICES_CCD_CASE_ASSIGNMENT_API: http://aac-${SERVICE_FQDN}
-      SERVICES_TERMS_AND_CONDITIONS: http://xui-terms-and-conditions-${SERVICE_FQDN}.service.core-compute-preview.internal
       JURISDICTIONS: DIVORCE
+      FEATURE_REDIS_ENABLED: false
+      NODE_OPTIONS: --max-old-space-size=900
+
+xui-mo-webapp:
+  enabled: true
+  nodejs:
+    imagePullPolicy: Always
+    releaseNameOverride: ${SERVICE_NAME}-xui-mo-webapp
+    image: hmctspublic.azurecr.io/xui/mo-webapp:latest
+    ingressHost: xui-mo-${SERVICE_FQDN}
+    environment:
+      MANAGE_CASE_LINK: https://xui-${SERVICE_FQDN}/cases
+      MANAGE_ORG_LINK: https://xui-mo-${SERVICE_FQDN}
+      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_NAME}-ccd-data-store-api
+      SERVICES_MCA_PROXY_API: http://aac-${SERVICE_FQDN}
+      CASE_TYPES: NFD
+
+nfdiv-frontend:
+  enabled: true
+  nodejs:
+    imagePullPolicy: Always
+    releaseNameOverride: ${SERVICE_NAME}-frontend
+    image: hmctspublic.azurecr.io/nfdiv/frontend:latest #pr-xxxx
+    ingressHost: frontend-${SERVICE_FQDN}
+    environment:
+      CCD_URL: http://${SERVICE_NAME}-ccd-data-store-api
+      SKIP_DIV_CASE_CHECK: true
+
+aac-manage-case-assignment:
+  enabled: true
+  java:
+    imagePullPolicy: Always
+    releaseNameOverride: ${SERVICE_NAME}-aac-manage-case-assignment
+    image: hmctspublic.azurecr.io/aac/manage-case-assignment:latest
+    ingressHost: aac-${SERVICE_FQDN}
+    environment:
+      IDAM_API_URL: https://idam-api.aat.platform.hmcts.net
+      IDAM_OIDC_URL: https://idam-web-public.aat.platform.hmcts.net
+      OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat.internal:8443/openam/oauth2/hmcts
+      S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+      MCA_DS_PROXY_URLS_ALLOWED_LIST: /searchCases.*,/internal/searchCases.*,/internal/cases.*
+      MCA_DEF_STORE_PROXY_URLS_ALLOWED_LIST: /api/display/challenge-questions.*
+      MANAGE_CASE_S2S_AUTHORISED_SERVICES: xui_webapp,ccd_data,fpl_case_service,divorce_frontend,divorce_ccd_submission,finrem_case_orchestration
+      CCD_DATA_STORE_API_BASE_URL: http://${SERVICE_NAME}-ccd-data-store-api
+      CCD_DEFINITION_STORE_API_BASE_URL: http://${SERVICE_NAME}-ccd-definition-store-api
+      PRD_HOST: http://rd-professional-api-aat.service.core-compute-aat.internal
+    autoscaling:
+      enabled: false
+    keyVaults: []
+
+idam-pr:
+  enabled: true
+  releaseNameOverride: ${SERVICE_NAME}-idam-pr
+  redirect_uris:
+    XUI:
+      - https://xui-${SERVICE_FQDN}/oauth2/callback
+    XUIMO:
+      - https://xui-mo-${SERVICE_FQDN}/oauth2/callback
+    divorce:
+      - https://frontend-${SERVICE_FQDN}/oauth2/callback
+      - https://frontend-${SERVICE_FQDN}/oauth2/callback-applicant2
+
