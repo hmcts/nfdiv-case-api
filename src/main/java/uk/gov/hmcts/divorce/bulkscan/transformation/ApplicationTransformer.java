@@ -11,11 +11,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import static java.util.Collections.emptySet;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -88,21 +90,15 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
 
         if (toBoolean(ocrDataFields.getSoleOrApplicant1ConfirmationOfBreakdown())) {
             if (caseData.isDivorce()) {
-                var marriageBroken = new HashSet<MarriageBroken>();
-                marriageBroken.add(MARRIAGE_BROKEN);
-                caseData.getApplication().setApplicant1HasMarriageBroken(marriageBroken);
+                caseData.getApplication().setApplicant1HasMarriageBroken(Set.of(MARRIAGE_BROKEN));
             } else {
-                var civilPartnershipBroken = new HashSet<CivilPartnershipBroken>();
-                civilPartnershipBroken.add(CIVIL_PARTNERSHIP_BROKEN);
-                caseData.getApplication().setApplicant1HasCivilPartnershipBroken(civilPartnershipBroken);
+                caseData.getApplication().setApplicant1HasCivilPartnershipBroken(Set.of(CIVIL_PARTNERSHIP_BROKEN));
             }
         } else {
             if (caseData.isDivorce()) {
-                var marriageBroken = new HashSet<MarriageBroken>();
-                caseData.getApplication().setApplicant1HasMarriageBroken(marriageBroken);
+                caseData.getApplication().setApplicant1HasMarriageBroken(emptySet());
             } else {
-                var civilPartnershipBroken = new HashSet<CivilPartnershipBroken>();
-                caseData.getApplication().setApplicant1HasCivilPartnershipBroken(civilPartnershipBroken);
+                caseData.getApplication().setApplicant1HasCivilPartnershipBroken(emptySet());
             }
         }
 
