@@ -4,14 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CivilPartnershipBroken;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
-import uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
