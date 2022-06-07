@@ -187,6 +187,8 @@ public class CitizenSwitchToSoleApplicationIT {
         CaseData caseData = validApplicant2CaseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+        setupMocks(true);
+
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
