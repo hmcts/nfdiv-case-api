@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderPronouncedTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -29,9 +28,6 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
 
     @Autowired
     private ConditionalOrderPronouncedTemplateContent conditionalOrderPronouncedTemplateContent;
-
-    @Autowired
-    private DocumentRemovalService documentRemovalService;
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
@@ -63,12 +59,7 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
     }
 
     public void removeExistingAndGenerateNewConditionalOrderGrantedDoc(CaseDetails<CaseData, State> caseDetails) {
-        final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
-
-        //remove existing doc from doc store
-        documentRemovalService.deleteDocumentFromDocumentStore(
-            caseData.getDocuments().getDocumentsGenerated(), CONDITIONAL_ORDER_GRANTED, caseId);
 
         //remove existing doc from case data
         if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {

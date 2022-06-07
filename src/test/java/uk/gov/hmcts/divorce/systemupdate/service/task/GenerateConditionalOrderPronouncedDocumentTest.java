@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderPronouncedTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -43,9 +42,6 @@ class GenerateConditionalOrderPronouncedDocumentTest {
 
     @Mock
     private ConditionalOrderPronouncedTemplateContent conditionalOrderPronouncedTemplateContent;
-
-    @Mock
-    private DocumentRemovalService documentRemovalService;
 
     @InjectMocks
     private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
@@ -165,12 +161,6 @@ class GenerateConditionalOrderPronouncedDocumentTest {
 
         generateConditionalOrderPronouncedDocument
             .removeExistingAndGenerateNewConditionalOrderGrantedDoc(caseDetails);
-
-        verify(documentRemovalService).deleteDocumentFromDocumentStore(
-            caseData.getDocuments().getDocumentsGenerated(),
-            CONDITIONAL_ORDER_GRANTED,
-            TEST_CASE_ID
-        );
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
