@@ -12,6 +12,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitAos.SUBMIT_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
@@ -36,5 +37,16 @@ public class SubmitAosFT extends FunctionalTestSuite {
         assertThatJson(response.asString())
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedResponse(RESPONSE)));
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulWhenApplicant1LanguageIsWelsh() throws Exception {
+
+        final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("applicant1LanguagePreferenceWelsh", YES.getValue());
+
+        final Response response = triggerCallback(caseData, SUBMIT_AOS, ABOUT_TO_SUBMIT_URL, AosDrafted);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 }

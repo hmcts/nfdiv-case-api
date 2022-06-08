@@ -15,6 +15,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISPUTED;
@@ -22,6 +23,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_UNDISPUTED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
@@ -53,10 +55,17 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Sending Aos not disputed notification to applicant");
 
+        final var templateContent =
+            notDisputedTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+
+        if (WELSH.equals(caseData.getApplicant1().getLanguagePreference())) {
+            templateContent.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
+        }
+
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             SOLE_APPLICANT_AOS_SUBMITTED,
-            notDisputedTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            templateContent,
             caseData.getApplicant1().getLanguagePreference()
         );
     }
