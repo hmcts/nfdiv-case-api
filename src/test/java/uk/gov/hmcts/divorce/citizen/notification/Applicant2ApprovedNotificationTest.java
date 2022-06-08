@@ -19,7 +19,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification.PAYS_FEES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -236,6 +238,27 @@ class Applicant2ApprovedNotificationTest {
             anyMap(),
             eq(ENGLISH)
         );
+    }
+
+    @Test
+    void shouldSendEmailInWelshLanguageToApplicant1WhenRespondentApprovedAndLanguagePreferenceIsWelsh() {
+        CaseData data = validApplicant2CaseData();
+        data.setDivorceOrDissolution(DIVORCE);
+        data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+        data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.YES);
+        data.setDueDate(LOCAL_DATE);
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
+            anyMap(),
+            eq(WELSH)
+        );
+
+        verify(commonContent).getPartnerWelshContent(data, data.getApplicant2());
     }
 }
 

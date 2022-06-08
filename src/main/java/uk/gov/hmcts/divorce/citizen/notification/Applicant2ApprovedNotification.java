@@ -6,16 +6,19 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
@@ -44,6 +47,8 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
 
+        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+
         if (caseData.getApplication().isHelpWithFeesApplication()
             && caseData.getApplication().getApplicant2HelpWithFees().getNeedHelp() != YesOrNo.YES) {
             log.info("Sending applicant 2 denied HWF notification to applicant 1 for case : {}", id);
@@ -52,16 +57,22 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
                 caseData.getApplicant1().getEmail(),
                 JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF,
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
+                languagePreference
             );
         } else {
             log.info("Sending applicant 2 approved notification to applicant 1 for case : {}", id);
 
+            Map<String, String> templateVars = applicant1TemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+
+            if (WELSH.equals(languagePreference)) {
+                templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
+            }
+
             notificationService.sendEmail(
                 caseData.getApplicant1().getEmail(),
                 JOINT_APPLICANT1_APPLICANT2_APPROVED,
-                applicant1TemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
+                templateVars,
+                languagePreference
             );
         }
     }

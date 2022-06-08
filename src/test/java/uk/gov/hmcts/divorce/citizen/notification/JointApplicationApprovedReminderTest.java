@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification.PAYS_FEES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
@@ -143,5 +144,34 @@ class JointApplicationApprovedReminderTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendReminderEmailInWelshToApplicant1WhenLanguagePreferenceIsWelsh() {
+        CaseData data = caseData();
+        data.setDueDate(LocalDate.now());
+        data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        data.setApplicant2(getApplicant(Gender.MALE));
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        HelpWithFees hwf = HelpWithFees.builder().needHelp(YesOrNo.YES).build();
+        data.getApplication().setApplicant1HelpWithFees(hwf);
+        data.getApplication().setApplicant2HelpWithFees(hwf);
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        jointApplicationApprovedReminder.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER),
+            argThat(allOf(
+                hasEntry(IS_REMINDER, YES),
+                hasEntry(PAYS_FEES, NO)
+            )),
+            eq(WELSH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).getPartnerWelshContent(data, data.getApplicant2());
     }
 }
