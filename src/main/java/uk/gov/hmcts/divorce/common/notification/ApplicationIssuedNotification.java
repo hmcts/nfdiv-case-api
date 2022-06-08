@@ -100,6 +100,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         final String email = caseData.getApplicant1().getSolicitor().getEmail();
         boolean isSolicitorServiceMethod = caseData.getApplication().isSolicitorServiceMethod();
+        final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
 
         if (isSolicitorServiceMethod) {
             log.info("Sending Personal Service email to applicant solicitor.  Case ID: {}", caseId);
@@ -108,7 +109,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 APPLICANT_SOLICITOR_SERVICE,
                 templateVars(caseData, caseId),
-                ENGLISH
+                languagePreference
             );
         } else if (caseData.getApplicationType().isSole()) {
 
@@ -120,7 +121,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                     ? SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE
                     : SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH);
+                languagePreference);
         } else if (!caseData.getApplicationType().isSole()) {
             log.info("Sending Notice Of Proceedings email to applicant 1 solicitor for joint case.  Case ID: {}", caseId);
 
@@ -128,7 +129,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH);
+                languagePreference);
         }
     }
 
