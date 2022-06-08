@@ -79,8 +79,8 @@ postgresql:
     requests:
       cpu: 25m
   auth:
-    username: hmcts
-    password: hmcts
+    username: postgres
+    password: postgres
   primary:
     initdb:
       scripts:
