@@ -78,15 +78,17 @@ postgresql:
   resources:
     requests:
       cpu: 25m
-  initdbScripts:
-    init.sql: |-
-      CREATE DATABASE "datastore" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-      CREATE DATABASE "definitionstore" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-      CREATE DATABASE "userprofile" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-      CREATE DATABASE "am" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-  postgresqlUsername: postgres
-  postgresqlPassword: postgres
-  postgresqlDatabase: ccd
+  auth:
+    username: hmcts
+    password: hmcts
+  primary:
+    initdb:
+      scripts:
+        create.sql: |
+          CREATE DATABASE "datastore" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+          CREATE DATABASE "definitionstore" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+          CREATE DATABASE "userprofile" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+          CREATE DATABASE "am" WITH OWNER = postgres ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
 
 elasticsearch:
   clusterName: "es"

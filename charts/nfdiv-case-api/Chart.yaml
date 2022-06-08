@@ -11,7 +11,7 @@ dependencies:
     version: 3.7.7
     repository: '@hmctspublic'
   - name: postgresql
-    version: 8.9.8
+    version: 11.6.3
     repository: https://charts.bitnami.com/bitnami
     condition: ccd.postgresql.enabled
   - name: elasticsearch
