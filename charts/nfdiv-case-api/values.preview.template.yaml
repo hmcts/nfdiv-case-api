@@ -7,8 +7,6 @@ ccd:
     enabled: true
   mo:
     enabled: true
-  aac:
-    enabled: true
 
 java:
   applicationPort: 8489
@@ -71,6 +69,8 @@ java:
           alias: DEFINITION_STORE_IDAM_KEY
         - name: s2s-role-assignment-store-secret
           alias: AM_ROLE_ASSIGNMENT_SERVICE_SECRET
+        - name: s2s-manage-case-assignment-secret
+          alias: MANAGE_CASE_S2S_KEY
 
 postgresql:
   persistence:
@@ -156,8 +156,7 @@ xui-webapp:
       SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
       SERVICES_DOCUMENTS_API_V2: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
       NODE_OPTIONS: --max-old-space-size=900
-      # TODO: aac-manage-case-assignment
-      SERVICES_CCD_CASE_ASSIGNMENT_API: http://aac-${SERVICE_FQDN}
+      SERVICES_CCD_CASE_ASSIGNMENT_API: http://${SERVICE_FQDN}
       FEATURE_REDIS_ENABLED: false
       JURISDICTIONS: DIVORCE
 
@@ -170,8 +169,7 @@ xui-mo-webapp:
     environment:
       MANAGE_CASE_LINK: https://xui-${SERVICE_FQDN}/cases
       MANAGE_ORG_LINK: https://xui-mo-${SERVICE_FQDN}
-      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_FQDN}
-      # TODO: aac-manage-case-assignment
+      SERVICES_CCD_DATA_STORE_API: http://${SERVICE_NAME}
       SERVICES_MCA_PROXY_API: http://aac-${SERVICE_FQDN}
       CASE_TYPES: NFD
 
@@ -185,27 +183,6 @@ nfdiv-frontend:
     environment:
       CCD_URL: http://${SERVICE_FQDN}
       SKIP_DIV_CASE_CHECK: true
-
-# Temp until CFTLIB eats it
-aac-manage-case-assignment:
-  java:
-    imagePullPolicy: Always
-    releaseNameOverride: ${SERVICE_NAME}-aac-manage-case-assignment
-    image: hmctspublic.azurecr.io/aac/manage-case-assignment:latest
-    ingressHost: aac-${SERVICE_FQDN}
-    environment:
-      IDAM_API_URL: https://idam-api.aat.platform.hmcts.net
-      IDAM_OIDC_URL: https://idam-web-public.aat.platform.hmcts.net
-      OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat.internal:8443/openam/oauth2/hmcts
-      S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
-      MCA_DS_PROXY_URLS_ALLOWED_LIST: /searchCases.*,/internal/searchCases.*,/internal/cases.*
-      MCA_DEF_STORE_PROXY_URLS_ALLOWED_LIST: /api/display/challenge-questions.*
-      MANAGE_CASE_S2S_AUTHORISED_SERVICES: xui_webapp,ccd_data,fpl_case_service,divorce_frontend,divorce_ccd_submission,finrem_case_orchestration
-      CCD_DATA_STORE_API_BASE_URL: http://${SERVICE_NAME}
-      CCD_DEFINITION_STORE_API_BASE_URL: http://${SERVICE_NAME}
-      PRD_HOST: http://rd-professional-api-aat.service.core-compute-aat.internal
-    autoscaling:
-      enabled: false
 
 idam-pr:
   enabled: true

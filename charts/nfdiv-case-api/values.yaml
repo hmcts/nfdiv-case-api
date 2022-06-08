@@ -7,8 +7,6 @@ ccd:
     enabled: false
   mo:
     enabled: false
-  aac:
-    enabled: false
 idam-pr:
   enabled: false
 nfdiv-frontend:
