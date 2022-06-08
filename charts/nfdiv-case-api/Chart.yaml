@@ -3,11 +3,7 @@ appVersion: "1.0"
 description: A Helm chart for nfdiv-case-api App
 name: nfdiv-case-api
 home: https://github.com/hmcts/nfdiv-case-api
-<<<<<<< HEAD
 version: 0.1.0
-=======
-version: 0.0.53
->>>>>>> master
 maintainers:
   - name: HMCTS nfdiv team
 dependencies:
