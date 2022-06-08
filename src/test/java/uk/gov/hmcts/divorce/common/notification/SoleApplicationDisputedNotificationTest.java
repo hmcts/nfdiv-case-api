@@ -87,7 +87,7 @@ class SoleApplicationDisputedNotificationTest {
                 hasEntry(SUBMISSION_RESPONSE_DATE,
                     data.getApplication().getIssueDate()
                         .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
-                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
             eq(ENGLISH)
