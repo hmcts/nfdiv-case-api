@@ -94,7 +94,7 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
             LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
 
             if (LanguagePreference.WELSH.equals(languagePreference)) {
-                templateContent.put(CommonContent.PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
+                templateContent.put(CommonContent.PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant1()));
             }
 
             notificationService.sendEmail(

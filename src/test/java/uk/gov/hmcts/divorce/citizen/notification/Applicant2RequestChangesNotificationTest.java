@@ -205,7 +205,7 @@ class Applicant2RequestChangesNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
                 .thenReturn(getMainTemplateVars());
 
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("gŵr");
+        when(commonContent.getPartnerWelshContent(data, data.getApplicant1())).thenReturn("gŵr");
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -258,7 +258,7 @@ class Applicant2RequestChangesNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
                 .thenReturn(templateVars);
 
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("partner sifil");
+        when(commonContent.getPartnerWelshContent(data, data.getApplicant1())).thenReturn("gwraig");
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -267,7 +267,7 @@ class Applicant2RequestChangesNotificationTest {
                 eq(JOINT_APPLICANT2_REQUEST_CHANGES),
             argThat(
                 anyOf(
-                    hasEntry(PARTNER, "partner sifil")
+                    hasEntry(PARTNER, "gwraig")
                 )
             ),
                 eq(WELSH)

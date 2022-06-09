@@ -138,7 +138,7 @@ public class Applicant2RequestChangesNotificationIT {
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(JOINT_APPLICANT2_REQUEST_CHANGES),
-                argThat(anyOf(hasEntry(PARTNER, "gŵr"))),
+                argThat(anyOf(hasEntry(PARTNER, "gwraig"))),
                 eq(WELSH)
             );
 
