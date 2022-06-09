@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -25,16 +24,23 @@ import java.nio.file.Files;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2RequestChanges.APPLICANT_2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
@@ -77,14 +83,14 @@ public class Applicant2RequestChangesNotificationIT {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant2() throws Exception {
         CaseData data = validJointApplicant1CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
-        data.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.NO);
+        data.getApplication().setApplicant2ConfirmApplicant1Information(NO);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Some issues");
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, APPLICANT_2_REQUEST_CHANGES)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, APPLICANT_2_REQUEST_CHANGES)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -104,19 +110,55 @@ public class Applicant2RequestChangesNotificationIT {
     }
 
     @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant2WhenLangPrefIsWelsh() throws Exception {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
+        data.getApplication().setApplicant2ConfirmApplicant1Information(NO);
+        data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Some issues");
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, APPLICANT_2_REQUEST_CHANGES)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(actualResponse)
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(JOINT_APPLICANT2_REQUEST_CHANGES),
+                argThat(anyOf(hasEntry(PARTNER, "gŵr"))),
+                eq(WELSH)
+            );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1Solicitor() throws Exception {
         CaseData data = validJointApplicant1CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
-        data.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.NO);
+        data.getApplication().setApplicant2ConfirmApplicant1Information(NO);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Some issues");
-        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitorRepresented(YES);
         data.getApplicant1().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, APPLICANT_2_REQUEST_CHANGES)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, APPLICANT_2_REQUEST_CHANGES)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -148,10 +190,10 @@ public class Applicant2RequestChangesNotificationIT {
         CaseData data = validJointApplicant1CaseData();
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, APPLICANT_2_REQUEST_CHANGES)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, APPLICANT_2_REQUEST_CHANGES)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()

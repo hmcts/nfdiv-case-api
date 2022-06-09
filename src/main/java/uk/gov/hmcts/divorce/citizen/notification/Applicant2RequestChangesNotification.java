@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -88,11 +89,18 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
             );
         } else {
             log.info("Sending notification to applicant 2 to confirm their request for changes (applicant 1 is not represented): {}", id);
+            final var templateContent = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+
+            LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
+
+            if (LanguagePreference.WELSH.equals(languagePreference)) {
+                templateContent.put(CommonContent.PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
+            }
 
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICANT2_REQUEST_CHANGES,
-                commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+                templateContent,
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
