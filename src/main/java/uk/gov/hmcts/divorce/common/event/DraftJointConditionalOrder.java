@@ -73,7 +73,7 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Draft joint conditional order about to submit callback invoked for case id: {}", details.getId());
+        log.info("Draft joint conditional order about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseData data = details.getData();
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(YES);
@@ -85,6 +85,9 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("Draft joint conditional order about to start callback invoked for Case Id: {}", details.getId());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseTasks(addMiniApplicationLink)
                 .run(details)
