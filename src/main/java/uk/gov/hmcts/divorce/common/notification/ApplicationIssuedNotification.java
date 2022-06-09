@@ -139,15 +139,15 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     public void sendToApplicant2(final CaseData caseData, final Long caseId) {
 
         final String email = caseData.getApplicant2EmailAddress();
-        final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+        final LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
 
         if (caseData.getApplicationType().isSole()) {
             if (isNotBlank(email) && !caseData.getApplication().isSolicitorServiceMethod() && !caseData.getApplicant2().isBasedOverseas()) {
                 log.info("Sending sole application issued notification to respondent for case : {}", caseId);
 
                 var templateVars = soleRespondentTemplateVars(caseData, caseId);
-                if (WELSH.equals(caseData.getApplicant1().getLanguagePreference())) {
-                    templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
+                if (WELSH.equals(caseData.getApplicant2().getLanguagePreference())) {
+                    templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant1()));
                 }
 
                 notificationService.sendEmail(

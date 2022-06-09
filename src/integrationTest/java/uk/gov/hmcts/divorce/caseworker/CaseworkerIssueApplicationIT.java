@@ -313,7 +313,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplicant1().setSolicitorRepresented(NO);
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().getAddress().setCountry("UK");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -351,7 +351,7 @@ public class CaseworkerIssueApplicationIT {
             .getContentAsString();
 
         DocumentContext jsonDocument = JsonPath.parse(TestResourceUtil.expectedResponse(SOLE_CITIZEN_UK_BASED_CASEWORKER_ABOUT_TO_SUBMIT));
-        jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
+        jsonDocument.set("data.applicant2LanguagePreferenceWelsh", "Yes");
 
         assertThatJson(response)
             .isEqualTo(jsonDocument.json());
@@ -361,14 +361,14 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_USER_EMAIL),
                 eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
                 anyMap(),
-                eq(WELSH));
+                eq(ENGLISH));
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
                 argThat(allOf(
-                    hasEntry(CommonContent.PARTNER, "gŵr"))
+                    hasEntry(CommonContent.PARTNER, "gwraig"))
                 ),
                 eq(WELSH));
 

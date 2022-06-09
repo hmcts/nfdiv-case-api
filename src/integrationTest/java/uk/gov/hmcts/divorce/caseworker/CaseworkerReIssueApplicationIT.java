@@ -970,7 +970,7 @@ public class CaseworkerReIssueApplicationIT {
                 eq(TEST_USER_EMAIL),
                 eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
                 argThat(allOf(
-                    hasEntry(CommonContent.PARTNER, "gŵr"))
+                    hasEntry(CommonContent.PARTNER, "gwraig"))
                 ),
                 eq(WELSH));
 
