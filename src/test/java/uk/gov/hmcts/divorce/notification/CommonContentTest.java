@@ -105,6 +105,25 @@ class CommonContentTest {
     }
 
     @Test
+    void shouldGetPartnerWelshContent() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setGender(FEMALE);
+        assertThat(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).isEqualTo("gwraig");
+
+        caseData = caseData();
+        caseData.getApplicant2().setGender(Gender.MALE);
+        assertThat(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).isEqualTo("gŵr");
+
+        caseData = caseData();
+        caseData.getApplicant2().setGender(null);
+        assertThat(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).isEqualTo("priod");
+
+        caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertThat(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).isEqualTo("partner sifil");
+    }
+
+    @Test
     void shouldSetTemplateVarsForSoleApplication() {
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
