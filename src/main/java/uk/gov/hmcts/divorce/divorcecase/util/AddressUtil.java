@@ -20,7 +20,7 @@ public final class AddressUtil {
 
     private static final String COMMA_SEPARATOR = ",";
     private static final int ADDRESS_LINE_MAX_CHARS = 25;
-    private static final List<String> UK_TERMS = Arrays.asList("unitedkingdom", "uk", "england", "wales");
+    private static final List<String> UK_TERMS = Arrays.asList("unitedkingdom", "uk", "england", "wales", "greatbritain");
     private static final List<String> SCOTTISH_POSTCODE_PREFIXES =
         Arrays.asList("ab", "dd", "dg", "eh", "fk", "g", "hs", "iv", "ka", "kw", "ky", "ml", "pa", "ph", "td", "ze");
     private static final String OVERSEAS_EXCEPTION_MESSAGE =
