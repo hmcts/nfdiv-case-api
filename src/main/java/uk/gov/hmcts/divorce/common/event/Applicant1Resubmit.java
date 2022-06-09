@@ -54,7 +54,8 @@ public class Applicant1Resubmit implements CCDConfig<CaseData, State, UserRole> 
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen applicant 1 Resubmits answers about to submit callback invoked");
+
+        log.info("Citizen applicant 1 Resubmits answers about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
 
