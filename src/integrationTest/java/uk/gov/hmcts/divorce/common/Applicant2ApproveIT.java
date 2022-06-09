@@ -278,7 +278,7 @@ public class Applicant2ApproveIT {
 
     private String expectedCcdAboutToStartCallbackSuccessfulResponseInWelsh() throws IOException {
         File validCaseDataJsonFile = getFile(
-            "classpath:wiremock/responses/about-to-submit-applicant-2-approved.json");
+            "classpath:wiremock/responses/about-to-submit-applicant-2-approved-welsh-notifications.json");
 
         return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
     }
