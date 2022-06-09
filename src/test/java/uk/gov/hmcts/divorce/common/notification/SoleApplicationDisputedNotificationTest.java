@@ -162,7 +162,7 @@ class SoleApplicationDisputedNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("gŵr");
+        when(commonContent.getPartnerWelshContent(data, data.getApplicant1())).thenReturn("gŵr");
 
         soleApplicationDisputedNotification.sendToApplicant2(data, 1234567890123456L);
 

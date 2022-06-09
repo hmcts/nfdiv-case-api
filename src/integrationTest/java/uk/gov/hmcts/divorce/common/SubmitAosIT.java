@@ -290,7 +290,7 @@ public class SubmitAosIT {
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
-                argThat(allOf(hasEntry(PARTNER, "gŵr"))),
+                argThat(allOf(hasEntry(PARTNER, "gwraig"))),
                 eq(WELSH)
             );
 
