@@ -121,6 +121,18 @@ public class CommonContent {
         }
     }
 
+    public String getPartnerWelshContent(CaseData caseData, Applicant partner) {
+        if (caseData.isDivorce()) {
+            if (isNull(partner.getGender())) {
+                return "priod";
+            } else {
+                return partner.getGender() == MALE ? "gŵr" : "gwraig";
+            }
+        } else {
+            return "partner sifil";
+        }
+    }
+
     public Map<String, String> conditionalOrderTemplateVars(final CaseData caseData,
                                                             final Long id,
                                                             final Applicant applicant,
