@@ -123,7 +123,7 @@ class BailiffServiceSuccessfulNotificationTest {
         when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(templateVars);
 
-        when(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).thenReturn("gŵr");
+        when(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).thenReturn("partner sifil");
 
         notification.sendToApplicant1(caseData, 1234567890123456L);
 
@@ -134,7 +134,7 @@ class BailiffServiceSuccessfulNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, CommonContent.YES),
-                hasEntry(PARTNER, "gŵr")
+                hasEntry(PARTNER, "partner sifil")
             )),
             eq(WELSH)
         );
