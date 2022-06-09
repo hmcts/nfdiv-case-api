@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAcces
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
@@ -119,6 +120,7 @@ public class CaseData {
 
     @JsonUnwrapped
     @Builder.Default
+    @CCD(access = {SolicitorAndSystemUpdateAccess.class})
     private GeneralApplication generalApplication = new GeneralApplication();
 
     @CCD(
