@@ -44,6 +44,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String PAPER_FORM_PAYMENT_OTHER_DETAILS =
         String.format("(%s) OR (%s)", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS, PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS);
     private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
+    public static final String SOLE_APPLICATION_OR_APPLICATION_TYPE_JOINT_APPLICATION_AND_APPLICANT_2_HWFNEED_HELP_YES
+        = "applicationType=\"soleApplication\" OR applicationType=\"jointApplication\" AND applicant2HWFNeedHelp=\"Yes\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -88,8 +90,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .showCondition("applicationType=\"soleApplication\" AND "
                 + notShowForState(
-                    Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
-                    AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
+                Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
+                AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
             .field("applicant2Offline", "applicationType=\"NEVER_SHOW\"")
             .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"", "## This is an online AoS response")
             .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"", "## This is an offline AoS response")
@@ -115,7 +117,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .label("LabelApplicant1-PaymentHeading", IS_JOINT, "### The applicant")
-            .field("applicant1HWFReferenceNumber","applicationType=\"soleApplication\" OR applicationType=\"jointApplication\" AND applicant2HWFNeedHelp=\"Yes\"")
+            .field("applicant2HWFNeedHelp", NEVER_SHOW)
+            .field("applicant1HWFReferenceNumber", SOLE_APPLICATION_OR_APPLICATION_TYPE_JOINT_APPLICATION_AND_APPLICANT_2_HWFNEED_HELP_YES)
             .label("LabelApplicant2-PaymentHeading", IS_JOINT_AND_HWF_ENTERED, "### ${labelContentTheApplicant2UC}")
             .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED)
             .field("newPaperCase", "applicationType=\"NEVER_SHOW\"")
