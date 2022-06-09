@@ -16,6 +16,7 @@ import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification.PAYS_FEES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
@@ -23,6 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
@@ -249,12 +251,16 @@ class Applicant2ApprovedNotificationTest {
         data.setDueDate(LOCAL_DATE);
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
+        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("gŵr");
+
         notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
-            anyMap(),
+            argThat(allOf(
+                hasEntry(PARTNER, "gŵr")
+            )),
             eq(WELSH)
         );
 
