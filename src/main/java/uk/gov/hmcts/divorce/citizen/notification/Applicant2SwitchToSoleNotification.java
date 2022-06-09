@@ -45,7 +45,6 @@ public class Applicant2SwitchToSoleNotification implements ApplicantNotification
             templateContent.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant1()));
         }
 
-
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
             APPLICANT_SWITCH_TO_SOLE,
