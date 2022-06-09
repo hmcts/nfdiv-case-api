@@ -117,6 +117,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("Legal advisor grant conditional order about to start callback invoked. CaseID: {}", details.getId());
         CaseData caseData = details.getData();
         caseData.getConditionalOrder().resetRefusalFields();
         return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData).build();
@@ -155,6 +156,13 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
         } else {
             endState = AwaitingAdminClarification;
         }
+
+        conditionalOrder.setLegalAdvisorDecisions(
+            conditionalOrder.addAuditRecord(
+                conditionalOrder.getLegalAdvisorDecisions(),
+                conditionalOrder.populateLegalAdvisorDecision(LocalDate.now(clock))
+            )
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

@@ -67,7 +67,7 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Submit joint conditional order about to submit callback invoked for case id: {}", details.getId());
+        log.info("Submit joint conditional order about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseData data = details.getData();
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setSubmittedDate(LocalDateTime.now(clock));

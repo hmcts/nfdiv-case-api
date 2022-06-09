@@ -61,7 +61,7 @@ public class SystemProgressHeldCasesTask implements Runnable {
                 .filter(rangeQuery(CcdSearchService.DUE_DATE).lte(LocalDate.now()));
 
             ccdSearchService
-                .searchForAllCasesWithQuery(Holding, query, user, serviceAuth)
+                .searchForAllCasesWithQuery(query, user, serviceAuth, Holding)
                 .forEach(caseDetails -> submitEvent(caseDetails, user, serviceAuth));
 
             log.info("SystemProgressHeldCasesTask scheduled task complete.");
