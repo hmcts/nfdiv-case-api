@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SWITCH_TO_SOLE;
@@ -41,7 +40,8 @@ public class Applicant1SwitchToSoleNotification implements ApplicantNotification
         if (caseData.getApplication().getApplicant2ScreenHasMarriageBroken().toBoolean()) {
             log.info("Sending applicant 1 switch to sole notification to applicant 2 for case : {}", id);
 
-            final var templateContent= commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+            final var templateContent
+                = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
             if (WELSH.equals(caseData.getApplicant2().getLanguagePreference())) {
                 templateContent.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant1()));
             }
