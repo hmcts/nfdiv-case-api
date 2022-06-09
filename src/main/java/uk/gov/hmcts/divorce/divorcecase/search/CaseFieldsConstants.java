@@ -24,6 +24,7 @@ public final class CaseFieldsConstants {
     public static final String CASE_STATE = "[STATE]";
     public static final String DUE_DATE = "dueDate";
     public static final String LAST_MODIFIED_DATE = "[LAST_MODIFIED_DATE]";
+    public static final String LAST_STATE_MODIFIED_DATE = "[LAST_STATE_MODIFIED_DATE]";
 
     // required for Checkstyle
     private CaseFieldsConstants() {

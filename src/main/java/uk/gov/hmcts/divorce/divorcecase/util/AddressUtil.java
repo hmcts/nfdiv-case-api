@@ -3,8 +3,13 @@ package uk.gov.hmcts.divorce.divorcecase.util;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.joinWith;
 import static org.apache.commons.lang3.StringUtils.removeStart;
@@ -15,6 +20,11 @@ public final class AddressUtil {
 
     private static final String COMMA_SEPARATOR = ",";
     private static final int ADDRESS_LINE_MAX_CHARS = 25;
+    private static final List<String> UK_TERMS = Arrays.asList("unitedkingdom", "uk", "england", "wales", "greatbritain");
+    private static final List<String> SCOTTISH_POSTCODE_PREFIXES =
+        Arrays.asList("ab", "dd", "dg", "eh", "fk", "g", "hs", "iv", "ka", "kw", "ky", "ml", "pa", "ph", "td", "ze");
+    private static final String OVERSEAS_EXCEPTION_MESSAGE =
+        "Cannot assert whether address is overseas or not due to null address or blank/null country";
 
     private AddressUtil() {
     }
@@ -56,5 +66,22 @@ public final class AddressUtil {
         }
 
         return null;
+    }
+
+    public static boolean isEnglandOrWales(AddressGlobalUK address) {
+        if (isNull(address) || StringUtils.isBlank(address.getCountry())) {
+            throw new IllegalArgumentException(OVERSEAS_EXCEPTION_MESSAGE);
+        }
+
+        final String sanitisedCountry = address.getCountry().replaceAll("[^a-zA-Z0-9]+", "").toLowerCase(Locale.ROOT);
+        final String postcode = Optional.ofNullable(address.getPostCode()).orElse("");
+
+        var isScottishPostcode = false;
+        if (postcode.matches(".*[a-zA-Z]+.*")) {
+            final String sanitisedPostcodePrefix = postcode.split("[0-9]")[0].toLowerCase(Locale.ROOT);
+            isScottishPostcode = SCOTTISH_POSTCODE_PREFIXES.contains(sanitisedPostcodePrefix);
+        }
+
+        return UK_TERMS.contains(sanitisedCountry) && !isScottishPostcode;
     }
 }

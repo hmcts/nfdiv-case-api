@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.apache.groovy.parser.antlr4.util.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
@@ -20,11 +21,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAcces
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
+import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import static java.lang.Integer.parseInt;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
@@ -36,6 +41,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
@@ -114,6 +120,7 @@ public class CaseData {
 
     @JsonUnwrapped
     @Builder.Default
+    @CCD(access = {SolicitorAndSystemUpdateAccess.class})
     private GeneralApplication generalApplication = new GeneralApplication();
 
     @CCD(
@@ -331,5 +338,33 @@ public class CaseData {
         this.getApplicant1().setGender(app1Gender);
         this.getApplicant2().setGender(app2Gender);
         this.getApplication().setDivorceWho(whoDivorcing);
+    }
+
+    @JsonIgnore
+    public void updateCaseDataWithPaymentDetails(
+        OrderSummary applicationFeeOrderSummary,
+        CaseData caseData,
+        String paymentReference
+    ) {
+        var payment = Payment
+            .builder()
+            .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
+            .channel("online")
+            .feeCode(applicationFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .reference(paymentReference)
+            .status(SUCCESS)
+            .build();
+
+
+        var application = caseData.getApplication();
+
+        if (isEmpty(application.getApplicationPayments())) {
+            List<ListValue<Payment>> payments = new ArrayList<>();
+            payments.add(new ListValue<>(UUID.randomUUID().toString(), payment));
+            application.setApplicationPayments(payments);
+        } else {
+            application.getApplicationPayments()
+                .add(new ListValue<>(UUID.randomUUID().toString(), payment));
+        }
     }
 }
