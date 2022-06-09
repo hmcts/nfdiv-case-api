@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,14 +37,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
+@Slf4j
 @Component
 public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String DRAFT_AOS = "draft-aos";
-
-    @Autowired
-    private AddMiniApplicationLink addMiniApplicationLink;
-
     protected static final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
         new Applicant2SolReviewApplicant1Application(),
@@ -51,6 +49,8 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         new Applicant2SolAosJurisdiction(),
         new Applicant2SolAosOtherProceedings()
     );
+    @Autowired
+    private AddMiniApplicationLink addMiniApplicationLink;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -77,6 +77,9 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("Draft AoS about to start callback invoked for Case Id: {}", details.getId());
+
         final var caseData = details.getData();
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
@@ -96,6 +99,9 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> before) {
+
+        log.info("Draft AoS about to submit callback invoked for Case Id: {}", details.getId());
+
         var state = details.getState() == AwaitingAos || details.getState() == AosOverdue ? AosDrafted : details.getState();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
