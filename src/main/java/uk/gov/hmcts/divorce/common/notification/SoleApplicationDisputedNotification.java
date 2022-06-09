@@ -70,7 +70,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
         final var templateContent =
             disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
 
-        if (WELSH.equals(caseData.getApplicant1().getLanguagePreference())) {
+        if (WELSH.equals(caseData.getApplicant2().getLanguagePreference())) {
             templateContent.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
         }
 
@@ -78,7 +78,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
             caseData.getApplicant2EmailAddress(),
             SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,
             templateContent,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference()
         );
     }
 

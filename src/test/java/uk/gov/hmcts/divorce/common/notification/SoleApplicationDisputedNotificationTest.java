@@ -154,7 +154,7 @@ class SoleApplicationDisputedNotificationTest {
     @Test
     void shouldSendAosDisputedEmailToSoleRespondentWithDivorceContentWhenLangPrefIsWelsh() {
         CaseData data = validCaseDataForAosSubmitted();
-        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
         data.getApplication().setIssueDate(LocalDate.now());
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
         data.getApplicant2().setEmail(null);

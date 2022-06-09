@@ -258,9 +258,9 @@ public class SubmitAosIT {
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
         data.getApplicant1().setSolicitor(null);
-        data.getApplicant1().setLanguagePreferenceWelsh(YES);
         data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -278,13 +278,13 @@ public class SubmitAosIT {
             .getContentAsString();
 
         DocumentContext jsonDocument = JsonPath.parse(expectedCcdAboutToStartCallbackSuccessfulWithDisputeResponse());
-        jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
+        jsonDocument.set("data.applicant2LanguagePreferenceWelsh", "Yes");
 
         assertThatJson(actualResponse)
             .isEqualTo(jsonDocument.json());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
             .sendEmail(
