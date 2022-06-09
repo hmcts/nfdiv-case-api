@@ -27,7 +27,8 @@ public class Applicant2SwitchToSoleNotification implements ApplicantNotification
     public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Sending applicant 2 switch to sole notification to applicant 1 for case : {}", id);
 
-        final var templateContent= commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+        final var templateContent
+            = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         if (WELSH.equals(caseData.getApplicant1().getLanguagePreference())) {
             templateContent.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
         }
