@@ -13,6 +13,7 @@ import static java.lang.String.join;
 import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
@@ -162,5 +163,34 @@ public class CommonContent {
 
     public String getProfessionalUsersSignInUrl(Long caseId) {
         return config.getTemplateVars().get(SIGN_IN_PROFESSIONAL_USERS_URL) + caseId;
+    }
+
+    public Map<String, String> addWelshPartnerContentIfApplicant1PrefersWelsh(final Map<String, String> templateContent,
+                                                                              final CaseData caseData) {
+        return addWelshPartnerContentIfApplicantPrefersWelsh(
+            templateContent,
+            caseData,
+            caseData.getApplicant1(),
+            caseData.getApplicant2());
+    }
+
+    public Map<String, String> addWelshPartnerContentIfApplicant2PrefersWelsh(final Map<String, String> templateContent,
+                                                                              final CaseData caseData) {
+        return addWelshPartnerContentIfApplicantPrefersWelsh(
+            templateContent,
+            caseData,
+            caseData.getApplicant2(),
+            caseData.getApplicant1());
+    }
+
+    private Map<String, String> addWelshPartnerContentIfApplicantPrefersWelsh(final Map<String, String> templateContent,
+                                                                              final CaseData caseData,
+                                                                              final Applicant applicant,
+                                                                              final Applicant partner) {
+        if (WELSH == applicant.getLanguagePreference()) {
+            templateContent.put(PARTNER, getPartnerWelshContent(caseData, partner));
+        }
+
+        return templateContent;
     }
 }
