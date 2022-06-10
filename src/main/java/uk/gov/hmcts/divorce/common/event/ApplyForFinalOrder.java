@@ -72,7 +72,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Apply for Final Order about to submit callback invoked");
+        log.info("Apply for Final Order about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
         State endState = details.getState();
