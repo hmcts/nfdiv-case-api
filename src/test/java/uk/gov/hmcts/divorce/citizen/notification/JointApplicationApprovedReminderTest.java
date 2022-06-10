@@ -30,7 +30,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -161,8 +160,6 @@ class JointApplicationApprovedReminderTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("partner sifil");
-
         jointApplicationApprovedReminder.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
@@ -170,12 +167,10 @@ class JointApplicationApprovedReminderTest {
             eq(JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER),
             argThat(allOf(
                 hasEntry(IS_REMINDER, YES),
-                hasEntry(PAYS_FEES, NO),
-                hasEntry(PARTNER, "partner sifil")
+                hasEntry(PAYS_FEES, NO)
             )),
             eq(WELSH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
-        verify(commonContent).getPartnerWelshContent(data, data.getApplicant2());
     }
 }

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -12,10 +11,8 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification.PAYS_FEES;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER;
 
@@ -39,17 +36,11 @@ public class JointApplicationApprovedReminder implements ApplicantNotification {
             && caseData.getApplication().isHelpWithFeesApplication() ? NO : YES);
         templateVars.put(IS_REMINDER, YES);
 
-        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
-
-        if (WELSH.equals(languagePreference)) {
-            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
-        }
-
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER,
             templateVars,
-            languagePreference
+            caseData.getApplicant1().getLanguagePreference()
         );
     }
 }

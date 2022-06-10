@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
@@ -14,12 +13,10 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
@@ -51,12 +48,6 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
         Map<String, String> templateVars
             = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
 
-        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
-
-        if (WELSH.equals(languagePreference)) {
-            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
-        }
-
         EmailTemplateName templateId;
 
         if (caseData.getApplication().isHelpWithFeesApplication()
@@ -74,7 +65,7 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
             caseData.getApplicant1().getEmail(),
             templateId,
             templateVars,
-            languagePreference
+            caseData.getApplicant1().getLanguagePreference()
         );
     }
 

@@ -24,7 +24,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
@@ -38,6 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(SpringExtension.class)
@@ -251,20 +251,19 @@ class Applicant2ApprovedNotificationTest {
         data.setDueDate(LOCAL_DATE);
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("gŵr");
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
-            argThat(allOf(
-                hasEntry(PARTNER, "gŵr")
-            )),
+            anyMap(),
             eq(WELSH)
         );
 
-        verify(commonContent).getPartnerWelshContent(data, data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -276,20 +275,19 @@ class Applicant2ApprovedNotificationTest {
         data.setDueDate(LOCAL_DATE);
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("gŵr");
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF),
-            argThat(allOf(
-                hasEntry(PARTNER, "gŵr")
-            )),
+            anyMap(),
             eq(WELSH)
         );
 
-        verify(commonContent).getPartnerWelshContent(data, data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 }
 
