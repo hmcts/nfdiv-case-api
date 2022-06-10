@@ -552,6 +552,7 @@ public class ApplicationIssuedNotificationTest {
             .build();
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.getUnionType(caseData, ENGLISH)).thenReturn("divorce");
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
 
@@ -588,6 +589,7 @@ public class ApplicationIssuedNotificationTest {
             .build();
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.getUnionType(caseData, ENGLISH)).thenReturn("dissolution");
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
 
