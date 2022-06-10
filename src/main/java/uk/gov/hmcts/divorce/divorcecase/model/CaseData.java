@@ -65,6 +65,12 @@ public class CaseData {
     )
     private DivorceOrDissolution divorceOrDissolution;
 
+    @CCD(
+        label = "Date and hour?",
+        access = {DefaultAccess.class}
+    )
+    private DateAndHour dateAndHour;
+
     @JsonUnwrapped(prefix = "labelContent")
     @Builder.Default
     @CCD(access = {DefaultAccess.class})

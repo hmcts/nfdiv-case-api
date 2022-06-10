@@ -62,6 +62,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
             .grantHistoryOnly(LEGAL_ADVISOR))
             .page("addCaseNotes")
             .pageLabel("Add case notes")
+            .optional(CaseData::getDateAndHour)
             .optional(CaseData::getNote);
     }
 
