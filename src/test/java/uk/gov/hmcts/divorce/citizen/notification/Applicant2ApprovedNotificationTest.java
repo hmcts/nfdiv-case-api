@@ -266,5 +266,30 @@ class Applicant2ApprovedNotificationTest {
 
         verify(commonContent).getPartnerWelshContent(data, data.getApplicant2());
     }
+
+    @Test
+    void shouldSendEmailInWelshLanguageToApplicant1WhenHWFDeniedAndLanguagePreferenceIsWelsh() {
+        CaseData data = validApplicant2CaseData();
+        data.setDivorceOrDissolution(DIVORCE);
+        data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+        data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
+        data.setDueDate(LOCAL_DATE);
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("gŵr");
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF),
+            argThat(allOf(
+                hasEntry(PARTNER, "gŵr")
+            )),
+            eq(WELSH)
+        );
+
+        verify(commonContent).getPartnerWelshContent(data, data.getApplicant2());
+    }
 }
 
