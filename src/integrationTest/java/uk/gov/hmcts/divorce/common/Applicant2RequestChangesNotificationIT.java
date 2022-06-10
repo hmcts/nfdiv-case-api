@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.divorce.common.event.Applicant2RequestChanges.APPLICANT_2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
@@ -96,6 +97,33 @@ public class Applicant2RequestChangesNotificationIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT2_REQUEST_CHANGES), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenApplicant1LanguagePreferenceWelshThenSendEmailToApplicant1WithWelshContent() throws Exception {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.NO);
+        data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Some issues");
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, APPLICANT_2_REQUEST_CHANGES)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES), anyMap(), eq(WELSH));
 
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT2_REQUEST_CHANGES), anyMap(), eq(ENGLISH));
