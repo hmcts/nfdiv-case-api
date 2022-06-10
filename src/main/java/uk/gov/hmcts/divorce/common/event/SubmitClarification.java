@@ -84,7 +84,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Submit Clarification about to submit callback invoked for case id: {}", details.getId());
+        log.info("Submit Clarification about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseData data = details.getData();
         final ConditionalOrder conditionalOrder = data.getConditionalOrder();
