@@ -70,6 +70,9 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("Submit AoS about to start callback invoked for Case Id: {}", details.getId());
+
         final var caseData = details.getData();
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
@@ -87,6 +90,9 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Submit AoS about to submit callback invoked for Case Id: {}", details.getId());
+
         final var caseData = details.getData();
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
@@ -147,7 +153,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
                                                final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker submit aos submitted callback invoked for case id: {}", details.getId());
+        log.info("Submit AoS submitted callback invoked for Case Id: {}", details.getId());
 
         final AcknowledgementOfService acknowledgementOfService = details.getData().getAcknowledgementOfService();
 
