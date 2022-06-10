@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
@@ -47,34 +48,34 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
 
+        Map<String, String> templateVars
+            = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+
         LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+
+        if (WELSH.equals(languagePreference)) {
+            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
+        }
+
+        EmailTemplateName templateId;
 
         if (caseData.getApplication().isHelpWithFeesApplication()
             && caseData.getApplication().getApplicant2HelpWithFees().getNeedHelp() != YesOrNo.YES) {
             log.info("Sending applicant 2 denied HWF notification to applicant 1 for case : {}", id);
-
-            notificationService.sendEmail(
-                caseData.getApplicant1().getEmail(),
-                JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF,
-                commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-                languagePreference
-            );
+            templateId = JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF;
         } else {
             log.info("Sending applicant 2 approved notification to applicant 1 for case : {}", id);
-
-            Map<String, String> templateVars = applicant1TemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-
-            if (WELSH.equals(languagePreference)) {
-                templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
-            }
-
-            notificationService.sendEmail(
-                caseData.getApplicant1().getEmail(),
-                JOINT_APPLICANT1_APPLICANT2_APPROVED,
-                templateVars,
-                languagePreference
-            );
+            templateId = JOINT_APPLICANT1_APPLICANT2_APPROVED;
+            templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
+            templateVars.put(IS_REMINDER, NO);
         }
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            templateId,
+            templateVars,
+            languagePreference
+        );
     }
 
     @Override
@@ -111,13 +112,6 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
                 caseData.getApplicant1().getLanguagePreference()
             );
         }
-    }
-
-    private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
-        templateVars.put(IS_REMINDER, NO);
-        return templateVars;
     }
 
     private Map<String, String> applicant2TemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
