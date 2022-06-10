@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -88,7 +89,7 @@ public class CommonContent {
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
-        templateVars.put(PARTNER, getPartner(caseData, partner));
+        templateVars.put(PARTNER, getPartner(caseData, partner, applicant.getLanguagePreference()));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
@@ -108,6 +109,14 @@ public class CommonContent {
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
 
         return templateVars;
+    }
+
+    public String getPartner(CaseData caseData, Applicant partner, LanguagePreference applicantLanguagePreference) {
+        if (WELSH.equals(applicantLanguagePreference)) {
+            return getPartnerWelshContent(caseData, partner);
+        }
+
+        return getPartner(caseData, partner);
     }
 
     public String getPartner(CaseData caseData, Applicant partner) {
@@ -163,34 +172,5 @@ public class CommonContent {
 
     public String getProfessionalUsersSignInUrl(Long caseId) {
         return config.getTemplateVars().get(SIGN_IN_PROFESSIONAL_USERS_URL) + caseId;
-    }
-
-    public Map<String, String> addWelshPartnerContentIfApplicant1PrefersWelsh(final Map<String, String> templateContent,
-                                                                              final CaseData caseData) {
-        return addWelshPartnerContentIfApplicantPrefersWelsh(
-            templateContent,
-            caseData,
-            caseData.getApplicant1(),
-            caseData.getApplicant2());
-    }
-
-    public Map<String, String> addWelshPartnerContentIfApplicant2PrefersWelsh(final Map<String, String> templateContent,
-                                                                              final CaseData caseData) {
-        return addWelshPartnerContentIfApplicantPrefersWelsh(
-            templateContent,
-            caseData,
-            caseData.getApplicant2(),
-            caseData.getApplicant1());
-    }
-
-    private Map<String, String> addWelshPartnerContentIfApplicantPrefersWelsh(final Map<String, String> templateContent,
-                                                                              final CaseData caseData,
-                                                                              final Applicant applicant,
-                                                                              final Applicant partner) {
-        if (WELSH == applicant.getLanguagePreference()) {
-            templateContent.put(PARTNER, getPartnerWelshContent(caseData, partner));
-        }
-
-        return templateContent;
     }
 }
