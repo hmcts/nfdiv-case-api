@@ -17,7 +17,6 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -28,7 +27,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -102,7 +100,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         final String email = caseData.getApplicant1().getSolicitor().getEmail();
         boolean isSolicitorServiceMethod = caseData.getApplication().isSolicitorServiceMethod();
-        final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
 
         if (isSolicitorServiceMethod) {
             log.info("Sending Personal Service email to applicant solicitor.  Case ID: {}", caseId);
@@ -111,7 +108,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 APPLICANT_SOLICITOR_SERVICE,
                 templateVars(caseData, caseId),
-                languagePreference
+                ENGLISH
             );
         } else if (caseData.getApplicationType().isSole()) {
 
@@ -123,7 +120,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                     ? SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE
                     : SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                languagePreference);
+                ENGLISH);
         } else if (!caseData.getApplicationType().isSole()) {
             log.info("Sending Notice Of Proceedings email to applicant 1 solicitor for joint case.  Case ID: {}", caseId);
 
@@ -131,7 +128,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                languagePreference);
+                ENGLISH);
         }
     }
 
@@ -145,15 +142,10 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
             if (isNotBlank(email) && !caseData.getApplication().isSolicitorServiceMethod() && !caseData.getApplicant2().isBasedOverseas()) {
                 log.info("Sending sole application issued notification to respondent for case : {}", caseId);
 
-                var templateVars = soleRespondentTemplateVars(caseData, caseId);
-                if (WELSH.equals(caseData.getApplicant2().getLanguagePreference())) {
-                    templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant1()));
-                }
-
                 notificationService.sendEmail(
                     email,
                     SOLE_RESPONDENT_APPLICATION_ACCEPTED,
-                    templateVars,
+                    soleRespondentTemplateVars(caseData, caseId),
                     languagePreference
                 );
             }
