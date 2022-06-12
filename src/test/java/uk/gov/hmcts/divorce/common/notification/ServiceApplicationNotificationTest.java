@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERE
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
@@ -202,6 +203,7 @@ class ServiceApplicationNotificationTest {
         data.getAlternativeService().setServiceApplicationGranted(GRANTED);
 
         final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(PARTNER, "gŵr");
 
         when(commonContent.mainTemplateVars(data, ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
@@ -217,7 +219,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DEEMED_SERVICE, NO),
                 hasEntry(IS_DISPENSE_SERVICE, NO),
-                hasEntry(IS_BAILIFF_SERVICE, YES)
+                hasEntry(IS_BAILIFF_SERVICE, YES),
+                hasEntry(PARTNER, "gŵr")
             )),
             eq(WELSH)
         );
