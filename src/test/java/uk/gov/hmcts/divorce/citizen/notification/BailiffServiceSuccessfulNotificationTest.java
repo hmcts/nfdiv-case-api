@@ -68,10 +68,12 @@ class BailiffServiceSuccessfulNotificationTest {
     void shouldSendNotificationToApplicantWithDivorceContentWhenLangPrefIsWelsh() {
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
-            .thenReturn(getMainTemplateVars());
 
-        when(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).thenReturn("gŵr");
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(PARTNER, "gŵr");
+
+        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant1(caseData, 1234567890123456L);
 
@@ -120,10 +122,9 @@ class BailiffServiceSuccessfulNotificationTest {
         Map<String, String> templateVars = getMainTemplateVars();
         templateVars.put(IS_DISSOLUTION, CommonContent.YES);
         templateVars.put(IS_DIVORCE, NO);
+        templateVars.put(PARTNER, "partner sifil");
         when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(templateVars);
-
-        when(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).thenReturn("partner sifil");
 
         notification.sendToApplicant1(caseData, 1234567890123456L);
 
