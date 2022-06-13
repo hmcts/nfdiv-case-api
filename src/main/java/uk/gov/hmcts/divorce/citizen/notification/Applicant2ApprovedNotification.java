@@ -12,12 +12,10 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
@@ -113,11 +111,6 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
 
     private Map<String, String> applicant2TemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-
-        if (WELSH.equals(applicant.getLanguagePreference())) {
-            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, partner));
-        }
-
         templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
