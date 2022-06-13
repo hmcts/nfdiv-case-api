@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
@@ -109,6 +111,43 @@ public class RespondentSolicitorReminderNotificationTest {
                 hasEntry(SIGN_IN_URL, "test-url")
             )),
             eq(ENGLISH)
+        );
+    }
+
+    @Test
+    public void shouldSendWelshNotificationToRespondentSolicitor() {
+        CaseData data = caseData();
+        data.getApplication().setIssueDate(LocalDate.of(2021, 4, 5));
+        data.setDueDate(LocalDate.of(2021, 4, 21));
+        data.getApplicant2().setSolicitor(Solicitor.builder()
+            .name("sol")
+            .reference("ref")
+            .email("sol@gm.com")
+            .build());
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.basicTemplateVars(data, 1234567890123456L))
+            .thenReturn(getBasicTemplateVars());
+
+        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L))
+            .thenReturn("test-url");
+
+        reminderNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq("sol@gm.com"),
+            eq(RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED),
+            argThat(allOf(
+                hasEntry(ISSUE_DATE, "5 April 2021"),
+                hasEntry(SUBMISSION_RESPONSE_DATE, "21 April 2021"),
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(IS_DIVORCE, "yes"),
+                hasEntry(IS_DISSOLUTION, "no"),
+                hasEntry(SOLICITOR_NAME, "sol"),
+                hasEntry(SOLICITOR_REFERENCE, "ref"),
+                hasEntry(SIGN_IN_URL, "test-url")
+            )),
+            eq(WELSH)
         );
     }
 }

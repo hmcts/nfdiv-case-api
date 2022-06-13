@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import io.cucumber.java.jv.Lan;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -165,6 +166,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
 
         final String email = caseData.getApplicant2().getSolicitor().getEmail();
+        final LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
 
         if (caseData.getApplicationType().isSole()
             && !caseData.getApplication().isSolicitorServiceMethod()
@@ -175,7 +177,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 soleRespondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH
+                languagePreference
             );
 
         } else if (!caseData.getApplicationType().isSole() && !caseData.getApplication().isSolicitorServiceMethod()) {
@@ -185,7 +187,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant2SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH);
+                languagePreference);
         }
     }
 

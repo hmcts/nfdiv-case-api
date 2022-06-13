@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -35,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
@@ -628,6 +630,34 @@ public class ApplicationIssuedNotificationTest {
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendNotificationInWelshToRespondentSolicitorWhenSoleApplication() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(getApplicant())
+            .applicant2(respondentWithDigitalSolicitor())
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
+            .build();
+
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+
+        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            TEST_SOLICITOR_EMAIL,
+            RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+            respondentSolicitorTemplateVars(),
+            WELSH
+        );
+
+        verifyNoMoreInteractions(notificationService);
     }
 
     private Map<String, String> respondentSolicitorTemplateVars() {
