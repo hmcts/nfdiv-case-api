@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
@@ -135,12 +136,16 @@ class ApplicationRemindApplicant2NotificationTest {
 
     @Test
     void shouldSendEmailWithWelshPartnerContent() {
+        final Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(PARTNER, "gŵr");
+
         CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
         data.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant1())).thenReturn("gŵr");
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -152,6 +157,6 @@ class ApplicationRemindApplicant2NotificationTest {
             )),
             eq(WELSH)
         );
-        verify(commonContent).getPartnerWelshContent(data, data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 }

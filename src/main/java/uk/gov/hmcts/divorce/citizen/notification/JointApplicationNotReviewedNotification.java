@@ -11,8 +11,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -36,10 +34,6 @@ public class JointApplicationNotReviewedNotification implements ApplicantNotific
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
-
-        if (WELSH.equals(languagePreference)) {
-            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2()));
-        }
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),

@@ -12,11 +12,9 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
@@ -75,10 +73,6 @@ public class ApplicationRemindApplicant2Notification implements ApplicantNotific
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateVars.put(CREATE_ACCOUNT_LINK,
             config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
-
-        if (WELSH.equals(applicant.getLanguagePreference())) {
-            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, partner));
-        }
 
         return templateVars;
     }

@@ -98,6 +98,8 @@ public class JointApplicationNotReviewedNotificationTest {
     @Test
     void shouldSendEmailWithWelshPartnerContent() {
         final Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(PARTNER, "gŵr");
+
         final CaseData data = caseData();
         data.setDueDate(LocalDate.now());
         data.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
@@ -105,7 +107,6 @@ public class JointApplicationNotReviewedNotificationTest {
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("gŵr");
 
         jointApplicationNotReviewedNotification.sendToApplicant1(data, 1234567890123456L);
 
@@ -119,6 +120,5 @@ public class JointApplicationNotReviewedNotificationTest {
             eq(WELSH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
-        verify(commonContent).getPartnerWelshContent(data, data.getApplicant2());
     }
 }
