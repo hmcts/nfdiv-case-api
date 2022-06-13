@@ -33,11 +33,14 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,6 +51,7 @@ import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_AP
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_2_ANSWERS;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_APPROVED;
@@ -171,10 +175,22 @@ public class Applicant2ApproveIT {
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponseInWelsh()));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT1_APPLICANT2_APPROVED), anyMap(), eq(ENGLISH));
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
+                anyMap(),
+                eq(ENGLISH));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT2_APPLICANT2_APPROVED), anyMap(), eq(WELSH));
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(JOINT_APPLICANT2_APPLICANT2_APPROVED),
+                argThat(
+                    anyOf(
+                        hasEntry(PARTNER, "gwraig")
+                    )
+                ),
+                eq(WELSH));
 
         verifyNoMoreInteractions(notificationService);
     }
