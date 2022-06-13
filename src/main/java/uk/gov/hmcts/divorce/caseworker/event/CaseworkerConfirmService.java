@@ -66,8 +66,8 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
                     .mandatory(SolicitorService::getLocationServed)
                     .mandatory(SolicitorService::getSpecifyLocationServed, "solServiceLocationServed=\"otherSpecify\"")
                     .mandatoryWithLabel(SolicitorService::getServiceSotName, "Solicitor's/Applicant's name")
+                    .optional(SolicitorService::getServiceSotFirm)
                     .readonly(SolicitorService::getTruthStatement)
-                    .mandatory(SolicitorService::getServiceSotFirm)
                 .done()
             .done();
     }

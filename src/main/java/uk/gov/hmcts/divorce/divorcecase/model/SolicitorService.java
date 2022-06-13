@@ -69,7 +69,7 @@ public class SolicitorService {
     private String addressServed;
 
     @CCD(
-        label = "Being the",
+        label = "Who served?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "DocumentsServedBeingThe",
         access = {DefaultAccess.class}
