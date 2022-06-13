@@ -41,16 +41,10 @@ public class Applicant1SwitchToSoleNotification implements ApplicantNotification
         if (caseData.getApplication().getApplicant2ScreenHasMarriageBroken() != NO) {
             log.info("Sending applicant 1 switch to sole notification to applicant 2 for case : {}", id);
 
-            final var templateContent
-                = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-            if (WELSH.equals(caseData.getApplicant2().getLanguagePreference())) {
-                templateContent.put(PARTNER, commonContent.getPartnerWelshContent(caseData, caseData.getApplicant1()));
-            }
-
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICATION_ENDED,
-                templateContent,
+                commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
