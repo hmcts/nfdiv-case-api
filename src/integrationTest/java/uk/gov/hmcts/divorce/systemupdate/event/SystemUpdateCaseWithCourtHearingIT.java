@@ -40,6 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
@@ -134,6 +135,39 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenBothApplicantsHaveWelshAsChosenLanguageThenSendWelshEmails() throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Certificate_Of_Entitlement_V2.docx");
+
+        CaseData data = validCaseWithCourtHearing();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant1().setLanguagePreferenceWelsh(YES);
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(WELSH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(WELSH));
 
         verifyNoMoreInteractions(notificationService);
     }
