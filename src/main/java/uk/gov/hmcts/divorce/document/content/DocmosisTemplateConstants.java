@@ -97,6 +97,7 @@ public final class DocmosisTemplateConstants {
     public static final String BULK_LIST = "bulkList";
     public static final String APPLICANT_HEADING = "applicant";
     public static final String RESPONDENT_HEADING = "respondent";
+    public static final String SOLE_JOINT_HEADING = "soleOrJoint";
     public static final String COSTS_GRANTED = "costsGranted";
     public static final String CTSC_CONTACT_DETAILS = "ctscContactDetails";
 
