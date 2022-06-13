@@ -314,11 +314,15 @@ public class ApplicationIssuedNotificationTest {
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         data.getApplication().setIssueDate(LocalDate.now());
 
+        Map<String, String> divorceTemplateVars = new HashMap<>();
+        divorceTemplateVars.put(PARTNER, "gŵr");
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
+
         when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(16));
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant2())).thenReturn("gŵr");
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -330,7 +334,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(WELSH)
         );
-        verify(commonContent).getPartnerWelshContent(data, data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
