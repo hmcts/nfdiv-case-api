@@ -174,7 +174,10 @@ public class SoleApplicationNotDisputedNotificationTest {
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant1())).thenReturn("gŵr");
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(PARTNER, "gŵr");
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         soleApplicationNotDisputedNotification.sendToApplicant2(data, 1234567890123456L);
 
@@ -186,7 +189,7 @@ public class SoleApplicationNotDisputedNotificationTest {
             )),
             eq(WELSH)
         );
-        verify(commonContent).getPartnerWelshContent(data, data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
