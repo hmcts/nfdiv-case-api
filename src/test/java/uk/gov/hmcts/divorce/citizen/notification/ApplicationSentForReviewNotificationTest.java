@@ -197,7 +197,9 @@ class ApplicationSentForReviewNotificationTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.getPartnerWelshContent(data, data.getApplicant1())).thenReturn("gŵr");
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(PARTNER, "gŵr");
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -209,6 +211,6 @@ class ApplicationSentForReviewNotificationTest {
             )),
             eq(WELSH)
         );
-        verify(commonContent).getPartnerWelshContent(data, data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 }

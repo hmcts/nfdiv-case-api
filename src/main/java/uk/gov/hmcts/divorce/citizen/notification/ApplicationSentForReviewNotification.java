@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.join;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -27,7 +26,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_FIRM;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -112,10 +110,6 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
         if (caseData.getApplicant1().isRepresented()) {
             templateVars.put(SOLICITOR_FIRM,
                 caseData.getApplicant1().getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationName());
-        }
-
-        if (WELSH.equals(applicant.getLanguagePreference())) {
-            templateVars.put(PARTNER, commonContent.getPartnerWelshContent(caseData, partner));
         }
 
         return templateVars;
