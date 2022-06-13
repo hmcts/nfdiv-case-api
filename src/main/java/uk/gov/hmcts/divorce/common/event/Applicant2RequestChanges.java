@@ -53,7 +53,9 @@ public class Applicant2RequestChanges implements CCDConfig<CaseData, State, User
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Applicant 2 request changes about to submit callback invoked");
+
+        log.info("Applicant 2 request changes about to submit callback invoked for Case Id: {}", details.getId());
+
         CaseData data = details.getData();
 
         log.info("Validating case data");
