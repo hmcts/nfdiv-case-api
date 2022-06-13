@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.join;
@@ -237,9 +236,7 @@ class CommonContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, String> templateContent = new HashMap<>();
-
-        final Map<String, String> result = commonContent.addWelshPartnerContentIfApplicant1PrefersWelsh(templateContent, caseData);
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant1, applicant2);
 
         assertThat(result)
             .isNotEmpty()
@@ -266,11 +263,13 @@ class CommonContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, String> templateContent = new HashMap<>();
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant1, applicant2);
 
-        final Map<String, String> result = commonContent.addWelshPartnerContentIfApplicant1PrefersWelsh(templateContent, caseData);
-
-        assertThat(result).isEmpty();
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(PARTNER, "wife")
+            );
     }
 
     @Test
@@ -292,9 +291,7 @@ class CommonContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, String> templateContent = new HashMap<>();
-
-        final Map<String, String> result = commonContent.addWelshPartnerContentIfApplicant2PrefersWelsh(templateContent, caseData);
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant2, applicant1);
 
         assertThat(result)
             .isNotEmpty()
@@ -321,10 +318,12 @@ class CommonContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, String> templateContent = new HashMap<>();
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant2, applicant1);
 
-        final Map<String, String> result = commonContent.addWelshPartnerContentIfApplicant2PrefersWelsh(templateContent, caseData);
-
-        assertThat(result).isEmpty();
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(PARTNER, "husband")
+            );
     }
 }
