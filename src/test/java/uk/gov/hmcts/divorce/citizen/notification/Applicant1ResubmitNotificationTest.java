@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_SOLICITOR;
@@ -252,7 +253,7 @@ class Applicant1ResubmitNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_APPLICANT2_SOLICITOR_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
-                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
@@ -278,7 +279,7 @@ class Applicant1ResubmitNotificationTest {
             eq(JOINT_APPLICANT2_SOLICITOR_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
                 hasEntry(IS_DIVORCE, NO),
-                hasEntry(IS_DISSOLUTION, CommonContent.YES),
+                hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
