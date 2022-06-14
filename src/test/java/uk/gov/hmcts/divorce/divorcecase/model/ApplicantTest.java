@@ -163,6 +163,24 @@ class ApplicantTest {
     }
 
     @Test
+    void shouldReturnFalseIfGreatBritain() {
+        final Applicant applicant = Applicant.builder()
+            .address(AddressGlobalUK.builder().country("Great Britain").build())
+            .build();
+
+        assertThat(applicant.isBasedOverseas()).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfGreatBritainAndCaseInsensitive() {
+        final Applicant applicant = Applicant.builder()
+            .address(AddressGlobalUK.builder().country("great britain").build())
+            .build();
+
+        assertThat(applicant.isBasedOverseas()).isFalse();
+    }
+
+    @Test
     void shouldReturnFalseIfApplicantIsRepresentedWhenCheckingIsBasedOverseas() {
         final Applicant applicant = Applicant.builder()
             .address(AddressGlobalUK.builder().country("France").build())

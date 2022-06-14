@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import static java.lang.String.join;
 import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
@@ -87,7 +89,7 @@ public class CommonContent {
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
-        templateVars.put(PARTNER, getPartner(caseData, partner));
+        templateVars.put(PARTNER, getPartner(caseData, partner, applicant.getLanguagePreference()));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
@@ -107,6 +109,14 @@ public class CommonContent {
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
 
         return templateVars;
+    }
+
+    public String getPartner(CaseData caseData, Applicant partner, LanguagePreference applicantLanguagePreference) {
+        if (WELSH.equals(applicantLanguagePreference)) {
+            return getPartnerWelshContent(caseData, partner);
+        }
+
+        return getPartner(caseData, partner);
     }
 
     public String getPartner(CaseData caseData, Applicant partner) {
