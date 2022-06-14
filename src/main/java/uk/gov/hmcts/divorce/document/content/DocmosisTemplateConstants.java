@@ -27,11 +27,14 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_POSTAL_ADDRESS = "applicant2PostalAddress";
     public static final String APPLICANT_1_ADDRESS = "applicant1Address";
     public static final String A_DIVORCE_APPLICATION = "a divorce application";
+    public static final String A_DIVORCE_APPLICATION_CY = "gais am ysgariad";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String END_A_CIVIL_PARTNERSHIP = "an application to end a civil partnership";
+    public static final String END_A_CIVIL_PARTNERSHIP_CY = "cais i ddod â phartneriaeth sifil i ben";
     public static final String END_CIVIL_PARTNERSHIP = "application to end the civil partnership";
     public static final String FOR_A_DIVORCE = "for a divorce";
     public static final String MARRIAGE = "marriage";
+    public static final String MARRIAGE_CY = "briodas";
     public static final String THE_APPLICATION = "theApplication";
     public static final String THE_DIVORCE = "the divorce";
     public static final String TO_END_A_CIVIL_PARTNERSHIP = "application to end a civil partnership";
@@ -39,6 +42,7 @@ public final class DocmosisTemplateConstants {
     public static final String RELATIONSHIP = "relationship";
     public static final String RELATION = "relation";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
+    public static final String CIVIL_PARTNERSHIP_CY = "bartneriaeth sifil";
     public static final String APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP = "application to end your civil partnership";
     public static final String DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH = "for the dissolution of the civil partnership with";
     public static final String ACCESS_CODE = "accessCode";
@@ -107,6 +111,11 @@ public final class DocmosisTemplateConstants {
     public static final String DISPUTING_CIVIL_PARTNERSHIP = "dispute the application to end the civil partnership";
     public static final String WITHOUT_DISPUTING_CIVIL_PARTNERSHIP =
         "continue without disputing the application to end the civil partnership";
+    public static final String DISPUTING_DIVORCE_CY = "gwrthwynebu’r cais am ysgariad";
+    public static final String WITHOUT_DISPUTING_DIVORCE_CY = "bwrw ymlaen heb wrthwynebu’r ysgariad";
+    public static final String DISPUTING_CIVIL_PARTNERSHIP_CY = "gwrthwynebu’r cais i ddod  â’r bartneriaeth sifil i ben";
+    public static final String WITHOUT_DISPUTING_CIVIL_PARTNERSHIP_CY =
+        "bwrw ymlaen heb wrthwynebu’r cais i ddod â’r bartneriaeth sifil i ben";
 
     public static final String SEARCH_ADDRESS_COST = "searchAddressCost";
     public static final String SERVE_BY_EMAIL_COST = "serveTheApplicationByEmailCost";

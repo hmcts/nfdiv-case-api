@@ -4,25 +4,35 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.A_DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.A_DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISPUTING_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISPUTING_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISPUTING_DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISPUTING_DIVORCE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_A_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_A_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_DISPUTING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.THE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WITHOUT_DISPUTING_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WITHOUT_DISPUTING_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WITHOUT_DISPUTING_DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WITHOUT_DISPUTING_DIVORCE_CY;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
@@ -42,6 +52,8 @@ public class RespondentAnswersTemplateContent {
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
+        final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+
         Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
@@ -60,22 +72,53 @@ public class RespondentAnswersTemplateContent {
         templateContent.put(RESP_LEGAL_PROCEEDINGS_DESCRIPTION, caseData.getApplicant2().getLegalProceedingsDetails());
 
         if (caseData.isDivorce()) {
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
-            templateContent.put(THE_APPLICATION, A_DIVORCE_APPLICATION);
+
+            templateContent.put(
+                MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                WELSH.equals(languagePreference) ? MARRIAGE_CY : MARRIAGE
+            );
+            templateContent.put(
+                THE_APPLICATION, WELSH.equals(languagePreference)
+                    ? A_DIVORCE_APPLICATION_CY
+                    : A_DIVORCE_APPLICATION
+            );
 
             if (caseData.getAcknowledgementOfService().isDisputed()) {
-                templateContent.put(IS_DISPUTING, DISPUTING_DIVORCE);
+                templateContent.put(
+                    IS_DISPUTING, WELSH.equals(languagePreference)
+                        ? DISPUTING_DIVORCE_CY
+                        : DISPUTING_DIVORCE
+                );
             } else {
-                templateContent.put(IS_DISPUTING, WITHOUT_DISPUTING_DIVORCE);
+                templateContent.put(
+                    IS_DISPUTING, WELSH.equals(languagePreference)
+                        ? WITHOUT_DISPUTING_DIVORCE_CY
+                        : WITHOUT_DISPUTING_DIVORCE
+                );
             }
         } else {
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
-            templateContent.put(THE_APPLICATION, END_A_CIVIL_PARTNERSHIP);
+            templateContent.put(
+                MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP
+            );
+            templateContent.put(
+                THE_APPLICATION, WELSH.equals(languagePreference)
+                    ? END_A_CIVIL_PARTNERSHIP_CY
+                    : END_A_CIVIL_PARTNERSHIP
+            );
 
             if (caseData.getAcknowledgementOfService().isDisputed()) {
-                templateContent.put(IS_DISPUTING, DISPUTING_CIVIL_PARTNERSHIP);
+                templateContent.put(
+                    IS_DISPUTING, WELSH.equals(languagePreference)
+                        ? DISPUTING_CIVIL_PARTNERSHIP_CY
+                        : DISPUTING_CIVIL_PARTNERSHIP
+                );
             } else {
-                templateContent.put(IS_DISPUTING, WITHOUT_DISPUTING_CIVIL_PARTNERSHIP);
+                templateContent.put(
+                    IS_DISPUTING, WELSH.equals(languagePreference)
+                        ? WITHOUT_DISPUTING_CIVIL_PARTNERSHIP_CY
+                        : WITHOUT_DISPUTING_CIVIL_PARTNERSHIP
+                );
             }
         }
 

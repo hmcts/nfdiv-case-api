@@ -168,6 +168,43 @@ public class SubmitAosIT {
     }
 
     @Test
+    void shouldSetStateToHoldingAndSetDateAosSubmittedAndGenerateRespondentPdfInWelshForValidUndisputedAos() throws Exception {
+
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .statementOfTruth(YES)
+            .prayerHasBeenGiven(YES)
+            .confirmReadPetition(YES)
+            .jurisdictionAgree(YES)
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(getExpectedLocalDate());
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        caseData.getApplicant2().setLegalProceedings(YES);
+        caseData.getApplicant2().setLegalProceedingsDetails("some description");
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Cy.docx");
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+            .content(
+                objectMapper.writeValueAsString(
+                    callbackRequest(caseData, SUBMIT_AOS, AosDrafted.name())))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn();
+    }
+
+    @Test
     public void givenValidCaseDataWithoutDisputeWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplication().setIssueDate(LOCAL_DATE);
