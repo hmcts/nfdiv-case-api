@@ -1,0 +1,30 @@
+{
+  "data": {
+  "applicant1ContactDetailsType": "private",
+  "applicant1Email": "test@test.com",
+  "applicant1FinancialOrder": "No",
+  "applicant1FirstName": "test_first_name",
+  "applicant1Gender": "female",
+  "applicant1LanguagePreferenceWelsh": "Yes",
+  "applicant1LastName": "test_last_name",
+  "applicant1MiddleName": "test_middle_name",
+  "applicant2Email": "applicant2@test.com",
+  "applicant2FirstName": "test_first_name",
+  "applicant2Gender": "male",
+  "applicant2InviteEmailAddress": "applicant2@test.com",
+  "applicant2LanguagePreferenceWelsh": "Yes",
+  "applicant2LastName": "test_last_name",
+  "applicant2MiddleName": "test_middle_name",
+    "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
+  "applicant2StatementOfTruth": "Yes",
+  "divorceOrDissolution": "divorce",
+  "jurisdictionApplicant1Residence": "Yes",
+  "jurisdictionApplicant2Residence": "Yes",
+  "jurisdictionConnections": ["A"],
+  "marriageApplicant1Name": "test_first_name test_last_name",
+  "marriageApplicant2Name": "test_first_name test_last_name",
+  "marriageDate": "2020-01-01",
+  "note": "Marriage date incorrect, correct date: 1/1/2020"
+},
+  "state": "AwaitingApplicant2Response"
+}
