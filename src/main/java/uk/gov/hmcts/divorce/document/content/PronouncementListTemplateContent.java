@@ -24,14 +24,17 @@ import java.util.Map;
 import static java.lang.String.format;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BULK_LIST;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PRONOUNCEMENT_JUDGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_HEADING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLE_JOINT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 
 @Component
@@ -74,8 +77,13 @@ public class PronouncementListTemplateContent {
                 mainCaseData.getApplicant1().getLastName()));
             caseLinkMap.put(RESPONDENT_HEADING, format("%s %s", mainCaseData.getApplicant2().getFirstName(),
                 mainCaseData.getApplicant2().getLastName()));
+            caseLinkMap.put(SOLE_JOINT_HEADING, SOLE_APPLICATION.equals(mainCaseData.getApplicationType()) ? "Sole" : "Joint");
+            caseLinkMap.put(DIVORCE_OR_DISSOLUTION, mainCaseData.getDivorceOrDissolution() != null
+                ? mainCaseData.getDivorceOrDissolution().getLabel() : null);
+
             bulkList.add(caseLinkMap);
         }
+
         templateContent.put(PRONOUNCEMENT_JUDGE, caseData.getPronouncementJudge());
         templateContent.put(COURT_NAME, caseData.getCourt().getLabel());
         templateContent.put(DATE_OF_HEARING, caseData.getDateAndTimeOfHearing().format(hearingDateFormat));
