@@ -31,7 +31,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_SOLICITOR;
@@ -151,6 +150,27 @@ class Applicant1ResubmitNotificationTest {
     }
 
     @Test
+    void shouldSendSpecificNotificationInWelshToApplicant2WhenResubmittedByApplicant1WithDivorceContentAndApp2LanguagePrefIsWelsh() {
+        CaseData data = validApplicant2CaseData();
+        data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE),
+            argThat(allOf(
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
+                hasEntry(SIGN_IN_URL, SIGN_IN_DIVORCE_TEST_URL + app2CheckJointAnswers)
+            )),
+            eq(WELSH)
+        );
+    }
+
+    @Test
     void shouldSendSpecificNotificationToApplicant2WhenResubmittedByApplicant1WithDissolutionContent() {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
@@ -232,7 +252,7 @@ class Applicant1ResubmitNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_APPLICANT2_SOLICITOR_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
-                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
@@ -258,7 +278,7 @@ class Applicant1ResubmitNotificationTest {
             eq(JOINT_APPLICANT2_SOLICITOR_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
                 hasEntry(IS_DIVORCE, NO),
-                hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(IS_DISSOLUTION, CommonContent.YES),
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
