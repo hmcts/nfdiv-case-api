@@ -55,6 +55,8 @@ public class CcdSearchService {
     public static final String APPLICATION_TYPE = "applicationType";
     public static final String SOLE_APPLICATION = "soleApplication";
     public static final String APPLICANT2_REPRESENTED = "applicant2SolicitorRepresented";
+    public static final String APPLICANT2_SOL_EMAIL = "applicant2SolicitorEmail";
+    public static final String APPLICANT2_SOL_ORG_POLICY = "applicant2SolicitorOrganisationPolicy";
     public static final String SERVICE_METHOD = "serviceMethod";
     public static final String COURT_SERVICE = "courtService";
 

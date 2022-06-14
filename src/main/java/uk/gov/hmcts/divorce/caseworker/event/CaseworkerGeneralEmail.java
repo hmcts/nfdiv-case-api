@@ -33,7 +33,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -66,7 +66,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_CREATE_GENERAL_EMAIL)
-            .forStates(POST_SUBMISSION_STATES)
+            .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
             .name("Create general email")
             .description("Create general email")
             .showSummary()
@@ -105,7 +105,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker create general email about to submit callback invoked");
+        log.info("Caseworker create general email about to submit callback invoked for Case Id: {}", details.getId());
 
         var caseData = details.getData();
         var generalEmail = caseData.getGeneralEmail();
