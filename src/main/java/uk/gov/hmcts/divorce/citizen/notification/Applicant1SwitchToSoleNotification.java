@@ -43,7 +43,7 @@ public class Applicant1SwitchToSoleNotification implements ApplicantNotification
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICATION_ENDED,
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference()
             );
         }
     }
