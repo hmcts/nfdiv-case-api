@@ -187,6 +187,31 @@ public class CitizenSwitchToSoleApplicationIT {
     }
 
     @Test
+    public void givenValidCaseDataWithWelshSelectedWhenCallbackIsInvokedThenSendEmailInWelsh() throws Exception {
+        CaseData caseData = validApplicant2CaseData();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+        setupMocks(true);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(caseData, SWITCH_TO_SOLE)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.applicant2Email").doesNotExist())
+            .andExpect(jsonPath("$.data.applicationType").value("soleApplication"));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(WELSH));
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(WELSH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
     public void givenValidDataWhenCallbackIsInvokedForApp1SwitchToSoleThenCaseIsWithdrawnAndNotificationsSentInWelsh() throws Exception {
         CaseData data = validJointApplicant1CaseData();
         data.getApplicant1().setLanguagePreferenceWelsh(YES);
