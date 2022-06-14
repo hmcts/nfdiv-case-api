@@ -90,11 +90,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
         if (isNull(caseInviteBefore.accessCode())) {
             log.info("Unlinking Applicant 2 from Case");
-            ccdAccessService.unlinkUserFromApplication(
-                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
-                details.getId(),
-                caseInviteBefore.applicant2UserId()
-            );
+            ccdAccessService.unlinkUserFromApplication(details.getId(), caseInviteBefore.applicant2UserId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

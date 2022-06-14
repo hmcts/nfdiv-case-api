@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -27,9 +26,6 @@ public class SystemUnlinkApplicantFromCase implements CCDConfig<CaseData, State,
 
     @Autowired
     private CcdAccessService ccdAccessService;
-
-    @Autowired
-    private HttpServletRequest httpServletRequest;
 
     public static final String SYSTEM_UNLINK_APPLICANT = "system-unlink-applicant";
 
@@ -46,14 +42,12 @@ public class SystemUnlinkApplicantFromCase implements CCDConfig<CaseData, State,
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        CaseData data = details.getData();
-        final var roles = List.of(CREATOR.getRole());
 
         log.info("System unlink applicant from case: Case Id: {}", details.getId());
-        ccdAccessService.removeUsersWithRole(details.getId(), roles);
+        ccdAccessService.removeUsersWithRole(details.getId(), List.of(CREATOR.getRole()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
+            .data(details.getData())
             .build();
     }
 }
