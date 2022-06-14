@@ -38,6 +38,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
@@ -97,6 +98,39 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
+    void shouldCallSendEmailInWelshToApplicant1ForSupportingDocuments() {
+        CaseData data = caseData();
+        data.setApplicant2(getApplicant2(MALE));
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
+        data.setApplicationType(SOLE_APPLICATION);
+        Set<DocumentType> docs = new HashSet<>();
+        docs.add(MARRIAGE_CERTIFICATE);
+        docs.add(MARRIAGE_CERTIFICATE_TRANSLATION);
+        docs.add(NAME_CHANGE_EVIDENCE);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
+                hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, YES),
+                hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, YES),
+                hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
+            )),
+            eq(WELSH)
+        );
+    }
+
+    @Test
     void shouldNotCallSendEmailToApplicant1IfNoAwaitingDocuments() {
         CaseData data = caseData();
         data.setApplicant2(getApplicant2(MALE));
@@ -131,6 +165,33 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
             eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void shouldCallSendEmailInWelshToApplicant2ForSupportingDocuments() {
+        CaseData data = validApplicant2CaseData();
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
+        data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getApplicant2().setEmail(null);
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
+                hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
+            )),
+            eq(WELSH)
         );
     }
 
