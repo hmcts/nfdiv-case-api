@@ -31,10 +31,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISP
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
@@ -190,6 +192,37 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_BAILIFF_SERVICE, YES)
             )),
             eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void shouldSendBailiffServiceApplicationSuccessfulEmailToSoleApplicantWhenLanguagePrefIsWelsh() {
+        CaseData data = validApplicant1CaseData();
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getAlternativeService().setAlternativeServiceType(BAILIFF);
+        data.getAlternativeService().setServiceApplicationGranted(GRANTED);
+
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(PARTNER, "gŵr");
+
+        when(commonContent.mainTemplateVars(data, ID, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(templateVars);
+
+        serviceApplicationNotification.sendToApplicant1(data, ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SERVICE_APPLICATION_GRANTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(ID)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(IS_DEEMED_SERVICE, NO),
+                hasEntry(IS_DISPENSE_SERVICE, NO),
+                hasEntry(IS_BAILIFF_SERVICE, YES),
+                hasEntry(PARTNER, "gŵr")
+            )),
+            eq(WELSH)
         );
     }
 
