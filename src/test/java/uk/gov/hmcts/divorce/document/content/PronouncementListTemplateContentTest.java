@@ -10,8 +10,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -59,11 +61,9 @@ public class PronouncementListTemplateContentTest {
     @Mock
     private AuthTokenGenerator authTokenGenerator;
 
-    private User user;
-
     @BeforeEach
     void setUp() {
-        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
     }
@@ -113,6 +113,8 @@ public class PronouncementListTemplateContentTest {
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
             .applicant2(respondent())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
