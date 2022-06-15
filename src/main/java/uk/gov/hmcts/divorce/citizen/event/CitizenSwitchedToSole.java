@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
@@ -51,9 +50,6 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
     @Autowired
     private Applicant2SwitchToSoleNotification applicant2SwitchToSoleNotification;
-
-    @Autowired
-    private IdamService idamService;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;

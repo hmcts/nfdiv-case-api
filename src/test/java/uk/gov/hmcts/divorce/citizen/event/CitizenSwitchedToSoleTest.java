@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
@@ -62,9 +61,6 @@ class CitizenSwitchedToSoleTest {
 
     @Mock
     private CcdAccessService ccdAccessService;
-
-    @Mock
-    private IdamService idamService;
 
     @Mock
     private HttpServletRequest httpServletRequest;
