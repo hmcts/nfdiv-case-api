@@ -42,6 +42,17 @@ public class SubmitAosFT extends FunctionalTestSuite {
     }
 
     @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulWhenApplicant1LanguageIsWelsh() throws Exception {
+
+        final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("applicant1LanguagePreferenceWelsh", YES.getValue());
+
+        final Response response = triggerCallback(caseData, SUBMIT_AOS, ABOUT_TO_SUBMIT_URL, AosDrafted);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulWhenApplicant2LanguageIsWelsh() throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST);
