@@ -6,8 +6,13 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.exception.InvalidCcdCaseDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataProvider.Connection;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
@@ -22,6 +27,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RES
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COUNTRY_OF_MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationTemplateDataProviderTest {
@@ -43,7 +51,7 @@ class ApplicationTemplateDataProviderTest {
             RESIDUAL_JURISDICTION_CP));
 
         final var result
-            = applicationTemplateDataProvider.deriveJurisdictionList(application, caseId, ENGLISH);
+            = applicationTemplateDataProvider.deriveJurisdictionList(application, caseId);
 
         assertThat(result).containsExactly(
             new Connection("both parties to the marriage or civil partnership are habitually resident in England and Wales"),
@@ -66,7 +74,7 @@ class ApplicationTemplateDataProviderTest {
         final var application = Application.builder().build();
         application.getJurisdiction().setConnections(emptySet());
 
-        assertThatThrownBy(() -> applicationTemplateDataProvider.deriveJurisdictionList(application, caseId))
+        assertThatThrownBy(() -> applicationTemplateDataProvider.deriveJurisdictionList(application, caseId, ENGLISH))
             .isInstanceOf(InvalidCcdCaseDataException.class)
             .hasMessage("JurisdictionConnections" + EMPTY);
     }
@@ -110,5 +118,27 @@ class ApplicationTemplateDataProviderTest {
             new Connection("mi wnaeth y partïon gofrestru fel partneriaid sifil i'w gilydd yng Nghymru neu Loegr, a byddai er "
                 + "budd cyfiawnder i'r llys ysgwyddo awdurdodaeth yn yr achos hwn")
         );
+    }
+
+    @Test
+    public void shouldMapCorrectMarriageDetails() {
+        Application application = Application.builder()
+            .marriageDetails(MarriageDetails.builder()
+                .placeOfMarriage("London")
+                .countryOfMarriage("UK")
+                .date(LocalDate.of(2000, 1, 1))
+                .build())
+            .build();
+
+        Map<String, Object> templateContent = new HashMap<>();
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(PLACE_OF_MARRIAGE, "London");
+        expectedEntries.put(COUNTRY_OF_MARRIAGE, "UK");
+        expectedEntries.put(MARRIAGE_DATE, "1 January 2000");
+
+        applicationTemplateDataProvider.mapMarriageDetails(templateContent, application);
+
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
 }
