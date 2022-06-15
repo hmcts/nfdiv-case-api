@@ -71,13 +71,13 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
 
         if (caseData.getApplicationType().isSole()) {
-            log.info("Sending sole application issued notification to applicant 1 for case : {}", caseId);
-
             if (!caseData.getApplication().isPersonalServiceMethod()) {
+                log.info("Sending sole application issued notification to applicant 1 for case : {}", caseId);
+
                 notificationService.sendEmail(
                     email,
                     SOLE_APPLICANT_APPLICATION_ACCEPTED,
-                    soleApplicant1TemplateVars(caseData, caseId),
+                    soleApplicant1TemplateVars(caseData, caseId, languagePreference),
                     languagePreference
                 );
             }
@@ -189,12 +189,13 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         }
     }
 
-    private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id) {
+    private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id, LanguagePreference languagePreference) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(
             REVIEW_DEADLINE_DATE,
             holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
         );
+
         return templateVars;
     }
 
