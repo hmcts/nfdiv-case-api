@@ -32,8 +32,8 @@ public class CitizenApplicant2UpdateApplication implements CCDConfig<CaseData, S
 
         configBuilder
             .event(CITIZEN_APPLICANT2_UPDATE)
-            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingApplicant2Response, AosDrafted, ConditionalOrderDrafted,
-                ConditionalOrderPending, AwaitingClarification))
+            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingApplicant2Response, AosDrafted,
+                ConditionalOrderDrafted, ConditionalOrderPending, AwaitingClarification))
             .name("Patch a joint case")
             .description("Patch a joint divorce or dissolution as applicant 2")
             .aboutToSubmitCallback(this::aboutToSubmit)
