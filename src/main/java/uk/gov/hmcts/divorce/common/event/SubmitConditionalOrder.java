@@ -94,7 +94,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
+        log.info("Submit conditional order about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseData data = details.getData();
         final List<String> validationErrors = validate(data);

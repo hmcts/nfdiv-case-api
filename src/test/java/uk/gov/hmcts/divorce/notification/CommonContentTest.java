@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
@@ -15,6 +16,8 @@ import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
@@ -29,6 +32,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.DISSOLUTION_COURT_
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_PROFESSIONAL_USERS_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
@@ -102,6 +106,25 @@ class CommonContentTest {
         caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("civil partner");
+    }
+
+    @Test
+    void shouldGetPartnerWelshContent() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setGender(FEMALE);
+        assertThat(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).isEqualTo("gwraig");
+
+        caseData = caseData();
+        caseData.getApplicant2().setGender(Gender.MALE);
+        assertThat(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).isEqualTo("gŵr");
+
+        caseData = caseData();
+        caseData.getApplicant2().setGender(null);
+        assertThat(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).isEqualTo("priod");
+
+        caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertThat(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).isEqualTo("partner sifil");
     }
 
     @Test
@@ -193,5 +216,114 @@ class CommonContentTest {
         String professionalSignInUrl = commonContent.getProfessionalUsersSignInUrl(caseId);
 
         assertThat(professionalSignInUrl).isEqualTo("http://professional-sing-in-url/123456789");
+    }
+
+    @Test
+    void shouldAddWelshPartnerContentIfApplicant1PrefersWelsh() {
+
+        final Applicant applicant1 = Applicant.builder()
+            .gender(MALE)
+            .languagePreferenceWelsh(YES)
+            .build();
+
+        final Applicant applicant2 = Applicant.builder()
+            .gender(FEMALE)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
+
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant1, applicant2);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(PARTNER, "gwraig")
+            );
+    }
+
+    @Test
+    void shouldNotAddWelshPartnerContentIfApplicant1DoesNotPreferWelsh() {
+
+        final Applicant applicant1 = Applicant.builder()
+            .gender(MALE)
+            .languagePreferenceWelsh(NO)
+            .build();
+
+        final Applicant applicant2 = Applicant.builder()
+            .gender(FEMALE)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
+
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant1, applicant2);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(PARTNER, "wife")
+            );
+    }
+
+    @Test
+    void shouldAddWelshPartnerContentIfApplicant2PrefersWelsh() {
+
+        final Applicant applicant1 = Applicant.builder()
+            .gender(MALE)
+            .languagePreferenceWelsh(NO)
+            .build();
+
+        final Applicant applicant2 = Applicant.builder()
+            .gender(FEMALE)
+            .languagePreferenceWelsh(YES)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
+
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant2, applicant1);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(PARTNER, "gŵr")
+            );
+    }
+
+    @Test
+    void shouldNotAddWelshPartnerContentIfApplicant2DoesNotPreferWelsh() {
+
+        final Applicant applicant1 = Applicant.builder()
+            .gender(MALE)
+            .languagePreferenceWelsh(NO)
+            .build();
+
+        final Applicant applicant2 = Applicant.builder()
+            .languagePreferenceWelsh(NO)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
+
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant2, applicant1);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(PARTNER, "husband")
+            );
     }
 }

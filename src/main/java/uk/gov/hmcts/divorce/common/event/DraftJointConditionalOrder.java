@@ -22,9 +22,10 @@ import static java.util.Arrays.asList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -54,7 +55,7 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(DRAFT_JOINT_CONDITIONAL_ORDER)
-            .forStates(AwaitingConditionalOrder, ConditionalOrderDrafted)
+            .forStates(AwaitingConditionalOrder, ConditionalOrderDrafted, ConditionalOrderPending)
             .name("Draft conditional order")
             .description("Draft conditional order")
             .showSummary()
@@ -62,7 +63,7 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
             .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .aboutToStartCallback(this::aboutToStart)
-            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, CREATOR, CITIZEN)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, CREATOR, APPLICANT_2)
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
@@ -72,7 +73,7 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Draft joint conditional order about to submit callback invoked for case id: {}", details.getId());
+        log.info("Draft joint conditional order about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseData data = details.getData();
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(YES);
@@ -84,6 +85,9 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("Draft joint conditional order about to start callback invoked for Case Id: {}", details.getId());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseTasks(addMiniApplicationLink)
                 .run(details)
