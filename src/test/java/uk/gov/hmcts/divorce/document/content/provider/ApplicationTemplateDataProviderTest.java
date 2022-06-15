@@ -19,6 +19,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_CP;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +30,7 @@ class ApplicationTemplateDataProviderTest {
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     @Test
-    void shouldReturnListOfJurisdictionsIfAllSelected() throws Exception {
+    void shouldReturnListOfJurisdictionsIfAllSelected() {
 
         final var caseId = 124872587L;
         final var application = Application.builder().build();
@@ -40,7 +42,8 @@ class ApplicationTemplateDataProviderTest {
             APP_1_APP_2_DOMICILED,
             RESIDUAL_JURISDICTION_CP));
 
-        final var result = applicationTemplateDataProvider.deriveJurisdictionList(application, caseId);
+        final var result
+            = applicationTemplateDataProvider.deriveJurisdictionList(application, caseId, ENGLISH);
 
         assertThat(result).containsExactly(
             new Connection("both parties to the marriage or civil partnership are habitually resident in England and Wales"),
@@ -77,5 +80,35 @@ class ApplicationTemplateDataProviderTest {
         assertThatThrownBy(() -> applicationTemplateDataProvider.deriveJurisdictionList(application, caseId))
             .isInstanceOf(InvalidCcdCaseDataException.class)
             .hasMessage("JurisdictionConnections" + EMPTY);
+    }
+
+    @Test
+    void shouldReturnListOfJurisdictionsInWelshIfAllSelected() {
+
+        final var caseId = 124872587L;
+        final var application = Application.builder().build();
+        application.getJurisdiction().setConnections(Set.of(
+            APP_1_APP_2_RESIDENT,
+            APP_1_APP_2_LAST_RESIDENT,
+            APP_1_RESIDENT_TWELVE_MONTHS,
+            APP_1_RESIDENT_SIX_MONTHS,
+            APP_1_APP_2_DOMICILED,
+            RESIDUAL_JURISDICTION_CP));
+
+        final var result
+            = applicationTemplateDataProvider.deriveJurisdictionList(application, caseId, WELSH);
+
+        assertThat(result).containsExactly(
+            new Connection("mae'r ddau barti i'r briodas neu bartneriaeth sifil yn preswylio'n arferol yng Nghymru neu Loegr."),
+            new Connection("roedd y ddau barti i'r briodas neu bartneriaeth sifil yn preswylio'n arferol ddiwethaf yng Nghymru "
+                + "neu Loegr ac mae un ohonynt yn parhau i breswylio yno."),
+            new Connection("mae'r ceisydd yn preswylio'n arferol yng Nghymru neu Loegr ac wedi preswylio yno am o leiaf blwyddyn"
+                + " yn union cyn gwneud y cais"),
+            new Connection("mae domisil y ceisydd yng Nghymru neu Loegr, mae'n preswylio'n arferol yno ac mae wedi preswylio yno "
+                + "am o leiaf chwe mis yn union cyn cyflwyno'r cais"),
+            new Connection("mae domisil y ddau barti i'r briodas neu  bartneriaeth sifil yng Nghymru neu Loegr"),
+            new Connection("mi wnaeth y partïon gofrestru fel partneriaid sifil i'w gilydd yng Nghymru neu Loegr, a byddai er "
+                + "budd cyfiawnder i'r llys ysgwyddo awdurdodaeth yn yr achos hwn")
+        );
     }
 }
