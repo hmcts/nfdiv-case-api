@@ -122,6 +122,7 @@ class ApplicationTemplateDataProviderTest {
 
     @Test
     public void shouldMapCorrectMarriageDetails() {
+        Map<String, Object> templateContent = new HashMap<>();
         Application application = Application.builder()
             .marriageDetails(MarriageDetails.builder()
                 .placeOfMarriage("London")
@@ -130,14 +131,12 @@ class ApplicationTemplateDataProviderTest {
                 .build())
             .build();
 
-        Map<String, Object> templateContent = new HashMap<>();
+        applicationTemplateDataProvider.mapMarriageDetails(templateContent, application);
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(PLACE_OF_MARRIAGE, "London");
         expectedEntries.put(COUNTRY_OF_MARRIAGE, "UK");
         expectedEntries.put(MARRIAGE_DATE, "1 January 2000");
-
-        applicationTemplateDataProvider.mapMarriageDetails(templateContent, application);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
