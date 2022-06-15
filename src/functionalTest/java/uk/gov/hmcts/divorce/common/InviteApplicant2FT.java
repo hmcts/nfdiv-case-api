@@ -49,6 +49,17 @@ public class InviteApplicant2FT extends FunctionalTestSuite {
     }
 
     @Test
+    public void shouldSendEmailToApplicant1AndApplicant2WhenAllTemplateParamsAreValidAndApplicant1LanguageWelsh()
+        throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("applicant1LanguagePreferenceWelsh", YES);
+
+        Response response = triggerCallback(request, INVITE_APPLICANT_2, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
     public void shouldSendEmailToApplicant2WhenAllTemplateParamsAreValidAndApplicant2IsRepresented() throws IOException {
         Map<String, Object> request = caseData(SOLICITOR_REQUEST);
 

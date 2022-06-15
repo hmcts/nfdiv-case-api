@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
@@ -88,6 +89,33 @@ class ApplicationSentForReviewNotificationTest {
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant1WithWelshPartnerContent() {
+        CaseData data = caseData();
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.setDueDate(LOCAL_DATE);
+        data.setApplicant2(getApplicant2(Gender.MALE));
+
+        Map<String, String> divorceTemplateVars = new HashMap<>();
+        divorceTemplateVars.put(PARTNER, "gŵr");
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW),
+            argThat(allOf(
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
+                hasEntry(PARTNER, "gŵr")
+            )),
+            eq(WELSH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
