@@ -5,22 +5,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
@@ -58,10 +59,9 @@ class ApplicationIssuedOverseasNotificationTest {
         final CaseData data = validCaseDataForIssueApplication();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        final Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getMainTemplateVars());
+
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(divorceTemplateVars);
+            .thenReturn(getMainTemplateVars());
 
         applicationIssuedOverseasNotification.sendToApplicant1(data, 1234567890123456L);
 
@@ -84,6 +84,28 @@ class ApplicationIssuedOverseasNotificationTest {
     }
 
     @Test
+    void shouldNotifyApplicantInWelshOfServiceToOverseasRespondentWithEmail() {
+        final CaseData data = validCaseDataForIssueApplication();
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        applicationIssuedOverseasNotification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED),
+            anyMap(),
+            eq(WELSH)
+        );
+
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
     void shouldNotifyApplicantOfServiceToOverseasRespondentWithoutEmail() {
         final CaseData data = validCaseDataForIssueApplication();
         data.setDueDate(LocalDate.now().plusDays(141));
@@ -91,10 +113,8 @@ class ApplicationIssuedOverseasNotificationTest {
         data.setCaseInvite(new CaseInvite(null, null, null));
         data.getApplicant2().setEmail(null);
 
-        final Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(divorceTemplateVars);
+            .thenReturn(getMainTemplateVars());
 
         applicationIssuedOverseasNotification.sendToApplicant1(data, 1234567890123456L);
 

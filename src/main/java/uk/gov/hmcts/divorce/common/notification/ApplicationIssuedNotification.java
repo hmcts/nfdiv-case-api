@@ -51,8 +51,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
     private static final String CASE_ID = "case id";
     private static final String UNION_TYPE = "union type";
-    private static final String DIVORCE = "divorce";
-    private static final String DISSOLUTION = "dissolution";
 
     @Autowired
     private NotificationService notificationService;
@@ -99,6 +97,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
 
         final String email = caseData.getApplicant1().getSolicitor().getEmail();
+        final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
         boolean isSolicitorServiceMethod = caseData.getApplication().isSolicitorServiceMethod();
 
         if (isSolicitorServiceMethod) {
@@ -107,8 +106,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
             notificationService.sendEmail(
                 email,
                 APPLICANT_SOLICITOR_SERVICE,
-                templateVars(caseData, caseId),
-                ENGLISH
+                templateVars(caseData, caseId, languagePreference),
+                languagePreference
             );
         } else if (caseData.getApplicationType().isSole()) {
 
@@ -120,7 +119,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                     ? SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE
                     : SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH);
+                languagePreference
+            );
         } else if (!caseData.getApplicationType().isSole()) {
             log.info("Sending Notice Of Proceedings email to applicant 1 solicitor for joint case.  Case ID: {}", caseId);
 
@@ -286,7 +286,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         return templateVars;
     }
 
-    private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {
+    private Map<String, String> templateVars(final CaseData caseData,
+                                             final Long caseId,
+                                             final LanguagePreference languagePreference) {
 
         String solicitorReference = isNotEmpty(caseData.getApplicant1().getSolicitor().getReference())
             ? caseData.getApplicant1().getSolicitor().getReference()
@@ -296,7 +298,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
         templateVars.put(APPLICATION_REFERENCE, String.valueOf(caseId));
-        templateVars.put(UNION_TYPE, caseData.isDivorce() ? DIVORCE : DISSOLUTION);
+        templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData, languagePreference));
         templateVars.put(SOLICITOR_REFERENCE, solicitorReference);
         return templateVars;
     }
