@@ -74,7 +74,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         } else {
             log.info("Generating notice of proceedings for applicant for sole case id {} ", caseId);
 
-            content = templateContent.apply(caseData, caseId, caseData.getApplicant2());
+            content = templateContent.apply(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference());
             templateId = caseData.getApplication().isCourtServiceMethod()
                 ? NFD_NOP_A1_SOLE_APP1_CIT_CS
                 : NFD_NOP_A2_SOLE_APP1_CIT_PS;

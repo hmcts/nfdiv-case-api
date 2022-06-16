@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
@@ -137,7 +138,10 @@ public class NoticeOfProceedingContent {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, Applicant partner) {
+    public Map<String, Object> apply(final CaseData caseData,
+                                     final Long ccdCaseReference,
+                                     Applicant partner,
+                                     LanguagePreference languagePreference) {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -206,7 +210,7 @@ public class NoticeOfProceedingContent {
         templateContent.put(URL_TO_LINK_CASE,
             config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
 
-        generateDivorceOrDissolutionContent(templateContent, caseData, partner);
+        generateDivorceOrDissolutionContent(templateContent, caseData, partner, languagePreference);
 
         final var ctscContactDetails = CtscContactDetails
             .builder()
@@ -223,13 +227,17 @@ public class NoticeOfProceedingContent {
         return templateContent;
     }
 
-    private void generateDivorceOrDissolutionContent(Map<String, Object> templateContent, CaseData caseData, Applicant partner) {
+    private void generateDivorceOrDissolutionContent(Map<String, Object> templateContent,
+                                                     CaseData caseData,
+                                                     Applicant partner,
+                                                     LanguagePreference languagePreference) {
+
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
             templateContent.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
-            templateContent.put(RELATION, commonContent.getPartner(caseData, partner));
+            templateContent.put(RELATION, commonContent.getPartner(caseData, partner, languagePreference));
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS, DIVORCE_PROCESS);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, YOUR_DIVORCE);
@@ -247,7 +255,7 @@ public class NoticeOfProceedingContent {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, TO_END_THEIR_CIVIL_PARTNERSHIP);
-            templateContent.put(RELATION, CIVIL_PARTNER);
+            templateContent.put(RELATION, commonContent.getPartner(caseData, partner, languagePreference));
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);

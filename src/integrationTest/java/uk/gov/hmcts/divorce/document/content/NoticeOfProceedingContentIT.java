@@ -206,7 +206,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -298,7 +303,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(SOLICITOR_ADDRESS, "10 the street the town UK");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -386,7 +396,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -490,7 +505,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -599,7 +619,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true);
 
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -698,7 +723,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }

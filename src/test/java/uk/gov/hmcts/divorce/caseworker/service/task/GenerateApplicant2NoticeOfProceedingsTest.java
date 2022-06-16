@@ -96,7 +96,9 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
+        ).thenReturn(templateContent);
         when(coversheetSolicitorTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
@@ -132,7 +134,9 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingsWithAddressContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
+        when(noticeOfProceedingsWithAddressContent.apply(
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
+        ).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -160,7 +164,9 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         final Map<String, Object> expectedTemplateContent = new HashMap<>();
         expectedTemplateContent.put(DISPLAY_HEADER_ADDRESS, false);
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
+        ).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -190,7 +196,9 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
+        ).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -221,7 +229,9 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
+        ).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
