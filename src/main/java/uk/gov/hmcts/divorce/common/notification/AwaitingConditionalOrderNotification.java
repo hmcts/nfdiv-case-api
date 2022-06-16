@@ -10,12 +10,18 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.UNION_TYPE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_AWAITING_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
@@ -50,10 +56,15 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
         final Applicant applicant1 = caseData.getApplicant1();
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
         templateVars.put(SOLICITOR_NAME, applicant1.getSolicitor().getName());
+        templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(SOLICITOR_REFERENCE, Objects.nonNull(applicant1.getSolicitor().getReference())
+            ? applicant1.getSolicitor().getReference()
+            : "not provided");
 
         notificationService.sendEmail(
             applicant1.getSolicitor().getEmail(),
-            SOLICITOR_AWAITING_CONDITIONAL_ORDER,
+            APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER,
             templateVars,
             applicant1.getLanguagePreference()
         );
