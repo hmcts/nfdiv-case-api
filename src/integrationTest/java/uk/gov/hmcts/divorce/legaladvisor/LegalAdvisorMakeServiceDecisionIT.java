@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
@@ -40,6 +41,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
@@ -77,6 +79,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
     private static final String UUID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
     private static final String SERVICE_ORDER_TEMPLATE_FILE = "NFD_Service_Order_V2.docx";
     private static final String SERVICE_ORDER_REFUSAL_TEMPLATE_FILE = "NFD_Refusal_Order_Deemed_Dispensed_Service_V2.docx";
+    private static final String SERVICE_ORDER_REFUSAL_TEMPLATE_FILE_WELSH = "NFD_Refusal_Order_Deemed_Dispensed_Service_V2_Cy.docx";
 
     @Autowired
     private MockMvc mockMvc;
@@ -315,5 +318,87 @@ public class LegalAdvisorMakeServiceDecisionIT {
             )));
 
         verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH));
+    }
+
+    @Test
+    public void shouldGenerateWelshRefusalDocumentIfApplicant1LanguagePreferenceIsWelshIfApplicationIsNotGrantedAndTypeIsDeemed()
+        throws Exception {
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE_WELSH);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().languagePreferenceWelsh(YES).build())
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .alternativeServiceType(DEEMED)
+                    .serviceApplicationGranted(NO)
+                    .serviceApplicationRefusalReason("refusal reasons")
+                    .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
+                    .build()
+            )
+            .dueDate(LocalDate.of(2021, 6, 20))
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .build();
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    LEGAL_ADVISOR_SERVICE_DECISION)
+                )
+            )
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn();
+    }
+
+    @Test
+    public void shouldGenerateWelshRefusalDocumentIfApplicant1LanguagePreferenceIsWelshIfApplicationIsNotGrantedAndTypeIsDispensed()
+        throws Exception {
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE_WELSH);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().languagePreferenceWelsh(YES).build())
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .alternativeServiceType(DISPENSED)
+                    .serviceApplicationGranted(NO)
+                    .serviceApplicationRefusalReason("refusal reasons")
+                    .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
+                    .build()
+            )
+            .dueDate(LocalDate.of(2021, 6, 20))
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .build();
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    LEGAL_ADVISOR_SERVICE_DECISION)
+                )
+            )
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn();
     }
 }
