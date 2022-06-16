@@ -73,10 +73,6 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
                 ? NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS
                 : NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 
-            if (caseData.getApplicant2().isBasedOverseas()) {
-                templateId = NFD_NOP_A2_SOLE_APP1_CIT_PS;
-            }
-
         } else {
             log.info("Generating notice of proceedings for applicant for sole case id {} ", caseId);
 
