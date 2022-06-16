@@ -314,6 +314,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().getAddress().setCountry("UK");
@@ -325,7 +326,7 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceeding respondent")
             .thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_V2.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_V2_CY.docx");
         stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
@@ -352,6 +353,7 @@ public class CaseworkerIssueApplicationIT {
             .getContentAsString();
 
         DocumentContext jsonDocument = JsonPath.parse(TestResourceUtil.expectedResponse(SOLE_CITIZEN_UK_BASED_CASEWORKER_ABOUT_TO_SUBMIT));
+        jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
         jsonDocument.set("data.applicant2LanguagePreferenceWelsh", "Yes");
 
         assertThatJson(response)
@@ -362,7 +364,7 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_USER_EMAIL),
                 eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(WELSH));
 
         verify(notificationService)
             .sendEmail(
