@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.util.Map;
 
@@ -125,6 +126,28 @@ class CommonContentTest {
         caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         assertThat(commonContent.getPartnerWelshContent(caseData, caseData.getApplicant2())).isEqualTo("partner sifil");
+    }
+
+    @Test
+    void shouldGetUnionType() {
+        CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
+        assertThat(commonContent.getUnionType(caseData, LanguagePreference.ENGLISH)).isEqualTo("divorce");
+
+        caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertThat(commonContent.getUnionType(caseData, LanguagePreference.ENGLISH)).isEqualTo("dissolution");
+    }
+
+    @Test
+    void shouldGetWelshUnionType() {
+        CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
+        assertThat(commonContent.getUnionType(caseData, LanguagePreference.WELSH)).isEqualTo("ysgariad");
+
+        caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertThat(commonContent.getUnionType(caseData, LanguagePreference.WELSH)).isEqualTo("diddymiad");
     }
 
     @Test
