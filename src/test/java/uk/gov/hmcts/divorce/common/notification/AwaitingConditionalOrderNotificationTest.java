@@ -111,6 +111,35 @@ class AwaitingConditionalOrderNotificationTest {
     }
 
     @Test
+    void shouldSendEmailToApplicant1SolicitorWithReference() {
+        final var applicant = getApplicant();
+        applicant.setSolicitor(
+            Solicitor.builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .name(TEST_SOLICITOR_NAME)
+                .reference("ref")
+                .build()
+        );
+        applicant.setSolicitorRepresented(YesOrNo.YES);
+        final var data = CaseData.builder().applicant1(applicant).build();
+        data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+
+        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
+        when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
+
+        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER),
+            argThat(allOf(
+                hasEntry(SOLICITOR_REFERENCE, "ref")
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
     void shouldSendEmailToApplicant2IfJointApplication() {
         final var data = validApplicant2CaseData();
         when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
