@@ -79,6 +79,7 @@ public class Applicant1Transformer implements Function<TransformationDetails, Tr
             warnings.add("Please review applicant1 name different to marriage certificate in the scanned form");
         }
 
+        // Applicant 1 email is not transformed so that email notifications are not sent for paper cases
         var applicant = Applicant
             .builder()
             .firstName(ocrDataFields.getSoleApplicantOrApplicant1FirstName())
@@ -101,8 +102,6 @@ public class Applicant1Transformer implements Function<TransformationDetails, Tr
             .phoneNumber(ocrDataFields.getSoleOrApplicant1PhoneNo())
             .solicitorRepresented(from(isApp1SolicitorRepresented))
             .build();
-        // Applicant 1 email is not transformed so that email notifications are not sent for paper cases
-
 
         if (isApp1SolicitorRepresented) {
             if (isEmpty(ocrDataFields.getSoleOrApplicant1SolicitorName())) {
