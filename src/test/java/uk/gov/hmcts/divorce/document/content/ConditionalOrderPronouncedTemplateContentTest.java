@@ -1,10 +1,12 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -59,10 +61,15 @@ class ConditionalOrderPronouncedTemplateContentTest {
     @InjectMocks
     private ConditionalOrderPronouncedTemplateContent conditionalOrderPronouncedTemplateContent;
 
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(conditionalOrderPronouncedTemplateContent, "finalOrderOffsetDays", 43);
+    }
+
     @Test
     void shouldApplyDivorceContentFromCaseDataForConditionalOrderPronouncedTemplate() {
 
-        LocalDate coPronouncedDate = LocalDate.of(2022, 5, 26);
+        LocalDate coPronouncedDate = LocalDate.of(2022, 6, 10);
         LocalDate marriageDate = LocalDate.of(2000, 1, 2);
 
         setMockClock(clock);
@@ -113,7 +120,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
             entry(MARRIAGE_DATE, "2 January 2000"),
             entry(JUDGE_NAME, "District Judge"),
             entry(COURT_NAME, "Birmingham Civil and Family Justice Centre"),
-            entry(CO_PRONOUNCED_DATE, "26 May 2022"),
-            entry(DATE_FO_ELIGIBLE_FROM, "7 July 2022"));
+            entry(CO_PRONOUNCED_DATE, "10 June 2022"),
+            entry(DATE_FO_ELIGIBLE_FROM, "23 July 2022"));
     }
 }

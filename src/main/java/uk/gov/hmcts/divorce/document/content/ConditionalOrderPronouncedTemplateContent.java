@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -43,6 +44,9 @@ public class ConditionalOrderPronouncedTemplateContent {
     @Autowired
     private CommonContent commonContent;
 
+    @Value("${final_order.eligible_from_offset_days}")
+    private long finalOrderOffsetDays;
+
     public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
 
         log.info("For ccd case reference {} ", caseId);
@@ -59,7 +63,7 @@ public class ConditionalOrderPronouncedTemplateContent {
         templateContent.put(CO_PRONOUNCED_DATE, conditionalOrder.getGrantedDate() != null
             ? conditionalOrder.getGrantedDate().format(DATE_TIME_FORMATTER) : null);
         templateContent.put(DATE_FO_ELIGIBLE_FROM, conditionalOrder.getGrantedDate() != null
-            ? conditionalOrder.getGrantedDate().plusWeeks(6).format(DATE_TIME_FORMATTER) : null);
+            ? conditionalOrder.getGrantedDate().plusDays(finalOrderOffsetDays).format(DATE_TIME_FORMATTER) : null);
 
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
         templateContent.put(IS_DIVORCE, isDivorce);
