@@ -139,6 +139,35 @@ public class CaseworkerMakeBailiffDecisionIT {
     }
 
     @Test
+    public void shouldGenerateWelshBailiffApplicationApprovedWhenApplicant1LanguagePreferenceIsWelsh() throws Exception {
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(BAILIFF_APPLICATION_APPROVED_ID, "NFD_Bailiff_Application_Approved_Cy.docx");
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    CASEWORKER_BAILIFF_DECISION)
+                )
+            )
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn();
+    }
+
+    @Test
     public void shouldChangeCaseStateToAwaitingAosAndSetDecisionDateWhenServiceApplicationIsNotGrantedAndServiceTypeIsBailiff()
         throws Exception {
         setMockClock(clock);
