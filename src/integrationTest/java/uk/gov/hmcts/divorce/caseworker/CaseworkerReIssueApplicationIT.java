@@ -913,7 +913,7 @@ public class CaseworkerReIssueApplicationIT {
     void shouldGenerateOnlyRespAosAndSetReIssueDateAndSendEmailWhenRespIsNotRepresentedAndReissueTypeIsReissueCaseAndLangPrefIsWelsh()
         throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().setAddress(correspondenceAddress());
