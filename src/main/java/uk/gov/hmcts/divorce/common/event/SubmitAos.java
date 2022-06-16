@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -24,7 +25,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -135,7 +135,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(SUBMIT_AOS)
-            .forStates(EnumSet.of(AosDrafted, AOS_STATES))
+            .forStates(ArrayUtils.addAll(AOS_STATES, AosDrafted))
             .name("Submit AoS")
             .description("Submit AoS")
             .showCondition("applicationType=\"soleApplication\"")
