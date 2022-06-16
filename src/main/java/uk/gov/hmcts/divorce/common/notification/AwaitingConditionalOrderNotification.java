@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
-import java.util.Objects;
 
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
@@ -58,7 +57,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
         templateVars.put(SOLICITOR_NAME, applicant1.getSolicitor().getName());
         templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));
         templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
-        templateVars.put(SOLICITOR_REFERENCE, Objects.nonNull(applicant1.getSolicitor().getReference())
+        templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant1.getSolicitor().getReference())
             ? applicant1.getSolicitor().getReference()
             : "not provided");
 
