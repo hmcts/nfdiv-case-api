@@ -28,6 +28,8 @@ import java.nio.file.Files;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -35,14 +37,18 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSole.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ENDED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -177,6 +183,80 @@ public class CitizenSwitchToSoleApplicationIT {
             .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(ENGLISH));
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(ENGLISH));
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenValidCaseDataWithWelshSelectedWhenCallbackIsInvokedThenSendEmailInWelsh() throws Exception {
+        CaseData caseData = validApplicant2CaseData();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+        setupMocks(true);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(caseData, SWITCH_TO_SOLE)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.applicant2Email").doesNotExist())
+            .andExpect(jsonPath("$.data.applicationType").value("soleApplication"));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(WELSH));
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(WELSH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenValidDataWhenCallbackIsInvokedForApp1SwitchToSoleThenCaseIsWithdrawnAndNotificationsSentInWelsh() throws Exception {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant1().setLanguagePreferenceWelsh(YES);
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
+        setValidCaseInviteData(data);
+        setupMocks(true);
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "AwaitingApplicant2Response")))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(actualResponse)
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(json(expectedCcdAboutToSubmitCallbackSuccessfulResponse()));
+        assertThatJson(actualResponse)
+            .inPath("$.data.applicationType")
+            .isEqualTo(ApplicationType.SOLE_APPLICATION);
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(APPLICANT_SWITCH_TO_SOLE),
+                argThat(
+                    anyOf(
+                        hasEntry(PARTNER, "gŵr")
+                    )
+                ),
+                eq(WELSH));
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(JOINT_APPLICATION_ENDED),
+                argThat(
+                    anyOf(
+                        hasEntry(PARTNER, "gwraig")
+                    )
+                ),
+                eq(WELSH));
         verifyNoMoreInteractions(notificationService);
     }
 
