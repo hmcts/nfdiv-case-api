@@ -25,6 +25,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
@@ -34,6 +35,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
@@ -60,7 +62,6 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CI
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DISPLAY_EMAIL_CONFIRMATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
@@ -206,7 +207,11 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            ENGLISH);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -298,7 +303,11 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(SOLICITOR_ADDRESS, "10 the street the town UK");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            ENGLISH);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -386,7 +395,11 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            ENGLISH);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -490,7 +503,11 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            ENGLISH);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -599,7 +616,11 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true);
 
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            ENGLISH);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -698,7 +719,11 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            ENGLISH);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
