@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -12,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -52,11 +52,16 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
         data.getLabelContent().setApplicationType(data.getApplicationType());
         data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
 
-        if (JOINT_APPLICATION.equals(data.getApplicationType())
-            || SOLE_APPLICATION.equals(data.getApplicationType()) && StringUtils.isBlank(data.getApplicant2().getEmail())) {
-            data.getApplicant2().setOffline(YES);
+        var applicant2 = data.getApplicant2();
+        if (JOINT_APPLICATION.equals(data.getApplicationType())) {
+            applicant2.setOffline(YES);
+        } else if (SOLE_APPLICATION.equals(data.getApplicationType())
+            && applicant2.isRepresented() && isBlank(applicant2.getSolicitor().getEmail())) {
+            applicant2.setOffline(YES);
+        } else if (SOLE_APPLICATION.equals(data.getApplicationType()) && !applicant2.isRepresented() && isBlank(applicant2.getEmail())) {
+            applicant2.setOffline(YES);
         } else {
-            data.getApplicant2().setOffline(NO);
+            applicant2.setOffline(NO);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
