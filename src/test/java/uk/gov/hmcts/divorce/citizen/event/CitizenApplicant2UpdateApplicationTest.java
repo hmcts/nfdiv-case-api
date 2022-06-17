@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2UpdateApplication.CITIZEN_APPLICANT2_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -38,11 +39,30 @@ public class CitizenApplicant2UpdateApplicationTest {
     }
 
     @Test
-    void shouldSetDisputeApplicationFieldsToNullIfConfirmationIsNo() {
+    void shouldSetDisputeApplicationFieldsToNullIfConfirmationIsNoAndInAosDraftedState() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
         caseDetails.setState(AosDrafted);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE);
+        caseData.getAcknowledgementOfService().setConfirmDisputeApplication(YesOrNo.NO);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response
+            = citizenApplicant2UpdateApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getAcknowledgementOfService().getHowToRespondApplication()).isNull();
+        assertThat(response.getData().getAcknowledgementOfService().getConfirmDisputeApplication()).isNull();
+    }
+
+    @Test
+    void shouldSetDisputeApplicationFieldsToNullIfConfirmationIsNoAndInAosOverdueState() {
+        final long caseId = 1L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseDetails.setState(AosOverdue);
         caseData.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE);
         caseData.getAcknowledgementOfService().setConfirmDisputeApplication(YesOrNo.NO);
 
