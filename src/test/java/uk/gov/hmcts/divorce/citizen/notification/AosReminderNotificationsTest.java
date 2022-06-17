@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -226,5 +227,32 @@ class AosReminderNotificationsTest {
         aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
 
         verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendPartnerNotRespondedToSoleApplicantEmailInWelshWhenLanguagePreferenceIsWelsh() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        aosReminderNotifications.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO)
+            )),
+            eq(WELSH)
+        );
+
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 }
