@@ -16,12 +16,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -110,6 +112,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.URL_TO_LINK_CASE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -211,6 +214,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
+        expectedEntries.put(IS_DIVORCE, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -308,6 +312,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(WHO_APPLIED, "applicant");
         expectedEntries.put(SOLICITOR_ADDRESS, "10 the street the town UK");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
+        expectedEntries.put(IS_DIVORCE, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -401,6 +406,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
+        expectedEntries.put(IS_DIVORCE, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -510,6 +516,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
+        expectedEntries.put(IS_DIVORCE, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -575,6 +582,7 @@ public class NoticeOfProceedingContentIT {
             .build();
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
+
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
@@ -623,7 +631,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(RELATIONS_SOLICITOR, "wife's solicitor");
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true);
-
+        expectedEntries.put(IS_DIVORCE, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -728,6 +736,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
+        expectedEntries.put(IS_DIVORCE, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -835,6 +844,127 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
+
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+
+        assertThat(templateContent).containsAllEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldGenerateWelshDivorceContentWhenSoleDivorceApplicationWithRespondentIsRepresented() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .build()
+        );
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.getApplication().setReissueDate(LocalDate.of(2021, 6, 19));
+        caseData.setDueDate(LocalDate.of(2021, 6, 30));
+
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant1().setSolicitor(
+            Solicitor.builder()
+                .build()
+        );
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .name("app 2 sol")
+                .address("The avenue")
+                .build()
+        );
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
+
+        Map<String, Object> expectedEntries = new HashMap<>();
+        expectedEntries.put(IS_DIVORCE, true);
+        expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
+        expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(ISSUE_DATE, "18 June 2021");
+        expectedEntries.put(SERVE_PAPERS_BEFORE_DATE, "16 July 2021");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put("hasCaseBeenReissued", true);
+        expectedEntries.put("reissueDate", "19 June 2021");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", "divorcecase@justice.gov.uk");
+        expectedEntries.put("divorceOrCivilPartnershipUrl", "https://www.gov.uk/divorce");
+        expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true);
+        expectedEntries.put(RELATIONS_SOLICITOR, "cyfreithiwr eich gwraig");
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
+
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+
+        assertThat(templateContent).containsAllEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldGenerateWelshDissolutionContentWhenSoleDivorceApplicationWithRespondentIsNotRepresented() {
+        CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .build()
+        );
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 30));
+
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
+
+        Map<String, Object> expectedEntries = new HashMap<>();
+        expectedEntries.put(IS_DIVORCE, false);
+        expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
+        expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(ISSUE_DATE, "18 June 2021");
+        expectedEntries.put(SERVE_PAPERS_BEFORE_DATE, "16 July 2021");
+        expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
+        expectedEntries.put("divorceOrCivilPartnershipEmail", "divorcecase@justice.gov.uk");
+        expectedEntries.put("divorceOrCivilPartnershipUrl", "https://www.gov.uk/end-civil-partnership");
+        expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
+        expectedEntries.put(RELATION, "partner sifil");
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,

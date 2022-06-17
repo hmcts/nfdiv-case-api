@@ -191,7 +191,7 @@ public class NoticeOfProceedingContent {
         templateContent.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, personalServiceMethod && isApplicant2Represented);
 
         if (caseData.getApplicant2().isRepresented()) {
-            generateSoleRespondentRepresentedContent(templateContent, caseData, personalServiceMethod);
+            generateSoleRespondentRepresentedContent(templateContent, caseData, personalServiceMethod, languagePreference);
         }
 
         if (!isNull(caseData.getApplication().getReissueDate())) {
@@ -240,6 +240,7 @@ public class NoticeOfProceedingContent {
                                                      LanguagePreference languagePreference) {
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
+            templateContent.put(CommonContent.IS_DIVORCE, true);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS,
                 WELSH.equals(languagePreference) ? DIVORCE_PROCEEDINGS_CY : DIVORCE_PROCEEDINGS);
@@ -261,6 +262,7 @@ public class NoticeOfProceedingContent {
             templateContent.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         } else {
+            templateContent.put(CommonContent.IS_DIVORCE, false);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS,
                 WELSH.equals(languagePreference)
@@ -295,7 +297,8 @@ public class NoticeOfProceedingContent {
 
     private void generateSoleRespondentRepresentedContent(Map<String, Object> templateContent,
                                                           CaseData caseData,
-                                                          boolean personalServiceMethod) {
+                                                          boolean personalServiceMethod,
+                                                          LanguagePreference languagePreference) {
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
         final Solicitor applicant1Solicitor = applicant1.getSolicitor();
@@ -321,7 +324,12 @@ public class NoticeOfProceedingContent {
         templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, !isNull(applicant2Solicitor.getOrganisationPolicy()) ? "Yes" : "No");
 
         if (personalServiceMethod) {
-            templateContent.put(RELATIONS_SOLICITOR, commonContent.getPartner(caseData, applicant2) + "'s solicitor");
+            if (WELSH.equals(languagePreference)) {
+                templateContent.put(RELATIONS_SOLICITOR,
+                    "cyfreithiwr eich " + commonContent.getPartner(caseData, applicant2, languagePreference));
+            } else {
+                templateContent.put(RELATIONS_SOLICITOR, commonContent.getPartner(caseData, applicant2) + "'s solicitor");
+            }
         }
     }
 }
