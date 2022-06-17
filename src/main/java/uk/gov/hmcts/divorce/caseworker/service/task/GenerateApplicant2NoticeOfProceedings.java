@@ -114,7 +114,13 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                     caseData,
                     caseId,
                     NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
-                    noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1()));
+                    noticeOfProceedingContent.apply(
+                        caseData,
+                        caseId,
+                        caseData.getApplicant1(),
+                        caseData.getApplicant2().getLanguagePreference()
+                    )
+                );
                 generateCoversheet(
                     caseData,
                     caseId,
@@ -125,7 +131,13 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                     caseData,
                     caseId,
                     NFD_NOP_R1_SOLE_APP2_CIT_ONLINE,
-                    noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1()));
+                    noticeOfProceedingContent.apply(
+                        caseData,
+                        caseId,
+                        caseData.getApplicant1(),
+                        caseData.getApplicant2().getLanguagePreference()
+                    )
+                );
                 if (!caseData.getApplication().isCourtServiceMethod()) {
                     generateCoversheet(
                         caseData,
@@ -159,7 +171,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
     private void generateNoticeOfProceedingsWithAddress(final CaseData caseData, final Long caseId) {
 
         final Map<String, Object> templateContent = noticeOfProceedingsWithAddressContent
-            .apply(caseData, caseId, caseData.getApplicant1());
+            .apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference());
 
         generateNoticeOfProceedings(caseData, caseId, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE, templateContent);
     }
@@ -171,7 +183,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             caseData,
             caseId,
             templateId,
-            noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1()));
+            noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference()));
     }
 
     private void generateNoticeOfProceedings(final CaseData caseData,

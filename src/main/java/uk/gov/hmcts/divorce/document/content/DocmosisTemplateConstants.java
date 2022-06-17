@@ -35,6 +35,7 @@ public final class DocmosisTemplateConstants {
     public static final String END_CIVIL_PARTNERSHIP = "application to end the civil partnership";
     public static final String END_CIVIL_PARTNERSHIP_CY = "cais i ddod â phartneriaeth sifil i ben";
     public static final String FOR_A_DIVORCE = "for a divorce";
+    public static final String FOR_A_DIVORCE_CY = "am ysgariad";
     public static final String MARRIAGE = "marriage";
     public static final String MARRIAGE_CY = "briodas";
     public static final String THE_APPLICATION = "theApplication";

@@ -34,7 +34,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
@@ -50,6 +52,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.AP
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_TO;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CAN_SERVE_BY_EMAIL;
@@ -75,6 +78,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DI
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PAPERS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PROCEEDINGS_CY;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_URL;
@@ -92,6 +96,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MA
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.REISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATION;
@@ -101,6 +106,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SU
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.THE_DIVORCE_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_THEIR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_YOUR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.URL_TO_LINK_CASE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_DIVORCE;
@@ -206,7 +212,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -298,7 +309,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(SOLICITOR_ADDRESS, "10 the street the town UK");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -386,7 +402,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -490,7 +511,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -599,7 +625,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true);
 
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -698,8 +729,120 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
 
-        Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSuccessfullyGenerateWelshDivorceNoticeOfProceedingsContent() {
+        CaseData caseData = caseData();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .build()
+        );
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant1().setSolicitor(
+            Solicitor.builder()
+                .build()
+        );
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .name("app 2 sol")
+                .address("The avenue")
+                .build()
+        );
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS_CY);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE_CY);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION_CY);
+
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+
+        assertThat(templateContent).containsAllEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSuccessfullyGenerateWelshDissolutionNoticeOfProceedingsContent() {
+        CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .build()
+        );
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant1().setSolicitor(
+            Solicitor.builder()
+                .build()
+        );
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .name("app 2 sol")
+                .address("The avenue")
+                .build()
+        );
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
+
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+
+        assertThat(templateContent).containsAllEntriesOf(expectedEntries);
     }
 }

@@ -79,7 +79,9 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2())).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(
+            caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference())
+        ).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -99,7 +101,9 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2())).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(
+            caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference())
+        ).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
