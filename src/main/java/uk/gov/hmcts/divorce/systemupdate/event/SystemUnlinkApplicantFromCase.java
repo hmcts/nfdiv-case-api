@@ -44,10 +44,12 @@ public class SystemUnlinkApplicantFromCase implements CCDConfig<CaseData, State,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("System unlink applicant from case: Case Id: {}", details.getId());
+        CaseData caseData = details.getData();
+        caseData.getApplicant1().setEmail(null);
         ccdAccessService.removeUsersWithRole(details.getId(), List.of(CREATOR.getRole()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .data(caseData)
             .build();
     }
 }
