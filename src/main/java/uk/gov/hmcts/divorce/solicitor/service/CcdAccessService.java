@@ -136,11 +136,13 @@ public class CcdAccessService {
             .map(caseAssignment -> getCaseAssignmentUserRole(caseId, null, caseAssignment.getCaseRole(), caseAssignment.getUserId()))
             .collect(Collectors.toList());
 
-        final var caseAssignmentUserRolesReq = CaseAssignmentUserRolesRequest.builder()
-            .caseAssignmentUserRolesWithOrganisation(assignmentUserRoles)
-            .build();
+        if (!assignmentUserRoles.isEmpty()) {
+            final var caseAssignmentUserRolesReq = CaseAssignmentUserRolesRequest.builder()
+                .caseAssignmentUserRolesWithOrganisation(assignmentUserRoles)
+                .build();
 
-        caseAssignmentApi.removeCaseUserRoles(auth, s2sToken, caseAssignmentUserRolesReq);
+            caseAssignmentApi.removeCaseUserRoles(auth, s2sToken, caseAssignmentUserRolesReq);
+        }
     }
 
     private CaseAssignmentUserRolesRequest getCaseAssignmentRequest(Long caseId, String userId, String orgId, UserRole role) {
