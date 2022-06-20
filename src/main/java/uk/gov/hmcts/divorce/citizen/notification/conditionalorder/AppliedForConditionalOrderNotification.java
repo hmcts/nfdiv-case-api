@@ -13,7 +13,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
@@ -32,6 +39,8 @@ public class AppliedForConditionalOrderNotification {
     static final String CIVIL_PARTNER_DID_NOT_APPLY = "civilPartnerDidNotApply";
     static final String PARTNER_DID_NOT_APPLY = "partnerDidNotApply";
     static final String PARTNER_DID_NOT_APPLY_DUE_DATE = "partnerDidNotApply due date";
+    static final String RESPONSE_DUE_DATE = "responseDueDate";
+    static final String CO_OR_FO = "coOrFo";
 
     static final String APPLICANT1 = "applicant 1";
     static final String APPLICANT2 = "applicant 2";
@@ -53,6 +62,22 @@ public class AppliedForConditionalOrderNotification {
         Map<String, String> templateVars = commonContent.mainTemplateVars(data, id, applicant, partner);
         templateVars.put(PLUS_14_DUE_DATE,
             coQuestions(data, whichPartner).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER));
+        return templateVars;
+    }
+
+    protected Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant, String whichPartner) {
+        Map<String, String> templateVars = commonContent.basicTemplateVars(data, id);
+        templateVars.put(ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(RESPONSE_DUE_DATE,
+            coQuestions(data, whichPartner).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER));
+        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+        templateVars.put(SOLICITOR_REFERENCE,
+            isNotEmpty(applicant.getSolicitor().getReference())
+                ? applicant.getSolicitor().getReference()
+                : NOT_PROVIDED);
+        templateVars.put(CO_OR_FO, "conditional");
+        templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant1().getFullName());
+        templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant2().getFullName());
         return templateVars;
     }
 

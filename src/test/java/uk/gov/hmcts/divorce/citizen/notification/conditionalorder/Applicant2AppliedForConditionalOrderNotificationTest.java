@@ -5,14 +5,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,17 +38,25 @@ import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applica
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.PLUS_14_DUE_DATE;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.WIFE_APPLIED;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.WIFE_DID_NOT_APPLY;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.CO_OR_FO;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.RESPONSE_DUE_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
@@ -72,6 +83,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
 
     @InjectMocks
     private Applicant2AppliedForConditionalOrderNotification notification;
+
+    private static final LocalDate CO_SUBMITTED_DATE = LocalDate.of(2022, 6, 20);
 
     @Test
     void shouldSendEmailToJointApplicant1WhoDidNotSubmitCo() {
@@ -175,14 +188,66 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
     }
 
+    @Test
+    void shouldSendEmailToJointApplicant2SolicitorWhoSubmittedCo() {
+        CaseData data = validApplicant2CaseData();
+
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant2().setSolicitor(Solicitor.builder()
+            .name("app2sol")
+            .email("app2sol@gm.com")
+            .reference("refxxx")
+            .build());
+
+        data.getApplication().setIssueDate(CO_SUBMITTED_DATE.minusDays(5));
+        setSubmittedDate(data, List.of(APPLICANT2));
+
+        when(commonContent.basicTemplateVars(data, 1234567890123456L))
+            .thenReturn(getMainTemplateVars());
+
+        setMockClock(clock);
+
+        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq("app2sol@gm.com"),
+            eq(JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(SOLICITOR_NAME, "app2sol"),
+                hasEntry(SOLICITOR_REFERENCE, "refxxx"),
+                hasEntry(RESPONSE_DUE_DATE, "4 July 2022"),
+                hasEntry(ISSUE_DATE, "15 June 2022"),
+                hasEntry(CO_OR_FO, "conditional"),
+                hasEntry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
+                hasEntry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name")
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).basicTemplateVars(data, 1234567890123456L);
+    }
+
+    @Test
+    void shouldNotSendEmailToApplicant2SolicitorWhenSoleApplication() {
+        CaseData caseData = validApplicant2CaseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+
+        notification.sendToApplicant2Solicitor(caseData, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+    }
+
     private void setSubmittedDate(CaseData caseData, List<String> applicants) {
         if (applicants.contains(APPLICANT1)) {
             caseData.getConditionalOrder()
-                .setConditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build());
+                .setConditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .submittedDate(CO_SUBMITTED_DATE.atStartOfDay()).build());
         }
         if (applicants.contains(APPLICANT2)) {
             caseData.getConditionalOrder()
-                .setConditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build());
+                .setConditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                    .submittedDate(CO_SUBMITTED_DATE.atStartOfDay()).build());
         }
 
     }

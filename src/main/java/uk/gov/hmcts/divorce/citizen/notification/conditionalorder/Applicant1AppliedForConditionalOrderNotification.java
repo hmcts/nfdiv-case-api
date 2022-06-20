@@ -1,15 +1,18 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER;
 
 @Component
 @Slf4j
@@ -40,6 +43,20 @@ public class Applicant1AppliedForConditionalOrderNotification
                 JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER,
                 partnerTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), APPLICANT1),
                 caseData.getApplicant2().getLanguagePreference()
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
+        if (!caseData.getApplicationType().isSole()
+            && StringUtils.isNotBlank(caseData.getApplicant1().getSolicitor().getEmail())) {
+            log.info("Notifying applicant 1 solicitor that their conditional order application has been submitted: {}", caseId);
+            notificationService.sendEmail(
+                caseData.getApplicant1().getSolicitor().getEmail(),
+                JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER,
+                solicitorTemplateVars(caseData, caseId, caseData.getApplicant1(), APPLICANT1),
+                ENGLISH
             );
         }
     }
