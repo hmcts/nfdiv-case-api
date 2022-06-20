@@ -253,21 +253,21 @@ public class NoticeOfProceedingContent {
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL,
-                WELSH == languagePreference ? CONTACT_JUSTICE_GOV_UK_CY : CONTACT_DIVORCE_JUSTICE_GOV_UK);
+                WELSH.equals(languagePreference) ? CONTACT_JUSTICE_GOV_UK_CY : CONTACT_DIVORCE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS,
-                WELSH == languagePreference ? DIVORCE_PROCEEDINGS_CY : DIVORCE_PROCEEDINGS);
+                WELSH.equals(languagePreference) ? DIVORCE_PROCEEDINGS_CY : DIVORCE_PROCEEDINGS);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP,
-                WELSH == languagePreference ? FOR_A_DIVORCE_CY : FOR_A_DIVORCE);
+                WELSH.equals(languagePreference) ? FOR_A_DIVORCE_CY : FOR_A_DIVORCE);
             templateContent.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION,
-                WELSH == languagePreference ? DIVORCE_APPLICATION_CY : DIVORCE_APPLICATION);
+                WELSH.equals(languagePreference) ? DIVORCE_APPLICATION_CY : DIVORCE_APPLICATION);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS,
-                WELSH == languagePreference ? DIVORCE_PROCESS_CY : DIVORCE_PROCESS);
+                WELSH.equals(languagePreference) ? DIVORCE_PROCESS_CY : DIVORCE_PROCESS);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION,
-                WELSH == languagePreference ? YOUR_DIVORCE_CY : YOUR_DIVORCE);
+                WELSH.equals(languagePreference) ? YOUR_DIVORCE_CY : YOUR_DIVORCE);
             templateContent.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP,
-                WELSH == languagePreference ? DIVORCE_CY : DIVORCE);
+                WELSH.equals(languagePreference) ? DIVORCE_CY : DIVORCE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_URL, DIVORCE_URL);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, DIVORCE_SERVICE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, THE_DIVORCE_SERVICE);
@@ -277,24 +277,28 @@ public class NoticeOfProceedingContent {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         } else {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL,
-                WELSH == languagePreference ? CONTACT_JUSTICE_GOV_UK_CY : CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
+                WELSH.equals(languagePreference) ? CONTACT_JUSTICE_GOV_UK_CY : CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS,
-                WELSH == languagePreference ? PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY : PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP);
+                WELSH.equals(languagePreference)
+                    ? PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY
+                    : PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP,
-                WELSH == languagePreference ? TO_END_YOUR_CIVIL_PARTNERSHIP_CY : TO_END_YOUR_CIVIL_PARTNERSHIP);
+                WELSH.equals(languagePreference) ? TO_END_YOUR_CIVIL_PARTNERSHIP_CY : TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, TO_END_THEIR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION,
-                WELSH == languagePreference ? APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY : APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
+                WELSH.equals(languagePreference)
+                    ? APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY
+                    : APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS,
-                WELSH == languagePreference ? PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY : PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
+                WELSH.equals(languagePreference) ? PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY : PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION,
-                WELSH == languagePreference
+                WELSH.equals(languagePreference)
                     ? YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY
                     : YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
 
             templateContent.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, ENDING_A_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP,
-                WELSH == languagePreference ? ENDING_YOUR_CIVIL_PARTNERSHIP_CY : ENDING_YOUR_CIVIL_PARTNERSHIP);
+                WELSH.equals(languagePreference) ? ENDING_YOUR_CIVIL_PARTNERSHIP_CY : ENDING_YOUR_CIVIL_PARTNERSHIP);
 
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_URL, CIVIL_PARTNERSHIP_EMAIL);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, END_A_CIVIL_PARTNERSHIP_SERVICE);
