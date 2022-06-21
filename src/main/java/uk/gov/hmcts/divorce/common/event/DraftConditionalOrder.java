@@ -22,10 +22,10 @@ import static java.util.Arrays.asList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -55,7 +55,7 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(DRAFT_CONDITIONAL_ORDER)
-            .forStates(AwaitingConditionalOrder, ConditionalOrderDrafted)
+            .forStates(AwaitingConditionalOrder, ConditionalOrderDrafted, ConditionalOrderPending)
             .name("Draft conditional order")
             .description("Draft conditional order")
             .showSummary()
@@ -63,7 +63,7 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
             .showCondition("coApplicant1IsDrafted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .aboutToStartCallback(this::aboutToStart)
-            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, CITIZEN, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
