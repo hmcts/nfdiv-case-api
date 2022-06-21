@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
@@ -114,40 +113,6 @@ public class CaseworkerCreatePaperCaseTest {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.getApplicant2().setEmail("testapp2@test.com");
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(1L);
-
-        AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
-
-        assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(NO);
-    }
-
-    @Test
-    public void shouldSetApplicant2OfflineWhenSoleApplicationAndApplicant2IsRepresentedAndApp2SolicitorHasNoEmailAddress() {
-        final CaseData caseData = caseData();
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        caseData.getApplicant2().setEmail(null);
-        caseData.getApplicant2().setSolicitorRepresented(YES);
-        caseData.getApplicant2().setSolicitor(Solicitor.builder().build());
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(1L);
-
-        AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
-
-        assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(YES);
-    }
-
-    @Test
-    public void shouldNotSetApplicant2OfflineWhenSoleApplicationAndApplicant2IsRepresentedAndApp2SolicitorHasEmailAddress() {
-        final CaseData caseData = caseData();
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        caseData.getApplicant2().setEmail(null);
-        caseData.getApplicant2().setSolicitorRepresented(YES);
-        caseData.getApplicant2().setSolicitor(Solicitor.builder().email("testsol@test.com").build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

@@ -55,10 +55,7 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
         var applicant2 = data.getApplicant2();
         if (JOINT_APPLICATION.equals(data.getApplicationType())) {
             applicant2.setOffline(YES);
-        } else if (SOLE_APPLICATION.equals(data.getApplicationType())
-            && applicant2.isRepresented() && isBlank(applicant2.getSolicitor().getEmail())) {
-            applicant2.setOffline(YES);
-        } else if (SOLE_APPLICATION.equals(data.getApplicationType()) && !applicant2.isRepresented() && isBlank(applicant2.getEmail())) {
+        } else if (SOLE_APPLICATION.equals(data.getApplicationType()) && isBlank(applicant2.getEmail())) {
             applicant2.setOffline(YES);
         } else {
             applicant2.setOffline(NO);
