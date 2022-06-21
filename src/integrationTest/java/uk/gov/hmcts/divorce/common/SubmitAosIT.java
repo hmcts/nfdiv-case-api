@@ -48,6 +48,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -57,6 +58,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WIT
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
@@ -172,6 +174,43 @@ public class SubmitAosIT {
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(expectedResponse("classpath:solicitor-submit-aos-response.json"));
+    }
+
+    @Test
+    void shouldSetStateToHoldingForValidUndisputedAosWithAosOverduePrestate() throws Exception {
+
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .statementOfTruth(YES)
+            .prayerHasBeenGiven(YES)
+            .confirmReadPetition(YES)
+            .jurisdictionAgree(YES)
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(getExpectedLocalDate());
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+
+        caseData.getApplicant2().setLegalProceedings(YES);
+        caseData.getApplicant2().setLegalProceedingsDetails("some description");
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+            .content(
+                objectMapper.writeValueAsString(
+                    callbackRequest(caseData, SUBMIT_AOS, AosOverdue.name())))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(jsonPath("$.state").value("Holding"));
     }
 
     @Test
