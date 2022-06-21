@@ -72,14 +72,4 @@ public class InviteApplicant2FT extends FunctionalTestSuite {
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(SOLICITOR_RESPONSE)));
     }
-
-    @Test
-    public void shouldSendEmailToApplicant1AndApplicant2WhenAllTemplateParamsAreValidAndApplicant2LanguageWelsh() throws IOException {
-        Map<String, Object> request = caseData(REQUEST);
-        request.put("applicant2LanguagePreferenceWelsh", YES);
-
-        Response response = triggerCallback(request, INVITE_APPLICANT_2, ABOUT_TO_SUBMIT_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-    }
 }

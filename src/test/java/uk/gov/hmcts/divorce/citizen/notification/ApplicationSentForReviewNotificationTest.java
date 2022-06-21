@@ -217,28 +217,4 @@ class ApplicationSentForReviewNotificationTest {
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
-
-    @Test
-    void shouldSendEmailWithWelshPartnerContent() {
-        CaseData data = validJointApplicant1CaseData();
-        data.setDueDate(LOCAL_DATE);
-        data.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
-        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
-
-        final Map<String, String> templateVars = getMainTemplateVars();
-        templateVars.put(PARTNER, "gŵr");
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
-
-        notification.sendToApplicant2(data, 1234567890123456L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW),
-            argThat(allOf(
-                hasEntry(PARTNER, "gŵr")
-            )),
-            eq(WELSH)
-        );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-    }
 }
