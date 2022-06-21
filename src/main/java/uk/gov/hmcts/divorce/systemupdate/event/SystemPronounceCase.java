@@ -10,10 +10,12 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ConditionalOrderPronouncedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -37,6 +39,9 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
+    @Autowired
+    private GenerateConditionalOrderPronouncedDocument generateDocument;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -58,7 +63,9 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         final CaseData caseData = details.getData();
         final Long caseId = details.getId();
 
-        log.info("Conditional order pronounced for Case({}), notifying Applicants their conditional order has been pronounced", caseId);
+        log.info("Conditional order pronounced for Case({})", caseId);
+
+        generateConditionalOrderGrantedDoc(details, beforeDetails);
 
         try {
             notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, caseId);
@@ -70,4 +77,22 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             .data(caseData)
             .build();
     }
+
+    private void generateConditionalOrderGrantedDoc(CaseDetails<CaseData, State> details,
+                                                    CaseDetails<CaseData, State> beforeDetails) {
+        if (generateDocument.getConditionalOrderGrantedDoc(details.getData()).isPresent()) {
+            ConditionalOrder oldCO = beforeDetails.getData().getConditionalOrder();
+            ConditionalOrder newCO = details.getData().getConditionalOrder();
+
+            if (!newCO.getPronouncementJudge().equals(oldCO.getPronouncementJudge())
+                || !newCO.getCourt().equals(oldCO.getCourt())
+                || !newCO.getDateAndTimeOfHearing().equals(oldCO.getDateAndTimeOfHearing())) {
+                generateDocument.removeExistingAndGenerateNewConditionalOrderGrantedDoc(details);
+            }
+
+        } else {
+            generateDocument.apply(details);
+        }
+    }
+
 }
