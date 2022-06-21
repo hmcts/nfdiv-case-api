@@ -227,24 +227,13 @@ public class CcdAccessServiceTest {
     @Test
     public void shouldNotThrowAnyExceptionWhenUnLinkUserFromApplicationIsInvoked() {
         User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN))
-            .thenReturn(systemUpdateUser);
-
-        when(authTokenGenerator.generate())
-            .thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        when(caseAssignmentApi.removeCaseUserRoles(
-                eq(SYSTEM_UPDATE_AUTH_TOKEN),
-                eq(TEST_SERVICE_AUTH_TOKEN),
-                any(CaseAssignmentUserRolesRequest.class)
-            )
-        ).thenReturn(any());
-
-        assertThatCode(() -> ccdAccessService.unlinkUserFromApplication(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
+        assertThatCode(() -> ccdAccessService.unlinkUserFromApplication(TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
             .doesNotThrowAnyException();
 
-        verify(idamService).retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN);
+        verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
         verify(caseAssignmentApi)
             .removeCaseUserRoles(
