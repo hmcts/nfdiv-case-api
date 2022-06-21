@@ -58,6 +58,44 @@ public class CitizenApplicant2UpdateApplicationTest {
     }
 
     @Test
+    void shouldNotSetDisputeApplicationFieldsToNullIfConfirmationIsYesAndInAosDraftedState() {
+        final long caseId = 1L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseDetails.setState(AosDrafted);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE);
+        caseData.getAcknowledgementOfService().setConfirmDisputeApplication(YesOrNo.YES);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response
+            = citizenApplicant2UpdateApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getAcknowledgementOfService().getHowToRespondApplication()).isNotNull();
+        assertThat(response.getData().getAcknowledgementOfService().getConfirmDisputeApplication()).isNotNull();
+    }
+
+    @Test
+    void shouldNotSetDisputeApplicationFieldsToNullIfApplicationNotDisputedAndInAosDraftedState() {
+        final long caseId = 1L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseDetails.setState(AosDrafted);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE);
+        caseData.getAcknowledgementOfService().setConfirmDisputeApplication(YesOrNo.NO);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response
+            = citizenApplicant2UpdateApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getAcknowledgementOfService().getHowToRespondApplication()).isNotNull();
+        assertThat(response.getData().getAcknowledgementOfService().getConfirmDisputeApplication()).isNotNull();
+    }
+
+    @Test
     void shouldSetDisputeApplicationFieldsToNullIfConfirmationIsNoAndInAosOverdueState() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -74,5 +112,43 @@ public class CitizenApplicant2UpdateApplicationTest {
 
         assertThat(response.getData().getAcknowledgementOfService().getHowToRespondApplication()).isNull();
         assertThat(response.getData().getAcknowledgementOfService().getConfirmDisputeApplication()).isNull();
+    }
+
+    @Test
+    void shouldNotSetDisputeApplicationFieldsToNullIfConfirmationIsYesAndInAosOverdueState() {
+        final long caseId = 1L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseDetails.setState(AosOverdue);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE);
+        caseData.getAcknowledgementOfService().setConfirmDisputeApplication(YesOrNo.YES);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response
+            = citizenApplicant2UpdateApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getAcknowledgementOfService().getHowToRespondApplication()).isNotNull();
+        assertThat(response.getData().getAcknowledgementOfService().getConfirmDisputeApplication()).isNotNull();
+    }
+
+    @Test
+    void shouldNotSetDisputeApplicationFieldsToNullIfApplicationNotDisputedAndInAosOverduedState() {
+        final long caseId = 1L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseDetails.setState(AosOverdue);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE);
+        caseData.getAcknowledgementOfService().setConfirmDisputeApplication(YesOrNo.NO);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response
+            = citizenApplicant2UpdateApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getAcknowledgementOfService().getHowToRespondApplication()).isNotNull();
+        assertThat(response.getData().getAcknowledgementOfService().getConfirmDisputeApplication()).isNotNull();
     }
 }
