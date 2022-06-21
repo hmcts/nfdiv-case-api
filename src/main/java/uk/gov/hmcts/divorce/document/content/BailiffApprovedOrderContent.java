@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
@@ -16,11 +17,15 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ENDING_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ENDING_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.THE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.THE_DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.THE_DIVORCE_CY;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -34,13 +39,30 @@ public class BailiffApprovedOrderContent {
         final Map<String, Object> templateContent = new HashMap<>();
         final var applicant1 = caseData.getApplicant1();
         final var applicant2 = caseData.getApplicant2();
+        final var applicant1LanguagePreference = applicant1.getLanguagePreference();
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateContent.put(THE_APPLICATION, DIVORCE_APPLICATION);
-            templateContent.put(DIVORCE_OR_DISSOLUTION, THE_DIVORCE);
+            templateContent.put(
+                THE_APPLICATION, WELSH.equals(applicant1LanguagePreference)
+                    ? DIVORCE_APPLICATION_CY
+                    : DIVORCE_APPLICATION
+            );
+            templateContent.put(
+                DIVORCE_OR_DISSOLUTION, WELSH.equals(applicant1LanguagePreference)
+                    ? THE_DIVORCE_CY
+                    : THE_DIVORCE
+            );
         } else {
-            templateContent.put(THE_APPLICATION, END_CIVIL_PARTNERSHIP);
-            templateContent.put(DIVORCE_OR_DISSOLUTION, ENDING_CIVIL_PARTNERSHIP);
+            templateContent.put(
+                THE_APPLICATION, WELSH.equals(applicant1LanguagePreference)
+                    ? END_CIVIL_PARTNERSHIP_CY
+                    : END_CIVIL_PARTNERSHIP
+            );
+            templateContent.put(
+                DIVORCE_OR_DISSOLUTION, WELSH.equals(applicant1LanguagePreference)
+                    ? ENDING_CIVIL_PARTNERSHIP_CY
+                    : ENDING_CIVIL_PARTNERSHIP
+            );
         }
 
         templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);
