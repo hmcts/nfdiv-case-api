@@ -157,7 +157,7 @@ uk:
             JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER: ${JOINT_APPLICANT1_APPLICANT2_APPROVED_WELSH_NOTIFICATION_ID:59ab58b7-b102-4b17-b023-226ce399668b}
             SOLE_APPLICANT_APPLICATION_ACCEPTED: ${SOLE_APPLICANT_APPLICATION_ACCEPTED_NOTIFICATION_ID:5f9d4cbe-623e-4066-ae87-76f9afeae884}
             SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED: ${SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED_WELSH_NOTIFICATION_ID:fe1a2a4c-68ac-4887-8557-7be338399a34}
-            SOLE_RESPONDENT_APPLICATION_ACCEPTED: '1726bcfb-95c7-4afd-b789-8072551febd1'
+            SOLE_RESPONDENT_APPLICATION_ACCEPTED: ${SOLE_RESPONDENT_APPLICATION_ACCEPTED_NOTIFICATION_ID:1726bcfb-95c7-4afd-b789-8072551febd1}
             OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED: ${OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED_WELSH_NOTIFICATION_ID:248d19a5-b00b-4c57-a283-10054558003c}
             OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED: 'b3be698a-d4b4-4fa8-8ed7-c1fd39827d21'
             SOLE_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
@@ -273,6 +273,7 @@ docmosis:
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2.docx
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered_V3.docx
+      CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -280,7 +281,7 @@ docmosis:
       CITIZEN_RESP_AOS_INVITATION_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
       CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
-      RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: replace template once available
+      RESPONDENT_ANSWERS: ${RESPONDENT_ANSWERS_TEMPLATE_ID:NFD_Respondent_Answers_Eng.docx}
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
       SERVICE_ORDER: NFD_Service_Order_V2.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx  #TODO: update content
@@ -292,7 +293,7 @@ docmosis:
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers.docx #TODO: update content
       SERVICE_REFUSAL: ${SERVICE_REFUSAL_TEMPLATE_ID:NFD_Refusal_Order_Deemed_Dispensed_Service_V2.docx}
-      BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx #TODO: update content
+      BAILIFF_APPLICATION_APPROVED: ${BAILIFF_APPLICATION_APPROVED_TEMPLATE_ID:NFD_Bailiff_Application_Approved.docx}
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed_V2.docx
@@ -312,6 +313,7 @@ docmosis:
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2.docx
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered_V3.docx
+      CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
   templateVars:
     applicant2SignInDivorceUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2}
     applicant2SignInDissolutionUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2}
@@ -340,6 +342,9 @@ submit_aos:
 
 submit_co:
   reminder_offset_days: ${SUBMIT_CO_REMINDER_OFFSET_DAYS:14}
+
+final_order:
+  eligible_from_offset_days: ${FINAL_ORDER_ELIGIBLE_FROM_OFFSET_DAYS:43}
 
 apply_for_final_order:
   reminder_offset_days: ${APPLY_FOR_FINAL_ORDER_REMINDER_OFFSET_DAYS:14}
