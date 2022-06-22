@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -89,7 +90,7 @@ class AwaitingConditionalOrderNotificationTest {
         final var applicant = getApplicant();
         applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
         applicant.setSolicitorRepresented(YesOrNo.YES);
-        final var data = CaseData.builder().applicationType(SOLE_APPLICATION).applicant1(applicant).build();
+        final var data = CaseData.builder().divorceOrDissolution(DivorceOrDissolution.DIVORCE).applicationType(SOLE_APPLICATION).applicant1(applicant).build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
@@ -118,7 +119,7 @@ class AwaitingConditionalOrderNotificationTest {
         final var applicant = getApplicant();
         applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
         applicant.setSolicitorRepresented(YesOrNo.YES);
-        final var data = CaseData.builder().applicationType(JOINT_APPLICATION).applicant1(applicant).build();
+        final var data = CaseData.builder().divorceOrDissolution(DivorceOrDissolution.DIVORCE).applicationType(JOINT_APPLICATION).applicant1(applicant).build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
@@ -149,7 +150,7 @@ class AwaitingConditionalOrderNotificationTest {
         final var applicant = getApplicant();
         applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
         applicant.setSolicitorRepresented(YesOrNo.YES);
-        final var data = CaseData.builder().applicationType(JOINT_APPLICATION).applicant2(applicant).build();
+        final var data = CaseData.builder().divorceOrDissolution(DivorceOrDissolution.DIVORCE).applicationType(JOINT_APPLICATION).applicant2(applicant).build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
@@ -186,7 +187,7 @@ class AwaitingConditionalOrderNotificationTest {
                 .build()
         );
         applicant.setSolicitorRepresented(YesOrNo.YES);
-        final var data = CaseData.builder().applicationType(SOLE_APPLICATION).applicant1(applicant).build();
+        final var data = CaseData.builder().divorceOrDissolution(DivorceOrDissolution.DIVORCE).applicationType(SOLE_APPLICATION).applicant1(applicant).build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
