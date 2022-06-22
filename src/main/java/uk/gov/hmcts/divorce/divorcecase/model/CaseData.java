@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
@@ -77,7 +78,7 @@ public class CaseData {
 
     @JsonUnwrapped(prefix = "applicant2")
     @Builder.Default
-    @CCD(access = {DefaultAccess.class})
+    @CCD(access = {DefaultAccess.class, Applicant2Access.class})
     private Applicant applicant2 = new Applicant();
 
     @JsonUnwrapped()
