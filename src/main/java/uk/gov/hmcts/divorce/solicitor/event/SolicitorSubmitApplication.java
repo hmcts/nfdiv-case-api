@@ -26,6 +26,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -120,22 +121,33 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         final var applicationFeeOrderSummary = application.getApplicationFeeOrderSummary();
 
         if (caseData.getApplication().isSolicitorPaymentMethodPba()) {
+            final Optional<String> pbaNumber = application.getPbaNumber();
+            if (pbaNumber.isPresent()) {
+                final PbaResponse response = paymentService.processPbaPayment(
+                    caseData,
+                    caseId,
+                    caseData.getApplicant1().getSolicitor(),
+                    pbaNumber.get(),
+                    caseData.getApplication().getApplicationFeeOrderSummary(),
+                    caseData.getApplication().getFeeAccountReference()
+                );
 
-            PbaResponse response = paymentService.processPbaPayment(
-                caseData,
-                caseId,
-                caseData.getApplicant1().getSolicitor(),
-                application.getPbaNumber(),
-                caseData.getApplication().getApplicationFeeOrderSummary(),
-                caseData.getApplication().getFeeAccountReference()
-            );
-
-            if (response.getHttpStatus() == CREATED) {
-                caseData.updateCaseDataWithPaymentDetails(applicationFeeOrderSummary, caseData, response.getPaymentReference());
+                if (response.getHttpStatus() == CREATED) {
+                    caseData.updateCaseDataWithPaymentDetails(applicationFeeOrderSummary, caseData, response.getPaymentReference());
+                } else {
+                    return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                        .data(details.getData())
+                        .errors(singletonList(response.getErrorMessage()))
+                        .build();
+                }
             } else {
+                log.error(
+                    "PBA number not present when payment method is 'Solicitor fee account (PBA)' for CaseId: {}",
+                    details.getId());
+
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(details.getData())
-                    .errors(singletonList(response.getErrorMessage()))
+                    .errors(singletonList("PBA number not present when payment method is 'Solicitor fee account (PBA)'"))
                     .build();
             }
         }
