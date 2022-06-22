@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorRefusalDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -48,7 +49,10 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     public static final String LEGAL_ADVISOR_MAKE_DECISION = "legal-advisor-make-decision";
 
     @Autowired
-    private LegalAdvisorMoreInfoDecisionNotification notification;
+    private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
+
+    @Autowired
+    private LegalAdvisorRefusalDecisionNotification refusalDecisionNotification;
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -139,6 +143,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingPronouncement;
 
         } else if (REJECT.equals(conditionalOrder.getRefusalDecision())) {
+            notificationDispatcher.send(refusalDecisionNotification, caseData, details.getId());
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
                 details.getId()
@@ -146,7 +151,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingAmendedApplication;
 
         } else if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
-            notificationDispatcher.send(notification, caseData, details.getId());
+            notificationDispatcher.send(moreInfoDecisionNotification, caseData, details.getId());
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
                 details.getId()
