@@ -11,10 +11,19 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.UNION_TYPE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_APPLY_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -58,11 +67,63 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         }
     }
 
+    @Override
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
+        log.info("Notifying applicant 1 solicitor (joint application) that they can apply for a final order: {}", id);
+
+        if (!caseData.getApplicationType().isSole()) {
+            Applicant applicant1 = caseData.getApplicant1();
+            final Map<String, String> templateVars = commonSolicitorTemplateVars(caseData, id, applicant1);
+            templateVars.put(IS_CONDITIONAL_ORDER, NO);
+            templateVars.put(IS_FINAL_ORDER, YES);
+
+            notificationService.sendEmail(
+                applicant1.getSolicitor().getEmail(),
+                JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR,
+                templateVars,
+                applicant1.getLanguagePreference()
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
+        log.info("Notifying applicant 2 solicitor (joint application) that they can apply for a final order: {}", id);
+
+        if (!caseData.getApplicationType().isSole()) {
+            Applicant applicant2 = caseData.getApplicant2();
+            final Map<String, String> templateVars = commonSolicitorTemplateVars(caseData, id, applicant2);
+            templateVars.put(IS_CONDITIONAL_ORDER, NO);
+            templateVars.put(IS_FINAL_ORDER, YES);
+
+            notificationService.sendEmail(
+                applicant2.getSolicitor().getEmail(),
+                JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR,
+                templateVars,
+                applicant2.getLanguagePreference()
+            );
+        }
+    }
+
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.conditionalOrderTemplateVars(caseData, id, applicant, partner);
         templateVars.put(IS_REMINDER, NO);
         templateVars.put(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS,
             caseData.getFinalOrder().getDateFinalOrderEligibleToRespondent().format(DATE_TIME_FORMATTER));
+        return templateVars;
+    }
+
+    private Map<String, String> commonSolicitorTemplateVars(CaseData caseData, final Long id, Applicant applicant) {
+
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
+
+        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+        templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant.getSolicitor().getReference())
+            ? applicant.getSolicitor().getReference()
+            : "not provided");
+
         return templateVars;
     }
 }
