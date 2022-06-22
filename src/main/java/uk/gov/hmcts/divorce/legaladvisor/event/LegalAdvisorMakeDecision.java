@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorRefusalDecisionNotification;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorCoRefusalDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -52,7 +52,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
 
     @Autowired
-    private LegalAdvisorRefusalDecisionNotification refusalDecisionNotification;
+    private LegalAdvisorCoRefusalDecisionNotification refusalDecisionNotification;
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
