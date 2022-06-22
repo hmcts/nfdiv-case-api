@@ -76,6 +76,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            # CCD diff report ${{ steps.ccd-diff.outputs.content }}
+            # CCD diff report
+            ${{ steps.ccd-diff.outputs.content }}
           comment_includes: CCD diff report
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
