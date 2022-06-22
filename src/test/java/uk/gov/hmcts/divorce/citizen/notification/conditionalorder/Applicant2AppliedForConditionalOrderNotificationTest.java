@@ -59,6 +59,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -83,8 +84,6 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
 
     @InjectMocks
     private Applicant2AppliedForConditionalOrderNotification notification;
-
-    private static final LocalDate CO_SUBMITTED_DATE = LocalDate.of(2022, 6, 20);
 
     @Test
     void shouldSendEmailToJointApplicant1WhoDidNotSubmitCo() {
@@ -200,7 +199,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             .reference("refxxx")
             .build());
 
-        data.getApplication().setIssueDate(CO_SUBMITTED_DATE.minusDays(5));
+        LocalDate issueDate = getExpectedLocalDate().minusDays(5);
+        data.getApplication().setIssueDate(issueDate);
         setSubmittedDate(data, List.of(APPLICANT2));
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L))
@@ -217,8 +217,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
                 hasEntry(SOLICITOR_NAME, "app2sol"),
                 hasEntry(SOLICITOR_REFERENCE, "refxxx"),
-                hasEntry(RESPONSE_DUE_DATE, "4 July 2022"),
-                hasEntry(ISSUE_DATE, "15 June 2022"),
+                hasEntry(RESPONSE_DUE_DATE, getExpectedLocalDateTime().plusDays(14).format(DATE_TIME_FORMATTER)),
+                hasEntry(ISSUE_DATE, issueDate.format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_OR_FO, "conditional"),
                 hasEntry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
                 hasEntry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name")
@@ -242,12 +242,12 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         if (applicants.contains(APPLICANT1)) {
             caseData.getConditionalOrder()
                 .setConditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .submittedDate(CO_SUBMITTED_DATE.atStartOfDay()).build());
+                    .submittedDate(getExpectedLocalDateTime()).build());
         }
         if (applicants.contains(APPLICANT2)) {
             caseData.getConditionalOrder()
                 .setConditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .submittedDate(CO_SUBMITTED_DATE.atStartOfDay()).build());
+                    .submittedDate(getExpectedLocalDateTime()).build());
         }
 
     }
