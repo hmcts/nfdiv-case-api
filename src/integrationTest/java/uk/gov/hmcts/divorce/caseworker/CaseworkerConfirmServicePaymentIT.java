@@ -101,7 +101,7 @@ public class CaseworkerConfirmServicePaymentIT {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.state").value("AwaitingServiceConsideration"));;
+            .andExpect(jsonPath("$.state").value("AwaitingServiceConsideration"));
     }
 
     @Test
@@ -130,6 +130,6 @@ public class CaseworkerConfirmServicePaymentIT {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.state").value("AwaitingBailiffReferral"));;
+            .andExpect(jsonPath("$.state").value("AwaitingBailiffReferral"));
     }
 }

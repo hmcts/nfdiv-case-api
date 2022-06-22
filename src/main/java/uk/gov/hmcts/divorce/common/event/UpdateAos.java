@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -13,12 +14,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
+@Slf4j
 @Component
 public class UpdateAos implements CCDConfig<CaseData, State, UserRole> {
 
@@ -36,7 +39,7 @@ public class UpdateAos implements CCDConfig<CaseData, State, UserRole> {
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(UPDATE_AOS)
-            .forState(AosDrafted)
+            .forStates(AosDrafted, AosOverdue)
             .name("Update AoS")
             .description("Update Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
@@ -50,6 +53,8 @@ public class UpdateAos implements CCDConfig<CaseData, State, UserRole> {
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("Update AoS about to start callback invoked for Case Id: {}", details.getId());
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(addMiniApplicationLink
                 .apply(details)

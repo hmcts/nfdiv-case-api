@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -24,13 +25,13 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -70,6 +71,9 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("Submit AoS about to start callback invoked for Case Id: {}", details.getId());
+
         final var caseData = details.getData();
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
@@ -87,6 +91,9 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Submit AoS about to submit callback invoked for Case Id: {}", details.getId());
+
         final var caseData = details.getData();
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
@@ -129,7 +136,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(SUBMIT_AOS)
-            .forStates(EnumSet.of(AosDrafted, AOS_STATES))
+            .forStates(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue))
             .name("Submit AoS")
             .description("Submit AoS")
             .showCondition("applicationType=\"soleApplication\"")
@@ -147,7 +154,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
                                                final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker submit aos submitted callback invoked for case id: {}", details.getId());
+        log.info("Submit AoS submitted callback invoked for Case Id: {}", details.getId());
 
         final AcknowledgementOfService acknowledgementOfService = details.getData().getAcknowledgementOfService();
 

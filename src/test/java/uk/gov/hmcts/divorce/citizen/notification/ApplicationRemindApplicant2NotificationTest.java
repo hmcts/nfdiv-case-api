@@ -107,7 +107,6 @@ class ApplicationRemindApplicant2NotificationTest {
     }
 
 
-
     @Test
     void shouldSendEmailToApplicant2WhileInAwaitingApplicant2ResponseStateWhenSendingReminderWhenApp1IsRepresented() {
         CaseData data = validJointApplicant1CaseData();
