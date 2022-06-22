@@ -216,7 +216,7 @@ public class CaseworkerMakeBailiffDecisionIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved.docx");
+        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved_Cy.docx");
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setReceivedServiceApplicationDate(LocalDate.of(2022, 1, 1));
@@ -243,5 +243,35 @@ public class CaseworkerMakeBailiffDecisionIT {
             anyMap(),
             eq(WELSH)
         );
+    }
+
+    @Test
+    public void shouldGenerateWelshBailiffApplicationNotApprovedWhenApplicant1LanguagePreferenceIsWelsh() throws Exception {
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved_Cy.docx");
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getAlternativeService().setReceivedServiceApplicationDate(LocalDate.of(2022, 1, 1));
+        caseData.getAlternativeService().setServiceApplicationGranted(NO);
+        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_BAILIFF_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn();
     }
 }
