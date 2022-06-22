@@ -14,9 +14,12 @@ import java.util.Map;
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.UNION_TYPE;
@@ -126,6 +129,9 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
         templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant.getSolicitor().getReference())
             ? applicant.getSolicitor().getReference()
             : "not provided");
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
+        templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
+        templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
 
         return templateVars;
     }
