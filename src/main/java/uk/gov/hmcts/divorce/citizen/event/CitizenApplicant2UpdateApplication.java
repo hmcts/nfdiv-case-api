@@ -48,7 +48,7 @@ public class CitizenApplicant2UpdateApplication implements CCDConfig<CaseData, S
         log.info("{} about to submit callback invoked for Case Id: {}", CITIZEN_APPLICANT2_UPDATE, details.getId());
         CaseData data = details.getData();
 
-        if (details.getState() == AosDrafted || details.getState() == AosOverdue
+        if ((details.getState() == AosDrafted || details.getState() == AosOverdue)
             && data.getAcknowledgementOfService().getConfirmDisputeApplication() == YesOrNo.NO
             && data.getAcknowledgementOfService().isDisputed()) {
 
