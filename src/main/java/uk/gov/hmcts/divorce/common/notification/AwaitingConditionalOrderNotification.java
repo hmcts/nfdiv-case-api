@@ -42,7 +42,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
         final Applicant applicant1 = caseData.getApplicant1();
         final Map<String, String> templateVars = commonContent
             .conditionalOrderTemplateVars(caseData, id, applicant1, caseData.getApplicant2());
-        templateVars.put(IS_REMINDER, CommonContent.NO);
+        templateVars.put(IS_REMINDER, NO);
 
         notificationService.sendEmail(
             applicant1.getEmail(),
@@ -86,7 +86,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
             final Applicant applicant2 = caseData.getApplicant2();
             final Map<String, String> templateVars = commonContent
                 .conditionalOrderTemplateVars(caseData, id, applicant2, caseData.getApplicant1());
-            templateVars.put(IS_REMINDER, CommonContent.NO);
+            templateVars.put(IS_REMINDER, NO);
 
             notificationService.sendEmail(
                 applicant2.getEmail(),
