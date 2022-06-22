@@ -76,8 +76,8 @@ public class AppliedForConditionalOrderNotification {
                 ? applicant.getSolicitor().getReference()
                 : NOT_PROVIDED);
         templateVars.put(CO_OR_FO, "conditional");
-        templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant1().getFullName());
-        templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant2().getFullName());
+        templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
+        templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
         return templateVars;
     }
 
