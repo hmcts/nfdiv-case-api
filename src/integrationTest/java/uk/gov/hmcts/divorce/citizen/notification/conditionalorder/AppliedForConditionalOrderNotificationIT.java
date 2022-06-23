@@ -43,7 +43,7 @@ public class AppliedForConditionalOrderNotificationIT {
     private static final LocalDateTime submittedDate = LocalDateTime.of(2021, 11, 10, 0, 0, 0);
 
     @Test
-    public void shouldApplicant1() {
+    public void shouldPopulateApplicant1TemplateContent() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setFirstName("Bob");
         caseData.getApplicant1().setLastName("Smith");
@@ -71,7 +71,7 @@ public class AppliedForConditionalOrderNotificationIT {
     }
 
     @Test
-    public void shouldApplicant1Welsh() {
+    public void shouldPopulateApplicant1WelshTemplateContent() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setFirstName("Bob");
         caseData.getApplicant1().setLastName("Smith");
@@ -100,7 +100,7 @@ public class AppliedForConditionalOrderNotificationIT {
     }
 
     @Test
-    public void shouldApplicant2() {
+    public void shouldPopulateApplicant2TemplateContent() {
         CaseData caseData = caseData();
         caseData.getApplicant2().setFirstName("Bob");
         caseData.getApplicant2().setLastName("Smith");
@@ -128,7 +128,7 @@ public class AppliedForConditionalOrderNotificationIT {
     }
 
     @Test
-    public void shouldApplicant2Welsh() {
+    public void shouldPopulateApplicant2WelshTemplateContent() {
         CaseData caseData = caseData();
         caseData.getApplicant2().setFirstName("Bob");
         caseData.getApplicant2().setLastName("Smith");
