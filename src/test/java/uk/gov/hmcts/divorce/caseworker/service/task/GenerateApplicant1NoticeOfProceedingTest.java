@@ -104,7 +104,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NFD_NOP_A2_SOLE_APP1_CIT_PS);
+        verifyInteractions(caseData, templateContent, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
 
         verifyNoInteractions(noticeOfProceedingContent);
 
