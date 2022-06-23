@@ -8,7 +8,7 @@ maintainers:
   - name: HMCTS nfdiv team
 dependencies:
   - name: java
-    version: 3.7.8
+    version: 3.7.9
     repository: '@hmctspublic'
   - name: ccd
     version: 7.1.0
