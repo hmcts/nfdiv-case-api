@@ -151,6 +151,27 @@ class Applicant1ResubmitNotificationTest {
     }
 
     @Test
+    void shouldSendSpecificNotificationInWelshToApplicant2WhenResubmittedByApplicant1WithDivorceContentAndApp2LanguagePrefIsWelsh() {
+        CaseData data = validApplicant2CaseData();
+        data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE),
+            argThat(allOf(
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
+                hasEntry(SIGN_IN_URL, SIGN_IN_DIVORCE_TEST_URL + app2CheckJointAnswers)
+            )),
+            eq(WELSH)
+        );
+    }
+
+    @Test
     void shouldSendSpecificNotificationToApplicant2WhenResubmittedByApplicant1WithDissolutionContent() {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);

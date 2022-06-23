@@ -179,6 +179,40 @@ public class ServiceOrderTemplateContentIT {
         );
     }
 
+    @Test
+    public void shouldApplyWelshPartnerContentIfApplicant1LanguagePreferenceIsWelshOnDivorce() {
+        CaseData caseData = buildCaseData(NO, DEEMED);
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
+        caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+
+        var ctscContactDetails = buildCtscContactDetails();
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
+
+        assertThat(templateContent).contains(
+            entry(PARTNER, "priod")
+        );
+    }
+
+    @Test
+    public void shouldApplyWelshCivilPartnerContentIfApplicant1LanguagePreferenceIsWelshOnDissolution() {
+        CaseData caseData = buildCaseData(NO, DEEMED);
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+
+        var ctscContactDetails = buildCtscContactDetails();
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
+
+        assertThat(templateContent).contains(
+            entry(PARTNER, "partner sifil")
+        );
+    }
+
     private CaseData buildCaseData(final YesOrNo serviceApplicationGranted,
                                    final AlternativeServiceType serviceType) {
 
