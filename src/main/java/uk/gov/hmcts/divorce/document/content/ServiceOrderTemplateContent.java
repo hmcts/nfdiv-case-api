@@ -81,7 +81,8 @@ public class ServiceOrderTemplateContent {
 
         if (NO.equals(alternativeService.getServiceApplicationGranted())) {
             templateContent.put(REFUSAL_REASON, alternativeService.getServiceApplicationRefusalReason());
-            templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
+            templateContent.put(PARTNER,
+                commonContent.getPartner(caseData, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference()));
             templateContent.put(IS_DIVORCE, caseData.isDivorce() ? YES.getValue() : NO.getValue());
         }
 
