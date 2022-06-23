@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -21,9 +20,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
@@ -75,10 +76,31 @@ class AwaitingConditionalOrderNotificationTest {
     }
 
     @Test
+    void shouldSendEmailToApplicant1InWelshIfApp1LangPrefIsWelsh() {
+        final var data = validApplicant1CaseData();
+        data.getApplicant1().setLanguagePreferenceWelsh(YES);
+        
+        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(new HashMap<>());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
+            argThat(allOf(
+                hasEntry(IS_REMINDER, CommonContent.NO)
+            )),
+            eq(WELSH)
+        );
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
     void shouldSendEmailToApplicant1Solicitor() {
         final var applicant = getApplicant();
         applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
-        applicant.setSolicitorRepresented(YesOrNo.YES);
+        applicant.setSolicitorRepresented(YES);
         final var data = CaseData.builder().applicant1(applicant).build();
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
@@ -118,6 +140,27 @@ class AwaitingConditionalOrderNotificationTest {
     }
 
     @Test
+    void shouldSendEmailToApplicant2IfJointApplicationInWelshIfApp2LangPrefIsWelsh() {
+        final var data = validApplicant2CaseData();
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
+
+        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(new HashMap<>());
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
+            argThat(allOf(
+                hasEntry(IS_REMINDER, CommonContent.NO)
+            )),
+            eq(WELSH)
+        );
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
     void shouldNotSendEmailToApplicant2IfSoleApplication() {
         final var data = validApplicant2CaseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -141,7 +184,7 @@ class AwaitingConditionalOrderNotificationTest {
     void shouldSendEmailToApplicant2SolicitorWhenJointApplication() {
         final Applicant applicant = getApplicant();
         applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
-        applicant.setSolicitorRepresented(YesOrNo.YES);
+        applicant.setSolicitorRepresented(YES);
         final var data = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
             .applicant2(applicant)
