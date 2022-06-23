@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_PROFESSIONAL_USERS_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
@@ -92,7 +92,7 @@ class AwaitingConditionalOrderNotificationTest {
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
-        when(commonContent.getSignInUrl(data)).thenReturn(SIGN_IN_DIVORCE_URL);
+        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn(SIGN_IN_PROFESSIONAL_USERS_URL);
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
         notification.sendToApplicant1Solicitor(data, 1234567890123456L);
@@ -108,7 +108,7 @@ class AwaitingConditionalOrderNotificationTest {
                 hasEntry(UNION_TYPE, DIVORCE),
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "not provided"),
-                hasEntry(SIGN_IN_URL, SIGN_IN_DIVORCE_URL)
+                hasEntry(SIGN_IN_URL, SIGN_IN_PROFESSIONAL_USERS_URL)
             )),
             eq(ENGLISH)
         );

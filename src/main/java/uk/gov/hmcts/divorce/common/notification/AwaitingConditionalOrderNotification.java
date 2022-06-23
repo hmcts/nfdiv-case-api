@@ -61,7 +61,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
         templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant1.getSolicitor().getReference())
             ? applicant1.getSolicitor().getReference()
             : "not provided");
-        templateVars.put(SIGN_IN_URL, commonContent.getSignInUrl(caseData));
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
         notificationService.sendEmail(
             applicant1.getSolicitor().getEmail(),
