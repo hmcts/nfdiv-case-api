@@ -6,6 +6,8 @@ import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +18,8 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -128,7 +132,7 @@ public class CommonContent {
 
     public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant) {
         Map<String, String> templateVars = basicTemplateVars(data, id);
-        templateVars.put(ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(SOLICITOR_REFERENCE,
             isNotEmpty(applicant.getSolicitor().getReference())
@@ -137,6 +141,21 @@ public class CommonContent {
         templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
         templateVars.put(SIGN_IN_URL, getSignInUrl(data));
+        return templateVars;
+    }
+
+    public Map<String, String> getCoRefusedSolicitorTemplateVars(CaseData caseData, Long caseId, Applicant applicant,
+                                                                 RefusalOption refusalOption) {
+        final Map<String, String> templateVars = solicitorTemplateVars(caseData, caseId, applicant);
+
+        boolean isSole = caseData.getApplicationType().isSole();
+
+        templateVars.put("moreInfo", MORE_INFO.equals(refusalOption) ? YES : NO);
+        templateVars.put("amendApplication", REJECT.equals(refusalOption) ? YES : NO);
+        templateVars.put("isJoint", isSole ? NO : YES);
+        templateVars.put("applicant1Label", isSole ? APPLICANT : APPLICANT_1);
+        templateVars.put("applicant2Label", isSole ? RESPONDENT : APPLICANT_2);
+
         return templateVars;
     }
 

@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorCoRefusalDecisionNotification;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorAmendApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -52,7 +52,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
 
     @Autowired
-    private LegalAdvisorCoRefusalDecisionNotification refusalDecisionNotification;
+    private LegalAdvisorAmendApplicationDecisionNotification amendApplicationDecisionNotification;
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -143,7 +143,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingPronouncement;
 
         } else if (REJECT.equals(conditionalOrder.getRefusalDecision())) {
-            notificationDispatcher.send(refusalDecisionNotification, caseData, details.getId());
+            notificationDispatcher.send(amendApplicationDecisionNotification, caseData, details.getId());
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
                 details.getId()

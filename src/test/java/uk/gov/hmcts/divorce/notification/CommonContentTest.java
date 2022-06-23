@@ -7,10 +7,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import static java.lang.String.join;
@@ -25,6 +27,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOINT;
@@ -36,12 +43,15 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_PROFESSIONAL_USERS_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
@@ -347,6 +357,71 @@ class CommonContentTest {
             .isNotEmpty()
             .contains(
                 entry(PARTNER, "husband")
+            );
+    }
+
+    @Test
+    public void shouldAddCoRefusedSolicitorContentForSoleApplicationWithRefusalOptionMoreInfo() {
+
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .application(Application.builder()
+                .issueDate(LocalDate.of(2022, 6, 22))
+                .build())
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(applicantRepresentedBySolicitor())
+            .applicant2(respondent())
+            .build();
+
+        final Map<String, String> result = commonContent.getCoRefusedSolicitorTemplateVars(caseData, 1L,
+            caseData.getApplicant1(), MORE_INFO);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry("isJoint", CommonContent.NO),
+                entry("moreInfo", CommonContent.YES),
+                entry("amendApplication", CommonContent.NO),
+                entry(SOLICITOR_NAME, "The Solicitor"),
+                entry(SOLICITOR_REFERENCE, "Not provided"),
+                entry("applicant1Label", "Applicant"),
+                entry("applicant2Label", "Respondent"),
+                entry(ISSUE_DATE, "22 June 2022"),
+                entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
+                entry(APPLICANT_2_FULL_NAME, "applicant_2_first_name test_last_name")
+            );
+    }
+
+    @Test
+    public void shouldAddCoRefusedSolicitorContentForJointApplicationWithRefusalOptionAmendApplication() {
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DISSOLUTION)
+            .application(Application.builder()
+                .issueDate(LocalDate.of(2022, 6, 22))
+                .build())
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(getApplicant())
+            .applicant2(applicantRepresentedBySolicitor())
+            .build();
+
+        caseData.getApplicant2().getSolicitor().setReference("sol2");
+
+        final Map<String, String> result = commonContent.getCoRefusedSolicitorTemplateVars(caseData, 1L,
+            caseData.getApplicant2(), REJECT);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry("isJoint", CommonContent.YES),
+                entry("moreInfo", CommonContent.NO),
+                entry("amendApplication", CommonContent.YES),
+                entry(SOLICITOR_NAME, "The Solicitor"),
+                entry(SOLICITOR_REFERENCE, "sol2"),
+                entry("applicant1Label", "Applicant 1"),
+                entry("applicant2Label", "Applicant 2"),
+                entry(ISSUE_DATE, "22 June 2022"),
+                entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
+                entry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name")
             );
     }
 }
