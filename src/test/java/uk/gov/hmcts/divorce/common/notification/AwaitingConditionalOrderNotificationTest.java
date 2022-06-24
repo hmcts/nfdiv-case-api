@@ -88,7 +88,7 @@ class AwaitingConditionalOrderNotificationTest {
     void shouldSendEmailToApplicant1InWelshIfApp1LangPrefIsWelsh() {
         final var data = validApplicant1CaseData();
         data.getApplicant1().setLanguagePreferenceWelsh(YES);
-        
+
         when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(new HashMap<>());
 
@@ -146,7 +146,7 @@ class AwaitingConditionalOrderNotificationTest {
                 .reference("ref")
                 .build()
         );
-        applicant.setSolicitorRepresented(YesOrNo.YES);
+        applicant.setSolicitorRepresented(YES);
         final var data = CaseData.builder().applicant1(applicant).build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
