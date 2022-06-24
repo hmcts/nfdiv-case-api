@@ -71,7 +71,12 @@ public class IssueApplicationService {
             generateApplicant2NoticeOfProceedings,
             divorceApplicationRemover,
             generateDivorceApplication,
-            generateD10Form,
+            generateD10Form
+        ).run(caseDetails);
+    }
+
+    public CaseDetails<CaseData, State> sendNotifications(final CaseDetails<CaseData, State> caseDetails) {
+        return caseTasks(
             sendAosPackToRespondent,
             sendAosPackToApplicant,
             sendApplicationIssueNotifications
