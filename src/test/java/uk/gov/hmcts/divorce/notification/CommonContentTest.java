@@ -132,6 +132,17 @@ class CommonContentTest {
     void shouldGetUnionType() {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DIVORCE);
+        assertThat(commonContent.getUnionType(caseData)).isEqualTo("divorce");
+
+        caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertThat(commonContent.getUnionType(caseData)).isEqualTo("dissolution");
+    }
+
+    @Test
+    void shouldGetEnglishUnionType() {
+        CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
         assertThat(commonContent.getUnionType(caseData, LanguagePreference.ENGLISH)).isEqualTo("divorce");
 
         caseData = caseData();
