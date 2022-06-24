@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccessExcludingCAA;
+import uk.gov.hmcts.divorce.divorcecase.model.access.LegalAdvisorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 
 import java.util.EnumSet;
@@ -73,7 +74,7 @@ public enum State {
     @CCD(
         name = "Awaiting admin clarification",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
     )
     AwaitingAdminClarification("AwaitingAdminClarification"),
 
@@ -87,7 +88,7 @@ public enum State {
     @CCD(
         name = "Awaiting amended application",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
     )
     AwaitingAmendedApplication("AwaitingAmendedApplication"),
 
@@ -129,7 +130,7 @@ public enum State {
     @CCD(
         name = "Awaiting clarification",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
     )
     AwaitingClarification("AwaitingClarification"),
 
@@ -304,7 +305,7 @@ public enum State {
     @CCD(
         name = "Listed; awaiting pronouncement",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
     )
     AwaitingPronouncement("AwaitingPronouncement"),
 
