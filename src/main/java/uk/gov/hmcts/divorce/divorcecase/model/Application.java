@@ -409,6 +409,11 @@ public class Application {
     private ReissueOption reissueOption;
 
     @CCD(
+        access = {DefaultAccess.class}
+    )
+    private ReissueOption previousReissueOption;
+
+    @CCD(
         label = "Does Applicant 2 need help with fees?",
         access = {Applicant2Access.class}
     )

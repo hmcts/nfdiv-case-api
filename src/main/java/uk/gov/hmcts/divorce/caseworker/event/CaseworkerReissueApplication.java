@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -95,10 +96,12 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker reissue application submitted callback invoked for case id: {}, with before reissue option - {}",
-            details.getId(), details.getData().getApplication().getReissueOption());
+        ReissueOption reissueOption = details.getData().getApplication().getPreviousReissueOption();
 
-        reIssueApplicationService.sendNotifications(details, details.getData().getApplication().getReissueOption());
+        log.info("Caseworker reissue application submitted callback invoked for case id: {}, with reissue option - {}",
+            details.getId(), reissueOption);
+
+        reIssueApplicationService.sendNotifications(details, reissueOption);
 
         return SubmittedCallbackResponse.builder().build();
     }

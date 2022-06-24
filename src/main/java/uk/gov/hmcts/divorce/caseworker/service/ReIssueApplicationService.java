@@ -63,6 +63,7 @@ public class ReIssueApplicationService {
         var updatedCaseDetails = updateCase(caseDetails, reissueOption);
 
         //Reset reissue option
+        updatedCaseDetails.getData().getApplication().setPreviousReissueOption(reissueOption);
         updatedCaseDetails.getData().getApplication().setReissueOption(null);
 
         return updatedCaseDetails;
