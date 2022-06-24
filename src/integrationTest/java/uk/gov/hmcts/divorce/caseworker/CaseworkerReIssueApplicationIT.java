@@ -644,12 +644,6 @@ public class CaseworkerReIssueApplicationIT {
                 eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE),
                 anyMap(),
                 eq(ENGLISH));
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
-                anyMap(),
-                eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
