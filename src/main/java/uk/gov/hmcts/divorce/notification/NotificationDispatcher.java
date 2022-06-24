@@ -10,7 +10,7 @@ public class NotificationDispatcher {
 
     public void send(final ApplicantNotification applicantNotification, final CaseData caseData, final Long caseId) {
 
-        if (caseData.getApplicant1().isRepresented()) {
+        if (caseData.getApplicant1().isRepresented() && !caseData.getApplicant1().isOffline()) {
             applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
         } else if (caseData.getApplicant1().isOffline()) {
             applicantNotification.sendToApplicant1Offline(caseData, caseId);
@@ -18,7 +18,7 @@ public class NotificationDispatcher {
             applicantNotification.sendToApplicant1(caseData, caseId);
         }
 
-        if (caseData.getApplicant2().isRepresented()) {
+        if (caseData.getApplicant2().isRepresented() && !caseData.getApplicant2().isOffline()) {
             applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
         } else if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
             applicantNotification.sendToApplicant2Offline(caseData, caseId);
