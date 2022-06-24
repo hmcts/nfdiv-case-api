@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -40,6 +41,7 @@ import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applica
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
@@ -120,6 +122,57 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
                 hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendWelshEmailToSoleApplicant1WhoSubmittedCoWithDivorceContentIfLanguagePreferenceIsWelsh() {
+        CaseData data = caseData(DIVORCE, ApplicationType.SOLE_APPLICATION);
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+        setMockClock(clock);
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+            )),
+            eq(WELSH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendWelshEmailToSoleApplicant1WhoSubmittedCoWithDissolutionContentIfLanguagePreferenceIsWelsh() {
+        CaseData data = caseData(DISSOLUTION, ApplicationType.SOLE_APPLICATION);
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(templateVars);
+        setMockClock(clock);
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+            )),
+            eq(WELSH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
