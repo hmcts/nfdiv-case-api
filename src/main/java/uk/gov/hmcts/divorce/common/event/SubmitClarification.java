@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.PostInformationToCourtNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -14,10 +15,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.ClarificationResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
@@ -103,11 +107,13 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                     ));
         }
 
+        List<ListValue<DivorceDocument>> newestClarificationUploadDocuments = getNewestClarificationUploadDocuments(conditionalOrder);
+
         final var clarificationResponse =
             ClarificationResponse.builder()
                 .clarificationDate(LocalDate.now(clock))
                 .clarificationResponses(conditionalOrder.getClarificationResponses())
-                .clarificationUploadDocuments(conditionalOrder.getClarificationUploadDocuments())
+                .clarificationUploadDocuments(newestClarificationUploadDocuments)
                 .cannotUploadClarificationDocuments(conditionalOrder.getCannotUploadClarificationDocuments())
                 .build();
 
@@ -122,6 +128,22 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             .data(details.getData())
             .state(ClarificationSubmitted)
             .build();
+    }
+
+    private List<ListValue<DivorceDocument>> getNewestClarificationUploadDocuments(ConditionalOrder conditionalOrder) {
+        List<ListValue<DivorceDocument>> clarificationUploadDocuments = conditionalOrder.getClarificationUploadDocuments();
+
+        if (conditionalOrder.getClarificationResponsesSubmitted() == null) {
+            return clarificationUploadDocuments;
+        }
+
+        List<ListValue<DivorceDocument>> historyOfClarificationUploadDocuments = new ArrayList<>();
+        for (final ListValue<ClarificationResponse> response : conditionalOrder.getClarificationResponsesSubmitted()) {
+            historyOfClarificationUploadDocuments.addAll(response.getValue().getClarificationUploadDocuments());
+        }
+
+        clarificationUploadDocuments.removeAll(historyOfClarificationUploadDocuments);
+        return clarificationUploadDocuments;
     }
 
 }
