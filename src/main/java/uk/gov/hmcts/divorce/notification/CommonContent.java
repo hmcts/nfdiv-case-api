@@ -140,7 +140,7 @@ public class CommonContent {
                 : NOT_PROVIDED);
         templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
-        templateVars.put(SIGN_IN_URL, getSignInUrl(data));
+        templateVars.put(SIGN_IN_URL, getProfessionalUsersSignInUrl(id));
         return templateVars;
     }
 
