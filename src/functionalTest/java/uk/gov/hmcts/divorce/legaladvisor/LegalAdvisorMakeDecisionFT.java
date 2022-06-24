@@ -23,6 +23,8 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-legal-advisor-make-decision.json";
+    private static final String JOINT_WELSH_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-legal-advisor-make-decision-joint-welsh.json";
     private static final String CO_MORE_INFO_RESPONSE = "classpath:responses/response-legal-advisor-make-decision-co-more-info.json";
     private static final String CO_REJECTED_RESPONSE = "classpath:responses/response-legal-advisor-make-decision-co-rejected.json";
 
@@ -53,5 +55,15 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(CO_REJECTED_RESPONSE)));
+    }
+
+    @Test
+    public void shouldSendWelshNotificationsIfJointConditionalOrderNotGranted() throws IOException {
+        Map<String, Object> request = caseData(JOINT_WELSH_REQUEST);
+        request.put("coRefusalDecision", "moreInfo");
+
+        Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 }
