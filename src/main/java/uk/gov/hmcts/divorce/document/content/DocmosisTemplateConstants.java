@@ -142,6 +142,11 @@ public final class DocmosisTemplateConstants {
     public static final String HUSBAND_OR_WIFE = "husband or wife";
     public static final String CIVIL_PARTNER = "civil partner";
 
+    public static final String DIVORCE_PROCESS = "divorce process";
+    public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP = "process to end your civil partnership";
+    public static final String DIVORCE_PROCESS_CY = "broses o ysgaru";
+    public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY = "broses o ddod â’ch partneriaeth sifil i ben";
+
     public static final String DUE_DATE = "dueDate";
     public static final String APPLICANT_SOLICITOR_REGISTERED = "isApplicantSolicitorRegistered";
     public static final String APPLICANT_SOLICITOR_LABEL = "applicantSolicitorLabel";
