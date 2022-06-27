@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,9 +29,11 @@ import static uk.gov.hmcts.divorce.citizen.notification.Applicant2RequestChanges
 import static uk.gov.hmcts.divorce.citizen.notification.Applicant2RequestChangesNotification.PARTNER_IS_REPRESENTED;
 import static uk.gov.hmcts.divorce.citizen.notification.Applicant2RequestChangesNotification.REQUESTED_CHANGES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -193,6 +196,34 @@ class Applicant2RequestChangesNotificationTest {
     }
 
     @Test
+    void shouldSendEmailToApplicant2WithDivorceContentWhenLangPrefIsWelsh() {
+        CaseData data = caseData();
+        data.setApplicant2(getApplicant(Gender.FEMALE));
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.setCaseInvite(new CaseInvite(TEST_USER_EMAIL, null, null));
+
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(PARTNER, "gŵr");
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateVars);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLICANT2_REQUEST_CHANGES),
+            argThat(
+                anyOf(
+                    hasEntry(PARTNER, "gŵr")
+                )
+            ),
+            eq(WELSH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
     void shouldSendEmailToApplicant2WithDissolutionContent() {
         CaseData data = caseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
@@ -211,6 +242,36 @@ class Applicant2RequestChangesNotificationTest {
             eq(JOINT_APPLICANT2_REQUEST_CHANGES),
             any(),
             eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2WithDissolutionContentWhenLangPrefIsWelsh() {
+        CaseData data = caseData();
+        data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        data.setApplicant2(getApplicant(Gender.MALE));
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.setCaseInvite(new CaseInvite(TEST_USER_EMAIL, null, null));
+
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
+        templateVars.put(PARTNER, "gwraig");
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateVars);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLICANT2_REQUEST_CHANGES),
+            argThat(
+                anyOf(
+                    hasEntry(PARTNER, "gwraig")
+                )
+            ),
+            eq(WELSH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }

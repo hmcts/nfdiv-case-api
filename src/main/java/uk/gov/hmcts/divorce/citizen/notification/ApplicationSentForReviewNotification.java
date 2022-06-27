@@ -82,7 +82,7 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
             emailTemplate,
-            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), false),
+            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()
         );
     }
@@ -99,9 +99,9 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
         );
     }
 
-    private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, boolean isReminder) {
+    private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(IS_REMINDER, isReminder ? YES :  NO);
+        templateVars.put(IS_REMINDER, NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateVars.put(CREATE_ACCOUNT_LINK,
@@ -111,6 +111,7 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
             templateVars.put(SOLICITOR_FIRM,
                 caseData.getApplicant1().getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationName());
         }
+
         return templateVars;
     }
 

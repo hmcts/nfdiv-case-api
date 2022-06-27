@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -28,6 +29,8 @@ public class JointApplicationNotReviewedNotification implements ApplicantNotific
     public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Sending notification to applicant 1 to notify them of overdue joint application: {}", id);
 
+        final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
@@ -36,7 +39,7 @@ public class JointApplicationNotReviewedNotification implements ApplicantNotific
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICATION_OVERDUE,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            languagePreference
         );
     }
 }
