@@ -130,7 +130,7 @@ public class CaseworkerMakeBailiffDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingBailiffService.getName()))
+                jsonPath("$.state").value(AwaitingBailiffService.name()))
             .andExpect(
                 jsonPath("$.data.serviceApplicationDecisionDate").value(getExpectedLocalDate().toString())
             );
@@ -197,7 +197,7 @@ public class CaseworkerMakeBailiffDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingAos.getName())
+                jsonPath("$.state").value(AwaitingAos.name())
             )
             .andExpect(
                 jsonPath("$.data.alternativeServiceOutcomes[0].value.serviceApplicationDecisionDate")
