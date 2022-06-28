@@ -31,8 +31,6 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
 
     public static final String CASEWORKER_CONFIRM_SERVICE = "caseworker-confirm-service";
 
-    private static final String BLANK_LABEL = "";
-
     @Autowired
     private SolicitorSubmitConfirmService solicitorSubmitConfirmService;
 
