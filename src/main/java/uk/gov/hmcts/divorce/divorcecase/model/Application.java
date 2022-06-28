@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.Integer.parseInt;
@@ -598,7 +599,8 @@ public class Application {
     }
 
     @JsonIgnore
-    public String getPbaNumber() {
-        return this.getPbaNumbers().getValue().getLabel();
+    public Optional<String> getPbaNumber() {
+        return Optional.ofNullable(pbaNumbers)
+            .map(dynamicList -> dynamicList.getValue().getLabel());
     }
 }

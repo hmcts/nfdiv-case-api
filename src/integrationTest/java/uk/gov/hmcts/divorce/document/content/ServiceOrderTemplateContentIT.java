@@ -22,9 +22,14 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_DEEMED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.REFUSAL_REASON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_DECISION_DATE;
@@ -55,7 +60,7 @@ public class ServiceOrderTemplateContentIT {
             entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
             entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, "No"),
+            entry(IS_SERVICE_ORDER_TYPE_DEEMED, NO),
             entry("ctscContactDetails", buildCtscContactDetails())
         );
     }
@@ -74,7 +79,7 @@ public class ServiceOrderTemplateContentIT {
             entry(SERVICE_APPLICATION_DECISION_DATE, "20 June 2021"),
             entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, "Yes"),
+            entry(IS_SERVICE_ORDER_TYPE_DEEMED, YES),
             entry("ctscContactDetails", buildCtscContactDetails())
         );
     }
@@ -96,10 +101,10 @@ public class ServiceOrderTemplateContentIT {
             entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
             entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, "No"),
+            entry(IS_SERVICE_ORDER_TYPE_DEEMED, NO),
             entry(REFUSAL_REASON, "refusal reasons"),
             entry(PARTNER, "spouse"),
-            entry(IS_DIVORCE, "Yes"),
+            entry(IS_DIVORCE, YES),
             entry("ctscContactDetails", ctscContactDetails)
         );
     }
@@ -122,10 +127,10 @@ public class ServiceOrderTemplateContentIT {
             entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
             entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, "No"),
+            entry(IS_SERVICE_ORDER_TYPE_DEEMED, NO),
             entry(REFUSAL_REASON, "refusal reasons"),
             entry(PARTNER, "civil partner"),
-            entry(IS_DIVORCE, "No"),
+            entry(IS_DIVORCE, NO),
             entry("ctscContactDetails", ctscContactDetails)
         );
     }
@@ -146,10 +151,11 @@ public class ServiceOrderTemplateContentIT {
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, "Yes"),
+            entry(IS_SERVICE_ORDER_TYPE_DEEMED, YES),
             entry(REFUSAL_REASON, "refusal reasons"),
             entry(PARTNER, "spouse"),
-            entry(IS_DIVORCE, "Yes"),
+            entry(IS_DIVORCE, YES),
+            entry(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS),
             entry("ctscContactDetails", ctscContactDetails)
         );
     }
@@ -171,16 +177,17 @@ public class ServiceOrderTemplateContentIT {
             entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
             entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, "Yes"),
+            entry(IS_SERVICE_ORDER_TYPE_DEEMED, YES),
             entry(REFUSAL_REASON, "refusal reasons"),
             entry(PARTNER, "civil partner"),
-            entry(IS_DIVORCE, "No"),
+            entry(IS_DIVORCE, NO),
+            entry(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP),
             entry("ctscContactDetails", ctscContactDetails)
         );
     }
 
     @Test
-    public void shouldApplyWelshPartnerContentIfApplicant1LanguagePreferenceIsWelshOnDivorce() {
+    public void shouldApplyWelshContentIfApplicant1LanguagePreferenceIsWelshOnDivorce() {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
@@ -192,12 +199,13 @@ public class ServiceOrderTemplateContentIT {
         ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
-            entry(PARTNER, "priod")
+            entry(PARTNER, "priod"),
+            entry(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS_CY)
         );
     }
 
     @Test
-    public void shouldApplyWelshCivilPartnerContentIfApplicant1LanguagePreferenceIsWelshOnDissolution() {
+    public void shouldApplyWelshContentIfApplicant1LanguagePreferenceIsWelshOnDissolution() {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
@@ -209,7 +217,8 @@ public class ServiceOrderTemplateContentIT {
         ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
-            entry(PARTNER, "partner sifil")
+            entry(PARTNER, "partner sifil"),
+            entry(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY)
         );
     }
 

@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.exception.InvalidCcdCaseDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_2_RESIDENT_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_CP;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_D;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COUNTRY_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
@@ -70,6 +73,27 @@ public class ApplicationTemplateDataProvider {
             .filter(connections::contains)
             .map(jurisdictionConnection ->
                 new Connection(toLowerCase(jurisdictionConnection.getLabel().charAt(0)) + jurisdictionConnection.getLabel().substring(1)))
+            .collect(Collectors.toList());
+    }
+
+    public List<Connection> deriveJurisdictionList(final Application application, final Long caseId,
+                                                   final LanguagePreference languagePreference) {
+
+        final Set<JurisdictionConnections> connections = application.getJurisdiction().getConnections();
+
+        if (isEmpty(connections)) {
+            final String errorMessage = "JurisdictionConnections" + EMPTY;
+            log.info("{}, for case id {} ", errorMessage, caseId);
+            throw new InvalidCcdCaseDataException(errorMessage);
+        }
+
+        return JURISDICTION_ORDER.stream()
+            .filter(connections::contains)
+            .map(jurisdictionConnection -> {
+                String label = WELSH.equals(languagePreference) && StringUtils.isNotBlank(jurisdictionConnection.getLabelCy())
+                    ? jurisdictionConnection.getLabelCy() : jurisdictionConnection.getLabel();
+                return new Connection(toLowerCase(label.charAt(0)) + label.substring(1));
+            })
             .collect(Collectors.toList());
     }
 
