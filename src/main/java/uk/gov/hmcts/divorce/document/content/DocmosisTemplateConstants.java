@@ -108,7 +108,6 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_HEADING = "applicant";
     public static final String RESPONDENT_HEADING = "respondent";
     public static final String SOLE_JOINT_HEADING = "soleOrJoint";
-    public static final String COSTS_GRANTED = "costsGranted";
     public static final String CTSC_CONTACT_DETAILS = "ctscContactDetails";
 
     public static final String IS_DISPUTING = "isDisputing";
@@ -145,8 +144,8 @@ public final class DocmosisTemplateConstants {
     public static final String CIVIL_PARTNER = "civil partner";
 
     public static final String DIVORCE_PROCESS = "divorce process";
-    public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP = "process to end your civil partnership";
     public static final String DIVORCE_PROCESS_CY = "broses o ysgaru";
+    public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP = "process to end your civil partnership";
     public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY = "broses o ddod â’ch partneriaeth sifil i ben";
 
     public static final String DUE_DATE = "dueDate";
