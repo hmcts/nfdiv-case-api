@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,10 +28,12 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_REGISTERED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPOND_BY_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
@@ -64,7 +67,6 @@ public class NoticeOfProceedingContent {
     public static final String END_A_CIVIL_PARTNERSHIP_SERVICE = "End A Civil Partnership Service";
     public static final String DIVORCE_PROCEEDINGS = "divorce proceedings";
     public static final String DIVORCE_APPLICATION = "divorce application";
-    public static final String DIVORCE_PROCESS = "divorce process";
     public static final String YOUR_DIVORCE = "your divorce";
     public static final String DIVORCE = "divorce";
     public static final String DIVORCE_URL = "https://www.gov.uk/divorce";
@@ -75,7 +77,6 @@ public class NoticeOfProceedingContent {
     public static final String TO_END_THEIR_CIVIL_PARTNERSHIP = "to end their civil partnership";
     public static final String CIVIL_PARTNER = "civil partner";
     public static final String APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP = "application to end your civil partnership";
-    public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP = "process to end your civil partnership";
     public static final String YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP = "your application to end your civil partnership";
     public static final String ENDING_YOUR_CIVIL_PARTNERSHIP = "ending your civil partnership";
     public static final String ENDING_A_CIVIL_PARTNERSHIP = "ending a civil partnership";
@@ -172,7 +173,9 @@ public class NoticeOfProceedingContent {
                 ? caseData.getApplicant1().getSolicitor().getName()
                 : NOT_REPRESENTED);
 
-        boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline() || caseData.getApplicant1().getEmail() != null;
+        boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline()
+            && ObjectUtils.isNotEmpty(caseData.getApplicant1().getEmail());
+
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
         final boolean personalServiceMethod = PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod());
@@ -285,7 +288,7 @@ public class NoticeOfProceedingContent {
         );
 
         templateContent.put(
-                SOLICITOR_NAME_WITH_DEFAULT_VALUE,
+            SOLICITOR_NAME_WITH_DEFAULT_VALUE,
             !isNull(applicant1Solicitor) && applicant1.isRepresented() ? applicant1Solicitor.getName() : NOT_REPRESENTED
         );
 
