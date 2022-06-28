@@ -25,6 +25,8 @@ public final class DocumentConstants {
     public static final String NFD_NOP_R1_SOLE_APP2_CIT_ONLINE = "NFD_NOP_R1_SOLE_APP2_CIT_ONLINE";
     public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE = "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE";
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
+    public static final String ORDER_COVERSHEET_DOCUMENT_NAME = "orderCoversheet";
+
 
     public static final String CERTIFICATE_OF_SERVICE_DOCUMENT_NAME = "certificateOfService";
 

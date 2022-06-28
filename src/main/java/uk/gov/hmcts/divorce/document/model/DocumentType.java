@@ -165,7 +165,10 @@ public enum DocumentType implements HasLabel {
     AOS_OVERDUE_LETTER("Aos overdue letter"),
 
     @JsonProperty("generalLetter")
-    GENERAL_LETTER("General letter");
+    GENERAL_LETTER("General letter"),
+
+    @JsonProperty("orderCoversheet")
+    ORDER_COVERSHEET("Order Coversheet");
 
     private final String label;
 }

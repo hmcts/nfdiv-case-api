@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
+package uk.gov.hmcts.divorce.common.notification;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronouncedPrinter;
 
 import java.util.Map;
 
@@ -35,6 +36,9 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     @Autowired
     private CommonContent commonContent;
 
+    @Autowired
+    private ConditionalOrderPronouncedPrinter conditionalOrderPronouncedPrinter;
+
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
         log.info("Notifying applicant 1 that their conditional order application has been pronounced: {}", caseId);
@@ -45,6 +49,12 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
             templateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
+    }
+
+    @Override
+    public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
+        log.info("Sending conditional order letter to applicant 1 for case: {}", caseId);
+        conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId);
     }
 
     @Override
@@ -59,6 +69,12 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
             templateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()
         );
+    }
+
+    @Override
+    public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
+        log.info("Sending conditional order letter to applicant 2 for case: {}", caseId);
+        conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId);
     }
 
     private Map<String, String> templateVars(final CaseData caseData,
