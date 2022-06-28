@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -31,13 +32,11 @@ import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applica
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.CIVIL_PARTNER_APPLIED;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.CIVIL_PARTNER_DID_NOT_APPLY;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.HUSBAND_APPLIED;
-import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.HUSBAND_DID_NOT_APPLY;
-import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.PARTNER_APPLIED;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.PARTNER_DID_NOT_APPLY;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.PARTNER_DID_NOT_APPLY_DUE_DATE;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.PLUS_14_DUE_DATE;
-import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.WIFE_APPLIED;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.WIFE_DID_NOT_APPLY;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.PLUS_21_DUE_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -52,6 +51,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -216,15 +216,9 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(JOINT_APPLIED_FOR_CONDITIONAL_ORDER),
+            eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(PARTNER_APPLIED, YES),
-                hasEntry(WIFE_APPLIED, NO),
-                hasEntry(HUSBAND_APPLIED, YES),
-                hasEntry(CIVIL_PARTNER_APPLIED, NO),
-                hasEntry(HUSBAND_DID_NOT_APPLY, NO),
-                hasEntry(CIVIL_PARTNER_DID_NOT_APPLY, NO)
+                hasEntry(PLUS_21_DUE_DATE, LocalDate.now().plusDays(21).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -286,9 +280,9 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
     }
 
     @Test
-    void shouldNotSendEmailToJointApplicant2WhoDidNotSubmitCoButAlreadyApplied() {
+    void shouldSendEmailToJointApplicant2WhoDidNotSubmitCoButAlreadyApplied() {
         CaseData caseData = validApplicant2CaseData();
-        setSubmittedDate(caseData, List.of(APPLICANT2));
+        setSubmittedDate(caseData, List.of(APPLICANT1, APPLICANT2));
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
@@ -297,7 +291,14 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
 
         notification.sendToApplicant2(caseData, 1234567890123456L);
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
+            argThat(allOf(
+                hasEntry(PLUS_21_DUE_DATE, LocalDate.now().plusDays(21).format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
     }
 
     @Test
