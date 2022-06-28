@@ -54,7 +54,7 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
         log.info("Sending conditional order letter to applicant 1 for case: {}", caseId);
-        conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId);
+        conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId, caseData.getApplicant1());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
         log.info("Sending conditional order letter to applicant 2 for case: {}", caseId);
-        conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId);
+        conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId, caseData.getApplicant2());
     }
 
     private Map<String, String> templateVars(final CaseData caseData,
