@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -42,6 +43,9 @@ public class ReIssueApplicationService {
 
     @Autowired
     private SendAosPackToRespondent sendAosPackToRespondent;
+
+    @Autowired
+    private SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
 
     @Autowired
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
@@ -87,6 +91,7 @@ public class ReIssueApplicationService {
             return caseTasks(
                 setPostIssueState,
                 setReIssueAndDueDate,
+                setNoticeOfProceedingDetailsForRespondent,
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
@@ -97,6 +102,7 @@ public class ReIssueApplicationService {
             return caseTasks(
                 setPostIssueState,
                 setReIssueAndDueDate,
+                setNoticeOfProceedingDetailsForRespondent,
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
@@ -110,25 +116,23 @@ public class ReIssueApplicationService {
         }
     }
 
-    public CaseDetails<CaseData, State> sendNotifications(CaseDetails<CaseData, State> caseDetails, ReissueOption reissueOption) {
+    public void sendNotifications(CaseDetails<CaseData, State> caseDetails, ReissueOption reissueOption) {
         if (DIGITAL_AOS.equals(reissueOption)) {
             log.info("For case id {} sending reissue notifications for digital aos ", caseDetails.getId());
-            return caseTasks(
+            caseTasks(
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else if (OFFLINE_AOS.equals(reissueOption)) {
             log.info("For case id {} sending reissue notifications for offline aos ", caseDetails.getId());
 
-            caseDetails.getData().getApplicant2().setOffline(YES);
-
-            return caseTasks(
+            caseTasks(
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else if (REISSUE_CASE.equals(reissueOption)) {
             log.info("For case id {} sending reissue notifications for reissue case", caseDetails.getId());
-            return caseTasks(
+            caseTasks(
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,
                 sendApplicationIssueNotifications
@@ -136,7 +140,7 @@ public class ReIssueApplicationService {
         } else {
             log.info("For case id {} invalid reissue option hence not sending reissue notifications ", caseDetails.getId());
             throw new ReissueProcessingException(
-                "Exception occurred while sending notifications for reissue application for case id " + caseDetails.getId()
+                "Exception occurred while sending reissue application notifications for case id " + caseDetails.getId()
             );
         }
 

@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetIssueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -22,6 +23,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -48,6 +51,9 @@ class CaseworkerIssueApplicationServiceTest {
     private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Mock
+    private SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
+
+    @Mock
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
 
     @Mock
@@ -69,7 +75,7 @@ class CaseworkerIssueApplicationServiceTest {
     private IssueApplicationService issueApplicationService;
 
     @Test
-    void shouldRunIssueApplicationTasksForCitizenApplication() {
+    void shouldRunIssueApplicationTasks() {
 
         final CaseData caseData = caseData();
 
@@ -81,18 +87,41 @@ class CaseworkerIssueApplicationServiceTest {
         when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
         when(setIssueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
+        when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(divorceApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
+
+        verifyNoInteractions(sendAosPackToApplicant);
+        verifyNoInteractions(sendAosPackToRespondent);
+        verifyNoInteractions(sendApplicationIssueNotifications);
+    }
+
+    @Test
+    void shouldRunSendNotificationTasks() {
+
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(1L);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+
+        issueApplicationService.sendNotifications(caseDetails);
+
+        verify(sendAosPackToApplicant).apply(caseDetails);
+        verify(sendAosPackToRespondent).apply(caseDetails);
+        verify(sendApplicationIssueNotifications).apply(caseDetails);
     }
 }
