@@ -31,6 +31,8 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
 
     public static final String CASEWORKER_CONFIRM_SERVICE = "caseworker-confirm-service";
 
+    private static final String BLANK_LABEL = "";
+
     @Autowired
     private SolicitorSubmitConfirmService solicitorSubmitConfirmService;
 
@@ -67,7 +69,7 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
                     .mandatory(SolicitorService::getSpecifyLocationServed, "solServiceLocationServed=\"otherSpecify\"")
                     .mandatoryWithLabel(SolicitorService::getServiceSotName, "Solicitor's/Applicant's name")
                     .optional(SolicitorService::getServiceSotFirm)
-                    .readonly(SolicitorService::getTruthStatement)
+                    .mandatory(SolicitorService::getStatementOfTruth)
                 .done()
             .done();
     }
