@@ -167,8 +167,8 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("generalLetter")
     GENERAL_LETTER("General letter"),
 
-    @JsonProperty("orderCoversheet")
-    CONDITIONAL_ORDER_GRANTED_COVERSHEET("Order Coversheet");
+    @JsonProperty("coGrantedCoversheet")
+    CONDITIONAL_ORDER_GRANTED_COVERSHEET("Conditional Order Granted Coversheet");
 
     private final String label;
 }

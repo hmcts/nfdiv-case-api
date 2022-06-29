@@ -32,6 +32,16 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
     private static final String JOINT_RESPONSE =
         "classpath:responses/response-system-pronounce-case-joint.json";
 
+    private static final String OFFLINE_NOT_REPRESENTED_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-system-pronounce-case-offline.json";
+    private static final String OFFLINE_NOT_REPRESENTED_RESPONSE =
+        "classpath:responses/response-system-pronounce-case-offline.json";
+
+    private static final String OFFLINE_REPRESENTED_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-system-pronounce-case-offline-represented.json";
+    private static final String OFFLINE_REPRESENTED_RESPONSE =
+        "classpath:responses/response-system-pronounce-case-offline-represented.json";
+
     @Test
     public void shouldGenerateCOGrantedDocAndSendPronouncementNotificationToApplicant() throws IOException {
         Map<String, Object> request = caseData(SOLE_REQUEST);
@@ -58,5 +68,39 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(JOINT_RESPONSE)));
+    }
+
+    @Test
+    public void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicants()
+        throws IOException {
+
+        Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
+
+        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        System.out.println(response.asString());
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(OFFLINE_NOT_REPRESENTED_RESPONSE)));
+    }
+
+    @Test
+    public void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantSolicitorsWhenRepresented()
+        throws IOException {
+
+        Map<String, Object> request = caseData(OFFLINE_REPRESENTED_REQUEST);
+
+        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+        System.out.println(response.asString());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(OFFLINE_REPRESENTED_RESPONSE)));
     }
 }

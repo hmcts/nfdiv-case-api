@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -32,11 +31,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET;
-import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
@@ -44,10 +39,10 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Slf4j
 public class ConditionalOrderPronouncedPrinter {
 
-    private static final String LETTER_TYPE_CO_PRONOUNCED = "conditional-order-pronounced";
-    private static final String NAME = "name";
-    private static final String ADDRESS = "address";
-    private static final String PRONOUNCEMENT_DATE_PLUS_43 = "pronouncementDatePlus43";
+    public static final String LETTER_TYPE_CO_PRONOUNCED = "conditional-order-pronounced";
+    public static final String NAME = "name";
+    public static final String ADDRESS = "address";
+    public static final String PRONOUNCEMENT_DATE_PLUS_43 = "pronouncementDatePlus43";
 
     @Autowired
     private BulkPrintService bulkPrintService;
@@ -109,7 +104,7 @@ public class ConditionalOrderPronouncedPrinter {
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CONDITIONAL_ORDER_GRANTED_COVERSHEET,
-            coversheetContent(caseData, caseId, applicant),
+            templateVars(caseData, caseId, applicant),
             caseId,
             CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
             applicant.getLanguagePreference(),
@@ -117,20 +112,19 @@ public class ConditionalOrderPronouncedPrinter {
         );
     }
 
-    private Map<String, Object> coversheetContent(final CaseData caseData,
+    private Map<String, Object> templateVars(final CaseData caseData,
                                                   final Long caseId,
                                                   final Applicant applicant) {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
         if (applicant.isRepresented()) {
-            Solicitor applicantSolicitor = applicant.getSolicitor();
-            templateContent.put(NAME, applicantSolicitor.getName());
-            templateContent.put(ADDRESS, applicantSolicitor.getAddress());
+            templateContent.put(NAME, applicant.getSolicitor().getName());
         } else {
             templateContent.put(NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
-            templateContent.put(ADDRESS, applicant.getAddress());
         }
+
+        templateContent.put(ADDRESS, applicant.getPostalAddress());
         templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
         templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,

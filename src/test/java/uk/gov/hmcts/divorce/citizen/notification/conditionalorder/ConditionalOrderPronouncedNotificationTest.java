@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronouncedNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -15,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronouncedPrinter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -53,6 +55,9 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private ConditionalOrderPronouncedPrinter printer;
 
     @InjectMocks
     private ConditionalOrderPronouncedNotification notification;
@@ -367,5 +372,33 @@ class ConditionalOrderPronouncedNotificationTest {
             eq(WELSH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendLetterToApplicant1IfOffline() {
+        Applicant applicant1 = Applicant.builder().build();
+        CaseData data = CaseData.builder().applicant1(applicant1).build();
+
+        notification.sendToApplicant1Offline(data, 1234567890123456L);
+
+        verify(printer).sendLetter(
+            eq(data),
+            eq(1234567890123456L),
+            eq(applicant1)
+        );
+    }
+
+    @Test
+    void shouldSendLetterToApplicant21IfOffline() {
+        Applicant applicant2 = Applicant.builder().build();
+        CaseData data = CaseData.builder().applicant2(applicant2).build();
+
+        notification.sendToApplicant2Offline(data, 1234567890123456L);
+
+        verify(printer).sendLetter(
+            eq(data),
+            eq(1234567890123456L),
+            eq(applicant2)
+        );
     }
 }
