@@ -1,0 +1,373 @@
+package uk.gov.hmcts.divorce.caseworker.service.print;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
+import uk.gov.hmcts.divorce.document.print.model.Print;
+
+import static java.util.Arrays.asList;
+import static java.util.UUID.randomUUID;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REMINDER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+
+@ExtendWith(MockitoExtension.class)
+class ConditionalOrderReminderPrinterTest {
+
+    @Mock
+    private BulkPrintService bulkPrintService;
+
+    @InjectMocks
+    private ConditionalOrderReminderPrinter conditionalOrderReminderPrinter;
+
+    @Captor
+    ArgumentCaptor<Print> printCaptor;
+
+    @Test
+    void shouldPrintConditionalOrderReminderPack() {
+
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_REMINDER)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(D84)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant2(
+                Applicant.builder()
+                    .email("testresp@test.com")
+                    .build())
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2, doc3)).build())
+            .build();
+
+        when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
+
+        conditionalOrderReminderPrinter.sendLetters(caseData, TEST_CASE_ID);
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("conditional-order-reminder-pack");
+        assertThat(print.getLetters().size()).isEqualTo(3);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
+        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(doc3.getValue());
+    }
+
+//    @Test
+//    void shouldPrintAosPackWithoutD10ForRespondentIfRequiredDocumentsArePresent() {
+//
+//        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(NOTICE_OF_PROCEEDINGS_APP_2)
+//                .build())
+//            .build();
+//
+//        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(APPLICATION)
+//                .build())
+//            .build();
+//
+//        final CaseData caseData = CaseData.builder()
+//            .applicationType(SOLE_APPLICATION)
+//            .applicant2(
+//                Applicant.builder()
+//                    .email("testresp@test.com")
+//                    .solicitorRepresented(NO)
+//                    .solicitor(Solicitor.builder().build())
+//                    .build())
+//            .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
+//            .build();
+//
+//        when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(false))).thenReturn(randomUUID());
+//
+//        aosPackPrinter.sendAosLetterToRespondent(caseData, TEST_CASE_ID);
+//
+//        final Print print = printCaptor.getValue();
+//        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+//        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+//        assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
+//        assertThat(print.getLetters().size()).isEqualTo(2);
+//        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
+//        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
+//    }
+//
+//    @Test
+//    void shouldPrintAosPackForApplicantIfRequiredDocumentsArePresent() {
+//
+//        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
+//                .build())
+//            .build();
+//
+//        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(APPLICATION)
+//                .build())
+//            .build();
+//
+//
+//        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(NAME_CHANGE_EVIDENCE)
+//                .build())
+//            .build();
+//
+//        final CaseData caseData = CaseData.builder()
+//            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2, doc3)).build())
+//            .build();
+//
+//        when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
+//
+//        aosPackPrinter.sendAosLetterToApplicant(caseData, TEST_CASE_ID);
+//
+//        final Print print = printCaptor.getValue();
+//        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+//        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+//        assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
+//        assertThat(print.getLetters().size()).isEqualTo(2);
+//        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
+//        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
+//    }
+//
+//    @Test
+//    void shouldPrintPersonalServiceAosPackForApplicantIfRequiredDocumentsArePresent() {
+//
+//        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
+//                .build())
+//            .build();
+//
+//        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(APPLICATION)
+//                .build())
+//            .build();
+//
+//        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(COVERSHEET)
+//                .build())
+//            .build();
+//
+//        final ListValue<DivorceDocument> doc4 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(NOTICE_OF_PROCEEDINGS_APP_2)
+//                .build())
+//            .build();
+//
+//        final CaseData caseData = CaseData.builder()
+//            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2, doc3, doc4)).build())
+//            .build();
+//
+//        when(bulkPrintService.printWithD10Form(printCaptor.capture())).thenReturn(randomUUID());
+//
+//        aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
+//
+//        final Print print = printCaptor.getValue();
+//        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+//        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+//        assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
+//        assertThat(print.getLetters().size()).isEqualTo(5);
+//        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
+//        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
+//        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(doc3.getValue());
+//        assertThat(print.getLetters().get(3).getDivorceDocument()).isSameAs(doc4.getValue());
+//        assertThat(print.getLetters().get(4).getDivorceDocument()).isSameAs(doc2.getValue());
+//    }
+//
+//    @Test
+//    void shouldPrintAosResponseLetterForApplicantIfRequiredDocumentsArePresent() {
+//
+//        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(AOS_RESPONSE_LETTER)
+//                .build())
+//            .build();
+//
+//        final CaseData caseData = CaseData.builder()
+//            .documents(CaseDocuments.builder()
+//                .documentsGenerated(singletonList(doc1))
+//                .build())
+//            .build();
+//
+//        when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
+//
+//        aosPackPrinter.sendAosResponseLetterToApplicant(caseData, TEST_CASE_ID);
+//
+//        final Print print = printCaptor.getValue();
+//        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+//        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+//        assertThat(print.getLetterType()).isEqualTo("aos-response-pack");
+//        assertThat(print.getLetters().size()).isEqualTo(1);
+//        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
+//    }
+//
+//    @Test
+//    void shouldNotPrintAosPackIfRequiredDocumentsAreNotPresent() {
+//
+//        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(RESPONDENT_ANSWERS)
+//                .build())
+//            .build();
+//
+//        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(NAME_CHANGE_EVIDENCE)
+//                .build())
+//            .build();
+//
+//        final CaseData caseData = CaseData.builder()
+//            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
+//            .build();
+//
+//        aosPackPrinter.sendAosLetterToRespondent(caseData, TEST_CASE_ID);
+//
+//        verifyNoInteractions(bulkPrintService);
+//    }
+//
+//    @Test
+//    void shouldNotPrintPersonalServiceAosPackIfRequiredDocumentsAreNotPresent() {
+//
+//        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(RESPONDENT_ANSWERS)
+//                .build())
+//            .build();
+//
+//        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(NAME_CHANGE_EVIDENCE)
+//                .build())
+//            .build();
+//
+//        final CaseData caseData = CaseData.builder()
+//            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
+//            .build();
+//
+//        aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
+//
+//        verifyNoInteractions(bulkPrintService);
+//    }
+//
+//    @Test
+//    void shouldNotPrintAosPackForApplicantIfRequiredDocumentsAreNotPresent() {
+//
+//        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(RESPONDENT_ANSWERS)
+//                .build())
+//            .build();
+//
+//        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(NAME_CHANGE_EVIDENCE)
+//                .build())
+//            .build();
+//
+//        final CaseData caseData = CaseData.builder()
+//            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
+//            .build();
+//
+//        aosPackPrinter.sendAosLetterToApplicant(caseData, TEST_CASE_ID);
+//
+//        verifyNoInteractions(bulkPrintService);
+//    }
+//
+//    @Test
+//    void shouldNotPrintAosResponseLetterPackIfRequiredDocumentsAreNotPresent() {
+//
+//        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
+//                .build())
+//            .build();
+//
+//        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(NAME_CHANGE_EVIDENCE)
+//                .build())
+//            .build();
+//
+//        final CaseData caseData = CaseData.builder()
+//            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
+//            .build();
+//
+//        aosPackPrinter.sendAosResponseLetterToApplicant(caseData, TEST_CASE_ID);
+//
+//        verifyNoInteractions(bulkPrintService);
+//    }
+//
+//    @Test
+//    void shouldPrintAosPackForApplicantIfRequiredDocumentsArePresentAndApplicantContactIsPrivate() {
+//
+//        final ListValue<ConfidentialDivorceDocument> doc1 = ListValue.<ConfidentialDivorceDocument>builder()
+//            .value(ConfidentialDivorceDocument.builder()
+//                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
+//                .build())
+//            .build();
+//
+//        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(APPLICATION)
+//                .build())
+//            .build();
+//
+//        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+//            .value(DivorceDocument.builder()
+//                .documentType(NAME_CHANGE_EVIDENCE)
+//                .build())
+//            .build();
+//
+//        final CaseData caseData = CaseData.builder()
+//            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
+//            .documents(CaseDocuments.builder()
+//                .confidentialDocumentsGenerated(List.of(doc1))
+//                .documentsGenerated(asList(doc2, doc3))
+//                .build())
+//            .build();
+//
+//        when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
+//
+//        aosPackPrinter.sendAosLetterToApplicant(caseData, TEST_CASE_ID);
+//
+//        final Print print = printCaptor.getValue();
+//        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+//        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+//        assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
+//        assertThat(print.getLetters().size()).isEqualTo(2);
+//        assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(doc1.getValue());
+//        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
+//    }
+}
