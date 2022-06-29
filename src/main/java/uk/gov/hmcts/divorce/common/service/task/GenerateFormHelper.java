@@ -18,8 +18,8 @@ import uk.gov.hmcts.reform.document.domain.UploadResponse;
 import uk.gov.hmcts.reform.document.utils.InMemoryMultipartFile;
 
 import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
