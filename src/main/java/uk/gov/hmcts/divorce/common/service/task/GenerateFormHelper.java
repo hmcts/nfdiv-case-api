@@ -17,8 +17,8 @@ import uk.gov.hmcts.reform.document.domain.Document;
 import uk.gov.hmcts.reform.document.domain.UploadResponse;
 import uk.gov.hmcts.reform.document.utils.InMemoryMultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;

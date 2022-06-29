@@ -35,7 +35,11 @@ public class ConditionalOrderReminderPrinter implements ApplicantNotification {
         final List<Letter> conditionalOrderLettersToSend = conditionalOrderLetters(caseData);
         if (!isEmpty(conditionalOrderLettersToSend) && conditionalOrderLettersToSend.size() == EXPECTED_DOCUMENTS_SIZE) {
             final String caseIdString = caseId.toString();
-            final Print print = new Print(conditionalOrderLettersToSend, caseIdString, caseIdString, LETTER_TYPE_CONDITIONAL_ORDER_REMINDER_PACK);
+            final Print print = new Print(
+                conditionalOrderLettersToSend,
+                caseIdString,
+                caseIdString,
+                LETTER_TYPE_CONDITIONAL_ORDER_REMINDER_PACK);
 
             final UUID letterId = bulkPrintService.print(print);
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
