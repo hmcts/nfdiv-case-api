@@ -8,6 +8,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,8 +36,10 @@ import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -180,8 +185,9 @@ public class SubmitAosIT {
             .isEqualTo(expectedResponse("classpath:solicitor-submit-aos-response.json"));
     }
 
-    @Test
-    void shouldSetStateToHoldingForValidUndisputedAosWithValidAosPrestates() throws Exception {
+    @ParameterizedTest
+    @MethodSource("caseStateParameters")
+    void shouldSetStateToHoldingForValidUndisputedAosWithValidAosPrestates(State aosValidState) throws Exception {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
@@ -203,20 +209,18 @@ public class SubmitAosIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
 
-        for (State aosValidState : ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived)) {
-            mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                    .contentType(APPLICATION_JSON)
-                    .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-                    .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-                    .content(
-                        objectMapper.writeValueAsString(
-                            callbackRequest(caseData, SUBMIT_AOS, aosValidState.name())))
-                    .accept(APPLICATION_JSON))
-                .andExpect(
-                    status().isOk()
-                )
-                .andExpect(jsonPath("$.state").value("Holding"));
-        }
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData, SUBMIT_AOS, aosValidState.name())))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(jsonPath("$.state").value("Holding"));
     }
 
     @Test
@@ -525,4 +529,7 @@ public class SubmitAosIT {
         return resourceAsBytes("classpath:Test.pdf");
     }
 
+    private static Stream<Arguments> caseStateParameters() {
+        return Arrays.stream(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived)).map(Arguments::of);
+    }
 }
