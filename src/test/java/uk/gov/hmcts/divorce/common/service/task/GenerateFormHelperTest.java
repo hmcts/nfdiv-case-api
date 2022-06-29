@@ -16,9 +16,9 @@ import uk.gov.hmcts.reform.document.domain.UploadResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,7 +87,7 @@ public class GenerateFormHelperTest {
             anyList())
         ).thenReturn(uploadResponse);
 
-       generateFormHelper.addFormToGeneratedDocuments(
+        generateFormHelper.addFormToGeneratedDocuments(
             caseData,
             D10,
             "D10",
