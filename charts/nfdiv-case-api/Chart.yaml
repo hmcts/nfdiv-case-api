@@ -14,7 +14,7 @@ dependencies:
     version: 7.1.0
     repository: '@hmctspublic'
     tags:
-      - ccd-idam-pr
+        - ccd-idam-pr
   - name: xui-webapp
     version: ~0.2.28
     repository: '@hmctspublic'
@@ -35,4 +35,3 @@ dependencies:
     version: ~0.0.68
     repository: '@hmctspublic'
     condition: nfdiv-frontend.enabled
-
