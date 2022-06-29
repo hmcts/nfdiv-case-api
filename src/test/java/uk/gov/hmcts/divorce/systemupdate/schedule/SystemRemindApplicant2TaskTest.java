@@ -126,7 +126,7 @@ public class SystemRemindApplicant2TaskTest {
 
         List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(caseDetailsList);
 
         systemRemindApplicant2Task.run();
@@ -158,7 +158,7 @@ public class SystemRemindApplicant2TaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(caseDetailsList);
 
         systemRemindApplicant2Task.run();
@@ -178,7 +178,7 @@ public class SystemRemindApplicant2TaskTest {
 
         when(caseDetails.getData()).thenReturn(data1);
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(singletonList(caseDetails));
 
         systemRemindApplicant2Task.run();
@@ -188,7 +188,7 @@ public class SystemRemindApplicant2TaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         systemRemindApplicant2Task.run();
@@ -216,7 +216,7 @@ public class SystemRemindApplicant2TaskTest {
 
         when(caseDetails1.getData()).thenReturn(data1);
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData1);
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
@@ -260,7 +260,7 @@ public class SystemRemindApplicant2TaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))

@@ -70,7 +70,7 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker create service application about to submit callback invoked");
+        log.info("Caseworker create service application about to submit callback invoked for Case Id: {}", details.getId());
 
         var caseData = details.getData();
 

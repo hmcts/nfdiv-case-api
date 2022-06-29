@@ -94,7 +94,7 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
             .data(caseData)
             .build();
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenReturn(List.of(caseDetails));
 
         systemRemindApplicantsApplyForFinalOrderTask.run();
@@ -104,7 +104,7 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         systemRemindApplicantsApplyForFinalOrderTask.run();
@@ -116,7 +116,7 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
     void shouldStopProcessingIfThereIsConflictDuringSubmission() {
         CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
         CaseDetails caseDetails2 = CaseDetails.builder().data(new HashMap<>()).id(2L).build();
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenReturn(List.of(caseDetails1, caseDetails2));
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
@@ -133,7 +133,7 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
         CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
         CaseDetails caseDetails2 = CaseDetails.builder().data(new HashMap<>()).id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenReturn(caseDetailsList);
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
@@ -148,6 +148,6 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
     void shouldRunAppropriateQuery() {
         systemRemindApplicantsApplyForFinalOrderTask.run();
 
-        verify(ccdSearchService).searchForAllCasesWithQuery(any(), eq(query), any(), any());
+        verify(ccdSearchService).searchForAllCasesWithQuery(eq(query), any(), any(), any());
     }
 }

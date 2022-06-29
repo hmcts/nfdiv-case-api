@@ -83,6 +83,7 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
+        log.info("CASEWORKER_ADD_ANSWER aboutToStart-callback invoked for case id: {}", details.getId());
         final CaseData caseData = details.getData();
 
         OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DEF);
@@ -95,6 +96,7 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+        log.info("CASEWORKER_ADD_ANSWER aboutToSubmit-callback invoked for case id: {}", details.getId());
         final CaseData caseData = details.getData();
 
         caseData.getDocuments().getAnswerReceivedSupportingDocuments()

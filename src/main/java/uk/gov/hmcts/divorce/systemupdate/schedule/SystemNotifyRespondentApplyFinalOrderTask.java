@@ -69,7 +69,7 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
             final List<CaseDetails> validCasesInAwaitingFinalOrderState =
-                ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, serviceAuth);
+                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingFinalOrder);
 
             for (final CaseDetails caseDetails : validCasesInAwaitingFinalOrderState) {
                 sendNotificationToRespondentIfEligible(user, serviceAuth, caseDetails);

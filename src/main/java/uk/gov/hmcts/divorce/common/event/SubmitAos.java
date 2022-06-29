@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -23,12 +24,15 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -67,8 +71,30 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("Submit AoS about to start callback invoked for Case Id: {}", details.getId());
+
+        final var caseData = details.getData();
+        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+
+        if (null != acknowledgementOfService && null != acknowledgementOfService.getDateAosSubmitted()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList("The Acknowledgement Of Service has already been submitted."))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Submit AoS about to submit callback invoked for Case Id: {}", details.getId());
+
         final var caseData = details.getData();
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
@@ -111,10 +137,12 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(SUBMIT_AOS)
-            .forStateTransition(AosDrafted, Holding)
+            .forStates(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived))
             .name("Submit AoS")
             .description("Submit AoS")
+            .showCondition("applicationType=\"soleApplication\"")
             .showSummary()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
@@ -127,7 +155,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
                                                final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker submit aos submitted callback invoked for case id: {}", details.getId());
+        log.info("Submit AoS submitted callback invoked for Case Id: {}", details.getId());
 
         final AcknowledgementOfService acknowledgementOfService = details.getData().getAcknowledgementOfService();
 

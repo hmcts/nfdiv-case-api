@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -58,6 +60,26 @@ class RetiredFieldsTest {
                 .build()
             )),
             entry("d11Document", null)
+        );
+    }
+
+    @Test
+    void shouldMigrateGeneralApplicationFeeAccountNumberToPbaNumbers() {
+        String feeCode = "FEE002";
+        final var data = new HashMap<String, Object>();
+        data.put("generalApplicationFeeAccountNumber", feeCode);
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("generalApplicationFeePbaNumbers",
+                DynamicList
+                    .builder()
+                    .value(DynamicListElement.builder().label(feeCode).build())
+                    .listItems(List.of(DynamicListElement.builder().label(feeCode).build()))
+                    .build()
+            ),
+            entry("generalApplicationFeeAccountNumber", null)
         );
     }
 }

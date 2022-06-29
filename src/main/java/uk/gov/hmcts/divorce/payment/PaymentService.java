@@ -96,18 +96,22 @@ public class PaymentService {
             .build();
     }
 
-    public PbaResponse processPbaPayment(CaseData caseData, Long caseId, Solicitor solicitor) {
+    public PbaResponse processPbaPayment(CaseData caseData,
+                                         Long caseId,
+                                         Solicitor solicitor,
+                                         String pbaNumber,
+                                         OrderSummary orderSummary,
+                                         String feeAccountReference) {
+
         log.info("Processing PBA payment for case id {}", caseId);
 
         ResponseEntity<CreditAccountPaymentResponse> paymentResponseEntity = null;
-
-        String pbaNumber = getPbaNumber(caseData);
 
         try {
             paymentResponseEntity = paymentPbaClient.creditAccountPayment(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
-                creditAccountPaymentRequest(caseData, caseId, solicitor)
+                creditAccountPaymentRequest(caseData, caseId, solicitor, pbaNumber, orderSummary, feeAccountReference)
             );
 
             String paymentReference = Optional.ofNullable(paymentResponseEntity)
@@ -246,18 +250,22 @@ public class PaymentService {
         return errorMessage;
     }
 
-    private CreditAccountPaymentRequest creditAccountPaymentRequest(CaseData caseData, Long caseId, Solicitor solicitor) {
-        var creditAccountPaymentRequest = new CreditAccountPaymentRequest();
-        var orderSummary = caseData.getApplication().getApplicationFeeOrderSummary();
+    private CreditAccountPaymentRequest creditAccountPaymentRequest(CaseData caseData,
+                                                                    Long caseId,
+                                                                    Solicitor solicitor,
+                                                                    String pbaNumber,
+                                                                    OrderSummary orderSummary,
+                                                                    String feeAccountReference) {
 
+        var creditAccountPaymentRequest = new CreditAccountPaymentRequest();
         creditAccountPaymentRequest.setService(DIVORCE_SERVICE);
         creditAccountPaymentRequest.setCurrency(GBP);
-        creditAccountPaymentRequest.setAccountNumber(getPbaNumber(caseData));
+        creditAccountPaymentRequest.setAccountNumber(pbaNumber);
         creditAccountPaymentRequest.setCaseType(CASE_TYPE);
 
         creditAccountPaymentRequest.setOrganisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
 
-        creditAccountPaymentRequest.setCustomerReference(caseData.getApplication().getFeeAccountReference());
+        creditAccountPaymentRequest.setCustomerReference(feeAccountReference);
 
         final Fee fee = getFeeValue(orderSummary);
         creditAccountPaymentRequest.setDescription(fee.getDescription());
@@ -275,10 +283,6 @@ public class PaymentService {
         creditAccountPaymentRequest.setFees(paymentItemList);
 
         return creditAccountPaymentRequest;
-    }
-
-    private String getPbaNumber(CaseData caseData) {
-        return caseData.getApplication().getPbaNumbers().getValue().getLabel();
     }
 
     private List<PaymentItem> populateFeesPaymentItems(

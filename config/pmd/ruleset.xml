@@ -90,7 +90,7 @@
   </rule>
   <rule ref="category/java/design.xml/TooManyMethods">
     <properties>
-      <property name="maxmethods" value="20" />
+      <property name="maxmethods" value="21" />
     </properties>
   </rule>
   <rule ref="category/java/design.xml/NPathComplexity">

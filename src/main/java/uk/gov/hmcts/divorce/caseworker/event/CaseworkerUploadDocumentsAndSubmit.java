@@ -70,7 +70,7 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
-        log.info("Caseworker upload documents and submit about to start callback invoked");
+        log.info("Caseworker upload documents and submit about to start callback invoked for Case Id: {}", details.getId());
 
         final CaseData caseData = details.getData();
 
@@ -84,7 +84,7 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker upload documents and submit about to submit callback invoked");
+        log.info("Caseworker upload documents and submit about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseData caseData = details.getData();
         final Application application = caseData.getApplication();

@@ -46,7 +46,7 @@ public class CitizenCreateApplication implements CCDConfig<CaseData, State, User
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                         final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen create application about to submit callback invoked");
+        log.info("Citizen create application about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
         data.setHyphenatedCaseRef(data.formatCaseRef(details.getId()));

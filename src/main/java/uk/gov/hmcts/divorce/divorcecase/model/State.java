@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccessExcludingCAA;
+import uk.gov.hmcts.divorce.divorcecase.model.access.LegalAdvisorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 
 import java.util.EnumSet;
@@ -73,7 +74,7 @@ public enum State {
     @CCD(
         name = "Awaiting admin clarification",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
     )
     AwaitingAdminClarification("AwaitingAdminClarification"),
 
@@ -87,7 +88,7 @@ public enum State {
     @CCD(
         name = "Awaiting amended application",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
     )
     AwaitingAmendedApplication("AwaitingAmendedApplication"),
 
@@ -129,7 +130,7 @@ public enum State {
     @CCD(
         name = "Awaiting clarification",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
     )
     AwaitingClarification("AwaitingClarification"),
 
@@ -304,7 +305,7 @@ public enum State {
     @CCD(
         name = "Listed; awaiting pronouncement",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
     )
     AwaitingPronouncement("AwaitingPronouncement"),
 
@@ -365,7 +366,21 @@ public enum State {
         Draft,
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
+        Applicant2Approved,
+        Withdrawn,
+        Rejected
+    ));
+
+    public static final EnumSet<State> POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
         Applicant2Approved
+    ));
+
+    public static final EnumSet<State> STATES_NOT_WITHDRAWN_OR_REJECTED = EnumSet.complementOf(EnumSet.of(
+        Withdrawn,
+        Rejected
     ));
 
     public static final EnumSet<State> PRE_RETURN_TO_PREVIOUS_STATES = EnumSet.complementOf(EnumSet.of(
@@ -373,7 +388,9 @@ public enum State {
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
         Applicant2Approved,
-        AwaitingPronouncement
+        AwaitingPronouncement,
+        Withdrawn,
+        Rejected
     ));
 
     public static final EnumSet<State> POST_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
@@ -384,8 +401,17 @@ public enum State {
         AwaitingPayment,
         AwaitingHWFDecision,
         AwaitingDocuments,
-        Submitted
+        Submitted,
+        Withdrawn,
+        Rejected
     ));
+
+    public static final State[] AOS_STATES = {
+        Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral,
+        AwaitingServiceConsideration, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
+        AwaitingJudgeClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
+        GeneralApplicationReceived, PendingHearingOutcome
+    };
 
     private final String name;
 

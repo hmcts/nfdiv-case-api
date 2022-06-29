@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -23,7 +24,7 @@ public class SystemUpdateIssueDate implements CCDConfig<CaseData, State, UserRol
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_SYSTEM_USER_UPDATE_ISSUE_DATE)
-            .forAllStates()
+            .forStates(STATES_NOT_WITHDRAWN_OR_REJECTED)
             .name("Update issue date")
             .description("Update issue date")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE))

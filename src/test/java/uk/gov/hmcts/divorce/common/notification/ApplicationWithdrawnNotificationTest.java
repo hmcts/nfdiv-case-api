@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
@@ -30,6 +31,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIC
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
 @ExtendWith(MockitoExtension.class)
@@ -208,5 +210,25 @@ public class ApplicationWithdrawnNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendEmailApplicant2IfEmailIsNull() {
+        CaseData data = validApplicant1CaseData();
+        data.getApplicant2().setEmail(null);
+
+        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendEmailApplicant2IfEmailIsEmptyString() {
+        CaseData data = validApplicant1CaseData();
+        data.getApplicant2().setEmail("");
+
+        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
     }
 }

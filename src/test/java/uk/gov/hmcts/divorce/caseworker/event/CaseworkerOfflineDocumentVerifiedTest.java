@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -26,6 +27,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +52,9 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
     @Mock
     private SubmitAosService submitAosService;
+
+    @Mock
+    private HoldingPeriodService holdingPeriodService;
 
     @Mock
     private Clock clock;
@@ -263,6 +268,29 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState().getName()).isEqualTo(AwaitingAmendedApplication.getName());
+    }
+
+    @Test
+    void shouldSetStateToUserValueProvidedAndDueDateIfTypeOfDocumentSelectedIsOtherAndTransitionToStateIsHolding() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .issueDate(LocalDate.of(2022, 01, 01))
+                .stateToTransitionApplicationTo(Holding)
+                .build())
+            .acknowledgementOfService(AcknowledgementOfService.builder()
+                .typeOfDocumentAttached(AcknowledgementOfService.OfflineDocumentReceived.OTHER)
+                .build())
+            .build();
+        details.setData(caseData);
+
+        when(holdingPeriodService.getDueDateFor(LocalDate.of(2022, 01, 01))).thenReturn(LocalDate.of(2022, 05, 22));
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState().getName()).isEqualTo(Holding.getName());
+        assertThat(response.getData().getDueDate()).isEqualTo("2022-05-22");
     }
 
     @Test

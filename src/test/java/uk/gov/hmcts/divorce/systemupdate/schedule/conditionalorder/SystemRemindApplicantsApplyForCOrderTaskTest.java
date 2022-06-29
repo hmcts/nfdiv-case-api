@@ -92,7 +92,8 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
         final CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(
+            query, user, SERVICE_AUTHORIZATION, AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted))
             .thenReturn(caseDetailsList);
 
         underTest.run();
@@ -102,7 +103,8 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(
+            query, user, SERVICE_AUTHORIZATION, AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         underTest.run();
@@ -116,7 +118,8 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
         final CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(
+            query, user, SERVICE_AUTHORIZATION, AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
@@ -135,7 +138,8 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
         final CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(
+            query, user, SERVICE_AUTHORIZATION, AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))

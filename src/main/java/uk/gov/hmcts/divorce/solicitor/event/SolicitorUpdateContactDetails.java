@@ -42,7 +42,7 @@ public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State,
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Solicitor update contact details about to submit callback invoked");
+        log.info("Solicitor update contact details about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseDetails<CaseData, State> result = caseTasks(setApplicant1SolicitorAddress).run(details);
 

@@ -48,7 +48,7 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen final order delay reason about to submit callback invoked");
+        log.info("Citizen final order delay reason about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
 

@@ -63,7 +63,7 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Caseworker progress paper case callback invoked");
+        log.info("Caseworker progress paper case callback invoked for Case Id: {}", details.getId());
 
         var caseData = details.getData();
 

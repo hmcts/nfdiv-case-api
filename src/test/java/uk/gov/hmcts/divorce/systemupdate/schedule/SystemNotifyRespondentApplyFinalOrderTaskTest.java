@@ -92,7 +92,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         data1.put("finalOrderReminderSentApplicant2", YesOrNo.NO);
         when(caseDetails1.getData()).thenReturn(data1);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenReturn(caseDetailsList);
 
         systemNotifyRespondentApplyFinalOrderTask.run();
@@ -104,7 +104,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
     @Test
     void shouldNotTriggerNotifyRespondentEventWhenSearchReturnsEmptyList() {
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenReturn(Collections.emptyList());
 
         systemNotifyRespondentApplyFinalOrderTask.run();
@@ -114,7 +114,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         systemNotifyRespondentApplyFinalOrderTask.run();
@@ -133,7 +133,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         data1.put("finalOrderReminderSentApplicant2", YesOrNo.NO);
         when(caseDetails1.getData()).thenReturn(data1);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
@@ -164,7 +164,7 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
         data2.put("finalOrderReminderSentApplicant2", YesOrNo.NO);
         when(caseDetails2.getData()).thenReturn(data2);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
@@ -186,6 +186,6 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
 
         systemNotifyRespondentApplyFinalOrderTask.run();
 
-        verify(ccdSearchService).searchForAllCasesWithQuery(any(), eq(expectedQuery), any(), any());
+        verify(ccdSearchService).searchForAllCasesWithQuery(eq(expectedQuery), any(), any(), any());
     }
 }

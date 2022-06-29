@@ -23,6 +23,8 @@ public class SetServiceType implements CaseTask {
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
 
+        log.info("Setting service method for case id {}", details.getId());
+
         // TODO cater for overseas solicitors
         if (!applicant1.isRepresented() && !applicant2.isRepresented() && (
             applicant2.isBasedOverseas() || NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address()))) {
@@ -30,6 +32,7 @@ public class SetServiceType implements CaseTask {
         } else if (caseData.getApplication().getServiceMethod() == null) {
             caseData.getApplication().setServiceMethod(COURT_SERVICE);
         }
+        log.info("Service method set to {} for case id {}", caseData.getApplication().getServiceMethod(), details.getId());
 
         return details;
     }

@@ -28,10 +28,6 @@ public class GeneralApplicationPaymentSummary implements CcdPageConfiguration {
                 "Your pay account reference: **${generalApplicationFeeAccountReferenceNumber}**",
                 SHOW_CONDITION_FEE_PBA)
             .label(
-                "LabelGeneralApplicationPayAccountReference2",
-                "Fee account number: **${generalApplicationFeeAccountNumber}**",
-                SHOW_CONDITION_FEE_PBA)
-            .label(
                 "LabelGeneralApplicationPayHWFHeading",
                 "Payment Method: Help with Fees",
                 "generalApplicationFeePaymentMethod=\"feePayByHelp\"")

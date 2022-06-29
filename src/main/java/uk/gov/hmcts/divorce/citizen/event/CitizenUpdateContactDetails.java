@@ -49,7 +49,7 @@ public class CitizenUpdateContactDetails implements CCDConfig<CaseData, State, U
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen update contact details about to submit callback invoked");
+        log.info("Citizen update contact details about to submit callback invoked for Case Id: {}", details.getId());
         CaseData updatedData = details.getData();
         CaseData data = beforeDetails.getData();
 

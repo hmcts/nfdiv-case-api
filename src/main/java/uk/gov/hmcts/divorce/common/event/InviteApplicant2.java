@@ -61,7 +61,7 @@ public class InviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Invite applicant 2 about to submit callback invoked");
+        log.info("Invite applicant 2 about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
 

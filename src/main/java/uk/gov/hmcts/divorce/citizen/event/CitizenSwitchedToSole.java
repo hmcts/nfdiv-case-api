@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
@@ -53,9 +52,6 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
     private Applicant2SwitchToSoleNotification applicant2SwitchToSoleNotification;
 
     @Autowired
-    private IdamService idamService;
-
-    @Autowired
     private NotificationDispatcher notificationDispatcher;
 
     @Override
@@ -74,7 +70,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen switched to sole about to submit callback invoked");
+        log.info("Citizen switched to sole about to submit callback invoked for Case Id: {}", details.getId());
         CaseData data = details.getData();
 
         if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), details.getId())) {
@@ -90,11 +86,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
         if (isNull(caseInviteBefore.accessCode())) {
             log.info("Unlinking Applicant 2 from Case");
-            ccdAccessService.unlinkUserFromApplication(
-                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
-                details.getId(),
-                caseInviteBefore.applicant2UserId()
-            );
+            ccdAccessService.unlinkUserFromApplication(details.getId(), caseInviteBefore.applicant2UserId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

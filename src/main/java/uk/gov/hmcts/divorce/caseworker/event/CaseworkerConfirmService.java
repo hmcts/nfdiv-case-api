@@ -79,7 +79,9 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
         var serviceMethod = !isNull(caseData.getApplication().getServiceMethod())
             ? caseData.getApplication().getServiceMethod().toString()
             : null;
-        log.info("Caseworker confirm service about to submit callback invoked with service method {}", serviceMethod);
+        log.info("Caseworker confirm service about to submit callback invoked with service method {}, Case Id: {}",
+            serviceMethod,
+            details.getId());
 
         final CaseDetails<CaseData, State> updateDetails = solicitorSubmitConfirmService.submitConfirmService(details);
 

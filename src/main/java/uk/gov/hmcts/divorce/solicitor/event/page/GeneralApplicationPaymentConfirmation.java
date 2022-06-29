@@ -15,9 +15,9 @@ public class GeneralApplicationPaymentConfirmation implements CcdPageConfigurati
             .complex(CaseData::getGeneralApplication)
                 .complex(GeneralApplication::getGeneralApplicationFee)
                 .mandatory(FeeDetails::getPaymentMethod)
-                .mandatory(FeeDetails::getAccountNumber,
+                .mandatory(FeeDetails::getPbaNumbers,
                     "generalApplicationFeePaymentMethod = \"feePayByAccount\"")
-                .optional(FeeDetails::getAccountReferenceNumber,
+                .mandatory(FeeDetails::getAccountReferenceNumber,
                     "generalApplicationFeePaymentMethod = \"feePayByAccount\"")
                 .mandatory(FeeDetails::getHelpWithFeesReferenceNumber,
                     "generalApplicationFeePaymentMethod = \"feePayByHelp\"")

@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotificatio
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -42,6 +43,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
@@ -150,6 +152,7 @@ public class CitizenAddPaymentIT {
         CaseData data = caseDataWithOrderSummary();
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
+        data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
         data.getApplication().setDateSubmitted(LocalDateTime.now());
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
@@ -171,6 +174,38 @@ public class CitizenAddPaymentIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenValidSoleCaseDataWhenCallbackIsInvokedThenSendEmailsInWelshToApplicant1() throws Exception {
+        CaseData data = caseDataWithOrderSummary();
+        data.getApplicant1().setLanguagePreferenceWelsh(YES);
+        data.setApplicationType(SOLE_APPLICATION);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
+        data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
+        data.getApplication().setDateSubmitted(LocalDateTime.now());
+
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        data.getApplication().setApplicationFeeOrderSummary(orderSummary);
+
+        Payment payment = Payment.builder()
+            .amount(55000)
+            .status(SUCCESS)
+            .build();
+
+        data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(WELSH));
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -206,6 +241,43 @@ public class CitizenAddPaymentIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenValidJointCaseDataWhenCallbackIsInvokedThenEmailsInWelshSentToBothApplicants() throws Exception {
+        CaseData data = jointCaseDataWithOrderSummary();
+        data.getApplication().setDateSubmitted(LocalDateTime.now());
+        data.getApplication().getMarriageDetails().setMarriedInUk(NO);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(MARRIAGE_CERTIFICATE, MARRIAGE_CERTIFICATE_TRANSLATION));
+        data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplicant1().setLanguagePreferenceWelsh(YES);
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
+
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        data.getApplication().setApplicationFeeOrderSummary(orderSummary);
+
+        Payment payment = Payment.builder()
+            .amount(55000)
+            .status(SUCCESS)
+            .build();
+
+        data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(WELSH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(WELSH));
 
         verifyNoMoreInteractions(notificationService);
     }

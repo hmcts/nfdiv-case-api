@@ -221,6 +221,29 @@ public class CaseValidationTest {
     }
 
     @Test
+    public void shouldNotReturnErrorsWhenJurisdictionConnectionsIsNotEmptyAndIsPaperCase() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setNewPaperCase(YES);
+
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_APP_2_RESIDENT));
+
+        List<String> errors = validateJurisdictionConnections(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    public void shouldReturnErrorsWhenJurisdictionConnectionsIsEmptyAndIsPaperCase() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setNewPaperCase(YES);
+
+        List<String> errors = validateJurisdictionConnections(caseData);
+
+        assertThat(errors).containsExactly("JurisdictionConnections cannot be empty or null");
+    }
+
+
+    @Test
     public void shouldValidateNoCasesAdded() {
         final BulkActionCaseData caseData = bulkActionCaseData();
         final CaseLink caseLink1 = CaseLink.builder()

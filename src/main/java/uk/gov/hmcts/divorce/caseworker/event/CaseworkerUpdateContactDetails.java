@@ -59,7 +59,7 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Callback invoked for {}", CASEWORKER_UPDATE_CONTACT_DETAILS);
+        log.info("Callback invoked for {}, Case Id: {}", CASEWORKER_UPDATE_CONTACT_DETAILS, details.getId());
 
         var caseData = details.getData();
 

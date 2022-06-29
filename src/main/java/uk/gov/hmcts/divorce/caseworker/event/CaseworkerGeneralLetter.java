@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -36,7 +36,7 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_CREATE_GENERAL_LETTER)
-            .forStates(POST_SUBMISSION_STATES)
+            .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
             .name(CREATE_GENERAL_LETTER_TITLE)
             .description(CREATE_GENERAL_LETTER_TITLE)
             .showSummary()
@@ -58,7 +58,7 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Caseworker create general letter about to submit callback invoked");
+        log.info("Caseworker create general letter about to submit callback invoked for Case Id: {}", details.getId());
 
         generalLetterService.processGeneralLetter(details);
 

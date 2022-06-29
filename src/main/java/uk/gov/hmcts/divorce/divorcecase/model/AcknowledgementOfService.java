@@ -89,7 +89,7 @@ public class AcknowledgementOfService {
     private String inWhichCountryIsYourLifeMainlyBased;
 
     @CCD(
-        label = "I am duly authorised by the respondent to sign this statement.",
+        label = "Respondent Statement of Truth",
         access = AosAccess.class
     )
     private YesOrNo statementOfTruth;

@@ -41,7 +41,7 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen update case in AAT about to submit callback invoked");
+        log.info("Citizen update case in AAT about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
         if (EnumUtils.isValidEnum(State.class, data.getApplicant2().getMiddleName())) {
@@ -56,9 +56,5 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
             .data(data)
             .state(state)
             .build();
-    }
-
-    public boolean isCitizenUpdateCaseStateEnabled() {
-        return Boolean.parseBoolean(System.getenv().get("CITIZEN_UPDATE_CASE_STATE_ENABLED"));
     }
 }

@@ -31,6 +31,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.isEnglandOrWales;
 
 @Data
 @AllArgsConstructor
@@ -185,11 +186,7 @@ public class Applicant {
 
     @JsonIgnore
     public boolean isBasedOverseas() {
-        return !isRepresented()
-            && nonNull(address)
-            && !isBlank(address.getCountry())
-            && !("UK").equalsIgnoreCase(address.getCountry())
-            && !("United Kingdom").equalsIgnoreCase(address.getCountry());
+        return !isRepresented() && nonNull(address) && !isBlank(address.getCountry()) && !isEnglandOrWales(address);
     }
 
     @JsonIgnore

@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.Integer.parseInt;
@@ -390,6 +391,12 @@ public class Application {
     private YesOrNo applicant2ReminderSent;
 
     @CCD(
+        label = "Reminder that respondent solicitor needs to respond to the application",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo respondentSolicitorReminderSent;
+
+    @CCD(
         label = "Reminder sent to Applicants indicating they can apply for Conditional Order",
         access = {DefaultAccess.class}
     )
@@ -557,6 +564,14 @@ public class Application {
     }
 
     @JsonIgnore
+    public boolean isHelpWithFeesApplicationApplicant2() {
+        return Objects.nonNull(applicant2HelpWithFees)
+            && Objects.nonNull(applicant2HelpWithFees.getNeedHelp())
+            && applicant2HelpWithFees.getNeedHelp().toBoolean()
+            || FEES_HELP_WITH.equals(solPaymentHowToPay);
+    }
+
+    @JsonIgnore
     public boolean isSolicitorPaymentMethodPba() {
         return FEE_PAY_BY_ACCOUNT.equals(this.getSolPaymentHowToPay());
     }
@@ -576,5 +591,11 @@ public class Application {
     @JsonIgnore
     public boolean isPaperCase() {
         return YES.equals(newPaperCase);
+    }
+
+    @JsonIgnore
+    public Optional<String> getPbaNumber() {
+        return Optional.ofNullable(pbaNumbers)
+            .map(dynamicList -> dynamicList.getValue().getLabel());
     }
 }

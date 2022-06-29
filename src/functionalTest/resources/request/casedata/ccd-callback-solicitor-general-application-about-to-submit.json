@@ -1,0 +1,42 @@
+{
+  "applicant1SolicitorOrganisationPolicy": {
+    "Organisation": {
+      "OrganisationName": "Test Organisation",
+      "OrganisationID": "HEBFGBR"
+    }
+  },
+  "documentsUploaded": [],
+  "generalApplicationFeeOrderSummary": {
+    "Fees": [{
+      "id": "1",
+      "value": {
+        "FeeCode": "FEE002",
+        "FeeDescription": "fees for divorce"
+      }
+    }],
+    "PaymentTotal": "55000"
+  },
+  "generalApplicationFeePbaNumbers": {
+    "value": {
+      "label": "PBA0012345"
+    },
+    "valueLabel": "PBA0012345"
+  },
+  "generalApplicationDocument": {
+    "documentLink": {
+      "document_url": "http://localhost:4200/assets/d11",
+      "document_filename": "GA.pdf",
+      "document_binary_url": "GA.pdf/binary"
+    },
+    "documentDateAdded": "2022-05-04",
+    "documentType": "d11"
+  },
+  "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+  "applicant2SolicitorOrganisationPolicy": {
+    "Organisation": {
+      "OrganisationID": "App2OrgPolicy"
+    }
+  },
+  "generalApplicationFeePaymentMethod": "feePayByAccount",
+  "warnings": []
+}

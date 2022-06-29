@@ -99,6 +99,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_SUBMIT_JOINT_APPLICATION, details.getId());
         CaseData data = details.getData();
 
         data.getDocuments()
@@ -117,6 +118,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
+        log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_SUBMIT_JOINT_APPLICATION, details.getId());
         CaseData data = details.getData();
 
         if (details.getData().getApplicant2().isRepresented()) {

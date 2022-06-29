@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -61,10 +62,11 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
     }
 
     private void generateSoleNoticeOfProceedings(CaseData caseData, Long caseId) {
-        String templateId;
-        Map<String, Object> content;
+        final String templateId;
+        final Map<String, Object> content;
+        final Applicant applicant1 = caseData.getApplicant1();
 
-        if (caseData.getApplicant1().isRepresented()) {
+        if (applicant1.isRepresented()) {
             log.info("Generating notice of proceedings for applicant solicitor for case id {} ", caseId);
 
             content = solicitorContent.apply(caseData, caseId, true);
@@ -74,7 +76,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         } else {
             log.info("Generating notice of proceedings for applicant for sole case id {} ", caseId);
 
-            content = templateContent.apply(caseData, caseId, caseData.getApplicant2());
+            content = templateContent.apply(caseData, caseId, caseData.getApplicant2(), applicant1.getLanguagePreference());
             templateId = caseData.getApplication().isCourtServiceMethod()
                 ? NFD_NOP_A1_SOLE_APP1_CIT_CS
                 : NFD_NOP_A2_SOLE_APP1_CIT_PS;
@@ -86,7 +88,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             content,
             caseId,
             templateId,
-            caseData.getApplicant1().getLanguagePreference(),
+            applicant1.getLanguagePreference(),
             formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
         );
     }

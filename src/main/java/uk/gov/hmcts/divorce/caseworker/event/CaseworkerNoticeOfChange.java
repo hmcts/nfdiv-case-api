@@ -105,7 +105,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker notice of change aboutToSubmit callback started");
+        log.info("Caseworker notice of change aboutToSubmit callback started for Case Id: {}", details.getId());
 
         final var data = details.getData();
         final var applicant = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1

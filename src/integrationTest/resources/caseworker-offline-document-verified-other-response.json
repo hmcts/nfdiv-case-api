@@ -14,7 +14,7 @@
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "stateToTransitionApplicationTo": "IssuedToBailiff",
     "typeOfDocumentAttached": "Other",
-    "dataVersion": 3,
+    "dataVersion": 4,
     "warnings": []
   },
   "state": "IssuedToBailiff"

@@ -81,7 +81,7 @@ class SystemProgressHeldCasesTaskTest {
         final CaseDetails caseDetails = CaseDetails.builder().data(new HashMap<>()).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails);
         when(holdingPeriodService.getHoldingPeriodInDays()).thenReturn(14);
-        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding)).thenReturn(caseDetailsList);
 
         underTest.run();
 
@@ -91,7 +91,7 @@ class SystemProgressHeldCasesTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         underTest.run();
@@ -105,7 +105,7 @@ class SystemProgressHeldCasesTaskTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
         when(holdingPeriodService.getHoldingPeriodInDays()).thenReturn(14);
-        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding)).thenReturn(caseDetailsList);
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
 
@@ -121,7 +121,7 @@ class SystemProgressHeldCasesTaskTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
         when(holdingPeriodService.getHoldingPeriodInDays()).thenReturn(14);
-        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding)).thenReturn(caseDetailsList);
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
 
