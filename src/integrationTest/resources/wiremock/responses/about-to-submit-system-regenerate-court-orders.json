@@ -13,15 +13,25 @@
       "documentFileName": "${json-unit.any-string}",
       "documentType": "certificateOfEntitlement"
     },
-    "documentsUploaded": [
+    "coConditionalOrderGrantedDocument": {
+      "documentLink": {
+        "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/d2fcd6f7-5365-4b8a-af15-ce3c949173aa",
+        "document_filename": "conditionalOrderGranted.pdf",
+        "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/d2fcd6f7-5365-4b8a-af15-ce3c949173aa/binary"
+      },
+      "documentFileName": "conditionalOrderGranted.pdf",
+      "documentType": "conditionalOrderGranted"
+    },
+    "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
-            "document_url": "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
-            "document_filename": "co_granted.pdf",
-            "document_binary_url": "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003/binary"
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/d2fcd6f7-5365-4b8a-af15-ce3c949173aa",
+            "document_filename": "conditionalOrderGranted.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/d2fcd6f7-5365-4b8a-af15-ce3c949173aa/binary"
           },
+          "documentFileName": "conditionalOrderGranted.pdf",
           "documentType": "conditionalOrderGranted"
         }
       }

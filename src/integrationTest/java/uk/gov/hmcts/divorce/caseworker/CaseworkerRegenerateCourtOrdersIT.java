@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -64,6 +65,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentLis
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
@@ -124,8 +126,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
                 CONDITIONAL_ORDER_GRANTED
             );
 
-        List<ListValue<DivorceDocument>> documentsUploaded = new ArrayList<>();
-        documentsUploaded.add(coGrantedDoc);
+        List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
+        documentsGenerated.add(coGrantedDoc);
 
         final CaseData caseData = CaseData
             .builder()
@@ -142,7 +144,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .documents(
                 CaseDocuments
                     .builder()
-                    .documentsUploaded(documentsUploaded)
+                    .documentsGenerated(documentsGenerated)
                     .build()
             )
             .build();
@@ -181,12 +183,12 @@ public class CaseworkerRegenerateCourtOrdersIT {
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
                 "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
-                "co_granted.pdf",
+                "conditionalOrderGranted.pdf",
                 CONDITIONAL_ORDER_GRANTED
             );
 
-        List<ListValue<DivorceDocument>> documentsUploaded = new ArrayList<>();
-        documentsUploaded.add(coGrantedDoc);
+        List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
+        documentsGenerated.add(coGrantedDoc);
 
         final CaseData caseData = CaseData
             .builder()
@@ -203,7 +205,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .documents(
                 CaseDocuments
                     .builder()
-                    .documentsUploaded(documentsUploaded)
+                    .documentsGenerated(documentsGenerated)
                     .build()
             )
             .build();
