@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
@@ -35,12 +36,12 @@ class SetSubmitAosStateTest {
         final CaseData caseData = caseData();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setState(AwaitingService);
+        caseDetails.setState(AwaitingConditionalOrder);
         caseDetails.setData(caseData);
 
         final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
 
-        assertThat(result.getState()).isEqualTo(AwaitingService);
+        assertThat(result.getState()).isEqualTo(AwaitingConditionalOrder);
     }
 
     @ParameterizedTest
@@ -54,6 +55,8 @@ class SetSubmitAosStateTest {
     }
 
     private static Stream<Arguments> caseStateParameters() {
-        return Arrays.stream(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived)).map(Arguments::of);
+        return Arrays.stream(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived, AwaitingService))
+            .filter(state -> !AwaitingConditionalOrder.equals(state))
+            .map(Arguments::of);
     }
 }

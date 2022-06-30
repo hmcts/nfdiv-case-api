@@ -9,10 +9,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 
@@ -23,9 +26,11 @@ public class SetSubmitAosState implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
 
-        State[] aosValidStates = ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived);
+        List<State> applicableStates = Arrays.stream(
+                ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived, AwaitingService))
+            .filter(state -> !AwaitingConditionalOrder.equals(state)).toList();
 
-        if (Arrays.asList(aosValidStates).contains(caseDetails.getState())) {
+        if (applicableStates.contains(caseDetails.getState())) {
             caseDetails.setState(Holding);
             log.info("Setting submit AoS state to Holding for CaseID: {}", caseDetails.getId());
         } else {
