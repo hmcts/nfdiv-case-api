@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 
 import java.util.ArrayList;
 import java.util.List;
