@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 
 @Component
 @Slf4j
-public class ConditionalOrderReminderPrinter implements ApplicantNotification {
+public class ConditionalOrderReminderPrinter {
 
     @Autowired
     private BulkPrintService bulkPrintService;
