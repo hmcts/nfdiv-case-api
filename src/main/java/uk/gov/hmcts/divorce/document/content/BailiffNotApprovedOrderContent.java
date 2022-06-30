@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
@@ -17,6 +18,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CC
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.REFUSAL_REASON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
@@ -45,6 +48,7 @@ public class BailiffNotApprovedOrderContent {
         final Map<String, Object> templateContent = new HashMap<>();
 
         var alternativeService = caseData.getAlternativeService();
+        final var applicant1LanguagePreference = caseData.getApplicant1().getLanguagePreference();
 
         templateContent.put(REFUSAL_REASON, alternativeService.getServiceApplicationRefusalReason());
         templateContent.put(SERVICE_APPLICATION_RECEIVED_DATE,
@@ -53,9 +57,22 @@ public class BailiffNotApprovedOrderContent {
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(PETITIONER_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplicant2().getFullName());
-        templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
-        templateContent.put(THE_APPLICATION, caseData.getDivorceOrDissolution().isDivorce()
-            ? DIVORCE_APPLICATION : APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP);
+        templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2(), applicant1LanguagePreference));
+
+        if (caseData.getDivorceOrDissolution().isDivorce()) {
+            templateContent.put(
+                THE_APPLICATION, LanguagePreference.WELSH.equals(applicant1LanguagePreference)
+                    ? DIVORCE_APPLICATION_CY
+                    : DIVORCE_APPLICATION
+            );
+        } else {
+            templateContent.put(
+                THE_APPLICATION, LanguagePreference.WELSH.equals(applicant1LanguagePreference)
+                    ? END_CIVIL_PARTNERSHIP_CY
+                    : APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP
+            );
+        }
+
 
         var ctscContactDetails = CtscContactDetails
             .builder()

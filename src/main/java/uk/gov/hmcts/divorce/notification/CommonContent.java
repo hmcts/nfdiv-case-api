@@ -64,6 +64,8 @@ public class CommonContent {
 
     public static final String ISSUE_DATE = " issue date";
 
+    public static final String UNION_TYPE = "union type";
+
     public static final String COURT_NAME = "court name";
     public static final String COURT_EMAIL = "court email";
     public static final String DATE_OF_HEARING = "date of hearing";
@@ -75,6 +77,11 @@ public class CommonContent {
 
     public static final String IS_SOLE = "isSole";
     public static final String IS_JOINT = "isJoint";
+
+    public static final String DIVORCE = "divorce";
+    public static final String DISSOLUTION = "dissolution";
+    public static final String DIVORCE_WELSH = "ysgariad";
+    public static final String DISSOLUTION_WELSH = "diddymiad";
 
     @Autowired
     private EmailTemplatesConfig config;
@@ -109,6 +116,18 @@ public class CommonContent {
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
 
         return templateVars;
+    }
+
+    public String getUnionType(CaseData caseData, LanguagePreference applicantLanguagePreference) {
+        if (WELSH.equals(applicantLanguagePreference)) {
+            return caseData.isDivorce() ? DIVORCE_WELSH : DISSOLUTION_WELSH;
+        }
+
+        return caseData.isDivorce() ? DIVORCE : DISSOLUTION;
+    }
+
+    public String getUnionType(CaseData caseData) {
+        return caseData.isDivorce() ? DIVORCE : DISSOLUTION;
     }
 
     public String getPartner(CaseData caseData, Applicant partner, LanguagePreference applicantLanguagePreference) {

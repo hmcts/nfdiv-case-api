@@ -489,6 +489,27 @@ public class SolicitorSubmitApplicationTest {
         assertThat(response.getErrors()).containsExactly("Account balance insufficient");
     }
 
+    @Test
+    void shouldReturnErrorMessageIfPaymentMethodIsPbaAndPbaNumberIsNotPresent() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+
+        final var caseData = validApplicant1CaseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorSubmitApplication.aboutToSubmit(caseDetails, beforeCaseDetails);
+
+        assertThat(response.getErrors())
+            .containsExactly("PBA number not present when payment method is 'Solicitor fee account (PBA)'");
+    }
+
     private void mockExpectedCaseDetails(CaseDetails<CaseData, State> caseDetails, CaseData caseData, State state) {
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
         expectedCaseDetails.setData(caseData);
