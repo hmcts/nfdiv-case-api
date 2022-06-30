@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.systemupdate.service.print.AwaitingConditionalOrderPrinter;
 
 import java.util.Map;
 
@@ -32,6 +33,9 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private AwaitingConditionalOrderPrinter awaitingConditionalOrderPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -72,6 +76,12 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     }
 
     @Override
+    public void sendToApplicant1Offline(final CaseData caseData, final Long id) {
+        log.info("Notifying applicant 1 offline that they can apply for a conditional order: {}", id);
+        awaitingConditionalOrderPrinter.sendLetters(caseData, id, caseData.getApplicant1());
+    }
+
+    @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         if (!caseData.getApplicationType().isSole() && nonNull(caseData.getApplicant2().getEmail())) {
             log.info("Notifying applicant 2 that they can apply for a conditional order: {}", id);
@@ -105,5 +115,11 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
                 applicant2.getLanguagePreference()
             );
         }
+    }
+
+    @Override
+    public void sendToApplicant2Offline(final CaseData caseData, final Long id) {
+        log.info("Notifying applicant 2 offline that they can apply for a conditional order: {}", id);
+        awaitingConditionalOrderPrinter.sendLetters(caseData, id, caseData.getApplicant2());
     }
 }
