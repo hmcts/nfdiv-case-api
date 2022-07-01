@@ -5,10 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderReminderPrinter;
@@ -50,6 +52,12 @@ class AwaitingConditionalOrderReminderNotificationTest {
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private GenerateCoversheet generateCoversheet;
+
+    @Mock
+    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
 
     @Mock
     private GenerateD84Form generateD84Form;
