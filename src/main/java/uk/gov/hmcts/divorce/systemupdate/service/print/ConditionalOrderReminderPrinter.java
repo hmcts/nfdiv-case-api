@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 
 @Component
 @Slf4j
-public class ConditionalOrderReminderPrinter implements ApplicantNotification {
+public class ConditionalOrderReminderPrinter {
 
     @Autowired
     private BulkPrintService bulkPrintService;

@@ -260,6 +260,7 @@ docmosis:
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
+      CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed_V2.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
@@ -299,6 +300,7 @@ docmosis:
       BAILIFF_APPLICATION_APPROVED: ${BAILIFF_APPLICATION_APPROVED_TEMPLATE_ID:NFD_Bailiff_Application_Approved.docx}
       BAILIFF_APPLICATION_NOT_APPROVED: ${BAILIFF_APPLICATION_NOT_APPROVED_TEMPLATE_ID:NFD_Bailiff_Application_Not_Approved.docx}
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
+      CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed_V2.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx

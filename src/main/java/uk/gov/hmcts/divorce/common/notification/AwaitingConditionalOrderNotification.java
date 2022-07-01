@@ -81,7 +81,6 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
         applyForConditionalOrderPrinter.sendLetters(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
     }
 
-    @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         if (!caseData.getApplicationType().isSole() && nonNull(caseData.getApplicant2().getEmail())) {
             log.info("Notifying applicant 2 that they can apply for a conditional order: {}", id);
