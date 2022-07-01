@@ -47,9 +47,9 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR))
             .page("regenerateCourtOrderDocs")
             .pageLabel("Regenerate court orders")
-            .label("regenerateCourtOrdersWarningLabel", "Updating court orders recreates the Certificate or Entitlement, "
+            .label("regenerateCourtOrdersWarningLabel", "Updating court orders recreates the Certificate of Entitlement, "
                 + "Conditional Order and Final Order, "
-                + "based on the latest case data."
+                + "based on the latest case data. "
                 + "Any other court orders e.g. conditional order refusals, will remain unchanged.\r\n\r\n"
                 + "If there have been updates to the case data e.g. change of applicant name, then these will be reflected in the updated "
                 + "court orders.\r\n\r\nPrevious versions of court orders will not be stored against the case.");
