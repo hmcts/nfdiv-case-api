@@ -80,7 +80,6 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        System.out.println(response.asString());
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
@@ -96,7 +95,6 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
-        System.out.println(response.asString());
 
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
