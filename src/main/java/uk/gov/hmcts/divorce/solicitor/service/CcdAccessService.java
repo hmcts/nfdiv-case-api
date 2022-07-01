@@ -95,7 +95,7 @@ public class CcdAccessService {
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
-    public void unlinkUserFromApplication(Long caseId, String userToRemoveId) {
+    public void unlinkApplicant2FromCase(Long caseId, String userToRemoveId) {
         User caseworkerUser = idamService.retrieveSystemUpdateUserDetails();
 
         caseAssignmentApi.removeCaseUserRoles(
@@ -105,6 +105,26 @@ public class CcdAccessService {
         );
 
         log.info("Successfully unlinked applicant from case Id {} ", caseId);
+    }
+
+    @Retryable(value = {FeignException.class, RuntimeException.class})
+    public void unlinkUserFromCase(Long caseId, String userToRemoveId) {
+        User caseworkerUser = idamService.retrieveSystemUpdateUserDetails();
+
+        final var creatorAssignmentRole = getCaseAssignmentUserRole(caseId, null, CREATOR.getRole(), userToRemoveId);
+        final var app2AssignmentRole = getCaseAssignmentUserRole(caseId, null, APPLICANT_2.getRole(), userToRemoveId);
+
+            final var caseAssignmentUserRolesReq = CaseAssignmentUserRolesRequest.builder()
+                .caseAssignmentUserRolesWithOrganisation(List.of(creatorAssignmentRole, app2AssignmentRole))
+                .build();
+
+        caseAssignmentApi.removeCaseUserRoles(
+            caseworkerUser.getAuthToken(),
+            authTokenGenerator.generate(),
+            caseAssignmentUserRolesReq
+        );
+
+        log.info("Successfully unlinked user from case (id: {}) ", caseId);
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})

@@ -230,7 +230,7 @@ public class CcdAccessServiceTest {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        assertThatCode(() -> ccdAccessService.unlinkUserFromApplication(TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
+        assertThatCode(() -> ccdAccessService.unlinkApplicant2FromCase(TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
             .doesNotThrowAnyException();
 
         verify(idamService).retrieveSystemUpdateUserDetails();
