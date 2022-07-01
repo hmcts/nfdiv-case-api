@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.service.print;
+package uk.gov.hmcts.divorce.systemupdate.service.print;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderReminderPrinter;
 
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
