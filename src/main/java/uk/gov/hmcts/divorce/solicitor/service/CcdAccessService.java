@@ -114,9 +114,9 @@ public class CcdAccessService {
         final var creatorAssignmentRole = getCaseAssignmentUserRole(caseId, null, CREATOR.getRole(), userToRemoveId);
         final var app2AssignmentRole = getCaseAssignmentUserRole(caseId, null, APPLICANT_2.getRole(), userToRemoveId);
 
-            final var caseAssignmentUserRolesReq = CaseAssignmentUserRolesRequest.builder()
-                .caseAssignmentUserRolesWithOrganisation(List.of(creatorAssignmentRole, app2AssignmentRole))
-                .build();
+        final var caseAssignmentUserRolesReq = CaseAssignmentUserRolesRequest.builder()
+            .caseAssignmentUserRolesWithOrganisation(List.of(creatorAssignmentRole, app2AssignmentRole))
+            .build();
 
         caseAssignmentApi.removeCaseUserRoles(
             caseworkerUser.getAuthToken(),
