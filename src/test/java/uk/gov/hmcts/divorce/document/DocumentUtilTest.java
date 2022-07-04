@@ -1,13 +1,18 @@
 package uk.gov.hmcts.divorce.document;
 
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
@@ -23,12 +28,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.isApplicableForConfidentiality;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
@@ -233,45 +239,6 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void isApplicableForConfidentialityShouldReturnTrueForApplicant1WhenGivenDocumentTypeIsApplicableForConfidentiality() {
-        assertTrue(isApplicableForConfidentiality(NOTICE_OF_PROCEEDINGS_APP_1, true));
-    }
-
-    @Test
-    public void isApplicableForConfidentialityShouldReturnTrueForApplicant2WhenGivenDocumentTypeIsApplicableForConfidentiality() {
-        assertTrue(isApplicableForConfidentiality(NOTICE_OF_PROCEEDINGS_APP_2, false));
-    }
-
-    @Test
-    public void isApplicableForConfidentialityShouldReturnTrueWhenGivenDocumentTypeIsApplicableForConfidentiality() {
-        assertTrue(isApplicableForConfidentiality(NOTICE_OF_PROCEEDINGS_APP_1, null));
-    }
-
-    @Test
-    public void isApplicableForConfidentialityShouldReturnTrueForGeneralLetterWhenGivenDocumentTypeIsApplicableForConfidentiality() {
-        assertTrue(isApplicableForConfidentiality(GENERAL_LETTER, null));
-    }
-
-    @Test
-    public void isApplicableForConfidentialityShouldReturnFalseWhenGivenDocumentTypeIsNotApplicableForConfidentiality() {
-        assertFalse(isApplicableForConfidentiality(APPLICATION, null));
-    }
-
-    @Test
-    public void isApplicableForConfidentialityShouldReturnTrueForApplicant1WhenConfidentialDocumentReceivedIsApplicableForConfidentiality(
-
-    ) {
-        assertTrue(isApplicableForConfidentiality(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1, true));
-    }
-
-    @Test
-    public void isApplicableForConfidentialityShouldReturnTrueForApplicant2WhenConfidentialDocumentReceivedIsApplicableForConfidentiality(
-        
-    ) {
-        assertTrue(isApplicableForConfidentiality(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2, false));
-    }
-
-    @Test
     public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsApplicant() {
         var caseData = CaseData.builder().build();
         caseData.getGeneralLetter().setGeneralLetterParties(APPLICANT);
@@ -297,6 +264,68 @@ class DocumentUtilTest {
         caseData.getApplicant2().setContactDetailsType(PRIVATE);
 
         assertFalse(isConfidential(caseData, GENERAL_LETTER));
+    }
+
+    @Test
+    public void shouldReturnConfidentialLettersWhenDocumentIsApplicableForConfidentialityAndApplicantContactIsPrivate() {
+
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
+                .build())
+            .build();
+
+        final ListValue<ConfidentialDivorceDocument> doc3 = ListValue.<ConfidentialDivorceDocument>builder()
+            .value(ConfidentialDivorceDocument.builder()
+                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
+                .build())
+            .build();
+
+        final ListValue<ConfidentialDivorceDocument> doc4 = ListValue.<ConfidentialDivorceDocument>builder()
+            .value(ConfidentialDivorceDocument.builder()
+                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.GENERAL_LETTER)
+                .build())
+            .build();
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .contactDetailsType(PUBLIC)
+                .build())
+            .applicant2(Applicant.builder()
+                .contactDetailsType(PRIVATE)
+                .build())
+            .generalLetter(GeneralLetter.builder()
+                .generalLetterParties(RESPONDENT)
+                .build())
+            .documents(CaseDocuments.builder()
+                .confidentialDocumentsGenerated(Lists.newArrayList(doc3, doc4))
+                .documentsGenerated(Lists.newArrayList(doc1, doc2))
+                .build())
+            .build();
+
+        List<Letter> nonConfidentialNop1 = getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
+        List<Letter> confidentialNop2 = getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_2);
+        List<Letter> confidentialGeneralLetter = getLettersBasedOnContactPrivacy(caseData, GENERAL_LETTER);
+
+        assertThat(nonConfidentialNop1.size()).isEqualTo(1);
+        assertThat(nonConfidentialNop1.get(0).getConfidentialDivorceDocument()).isNull();
+        assertThat(nonConfidentialNop1.get(0).getDivorceDocument().getDocumentType()).isEqualTo(NOTICE_OF_PROCEEDINGS_APP_1);
+
+        assertThat(confidentialNop2.size()).isEqualTo(1);
+        assertThat(confidentialNop2.get(0).getDivorceDocument()).isNull();
+        assertThat(confidentialNop2.get(0).getConfidentialDivorceDocument().getConfidentialDocumentsReceived())
+            .isEqualTo(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2);
+
+        assertThat(confidentialGeneralLetter.size()).isEqualTo(1);
+        assertThat(confidentialGeneralLetter.get(0).getDivorceDocument()).isNull();
+        assertThat(confidentialGeneralLetter.get(0).getConfidentialDivorceDocument().getConfidentialDocumentsReceived())
+            .isEqualTo(ConfidentialDocumentsReceived.GENERAL_LETTER);
     }
 
     private DocumentInfo documentInfo() {

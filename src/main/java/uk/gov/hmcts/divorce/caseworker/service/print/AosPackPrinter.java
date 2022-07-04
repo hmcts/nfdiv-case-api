@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -16,10 +15,7 @@ import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.isApplicableForConfidentiality;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithConfidentialDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -27,7 +23,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
-
 
 @Component
 @Slf4j
@@ -45,6 +40,14 @@ public class AosPackPrinter {
         final List<Letter> currentAosLetters = aosLettersForRespondent(caseData);
 
         if (!isEmpty(currentAosLetters)) {
+            currentAosLetters.forEach(letter -> {
+                if (letter.getDivorceDocument()!=null) {
+                    log.info("Non confidential letter : {}", letter.getDivorceDocument().getDocumentType());
+                } else {
+                    log.info("Confidential letter : {}", letter.getConfidentialDivorceDocument().getConfidentialDocumentsReceived());
+                }
+            });
+
             final String caseIdString = caseId.toString();
             final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_RESPONDENT_PACK);
             final var app2 = caseData.getApplicant2();
@@ -66,7 +69,7 @@ public class AosPackPrinter {
 
     public void sendAosLetterToApplicant(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> currentAosLetters = aosLetters(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
+        final List<Letter> currentAosLetters = aosLetters(caseData);
 
         if (!isEmpty(currentAosLetters)) {
 
@@ -141,7 +144,7 @@ public class AosPackPrinter {
         }
     }
 
-    private List<Letter> aosLetters(CaseData caseData, DocumentType documentType) {
+    private List<Letter> aosLetters(CaseData caseData) {
         final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
             APPLICATION);
@@ -150,7 +153,7 @@ public class AosPackPrinter {
         final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
 
         //Always get document on top of list as new document is added to top after generation
-        final Letter notificationLetter = firstElement(getNotificationLetters(caseData, documentType));
+        final Letter notificationLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1));
 
         final List<Letter> currentAosLetters = new ArrayList<>();
 
@@ -164,21 +167,10 @@ public class AosPackPrinter {
     }
 
     private List<Letter> aosLettersForRespondent(CaseData caseData) {
-        final List<Letter> coversheetLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            COVERSHEET);
-
-        final List<Letter> respondentInvitationLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            NOTICE_OF_PROCEEDINGS_APP_2);
-
-        final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            APPLICATION);
-
-        final Letter coversheetLetter = firstElement(coversheetLetters);
-        final Letter respondentInvitationLetter = firstElement(respondentInvitationLetters);
-        final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
+        final Letter coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
+        final Letter respondentInvitationLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_2));
+        final Letter divorceApplicationLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(),
+            APPLICATION));
 
         final List<Letter> currentAosLetters = new ArrayList<>();
 
@@ -199,8 +191,8 @@ public class AosPackPrinter {
             caseData.getDocuments().getDocumentsGenerated(),
             COVERSHEET);
 
-        final List<Letter> respondentInvitationLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
+        final List<Letter> respondentInvitationLetters = getLettersBasedOnContactPrivacy(
+            caseData,
             NOTICE_OF_PROCEEDINGS_APP_2);
 
         final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
@@ -210,7 +202,7 @@ public class AosPackPrinter {
         final Letter coversheetLetter = firstElement(coversheetLetters);
         final Letter respondentInvitationLetter = firstElement(respondentInvitationLetters);
         final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
-        final Letter notificationLetter = firstElement(getNotificationLetters(caseData, NOTICE_OF_PROCEEDINGS_APP_1));
+        final Letter notificationLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1));
 
         final List<Letter> currentAosLetters = new ArrayList<>();
 
@@ -234,20 +226,5 @@ public class AosPackPrinter {
         }
 
         return currentAosLetters;
-    }
-
-    private List<Letter> getNotificationLetters(final CaseData caseData, final DocumentType documentType) {
-        List<Letter> notificationLetters;
-
-        if (isApplicableForConfidentiality(documentType, null) && isConfidential(caseData, documentType)) {
-            notificationLetters = lettersWithConfidentialDocumentType(
-                caseData.getDocuments().getConfidentialDocumentsGenerated(),
-                getConfidentialDocumentType(documentType));
-        } else {
-            notificationLetters = lettersWithDocumentType(
-                caseData.getDocuments().getDocumentsGenerated(),
-                documentType);
-        }
-        return notificationLetters;
     }
 }
