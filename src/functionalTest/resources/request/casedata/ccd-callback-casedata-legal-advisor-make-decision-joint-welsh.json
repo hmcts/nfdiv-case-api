@@ -1,0 +1,18 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "jointApplication",
+  "coGranted": "No",
+  "coRefusalDecision": "moreInfo",
+  "solSignStatementOfTruth": "Yes",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1SolicitorRepresented": "No",
+  "applicant1LanguagePreferenceWelsh": "Yes",
+  "applicant1Gender": "male",
+  "applicant2FirstName": "Olive",
+  "applicant2LastName": "Oil",
+  "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2LanguagePreferenceWelsh": "Yes",
+  "applicant2Gender": "female"
+}
