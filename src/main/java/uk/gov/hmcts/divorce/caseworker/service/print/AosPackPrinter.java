@@ -40,13 +40,6 @@ public class AosPackPrinter {
         final List<Letter> currentAosLetters = aosLettersForRespondent(caseData);
 
         if (!isEmpty(currentAosLetters)) {
-            currentAosLetters.forEach(letter -> {
-                if (letter.getDivorceDocument()!=null) {
-                    log.info("Non confidential letter : {}", letter.getDivorceDocument().getDocumentType());
-                } else {
-                    log.info("Confidential letter : {}", letter.getConfidentialDivorceDocument().getConfidentialDocumentsReceived());
-                }
-            });
 
             final String caseIdString = caseId.toString();
             final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_RESPONDENT_PACK);
