@@ -6,11 +6,13 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.RejectionReason;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -33,9 +35,12 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
@@ -48,6 +53,9 @@ public class ConditionalOrderRefusalContent {
     private static final String IS_CLARIFICATION = "isClarification";
     private static final String IS_AMENDED_APPLICATION = "isAmendedApplication";
     private static final String IS_OFFLINE = "isOffline";
+
+    @Autowired
+    private CommonContent commonContent;
 
     @Autowired
     private Clock clock;
@@ -71,7 +79,8 @@ public class ConditionalOrderRefusalContent {
     private String phoneNumber;
 
     public Map<String, Object> apply(final CaseData caseData,
-                                     final Long ccdCaseReference) {
+                                     final Long ccdCaseReference,
+                                     final Applicant partner) {
 
         Map<String, Object> templateContent = new HashMap<>();
 
@@ -79,6 +88,7 @@ public class ConditionalOrderRefusalContent {
 
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
+        templateContent.put(PARTNER, commonContent.getPartner(caseData, partner));
 
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
@@ -88,9 +98,11 @@ public class ConditionalOrderRefusalContent {
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
         } else {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CONTACT_DIVORCE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
         }
 
@@ -115,7 +127,7 @@ public class ConditionalOrderRefusalContent {
         return templateContent;
     }
 
-    private List<RefusalReason> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
+    public List<RefusalReason> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
 
         if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
 
