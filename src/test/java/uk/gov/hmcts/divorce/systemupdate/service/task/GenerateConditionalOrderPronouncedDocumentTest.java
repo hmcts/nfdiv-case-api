@@ -17,13 +17,9 @@ import uk.gov.hmcts.divorce.document.content.ConditionalOrderPronouncedTemplateC
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -73,59 +69,6 @@ class GenerateConditionalOrderPronouncedDocumentTest {
             CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
             ENGLISH,
             CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME);
-    }
-
-    @Test
-    public void shouldReturnConditionalOrderDocWhenExists() {
-
-        ListValue<DivorceDocument> divorceDocumentListValue = ListValue
-            .<DivorceDocument>builder()
-            .id(APPLICATION.getLabel())
-            .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
-                .build())
-            .build();
-
-        ListValue<DivorceDocument> coDocumentListValue = ListValue
-            .<DivorceDocument>builder()
-            .id(CONDITIONAL_ORDER_GRANTED.getLabel())
-            .value(DivorceDocument.builder()
-                .documentType(CONDITIONAL_ORDER_GRANTED)
-                .build())
-            .build();
-
-        CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder()
-                .documentsGenerated(List.of(divorceDocumentListValue, coDocumentListValue))
-                .build())
-            .build();
-
-        Optional<ListValue<DivorceDocument>> conditionalOrderGrantedDoc =
-            generateConditionalOrderPronouncedDocument.getConditionalOrderGrantedDoc(caseData);
-
-        assertTrue(conditionalOrderGrantedDoc.isPresent());
-    }
-
-    @Test
-    public void shouldNotReturnConditionalOrderDocWhenDoesNotExists() {
-        ListValue<DivorceDocument> divorceDocumentListValue = ListValue
-            .<DivorceDocument>builder()
-            .id(APPLICATION.getLabel())
-            .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
-                .build())
-            .build();
-
-        CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder()
-                .documentsGenerated(singletonList(divorceDocumentListValue))
-                .build())
-            .build();
-
-        Optional<ListValue<DivorceDocument>> conditionalOrderGrantedDoc =
-            generateConditionalOrderPronouncedDocument.getConditionalOrderGrantedDoc(caseData);
-
-        assertTrue(conditionalOrderGrantedDoc.isEmpty());
     }
 
     @Test

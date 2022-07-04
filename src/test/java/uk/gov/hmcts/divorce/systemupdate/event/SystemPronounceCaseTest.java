@@ -24,11 +24,9 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPr
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -143,12 +141,8 @@ public class SystemPronounceCaseTest {
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
 
-        when(generateConditionalOrderPronouncedDocument.getConditionalOrderGrantedDoc(any()))
-            .thenReturn(Optional.ofNullable(caseData.getDocuments().getDocumentsGenerated().get(0)));
-
         underTest.aboutToSubmit(details, details);
 
-        verify(generateConditionalOrderPronouncedDocument).getConditionalOrderGrantedDoc(caseData);
         verifyNoMoreInteractions(generateConditionalOrderPronouncedDocument);
         verifyNoInteractions(notificationDispatcher);
     }
@@ -174,12 +168,8 @@ public class SystemPronounceCaseTest {
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
 
-        when(generateConditionalOrderPronouncedDocument.getConditionalOrderGrantedDoc(any()))
-            .thenReturn(Optional.ofNullable(caseDataNew.getDocuments().getDocumentsGenerated().get(0)));
-
         underTest.aboutToSubmit(detailsNew, detailsOld);
 
-        verify(generateConditionalOrderPronouncedDocument).getConditionalOrderGrantedDoc(caseDataNew);
         verify(generateConditionalOrderPronouncedDocument).removeExistingAndGenerateNewConditionalOrderGrantedDoc(detailsNew);
         verifyNoInteractions(notificationDispatcher);
     }
