@@ -82,9 +82,12 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
 
         log.info("Conditional order pronounced for Case({})", caseId);
 
+        final State state = caseData.caseIsJudicialSeparation() ? SeparationOrderGranted : ConditionalOrderPronounced;
+
         generateConditionalOrderGrantedDocs(details, beforeDetails);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .state(state)
             .data(caseData)
             .build();
     }
