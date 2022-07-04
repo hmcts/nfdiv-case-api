@@ -187,7 +187,7 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
-        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
+        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, false);
 
         Map<String, Object> templateContent =
             noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
