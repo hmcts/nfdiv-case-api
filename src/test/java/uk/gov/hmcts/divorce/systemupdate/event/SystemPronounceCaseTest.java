@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
+import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,6 +60,9 @@ public class SystemPronounceCaseTest {
 
     @Mock
     private GenerateConditionalOrderPronouncedCoversheet generateCoversheetDocument;
+
+    @Mock
+    private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
 
     @InjectMocks
     private SystemPronounceCase underTest;
@@ -167,10 +171,13 @@ public class SystemPronounceCaseTest {
             .build();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
+        when(removeExistingConditionalOrderPronouncedDocument.apply(detailsNew)).thenReturn(detailsNew);
+        when(generateConditionalOrderPronouncedDocument.apply(detailsNew)).thenReturn(detailsNew);
 
         underTest.aboutToSubmit(detailsNew, detailsOld);
 
-        verify(generateConditionalOrderPronouncedDocument).removeExistingAndGenerateNewConditionalOrderGrantedDoc(detailsNew);
+        verify(removeExistingConditionalOrderPronouncedDocument).apply(detailsNew);
+        verify(generateConditionalOrderPronouncedDocument).apply(detailsNew);
         verifyNoInteractions(notificationDispatcher);
     }
 

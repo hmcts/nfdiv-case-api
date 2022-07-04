@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
+import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.EnumSet;
@@ -32,6 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 
 @Component
@@ -47,7 +49,10 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
     private NotificationDispatcher notificationDispatcher;
 
     @Autowired
-    private GenerateConditionalOrderPronouncedDocument generateDocument;
+    private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
+
+    @Autowired
+    private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
 
     @Autowired
     private GenerateConditionalOrderPronouncedCoversheet generateCoversheetDocument;
@@ -110,11 +115,15 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             if (!newCO.getPronouncementJudge().equals(oldCO.getPronouncementJudge())
                 || !newCO.getCourt().equals(oldCO.getCourt())
                 || !newCO.getDateAndTimeOfHearing().equals(oldCO.getDateAndTimeOfHearing())) {
-                generateDocument.removeExistingAndGenerateNewConditionalOrderGrantedDoc(details);
+
+                caseTasks(
+                    removeExistingConditionalOrderPronouncedDocument,
+                    generateConditionalOrderPronouncedDocument
+                ).run(details);
             }
 
         } else {
-            generateDocument.apply(details);
+            caseTasks(generateConditionalOrderPronouncedDocument).run(details);
         }
     }
 }

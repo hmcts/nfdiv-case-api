@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
+import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
@@ -57,6 +58,9 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
+    @Autowired
+    private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -89,8 +93,14 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
 
         if (caseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
             log.info("Regenerating CO Pronounced document for Case Id: {}", details.getId());
+
+            //TODO: Needs to be split into tasks
             generateConditionalOrderPronouncedCoversheetDocument.removeExistingAndGenerateConditionalOrderPronouncedCoversheet(details);
-            generateConditionalOrderPronouncedDocument.removeExistingAndGenerateNewConditionalOrderGrantedDoc(details);
+
+            caseTasks(
+                removeExistingConditionalOrderPronouncedDocument,
+                generateConditionalOrderPronouncedDocument
+            ).run(details);
         }
 
         if (caseData.getDocuments().getDocumentGeneratedWithType(FINAL_ORDER_GRANTED).isPresent()) {

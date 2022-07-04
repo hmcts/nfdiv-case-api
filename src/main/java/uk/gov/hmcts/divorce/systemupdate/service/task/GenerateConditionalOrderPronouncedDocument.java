@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderPronouncedTemplateContent;
 
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
@@ -45,19 +44,6 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
         addConditionalOrderGrantedDocument(caseData);
 
         return caseDetails;
-    }
-
-    public void removeExistingAndGenerateNewConditionalOrderGrantedDoc(CaseDetails<CaseData, State> caseDetails) {
-        final CaseData caseData = caseDetails.getData();
-
-        //remove existing doc from case data
-        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
-            caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> CONDITIONAL_ORDER_GRANTED.equals(document.getValue().getDocumentType()));
-        }
-
-        //generate new doc
-        apply(caseDetails);
     }
 
     private void addConditionalOrderGrantedDocument(CaseData caseData) {

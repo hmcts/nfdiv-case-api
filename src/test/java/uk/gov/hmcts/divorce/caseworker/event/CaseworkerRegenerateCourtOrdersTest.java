@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
+import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -65,6 +66,9 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
 
     @InjectMocks
     private CaseworkerRegenerateCourtOrders caseworkerRegenerateCourtOrders;
@@ -156,7 +160,8 @@ public class CaseworkerRegenerateCourtOrdersTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        doNothing().when(generateConditionalOrderPronouncedDocument).removeExistingAndGenerateNewConditionalOrderGrantedDoc(caseDetails);
+        when(removeExistingConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
@@ -165,8 +170,8 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         verify(generateConditionalOrderPronouncedCoversheetDocument)
             .removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseDetails);
-        verify(generateConditionalOrderPronouncedDocument)
-            .removeExistingAndGenerateNewConditionalOrderGrantedDoc(caseDetails);
+        verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
+        verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
     }
 
     @Test
@@ -178,9 +183,9 @@ public class CaseworkerRegenerateCourtOrdersTest {
                     .builder()
                     .documentsGenerated(
                         List.of(getDivorceDocumentListValue(
-                            "http://localhost:4200/assets/8c75732c-d640-43bf-a0e9-f33452243696",
-                            "fo_granted.pdf",
-                            FINAL_ORDER_GRANTED
+                                "http://localhost:4200/assets/8c75732c-d640-43bf-a0e9-f33452243696",
+                                "fo_granted.pdf",
+                                FINAL_ORDER_GRANTED
                             )
                         )
                     ).build()
@@ -266,7 +271,8 @@ public class CaseworkerRegenerateCourtOrdersTest {
         updatedCaseDetails.setData(updatedCaseData);
 
         when(generateCertificateOfEntitlement.apply(caseDetails)).thenReturn(updatedCaseDetails);
-        doNothing().when(generateConditionalOrderPronouncedDocument).removeExistingAndGenerateNewConditionalOrderGrantedDoc(caseDetails);
+        when(removeExistingConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
         doNothing().when(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
@@ -276,12 +282,12 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         verify(generateConditionalOrderPronouncedCoversheetDocument)
             .removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseDetails);
-        verify(generateConditionalOrderPronouncedDocument)
-            .removeExistingAndGenerateNewConditionalOrderGrantedDoc(caseDetails);
         verify(generateFinalOrderCoverLetter).removeExistingAndGenerateNewFinalOrderGrantedCoverLetters(caseDetails);
+        verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
+        verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
+        verify(generateCertificateOfEntitlement).apply(caseDetails);
         verify(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
         verify(generateCertificateOfEntitlement).removeExistingAndGenerateNewCertificateOfEntitlementCoverLetters(caseDetails);
-        verify(generateCertificateOfEntitlement).apply(caseDetails);
     }
 
     @Test

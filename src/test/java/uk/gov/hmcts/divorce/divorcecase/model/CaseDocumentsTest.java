@@ -415,6 +415,31 @@ class CaseDocumentsTest {
         assertTrue(conditionalOrderGrantedDoc.isEmpty());
     }
 
+    @Test
+    public void shouldRemoveConditionalOrderGrantedDoc() {
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseDocuments caseDocuments = CaseDocuments.builder()
+            .documentsGenerated(Lists.newArrayList(
+                ListValue.<DivorceDocument>builder()
+                    .id("1")
+                    .value(DivorceDocument.builder()
+                        .documentType(CONDITIONAL_ORDER_GRANTED)
+                        .build())
+                    .build(),
+                ListValue.<DivorceDocument>builder()
+                    .id("2")
+                    .value(DivorceDocument.builder()
+                        .documentType(APPLICATION)
+                        .build()).build()
+            ))
+            .build();
+
+        caseDocuments.removeDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED);
+
+        assertEquals(1, caseDocuments.getDocumentsGenerated().size());
+        assertEquals(APPLICATION, caseDocuments.getDocumentsGenerated().get(0).getValue().getDocumentType());
+    }
+
     private ListValue<ScannedDocument> getDocumentListValue(final String url,
                                                             final String filename,
                                                             final ScannedDocumentType scannedDocumentType) {
