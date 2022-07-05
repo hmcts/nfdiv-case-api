@@ -153,7 +153,7 @@ public abstract class FunctionalTestSuite {
                     .data(caseData)
                     .createdDate(LOCAL_DATE_TIME)
                     .caseTypeId(CASE_TYPE)
-                    .state(state.getName())
+                    .state(state.name())
                     .build()
             )
             .caseDetails(
@@ -163,7 +163,7 @@ public abstract class FunctionalTestSuite {
                     .data(caseData)
                     .createdDate(LOCAL_DATE_TIME)
                     .caseTypeId(CASE_TYPE)
-                    .state(state.getName())
+                    .state(state.name())
                     .build()
             )
             .build();
