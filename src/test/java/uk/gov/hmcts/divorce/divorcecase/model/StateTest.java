@@ -29,7 +29,7 @@ class StateTest {
             if (null == annotation) {
                 throw new AssertionError("CCD name not set for State");
             }
-            return annotation.name();
+            return annotation.label();
         } catch (final NoSuchFieldException e) {
             throw new AssertionError("Field not found in State");
         }
