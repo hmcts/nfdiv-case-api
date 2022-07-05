@@ -152,7 +152,7 @@ public class LegalAdvisorMakeDecisionIT {
                 jsonPath("$.data.coDecisionDate").value(getExpectedLocalDate().toString())
             )
             .andExpect(
-                jsonPath("$.state").value(AwaitingPronouncement.getName())
+                jsonPath("$.state").value(AwaitingPronouncement.name())
             );
     }
 
@@ -185,7 +185,7 @@ public class LegalAdvisorMakeDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingClarification.getName())
+                jsonPath("$.state").value(AwaitingClarification.name())
             );
     }
 
@@ -326,7 +326,7 @@ public class LegalAdvisorMakeDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingAdminClarification.getName())
+                jsonPath("$.state").value(AwaitingAdminClarification.name())
             );
     }
 
@@ -373,7 +373,7 @@ public class LegalAdvisorMakeDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingAmendedApplication.getName())
+                jsonPath("$.state").value(AwaitingAmendedApplication.name())
             );
     }
 
