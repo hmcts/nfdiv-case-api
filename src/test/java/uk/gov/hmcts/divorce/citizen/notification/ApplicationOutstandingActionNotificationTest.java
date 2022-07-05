@@ -116,6 +116,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(MARRIAGE_CERTIFICATE_TRANSLATION);
         docs.add(NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -181,6 +182,7 @@ class ApplicationOutstandingActionNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
         data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        data.getApplicant2().setNameChangedHow(Set.of(DEED_POLL));
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
         data.getApplicant2().setEmail(null);
 
