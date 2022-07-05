@@ -65,7 +65,7 @@ class CaseDetailsConverterTest {
         assertThat(reformModelCaseDetails.getCaseTypeId()).isEqualTo(CASE_TYPE);
         assertThat(reformModelCaseDetails.getCreatedDate()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(reformModelCaseDetails.getLastModified()).isEqualTo(LOCAL_DATE_TIME);
-        assertThat(reformModelCaseDetails.getState()).isEqualTo(Submitted.getName());
+        assertThat(reformModelCaseDetails.getState()).isEqualTo(Submitted.name());
         assertThat(reformModelCaseDetails.getLockedBy()).isEqualTo(lockedBy);
         assertThat(reformModelCaseDetails.getSecurityLevel()).isEqualTo(securityLevel);
         assertThat(reformModelCaseDetails.getData()).isEqualTo(expectedData(caseData));
@@ -87,7 +87,7 @@ class CaseDetailsConverterTest {
             .caseTypeId(CASE_TYPE)
             .createdDate(LOCAL_DATE_TIME)
             .lastModified(LOCAL_DATE_TIME)
-            .state(Submitted.getName())
+            .state(Submitted.name())
             .lockedBy(lockedBy)
             .securityLevel(securityLevel)
             .data(Map.of("createdDate", LOCAL_DATE))
@@ -144,7 +144,7 @@ class CaseDetailsConverterTest {
         assertThat(reformModelCaseDetails.getCaseTypeId()).isEqualTo(CASE_TYPE);
         assertThat(reformModelCaseDetails.getCreatedDate()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(reformModelCaseDetails.getLastModified()).isEqualTo(LOCAL_DATE_TIME);
-        assertThat(reformModelCaseDetails.getState()).isEqualTo(Created.getName());
+        assertThat(reformModelCaseDetails.getState()).isEqualTo(Created.name());
         assertThat(reformModelCaseDetails.getLockedBy()).isEqualTo(lockedBy);
         assertThat(reformModelCaseDetails.getSecurityLevel()).isEqualTo(securityLevel);
         assertThat(reformModelCaseDetails.getData()).isEqualTo(expectedBulkCaseData(caseData));
@@ -166,7 +166,7 @@ class CaseDetailsConverterTest {
             .caseTypeId(CASE_TYPE)
             .createdDate(LOCAL_DATE_TIME)
             .lastModified(LOCAL_DATE_TIME)
-            .state(Created.getName())
+            .state(Created.name())
             .lockedBy(lockedBy)
             .securityLevel(securityLevel)
             .data(Map.of("caseTitle", "test"))
