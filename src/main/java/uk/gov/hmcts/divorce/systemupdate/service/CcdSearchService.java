@@ -177,7 +177,7 @@ public class CcdSearchService {
         final String serviceAuth) {
 
         final QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
-        final QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
+        final QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReferenceLink.CaseReference");
 
         final BoolQueryBuilder query = boolQuery()
             .must(stateQuery)

@@ -92,7 +92,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         final CaseData data = details.getData();
 
         if (AwaitingPronouncement == details.getState()
-            && !isEmpty(data.getBulkListCaseReference())) {
+            && !isEmpty(data.getBulkListCaseReferenceLink().getCaseReference())) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList(GENERAL_APPLICATION_BULK_CASE_ERROR))
