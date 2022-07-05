@@ -73,6 +73,8 @@ public class CommonContent {
 
     public static final String ISSUE_DATE = " issue date";
 
+    public static final String UNION_TYPE = "union type";
+
     public static final String COURT_NAME = "court name";
     public static final String COURT_EMAIL = "court email";
     public static final String DATE_OF_HEARING = "date of hearing";
@@ -164,6 +166,10 @@ public class CommonContent {
             return caseData.isDivorce() ? DIVORCE_WELSH : DISSOLUTION_WELSH;
         }
 
+        return caseData.isDivorce() ? DIVORCE : DISSOLUTION;
+    }
+
+    public String getUnionType(CaseData caseData) {
         return caseData.isDivorce() ? DIVORCE : DISSOLUTION;
     }
 

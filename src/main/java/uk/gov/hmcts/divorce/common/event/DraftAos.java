@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -61,7 +62,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(DRAFT_AOS)
-            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue))
+            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue, OfflineDocumentReceived))
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
             .showCondition("applicationType=\"soleApplication\"")
