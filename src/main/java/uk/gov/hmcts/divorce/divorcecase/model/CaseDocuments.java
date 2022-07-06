@@ -1,10 +1,12 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
@@ -14,12 +16,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSol
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.UUID.randomUUID;
@@ -175,5 +180,15 @@ public class CaseDocuments {
         return !after.stream()
             .allMatch(afterValue -> before.stream()
                 .anyMatch(beforeValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
+    }
+
+    @JsonIgnore
+    public Optional<Document> getFirstGeneratedDocumentLinkWith(final DocumentType documentType) {
+        return Stream.ofNullable(getDocumentsGenerated())
+            .flatMap(java.util.Collection::stream)
+            .map(ListValue::getValue)
+            .filter(divorceDocument -> documentType == divorceDocument.getDocumentType())
+            .map(DivorceDocument::getDocumentLink)
+            .findFirst();
     }
 }

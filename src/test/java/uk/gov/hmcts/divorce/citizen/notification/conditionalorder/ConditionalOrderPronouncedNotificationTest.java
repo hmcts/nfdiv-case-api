@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
@@ -293,5 +295,76 @@ class ConditionalOrderPronouncedNotificationTest {
         assertThatExceptionOfType(NotificationTemplateException.class)
             .isThrownBy(() -> notification.sendToApplicant1(data, 1234567890123456L))
             .withMessage("Notification failed with missing field 'coGrantedDate' for Case Id: 1234567890123456");
+    }
+
+    @Test
+    void shouldSendWelshEmailToApplicant1WithDivorceContent() {
+        LocalDateTime now = LocalDateTime.now();
+        CaseData data = caseData();
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .court(ConditionalOrderCourt.BIRMINGHAM)
+            .dateAndTimeOfHearing(now)
+            .grantedDate(now.toLocalDate())
+            .build()
+        );
+
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
+                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+            )),
+            eq(WELSH)
+        );
+
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendWelshEmailToApplicant2WithDissolutionContentForJointApplication() {
+        CaseData data = caseData();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.setApplicant2(getApplicant(Gender.MALE));
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .court(ConditionalOrderCourt.BIRMINGHAM)
+            .dateAndTimeOfHearing(now)
+            .grantedDate(now.toLocalDate())
+            .build()
+        );
+
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateVars);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
+            argThat(allOf(
+                hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
+                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+            )),
+            eq(WELSH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 }

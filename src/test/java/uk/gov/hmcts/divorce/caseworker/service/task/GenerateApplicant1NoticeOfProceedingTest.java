@@ -35,6 +35,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
@@ -69,6 +70,37 @@ class GenerateApplicant1NoticeOfProceedingTest {
     @InjectMocks
     private GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
 
+    public static CaseDetails<CaseData, State> caseDetails(CaseData caseData) {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+        return caseDetails;
+    }
+
+    public static CaseData caseData(ApplicationType applicationType, YesOrNo isApp1Represented) {
+        return caseData(applicationType, isApp1Represented, NO);
+    }
+
+    public static CaseData caseData(ApplicationType applicationType, YesOrNo isApp1Represented, YesOrNo isApp2Represented) {
+        return CaseData.builder()
+            .applicationType(applicationType)
+            .applicant1(Applicant.builder()
+                .solicitorRepresented(isApp1Represented)
+                .languagePreferenceWelsh(NO)
+                .build())
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(isApp2Represented)
+                .email("onlineApplicant2@email.com")
+                .languagePreferenceWelsh(NO)
+                .build())
+            .application(Application.builder()
+                .solSignStatementOfTruth(NO)
+                .build())
+            .caseInvite(CaseInvite.builder().build())
+            .build();
+    }
+
     @Test
     void shouldGenerateA1WhenSoleWithAppNotRepresentedAndCourtService() {
 
@@ -80,7 +112,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2())).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -122,7 +154,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2())).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -218,35 +250,5 @@ class GenerateApplicant1NoticeOfProceedingTest {
                 caseData.getApplicant1().getLanguagePreference(),
                 formatDocumentName(TEST_CASE_ID, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
             );
-    }
-
-    public static CaseDetails<CaseData, State> caseDetails(CaseData caseData) {
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-        return caseDetails;
-    }
-
-    public static CaseData caseData(ApplicationType applicationType, YesOrNo isApp1Represented) {
-        return caseData(applicationType, isApp1Represented, NO);
-    }
-
-    public static CaseData caseData(ApplicationType applicationType, YesOrNo isApp1Represented, YesOrNo isApp2Represented) {
-        return CaseData.builder()
-            .applicationType(applicationType)
-            .applicant1(Applicant.builder()
-                .solicitorRepresented(isApp1Represented)
-                .languagePreferenceWelsh(NO)
-                .build())
-            .applicant2(Applicant.builder()
-                .solicitorRepresented(isApp2Represented)
-                .email("onlineApplicant2@email.com")
-                .build())
-            .application(Application.builder()
-                .solSignStatementOfTruth(NO)
-                .build())
-            .caseInvite(CaseInvite.builder().build())
-            .build();
     }
 }
