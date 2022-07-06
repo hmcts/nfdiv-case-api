@@ -96,7 +96,7 @@ public class GenerateCoRefusedCoverLetterTest {
         when(conditionalOrderRefusalContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
 
-        generateCoRefusedCoverLetter.generateCoverLetter(
+        generateCoRefusedCoverLetter.generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
@@ -153,7 +153,7 @@ public class GenerateCoRefusedCoverLetterTest {
         when(conditionalOrderRefusalContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
 
-        generateCoRefusedCoverLetter.generateCoverLetter(
+        generateCoRefusedCoverLetter.generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,

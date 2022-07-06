@@ -39,10 +39,10 @@ public class GenerateCoRefusedCoverLetter {
     @Autowired
     private Clock clock;
 
-    public void generateCoverLetter(final CaseData caseData,
-                                    final Long caseId,
-                                    final String templateId,
-                                    final Applicant applicant) {
+    public void generateAndUpdateCaseData(final CaseData caseData,
+                                          final Long caseId,
+                                          final String templateId,
+                                          final Applicant applicant) {
 
         log.info("Generating Conditional Order Refused Cover Letter for case id {} ", caseId);
 

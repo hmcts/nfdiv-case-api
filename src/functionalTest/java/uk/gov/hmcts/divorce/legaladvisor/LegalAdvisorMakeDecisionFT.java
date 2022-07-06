@@ -130,9 +130,6 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        //TODO: remove println
-        System.out.println(response.asString());
-
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)

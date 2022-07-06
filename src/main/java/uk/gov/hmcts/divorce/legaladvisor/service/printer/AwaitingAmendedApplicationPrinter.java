@@ -123,7 +123,7 @@ public class AwaitingAmendedApplicationPrinter {
             coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
             applicant.getLanguagePreference()
         );
-        generateCoRefusedCoverLetter.generateCoverLetter(
+        generateCoRefusedCoverLetter.generateAndUpdateCaseData(
             caseData,
             caseId,
             REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,

@@ -113,7 +113,7 @@ public class AwaitingAmendedApplicationPrinterTest {
             eq(ENGLISH)
         );
 
-        verify(generateCoRefusedCoverLetter).generateCoverLetter(
+        verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
@@ -196,7 +196,7 @@ public class AwaitingAmendedApplicationPrinterTest {
             eq(ENGLISH)
         );
 
-        verify(generateCoRefusedCoverLetter).generateCoverLetter(
+        verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
