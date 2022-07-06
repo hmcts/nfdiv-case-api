@@ -125,7 +125,7 @@ public class CasePronouncementServiceIT {
                     .total(1)
                     .cases(List.of(uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                         .id(TEST_CASE_ID)
-                        .state(AwaitingPronouncement.getName())
+                        .state(AwaitingPronouncement.name())
                         .build()))
                     .build()
             );
