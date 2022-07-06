@@ -100,12 +100,12 @@ public class CasePronouncementService {
 
         ccdSearchService.searchForCases(caseReferences, user, serviceAuth)
             .forEach(caseDetails -> {
-                if (ConditionalOrderPronounced.getName().equals(caseDetails.getState())) {
+                if (ConditionalOrderPronounced.name().equals(caseDetails.getState())) {
                     log.info(
                         "Case ID {} will be skipped and moved to processed list as already pronounced",
                         caseDetails.getId());
                     casesToBeAddedToProcessedList.add(String.valueOf(caseDetails.getId()));
-                } else if (!AwaitingPronouncement.getName().equals(caseDetails.getState())) {
+                } else if (!AwaitingPronouncement.name().equals(caseDetails.getState())) {
                     log.info(
                         "Case ID {} will be skipped and moved to error list as not in correct state to be pronounced",
                         caseDetails.getId());

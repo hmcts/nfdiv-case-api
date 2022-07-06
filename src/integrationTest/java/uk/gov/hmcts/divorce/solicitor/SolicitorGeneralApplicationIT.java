@@ -141,7 +141,7 @@ public class SolicitorGeneralApplicationIT {
             .build();
 
         CallbackRequest request = callbackRequest(caseData, SOLICITOR_GENERAL_APPLICATION);
-        request.getCaseDetails().setState(AwaitingAos.getName());
+        request.getCaseDetails().setState(AwaitingAos.name());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -229,7 +229,7 @@ public class SolicitorGeneralApplicationIT {
         caseData.getApplicant2().setSolicitor(applicant2Solicitor);
 
         CallbackRequest request = callbackRequest(caseData, SOLICITOR_GENERAL_APPLICATION);
-        request.getCaseDetails().setState(AwaitingAos.getName());
+        request.getCaseDetails().setState(AwaitingAos.name());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubGetOrganisationEndpoint(getOrganisationResponseWith("App1OrgPolicy"));
@@ -265,7 +265,7 @@ public class SolicitorGeneralApplicationIT {
             .build();
 
         CallbackRequest request = callbackRequest(caseData, SOLICITOR_GENERAL_APPLICATION);
-        request.getCaseDetails().setState(AwaitingPronouncement.getName());
+        request.getCaseDetails().setState(AwaitingPronouncement.name());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

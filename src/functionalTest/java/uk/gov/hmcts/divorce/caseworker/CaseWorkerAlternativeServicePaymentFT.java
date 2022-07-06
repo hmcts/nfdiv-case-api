@@ -74,7 +74,7 @@ public class CaseWorkerAlternativeServicePaymentFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
         assertThatJson(response.asString(),
-            json -> json.inPath("state").isEqualTo(AwaitingBailiffReferral.getName())
+            json -> json.inPath("state").isEqualTo(AwaitingBailiffReferral.name())
         );
     }
 
@@ -89,7 +89,7 @@ public class CaseWorkerAlternativeServicePaymentFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
         assertThatJson(response.asString(),
-            json -> json.inPath("state").isEqualTo(AwaitingServiceConsideration.getName())
+            json -> json.inPath("state").isEqualTo(AwaitingServiceConsideration.name())
         );
     }
 }

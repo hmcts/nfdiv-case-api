@@ -80,9 +80,9 @@ public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite 
                 CaseData caseData = getCaseData(caseDetails.getData());
                 assertThat(caseDetails.getState())
                     .isIn(List.of(
-                        AwaitingConditionalOrder.getName(),
-                        ConditionalOrderPending.getName(),
-                        ConditionalOrderDrafted.getName()
+                        AwaitingConditionalOrder.name(),
+                        ConditionalOrderPending.name(),
+                        ConditionalOrderDrafted.name()
                     ));
                 assertThat(caseData.getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isNotEqualTo(YesOrNo.YES);
                 assertThat(caseData.getDueDate()).isBeforeOrEqualTo(LocalDate.now());

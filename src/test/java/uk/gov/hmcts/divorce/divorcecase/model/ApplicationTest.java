@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -9,6 +11,7 @@ import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Collections.emptyList;
@@ -360,6 +363,27 @@ class ApplicationTest {
         final Application application = Application.builder().build();
 
         assertThat(application.isHelpWithFeesApplication()).isFalse();
+    }
+
+    @Test
+    void shouldReturnOptionalPbaNumberIfPbaNumberIsPresent() {
+
+        final String pbaNumber = "123456";
+        final Application application = Application.builder()
+            .pbaNumbers(DynamicList.builder()
+                .value(DynamicListElement.builder().label(pbaNumber).build())
+                .build())
+            .build();
+
+        assertThat(application.getPbaNumber()).isEqualTo(Optional.of(pbaNumber));
+    }
+
+    @Test
+    void shouldReturnOptionalEmptyIfPbaNumberIsNotPresent() {
+
+        final Application application = Application.builder().build();
+
+        assertThat(application.getPbaNumber()).isEqualTo(Optional.empty());
     }
 
     private ListValue<Payment> paymentValue(final Payment payment) {

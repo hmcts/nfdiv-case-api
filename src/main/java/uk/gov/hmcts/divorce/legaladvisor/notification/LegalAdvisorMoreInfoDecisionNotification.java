@@ -11,9 +11,10 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_REFUSED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CLARIFICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CO_REFUSED_SOLE_JOINT;
 
 @Component
 @Slf4j
@@ -65,19 +66,34 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
 
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
+        log.info("Sending CO refused notification to applicant 1 solicitor as required more info for case : {}", caseId);
 
-        templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
-
-        log.info("Sending Clarification Submitted notification for case : {}", caseId);
+        Applicant applicant = caseData.getApplicant1();
 
         notificationService.sendEmail(
-            caseData.getApplicant1().getSolicitor().getEmail(),
-            SOLICITOR_CLARIFICATION_SUBMITTED,
-            templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            applicant.getSolicitor().getEmail(),
+            SOLICITOR_CO_REFUSED_SOLE_JOINT,
+            commonContent.getCoRefusedSolicitorTemplateVars(caseData, caseId, applicant, MORE_INFO),
+            ENGLISH
         );
 
-        log.info("Successfully sent Clarification Submitted notification for case : {}", caseId);
+        log.info("Successfully sent CO refused notification to applicant 1 solicitor as required more info for case : {}", caseId);
+    }
+
+    @Override
+    public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
+
+        log.info("Sending CO refused notification to applicant 2 solicitor as required more info for case : {}", caseId);
+
+        Applicant applicant = caseData.getApplicant2();
+
+        notificationService.sendEmail(
+            applicant.getSolicitor().getEmail(),
+            SOLICITOR_CO_REFUSED_SOLE_JOINT,
+            commonContent.getCoRefusedSolicitorTemplateVars(caseData, caseId, applicant, MORE_INFO),
+            ENGLISH
+        );
+
+        log.info("Successfully sent CO refused notification to applicant 2 solicitor as required more info for case : {}", caseId);
     }
 }
