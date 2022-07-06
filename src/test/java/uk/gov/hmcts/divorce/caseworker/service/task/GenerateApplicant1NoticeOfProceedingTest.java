@@ -131,15 +131,12 @@ class GenerateApplicant1NoticeOfProceedingTest {
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
 
         final Map<String, Object> templateContent = new HashMap<>();
-
         when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-
         verifyNoInteractions(noticeOfProceedingContent);
-
         assertThat(result.getData()).isEqualTo(caseData);
     }
 
