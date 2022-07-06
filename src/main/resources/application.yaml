@@ -249,7 +249,7 @@ docmosis:
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
-      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
+      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx
       SERVICE_ORDER: NFD_Service_Order_V2.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement_V2.docx
@@ -285,7 +285,7 @@ docmosis:
       CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: ${RESPONDENT_ANSWERS_TEMPLATE_ID:NFD_Respondent_Answers_Eng.docx}
-      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
+      CERTIFICATE_OF_SERVICE: ${CERTIFICATE_OF_SERVICE_TEMPLATE_ID:NFD_Certificate_Of_Service.docx}
       SERVICE_ORDER: ${SERVICE_ORDER_TEMPLATE_ID:NFD_Service_Order_V2.docx}
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole_V2.docx  #TODO: update content
