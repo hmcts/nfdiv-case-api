@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
+
 @Data
 @NoArgsConstructor
 public class RetiredFields {
@@ -45,6 +47,13 @@ public class RetiredFields {
     private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
     private ServiceMethod solServiceMethod;
     private DivorceDocument d11Document;
+
+    @CCD(
+        label = "Refusal rejection reasons",
+        typeOverride = MultiSelectList,
+        typeParameterOverride = "RejectionReason"
+    )
+    private Set<RejectionReason> coRefusalRejectionReason;
 
     @JsonIgnore
     private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {
