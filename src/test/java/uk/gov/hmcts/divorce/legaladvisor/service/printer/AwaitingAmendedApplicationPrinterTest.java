@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class AwaitingClarificationPrinterTest {
+public class AwaitingAmendedApplicationPrinterTest {
 
     @Mock
     private BulkPrintService bulkPrintService;
@@ -54,7 +54,7 @@ public class AwaitingClarificationPrinterTest {
     private GenerateCoRefusedCoverLetter generateCoRefusedCoverLetter;
 
     @InjectMocks
-    private AwaitingClarificationPrinter awaitingClarificationPrinter;
+    private AwaitingAmendedApplicationPrinter awaitingAmendedApplicationPrinter;
 
     @Captor
     ArgumentCaptor<Print> printCaptor;
@@ -99,7 +99,7 @@ public class AwaitingClarificationPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
 
-        awaitingClarificationPrinter.sendLetters(
+        awaitingAmendedApplicationPrinter.sendLetters(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1()
@@ -123,7 +123,7 @@ public class AwaitingClarificationPrinterTest {
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("awaiting-clarification-letter");
+        assertThat(print.getLetterType()).isEqualTo("awaiting-amended-application-letter");
         assertThat(print.getLetters().size()).isEqualTo(4);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(coversheetDoc.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coCanApplyDoc.getValue());
@@ -147,7 +147,7 @@ public class AwaitingClarificationPrinterTest {
             )
             .build();
 
-        awaitingClarificationPrinter.sendLetters(
+        awaitingAmendedApplicationPrinter.sendLetters(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1()
@@ -182,7 +182,7 @@ public class AwaitingClarificationPrinterTest {
             )
             .build();
 
-        awaitingClarificationPrinter.sendLetters(
+        awaitingAmendedApplicationPrinter.sendLetters(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1()

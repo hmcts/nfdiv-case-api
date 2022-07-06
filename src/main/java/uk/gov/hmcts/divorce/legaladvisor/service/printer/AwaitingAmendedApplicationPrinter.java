@@ -28,9 +28,9 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 
 @Component
 @Slf4j
-public class AwaitingClarificationPrinter {
+public class AwaitingAmendedApplicationPrinter {
 
-    private static final String LETTER_TYPE_AWAITING_CLARIFICATION = "awaiting-clarification-letter";
+    private static final String LETTER_TYPE_AWAITING_CLARIFICATION = "awaiting-amended-application-letter";
 
     @Autowired
     private BulkPrintService bulkPrintService;
