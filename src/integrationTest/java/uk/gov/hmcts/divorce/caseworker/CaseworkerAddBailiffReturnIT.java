@@ -104,7 +104,7 @@ public class CaseworkerAddBailiffReturnIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(Holding.getName()))
+                jsonPath("$.state").value(Holding.name()))
             .andExpect(
                 jsonPath("$.data.dueDate").value(certificateOfServiceDate.plusDays(16).toString())
             );
@@ -147,6 +147,6 @@ public class CaseworkerAddBailiffReturnIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingAos.getName()));
+                jsonPath("$.state").value(AwaitingAos.name()));
     }
 }

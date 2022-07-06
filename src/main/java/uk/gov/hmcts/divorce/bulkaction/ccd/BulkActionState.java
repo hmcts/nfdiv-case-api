@@ -10,31 +10,29 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAcc
 public enum BulkActionState {
 
     @CCD(
-        name = "Bulk case list created"
+        label = "Bulk case list created"
     )
-    Created("Created"),
+    Created,
 
     @CCD(
-        name = "Bulk case listed"
+        label = "Bulk case listed"
     )
-    Listed("Listed"),
+    Listed,
 
     @CCD(
-        name = "Bulk case pronounced"
+        label = "Bulk case pronounced"
     )
-    Pronounced("Pronounced"),
+    Pronounced,
 
     @CCD(
-        name = "Bulk case dropped"
+        label = "Bulk case dropped"
     )
-    Dropped("Dropped"),
+    Dropped,
 
     @CCD(
-        name = "Bulk case empty",
+        label = "Bulk case empty",
         access = {SystemUpdateAndSuperUserAccess.class}
     )
-    Empty("Empty");
-
-    private final String name;
+    Empty;
 }
 
