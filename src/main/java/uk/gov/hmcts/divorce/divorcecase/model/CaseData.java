@@ -192,7 +192,7 @@ public class CaseData {
         typeOverride = FieldType.CaseLink,
         access = {CaseworkerAccess.class}
     )
-    private CaseLink  bulkListCaseReferenceLink;
+    private CaseLink bulkListCaseReferenceLink;
 
     @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped
