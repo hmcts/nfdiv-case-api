@@ -18,6 +18,8 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_LAST_NAME = "applicant2LastName";
     public static final String APPLICANT_1_FULL_NAME = "applicant1FullName";
     public static final String APPLICANT_2_FULL_NAME = "applicant2FullName";
+    public static final String FIRST_NAME = "firstName";
+    public static final String LAST_NAME = "lastName";
     public static final String APPLICANT_1_MARRIAGE_NAME = "applicant1MarriageName";
     public static final String APPLICANT_2_MARRIAGE_NAME = "applicant2MarriageName";
     public static final String MARRIAGE_DATE = "marriageDate";

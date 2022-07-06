@@ -144,19 +144,19 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingPronouncement;
 
         } else if (REJECT.equals(conditionalOrder.getRefusalDecision())) {
-            notificationDispatcher.send(rejectedNotification, caseData, details.getId());
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
                 details.getId()
             );
+            notificationDispatcher.send(rejectedNotification, caseData, details.getId());
             endState = AwaitingAmendedApplication;
 
         } else if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
-            notificationDispatcher.send(moreInfoNotification, caseData, details.getId());
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
                 details.getId()
             );
+            notificationDispatcher.send(moreInfoNotification, caseData, details.getId());
             endState = AwaitingClarification;
 
         } else {
@@ -176,13 +176,12 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .build();
     }
 
-    private void generateAndSetConditionalOrderRefusedDocument(final CaseData caseData,
-                                                               final Long caseId) {
+    private void generateAndSetConditionalOrderRefusedDocument(final CaseData caseData, final Long caseId) {
 
         log.info("Generating conditional order refused document for templateId : {} caseId: {}",
             REFUSAL_ORDER_TEMPLATE_ID, caseId);
 
-        final var templateContents = conditionalOrderRefusalContent.apply(caseData, caseId, caseData.getApplicant2());
+        final var templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
 
         final String templateId = caseData.getApplicant1().isOffline()
             ? REFUSAL_ORDER_OFFLINE_TEMPLATE_ID
