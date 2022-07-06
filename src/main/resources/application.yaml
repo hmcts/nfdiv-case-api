@@ -96,6 +96,7 @@ uk:
             APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '9bd841f2-0989-45c5-a08b-348ecd09711f'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
             SOLICITOR_CLARIFICATION_SUBMITTED: '7636dc7a-039d-4963-805d-33f539a0b48d'
+            SOLICITOR_CO_REFUSED_SOLE_JOINT: 'b1590f77-3cdb-4f80-abae-4f4f13f06e26'
             CITIZEN_APPLICATION_WITHDRAWN: '952beacb-0e73-4fde-94d4-60cfcbec2d63'
             CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: '39def49e-2d2d-489e-b715-3103e27d5977'
             CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER: '5be323bf-7ed5-44a7-9e91-05f363cf27c2'
@@ -178,6 +179,7 @@ uk:
             APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '9bd841f2-0989-45c5-a08b-348ecd09711f'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
             SOLICITOR_CLARIFICATION_SUBMITTED: '7636dc7a-039d-4963-805d-33f539a0b48d'
+            SOLICITOR_CO_REFUSED_SOLE_JOINT: 'b1590f77-3cdb-4f80-abae-4f4f13f06e26'
             CITIZEN_APPLICATION_WITHDRAWN: '952beacb-0e73-4fde-94d4-60cfcbec2d63'
             CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: ${CITIZEN_APPLY_FOR_CONDITIONAL_ORDER_NOTIFICATION_ID:39def49e-2d2d-489e-b715-3103e27d5977}
             CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER: ${CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER_NOTIFICATION_ID:5be323bf-7ed5-44a7-9e91-05f363cf27c2}
@@ -249,7 +251,7 @@ docmosis:
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
-      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
+      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx
       SERVICE_ORDER: NFD_Service_Order_V2.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement_V2.docx
@@ -284,7 +286,7 @@ docmosis:
       CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: ${RESPONDENT_ANSWERS_TEMPLATE_ID:NFD_Respondent_Answers_Eng.docx}
-      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
+      CERTIFICATE_OF_SERVICE: ${CERTIFICATE_OF_SERVICE_TEMPLATE_ID:NFD_Certificate_Of_Service.docx}
       SERVICE_ORDER: ${SERVICE_ORDER_TEMPLATE_ID:NFD_Service_Order_V2.docx}
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole_V2.docx  #TODO: update content
