@@ -44,7 +44,6 @@ public class ConditionalOrderReminderContent {
         templateContent.put(APPLICANT_FIRST_NAME, applicant.getFirstName());
         templateContent.put(APPLICANT_LAST_NAME, applicant.getLastName());
         templateContent.put(APPLICANT_ADDRESS, applicant.getAddress());
-        templateContent.put(RELATION, commonContent.getPartner(caseData, partner));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION);

@@ -64,7 +64,6 @@ public class ConditionalOrderReminderContentIT {
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(IS_JOINT, !caseData.getApplicationType().isSole());
-        expectedEntries.put(RELATION, "wife");
 
         Map<String, Object> templateContent = conditionalOrderReminderContent.apply(
             caseData,
@@ -96,7 +95,6 @@ public class ConditionalOrderReminderContentIT {
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, TO_END_A_CIVIL_PARTNERSHIP);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, END_THE_CIVIL_PARTNERSHIP);
         expectedEntries.put(IS_JOINT, !caseData.getApplicationType().isSole());
-        expectedEntries.put(RELATION, "civil partner");
 
         Map<String, Object> templateContent = conditionalOrderReminderContent.apply(
             caseData,
