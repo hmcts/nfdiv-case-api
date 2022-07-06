@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorAmendApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -31,6 +32,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -55,7 +57,10 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 class LegalAdvisorMakeDecisionTest {
 
     @Mock
-    private LegalAdvisorMoreInfoDecisionNotification notification;
+    private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
+
+    @Mock
+    private LegalAdvisorAmendApplicationDecisionNotification amendApplicationDecisionNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -200,6 +205,9 @@ class LegalAdvisorMakeDecisionTest {
 
         assertThat(response.getData().getConditionalOrder().getDecisionDate()).isNull();
         assertThat(response.getState()).isEqualTo(AwaitingAmendedApplication);
+
+        verify(notificationDispatcher).send(amendApplicationDecisionNotification, caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
@@ -238,7 +246,8 @@ class LegalAdvisorMakeDecisionTest {
 
         legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(notificationDispatcher).send(notification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(moreInfoDecisionNotification, caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
@@ -277,7 +286,7 @@ class LegalAdvisorMakeDecisionTest {
 
         legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
-        verifyNoInteractions(notification);
+        verifyNoInteractions(moreInfoDecisionNotification);
     }
 
     @Test

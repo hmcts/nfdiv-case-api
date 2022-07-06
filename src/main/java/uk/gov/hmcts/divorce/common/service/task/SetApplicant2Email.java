@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static java.util.Objects.nonNull;
-import static org.apache.groovy.parser.antlr4.util.StringUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 @Component
 @Slf4j
