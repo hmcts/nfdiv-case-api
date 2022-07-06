@@ -74,8 +74,12 @@ public class GeneralOrderTemplateContent {
         templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(GENERAL_ORDER_DETAILS, generalOrder.getGeneralOrderDetails());
 
-        if (DEPUTY_DISTRICT_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())
-            || DISTRICT_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())
+        if (DEPUTY_DISTRICT_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())) {
+            templateContent.put(GENERAL_ORDER_MADE_BY,
+                String.format("%s %s", generalOrder.getGeneralOrderJudgeOrLegalAdvisorType().getLabel(),
+                    generalOrder.getGeneralOrderJudgeOrLegalAdvisorName()));
+            templateContent.put(SITTING, SITTING_CONTENT);
+        } else if (DISTRICT_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())
             || HER_HONOUR_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())
             || HIS_HONOUR_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())
         ) {
