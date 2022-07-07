@@ -368,7 +368,7 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public boolean caseIsJudicialSeparation() {
+    public boolean isJudicialSeparationCase() {
         return !isNull(isJudicialSeparation) && isJudicialSeparation == YES;
     }
 
