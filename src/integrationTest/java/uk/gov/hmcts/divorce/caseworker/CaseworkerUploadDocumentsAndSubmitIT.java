@@ -83,7 +83,7 @@ public class CaseworkerUploadDocumentsAndSubmitIT {
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseData,
                 CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT,
-                AwaitingDocuments.getName())))
+                AwaitingDocuments.name())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -104,7 +104,7 @@ public class CaseworkerUploadDocumentsAndSubmitIT {
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseData,
                 CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT,
-                AwaitingDocuments.getName())))
+                AwaitingDocuments.name())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -114,6 +114,6 @@ public class CaseworkerUploadDocumentsAndSubmitIT {
 
     private String responseWithStateOf(final State state) throws IOException {
         return expectedResponse("classpath:caseworker-document-upload-about-to-submit-response.json")
-            .replace("<state>", state.getName());
+            .replace("<state>", state.name());
     }
 }

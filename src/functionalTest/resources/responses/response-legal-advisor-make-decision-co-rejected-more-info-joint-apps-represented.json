@@ -1,15 +1,21 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "applicationType": "soleApplication",
+    "applicationType": "jointApplication",
     "coGranted": "No",
     "solSignStatementOfTruth": "Yes",
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant2FirstName": "Olive",
     "applicant2LastName": "Oil",
-    "applicant1SolicitorRepresented": "No",
+    "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorName": "Applicant 1 Solicitor",
+    "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
     "applicant1LanguagePreferenceWelsh": "No",
+    "applicant2SolicitorRepresented": "Yes",
+    "applicant2SolicitorName": "Applicant 2 Solicitor",
+    "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
+    "applicant2LanguagePreferenceWelsh": "No",
     "coRefusalOrderDocument": {
       "document_url": "${json-unit.any-string}",
       "document_filename": "NoticeOfRefusalDocument.pdf",
@@ -28,5 +34,5 @@
       }
     }]
   },
-  "state": "AwaitingAmendedApplication"
+  "state": "AwaitingClarification"
 }
