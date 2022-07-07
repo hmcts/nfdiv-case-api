@@ -104,8 +104,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
@@ -164,8 +163,6 @@ public class CaseworkerIssueApplicationIT {
     private static final String APPLICANT_COVERSHEET_TEMPLATE_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
     private static final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID = "eb780eb7-8982-40a7-b30f-902b582ded26";
 
-    private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP =
-        "classpath:caseworker-issue-application-about-to-submit-app2-sol-rep-response.json";
     private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_SOLICITOR_SERVICE =
         "classpath:caseworker-issue-application-about-to-submit-solicitor-service-response.json";
     private static final String ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP =
@@ -184,8 +181,6 @@ public class CaseworkerIssueApplicationIT {
         "classpath:caseworker-issue-joint-application-app2-represented-about-to-submit-response.json";
     private static final String APP2_CONTACT_PRIVATE_CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-joint-application-app2-contact-private-about-to-submit-response.json";
-    private static final String PRINT_CONFIDENTIAL_NOP_CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT =
-        "classpath:caseworker-issue-joint-application-both-applicant-offline-about-to-submit-response.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -547,7 +542,7 @@ public class CaseworkerIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_USER_EMAIL),
-                eq(OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED),
+                eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
                 anyMap(),
                 eq(ENGLISH));
 
@@ -605,7 +600,7 @@ public class CaseworkerIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_USER_EMAIL),
-                eq(OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED),
+                eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
                 anyMap(),
                 eq(ENGLISH));
 

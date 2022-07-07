@@ -92,8 +92,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEED
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
@@ -1172,7 +1171,7 @@ public class CaseworkerReIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_USER_EMAIL),
-                eq(OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED),
+                eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
                 anyMap(),
                 eq(ENGLISH));
 
@@ -1260,7 +1259,7 @@ public class CaseworkerReIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_USER_EMAIL),
-                eq(OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED),
+                eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
                 anyMap(),
                 eq(ENGLISH));
 
