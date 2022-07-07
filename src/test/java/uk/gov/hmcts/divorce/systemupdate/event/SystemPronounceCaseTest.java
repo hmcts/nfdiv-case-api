@@ -64,13 +64,13 @@ public class SystemPronounceCaseTest {
     private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
 
     @InjectMocks
-    private SystemPronounceCase systemPronounceCase;
+    private SystemPronounceCase underTest;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        systemPronounceCase.configure(configBuilder);
+        underTest.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -85,7 +85,7 @@ public class SystemPronounceCaseTest {
             .data(caseData)
             .build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = systemPronounceCase.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(ConditionalOrderPronounced);
 
@@ -103,7 +103,7 @@ public class SystemPronounceCaseTest {
             .data(caseData)
             .build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = systemPronounceCase.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(SeparationOrderGranted);
 
@@ -119,7 +119,7 @@ public class SystemPronounceCaseTest {
             .data(caseData)
             .build();
 
-        systemPronounceCase.submitted(details, details);
+        underTest.submitted(details, details);
 
         verify(notificationDispatcher).send(notification, caseData, details.getId());
     }
@@ -137,7 +137,7 @@ public class SystemPronounceCaseTest {
             .when(notificationDispatcher)
             .send(notification, caseData, details.getId());
 
-        systemPronounceCase.submitted(details, details);
+        underTest.submitted(details, details);
 
         verify(logger)
             .info("SystemPronounceCase submitted callback invoked for case id: {}", 1L);
@@ -159,7 +159,7 @@ public class SystemPronounceCaseTest {
             .data(caseData)
             .build();
 
-        systemPronounceCase.aboutToSubmit(details, details);
+        underTest.aboutToSubmit(details, details);
 
         verifyNoMoreInteractions(generateConditionalOrderPronouncedDocument);
         verifyNoInteractions(notificationDispatcher);
@@ -187,7 +187,7 @@ public class SystemPronounceCaseTest {
         when(removeExistingConditionalOrderPronouncedDocument.apply(detailsNew)).thenReturn(detailsNew);
         when(generateConditionalOrderPronouncedDocument.apply(detailsNew)).thenReturn(detailsNew);
 
-        systemPronounceCase.aboutToSubmit(detailsNew, detailsOld);
+        underTest.aboutToSubmit(detailsNew, detailsOld);
 
         verify(removeExistingConditionalOrderPronouncedDocument).apply(detailsNew);
         verify(generateConditionalOrderPronouncedDocument).apply(detailsNew);
