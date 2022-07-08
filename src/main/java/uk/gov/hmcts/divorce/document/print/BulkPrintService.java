@@ -22,11 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Base64.getEncoder;
 import static java.util.stream.Collectors.toList;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Service
 @Slf4j
@@ -41,9 +39,6 @@ public class BulkPrintService {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Autowired
     private DocumentManagementClient documentManagementClient;
@@ -81,14 +76,24 @@ public class BulkPrintService {
         documents.add(d10Document);
     }
 
-    private List<Document> documentRequestForPrint(Print print, String authToken) {
+    private List<Document> documentRequestForPrint(Print print, String serviceAuth) {
+
+        final var systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
+        final var userAuth = systemUpdateUser.getAuthToken();
+        final var userDetails = systemUpdateUser.getUserDetails();
+        final var userRoles = String.join(",", userDetails.getRoles());
+        final var userId = userDetails.getId();
+
         return print.getLetters().stream()
             .map(letter ->
                 new Document(
                     getEncoder().encodeToString(
                         getDocumentBytes(
                             letter,
-                            authToken
+                            serviceAuth,
+                            userAuth,
+                            userRoles,
+                            userId
                         )
                     ),
                     letter.getCount()
@@ -111,7 +116,11 @@ public class BulkPrintService {
             .letterId;
     }
 
-    private byte[] getDocumentBytes(final Letter letter, final String authToken) {
+    private byte[] getDocumentBytes(final Letter letter,
+                                    final String serviceAuth,
+                                    final String userAuth,
+                                    final String userRoles,
+                                    final String userId) {
         String docUrl;
 
         if (letter.getDivorceDocument() != null) {
@@ -122,14 +131,12 @@ public class BulkPrintService {
             throw new InvalidResourceException("Invalid document resource");
         }
 
-        String fileName = FilenameUtils.getName(docUrl);
-        final String userAuth = request.getHeader(AUTHORIZATION);
-        final var userDetails = idamService.retrieveUser(userAuth).getUserDetails();
+        final String fileName = FilenameUtils.getName(docUrl);
         ResponseEntity<Resource> resourceResponseEntity = documentManagementClient.downloadBinary(
             userAuth,
-            authToken,
-            String.join(",", userDetails.getRoles()),
-            userDetails.getId(),
+            serviceAuth,
+            userRoles,
+            userId,
             fileName
         );
 

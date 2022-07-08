@@ -19,7 +19,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.systemupdate.service.ReissueProcessingException;
+import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -292,7 +292,7 @@ class ReIssueApplicationServiceTest {
     }
 
     @Test
-    void shouldThrowReissueProcessingExceptionWhenReissueOptionIsNotSet() {
+    void shouldThrowInvalidReissueOptionExceptionWhenReissueOptionIsNotSet() {
 
         final CaseData caseData = caseData();
         caseData.getApplicant2().setSolicitorRepresented(YES);
@@ -304,7 +304,6 @@ class ReIssueApplicationServiceTest {
             .email(TEST_SOLICITOR_EMAIL)
             .build();
 
-
         caseData.getApplicant2().setSolicitor(solicitor);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -313,8 +312,8 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
-            .isExactlyInstanceOf(ReissueProcessingException.class)
-            .hasMessage("Exception occurred while processing reissue application for case id 1");
+            .isExactlyInstanceOf(InvalidReissueOptionException.class)
+            .hasMessage("Invalid reissue option for CaseId: 1");
 
     }
 
@@ -379,7 +378,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         assertThatThrownBy(() -> reIssueApplicationService.sendNotifications(caseDetails, null))
-            .isExactlyInstanceOf(ReissueProcessingException.class)
+            .isExactlyInstanceOf(InvalidReissueOptionException.class)
             .hasMessage("Exception occurred while sending reissue application notifications for case id 1");
     }
 }

@@ -46,6 +46,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeServiceDecision.LEGAL_ADVISOR_SERVICE_DECISION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
@@ -123,6 +124,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
         stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
 
         final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .alternativeService(
                 AlternativeService
@@ -133,9 +135,8 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
-            .dueDate(LocalDate.of(2021, 6, 20))
             .build();
-        caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 7, 1));
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -175,6 +176,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
         stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
 
         final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .alternativeService(
                 AlternativeService
@@ -186,9 +188,8 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
             )
-            .dueDate(LocalDate.of(2021, 6, 20))
             .build();
-        caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 7, 1));
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

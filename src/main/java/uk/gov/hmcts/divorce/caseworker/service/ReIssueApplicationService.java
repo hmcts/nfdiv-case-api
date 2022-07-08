@@ -17,8 +17,9 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.systemupdate.service.ReissueProcessingException;
+import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 
+import static java.lang.String.format;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
@@ -110,9 +111,7 @@ public class ReIssueApplicationService {
             ).run(caseDetails);
         } else {
             log.info("For case id {} invalid reissue option hence not processing reissue application ", caseDetails.getId());
-            throw new ReissueProcessingException(
-                "Exception occurred while processing reissue application for case id " + caseDetails.getId()
-            );
+            throw new InvalidReissueOptionException(format("Invalid reissue option for CaseId: %s", caseDetails.getId()));
         }
     }
 
@@ -139,7 +138,7 @@ public class ReIssueApplicationService {
             ).run(caseDetails);
         } else {
             log.info("For case id {} invalid reissue option hence not sending reissue notifications ", caseDetails.getId());
-            throw new ReissueProcessingException(
+            throw new InvalidReissueOptionException(
                 "Exception occurred while sending reissue application notifications for case id " + caseDetails.getId()
             );
         }
