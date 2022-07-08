@@ -133,13 +133,13 @@ class AosPackPrinterTest {
     @Test
     void shouldPrintAosPackWithConfidentialNopDocumentForApplicant2IfContactIsPrivate() {
 
-        final ListValue<ConfidentialDivorceDocument> doc2 = ListValue.<ConfidentialDivorceDocument>builder()
+        final ListValue<ConfidentialDivorceDocument> doc1 = ListValue.<ConfidentialDivorceDocument>builder()
             .value(ConfidentialDivorceDocument.builder()
                 .confidentialDocumentsReceived(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(APPLICATION)
                 .build())
@@ -155,8 +155,8 @@ class AosPackPrinterTest {
                     .contactDetailsType(ContactDetailsType.PRIVATE)
                     .build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(List.of(doc3))
-                .confidentialDocumentsGenerated(List.of(doc2))
+                .documentsGenerated(List.of(doc2))
+                .confidentialDocumentsGenerated(List.of(doc1))
                 .build())
             .build();
 
@@ -169,9 +169,9 @@ class AosPackPrinterTest {
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
         assertThat(print.getLetters().size()).isEqualTo(2);
-        assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(doc2.getValue());
+        assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(0).getDivorceDocument()).isNull();
-        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(1).getConfidentialDivorceDocument()).isNull();
     }
 

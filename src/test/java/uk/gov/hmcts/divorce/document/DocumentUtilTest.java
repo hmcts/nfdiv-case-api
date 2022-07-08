@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.isDocumentApplicableForConfidentiality;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -326,6 +327,26 @@ class DocumentUtilTest {
         assertThat(confidentialGeneralLetter.get(0).getDivorceDocument()).isNull();
         assertThat(confidentialGeneralLetter.get(0).getConfidentialDivorceDocument().getConfidentialDocumentsReceived())
             .isEqualTo(ConfidentialDocumentsReceived.GENERAL_LETTER);
+    }
+
+    @Test
+    public void shouldReturnTrueForApplicant1WhenGivenDocumentTypeIsApplicableForConfidentiality() {
+        assertTrue(isDocumentApplicableForConfidentiality(NOTICE_OF_PROCEEDINGS_APP_1, true));
+    }
+
+    @Test
+    public void shouldReturnTrueForApplicant2WhenGivenDocumentTypeIsApplicableForConfidentiality() {
+        assertTrue(isDocumentApplicableForConfidentiality(NOTICE_OF_PROCEEDINGS_APP_2, false));
+    }
+
+    @Test
+    public void shouldReturnTrueWhenGivenDocumentTypeIsApplicableForConfidentiality() {
+        assertTrue(isDocumentApplicableForConfidentiality(GENERAL_LETTER, true));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenGivenDocumentTypeIsNotApplicableForConfidentiality() {
+        assertFalse(isDocumentApplicableForConfidentiality(APPLICATION, true));
     }
 
     private DocumentInfo documentInfo() {

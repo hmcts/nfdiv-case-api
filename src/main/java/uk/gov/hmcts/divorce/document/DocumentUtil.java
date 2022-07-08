@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document;
 
+import com.google.common.collect.Lists;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -125,31 +126,12 @@ public final class DocumentUtil {
         }
     }
 
-    public static boolean isConfidential(final CaseData caseData, final boolean isApplicant1, final DivorceDocument document) {
+    public static boolean isDocumentApplicableForConfidentiality(final DocumentType documentType, final boolean isApplicant1) {
+        List<DocumentType> documentsForApplicant1 = Lists.newArrayList(NOTICE_OF_PROCEEDINGS_APP_1, GENERAL_LETTER);
 
-        if (NOTICE_OF_PROCEEDINGS_APP_1.equals(document.getDocumentType())
-            || GENERAL_LETTER.equals(document.getDocumentType()) && isApplicant1 && generalLettersExist(caseData, document, APPLICANT)) {
-            return caseData.getApplicant1().isConfidentialContactDetails();
-        } else if (NOTICE_OF_PROCEEDINGS_APP_2.equals(document.getDocumentType())
-            || GENERAL_LETTER.equals(document.getDocumentType()) && !isApplicant1 && generalLettersExist(caseData, document, RESPONDENT)) {
-            return caseData.getApplicant2().isConfidentialContactDetails();
-        } else {
-            return false;
-        }
-    }
+        List<DocumentType> documentsForApplicant2 = Lists.newArrayList(NOTICE_OF_PROCEEDINGS_APP_2, GENERAL_LETTER);
 
-    private static boolean generalLettersExist(final CaseData caseData, final DivorceDocument document, final GeneralParties party) {
-
-        boolean existingGeneralLettersFound = ofNullable(caseData.getGeneralLetters())
-            .flatMap(Collection::stream)
-            .map(ListValue::getValue)
-            .anyMatch(generalLetterDetail -> party.equals(generalLetterDetail.getGeneralLetterParties())
-                        && generalLetterDetail.getGeneralLetterLink().getUrl().equals(document.getDocumentLink().getUrl()));
-
-        boolean newGeneralLetterFound = caseData.getGeneralLetter() != null
-            && party.equals(caseData.getGeneralLetter().getGeneralLetterParties());
-
-        return newGeneralLetterFound || existingGeneralLettersFound;
+        return isApplicant1 ? documentsForApplicant1.contains(documentType) : documentsForApplicant2.contains(documentType);
     }
 
     public static ConfidentialDocumentsReceived getConfidentialDocumentType(final DocumentType documentType) {

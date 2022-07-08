@@ -7,16 +7,20 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.Collection;
 import java.util.List;
 
 import static java.util.stream.Stream.ofNullable;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.isDocumentApplicableForConfidentiality;
 
 @Service
 @Slf4j
@@ -46,7 +50,7 @@ public class ProcessConfidentialDocumentsService {
         List<ListValue<DivorceDocument>> documentsToMove
             = ofNullable(caseDocuments.getDocumentsGenerated())
             .flatMap(Collection::stream)
-            .filter(document -> isConfidential(caseData, isApplicant1, document.getValue()))
+            .filter(document -> filterDocumentBasedOnConfidentialityForGivenApplicant(caseData, document.getValue(), isApplicant1))
             .toList();
 
         if (!CollectionUtils.isEmpty(documentsToMove)) {
@@ -72,4 +76,28 @@ public class ProcessConfidentialDocumentsService {
             .confidentialDocumentsReceived(getConfidentialDocumentType(divorceDocument.getDocumentType()))
             .build();
     }
+
+    private boolean filterDocumentBasedOnConfidentialityForGivenApplicant(final CaseData caseData, final DivorceDocument document,
+                                                                          final boolean isApplicant1) {
+        boolean applicable = isDocumentApplicableForConfidentiality(document.getDocumentType(), isApplicant1);
+
+        if (applicable && DocumentType.GENERAL_LETTER.equals(document.getDocumentType())) {
+            return generalLetterBelongsToGivenApplicant(caseData, document, isApplicant1);
+        }
+
+        return applicable;
+    }
+
+    private boolean generalLetterBelongsToGivenApplicant(final CaseData caseData, final DivorceDocument generalLetterDocument,
+                                                               final boolean isApplicant1) {
+
+        GeneralParties party = isApplicant1 ? APPLICANT : RESPONDENT;
+
+        return ofNullable(caseData.getGeneralLetters())
+            .flatMap(Collection::stream)
+            .map(ListValue::getValue)
+            .anyMatch(generalLetterDetail -> party.equals(generalLetterDetail.getGeneralLetterParties())
+                && generalLetterDetail.getGeneralLetterLink().getUrl().equals(generalLetterDocument.getDocumentLink().getUrl()));
+    }
+
 }
