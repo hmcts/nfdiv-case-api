@@ -191,4 +191,12 @@ public class CaseDocuments {
             .map(DivorceDocument::getDocumentLink)
             .findFirst();
     }
+
+    @JsonIgnore
+    public void removeDocumentGeneratedWithType(final DocumentType documentType) {
+        if (!isEmpty(this.getDocumentsGenerated())) {
+            this.getDocumentsGenerated()
+                .removeIf(document -> documentType.equals(document.getValue().getDocumentType()));
+        }
+    }
 }

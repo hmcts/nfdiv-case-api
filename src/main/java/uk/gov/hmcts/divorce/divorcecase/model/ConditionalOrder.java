@@ -219,6 +219,11 @@ public class ConditionalOrder {
     )
     private List<ListValue<ClarificationResponse>> clarificationResponsesSubmitted;
 
+    @CCD(
+        label = "Date and time Conditional Order rescinded"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime rescindedDate;
 
     @JsonIgnore
     public boolean areClaimsGranted() {
