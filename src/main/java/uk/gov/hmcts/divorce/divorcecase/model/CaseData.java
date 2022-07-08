@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.groovy.parser.antlr4.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -27,7 +27,9 @@ import uk.gov.hmcts.divorce.payment.model.Payment;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Objects.nonNull;
@@ -366,5 +368,13 @@ public class CaseData {
             application.getApplicationPayments()
                 .add(new ListValue<>(UUID.randomUUID().toString(), payment));
         }
+    }
+
+    @JsonIgnore
+    public Optional<AlternativeServiceOutcome> getFirstAlternativeServiceOutcome() {
+        return Stream.ofNullable(getAlternativeServiceOutcomes())
+            .flatMap(java.util.Collection::stream)
+            .map(ListValue::getValue)
+            .findFirst();
     }
 }

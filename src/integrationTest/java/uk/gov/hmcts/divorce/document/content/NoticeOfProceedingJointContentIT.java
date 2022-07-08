@@ -15,6 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -67,6 +69,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 
@@ -184,7 +187,7 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
-        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
+        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, false);
 
         Map<String, Object> templateContent =
             noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
@@ -213,6 +216,46 @@ public class NoticeOfProceedingJointContentIT {
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(RELATION, "spouse");
+
+        Map<String, Object> templateContent =
+            noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
+
+        assertThat(templateContent).containsAllEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSetDisplayConfirmationToFalseWhenApplicantIsOfflineAndEmailIsPresent() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant2().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, false);
+
+        Map<String, Object> templateContent =
+            noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
+
+        assertThat(templateContent).containsAllEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSetDisplayConfirmationToTrueWhenApplicantIsNotOfflineAndEmailIsPresent() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant2().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
 
         Map<String, Object> templateContent =
             noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
