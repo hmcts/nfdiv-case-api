@@ -49,7 +49,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             configBuilder
                 .event(SYSTEM_PRONOUNCE_CASE)
                 .forStateTransition(AwaitingPronouncement, ConditionalOrderPronounced)
-//                .showCondition(NEVER_SHOW)
+                .showCondition(NEVER_SHOW)
                 .name("System pronounce case")
                 .description("System pronounce case")
                 .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
