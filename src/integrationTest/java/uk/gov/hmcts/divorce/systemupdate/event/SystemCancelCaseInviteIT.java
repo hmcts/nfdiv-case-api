@@ -20,21 +20,15 @@ import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
-import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -92,7 +86,7 @@ public class SystemCancelCaseInviteIT {
     }
 
     @Test
-    public void givenValidAccessCodeWhenCallbackIsInvokedThenAccessCodeIsRemovedAndSolicitorRolesAreSet() throws Exception {
+    public void givenValidAccessCodeWhenCallbackIsInvokedThenAccessCodeIsRemoved() throws Exception {
         CaseData data = caseData();
         data.setCaseInvite(new CaseInvite(null, "D8BC9AQR", "3"));
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
@@ -102,22 +96,9 @@ public class SystemCancelCaseInviteIT {
         stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(CASEWORKER_AUTH_TOKEN);
 
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-
         stubForCitizenCcdCaseRoles();
 
         CallbackRequest callbackRequest = callbackRequest(data, SYSTEM_CANCEL_CASE_INVITE);
-        callbackRequest.setCaseDetailsBefore(
-            CaseDetails
-                .builder()
-                .data(
-                    Map.of(
-                    "applicant2UserId", "3",
-                    "accessCode", "D8BC9AQR"
-                    )
-                )
-                .build()
-        );
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -131,16 +112,12 @@ public class SystemCancelCaseInviteIT {
             .getContentAsString();
 
         assertThatJson(actualResponse)
-            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
-
-        verify(serviceTokenGenerator).generate();
-        verifyNoMoreInteractions(serviceTokenGenerator);
     }
 
     private String expectedCcdAboutToStartCallbackSuccessfulResponse() throws IOException {
         File validCaseDataJsonFile = getFile(
-            "classpath:wiremock/responses/about-to-submit-link-applicant-2.json");
+            "classpath:wiremock/responses/about-to-submit-cancel-case-invite.json");
 
         return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
     }
