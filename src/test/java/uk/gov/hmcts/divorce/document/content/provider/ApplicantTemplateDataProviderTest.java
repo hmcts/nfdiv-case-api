@@ -191,6 +191,45 @@ class ApplicantTemplateDataProviderTest {
     }
 
     @Test
+    void shouldReturnWelshContentForSoleFinancialOrderForApplicantAndChildrenForJoint() {
+
+        final Applicant applicant = Applicant.builder()
+            .languagePreferenceWelsh(YES)
+            .financialOrder(YES)
+            .financialOrdersFor(Set.of(APPLICANT, CHILDREN))
+            .build();
+
+        assertThat(applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant))
+            .isEqualTo("y ceisydd a phlant y ceisydd a'r atebydd.");
+    }
+
+    @Test
+    void shouldReturnWelshContentForSoleFinancialOrderForApplicant() {
+
+        final Applicant applicant = Applicant.builder()
+            .languagePreferenceWelsh(YES)
+            .financialOrder(YES)
+            .financialOrdersFor(Set.of(APPLICANT))
+            .build();
+
+        assertThat(applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant))
+            .isEqualTo("y ceisydd.");
+    }
+
+    @Test
+    void shouldReturnWelshContentForSoleFinancialOrderForChildren() {
+
+        final Applicant applicant = Applicant.builder()
+            .languagePreferenceWelsh(YES)
+            .financialOrder(YES)
+            .financialOrdersFor(Set.of(CHILDREN))
+            .build();
+
+        assertThat(applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant))
+            .isEqualTo("plant y ceisydd a'r atebydd.");
+    }
+
+    @Test
     public void shouldMapApplicantContactDetailsWhenApplicantContactIsNotPrivateAndIsRepresented() {
         Applicant applicant1 = buildApplicant(YES, ContactDetailsType.PUBLIC);
         Applicant applicant2 = buildApplicant(YES, ContactDetailsType.PUBLIC);

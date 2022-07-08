@@ -15,21 +15,25 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DISPLAY_EMAIL_CONFIRMATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
@@ -43,7 +47,6 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DI
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PROCEEDINGS;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_URL;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DUE_DATE;
@@ -53,7 +56,6 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.EN
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.THE_DIVORCE_SERVICE;
@@ -67,6 +69,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 
@@ -184,7 +187,7 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
-        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
+        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, false);
 
         Map<String, Object> templateContent =
             noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
@@ -213,6 +216,46 @@ public class NoticeOfProceedingJointContentIT {
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(RELATION, "spouse");
+
+        Map<String, Object> templateContent =
+            noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
+
+        assertThat(templateContent).containsAllEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSetDisplayConfirmationToFalseWhenApplicantIsOfflineAndEmailIsPresent() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant2().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, false);
+
+        Map<String, Object> templateContent =
+            noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
+
+        assertThat(templateContent).containsAllEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSetDisplayConfirmationToTrueWhenApplicantIsNotOfflineAndEmailIsPresent() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant2().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
 
         Map<String, Object> templateContent =
             noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());

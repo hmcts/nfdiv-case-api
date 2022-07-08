@@ -13,13 +13,13 @@ public final class TabShowCondition {
 
     public static String notShowForState(final State... states) {
         return Stream.of(states)
-            .map(State::getName)
+            .map(State::name)
             .collect(joining("\" AND [STATE]!=\"", "[STATE]!=\"", "\""));
     }
 
     public static String showForState(final State... states) {
         return Stream.of(states)
-            .map(State:: getName)
+            .map(State::name)
             .collect(joining("\" OR [STATE]=\"", "[STATE]=\"", "\""));
     }
 }

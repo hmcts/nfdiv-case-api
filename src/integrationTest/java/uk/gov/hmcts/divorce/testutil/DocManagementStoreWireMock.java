@@ -11,11 +11,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.BEARER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 
@@ -38,7 +37,7 @@ public final class DocManagementStoreWireMock {
             DM_STORE_SERVER.resetAll();
         }
     }
-    
+
     public static void stubDeleteFromDocumentManagementForSystem(final String documentUuid, final HttpStatus httpStatus) {
         stubDeleteFromDocumentManagement(documentUuid, httpStatus, "4", "caseworker-divorce-systemupdate");
     }
@@ -57,10 +56,10 @@ public final class DocManagementStoreWireMock {
 
     public static void stubDownloadBinaryFromDocumentManagement(final String documentUuid, final byte[] documentBytes) {
         DM_STORE_SERVER.stubFor(get("/documents/" + documentUuid + "/binary")
-            .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+            .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + TEST_SYSTEM_AUTHORISATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
-            .withHeader("user-id", new EqualToPattern("2"))
-            .withHeader("user-roles", new EqualToPattern(CASEWORKER_ROLE))
+            .withHeader("user-id", new EqualToPattern("4"))
+            .withHeader("user-roles", new EqualToPattern(SYSTEM_USER_ROLE))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
                 .withBody(documentBytes)
