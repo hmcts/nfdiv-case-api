@@ -225,12 +225,33 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldNotThrowAnyExceptionWhenUnLinkUserFromApplicationIsInvoked() {
+    public void shouldNotThrowAnyExceptionWhenUnLinkApp2FromApplicationIsInvoked() {
         User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         assertThatCode(() -> ccdAccessService.unlinkApplicant2FromCase(TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
+            .doesNotThrowAnyException();
+
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(authTokenGenerator).generate();
+        verify(caseAssignmentApi)
+            .removeCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
+            );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseAssignmentApi);
+    }
+
+    @Test
+    public void shouldNotThrowAnyExceptionWhenUnLinkUserFromApplicationIsInvoked() {
+        User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        assertThatCode(() -> ccdAccessService.unlinkUserFromCase(TEST_CASE_ID, SOLICITOR_USER_ID))
             .doesNotThrowAnyException();
 
         verify(idamService).retrieveSystemUpdateUserDetails();
