@@ -11,19 +11,23 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUnlinkApplicantFromCase.SYSTEM_UNLINK_APPLICANT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -34,7 +38,10 @@ public class SystemUnlinkApplicantFromCaseTest {
     private CcdAccessService ccdAccessService;
 
     @Mock
-    private HttpServletRequest httpServletRequest;
+    private HttpServletRequest request;
+
+    @Mock
+    private IdamService idamService;
 
     @InjectMocks
     private SystemUnlinkApplicantFromCase systemUnlinkApplicantFromCase;
@@ -57,8 +64,12 @@ public class SystemUnlinkApplicantFromCaseTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
+        User user = new User("dummy-user-token", UserDetails.builder().id(TEST_AUTHORIZATION_TOKEN).build());
+        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
+
         systemUnlinkApplicantFromCase.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(ccdAccessService).removeUsersWithRole(anyLong(), eq(List.of(CREATOR.getRole())));
+        verify(ccdAccessService).unlinkUserFromCase(anyLong(), eq(TEST_AUTHORIZATION_TOKEN));
     }
 }
