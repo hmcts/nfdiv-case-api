@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ChangedNameHow;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -25,6 +26,8 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.CONDITIONAL_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.CONDITIONAL_REFERENCE_NUMBER;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_CIVIL_PARTNERSHIP_CERTIFICATE;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_FOREIGN_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_MARRIAGE_CERTIFICATE_TRANSLATION;
@@ -34,8 +37,11 @@ import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingAc
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DISSOLUTION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DIVORCE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SERVE_HUSBAND_ANOTHER_WAY;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ChangedNameHow.DEED_POLL;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -76,6 +82,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(MARRIAGE_CERTIFICATE_TRANSLATION);
         docs.add(NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -109,6 +116,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(MARRIAGE_CERTIFICATE_TRANSLATION);
         docs.add(NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -148,6 +156,7 @@ class ApplicationOutstandingActionNotificationTest {
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
         data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
         data.getApplicant2().setEmail(null);
+        data.getApplicant2().setNameChangedHow(Set.of(DEED_POLL));
 
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
@@ -173,6 +182,7 @@ class ApplicationOutstandingActionNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
         data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        data.getApplicant2().setNameChangedHow(Set.of(DEED_POLL));
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
         data.getApplicant2().setEmail(null);
 
@@ -200,6 +210,7 @@ class ApplicationOutstandingActionNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
         data.getApplicant2().setEmail(null);
@@ -256,6 +267,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -292,6 +304,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -429,6 +442,132 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SEND_DOCUMENTS_TO_COURT, NO),
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, NO)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void assertContentWhenMissingNameChangeEvidenceIsMarriageCertificate() {
+        CaseData data = caseData();
+        data.setDivorceOrDissolution(DIVORCE);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplicant1().setNameChangedHow(Set.of(ChangedNameHow.MARRIAGE_CERTIFICATE));
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setApplicant2(getApplicant2(MALE));
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(MISSING_MARRIAGE_CERTIFICATE, YES),
+                hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE, NO),
+                hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, NO),
+                hasEntry(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE, NO),
+                hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, NO),
+                hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
+                hasEntry(MISSING_NAME_CHANGE_PROOF, NO)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void assertContentWhenMissingNameChangeEvidenceIsDeedPoll() {
+        CaseData data = caseData();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setApplicant2(getApplicant2(MALE));
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(MISSING_MARRIAGE_CERTIFICATE, NO),
+                hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE, NO),
+                hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, NO),
+                hasEntry(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE, NO),
+                hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, NO),
+                hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
+                hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void assertContentWhenMissingNameChangeEvidenceIsMarriageCertificateTranslated() {
+        CaseData data = caseData();
+        data.setDivorceOrDissolution(DIVORCE);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
+        data.getApplication().getMarriageDetails().setCertifiedTranslation(YesOrNo.YES);
+        data.getApplicant1().setNameChangedHow(Set.of(ChangedNameHow.MARRIAGE_CERTIFICATE));
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setApplicant2(getApplicant2(MALE));
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(MISSING_MARRIAGE_CERTIFICATE, NO),
+                hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE, NO),
+                hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, NO),
+                hasEntry(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE, NO),
+                hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, YES),
+                hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
+                hasEntry(MISSING_NAME_CHANGE_PROOF, NO)
+            )),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void assertContentWhenMissingMarriageCertificateAndDeedPollForeignCivilPartnership() {
+        CaseData data = caseData();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE, MARRIAGE_CERTIFICATE));
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
+        data.getApplication().getMarriageDetails().setCertifiedTranslation(YesOrNo.NO);
+        data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setApplicant2(getApplicant2(MALE));
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(MISSING_MARRIAGE_CERTIFICATE, NO),
+                hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE, NO),
+                hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, NO),
+                hasEntry(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE, YES),
+                hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, NO),
+                hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
+                hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
             eq(ENGLISH)
         );

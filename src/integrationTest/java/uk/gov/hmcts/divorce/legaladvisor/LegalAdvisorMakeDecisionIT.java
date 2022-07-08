@@ -18,6 +18,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -27,6 +28,7 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,6 +64,7 @@ import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.L
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_REFUSED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CO_REFUSED_SOLE_JOINT;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
@@ -81,6 +84,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -152,7 +156,7 @@ public class LegalAdvisorMakeDecisionIT {
                 jsonPath("$.data.coDecisionDate").value(getExpectedLocalDate().toString())
             )
             .andExpect(
-                jsonPath("$.state").value(AwaitingPronouncement.getName())
+                jsonPath("$.state").value(AwaitingPronouncement.name())
             );
     }
 
@@ -185,7 +189,7 @@ public class LegalAdvisorMakeDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingClarification.getName())
+                jsonPath("$.state").value(AwaitingClarification.name())
             );
     }
 
@@ -326,7 +330,7 @@ public class LegalAdvisorMakeDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingAdminClarification.getName())
+                jsonPath("$.state").value(AwaitingAdminClarification.name())
             );
     }
 
@@ -373,7 +377,7 @@ public class LegalAdvisorMakeDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingAmendedApplication.getName())
+                jsonPath("$.state").value(AwaitingAmendedApplication.name())
             );
     }
 
@@ -421,5 +425,157 @@ public class LegalAdvisorMakeDecisionIT {
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(expectedResponse(("classpath:legal-advisor-make-decision-response.json")));
 
+    }
+
+    @Test
+    public void givenSoleApplicationCoIsNotGrantedAndRefusalIsDueToMoreInfoRequiredThenShouldSendNotificationToApp1Solicitor()
+        throws Exception {
+
+        setMockClock(clock);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 6, 22));
+        caseData.getApplicant1().setSolicitor(Solicitor.builder()
+                .name("App1 sol")
+                .email("sol1@gm.com")
+                .reference("sol1")
+            .build());
+
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .granted(NO)
+            .refusalDecision(MORE_INFO)
+            .build());
+
+        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_MAKE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk());
+
+        verify(notificationService).sendEmail(
+            eq("sol1@gm.com"),
+            eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
+            argThat(allOf(
+                hasEntry("solicitor name", "App1 sol"),
+                hasEntry("solicitor reference", "sol1"),
+                hasEntry("applicant1Label", "Applicant"),
+                hasEntry("applicant2Label", "Respondent"),
+                hasEntry("isJoint", "no"),
+                hasEntry("moreInfo", "yes"),
+                hasEntry("amendApplication", "no"),
+                hasEntry("issueDate", "22 June 2022")
+            )),
+            eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenJointCaseCoIsNotGrantedAndRefusalIsDueToAmendApplicationThenShouldSendNotificationToBothApplicantSolicitors()
+        throws Exception {
+
+        setMockClock(clock);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseData caseData = validJointApplicant1CaseData();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 6, 22));
+        caseData.getApplicant1().setSolicitor(Solicitor.builder()
+            .name("App1 sol")
+            .email("sol1@gm.com")
+            .reference("sol1")
+            .build());
+
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+
+        caseData.getApplicant2().setSolicitor(Solicitor.builder()
+            .name("App2 sol")
+            .email("sol2@gm.com")
+            .reference("sol2")
+            .build());
+
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .granted(NO)
+            .refusalDecision(REJECT)
+            .build());
+
+        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_MAKE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk());
+
+        verify(notificationService).sendEmail(
+            eq("sol1@gm.com"),
+            eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
+            argThat(allOf(
+                hasEntry("solicitor name", "App1 sol"),
+                hasEntry("solicitor reference", "sol1"),
+                hasEntry("applicant1Label", "Applicant 1"),
+                hasEntry("applicant2Label", "Applicant 2"),
+                hasEntry("isJoint", "yes"),
+                hasEntry("moreInfo", "no"),
+                hasEntry("amendApplication", "yes"),
+                hasEntry("issueDate", "22 June 2022")
+            )),
+            eq(ENGLISH)
+        );
+
+        verify(notificationService).sendEmail(
+            eq("sol2@gm.com"),
+            eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
+            argThat(allOf(
+                hasEntry("solicitor name", "App2 sol"),
+                hasEntry("solicitor reference", "sol2"),
+                hasEntry("applicant1Label", "Applicant 1"),
+                hasEntry("applicant2Label", "Applicant 2"),
+                hasEntry("isJoint", "yes"),
+                hasEntry("moreInfo", "no"),
+                hasEntry("amendApplication", "yes"),
+                hasEntry("issueDate", "22 June 2022")
+            )),
+            eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
     }
 }
