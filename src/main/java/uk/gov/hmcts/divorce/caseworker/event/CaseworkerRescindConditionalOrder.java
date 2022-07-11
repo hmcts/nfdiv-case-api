@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 import java.time.LocalDateTime;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
@@ -62,7 +61,7 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
         caseData.getConditionalOrder().setRescindedDate(LocalDateTime.now(clock));
 
         if (AwaitingPronouncement.equals(details.getState())) {
-            caseData.setBulkListCaseReference(EMPTY);
+            caseData.setBulkListCaseReferenceLink(null);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

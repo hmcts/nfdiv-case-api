@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -50,7 +51,7 @@ public class CaseworkerRescindConditionalOrderTest {
             .build();
         documentsGenerated.add(coGrantedDoc);
 
-        caseData.setBulkListCaseReference("1234-1234-1234-1234");
+        caseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference("1234-1234-1234-1234").build());
         caseData.setConditionalOrder(
             ConditionalOrder.builder()
                 .conditionalOrderGrantedDocument(coGrantedDoc.getValue())
@@ -69,7 +70,7 @@ public class CaseworkerRescindConditionalOrderTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRescindConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getBulkListCaseReference()).isBlank();
+        assertThat(response.getData().getBulkListCaseReferenceLink()).isNull();
     }
 
     @Test
