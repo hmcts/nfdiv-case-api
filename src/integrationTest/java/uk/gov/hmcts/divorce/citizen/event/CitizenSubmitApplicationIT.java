@@ -172,7 +172,7 @@ public class CitizenSubmitApplicationIT {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.getName())))
+            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.name())))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackErrorResponse()));
@@ -217,7 +217,7 @@ public class CitizenSubmitApplicationIT {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.getName())))
+            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.name())))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackErrorForJointApplicationResponse()));
@@ -231,7 +231,7 @@ public class CitizenSubmitApplicationIT {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.getName())))
+            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.name())))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToSubmitCallbackErrorForApplicant2OfflineJointApplicationResponse()));

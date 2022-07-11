@@ -159,7 +159,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         verify(submitAosService).submitOfflineAos(details);
-        assertThat(response.getState().getName()).isEqualTo(Holding.getName());
+        assertThat(response.getState().name()).isEqualTo(Holding.name());
         assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
 
         Document ccdDocument = new Document(
@@ -244,7 +244,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         verify(submitAosService).submitOfflineAos(details);
-        assertThat(response.getState().getName()).isEqualTo(Holding.getName());
+        assertThat(response.getState().name()).isEqualTo(Holding.name());
         assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
 
 
@@ -267,7 +267,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
-        assertThat(response.getState().getName()).isEqualTo(AwaitingAmendedApplication.getName());
+        assertThat(response.getState().name()).isEqualTo(AwaitingAmendedApplication.name());
     }
 
     @Test
@@ -289,7 +289,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
-        assertThat(response.getState().getName()).isEqualTo(Holding.getName());
+        assertThat(response.getState().name()).isEqualTo(Holding.name());
         assertThat(response.getData().getDueDate()).isEqualTo("2022-05-22");
     }
 
