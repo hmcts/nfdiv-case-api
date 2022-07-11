@@ -1267,6 +1267,99 @@ public class CaseworkerReIssueApplicationIT {
     }
 
     @Test
+    void shouldSendApplicationReissueNotificationInWelshForSoleCitizenApplicationWhenRespondentOnlineAndPersonalService()
+        throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 20));
+        caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setCaseInvite(null);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Notice of proceeding respondent")
+            .thenReturn("Coversheet")
+            .thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Overseas_Sole_V3.docx");
+        stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx");
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
+        stubForDocAssemblyWith(COVERSHEET_APPLICANT_ID, "NFD_Applicant_Coversheet.docx");
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        final var documentListValue1 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            NOTICE_OF_PROCEEDING_ID);
+
+        final var documentListValue2 = documentWithType(
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            CITIZEN_RESP_AOS_INVITATION_OFFLINE_ID);
+
+        final var documentListValue3 = documentWithType(
+            APPLICATION,
+            DIVORCE_APPLICATION_TEMPLATE_ID);
+
+        final var documentListValue4 = documentWithType(
+            COVERSHEET,
+            COVERSHEET_APPLICANT_ID);
+
+        final List<String> documentIds = asList(
+            FilenameUtils.getName(documentListValue1.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue2.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue3.getValue().getDocumentLink().getUrl()),
+            FilenameUtils.getName(documentListValue4.getValue().getDocumentLink().getUrl())
+        );
+
+        stubAosPackSendLetter(documentIds);
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        DocumentContext jsonDocument = expectedPersonalServiceResponseRespondentOnline();
+        jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
+        assertThatJson(response).isEqualTo(jsonDocument.json());
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
+                anyMap(),
+                eq(WELSH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
     void shouldGenerateOnlyDivorceApplicationAndSetIssueDateAndSendEmailWhenSolicitorServiceMethod() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
