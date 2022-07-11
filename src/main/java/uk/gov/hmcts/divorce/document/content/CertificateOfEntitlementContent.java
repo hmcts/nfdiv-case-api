@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,13 +17,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -69,8 +74,13 @@ public class CertificateOfEntitlementContent {
         templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
 
-        templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
-            caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE : CIVIL_PARTNERSHIP);
+        if (WELSH.equals(applicant1.getLanguagePreference())) {
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE_CY : CIVIL_PARTNERSHIP_CY);
+        } else {
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE : CIVIL_PARTNERSHIP);
+        }
 
         final LocalDateTime dateAndTimeOfHearing = conditionalOrder.getDateAndTimeOfHearing();
         final String dateOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(DATE_TIME_FORMATTER) : null;
