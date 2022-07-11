@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
@@ -29,6 +30,19 @@ public class Applicant1AppliedForConditionalOrderNotification
             templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2(), APPLICANT1),
             caseData.getApplicant1().getLanguagePreference()
         );
+    }
+
+    @Override
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
+        if (caseData.getApplicationType().isSole()) {
+            log.info("Notifying applicant 1's solicitor that their conditional order application has been submitted: {}", id);
+            notificationService.sendEmail(
+                caseData.getApplicant1().getSolicitor().getEmail(),
+                APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER,
+                solicitorTemplateVars(caseData, id, caseData.getApplicant1().getSolicitor()),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
     }
 
     @Override
