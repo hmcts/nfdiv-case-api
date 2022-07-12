@@ -547,7 +547,7 @@ class CcdSearchServiceTest {
 
     private SearchSourceBuilder searchSourceBuilderForAwaitingPronouncementCases(final int from) {
         QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
-        QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
+        QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReferenceLink.CaseReference");
 
         QueryBuilder query = boolQuery()
             .must(stateQuery)

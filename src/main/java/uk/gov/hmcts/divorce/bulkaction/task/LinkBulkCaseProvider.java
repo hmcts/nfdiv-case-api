@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.bulkaction.task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -22,7 +23,12 @@ public class LinkBulkCaseProvider implements BulkActionCaseTaskProvider {
     public CaseTask getCaseTask(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
         return mainCaseDetails -> {
             log.info("Updating case data for Case Id: {} Event: {}", mainCaseDetails.getId(), getEventId());
-            mainCaseDetails.getData().setBulkListCaseReference(String.valueOf(bulkCaseDetails.getId()));
+            mainCaseDetails.getData().setBulkListCaseReferenceLink(
+                CaseLink
+                    .builder()
+                    .caseReference(String.valueOf(bulkCaseDetails.getId()))
+                    .build()
+            );
             return mainCaseDetails;
         };
     }
