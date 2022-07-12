@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -35,7 +36,7 @@ class SetSubmissionAndDueDateTest {
     private SetSubmissionAndDueDate setSubmissionAndDueDate;
 
     @Test
-    void shouldSetDueDateAndDateAosSubmittedIfStateIsDisputed() {
+    void shouldSetDueDateAndDateAosSubmittedIfStateIsHolding() {
 
         setMockClock(clock);
 
@@ -46,6 +47,29 @@ class SetSubmissionAndDueDateTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setState(Holding);
+        caseDetails.setData(caseData);
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(issueDate);
+
+        final CaseDetails<CaseData, State> result = setSubmissionAndDueDate.apply(caseDetails);
+
+        assertThat(result.getData().getAcknowledgementOfService().getDateAosSubmitted()).isEqualTo(getExpectedLocalDateTime());
+        assertThat(result.getData().getDueDate()).isEqualTo(issueDate);
+    }
+
+    @Test
+    void shouldSetDueDateAndDateAosSubmittedIfStateIsWelshTranslationReviewAndWelshPreviousStateIsHolding() {
+
+        setMockClock(clock);
+
+        final LocalDate issueDate = getExpectedLocalDate();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setWelshPreviousState(Holding);
+        caseData.getApplication().setIssueDate(issueDate);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(WelshTranslationReview);
         caseDetails.setData(caseData);
 
         when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(issueDate);
