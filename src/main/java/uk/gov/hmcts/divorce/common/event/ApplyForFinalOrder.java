@@ -88,7 +88,8 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             if (data.isWelshApplication()) {
                 data.getApplication().setWelshPreviousState(endState);
                 endState = WelshTranslationReview;
-                log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}", data.getApplication().getWelshPreviousState(), details.getId());
+                log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                    data.getApplication().getWelshPreviousState(), details.getId());
             }
         }
 

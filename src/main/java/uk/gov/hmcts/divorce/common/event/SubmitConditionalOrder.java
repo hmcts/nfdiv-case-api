@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -130,7 +129,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         if (state == AwaitingLegalAdvisorReferral && data.isWelshApplication()) {
             data.getApplication().setWelshPreviousState(state);
             state = WelshTranslationReview;
-            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}", data.getApplication().getWelshPreviousState(), details.getId());
+            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                data.getApplication().getWelshPreviousState(), details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

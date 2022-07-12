@@ -44,7 +44,8 @@ public class SetSubmitAosState implements CaseTask {
         if (caseData.getApplicant2().getLanguagePreferenceWelsh() == YesOrNo.YES) {
             caseData.getApplication().setWelshPreviousState(caseDetails.getState());
             caseDetails.setState(WelshTranslationReview);
-            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}", caseData.getApplication().getWelshPreviousState(), caseDetails.getId());
+            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                caseData.getApplication().getWelshPreviousState(), caseDetails.getId());
         }
 
         return caseDetails;
