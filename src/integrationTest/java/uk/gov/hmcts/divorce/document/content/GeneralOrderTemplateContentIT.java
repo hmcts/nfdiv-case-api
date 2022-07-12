@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -36,7 +36,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 public class GeneralOrderTemplateContentIT {
 
     @Autowired
@@ -82,6 +81,7 @@ public class GeneralOrderTemplateContentIT {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setGeneralOrder(getGeneralOrder());
+        caseData.getGeneralOrder().setGeneralOrderJudgeOrLegalAdvisorType(GeneralOrderJudgeOrLegalAdvisorType.DEPUTY_DISTRICT_JUDGE);
         caseData.getApplicant1().setFirstName("pet full");
         caseData.getApplicant1().setLastName("name");
         caseData.getApplicant2().setFirstName("resp full");
@@ -102,7 +102,7 @@ public class GeneralOrderTemplateContentIT {
             entry(CASE_REFERENCE, 1616591401473378L),
             entry(GENERAL_ORDER_DATE, "1 January 2021"),
             entry(GENERAL_ORDER_DETAILS, "some details"),
-            entry(GENERAL_ORDER_MADE_BY, "judge some name"),
+            entry(GENERAL_ORDER_MADE_BY, "Deputy District Judge some name"),
             entry("sitting", ", sitting"),
             entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),

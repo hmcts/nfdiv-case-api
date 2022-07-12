@@ -47,6 +47,7 @@ public class RetiredFields {
     private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
     private ServiceMethod solServiceMethod;
     private DivorceDocument d11Document;
+    private String bulkListCaseReference;
 
     @CCD(
         label = "Refusal rejection reasons",
@@ -76,6 +77,12 @@ public class RetiredFields {
                 .builder()
                 .value(DynamicListElement.builder().label(String.valueOf(val)).build())
                 .listItems(List.of(DynamicListElement.builder().label(String.valueOf(val)).build()))
+                .build()
+        ),
+        "bulkListCaseReference", (data, key, val) -> data.put("bulkListCaseReferenceLink",
+            CaseLink
+                .builder()
+                .caseReference(String.valueOf(val))
                 .build()
         )
     );
