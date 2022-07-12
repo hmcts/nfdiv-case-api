@@ -45,7 +45,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         String.format("(%s) OR (%s)", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS, PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS);
     private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
     public static final String SOLE_APPLICATION_OR_APPLICATION_TYPE_JOINT_APPLICATION_AND_APPLICANT_2_HWFNEED_HELP_YES
-        = "applicationType=\"soleApplication\" OR (applicationType=\"jointApplication\" AND applicant2HWFNeedHelp=\"Yes\")";
+        = "(applicationType=\"soleApplication\") OR (applicationType=\"jointApplication\" AND applicant2HWFNeedHelp=\"Yes\")";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
