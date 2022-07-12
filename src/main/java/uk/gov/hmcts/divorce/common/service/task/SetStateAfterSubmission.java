@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.common.service.task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -14,6 +15,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 
 @Component
 @Slf4j
@@ -53,6 +55,12 @@ public class SetStateAfterSubmission implements CaseTask {
         }
 
         log.info("State set to {}, CaseID {}", caseDetails.getState(), caseDetails.getId());
+
+        if (caseData.isWelshApplication()) {
+            caseData.getApplication().setWelshPreviousState(caseDetails.getState());
+            caseDetails.setState(WelshTranslationReview);
+            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}", caseData.getApplication().getWelshPreviousState(), caseDetails.getId());
+        }
 
         return caseDetails;
     }

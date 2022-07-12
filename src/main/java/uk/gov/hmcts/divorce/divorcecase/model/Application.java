@@ -358,6 +358,12 @@ public class Application {
     private State previousState;
 
     @CCD(
+        label = "Welsh previous state",
+        access = {CaseworkerAccess.class}
+    )
+    private State welshPreviousState;
+
+    @CCD(
         label = "Bulk Scan state to transition to",
         typeOverride = FixedList,
         typeParameterOverride = "State"
