@@ -100,7 +100,7 @@ public class PronouncementListTemplateContent {
 
         final BoolQueryBuilder query =
             boolQuery()
-                .must(matchQuery("data.bulkListCaseReference", bulkListCaseReference));
+                .must(matchQuery("data.bulkListCaseReferenceLink.CaseReference", bulkListCaseReference));
 
         log.info("Starting to search for cases with BulkList reference {}", bulkListCaseReference);
         final List<CaseDetails> bulkListCases =
