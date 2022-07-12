@@ -50,7 +50,9 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -245,6 +247,8 @@ class CcdSearchServiceTest {
             .searchSource()
             .query(
                 boolQuery()
+                    .mustNot(matchQuery(STATE, Withdrawn))
+                    .mustNot(matchQuery(STATE, Rejected))
                     .must(boolQuery()
                         .mustNot(matchQuery("data.dataVersion", 0))
                     )

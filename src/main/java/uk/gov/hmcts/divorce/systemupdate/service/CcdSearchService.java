@@ -39,6 +39,8 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 
 @Service
 @Slf4j
@@ -128,6 +130,8 @@ public class CcdSearchService {
             .searchSource()
             .query(
                 boolQuery()
+                    .mustNot(matchQuery(STATE, Withdrawn))
+                    .mustNot(matchQuery(STATE, Rejected))
                     .must(boolQuery()
                         .mustNot(matchQuery("data.dataVersion", 0))
                     )
