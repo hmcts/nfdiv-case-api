@@ -5,9 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.util.Map;
+
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
 
 @Component
@@ -20,25 +24,50 @@ public class Applicant2AppliedForConditionalOrderNotification
     private NotificationService notificationService;
 
     @Override
-    public void sendToApplicant1(final CaseData caseData, final Long id) {
-        if (!alreadyApplied(caseData, APPLICANT1)) {
-            log.info("Notifying applicant 1 that their partner has submitted a conditional order application: {}", id);
-            notificationService.sendEmail(
-                caseData.getApplicant1().getEmail(),
-                JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER,
-                partnerTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2(), APPLICANT2),
-                caseData.getApplicant1().getLanguagePreference()
-            );
+    public void sendToApplicant1(final CaseData caseData, final Long caseId) {
+
+        EmailTemplateName templateName;
+        Map<String, String> templateMap;
+
+        if (alreadyApplied(caseData, APPLICANT1)) {
+            templateName = JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
+            templateMap = templateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2(), APPLICANT2);
+            log.info("Notifying applicant 1 that both applicants have submitted their conditional order applications for case: {}, "
+                + "with template: {}", caseId, templateName);
+        } else {
+            templateName = JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
+            templateMap = partnerTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2(), APPLICANT2);
+            log.info("Notifying applicant 1 that their partner has submitted a conditional order application for case: {}, "
+                + "with template: {}", caseId, templateName);
         }
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            templateName,
+            templateMap,
+            caseData.getApplicant1().getLanguagePreference()
+        );
     }
 
     @Override
-    public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Notifying applicant 2 that their conditional order application has been submitted: {}", id);
+    public void sendToApplicant2(final CaseData caseData, final Long caseId) {
+
+        EmailTemplateName templateName;
+
+        if (alreadyApplied(caseData, APPLICANT1)) {
+            templateName = JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
+            log.info("Notifying applicant 2 that both applicants have submitted their conditional order applications for case: {}, "
+                + "with template: {}", caseId, templateName);
+        } else {
+            templateName = JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
+            log.info("Notifying applicant 2 that their conditional order application has been submitted for case: {}, with template: {}",
+                caseId, templateName);
+        }
+
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
-            JOINT_APPLIED_FOR_CONDITIONAL_ORDER,
-            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), APPLICANT2),
+            templateName,
+            templateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1(), APPLICANT2),
             caseData.getApplicant2().getLanguagePreference()
         );
     }
