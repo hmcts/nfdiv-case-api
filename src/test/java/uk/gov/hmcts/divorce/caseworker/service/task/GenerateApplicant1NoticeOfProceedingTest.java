@@ -28,6 +28,7 @@ import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -117,6 +118,25 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         verifyInteractions(caseData, templateContent, NFD_NOP_A1_SOLE_APP1_CIT_CS);
 
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldGenerateA2WhenSoleWithAppRepresentedAndRespondentIsBasedOverseas() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, YES);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
+
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
+        verifyNoInteractions(noticeOfProceedingContent);
         assertThat(result.getData()).isEqualTo(caseData);
     }
 

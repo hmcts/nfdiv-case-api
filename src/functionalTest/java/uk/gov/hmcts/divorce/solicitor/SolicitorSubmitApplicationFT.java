@@ -81,7 +81,7 @@ public class SolicitorSubmitApplicationFT extends FunctionalTestSuite {
                     .id(1L)
                     .caseTypeId(CASE_TYPE)
                     .data(caseData(VALID_ABOUT_TO_SUBMIT_REQUEST))
-                    .state(Draft.getName())
+                    .state(Draft.name())
                     .build()
             )
             .build();
