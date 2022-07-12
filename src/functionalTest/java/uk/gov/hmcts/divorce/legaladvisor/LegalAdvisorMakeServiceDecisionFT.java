@@ -25,6 +25,7 @@ public class LegalAdvisorMakeServiceDecisionFT extends FunctionalTestSuite {
         throws Exception {
         final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-make-service-decision.json");
         caseData.put("alternativeServiceType", "dispensed");
+        caseData.put("applicationType", "soleApplication");
 
         final Response aboutToSubmitResponse = triggerCallback(caseData, LEGAL_ADVISOR_SERVICE_DECISION, ABOUT_TO_SUBMIT_URL);
         assertThat(aboutToSubmitResponse.getStatusCode()).isEqualTo(OK.value());
@@ -42,6 +43,7 @@ public class LegalAdvisorMakeServiceDecisionFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-make-service-decision.json");
         caseData.put("alternativeServiceType", "deemed");
         caseData.put("deemedServiceDate","2021-06-20");
+        caseData.put("applicationType", "jointApplication");
 
         final Response aboutToSubmitResponse = triggerCallback(caseData, LEGAL_ADVISOR_SERVICE_DECISION, ABOUT_TO_SUBMIT_URL);
         assertThat(aboutToSubmitResponse.getStatusCode()).isEqualTo(OK.value());

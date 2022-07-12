@@ -8,8 +8,7 @@
   "applicant1LastName": "Smith",
   "applicant2FirstName": "Olive",
   "applicant2LastName": "Oil",
-  "applicant1SolicitorRepresented": "Yes",
-  "applicant1SolicitorName": "Applicant 1 Solicitor",
-  "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1SolicitorRepresented": "No",
   "applicant1LanguagePreferenceWelsh": "No"
 }

@@ -25,6 +25,9 @@ public final class CaseFieldsConstants {
     public static final String DUE_DATE = "dueDate";
     public static final String LAST_MODIFIED_DATE = "[LAST_MODIFIED_DATE]";
     public static final String LAST_STATE_MODIFIED_DATE = "[LAST_STATE_MODIFIED_DATE]";
+    public static final String SOL_PAYMENT_METHOD = "solPaymentHowToPay";
+    public static final String APPLICANT_WELSH_TRANSLATION = "applicant1LanguagePreferenceWelsh";
+    public static final String RESPONDENT_WELSH_TRANSLATION = "applicant2LanguagePreferenceWelsh";
 
     // required for Checkstyle
     private CaseFieldsConstants() {
