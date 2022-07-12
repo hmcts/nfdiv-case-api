@@ -34,7 +34,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitClarification.SUBMIT_CLARIFICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
-import static uk.gov.hmcts.divorce.divorcecase.model.RejectionReason.NO_JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
@@ -218,7 +217,6 @@ class SubmitClarificationTest {
                     .refusalClarificationReason(Set.of(ClarificationReason.MARRIAGE_CERTIFICATE, ClarificationReason.OTHER))
                     .refusalClarificationAdditionalInfo("Test refusalClarificationAdditionalInfo")
                     .refusalAdminErrorInfo("Test refusalAdminErrorInfo")
-                    .refusalRejectionReason(Set.of(NO_JURISDICTION))
                     .refusalRejectionAdditionalInfo("Rejected comments")
                     .build()
             )
@@ -235,7 +233,6 @@ class SubmitClarificationTest {
         assertThat(actualConditionalOrder.getRefusalClarificationReason()).isNull();
         assertThat(actualConditionalOrder.getRefusalClarificationAdditionalInfo()).isNull();
         assertThat(actualConditionalOrder.getRefusalAdminErrorInfo()).isNull();
-        assertThat(actualConditionalOrder.getRefusalRejectionReason()).isNull();
         assertThat(actualConditionalOrder.getRefusalRejectionAdditionalInfo()).isNull();
     }
 }
