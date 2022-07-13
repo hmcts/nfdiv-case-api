@@ -70,13 +70,14 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen switched to sole about to submit callback invoked for Case Id: {}", details.getId());
+        Long caseId = details.getId();
+        log.info("Citizen switched to sole about to submit callback invoked for Case Id: {}", caseId);
         CaseData data = details.getData();
 
-        if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), details.getId())) {
-            notificationDispatcher.send(applicant1SwitchToSoleNotification, data, details.getId());
+        if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
+            notificationDispatcher.send(applicant1SwitchToSoleNotification, data, caseId);
         } else {
-            notificationDispatcher.send(applicant2SwitchToSoleNotification, data, details.getId());
+            notificationDispatcher.send(applicant2SwitchToSoleNotification, data, caseId);
         }
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         removeApplicant2AnswersFromCase(data);
@@ -85,8 +86,8 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         CaseInvite caseInviteBefore = beforeDetails.getData().getCaseInvite();
 
         if (isNull(caseInviteBefore.accessCode())) {
-            log.info("Unlinking Applicant 2 from Case");
-            ccdAccessService.unlinkApplicant2FromCase(details.getId(), caseInviteBefore.applicant2UserId());
+            log.info("Unlinking Applicant 2 from Case Id: {}", caseId);
+            ccdAccessService.unlinkApplicant2FromCase(caseId, caseInviteBefore.applicant2UserId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
