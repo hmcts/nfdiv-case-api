@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2HowToRespondToApplication;
@@ -25,6 +24,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -65,7 +65,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue, OfflineDocumentReceived))
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
-            .showCondition("applicationType=\"soleApplication\"")
+            .showCondition("applicationType=\"soleApplication\" AND aosIsDrafted!=\"Yes\"")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
@@ -84,7 +84,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         final var caseData = details.getData();
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
-        if (null != acknowledgementOfService && acknowledgementOfService.getConfirmReadPetition() == YesOrNo.YES) {
+        if (null != acknowledgementOfService && acknowledgementOfService.getConfirmReadPetition() == YES) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("The Acknowledgement Of Service has already been drafted."))
@@ -104,6 +104,8 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         log.info("Draft AoS about to submit callback invoked for Case Id: {}", details.getId());
 
         var state = details.getState() == AwaitingAos || details.getState() == AosOverdue ? AosDrafted : details.getState();
+
+        details.getData().getAcknowledgementOfService().setAosIsDrafted(YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

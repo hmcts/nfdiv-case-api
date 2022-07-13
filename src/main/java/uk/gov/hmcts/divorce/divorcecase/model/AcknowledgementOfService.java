@@ -139,6 +139,11 @@ public class AcknowledgementOfService {
     )
     private OfflineDocumentReceived typeOfDocumentAttached;
 
+    @CCD(
+        label = "AoS is drafted"
+    )
+    private YesOrNo aosIsDrafted;
+
     @Getter
     @AllArgsConstructor
     public enum OfflineDocumentReceived implements HasLabel {
