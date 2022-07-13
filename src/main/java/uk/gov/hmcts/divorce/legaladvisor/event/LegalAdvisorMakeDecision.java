@@ -74,7 +74,6 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .name("Make a decision")
             .description("Grant Conditional Order")
             .endButtonLabel("Submit")
-            .aboutToStartCallback(this::aboutToStart)
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -112,26 +111,15 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .pageLabel("Request amended application - Make a Decision")
             .showCondition("coRefusalDecision=\"reject\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getRefusalRejectionReason)
-                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo,
-                "coRefusalRejectionReasonCONTAINS \"other\" "
-                    + "OR coRefusalRejectionReasonCONTAINS \"noCriteria\" " // added for backward compatibility
-                    + "OR coRefusalRejectionReasonCONTAINS \"insufficentDetails\"") // added for backward compatibility
+                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo)
             .done()
             .page("refusalDraft")
             .pageLabel("Refusal Draft")
             .showCondition("coGranted=\"No\" AND coRefusalDecision!=\"adminError\"")
             .complex(CaseData::getConditionalOrder)
-                .readonlyWithLabel(ConditionalOrder::getRefusalOrderDocument, "View refusal order:")
+            .readonlyWithLabel(ConditionalOrder::getRefusalOrderDocument, "View refusal order:")
             .done()
             .done();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("Legal advisor grant conditional order about to start callback invoked. CaseID: {}", details.getId());
-        CaseData caseData = details.getData();
-        caseData.getConditionalOrder().resetRefusalFields();
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData).build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -175,6 +163,8 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
                 conditionalOrder.populateLegalAdvisorDecision(LocalDate.now(clock))
             )
         );
+
+        caseData.getConditionalOrder().resetClarificationFields();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
