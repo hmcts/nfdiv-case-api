@@ -78,7 +78,6 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         CaseData caseData = details.getData();
-        caseData.getConditionalOrder().resetClarificationFields();
         return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData).build();
     }
 
@@ -118,6 +117,8 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 clarificationResponse
             )
         );
+
+        data.getConditionalOrder().resetRefusalFields();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
