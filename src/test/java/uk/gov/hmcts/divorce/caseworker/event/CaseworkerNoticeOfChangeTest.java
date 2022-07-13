@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,10 +17,8 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -44,11 +41,6 @@ class CaseworkerNoticeOfChangeTest {
 
     @InjectMocks
     private CaseworkerNoticeOfChange noticeOfChange;
-
-    @Before
-    public void setup() {
-        doNothing().when(caseAccessService).removeUsersWithRole(anyLong(), anyList());
-    }
 
     @Test
     public void configure() {

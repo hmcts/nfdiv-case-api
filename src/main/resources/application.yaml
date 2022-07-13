@@ -96,11 +96,14 @@ uk:
             APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '9bd841f2-0989-45c5-a08b-348ecd09711f'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
             SOLICITOR_CLARIFICATION_SUBMITTED: '7636dc7a-039d-4963-805d-33f539a0b48d'
+            SOLICITOR_CO_REFUSED_SOLE_JOINT: 'b1590f77-3cdb-4f80-abae-4f4f13f06e26'
             CITIZEN_APPLICATION_WITHDRAWN: '952beacb-0e73-4fde-94d4-60cfcbec2d63'
             CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: '39def49e-2d2d-489e-b715-3103e27d5977'
             CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER: '5be323bf-7ed5-44a7-9e91-05f363cf27c2'
+            APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER: 'ee403b64-1df6-4630-a233-881e85be0395'
             JOINT_APPLIED_FOR_CONDITIONAL_ORDER: '0d8c59f1-aea3-4245-8bca-eb0d5558f0fd'
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER: '32778ad1-0315-41cc-927b-2c008be35435'
+            JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER: 'aa6114e5-f652-49ab-82f9-66d1b2deefed'
             CITIZEN_CONDITIONAL_ORDER_PRONOUNCED: 'adbb43fa-b7d2-4184-8bd9-4b5632f57b7a'
             CITIZEN_CONDITIONAL_ORDER_REFUSED: 'ab76d32c-ee27-4b4b-aeaa-9b781bd0dfe2'
             CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: '4d0e2dca-1af3-446d-997d-70b46f99bd73'
@@ -178,11 +181,14 @@ uk:
             APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '9bd841f2-0989-45c5-a08b-348ecd09711f'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
             SOLICITOR_CLARIFICATION_SUBMITTED: '7636dc7a-039d-4963-805d-33f539a0b48d'
+            SOLICITOR_CO_REFUSED_SOLE_JOINT: 'b1590f77-3cdb-4f80-abae-4f4f13f06e26'
             CITIZEN_APPLICATION_WITHDRAWN: '952beacb-0e73-4fde-94d4-60cfcbec2d63'
             CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: ${CITIZEN_APPLY_FOR_CONDITIONAL_ORDER_NOTIFICATION_ID:39def49e-2d2d-489e-b715-3103e27d5977}
             CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER: ${CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER_NOTIFICATION_ID:5be323bf-7ed5-44a7-9e91-05f363cf27c2}
+            APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER: 'ee403b64-1df6-4630-a233-881e85be0395'
             JOINT_APPLIED_FOR_CONDITIONAL_ORDER: '0d8c59f1-aea3-4245-8bca-eb0d5558f0fd'
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER: ${JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER_NOTIFICATION_ID:32778ad1-0315-41cc-927b-2c008be35435}
+            JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER: 'aa6114e5-f652-49ab-82f9-66d1b2deefed'
             CITIZEN_CONDITIONAL_ORDER_PRONOUNCED: ${CITIZEN_CONDITIONAL_ORDER_PRONOUNCED_WELSH_NOTIFICATION_ID:adbb43fa-b7d2-4184-8bd9-4b5632f57b7a}
             CITIZEN_CONDITIONAL_ORDER_REFUSED: ${CITIZEN_CONDITIONAL_ORDER_REFUSED_NOTIFICATION_ID:ab76d32c-ee27-4b4b-aeaa-9b781bd0dfe2}
             CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: ${CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED_NOTIFICATION_ID:4d0e2dca-1af3-446d-997d-70b46f99bd73}
@@ -249,7 +255,7 @@ docmosis:
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
-      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
+      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx
       SERVICE_ORDER: NFD_Service_Order_V2.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement_V2.docx
@@ -267,7 +273,7 @@ docmosis:
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
       GENERAL_LETTER: NFD_General_Letter.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2.docx
-      NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V2.docx
+      NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3.docx
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx
@@ -285,12 +291,11 @@ docmosis:
       CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: ${RESPONDENT_ANSWERS_TEMPLATE_ID:NFD_Respondent_Answers_Eng.docx}
-      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
+      CERTIFICATE_OF_SERVICE: ${CERTIFICATE_OF_SERVICE_TEMPLATE_ID:NFD_Certificate_Of_Service.docx}
       SERVICE_ORDER: ${SERVICE_ORDER_TEMPLATE_ID:NFD_Service_Order_V2.docx}
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole_V2.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx #TODO: update content
-      NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP: NFD_Notice_Of_Proceedings_Overseas_Sole_V2.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement_V2.docx #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx #TODO: update content
@@ -308,7 +313,7 @@ docmosis:
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: ${NFD_NOP_A1_SOLE_APP1_CIT_CS_TEMPLATE_ID:NFD_Notice_Of_Proceedings_Sole_V2.docx}
-      NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V2.docx
+      NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3.docx
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx
@@ -405,3 +410,4 @@ SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 
 toggle:
   enable_entitlement_email: ${ENABLE_ENTITLEMENT_EMAIL:true}
+  enable_updated_migration_query: ${ENABLE_UPDATED_MIGRATION_QUERY:false}

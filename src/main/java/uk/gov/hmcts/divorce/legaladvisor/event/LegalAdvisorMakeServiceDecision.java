@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -67,6 +68,9 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
+    @Autowired
+    private HoldingPeriodService holdingPeriodService;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -113,7 +117,15 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
         if (serviceApplication.isApplicationGranted()) {
             log.info("Service application granted for case id {}", details.getId());
-            endState = application.getIssueDate() == null ? Submitted : Holding;
+
+            if (application.getIssueDate() == null) {
+                endState = Submitted;
+            } else {
+                endState = Holding;
+                if (caseDataCopy.getApplicationType().isSole()) {
+                    caseDataCopy.setDueDate(holdingPeriodService.getDueDateFor(application.getIssueDate()));
+                }
+            }
 
             if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
                 generateAndSetOrderToDeemedOrDispenseDocument(
