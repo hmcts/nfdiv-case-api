@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderAnswersTemplateContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
@@ -37,6 +38,7 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -47,6 +49,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getFormattedExpectedDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -213,12 +217,76 @@ public class SubmitConditionalOrderIT {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.errors[0]").value("The applicant must agree that the facts stated in the application are true"));
+            .andExpect(jsonPath("$.errors[0]")
+                .value("The applicant must agree that the facts stated in the application are true"));
     }
 
     @Test
-    void shouldSendEmailToApplicant2() throws Exception {
+    public void shouldSendEmailToBothApplicantsWhenJointApplicant1SubmitsCOAndApplicant2StillNotApplied()
+        throws Exception {
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
+        verifyJointCONotifications(
+            ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .build(),
+            JOINT_APPLIED_FOR_CONDITIONAL_ORDER,
+            JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER
+        );
+    }
+
+    @Test
+    void shouldSendEmailToBothApplicantsWhenJointApplicant2SubmitsCOAndApplicant1StillNotApplied() throws Exception {
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(false);
+
+        verifyJointCONotifications(
+            ConditionalOrder.builder()
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .build(),
+            JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER,
+            JOINT_APPLIED_FOR_CONDITIONAL_ORDER
+        );
+    }
+
+    @Test
+    public void shouldSendBothApplicantsAppliedForCOEmailToBothApplicantsWhenJointApplicant1SubmitsCOAndApplicant2HaveAlreadyApplied()
+        throws Exception {
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
+
+        verifyJointCONotifications(
+            ConditionalOrder.builder()
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .build(),
+            JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER,
+            JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER
+        );
+    }
+
+    @Test
+    public void shouldSendBothApplicantsAppliedForCOEmailToBothApplicantsWhenJointApplicant2SubmitsCOAndApplicant1HaveAlreadyApplied()
+        throws Exception {
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(false);
+
+        verifyJointCONotifications(
+            ConditionalOrder.builder()
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .build(),
+            JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER,
+            JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER
+        );
+    }
+
+    private void verifyJointCONotifications(final ConditionalOrder conditionalOrder, final EmailTemplateName applicant1EmailTemplateId,
+                                            final EmailTemplateName applicant2EmailTemplateId)
+        throws Exception {
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
 
         setMockClock(clock);
@@ -231,14 +299,10 @@ public class SubmitConditionalOrderIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Conditional_Order_Answers.docx");
 
-        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(false);
-
         final CaseData caseData = validApplicant2CaseData();
+        caseData.getApplicant2().setEmail("app2@gm.com");
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
-            .build());
+        caseData.setConditionalOrder(conditionalOrder);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=SolConfirmService")
                 .contentType(APPLICATION_JSON)
@@ -248,11 +312,14 @@ public class SubmitConditionalOrderIT {
                 .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
-                status().isOk()
-            )
-            .andExpect(jsonPath("$.data.coApplicant2SubmittedDate").value(getFormattedExpectedDateTime()));
+                status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(applicant1EmailTemplateId), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(eq("app2@gm.com"), eq(applicant2EmailTemplateId), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
     }
 }
