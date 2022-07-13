@@ -39,6 +39,6 @@ class UnlinkCaseProviderTest {
 
         final CaseDetails<CaseData, State> unlinkBulkCaseProvider = caseTask.apply(caseDetails);
 
-        assertThat(unlinkBulkCaseProvider.getData().getBulkListCaseReference()).isEmpty();
+        assertThat(unlinkBulkCaseProvider.getData().getBulkListCaseReferenceLink().getCaseReference()).isEmpty();
     }
 }

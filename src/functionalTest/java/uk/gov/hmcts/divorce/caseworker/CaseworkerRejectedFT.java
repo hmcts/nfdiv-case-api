@@ -45,7 +45,7 @@ public class CaseworkerRejectedFT extends FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertThatJson(response.asString(),
-            json -> json.inPath("data.previousState").isEqualTo(Submitted.getName())
+            json -> json.inPath("data.previousState").isEqualTo(Submitted.name())
         );
     }
 }

@@ -72,7 +72,7 @@ docmosis:
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
-      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
+      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx
       SERVICE_ORDER: NFD_Service_Order_V2.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement_V2.docx
@@ -90,7 +90,7 @@ docmosis:
       NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
       GENERAL_LETTER: NFD_General_Letter.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2.docx
-      NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V2.docx
+      NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3.docx
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx # fix needed for no app1 sol
@@ -106,12 +106,11 @@ docmosis:
       CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx   #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Cy.docx
-      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
+      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service_CY.docx
       SERVICE_ORDER: NFD_Service_Order_V2_Cy.docx
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole_V2.docx  #TODO: update content
       JOINT_NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Joint_V2.docx #TODO: update content
-      NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP: NFD_Notice_Of_Proceedings_Overseas_Sole_V2.docx  #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement_V2.docx #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx #TODO: update content
@@ -128,7 +127,7 @@ docmosis:
       NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx #TODO: update content
       GENERAL_LETTER: NFD_General_Letter.docx
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
-      NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2.docx
+      NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2_CY.docx
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered_V3.docx
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
@@ -216,3 +215,4 @@ SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 
 toggle:
   enable_entitlement_email: ${ENABLE_ENTITLEMENT_EMAIL:true}
+  enable_updated_migration_query: ${ENABLE_UPDATED_MIGRATION_QUERY:false}
