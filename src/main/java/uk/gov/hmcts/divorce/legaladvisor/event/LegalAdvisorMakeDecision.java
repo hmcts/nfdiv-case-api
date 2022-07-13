@@ -112,18 +112,13 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .pageLabel("Request amended application - Make a Decision")
             .showCondition("coRefusalDecision=\"reject\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getRefusalRejectionReason)
-                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo,
-                "coRefusalRejectionReasonCONTAINS \"other\" "
-                    + "OR coRefusalRejectionReasonCONTAINS \"noCriteria\" " // added for backward compatibility
-                    + "OR coRefusalRejectionReasonCONTAINS \"insufficentDetails\"") // added for backward compatibility
+                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo)
             .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("Legal advisor grant conditional order about to start callback invoked. CaseID: {}", details.getId());
         CaseData caseData = details.getData();
-        caseData.getConditionalOrder().resetRefusalFields();
         return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData).build();
     }
 
@@ -168,6 +163,8 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
                 conditionalOrder.populateLegalAdvisorDecision(LocalDate.now(clock))
             )
         );
+
+        caseData.getConditionalOrder().resetClarificationFields();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
