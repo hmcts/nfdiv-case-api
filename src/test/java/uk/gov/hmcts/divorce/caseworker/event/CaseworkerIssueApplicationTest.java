@@ -151,6 +151,8 @@ class CaseworkerIssueApplicationTest {
         caseworkerIssueApplication.submitted(caseDetails, null);
 
         verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
+
+        verify(issueApplicationService).sendNotifications(caseDetails);
     }
 
     @Test
@@ -165,6 +167,8 @@ class CaseworkerIssueApplicationTest {
         caseworkerIssueApplication.submitted(caseDetails, null);
 
         verifyNoInteractions(ccdUpdateService);
+
+        verify(issueApplicationService).sendNotifications(caseDetails);
     }
 
     @Test
@@ -179,6 +183,8 @@ class CaseworkerIssueApplicationTest {
         caseworkerIssueApplication.submitted(caseDetails, null);
 
         verifyNoInteractions(ccdUpdateService);
+
+        verify(issueApplicationService).sendNotifications(caseDetails);
     }
 
     private CaseData caseDataWithAllMandatoryFields() {
