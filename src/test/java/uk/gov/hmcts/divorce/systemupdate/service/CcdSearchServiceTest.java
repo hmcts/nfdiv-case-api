@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
@@ -50,7 +51,9 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -236,7 +239,46 @@ class CcdSearchServiceTest {
     }
 
     @Test
-    void shouldReturnCasesWithVersionOlderThan() {
+    void shouldReturnCasesWithVersionOlderThanUsingUpdatedQuery() {
+
+        ReflectionTestUtils.setField(ccdSearchService, "enableUpdatedMigrationQuery", true);
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+
+        SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(
+                boolQuery()
+                    .must(boolQuery()
+                        .mustNot(matchQuery("data.dataVersion", 0))
+                    )
+                    .must(boolQuery()
+                        .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
+                        .should(boolQuery().must(rangeQuery("data.dataVersion").lt(1)))
+                    )
+                    .mustNot(matchQuery(STATE, Withdrawn))
+                    .mustNot(matchQuery(STATE, Rejected))
+            )
+            .from(0)
+            .size(500);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            sourceBuilder.toString()))
+            .thenReturn(expected1);
+
+        final List<CaseDetails> searchResult = ccdSearchService.searchForCasesWithVersionLessThan(1, user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(100);
+    }
+
+    @Test
+    void shouldReturnCasesWithVersionOlderThanUsingOlderQuery() {
+
+        ReflectionTestUtils.setField(ccdSearchService, "enableUpdatedMigrationQuery", false);
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
@@ -547,7 +589,7 @@ class CcdSearchServiceTest {
 
     private SearchSourceBuilder searchSourceBuilderForAwaitingPronouncementCases(final int from) {
         QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
-        QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
+        QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReferenceLink.CaseReference");
 
         QueryBuilder query = boolQuery()
             .must(stateQuery)

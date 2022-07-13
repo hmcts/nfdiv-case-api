@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -103,7 +104,7 @@ public class NoticeOfProceedingJointContent {
 
         templateContent.put(RELATION, commonContent.getPartner(caseData, partner, applicantLanguagePreference));
 
-        boolean displayEmailConfirmation = !applicant.isOffline() || applicant.getEmail() != null;
+        boolean displayEmailConfirmation = !applicant.isOffline() && ObjectUtils.isNotEmpty(applicant.getEmail());
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));

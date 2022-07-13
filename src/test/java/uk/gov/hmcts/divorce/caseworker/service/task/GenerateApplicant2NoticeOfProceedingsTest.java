@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1Not
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
@@ -96,9 +97,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(
-            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
-        ).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
         when(coversheetSolicitorTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
@@ -135,8 +134,10 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         final Map<String, Object> templateContent = new HashMap<>();
 
         when(noticeOfProceedingsWithAddressContent.apply(
-            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
-        ).thenReturn(templateContent);
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            ENGLISH)).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -164,9 +165,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         final Map<String, Object> expectedTemplateContent = new HashMap<>();
         expectedTemplateContent.put(DISPLAY_HEADER_ADDRESS, false);
 
-        when(noticeOfProceedingContent.apply(
-            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
-        ).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -196,9 +195,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(
-            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
-        ).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -229,9 +226,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(
-            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
-        ).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 

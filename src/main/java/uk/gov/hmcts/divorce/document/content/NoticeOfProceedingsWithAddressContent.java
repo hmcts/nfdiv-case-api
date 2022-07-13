@@ -23,8 +23,11 @@ public class NoticeOfProceedingsWithAddressContent {
                                      final Applicant partner,
                                      final LanguagePreference languagePreference) {
 
-        final Map<String, Object> templateContent =
-            noticeOfProceedingContent.apply(caseData, ccdCaseReference, partner, languagePreference);
+        final Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            ccdCaseReference,
+            partner,
+            languagePreference);
         templateContent.put(DISPLAY_HEADER_ADDRESS, true);
 
         return templateContent;

@@ -46,6 +46,6 @@ class LinkBulkCaseProviderTest {
         final CaseData resultCaseData = resultCaseDetails.getData();
         final ConditionalOrder resultConditionalOrder = resultCaseData.getConditionalOrder();
 
-        assertThat(resultCaseData.getBulkListCaseReference()).isEqualTo("1");
+        assertThat(resultCaseData.getBulkListCaseReferenceLink().getCaseReference()).isEqualTo("1");
     }
 }

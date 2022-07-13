@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -56,13 +57,30 @@ class AcknowledgementOfServiceTest {
     }
 
     @Test
-    void shouldSetNoticeOfProceedingsEmailToApplicantIfApplicantNotIsRepresented() {
+    void shouldSetNoticeOfProceedingsToSolicitorFirmNameWithNoOrganisationPolicyOrOrganisation() {
 
         final Solicitor solicitor = Solicitor.builder()
             .name(TEST_SOLICITOR_NAME)
+            .firmName(TEST_ORG_NAME)
             .email(TEST_SOLICITOR_EMAIL)
-            .organisationPolicy(organisationPolicy())
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder().build())
             .build();
+        final Applicant applicant = Applicant.builder()
+            .solicitor(solicitor)
+            .solicitorRepresented(YES)
+            .build();
+
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder().build();
+
+        acknowledgementOfService.setNoticeOfProceedings(applicant);
+
+        assertThat(acknowledgementOfService.getNoticeOfProceedingsEmail()).isEqualTo(TEST_SOLICITOR_EMAIL);
+        assertThat(acknowledgementOfService.getNoticeOfProceedingsSolicitorFirm()).isEqualTo(TEST_ORG_NAME);
+    }
+
+    @Test
+    void shouldSetNoticeOfProceedingsEmailToApplicantIfApplicantNotIsRepresented() {
+
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
             .email(TEST_USER_EMAIL)
