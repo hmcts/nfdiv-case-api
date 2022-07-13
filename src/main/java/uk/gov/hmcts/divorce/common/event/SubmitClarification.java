@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -58,7 +59,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, CREATOR, APPLICANT_2)
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
@@ -77,7 +78,6 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         CaseData caseData = details.getData();
-        caseData.getConditionalOrder().resetClarificationFields();
         return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData).build();
     }
 
@@ -117,6 +117,8 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 clarificationResponse
             )
         );
+
+        data.getConditionalOrder().resetRefusalFields();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
