@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 
 import java.util.List;
 
@@ -83,11 +84,18 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 .build();
         }
 
-        final CaseDetails<CaseData, State> result = reIssueApplicationService.process(details);
+        try {
+            final CaseDetails<CaseData, State> result = reIssueApplicationService.process(details);
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(result.getData())
-            .state(result.getState())
-            .build();
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(result.getData())
+                .state(result.getState())
+                .build();
+        } catch (final InvalidReissueOptionException e) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of("Invalid reissue option, browser page refresh may have occurred. "
+                    + "Please use 'Previous' button and select a reissue option"))
+                .build();
+        }
     }
 }

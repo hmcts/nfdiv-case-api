@@ -86,7 +86,7 @@ public class CasePronouncementServiceTest {
             .thenReturn(List.of(
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(1L)
-                    .state(AwaitingPronouncement.getName())
+                    .state(AwaitingPronouncement.name())
                     .build())
             );
 
@@ -153,11 +153,11 @@ public class CasePronouncementServiceTest {
             .thenReturn(List.of(
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(1L)
-                    .state(AwaitingPronouncement.getName())
+                    .state(AwaitingPronouncement.name())
                     .build(),
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(2L)
-                    .state(AwaitingPronouncement.getName())
+                    .state(AwaitingPronouncement.name())
                     .build())
             );
 
@@ -228,11 +228,11 @@ public class CasePronouncementServiceTest {
             .thenReturn(List.of(
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(1L)
-                    .state(IssuedToBailiff.getName())
+                    .state(IssuedToBailiff.name())
                     .build(),
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(2L)
-                    .state(IssuedToBailiff.getName())
+                    .state(IssuedToBailiff.name())
                     .build())
             );
 
@@ -289,11 +289,11 @@ public class CasePronouncementServiceTest {
             .thenReturn(List.of(
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(1L)
-                    .state(AwaitingPronouncement.getName())
+                    .state(AwaitingPronouncement.name())
                     .build(),
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(2L)
-                    .state(AwaitingPronouncement.getName())
+                    .state(AwaitingPronouncement.name())
                     .build())
             );
 
