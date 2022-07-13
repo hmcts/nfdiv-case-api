@@ -46,12 +46,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(MockitoExtension.class)
 class LegalAdvisorMakeDecisionTest {
@@ -290,32 +292,6 @@ class LegalAdvisorMakeDecisionTest {
     }
 
     @Test
-    void shouldResetConditionalOrderRefusalFieldsWhenAboutToStartCallbackIsInvoked() {
-
-        final CaseData caseData = CaseData.builder()
-            .conditionalOrder(
-                ConditionalOrder
-                    .builder()
-                    .granted(NO)
-                    .refusalDecision(MORE_INFO)
-                    .refusalClarificationAdditionalInfo("some info")
-                    .build()
-            )
-            .build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            legalAdvisorMakeDecision.aboutToStart(caseDetails);
-
-        ConditionalOrder actualConditionalOrder = response.getData().getConditionalOrder();
-        assertThat(actualConditionalOrder.getRefusalDecision()).isNull();
-        assertThat(actualConditionalOrder.getRefusalClarificationAdditionalInfo()).isNull();
-        assertThat(actualConditionalOrder.getGranted()).isNull();
-    }
-
-    @Test
     void shouldCreateNewClarificationResponsesSubmittedListIfNotExist() {
 
         setMockClock(clock);
@@ -411,5 +387,39 @@ class LegalAdvisorMakeDecisionTest {
             legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getConditionalOrder().getLegalAdvisorDecisions()).hasSize(2);
+    }
+
+    @Test
+    void shouldResetClarificationResponseFieldsUponDecision() {
+        setMockClock(clock);
+
+        final ListValue<String> listValue1 =
+            ListValue.<String>builder()
+                .value("Clarification")
+                .build();
+        final List<ListValue<String>> clarifications = new ArrayList<>();
+        clarifications.add(listValue1);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .clarificationResponses(clarifications)
+                    .cannotUploadClarificationDocuments(NO)
+                    .clarificationUploadDocuments(List.of(documentWithType(CONDITIONAL_ORDER_REFUSAL)))
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.aboutToSubmit(caseDetails, null);
+
+        ConditionalOrder actualConditionalOrder = response.getData().getConditionalOrder();
+        assertThat(actualConditionalOrder.getClarificationResponses()).hasSize(0);
+        assertThat(actualConditionalOrder.getCannotUploadClarificationDocuments()).isNull();
+        assertThat(actualConditionalOrder.getClarificationUploadDocuments()).hasSize(0);
     }
 }

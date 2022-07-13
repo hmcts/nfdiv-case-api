@@ -125,6 +125,8 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             ccdUpdateService.submitEvent(details, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
         }
 
+        issueApplicationService.sendNotifications(details);
+
         return SubmittedCallbackResponse.builder().build();
     }
 }
