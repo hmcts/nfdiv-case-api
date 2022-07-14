@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetIssueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -44,6 +45,9 @@ public class IssueApplicationService {
     private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Autowired
+    private SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
+
+    @Autowired
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
 
     @Autowired
@@ -67,11 +71,17 @@ public class IssueApplicationService {
             setIssueDate,
             setPostIssueState,
             setDueDateAfterIssue,
+            setNoticeOfProceedingDetailsForRespondent,
             generateApplicant1NoticeOfProceeding,
             generateApplicant2NoticeOfProceedings,
             divorceApplicationRemover,
             generateDivorceApplication,
-            generateD10Form,
+            generateD10Form
+        ).run(caseDetails);
+    }
+
+    public void sendNotifications(final CaseDetails<CaseData, State> caseDetails) {
+        caseTasks(
             sendAosPackToRespondent,
             sendAosPackToApplicant,
             sendApplicationIssueNotifications

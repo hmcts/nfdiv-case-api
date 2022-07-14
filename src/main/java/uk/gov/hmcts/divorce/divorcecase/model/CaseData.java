@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.FieldType;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -187,9 +189,10 @@ public class CaseData {
 
     @CCD(
         label = "Bulk list case reference",
+        typeOverride = FieldType.CaseLink,
         access = {CaseworkerAccess.class}
     )
-    private String bulkListCaseReference;
+    private CaseLink bulkListCaseReferenceLink;
 
     @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped
