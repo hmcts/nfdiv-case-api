@@ -173,8 +173,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
-                                                                  final CaseDetails<CaseData, State> detailsBefore
-    ) {
+                                                                  final CaseDetails<CaseData, State> detailsBefore) {
         CaseData caseData = details.getData();
 
         caseData.getConditionalOrder().setRefusalOrderDocument(generateRefusalDocument(caseData, details.getId()));
