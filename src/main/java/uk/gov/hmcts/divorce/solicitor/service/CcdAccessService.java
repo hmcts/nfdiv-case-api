@@ -12,6 +12,7 @@ import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
@@ -118,12 +119,13 @@ public class CcdAccessService {
             .caseAssignmentUserRolesWithOrganisation(List.of(creatorAssignmentRole, app2AssignmentRole))
             .build();
 
-        caseAssignmentApi.removeCaseUserRoles(
+        CaseAssignmentUserRolesResponse response = caseAssignmentApi.removeCaseUserRoles(
             caseworkerUser.getAuthToken(),
             authTokenGenerator.generate(),
             caseAssignmentUserRolesReq
         );
 
+        log.info("removed user roles from case response message: {} ", response.getStatusMessage());
         log.info("Successfully unlinked user from case (id: {}) ", caseId);
     }
 

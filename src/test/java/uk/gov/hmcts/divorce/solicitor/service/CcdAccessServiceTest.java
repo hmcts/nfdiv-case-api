@@ -251,6 +251,12 @@ public class CcdAccessServiceTest {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
+        when(caseAssignmentApi.removeCaseUserRoles(
+            eq(SYSTEM_UPDATE_AUTH_TOKEN),
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            any(CaseAssignmentUserRolesRequest.class)
+        )).thenReturn(CaseAssignmentUserRolesResponse.builder().build());
+
         assertThatCode(() -> ccdAccessService.unlinkUserFromCase(TEST_CASE_ID, SOLICITOR_USER_ID))
             .doesNotThrowAnyException();
 
