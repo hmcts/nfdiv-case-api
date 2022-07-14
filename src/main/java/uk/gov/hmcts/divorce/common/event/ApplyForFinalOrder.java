@@ -77,6 +77,10 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
         CaseData data = details.getData();
         State endState = details.getState();
 
+        // TODO: AARON - Move the "if sole" logic into the notifications class methods for sendToApplicant1 and sendToApplicant2.
+        // Then rename the class to appliedForFinalOrderNotification and add the 2 new
+        // sendToApplicant1Solicitor and sendToApplicant2Solicitor methods from the SubmitConditionalOrder notification class we made
+        // earlier, and change it to final order instead of conditional order.
         if (details.getState() == AwaitingFinalOrder) {
             if (data.getApplicationType().isSole()) {
                 notificationDispatcher.send(soleAppliedForFinalOrderNotification, data, details.getId());

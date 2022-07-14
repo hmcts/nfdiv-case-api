@@ -11,12 +11,16 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForCOorFONotification;
 
 import java.time.Clock;
 
@@ -30,6 +34,8 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class SubmitJointConditionalOrderTest {
@@ -39,6 +45,12 @@ public class SubmitJointConditionalOrderTest {
 
     @Mock
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
+    @Mock
+    private SolicitorAppliedForCOorFONotification solicitorAppliedForCOorFONotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SubmitJointConditionalOrder submitJointConditionalOrder;
@@ -78,6 +90,40 @@ public class SubmitJointConditionalOrderTest {
             .isEqualTo(getExpectedLocalDateTime());
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted())
             .isEqualTo(YesOrNo.YES);
+    }
+
+    @Test
+    void shouldSendApp1SolicitorAndApp2SolicitorNotificationsOnAboutToSubmit() {
+        setMockClock(clock);
+        CaseData caseData = caseData();
+        caseData.setApplicant1(Applicant
+            .builder()
+            .solicitorRepresented(YesOrNo.YES)
+            .solicitor(Solicitor
+                .builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .build())
+            .build());
+        caseData.setApplicant2(Applicant
+            .builder()
+            .solicitorRepresented(YesOrNo.YES)
+            .solicitor(Solicitor
+                .builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .build())
+            .build());
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(1L)
+            .data(caseData)
+            .state(AwaitingLegalAdvisorReferral)
+            .build();
+
+        final CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder().id(1L).build();
+
+        submitJointConditionalOrder.aboutToSubmit(caseDetails, beforeDetails);
+
+        verify(notificationDispatcher).send(solicitorAppliedForCOorFONotification, caseData, 1L);
     }
 
     @Test

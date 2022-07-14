@@ -13,19 +13,22 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForCOorFONotification;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.util.Objects;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +44,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
 class SubmitConditionalOrderTest {
@@ -52,6 +56,9 @@ class SubmitConditionalOrderTest {
 
     @Mock
     private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
+
+    @Mock
+    private SolicitorAppliedForCOorFONotification solicitorAppliedForCOorFONotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -182,6 +189,38 @@ class SubmitConditionalOrderTest {
         submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, 1L);
+    }
+
+    @Test
+    void shouldSendApp1SolicitorAndApp2SolicitorNotificationsOnAboutToSubmit() {
+        setupMocks(clock);
+        CaseData caseData = caseData();
+        caseData.setApplicant1(Applicant
+            .builder()
+            .solicitorRepresented(YesOrNo.YES)
+            .solicitor(Solicitor
+                .builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .build())
+            .build());
+        caseData.setApplicant2(Applicant
+            .builder()
+            .solicitorRepresented(YesOrNo.YES)
+            .solicitor(Solicitor
+                .builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .build())
+            .build());
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(1L)
+            .data(caseData)
+            .state(AwaitingLegalAdvisorReferral)
+            .build();
+
+        submitConditionalOrder.aboutToSubmit(caseDetails, null);
+
+        verify(notificationDispatcher).send(solicitorAppliedForCOorFONotification, caseData, 1L);
     }
 
     @Test
