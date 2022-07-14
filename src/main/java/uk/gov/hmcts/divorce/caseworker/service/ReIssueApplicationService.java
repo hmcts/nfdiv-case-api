@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -45,6 +46,9 @@ public class ReIssueApplicationService {
     private SendAosPackToRespondent sendAosPackToRespondent;
 
     @Autowired
+    private SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
+
+    @Autowired
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
 
     @Autowired
@@ -64,6 +68,7 @@ public class ReIssueApplicationService {
         var updatedCaseDetails = updateCase(caseDetails, reissueOption);
 
         //Reset reissue option
+        updatedCaseDetails.getData().getApplication().setPreviousReissueOption(reissueOption);
         updatedCaseDetails.getData().getApplication().setReissueOption(null);
 
         return updatedCaseDetails;
@@ -77,8 +82,7 @@ public class ReIssueApplicationService {
                 setReIssueAndDueDate,
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
-                generateD10Form,
-                sendApplicationIssueNotifications
+                generateD10Form
             ).run(caseDetails);
         } else if (OFFLINE_AOS.equals(reissueOption)) {
             log.info("For case id {} processing reissue for offline aos ", caseDetails.getId());
@@ -88,30 +92,55 @@ public class ReIssueApplicationService {
             return caseTasks(
                 setPostIssueState,
                 setReIssueAndDueDate,
+                setNoticeOfProceedingDetailsForRespondent,
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
-                generateD10Form,
-                sendAosPackToRespondent,
-                sendAosPackToApplicant,
-                sendApplicationIssueNotifications
+                generateD10Form
             ).run(caseDetails);
         } else if (REISSUE_CASE.equals(reissueOption)) {
             log.info("For case id {} processing complete reissue ", caseDetails.getId());
             return caseTasks(
                 setPostIssueState,
                 setReIssueAndDueDate,
+                setNoticeOfProceedingDetailsForRespondent,
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
-                generateD10Form,
+                generateD10Form
+            ).run(caseDetails);
+        } else {
+            log.info("For case id {} invalid reissue option hence not processing reissue application ", caseDetails.getId());
+            throw new InvalidReissueOptionException(format("Invalid reissue option for CaseId: %s", caseDetails.getId()));
+        }
+    }
+
+    public void sendNotifications(CaseDetails<CaseData, State> caseDetails, ReissueOption reissueOption) {
+        if (DIGITAL_AOS.equals(reissueOption)) {
+            log.info("For case id {} sending reissue notifications for digital aos ", caseDetails.getId());
+            caseTasks(
+                sendApplicationIssueNotifications
+            ).run(caseDetails);
+        } else if (OFFLINE_AOS.equals(reissueOption)) {
+            log.info("For case id {} sending reissue notifications for offline aos ", caseDetails.getId());
+
+            caseTasks(
+                sendAosPackToRespondent,
+                sendAosPackToApplicant,
+                sendApplicationIssueNotifications
+            ).run(caseDetails);
+        } else if (REISSUE_CASE.equals(reissueOption)) {
+            log.info("For case id {} sending reissue notifications for reissue case", caseDetails.getId());
+            caseTasks(
                 sendAosPackToRespondent,
                 sendAosPackToApplicant,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
         } else {
-            log.info("For case id {} invalid reissue option hence not processing reissue application ", caseDetails.getId());
-            throw new InvalidReissueOptionException(format("Invalid reissue option for CaseId: %s", caseDetails.getId()));
+            log.info("For case id {} invalid reissue option hence not sending reissue notifications ", caseDetails.getId());
+            throw new InvalidReissueOptionException(
+                "Exception occurred while sending reissue application notifications for case id " + caseDetails.getId()
+            );
         }
 
     }
