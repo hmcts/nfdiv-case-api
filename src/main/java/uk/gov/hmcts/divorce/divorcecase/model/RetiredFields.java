@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 import static uk.gov.hmcts.divorce.divorcecase.model.CivilPartnershipBroken.CIVIL_PARTNERSHIP_BROKEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken.MARRIAGE_BROKEN;
 
@@ -51,6 +52,13 @@ public class RetiredFields {
     private YesOrNo applicant1ScreenHasMarriageBroken;
     private DivorceDocument d11Document;
     private String bulkListCaseReference;
+
+    @CCD(
+        label = "Refusal rejection reasons",
+        typeOverride = MultiSelectList,
+        typeParameterOverride = "RejectionReason"
+    )
+    private Set<RejectionReason> coRefusalRejectionReason;
 
     @JsonIgnore
     private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {

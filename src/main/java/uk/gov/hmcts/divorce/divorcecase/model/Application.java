@@ -369,6 +369,12 @@ public class Application {
     private State previousState;
 
     @CCD(
+        label = "Welsh previous state",
+        access = {CaseworkerAccess.class}
+    )
+    private State welshPreviousState;
+
+    @CCD(
         label = "Bulk Scan state to transition to",
         typeOverride = FixedList,
         typeParameterOverride = "State"
@@ -419,6 +425,11 @@ public class Application {
         typeParameterOverride = "ReissueOption"
     )
     private ReissueOption reissueOption;
+
+    @CCD(
+        access = {DefaultAccess.class}
+    )
+    private ReissueOption previousReissueOption;
 
     @CCD(
         label = "Does Applicant 2 need help with fees?",

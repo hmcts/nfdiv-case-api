@@ -57,7 +57,6 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             .description("Submit clarification for conditional order")
             .showSummary()
             .showEventNotes()
-            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, CREATOR, APPLICANT_2)
             .grantHistoryOnly(
@@ -74,12 +73,6 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 .mandatory(ConditionalOrder::getClarificationResponses)
                 .optional(ConditionalOrder::getClarificationUploadDocuments)
             .done();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        CaseData caseData = details.getData();
-        caseData.getConditionalOrder().resetClarificationFields();
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData).build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -118,6 +111,8 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 clarificationResponse
             )
         );
+
+        data.getConditionalOrder().resetRefusalFields();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
