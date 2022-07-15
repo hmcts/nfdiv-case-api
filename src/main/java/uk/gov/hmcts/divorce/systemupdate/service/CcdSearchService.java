@@ -39,6 +39,8 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 
 @Service
 @Slf4j
@@ -66,6 +68,9 @@ public class CcdSearchService {
     @Value("${bulk-action.page-size}")
     @Setter
     private int bulkActionPageSize;
+
+    @Value("${toggle.enable_updated_migration_query}")
+    private boolean enableUpdatedMigrationQuery;
 
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
@@ -126,16 +131,7 @@ public class CcdSearchService {
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
-            .query(
-                boolQuery()
-                    .must(boolQuery()
-                        .mustNot(matchQuery("data.dataVersion", 0))
-                    )
-                    .must(boolQuery()
-                        .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
-                        .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
-                    )
-            )
+            .query(getMigrationQuery(latestVersion))
             .from(0)
             .size(500);
 
@@ -145,6 +141,31 @@ public class CcdSearchService {
             CASE_TYPE,
             sourceBuilder.toString()
         ).getCases();
+    }
+
+    private QueryBuilder getMigrationQuery(int latestVersion) {
+
+        if (enableUpdatedMigrationQuery) {
+            return boolQuery()
+                .must(boolQuery()
+                    .mustNot(matchQuery("data.dataVersion", 0))
+                )
+                .must(boolQuery()
+                    .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
+                    .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
+                )
+                .mustNot(matchQuery(STATE, Withdrawn))
+                .mustNot(matchQuery(STATE, Rejected));
+        } else {
+            return boolQuery()
+                .must(boolQuery()
+                    .mustNot(matchQuery("data.dataVersion", 0))
+                )
+                .must(boolQuery()
+                    .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
+                    .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
+                );
+        }
     }
 
     public List<CaseDetails> searchForBulkCasesWithVersionLessThan(int latestVersion, User user, String serviceAuth) {
@@ -177,7 +198,7 @@ public class CcdSearchService {
         final String serviceAuth) {
 
         final QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
-        final QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
+        final QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReferenceLink.CaseReference");
 
         final BoolQueryBuilder query = boolQuery()
             .must(stateQuery)
