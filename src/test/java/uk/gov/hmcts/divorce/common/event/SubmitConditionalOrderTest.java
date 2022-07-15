@@ -23,7 +23,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForCOorFONotification;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,9 +37,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.event.SubmitConditionalOrder.SUBMIT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.*;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -58,7 +58,7 @@ class SubmitConditionalOrderTest {
     private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
 
     @Mock
-    private SolicitorAppliedForCOorFONotification solicitorAppliedForCOorFONotification;
+    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -116,7 +116,7 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSetStateToConditionalOrderPendingOnAboutToSubmit() {
         setupMocks(null);
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
                 .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
@@ -135,7 +135,7 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSetStateToAwaitingLegalAdvisorReferralIfJointApplicationOnAboutToSubmit() {
         setupMocks(null);
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
                 .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
@@ -212,22 +212,33 @@ class SubmitConditionalOrderTest {
                 .build())
             .build());
 
+        caseData.setApplicationType(JOINT_APPLICATION);
+
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(1L)
             .data(caseData)
             .state(AwaitingLegalAdvisorReferral)
             .build();
 
-        submitConditionalOrder.aboutToSubmit(caseDetails, null);
+        CaseData caseDataBefore = caseData();
+        caseDataBefore.setApplicationType(JOINT_APPLICATION);
 
-        verify(notificationDispatcher).send(solicitorAppliedForCOorFONotification, caseData, 1L);
+        final CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
+            .id(1L)
+            .data(caseDataBefore)
+            .state(ConditionalOrderPronounced)
+            .build();
+
+        submitConditionalOrder.aboutToSubmit(caseDetails, beforeDetails);
+
+        verify(notificationDispatcher).send(solicitorAppliedForConditionalOrderNotification, caseData, 1L);
     }
 
     @Test
     void shouldSetIsSubmittedForApplicant1OnAboutToSubmit() {
         setupMocks(clock);
         final CaseData caseData = CaseData.builder()
-            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .applicationType(JOINT_APPLICATION)
             .application(Application.builder()
                 .serviceMethod(SOLICITOR_SERVICE)
                 .solSignStatementOfTruth(YesOrNo.YES)

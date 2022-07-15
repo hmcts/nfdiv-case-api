@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.notification.SoleAppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -28,7 +28,7 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
     public static final String CITIZEN_FINAL_ORDER_DELAY_REASON = "citizen-final-order-delay-reason";
 
     @Autowired
-    private SoleAppliedForFinalOrderNotification soleAppliedForFinalOrderNotification;
+    private AppliedForFinalOrderNotification appliedForFinalOrderNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -53,7 +53,7 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
         CaseData data = details.getData();
 
         if (data.getApplicationType().isSole()) {
-            notificationDispatcher.send(soleAppliedForFinalOrderNotification, data, details.getId());
+            notificationDispatcher.send(appliedForFinalOrderNotification, data, details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

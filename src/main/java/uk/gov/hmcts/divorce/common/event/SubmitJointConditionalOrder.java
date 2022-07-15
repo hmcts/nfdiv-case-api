@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForCOorFONotification;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -46,7 +46,7 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
     private NotificationDispatcher notificationDispatcher;
 
     @Autowired
-    private SolicitorAppliedForCOorFONotification solicitorAppliedForCOorFONotification;
+    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -86,7 +86,7 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             : AwaitingLegalAdvisorReferral;
 
         if (state == AwaitingLegalAdvisorReferral) {
-            notificationDispatcher.send(solicitorAppliedForCOorFONotification, data, details.getId());
+            notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, details.getId());
             generateConditionalOrderAnswersDocument.apply(details);
         }
 

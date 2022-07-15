@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class SolicitorAppliedForCOorFONotification implements ApplicantNotification {
+public class SolicitorAppliedForConditionalOrderNotification implements ApplicantNotification {
 
     @Autowired
     private NotificationService notificationService;

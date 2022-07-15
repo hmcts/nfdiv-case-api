@@ -20,7 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForCOorFONotification;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 
 import java.time.Clock;
 
@@ -47,7 +47,7 @@ public class SubmitJointConditionalOrderTest {
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @Mock
-    private SolicitorAppliedForCOorFONotification solicitorAppliedForCOorFONotification;
+    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -123,7 +123,7 @@ public class SubmitJointConditionalOrderTest {
 
         submitJointConditionalOrder.aboutToSubmit(caseDetails, beforeDetails);
 
-        verify(notificationDispatcher).send(solicitorAppliedForCOorFONotification, caseData, 1L);
+        verify(notificationDispatcher).send(solicitorAppliedForConditionalOrderNotification, caseData, 1L);
     }
 
     @Test

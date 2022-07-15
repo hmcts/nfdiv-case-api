@@ -17,7 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForCOorFONotification;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,7 +69,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @Autowired
-    private SolicitorAppliedForCOorFONotification solicitorAppliedForCOorFONotification;
+    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -126,7 +126,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         }
 
         if (state == AwaitingLegalAdvisorReferral) {
-            notificationDispatcher.send(solicitorAppliedForCOorFONotification, data, details.getId());
+            notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, details.getId());
             generateConditionalOrderAnswersDocument.apply(details);
         }
 

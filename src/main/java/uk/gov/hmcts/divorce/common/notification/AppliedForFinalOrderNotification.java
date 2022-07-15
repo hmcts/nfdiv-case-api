@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.common.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -14,13 +15,18 @@ import java.time.LocalDate;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.notification.CommonContent.*;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class SoleAppliedForFinalOrderNotification implements ApplicantNotification {
+public class AppliedForFinalOrderNotification implements ApplicantNotification {
 
     public static final String WILL_BE_CHECKED_WITHIN_2_DAYS = "will be checked within 2 days";
     public static final String WILL_BE_CHECKED_WITHIN_14_DAYS = "will be checked within 14 days";
@@ -44,7 +50,7 @@ public class SoleAppliedForFinalOrderNotification implements ApplicantNotificati
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
 
-        if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), id)) {
+        if (caseData.getApplicationType().isSole() && ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), id)) {
             log.info("Sending Applicant 1 notification informing them that they have applied for final order: {}", id);
             notificationService.sendEmail(
                 caseData.getApplicant1().getEmail(),
@@ -58,7 +64,8 @@ public class SoleAppliedForFinalOrderNotification implements ApplicantNotificati
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
 
-        if (!ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), id)) {
+        if (caseData.getApplicationType().isSole() && !ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), id)) {
+
             log.info("Sending Applicant 2 notification informing them that they have applied for final order: {}", id);
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
@@ -67,6 +74,50 @@ public class SoleAppliedForFinalOrderNotification implements ApplicantNotificati
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
+    }
+
+    @Override
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
+        if (!caseData.getApplicationType().isSole()) {
+            var templateVars = solicitorTemplateVars(caseData, caseId, caseData.getApplicant1());
+
+            notificationService.sendEmail(
+                caseData.getApplicant1().getSolicitor().getEmail(),
+                JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
+                templateVars,
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
+        if (!caseData.getApplicationType().isSole()) {
+            var templateVars = solicitorTemplateVars(caseData, caseId, caseData.getApplicant2());
+
+            notificationService.sendEmail(
+                caseData.getApplicant2().getSolicitor().getEmail(),
+                JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
+                templateVars,
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        }
+    }
+
+    private Map<String, String> solicitorTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
+        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
+
+        templateVars.put(IS_CONDITIONAL_ORDER, NO);
+        templateVars.put(IS_FINAL_ORDER, YES);
+        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+        templateVars.put(SOLICITOR_REFERENCE,
+            isNotEmpty(applicant.getSolicitor().getReference()) ? applicant.getSolicitor().getReference() : NOT_PROVIDED);
+        templateVars.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
+        templateVars.put(IS_DISSOLUTION, !caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+
+        return templateVars;
     }
 
     private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id) {
