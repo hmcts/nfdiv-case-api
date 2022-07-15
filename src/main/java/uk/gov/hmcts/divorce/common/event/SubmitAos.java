@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -119,16 +120,33 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
         final List<String> errors = new ArrayList<>();
 
-        if (NO.equals(acknowledgementOfService.getStatementOfTruth())) {
+        if (!YES.equals(acknowledgementOfService.getStatementOfTruth())) {
             errors.add("You must be authorised by the respondent to sign this statement.");
         }
 
-        if (NO.equals(acknowledgementOfService.getPrayerHasBeenGiven())) {
+        if (!YES.equals(acknowledgementOfService.getPrayerHasBeenGiven())) {
             errors.add("The respondent must have given their prayer.");
         }
 
-        if (NO.equals(acknowledgementOfService.getConfirmReadPetition())) {
+        if (!YES.equals(acknowledgementOfService.getConfirmReadPetition())) {
             errors.add("The respondent must have read the application for divorce.");
+        }
+
+        if (acknowledgementOfService.getJurisdictionAgree() == null) {
+            errors.add("Jurisdiction agree cannot be null.");
+        }
+
+        if (NO.equals(acknowledgementOfService.getJurisdictionAgree())) {
+            if (acknowledgementOfService.getReasonCourtsOfEnglandAndWalesHaveNoJurisdiction() == null) {
+                errors.add("The respondent must have a reason for refusing jurisdiction.");
+            }
+            if (acknowledgementOfService.getInWhichCountryIsYourLifeMainlyBased() == null) {
+                errors.add("The respondent must set inWhichCountryIsYourLifeMainlyBased field.");
+            }
+        }
+
+        if (acknowledgementOfService.getHowToRespondApplication() == null) {
+            errors.add("The respondent must set the howToRespondApplication field.");
         }
 
         return errors;

@@ -70,11 +70,11 @@ class SubmitAosTest {
 
     @Test
     void shouldReturnErrorsIfAosValidationFails() {
-
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(NO)
             .prayerHasBeenGiven(NO)
             .confirmReadPetition(NO)
+            .jurisdictionAgree(null)
             .build();
 
         final CaseData caseData = caseData();
@@ -91,7 +91,35 @@ class SubmitAosTest {
             .containsExactly(
                 "You must be authorised by the respondent to sign this statement.",
                 "The respondent must have given their prayer.",
-                "The respondent must have read the application for divorce.");
+                "The respondent must have read the application for divorce.",
+                "Jurisdiction agree cannot be null.",
+                "The respondent must set the howToRespondApplication field.");
+    }
+
+    @Test
+    void shouldReturnErrorsIfAosValidationFailsForJurisdictionAgree() {
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .statementOfTruth(YES)
+            .prayerHasBeenGiven(YES)
+            .confirmReadPetition(YES)
+            .jurisdictionAgree(NO)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitAos.aboutToSubmit(caseDetails, beforeDetails);
+
+        assertThat(response.getData()).isSameAs(caseData);
+        assertThat(response.getErrors())
+            .containsExactly(
+                "The respondent must have a reason for refusing jurisdiction.",
+                "The respondent must set inWhichCountryIsYourLifeMainlyBased field.");
     }
 
     @Test
@@ -101,6 +129,8 @@ class SubmitAosTest {
             .statementOfTruth(YES)
             .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
+            .jurisdictionAgree(YES)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
             .build();
 
         final CaseData caseData = caseData();
