@@ -29,10 +29,8 @@ public class CaseworkerUpdateDueDate implements CCDConfig<CaseData, State, UserR
             .name("Update due date")
             .description("Update due date")
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE_DELETE,
-                SUPER_USER)
+            .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER, CASE_WORKER)
             .grantHistoryOnly(
-                CASE_WORKER,
                 SOLICITOR,
                 LEGAL_ADVISOR))
             .page("updateDueDate")

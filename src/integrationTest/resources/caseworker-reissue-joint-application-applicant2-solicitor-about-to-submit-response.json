@@ -47,6 +47,7 @@
       "PaymentTotal": "55000"
     },
     "applicant1KnowsApplicant2EmailAddress": "Yes",
+    "previousReissueOption":"reissueCase",
     "documentUploadComplete": "Yes",
     "issueDate": "${json-unit.any-string}",
     "reissueDate": "${json-unit.any-string}",

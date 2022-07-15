@@ -20,6 +20,7 @@
     "applicant2LastName": "test_last_name",
     "applicant2Email": "test@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
+    "previousReissueOption": "offlineAos",
     "applicant2Address": {
       "AddressLine1": "223b",
       "AddressLine2": "Baker Street",

@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -76,7 +77,7 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldUpdateCaseDataAndSendEmailWhenAboutToSubmitCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
 
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
@@ -90,18 +91,27 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendEmailsWhenApplicant1LanguageIsWelsh() throws Exception {
+    public void shouldSendNotificationsWhenSubmittedCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
-        caseData.put("applicant1LanguagePreferenceWelsh", YES);
-        caseData.put("applicant1ServiceMethod", COURT_SERVICE);
 
-        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, SUBMITTED_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 
     @Test
-    public void shouldUpdateCaseDataAndSendEmailsWhenAboutToSubmitCallbackIsSuccessfulForJointCitizenApplication() throws Exception {
+    public void shouldSendNotificationsWhenApplicant1LanguageIsWelsh() throws Exception {
+        final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
+        caseData.put("applicant1LanguagePreferenceWelsh", YES);
+        caseData.put("applicant1ServiceMethod", COURT_SERVICE);
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, SUBMITTED_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForJointCitizenApplication() throws Exception {
         final Map<String, Object> caseData = caseData(JOINT_CITIZEN_REQUEST);
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
 
@@ -113,5 +123,15 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(
                 JOINT_CITIZEN_RESPONSE
             )));
+    }
+
+    @Test
+    public void shouldSendNotificationsWhenSubmittedCallbackIsSuccessfulForJointCitizenApplication() throws Exception {
+        final Map<String, Object> caseData = caseData(JOINT_CITIZEN_REQUEST);
+        caseData.put("issueDate", "2022-06-20");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, SUBMITTED_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 }
