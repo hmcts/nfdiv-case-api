@@ -93,8 +93,8 @@ class SubmitAosTest {
                 "You must be authorised by the respondent to sign this statement.",
                 "The respondent must have given their prayer.",
                 "The respondent must have read the application.",
-                "Jurisdiction agree cannot be null.",
-                "The respondent answer how they want to respond to the application.",
+                "The respondent must agree or disagree to claimed jurisdiction.",
+                "The respondent must answer how they want to respond to the application.",
                 "The respondent must confirm if they have any other legal proceedings.");
     }
 
@@ -123,7 +123,7 @@ class SubmitAosTest {
         assertThat(response.getErrors())
             .containsExactly(
                 "The respondent must have a reason for refusing jurisdiction.",
-                "The respondent answer in which country is their life mainly based question.",
+                "The respondent must answer in which country is their life mainly based question.",
                 "The respondent must enter the details of their other legal proceedings.");
     }
 

@@ -133,7 +133,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         }
 
         if (acknowledgementOfService.getJurisdictionAgree() == null) {
-            errors.add("Jurisdiction agree cannot be null.");
+            errors.add("The respondent must agree or disagree to claimed jurisdiction.");
         }
 
         if (NO.equals(acknowledgementOfService.getJurisdictionAgree())) {
@@ -141,12 +141,12 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
                 errors.add("The respondent must have a reason for refusing jurisdiction.");
             }
             if (acknowledgementOfService.getInWhichCountryIsYourLifeMainlyBased() == null) {
-                errors.add("The respondent answer in which country is their life mainly based question.");
+                errors.add("The respondent must answer in which country is their life mainly based question.");
             }
         }
 
         if (acknowledgementOfService.getHowToRespondApplication() == null) {
-            errors.add("The respondent answer how they want to respond to the application.");
+            errors.add("The respondent must answer how they want to respond to the application.");
         }
 
         if (caseData.getApplicant2().getLegalProceedings() == null) {
