@@ -104,4 +104,14 @@ class ApplyForFinalOrderTest {
 
         verify(notificationDispatcher, never()).send(appliedForFinalOrderNotification, caseData, caseDetails.getId());
     }
+
+    @Test
+    void shouldSendAppliedForFinalOrderNotificationIfStateIsAwaitingFinalOrderAndSolicitorSubmitsEvent() {
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).state(AwaitingFinalOrder).data(caseData).build();
+
+        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+
+        verify(notificationDispatcher).send(appliedForFinalOrderNotification, caseData, caseDetails.getId());
+    }
 }
