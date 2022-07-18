@@ -78,6 +78,7 @@ class SubmitAosTest {
             .build();
 
         final CaseData caseData = caseData();
+        caseData.getApplicant2().setLegalProceedings(null);
         caseData.setAcknowledgementOfService(acknowledgementOfService);
 
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
@@ -91,13 +92,14 @@ class SubmitAosTest {
             .containsExactly(
                 "You must be authorised by the respondent to sign this statement.",
                 "The respondent must have given their prayer.",
-                "The respondent must have read the application for divorce.",
+                "The respondent must have read the application.",
                 "Jurisdiction agree cannot be null.",
-                "The respondent must set the howToRespondApplication field.");
+                "The respondent answer how they want to respond to the application.",
+                "The respondent must confirm if they have any other legal proceedings.");
     }
 
     @Test
-    void shouldReturnErrorsIfAosValidationFailsForJurisdictionAgree() {
+    void shouldReturnErrorsIfAosValidationFailsForJurisdictionAgreeAndOtherLegalProceedings() {
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
             .prayerHasBeenGiven(YES)
@@ -107,6 +109,8 @@ class SubmitAosTest {
             .build();
 
         final CaseData caseData = caseData();
+        caseData.getApplicant2().setLegalProceedings(YES);
+        caseData.getApplicant2().setLegalProceedingsDetails(null);
         caseData.setAcknowledgementOfService(acknowledgementOfService);
 
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
@@ -119,7 +123,8 @@ class SubmitAosTest {
         assertThat(response.getErrors())
             .containsExactly(
                 "The respondent must have a reason for refusing jurisdiction.",
-                "The respondent must set inWhichCountryIsYourLifeMainlyBased field.");
+                "The respondent answer in which country is their life mainly based question.",
+                "The respondent must enter the details of their other legal proceedings.");
     }
 
     @Test
@@ -135,6 +140,7 @@ class SubmitAosTest {
 
         final CaseData caseData = caseData();
         caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.getApplicant2().setLegalProceedings(NO);
         final CaseData expectedCaseData = caseData();
 
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();

@@ -155,6 +155,7 @@ public class SubmitAosIT {
             .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
             .build();
 
         final CaseData caseData = caseData();
@@ -196,9 +197,11 @@ public class SubmitAosIT {
             .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
             .build();
 
         final CaseData caseData = caseData();
+        caseData.getApplicant2().setLegalProceedings(NO);
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
 

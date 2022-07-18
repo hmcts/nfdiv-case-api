@@ -97,9 +97,8 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         log.info("Submit AoS about to submit callback invoked for Case Id: {}", details.getId());
 
         final var caseData = details.getData();
-        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
-        final List<String> errors = validateAos(acknowledgementOfService);
+        final List<String> errors = validateAos(caseData);
 
         if (!errors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -116,7 +115,8 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .build();
     }
 
-    private List<String> validateAos(final AcknowledgementOfService acknowledgementOfService) {
+    private List<String> validateAos(final CaseData caseData) {
+        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
         final List<String> errors = new ArrayList<>();
 
@@ -129,7 +129,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         }
 
         if (!YES.equals(acknowledgementOfService.getConfirmReadPetition())) {
-            errors.add("The respondent must have read the application for divorce.");
+            errors.add("The respondent must have read the application.");
         }
 
         if (acknowledgementOfService.getJurisdictionAgree() == null) {
@@ -141,12 +141,20 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
                 errors.add("The respondent must have a reason for refusing jurisdiction.");
             }
             if (acknowledgementOfService.getInWhichCountryIsYourLifeMainlyBased() == null) {
-                errors.add("The respondent must set inWhichCountryIsYourLifeMainlyBased field.");
+                errors.add("The respondent answer in which country is their life mainly based question.");
             }
         }
 
         if (acknowledgementOfService.getHowToRespondApplication() == null) {
-            errors.add("The respondent must set the howToRespondApplication field.");
+            errors.add("The respondent answer how they want to respond to the application.");
+        }
+
+        if (caseData.getApplicant2().getLegalProceedings() == null) {
+            errors.add("The respondent must confirm if they have any other legal proceedings.");
+        }
+
+        if (YES.equals(caseData.getApplicant2().getLegalProceedings()) && caseData.getApplicant2().getLegalProceedingsDetails() == null) {
+            errors.add("The respondent must enter the details of their other legal proceedings.");
         }
 
         return errors;
