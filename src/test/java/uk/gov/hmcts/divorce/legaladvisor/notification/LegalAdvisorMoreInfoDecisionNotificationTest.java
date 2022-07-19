@@ -5,16 +5,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.lang.String.join;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -23,23 +21,16 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LAST_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_REFUSED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CLARIFICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CO_REFUSED_SOLE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
@@ -56,7 +47,6 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
 
     @InjectMocks
     private LegalAdvisorMoreInfoDecisionNotification notification;
-
 
     @Test
     void shouldSendConditionalOrderRefusedEmailToApplicant1IfNotRepresented() {
@@ -142,35 +132,52 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
     }
 
     @Test
-    void shouldSendClarificationSubmittedEmailToSolicitor() {
+    void shouldSendConditionalOrderRefusedEmailToApplicant1Solicitor() {
 
-        final CaseData data = caseDataWithStatementOfTruth();
-        data.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
-        data.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
-        data.getApplicant1().getSolicitor().setName(TEST_SOLICITOR_NAME);
-
-        Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(APPLICANT_NAME,
-            join(" ", data.getApplicant1().getFirstName(), data.getApplicant1().getLastName()));
-        templateVars.put(RESPONDENT_NAME,
-            join(" ", data.getApplicant2().getFirstName(), data.getApplicant2().getLastName()));
-        templateVars.put(APPLICATION_REFERENCE, formatId(1234567890123456L));
-
-        when(commonContent.basicTemplateVars(data, 1234567890123456L))
-            .thenReturn(templateVars);
+        final var data = validApplicant1CaseData();
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .refusalDecision(MORE_INFO)
+            .build());
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .name("applicant solicitor")
+            .reference("sol1")
+            .email("sol1@gm.com")
+            .build());
 
         notification.sendToApplicant1Solicitor(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_SOLICITOR_EMAIL),
-            eq(SOLICITOR_CLARIFICATION_SUBMITTED),
-            argThat(allOf(
-                hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
-                hasEntry(APPLICANT_NAME, "test_first_name test_last_name"),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
-                hasEntry(RESPONDENT_NAME, "applicant2FirstName applicant2LastName")
-            )),
+            eq("sol1@gm.com"),
+            eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
+            anyMap(),
             eq(ENGLISH)
         );
+
+        verify(commonContent).getCoRefusedSolicitorTemplateVars(data, 1234567890123456L, data.getApplicant1(), MORE_INFO);
+    }
+
+    @Test
+    void shouldSendConditionalOrderRefusedEmailToApplicant2Solicitor() {
+
+        final var data = validApplicant2CaseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .refusalDecision(MORE_INFO)
+            .build());
+        data.getApplicant2().setSolicitor(Solicitor.builder()
+            .name("applicant2 solicitor")
+            .reference("sol2")
+            .email("sol2@gm.com")
+            .build());
+
+        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq("sol2@gm.com"),
+            eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
+            anyMap(),
+            eq(ENGLISH)
+        );
+        verify(commonContent).getCoRefusedSolicitorTemplateVars(data, 1234567890123456L, data.getApplicant2(), MORE_INFO);
     }
 }

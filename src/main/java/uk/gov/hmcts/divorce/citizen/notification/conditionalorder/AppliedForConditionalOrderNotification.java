@@ -7,12 +7,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
@@ -55,6 +57,17 @@ public class AppliedForConditionalOrderNotification {
         if (!caseData.getApplicationType().isSole()) {
             templateVars.putAll(jointTemplateVars(caseData, partner, whichApplicant));
         }
+        return templateVars;
+    }
+
+    protected Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Solicitor solicitor) {
+        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
+        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(SOLICITOR_NAME, solicitor.getName());
+        templateVars.put(
+            SOLICITOR_REFERENCE,
+            Objects.nonNull(solicitor.getReference()) ? solicitor.getReference() : "not provided"
+        );
         return templateVars;
     }
 

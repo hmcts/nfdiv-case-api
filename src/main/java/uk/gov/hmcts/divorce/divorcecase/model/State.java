@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccessExcludingCAA;
+import uk.gov.hmcts.divorce.divorcecase.model.access.LegalAdvisorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 
 import java.util.EnumSet;
@@ -14,334 +15,341 @@ import java.util.EnumSet;
 public enum State {
 
     @CCD(
-        name = "20 week holding period",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "20 week holding period",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    Holding("Holding"),
+    Holding,
 
     @CCD(
-        name = "AoS awaiting",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "AoS awaiting",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingAos("AwaitingAos"),
+    AwaitingAos,
 
     @CCD(
-        name = "AoS drafted",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "AoS drafted",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AosDrafted("AosDrafted"),
+    AosDrafted,
 
     @CCD(
-        name = "AoS overdue",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "AoS overdue",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AosOverdue("AosOverdue"),
+    AosOverdue,
 
     @CCD(
-        name = "Applicant 2 approved",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Applicant 2 approved",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class, SolicitorAccess.class}
     )
-    Applicant2Approved("Applicant2Approved"),
+    Applicant2Approved,
 
     @CCD(
-        name = "Application awaiting payment",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Application awaiting payment",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingPayment("AwaitingPayment"),
+    AwaitingPayment,
 
     @CCD(
-        name = "Application rejected",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Application rejected",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    Rejected("Rejected"),
+    Rejected,
 
     @CCD(
-        name = "Application withdrawn",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Application withdrawn",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    Withdrawn("Withdrawn"),
+    Withdrawn,
 
 
     @CCD(
-        name = "Awaiting admin clarification",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting admin clarification",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
+    )
+    AwaitingAdminClarification,
+
+    @CCD(
+        label = "Awaiting alternative service",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingAdminClarification("AwaitingAdminClarification"),
+    AwaitingAlternativeService,
 
     @CCD(
-        name = "Awaiting alternative service",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        label = "Awaiting amended application",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
     )
-    AwaitingAlternativeService("AwaitingAlternativeService"),
+    AwaitingAmendedApplication,
 
     @CCD(
-        name = "Awaiting amended application",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
-    )
-    AwaitingAmendedApplication("AwaitingAmendedApplication"),
-
-    @CCD(
-        name = "Awaiting applicant",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting applicant",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
     )
-    AwaitingDocuments("AwaitingDocuments"),
+    AwaitingDocuments,
 
     @CCD(
-        name = "Awaiting applicant 1 response",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting applicant 1 response",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class, SolicitorAccess.class}
     )
-    AwaitingApplicant1Response("AwaitingApplicant1Response"),
+    AwaitingApplicant1Response,
 
     @CCD(
-        name = "Awaiting applicant 2 response",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting applicant 2 response",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class, SolicitorAccess.class}
     )
-    AwaitingApplicant2Response("AwaitingApplicant2Response"),
+    AwaitingApplicant2Response,
 
     @CCD(
-        name = "Awaiting bailiff referral",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting bailiff referral",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingBailiffReferral("AwaitingBailiffReferral"),
+    AwaitingBailiffReferral,
 
     @CCD(
-        name = "Awaiting bailiff service",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting bailiff service",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingBailiffService("AwaitingBailiffService"),
+    AwaitingBailiffService,
 
     @CCD(
-        name = "Awaiting clarification",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting clarification",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
+    )
+    AwaitingClarification,
+
+    @CCD(
+        label = "Awaiting conditional order",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingClarification("AwaitingClarification"),
+    AwaitingConditionalOrder,
 
     @CCD(
-        name = "Awaiting conditional order",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting DWP response",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingConditionalOrder("AwaitingConditionalOrder"),
+    AwaitingDwpResponse,
 
     @CCD(
-        name = "Awaiting DWP response",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting final order",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingDwpResponse("AwaitingDWPResponse"),
+    AwaitingFinalOrder,
 
     @CCD(
-        name = "Awaiting final order",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting general consideration",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingFinalOrder("AwaitingFinalOrder"),
+    AwaitingGeneralConsideration,
 
     @CCD(
-        name = "Awaiting general consideration",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting general referral payment",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingGeneralConsideration("AwaitingGeneralConsideration"),
+    AwaitingGeneralReferralPayment,
 
     @CCD(
-        name = "Awaiting general referral payment",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
-    )
-    AwaitingGeneralReferralPayment("AwaitingGeneralReferralPayment"),
-
-    @CCD(
-        name = "Awaiting HWF decision",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting HWF decision",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
     )
-    AwaitingHWFDecision("AwaitingHWFDecision"),
+    AwaitingHWFDecision,
 
     @CCD(
-        name = "Awaiting joint conditional order",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        label = "Awaiting joint conditional order",
+        hint = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {DefaultStateAccess.class}
     )
-    ConditionalOrderPending("ConditionalOrderPending"),
+    ConditionalOrderPending,
 
     @CCD(
-        name = "Awaiting judge clarification",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting judge clarification",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingJudgeClarification("AwaitingJudgeClarification"),
+    AwaitingJudgeClarification,
 
     @CCD(
-        name = "Awaiting legal advisor referral",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting legal advisor referral",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingLegalAdvisorReferral("AwaitingLegalAdvisorReferral"),
+    AwaitingLegalAdvisorReferral,
 
     @CCD(
-        name = "Awaiting service",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting service",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
     )
-    AwaitingService("AwaitingService"),
+    AwaitingService,
 
     @CCD(
-        name = "Awaiting service consideration",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting service consideration",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingServiceConsideration("AwaitingServiceConsideration"),
+    AwaitingServiceConsideration,
 
     @CCD(
-        name = "Awaiting service payment",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Awaiting service payment",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingServicePayment("AwaitingServicePayment"),
+    AwaitingServicePayment,
 
     @CCD(
-        name = "Clarification response submitted",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Clarification response submitted",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    ClarificationSubmitted("ClarificationSubmitted"),
+    ClarificationSubmitted,
 
     @CCD(
-        name = "Conditional order drafted",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Conditional order drafted",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    ConditionalOrderDrafted("ConditionalOrderDrafted"),
+    ConditionalOrderDrafted,
 
     @CCD(
-        name = "Conditional order pronounced",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Conditional order pronounced",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    ConditionalOrderPronounced("ConditionalOrderPronounced"),
+    ConditionalOrderPronounced,
 
     @CCD(
-        name = "Conditional order refused",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Conditional order refused",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    ConditionalOrderRefused("ConditionalOrderRefused"),
+    ConditionalOrderRefused,
 
     @CCD(
-        name = "Draft",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Draft",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class, SolicitorAccess.class}
     )
-    Draft("Draft"),
+    Draft,
 
     @CCD(
-        name = "Final order complete",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Final order complete",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    FinalOrderComplete("FinalOrderComplete"),
+    FinalOrderComplete,
 
     @CCD(
-        name = "Final order overdue",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Final order overdue",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    FinalOrderOverdue("FinalOrderOverdue"),
+    FinalOrderOverdue,
 
     @CCD(
-        name = "Final order pending",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Final order pending",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    FinalOrderPending("FinalOrderPending"),
+    FinalOrderPending,
 
     @CCD(
-        name = "Final order requested",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Final order requested",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    FinalOrderRequested("FinalOrderRequested"),
+    FinalOrderRequested,
 
     @CCD(
-        name = "General application received",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "General application received",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    GeneralApplicationReceived("GeneralApplicationReceived"),
+    GeneralApplicationReceived,
 
     @CCD(
-        name = "General consideration complete",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "General consideration complete",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    GeneralConsiderationComplete("GeneralConsiderationComplete"),
+    GeneralConsiderationComplete,
 
     @CCD(
-        name = "Issued to bailiff",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Issued to bailiff",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    IssuedToBailiff("IssuedToBailiff"),
+    IssuedToBailiff,
 
     @CCD(
-        name = "Listed; awaiting pronouncement",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Listed; awaiting pronouncement",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
+    )
+    AwaitingPronouncement,
+
+    @CCD(
+        label = "New paper case",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingPronouncement("AwaitingPronouncement"),
+    NewPaperCase,
 
     @CCD(
-        name = "New paper case",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Offline document received by CW",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    NewPaperCase("NewPaperCase"),
+    OfflineDocumentReceived,
 
     @CCD(
-        name = "Offline document received by CW",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Pending hearing outcome",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    OfflineDocumentReceived("OfflineDocumentReceived"),
+    PendingHearingOutcome,
 
     @CCD(
-        name = "Pending hearing outcome",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Removed from bulk case",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    PendingHearingOutcome("PendingHearingOutcome"),
+    BulkCaseReject,
 
     @CCD(
-        name = "Removed from bulk case",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
-    )
-    BulkCaseReject("BulkCaseReject"),
-
-    @CCD(
-        name = "Submitted",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        label = "Submitted",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
     )
-    Submitted("Submitted");
+    Submitted,
+
+    @CCD(
+        label = "Welsh Translation review",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    WelshTranslationReview;
 
     public static final EnumSet<State> PRE_CONDITIONAL_ORDER_STATES = EnumSet.of(
         AwaitingHWFDecision,
@@ -411,8 +419,6 @@ public enum State {
         AwaitingJudgeClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
         GeneralApplicationReceived, PendingHearingOutcome
     };
-
-    private final String name;
 
 }
 

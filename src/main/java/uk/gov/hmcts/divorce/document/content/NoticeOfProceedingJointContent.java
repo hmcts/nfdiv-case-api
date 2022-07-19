@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,8 +18,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
@@ -43,7 +46,6 @@ public class NoticeOfProceedingJointContent {
     public static final String END_A_CIVIL_PARTNERSHIP_SERVICE = "End A Civil Partnership Service";
     public static final String DIVORCE_PROCEEDINGS = "divorce proceedings";
     public static final String DIVORCE_APPLICATION = "divorce application";
-    public static final String DIVORCE_PROCESS = "divorce process";
     public static final String YOUR_DIVORCE = "your divorce";
     public static final String DIVORCE = "divorce";
     public static final String DIVORCE_URL = "https://www.gov.uk/divorce";
@@ -53,7 +55,6 @@ public class NoticeOfProceedingJointContent {
     public static final String TO_END_YOUR_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String CIVIL_PARTNER = "civil partner";
     public static final String APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP = "application to end your civil partnership";
-    public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP = "process to end your civil partnership";
     public static final String YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP = "your application to end your civil partnership";
     public static final String ENDING_YOUR_CIVIL_PARTNERSHIP = "ending your civil partnership";
     public static final String ENDING_A_CIVIL_PARTNERSHIP = "ending a civil partnership";
@@ -92,7 +93,7 @@ public class NoticeOfProceedingJointContent {
 
         templateContent.put(RELATION, commonContent.getPartner(caseData, partner));
 
-        boolean displayEmailConfirmation = !applicant.isOffline() || applicant.getEmail() != null;
+        boolean displayEmailConfirmation = !applicant.isOffline() && ObjectUtils.isNotEmpty(applicant.getEmail());
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));

@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
@@ -141,7 +142,7 @@ public class SolicitorGeneralApplicationIT {
             .build();
 
         CallbackRequest request = callbackRequest(caseData, SOLICITOR_GENERAL_APPLICATION);
-        request.getCaseDetails().setState(AwaitingAos.getName());
+        request.getCaseDetails().setState(AwaitingAos.name());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -229,7 +230,7 @@ public class SolicitorGeneralApplicationIT {
         caseData.getApplicant2().setSolicitor(applicant2Solicitor);
 
         CallbackRequest request = callbackRequest(caseData, SOLICITOR_GENERAL_APPLICATION);
-        request.getCaseDetails().setState(AwaitingAos.getName());
+        request.getCaseDetails().setState(AwaitingAos.name());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubGetOrganisationEndpoint(getOrganisationResponseWith("App1OrgPolicy"));
@@ -261,11 +262,14 @@ public class SolicitorGeneralApplicationIT {
     public void shouldReturnErrorsIfCaseIsPartOfActiveBulkCase() throws Exception {
 
         final CaseData caseData = CaseData.builder()
-            .bulkListCaseReference("1234")
+            .bulkListCaseReferenceLink(CaseLink
+                .builder()
+                .caseReference("1234")
+                .build())
             .build();
 
         CallbackRequest request = callbackRequest(caseData, SOLICITOR_GENERAL_APPLICATION);
-        request.getCaseDetails().setState(AwaitingPronouncement.getName());
+        request.getCaseDetails().setState(AwaitingPronouncement.name());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
