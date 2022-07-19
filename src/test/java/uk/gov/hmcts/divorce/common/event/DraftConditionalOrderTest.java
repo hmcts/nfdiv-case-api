@@ -18,13 +18,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddLastAlternativeServiceDocumentLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
+import uk.gov.hmcts.divorce.solicitor.service.task.ProgressDraftConditionalOrderState;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.event.DraftConditionalOrder.DRAFT_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -36,6 +35,9 @@ class DraftConditionalOrderTest {
 
     @Mock
     private AddLastAlternativeServiceDocumentLink addLastAlternativeServiceDocumentLink;
+
+    @Mock
+    private ProgressDraftConditionalOrderState progressDraftConditionalOrderState;
 
     @InjectMocks
     private DraftConditionalOrder draftConditionalOrder;
@@ -52,28 +54,6 @@ class DraftConditionalOrderTest {
     }
 
     @Test
-    void shouldSetStateOnAboutToSubmit() {
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(State.AwaitingConditionalOrder).id(1L).build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = draftConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getState()).isEqualTo(ConditionalOrderDrafted);
-    }
-
-    @Test
-    void shouldSkipSettingStateOnAboutToSubmitIfStateIsConditionalOrderPending() {
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(State.ConditionalOrderPending).id(1L).build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = draftConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
-    }
-
-    @Test
     void shouldSetIsDraftedForApplicant1OnAboutToSubmit() {
 
         final CaseData caseData = CaseData.builder()
@@ -87,10 +67,34 @@ class DraftConditionalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.AwaitingConditionalOrder).id(1L).build();
 
+        when(progressDraftConditionalOrderState.apply(caseDetails)).thenReturn(caseDetails);
+
         final AboutToStartOrSubmitResponse<CaseData, State> response = draftConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted())
             .isEqualTo(YesOrNo.YES);
+    }
+
+    @Test
+    void shouldCallProgressDraftConditionalOrderStateOnAboutToSubmit() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YesOrNo.YES)
+                    .build())
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        when(progressDraftConditionalOrderState.apply(caseDetails)).thenReturn(caseDetails);
+
+        draftConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(progressDraftConditionalOrderState).apply(caseDetails);
     }
 
     @Test
