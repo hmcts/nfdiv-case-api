@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -38,17 +39,16 @@ import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applica
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.PARTNER_DID_NOT_APPLY_DUE_DATE;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.PLUS_14_DUE_DATE;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.WIFE_DID_NOT_APPLY;
-import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.PLUS_21_DUE_DATE;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.CO_OR_FO;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.PLUS_21_DUE_DATE;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.RESPONSE_DUE_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
@@ -56,8 +56,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -284,15 +282,6 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
     }
 
     @Test
-    void shouldNotSendEmailToSoleApplicant1SolicitorIfJointApplication() {
-        CaseData data = caseData(DIVORCE, ApplicationType.JOINT_APPLICATION);
-
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
     void shouldSendEmailToJointApplicant2WhoDidNotSubmitCo() {
         CaseData caseData = validApplicant2CaseData();
         setSubmittedDate(caseData, List.of(APPLICANT1));
@@ -411,7 +400,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
                 hasEntry(SOLICITOR_NAME, "app1sol"),
                 hasEntry(SOLICITOR_REFERENCE, "refxxx"),
                 hasEntry(RESPONSE_DUE_DATE, getExpectedLocalDateTime().plusDays(14).format(DATE_TIME_FORMATTER)),
-                hasEntry(ISSUE_DATE, issueDate.format(DATE_TIME_FORMATTER)),
+                hasEntry(DocmosisTemplateConstants.ISSUE_DATE, issueDate.format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_OR_FO, "conditional"),
                 hasEntry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
                 hasEntry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name")
@@ -419,16 +408,6 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
-    }
-
-    @Test
-    void shouldNotSendEmailToApplicant1SolicitorWhenSoleApplication() {
-        CaseData caseData = validApplicant1CaseData();
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
-
-        notification.sendToApplicant1Solicitor(caseData, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
     }
 
     private CaseData caseData(DivorceOrDissolution divorceOrDissolution, ApplicationType applicationType) {

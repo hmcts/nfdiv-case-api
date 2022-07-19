@@ -8,18 +8,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
@@ -71,16 +71,9 @@ public class AppliedForConditionalOrderNotification {
         return templateVars;
     }
 
-    protected Map<String, String> partnerTemplateVars(CaseData data, Long id, Applicant applicant, Applicant partner, String whichPartner) {
-        Map<String, String> templateVars = commonContent.mainTemplateVars(data, id, applicant, partner);
-        templateVars.put(PLUS_14_DUE_DATE,
-            coQuestions(data, whichPartner).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER));
-        return templateVars;
-    }
-
     protected Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant, String whichPartner) {
         Map<String, String> templateVars = commonContent.basicTemplateVars(data, id);
-        templateVars.put(ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(RESPONSE_DUE_DATE,
             coQuestions(data, whichPartner).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER));
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
@@ -91,6 +84,13 @@ public class AppliedForConditionalOrderNotification {
         templateVars.put(CO_OR_FO, "conditional");
         templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
+        return templateVars;
+    }
+
+    protected Map<String, String> partnerTemplateVars(CaseData data, Long id, Applicant applicant, Applicant partner, String whichPartner) {
+        Map<String, String> templateVars = commonContent.mainTemplateVars(data, id, applicant, partner);
+        templateVars.put(PLUS_14_DUE_DATE,
+            coQuestions(data, whichPartner).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 

@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -11,8 +10,8 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
@@ -56,19 +55,6 @@ public class Applicant1AppliedForConditionalOrderNotification
     }
 
     @Override
-    public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
-        if (caseData.getApplicationType().isSole()) {
-            log.info("Notifying applicant 1's solicitor that their conditional order application has been submitted: {}", id);
-            notificationService.sendEmail(
-                caseData.getApplicant1().getSolicitor().getEmail(),
-                APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER,
-                solicitorTemplateVars(caseData, id, caseData.getApplicant1().getSolicitor()),
-                caseData.getApplicant1().getLanguagePreference()
-            );
-        }
-    }
-
-    @Override
     public void sendToApplicant2(final CaseData caseData, final Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
 
@@ -97,14 +83,21 @@ public class Applicant1AppliedForConditionalOrderNotification
     }
 
     @Override
-    public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
-        if (!caseData.getApplicationType().isSole()
-            && StringUtils.isNotBlank(caseData.getApplicant1().getSolicitor().getEmail())) {
-            log.info("Notifying applicant 1 solicitor that their conditional order application has been submitted: {}", caseId);
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
+        if (caseData.getApplicationType().isSole()) {
+            log.info("Notifying applicant's solicitor that their conditional order application has been submitted: {}", id);
+            notificationService.sendEmail(
+                caseData.getApplicant1().getSolicitor().getEmail(),
+                APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER,
+                solicitorTemplateVars(caseData, id, caseData.getApplicant1().getSolicitor()),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        } else {
+            log.info("Notifying applicant 1 solicitor that their conditional order application has been submitted: {}", id);
             notificationService.sendEmail(
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER,
-                solicitorTemplateVars(caseData, caseId, caseData.getApplicant1(), APPLICANT1),
+                solicitorTemplateVars(caseData, id, caseData.getApplicant1(), APPLICANT1),
                 ENGLISH
             );
         }
