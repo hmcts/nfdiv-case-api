@@ -82,9 +82,14 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
         final CaseData data = details.getData();
         data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(YES);
 
+        var state = details.getState();
+        if (!details.getState().equals(ConditionalOrderPending)) {
+            state = ConditionalOrderDrafted;
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(ConditionalOrderDrafted)
+            .state(state)
             .build();
     }
 
