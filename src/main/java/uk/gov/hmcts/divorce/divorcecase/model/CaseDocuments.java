@@ -191,4 +191,12 @@ public class CaseDocuments {
             .map(DivorceDocument::getDocumentLink)
             .findFirst();
     }
+
+    @JsonIgnore
+    public Optional<ListValue<DivorceDocument>> getDocumentGeneratedWithType(final DocumentType documentType) {
+        return !isEmpty(this.getDocumentsGenerated())
+            ? this.getDocumentsGenerated().stream()
+            .filter(document -> documentType.equals(document.getValue().getDocumentType())).findFirst()
+            : Optional.empty();
+    }
 }
