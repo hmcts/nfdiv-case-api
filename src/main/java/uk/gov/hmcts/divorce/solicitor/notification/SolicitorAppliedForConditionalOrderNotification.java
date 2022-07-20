@@ -36,19 +36,19 @@ public class SolicitorAppliedForConditionalOrderNotification implements Applican
     @Autowired
     private CommonContent commonContent;
 
-   @Override
-   public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
-       if (!caseData.getApplicationType().isSole()) {
-           var templateVars = solicitorTemplateVars(caseData, caseId, caseData.getApplicant1());
+    @Override
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
+        if (!caseData.getApplicationType().isSole()) {
+            var templateVars = solicitorTemplateVars(caseData, caseId, caseData.getApplicant1());
 
-           notificationService.sendEmail(
-               caseData.getApplicant1().getSolicitor().getEmail(),
-               JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
-               templateVars,
-               caseData.getApplicant1().getLanguagePreference()
-           );
-       }
-   }
+            notificationService.sendEmail(
+                caseData.getApplicant1().getSolicitor().getEmail(),
+                JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
+                templateVars,
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
+    }
 
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {

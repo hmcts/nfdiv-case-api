@@ -20,11 +20,11 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 import static java.util.List.of;
@@ -86,12 +86,12 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .page("ConditionalOrderSoT")
             .pageLabel("Statement of Truth - submit conditional order")
             .complex(CaseData::getConditionalOrder)
-                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
-                .mandatory(ConditionalOrderQuestions::getStatementOfTruth)
-                .mandatory(ConditionalOrderQuestions::getSolicitorName)
-                .mandatory(ConditionalOrderQuestions::getSolicitorFirm)
-                .optional(ConditionalOrderQuestions::getSolicitorAdditionalComments)
-                .done()
+            .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
+            .mandatory(ConditionalOrderQuestions::getStatementOfTruth)
+            .mandatory(ConditionalOrderQuestions::getSolicitorName)
+            .mandatory(ConditionalOrderQuestions::getSolicitorFirm)
+            .optional(ConditionalOrderQuestions::getSolicitorAdditionalComments)
+            .done()
             .done();
     }
 
@@ -139,8 +139,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     private List<String> validate(CaseData data) {
         return data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth() == null
             || data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth().toBoolean()
-                ? emptyList()
-                : of("The applicant must agree that the facts stated in the application are true");
+            ? emptyList()
+            : of("The applicant must agree that the facts stated in the application are true");
     }
 
     private void setSubmittedDate(ConditionalOrder conditionalOrder) {
