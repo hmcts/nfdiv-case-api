@@ -23,7 +23,7 @@ public class ConditionalOrderReviewAoSApplicant2 implements CcdPageConfiguration
 
         pageBuilder
             .page("ConditionalOrderReviewAoSApplicant2", this::midEvent)
-            .pageLabel("Review Acknowledgement of Service - Draft Conditional Order Application")
+            .pageLabel("Draft joint conditional order")
             .complex(CaseData::getConditionalOrder)
                 .readonly(ConditionalOrder::getRespondentAnswersLink)
             .done()
