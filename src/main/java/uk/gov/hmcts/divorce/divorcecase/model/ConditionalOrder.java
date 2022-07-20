@@ -63,6 +63,11 @@ public class ConditionalOrder {
     private Document onlinePetitionLink;
 
     @CCD(
+        label = "Link to alternative service document"
+    )
+    private Document lastAlternativeServiceDocumentLink;
+
+    @CCD(
         label = "Grant Conditional Order?"
     )
     private YesOrNo granted;
@@ -104,14 +109,7 @@ public class ConditionalOrder {
     private String refusalAdminErrorInfo;
 
     @CCD(
-        label = "Refusal rejection reasons",
-        typeOverride = MultiSelectList,
-        typeParameterOverride = "RejectionReason"
-    )
-    private Set<RejectionReason> refusalRejectionReason;
-
-    @CCD(
-        label = "Additional information",
+        label = "Make a free text order",
         typeOverride = TextArea
     )
     private String refusalRejectionAdditionalInfo;
@@ -196,6 +194,11 @@ public class ConditionalOrder {
     private Document refusalOrderDocument;
 
     @CCD(
+        label = "Conditional Order Granted"
+    )
+    private DivorceDocument conditionalOrderGrantedDocument;
+
+    @CCD(
         label = "Legal Advisor Decisions Submitted",
         typeOverride = Collection,
         typeParameterOverride = "LegalAdvisorDecision"
@@ -227,7 +230,6 @@ public class ConditionalOrder {
         this.setRefusalClarificationReason(null);
         this.setRefusalClarificationAdditionalInfo(null);
         this.setRefusalAdminErrorInfo(null);
-        this.setRefusalRejectionReason(null);
         this.setRefusalRejectionAdditionalInfo(null);
     }
 
@@ -289,7 +291,6 @@ public class ConditionalOrder {
                 .granted(getGranted())
                 .decisionDate(decisionDate)
                 .refusalDecision(getRefusalDecision())
-                .refusalRejectionReason(getRefusalRejectionReason())
                 .refusalRejectionAdditionalInfo(getRefusalRejectionAdditionalInfo())
                 .build();
 

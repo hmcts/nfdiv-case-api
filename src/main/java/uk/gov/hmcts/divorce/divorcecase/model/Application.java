@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.Integer.parseInt;
@@ -357,6 +358,12 @@ public class Application {
     private State previousState;
 
     @CCD(
+        label = "Welsh previous state",
+        access = {CaseworkerAccess.class}
+    )
+    private State welshPreviousState;
+
+    @CCD(
         label = "Bulk Scan state to transition to",
         typeOverride = FixedList,
         typeParameterOverride = "State"
@@ -407,6 +414,11 @@ public class Application {
         typeParameterOverride = "ReissueOption"
     )
     private ReissueOption reissueOption;
+
+    @CCD(
+        access = {DefaultAccess.class}
+    )
+    private ReissueOption previousReissueOption;
 
     @CCD(
         label = "Does Applicant 2 need help with fees?",
@@ -593,7 +605,8 @@ public class Application {
     }
 
     @JsonIgnore
-    public String getPbaNumber() {
-        return this.getPbaNumbers().getValue().getLabel();
+    public Optional<String> getPbaNumber() {
+        return Optional.ofNullable(pbaNumbers)
+            .map(dynamicList -> dynamicList.getValue().getLabel());
     }
 }

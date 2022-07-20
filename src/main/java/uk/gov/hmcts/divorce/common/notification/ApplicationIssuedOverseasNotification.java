@@ -12,8 +12,7 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -31,11 +30,9 @@ public class ApplicationIssuedOverseasNotification implements ApplicantNotificat
 
         log.info("Notifying sole applicant of application issue (case {}) to overseas respondent", id);
 
-        final boolean hasEmail = caseData.getApplicant2EmailAddress() != null
-            && !caseData.getApplicant2EmailAddress().isEmpty();
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            hasEmail ? OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED : OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED,
+            OVERSEAS_RESPONDENT_APPLICATION_ISSUED,
             overseasRespondentTemplateVars(caseData, id),
             caseData.getApplicant1().getLanguagePreference()
         );

@@ -108,7 +108,7 @@ public class CcdAccessServiceIT {
 
     @Test
     void shouldRetryRemoveCaseRolesThreeTimesWhenRemovingCaseRolesThrowsException() {
-        when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(caseworkerUser());
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(caseworkerUser());
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         doThrow(feignException(500, "some error"))
@@ -118,10 +118,7 @@ public class CcdAccessServiceIT {
                 getCaseAssignmentUserRolesRequest(null, APPLICANT_2, APP_2_CITIZEN_USER_ID)
             );
 
-        assertThrows(
-            FeignException.class,
-            () -> ccdAccessService.unlinkUserFromApplication(CASEWORKER_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID)
-        );
+        assertThrows(FeignException.class, () -> ccdAccessService.unlinkApplicant2FromCase(TEST_CASE_ID, APP_2_CITIZEN_USER_ID));
 
         verify(caseAssignmentApi, times(3))
             .removeCaseUserRoles(

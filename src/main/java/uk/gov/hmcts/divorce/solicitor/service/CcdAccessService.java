@@ -12,6 +12,7 @@ import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
@@ -20,7 +21,6 @@ import java.util.stream.Collectors;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.fromString;
 
 @Service
 @Slf4j
@@ -96,8 +96,8 @@ public class CcdAccessService {
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
-    public void unlinkUserFromApplication(String caseworkerUserToken, Long caseId, String userToRemoveId) {
-        User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
+    public void unlinkApplicant2FromCase(Long caseId, String userToRemoveId) {
+        User caseworkerUser = idamService.retrieveSystemUpdateUserDetails();
 
         caseAssignmentApi.removeCaseUserRoles(
             caseworkerUser.getAuthToken(),
@@ -106,6 +106,27 @@ public class CcdAccessService {
         );
 
         log.info("Successfully unlinked applicant from case Id {} ", caseId);
+    }
+
+    @Retryable(value = {FeignException.class, RuntimeException.class})
+    public void unlinkUserFromCase(Long caseId, String userToRemoveId) {
+        User caseworkerUser = idamService.retrieveSystemUpdateUserDetails();
+
+        final var creatorAssignmentRole = getCaseAssignmentUserRole(caseId, null, CREATOR.getRole(), userToRemoveId);
+        final var app2AssignmentRole = getCaseAssignmentUserRole(caseId, null, APPLICANT_2.getRole(), userToRemoveId);
+
+        final var caseAssignmentUserRolesReq = CaseAssignmentUserRolesRequest.builder()
+            .caseAssignmentUserRolesWithOrganisation(List.of(creatorAssignmentRole, app2AssignmentRole))
+            .build();
+
+        CaseAssignmentUserRolesResponse response = caseAssignmentApi.removeCaseUserRoles(
+            caseworkerUser.getAuthToken(),
+            authTokenGenerator.generate(),
+            caseAssignmentUserRolesReq
+        );
+
+        log.info("removed user roles from case response message: {} ", response.getStatusMessage());
+        log.info("Successfully unlinked user from case (id: {}) ", caseId);
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
@@ -126,30 +147,39 @@ public class CcdAccessService {
         return userRoles.contains(CREATOR.getRole()) || userRoles.contains(APPLICANT_1_SOLICITOR.getRole());
     }
 
-    private CaseAssignmentUserRolesRequest getCaseAssignmentRequest(Long caseId, String userId, String orgId, UserRole role) {
-        return CaseAssignmentUserRolesRequest.builder()
-            .caseAssignmentUserRolesWithOrganisation(
-                List.of(
-                    CaseAssignmentUserRoleWithOrganisation.builder()
-                        .organisationId(orgId)
-                        .caseDataId(String.valueOf(caseId))
-                        .caseRole(role.getRole())
-                        .userId(userId)
-                        .build()
-                )
-            )
-            .build();
-    }
-
     public void removeUsersWithRole(Long caseId, List<String> roles) {
         final var auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         final var s2sToken = authTokenGenerator.generate();
         final var response = caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));
 
-        response.getCaseAssignmentUserRoles()
+        final var assignmentUserRoles = response.getCaseAssignmentUserRoles()
             .stream()
-            .filter(assignment -> roles.contains(assignment.getCaseRole()))
-            .map(a -> getCaseAssignmentRequest(caseId, a.getUserId(), null, fromString(a.getCaseRole())))
-            .forEach(request -> caseAssignmentApi.removeCaseUserRoles(auth, s2sToken, request));
+            .filter(caseAssignment -> roles.contains(caseAssignment.getCaseRole()))
+            .map(caseAssignment -> getCaseAssignmentUserRole(caseId, null, caseAssignment.getCaseRole(), caseAssignment.getUserId()))
+            .collect(Collectors.toList());
+
+        if (!assignmentUserRoles.isEmpty()) {
+            final var caseAssignmentUserRolesReq = CaseAssignmentUserRolesRequest.builder()
+                .caseAssignmentUserRolesWithOrganisation(assignmentUserRoles)
+                .build();
+
+            caseAssignmentApi.removeCaseUserRoles(auth, s2sToken, caseAssignmentUserRolesReq);
+        }
+    }
+
+    private CaseAssignmentUserRolesRequest getCaseAssignmentRequest(Long caseId, String userId, String orgId, UserRole role) {
+        return CaseAssignmentUserRolesRequest.builder()
+            .caseAssignmentUserRolesWithOrganisation(
+                List.of(getCaseAssignmentUserRole(caseId, orgId, role.getRole(), userId))
+            ).build();
+    }
+
+    private CaseAssignmentUserRoleWithOrganisation getCaseAssignmentUserRole(Long caseId, String orgId, String role, String userId) {
+        return CaseAssignmentUserRoleWithOrganisation.builder()
+            .organisationId(orgId)
+            .caseDataId(String.valueOf(caseId))
+            .caseRole(role)
+            .userId(userId)
+            .build();
     }
 }

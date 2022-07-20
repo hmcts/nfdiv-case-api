@@ -80,6 +80,9 @@ submit_aos:
 submit_co:
   reminder_offset_days: ${SUBMIT_CO_REMINDER_OFFSET_DAYS:14}
 
+final_order:
+  eligible_from_offset_days: ${FINAL_ORDER_ELIGIBLE_FROM_OFFSET_DAYS:43}
+
 apply_for_final_order:
   reminder_offset_days: ${APPLY_FOR_FINAL_ORDER_REMINDER_OFFSET_DAYS:14}
 
@@ -123,4 +126,5 @@ SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-com
 
 toggle:
   enable_entitlement_email: ${ENABLE_ENTITLEMENT_EMAIL:true}
+  enable_updated_migration_query: ${ENABLE_UPDATED_MIGRATION_QUERY:false}
 

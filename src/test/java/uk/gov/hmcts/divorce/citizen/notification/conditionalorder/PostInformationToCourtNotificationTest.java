@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -20,6 +21,7 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
@@ -73,6 +75,32 @@ class PostInformationToCourtNotificationTest {
     }
 
     @Test
+    void shouldSendWelshEmailToApplicant1WithDivorceContentIfLanguagePreferenceIsWelsh() {
+        CaseData data = validApplicant1CaseData();
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getConditionalOrderTemplateVars(ApplicationType.SOLE_APPLICATION));
+
+        postInformationToCourtNotification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(POST_INFORMATION_TO_COURT),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO),
+                hasEntry(WIFE_JOINT, CommonContent.NO),
+                hasEntry(HUSBAND_JOINT, CommonContent.NO),
+                hasEntry(CIVIL_PARTNER_JOINT, CommonContent.NO)
+            )),
+            eq(WELSH)
+        );
+
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
     void shouldNotSendEmailToApplicant2WhenSoleApplication() {
         CaseData data = validApplicant2CaseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -107,6 +135,34 @@ class PostInformationToCourtNotificationTest {
                 hasEntry(CIVIL_PARTNER_JOINT, CommonContent.NO)
             )),
             eq(ENGLISH)
+        );
+
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendWelshEmailToApplicant2WithDivorceContentWhenJointAndLanguagePreferenceIsWelsh() {
+        CaseData data = validApplicant2CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.setApplicationType(JOINT_APPLICATION);
+        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getConditionalOrderTemplateVars(ApplicationType.JOINT_APPLICATION));
+
+        postInformationToCourtNotification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(POST_INFORMATION_TO_COURT),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES),
+                hasEntry(WIFE_JOINT, CommonContent.YES),
+                hasEntry(HUSBAND_JOINT, CommonContent.NO),
+                hasEntry(CIVIL_PARTNER_JOINT, CommonContent.NO)
+            )),
+            eq(WELSH)
         );
 
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());

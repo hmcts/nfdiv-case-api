@@ -48,6 +48,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERE
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -307,6 +308,36 @@ public class ApplicationIssuedNotificationTest {
     }
 
     @Test
+    void shouldSendEmailToApplicant1WithWelshPartnerContent() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.setDivorceOrDissolution(DIVORCE);
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getApplication().setIssueDate(LocalDate.now());
+
+        Map<String, String> divorceTemplateVars = new HashMap<>();
+        divorceTemplateVars.put(PARTNER, "gŵr");
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
+
+        when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
+            .thenReturn(data.getApplication().getIssueDate().plusDays(16));
+        when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
+            .thenReturn(data.getApplication().getIssueDate().plusDays(141));
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
+            argThat(allOf(
+                hasEntry(PARTNER, "gŵr")
+            )),
+            eq(WELSH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
     void shouldSendEmailToApplicant2WithDivorceContent() {
         CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LocalDate.now().plusDays(141));
@@ -554,6 +585,7 @@ public class ApplicationIssuedNotificationTest {
             .build();
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.getUnionType(caseData, ENGLISH)).thenReturn("divorce");
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
 
@@ -590,6 +622,7 @@ public class ApplicationIssuedNotificationTest {
             .build();
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.getUnionType(caseData, ENGLISH)).thenReturn("dissolution");
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
 
@@ -630,6 +663,70 @@ public class ApplicationIssuedNotificationTest {
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendEmailInWelshToSoleRespondentWithDivorceContent() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+        when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
+            .thenReturn(data.getApplication().getIssueDate().plusDays(16));
+        when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
+            .thenReturn(data.getApplication().getIssueDate().plusDays(141));
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO)
+            )),
+            eq(WELSH)
+        );
+
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendEmailInWelshToApplicant2() {
+        CaseData data = validJointApplicant1CaseData();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        Map<String, String> dissolutionTemplateVars = new HashMap<>();
+        dissolutionTemplateVars.putAll(getMainTemplateVars());
+        dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(dissolutionTemplateVars);
+        when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
+            .thenReturn(data.getApplication().getIssueDate().plusDays(141));
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(JOINT_APPLICATION_ACCEPTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
+                hasEntry(IS_DIVORCE, NO),
+                hasEntry(IS_DISSOLUTION, YES)
+            )),
+            eq(WELSH)
+        );
+
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test

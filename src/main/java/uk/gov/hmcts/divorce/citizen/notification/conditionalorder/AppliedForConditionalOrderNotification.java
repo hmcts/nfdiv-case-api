@@ -7,13 +7,17 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
@@ -46,6 +50,17 @@ public class AppliedForConditionalOrderNotification {
         if (!caseData.getApplicationType().isSole()) {
             templateVars.putAll(jointTemplateVars(caseData, partner, whichApplicant));
         }
+        return templateVars;
+    }
+
+    protected Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Solicitor solicitor) {
+        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
+        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(SOLICITOR_NAME, solicitor.getName());
+        templateVars.put(
+            SOLICITOR_REFERENCE,
+            Objects.nonNull(solicitor.getReference()) ? solicitor.getReference() : "not provided"
+        );
         return templateVars;
     }
 
