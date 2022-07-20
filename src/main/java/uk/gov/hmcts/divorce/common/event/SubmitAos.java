@@ -124,10 +124,6 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             errors.add("You must be authorised by the respondent to sign this statement.");
         }
 
-        if (!YES.equals(acknowledgementOfService.getPrayerHasBeenGiven())) {
-            errors.add("The respondent must have given their prayer.");
-        }
-
         if (!YES.equals(acknowledgementOfService.getConfirmReadPetition())) {
             errors.add("The respondent must have read the application.");
         }

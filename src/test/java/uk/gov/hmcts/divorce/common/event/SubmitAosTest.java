@@ -72,7 +72,6 @@ class SubmitAosTest {
     void shouldReturnErrorsIfAosValidationFails() {
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(NO)
-            .prayerHasBeenGiven(NO)
             .confirmReadPetition(NO)
             .jurisdictionAgree(null)
             .build();
@@ -91,7 +90,6 @@ class SubmitAosTest {
         assertThat(response.getErrors())
             .containsExactly(
                 "You must be authorised by the respondent to sign this statement.",
-                "The respondent must have given their prayer.",
                 "The respondent must have read the application.",
                 "The respondent must agree or disagree to claimed jurisdiction.",
                 "The respondent must answer how they want to respond to the application.",
@@ -102,7 +100,6 @@ class SubmitAosTest {
     void shouldReturnErrorsIfAosValidationFailsForJurisdictionAgreeAndOtherLegalProceedings() {
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(NO)
             .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
@@ -132,7 +129,6 @@ class SubmitAosTest {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
             .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
@@ -164,7 +160,6 @@ class SubmitAosTest {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .howToRespondApplication(DISPUTE_DIVORCE)
             .build();
@@ -193,7 +188,6 @@ class SubmitAosTest {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
             .build();

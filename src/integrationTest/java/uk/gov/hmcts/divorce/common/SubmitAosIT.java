@@ -152,7 +152,6 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
             .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
@@ -194,7 +193,6 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
             .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
@@ -233,7 +231,6 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
             .build();
@@ -432,7 +429,6 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .howToRespondApplication(DISPUTE_DIVORCE)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
