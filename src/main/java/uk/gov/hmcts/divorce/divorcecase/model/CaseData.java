@@ -263,12 +263,13 @@ public class CaseData {
     @JsonIgnore
     public boolean isWelshApplication() {
         if (applicationType.isSole()) {
-            return applicant1.getLanguagePreferenceWelsh().toBoolean() || applicant1.getUsedWelshTranslationOnSubmission().toBoolean();
+            return applicant1.getLanguagePreferenceWelsh() == YesOrNo.YES
+                || applicant1.getUsedWelshTranslationOnSubmission() == YesOrNo.YES;
         } else {
-            return applicant1.getLanguagePreferenceWelsh().toBoolean()
-                || applicant2.getLanguagePreferenceWelsh().toBoolean()
-                || applicant1.getUsedWelshTranslationOnSubmission().toBoolean()
-                || applicant2.getUsedWelshTranslationOnSubmission().toBoolean();
+            return applicant1.getLanguagePreferenceWelsh() == YesOrNo.YES
+                || applicant2.getLanguagePreferenceWelsh() == YesOrNo.YES
+                || applicant1.getUsedWelshTranslationOnSubmission() == YesOrNo.YES
+                || applicant2.getUsedWelshTranslationOnSubmission() == YesOrNo.YES;
         }
     }
 
