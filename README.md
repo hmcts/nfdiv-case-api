@@ -4,24 +4,24 @@ This API handles callbacks from CCD for the NFD case type.
 
 ## Overview
 
-                        ┌────────────────┐
-                        │                │
-                        │ NFDIV-CASE-API │
-                        │                │
-                        └───────▲────────┘
-                                │
-                                │
-                        ┌───────▼────────┐
-                        │                │
-                  ┌─────►      CCD       ◄─────┐
-                  │     │                │     │
-                  │     └────────────────┘     │
-                  │                            │
-          ┌───────┴─────────┐        ┌─────────┴───────┐
-          │                 │        │                 │
-          │ NFDIV-FRONTEND  │        │       XUI       │
-          │                 │        │                 │
-          └─────────────────┘        └─────────────────┘
+<p align="center">
+<a href="https://github.com/hmcts/nfdiv-frontend">nfdiv-frontend</a> • <b><a href="https://github.com/hmcts/nfdiv-case-api">nfdiv-case-api</a></b> • <a href="https://github.com/hmcts/nfdiv-shared-infrastructure">nfdiv-shared-infrastructure</a> • <a href="https://github.com/hmcts/nfdiv-performance">nfdiv-performance</a> • <a href="https://github.com/hmcts/nfdiv-solicitor-e2e-tests">nfdiv-solicitor-e2e-tests</a>
+</p>
+
+<br>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/hmcts/reform-api-docs/master/docs/c4/nfdiv/images/structurizr-nfdiv-overview.png" width="700"/>
+</p>
+
+<details>
+<summary>Citizen view</summary>
+<img src="https://raw.githubusercontent.com/hmcts/reform-api-docs/master/docs/c4/nfdiv/images/structurizr-nfdiv-citizen.png" width="600">
+</details>
+<details>
+<summary>Caseworker view</summary>
+<img src="https://raw.githubusercontent.com/hmcts/reform-api-docs/master/docs/c4/nfdiv/images/structurizr-nfdiv-caseworker.png" width="600">
+</details>
 
 ## Building and deploying the application
 
