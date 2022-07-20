@@ -6,9 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -63,7 +61,7 @@ public class GenerateD10FormTest {
     @Test
     void shouldGenerateD10DocumentAndAddToListOfDocumentsGenerated() {
         final CaseData caseData = validApplicant1CaseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
@@ -110,7 +108,7 @@ public class GenerateD10FormTest {
     @Test
     void shouldNotGenerateD10DocumentIfSolicitorServiceMethodHasNotBeenSelected() {
         final CaseData caseData = validApplicant1CaseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -139,7 +137,7 @@ public class GenerateD10FormTest {
             .build();
 
         final CaseData caseData = validApplicant1CaseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getDocuments().setDocumentsGenerated(singletonList(d10Document));
 
@@ -154,29 +152,9 @@ public class GenerateD10FormTest {
     }
 
     @Test
-    void shouldNotGenerateD10DocumentIfSoleApplication() {
-        CaseData caseData = CaseData.builder().build();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        final var result = generateD10Form.apply(caseDetails);
-
-        verifyNoInteractions(documentUploadClientApi);
-        assertThat(result.getData()).isEqualTo(caseData);
-    }
-
-    @Test
-    void shouldNotGenerateD10DocumentIfJointApplicationAndApp2BasedOverseas() {
+    void shouldNotGenerateD10DocumentIfJointApplication() {
         CaseData caseData = CaseData.builder().build();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant2(Applicant.builder()
-                .address(AddressGlobalUK.builder()
-                    .country("France")
-                    .postCode("12000")
-                    .build())
-            .build());
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
