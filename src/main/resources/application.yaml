@@ -96,6 +96,8 @@ uk:
             APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '9bd841f2-0989-45c5-a08b-348ecd09711f'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
             SOLICITOR_CLARIFICATION_SUBMITTED: '7636dc7a-039d-4963-805d-33f539a0b48d'
+            CITIZEN_CLARIFICATION_SUBMITTED: '1a9f328b-262d-4797-ad66-a9564e0c2a52'
+            CITIZEN_PARTNER_CLARIFICATION_SUBMITTED: '36ccff54-1d6b-4bcc-8bf8-c5a10d1d7cf9'
             SOLICITOR_CO_REFUSED_SOLE_JOINT: 'b1590f77-3cdb-4f80-abae-4f4f13f06e26'
             CITIZEN_APPLICATION_WITHDRAWN: '952beacb-0e73-4fde-94d4-60cfcbec2d63'
             CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: '39def49e-2d2d-489e-b715-3103e27d5977'
@@ -182,6 +184,8 @@ uk:
             APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '9bd841f2-0989-45c5-a08b-348ecd09711f'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
             SOLICITOR_CLARIFICATION_SUBMITTED: '7636dc7a-039d-4963-805d-33f539a0b48d'
+            CITIZEN_CLARIFICATION_SUBMITTED: '1a9f328b-262d-4797-ad66-a9564e0c2a52'
+            CITIZEN_PARTNER_CLARIFICATION_SUBMITTED: '36ccff54-1d6b-4bcc-8bf8-c5a10d1d7cf9'
             SOLICITOR_CO_REFUSED_SOLE_JOINT: 'b1590f77-3cdb-4f80-abae-4f4f13f06e26'
             CITIZEN_APPLICATION_WITHDRAWN: '952beacb-0e73-4fde-94d4-60cfcbec2d63'
             CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: ${CITIZEN_APPLY_FOR_CONDITIONAL_ORDER_NOTIFICATION_ID:39def49e-2d2d-489e-b715-3103e27d5977}
@@ -278,7 +282,7 @@ docmosis:
       NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3.docx
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
-      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
+      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Paper_Respondent_V6.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2.docx
@@ -289,8 +293,6 @@ docmosis:
       DIVORCE_APPLICATION_SOLE: ${DIVORCE_APPLICATION_SOLE_WELSH_TEMPLATE_ID:NFD_CP_Application_Sole_V5.docx}
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
-      CITIZEN_RESP_AOS_INVITATION_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
-      CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: ${RESPONDENT_ANSWERS_TEMPLATE_ID:NFD_Respondent_Answers_Eng.docx}
       CERTIFICATE_OF_SERVICE: ${CERTIFICATE_OF_SERVICE_TEMPLATE_ID:NFD_Certificate_Of_Service.docx}
@@ -316,11 +318,11 @@ docmosis:
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: ${NFD_NOP_A1_SOLE_APP1_CIT_CS_TEMPLATE_ID:NFD_Notice_Of_Proceedings_Sole_V2.docx}
       NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3.docx
-      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
-      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
+      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: ${NOP_ONLINE_RESPONDENT_SOLE_TEMPLATE_ID:NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx}
+      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: ${NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_TEMPLATE_ID:FL-NFD-GOR-ENG-Notice_Of_Proceedings_Paper_Respondent_V6.docx}
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx
-      NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2.docx
+      NFD_NOP_JA1_JOINT_APP1APP2_CIT: ${NFD_NOP_JA1_JOINT_APP1APP2_CIT_TEMPLATE_ID:NFD_Notice_Of_Proceedings_Joint_V2.docx}
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered_V3.docx
       CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
