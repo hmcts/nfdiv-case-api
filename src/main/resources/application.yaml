@@ -289,7 +289,7 @@ docmosis:
       DIVORCE_APPLICATION_SOLE: ${DIVORCE_APPLICATION_SOLE_WELSH_TEMPLATE_ID:NFD_CP_Application_Sole_V5.docx}
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
-      CITIZEN_RESP_AOS_INVITATION_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
+      CITIZEN_RESP_AOS_INVITATION_ONLINE: ${NOP_ONLINE_RESPONDENT_SOLE_TEMPLATE_ID:NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx}
       CITIZEN_RESP_AOS_INVITATION_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: ${RESPONDENT_ANSWERS_TEMPLATE_ID:NFD_Respondent_Answers_Eng.docx}
@@ -316,7 +316,7 @@ docmosis:
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: ${NFD_NOP_A1_SOLE_APP1_CIT_CS_TEMPLATE_ID:NFD_Notice_Of_Proceedings_Sole_V2.docx}
       NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3.docx
-      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx
+      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: ${NOP_ONLINE_RESPONDENT_SOLE_TEMPLATE_ID:NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx}
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: NFD_Notice_Of_Proceedings_Paper_Respondent_V6.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx
