@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ClarificationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.PostInformationToCourtNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -25,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -45,6 +47,9 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
     private PostInformationToCourtNotification postInformationToCourtNotification;
 
     @Autowired
+    private ClarificationSubmittedNotification clarificationSubmittedNotification;
+
+    @Autowired
     private Clock clock;
 
     @Override
@@ -56,9 +61,8 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             .description("Submit clarification for conditional order")
             .showSummary()
             .showEventNotes()
-            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, CREATOR, APPLICANT_2)
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
@@ -73,12 +77,6 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 .mandatory(ConditionalOrder::getClarificationResponses)
                 .optional(ConditionalOrder::getClarificationUploadDocuments)
             .done();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        CaseData caseData = details.getData();
-        caseData.getConditionalOrder().resetClarificationFields();
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData).build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -117,6 +115,10 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 clarificationResponse
             )
         );
+
+        notificationDispatcher.send(clarificationSubmittedNotification, data, details.getId());
+
+        data.getConditionalOrder().resetRefusalFields();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
