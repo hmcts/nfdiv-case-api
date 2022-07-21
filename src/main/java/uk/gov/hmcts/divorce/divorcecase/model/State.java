@@ -342,7 +342,21 @@ public enum State {
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
     )
-    Submitted;
+    Submitted,
+
+    @CCD(
+        label = "Welsh Translation requested",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    WelshTranslationRequested,
+
+    @CCD(
+        label = "Welsh Translation review",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    WelshTranslationReview;
 
     public static final EnumSet<State> PRE_CONDITIONAL_ORDER_STATES = EnumSet.of(
         AwaitingHWFDecision,
