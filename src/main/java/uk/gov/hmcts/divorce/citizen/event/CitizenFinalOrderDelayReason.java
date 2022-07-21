@@ -52,9 +52,7 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
 
         CaseData data = details.getData();
 
-        if (data.getApplicationType().isSole()) {
-            notificationDispatcher.send(appliedForFinalOrderNotification, data, details.getId());
-        }
+        notificationDispatcher.send(appliedForFinalOrderNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
