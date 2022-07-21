@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static uk.gov.hmcts.divorce.notification.CommonContent.DUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -57,7 +56,6 @@ public class AppliedForConditionalOrderNotification {
     protected Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Solicitor solicitor) {
         Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
-        templateVars.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SOLICITOR_NAME, solicitor.getName());
         templateVars.put(
             SOLICITOR_REFERENCE,
