@@ -924,4 +924,111 @@ public class NoticeOfProceedingContentIT {
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
+
+    @Test
+    public void shouldSuccessfullyGenerateWelshDivorceNoticeOfProceedingsContent() {
+        CaseData caseData = caseData();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .build()
+        );
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant1().setSolicitor(
+            Solicitor.builder()
+                .build()
+        );
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .name("app 2 sol")
+                .address("The avenue")
+                .build()
+        );
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS_CY);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE_CY);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION_CY);
+
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+
+        assertThat(templateContent).containsAllEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSuccessfullyGenerateWelshDissolutionNoticeOfProceedingsContent() {
+        CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .build()
+        );
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant1().setSolicitor(
+            Solicitor.builder()
+                .build()
+        );
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .name("app 2 sol")
+                .address("The avenue")
+                .build()
+        );
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
+        expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
+
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+
+        assertThat(templateContent).containsAllEntriesOf(expectedEntries);
+    }
 }
