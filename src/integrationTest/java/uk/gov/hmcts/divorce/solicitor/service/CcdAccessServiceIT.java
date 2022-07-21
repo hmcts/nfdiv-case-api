@@ -118,7 +118,7 @@ public class CcdAccessServiceIT {
                 getCaseAssignmentUserRolesRequest(null, APPLICANT_2, APP_2_CITIZEN_USER_ID)
             );
 
-        assertThrows(FeignException.class, () -> ccdAccessService.unlinkUserFromApplication(TEST_CASE_ID, APP_2_CITIZEN_USER_ID));
+        assertThrows(FeignException.class, () -> ccdAccessService.unlinkApplicant2FromCase(TEST_CASE_ID, APP_2_CITIZEN_USER_ID));
 
         verify(caseAssignmentApi, times(3))
             .removeCaseUserRoles(

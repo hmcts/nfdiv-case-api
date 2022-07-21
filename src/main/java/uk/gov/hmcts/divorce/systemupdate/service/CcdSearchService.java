@@ -39,6 +39,8 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 
 @Service
 @Slf4j
@@ -135,6 +137,8 @@ public class CcdSearchService {
                         .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
                         .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
                     )
+                    .mustNot(matchQuery(STATE, Withdrawn))
+                    .mustNot(matchQuery(STATE, Rejected))
             )
             .from(0)
             .size(500);
@@ -177,7 +181,7 @@ public class CcdSearchService {
         final String serviceAuth) {
 
         final QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
-        final QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
+        final QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReferenceLink.CaseReference");
 
         final BoolQueryBuilder query = boolQuery()
             .must(stateQuery)

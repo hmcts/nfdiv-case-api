@@ -11,8 +11,11 @@ import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 
@@ -53,6 +56,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(
                 SOLICITOR,
@@ -83,11 +87,30 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 .build();
         }
 
-        final CaseDetails<CaseData, State> result = reIssueApplicationService.process(details);
+        try {
+            final CaseDetails<CaseData, State> result = reIssueApplicationService.process(details);
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(result.getData())
-            .state(result.getState())
-            .build();
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(result.getData())
+                .state(result.getState())
+                .build();
+        } catch (final InvalidReissueOptionException e) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of("Invalid reissue option, browser page refresh may have occurred. "
+                    + "Please use 'Previous' button and select a reissue option"))
+                .build();
+        }
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+
+        ReissueOption reissueOption = details.getData().getApplication().getPreviousReissueOption();
+
+        log.info("Caseworker reissue application submitted callback invoked for case id: {}, with reissue option - {}",
+            details.getId(), reissueOption);
+
+        reIssueApplicationService.sendNotifications(details, reissueOption);
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }

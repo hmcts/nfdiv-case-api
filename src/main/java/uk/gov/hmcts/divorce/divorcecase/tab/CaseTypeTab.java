@@ -88,8 +88,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .showCondition("applicationType=\"soleApplication\" AND "
                 + notShowForState(
-                    Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
-                    AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
+                Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
+                AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
             .field("applicant2Offline", "applicationType=\"NEVER_SHOW\"")
             .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"", "## This is an online AoS response")
             .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"", "## This is an offline AoS response")
@@ -115,7 +115,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .label("LabelApplicant1-PaymentHeading", IS_JOINT, "### The applicant")
-            .field("applicant1HWFReferenceNumber")
+            .field("applicant2HWFNeedHelp", NEVER_SHOW)
+            .field("applicant1HWFReferenceNumber", "applicationType=\"soleApplication\" OR applicant2HWFReferenceNumber=\"*\"")
             .label("LabelApplicant2-PaymentHeading", IS_JOINT_AND_HWF_ENTERED, "### ${labelContentTheApplicant2UC}")
             .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED)
             .field("newPaperCase", "applicationType=\"NEVER_SHOW\"")
@@ -335,8 +336,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "coGranted=\"*\" AND coClarificationResponsesSubmitted=\"*\"",
                 "## Clarification Responses")
             .field("coClarificationResponsesSubmitted")
+            .field("coCannotUploadClarificationDocuments")
             .label("labelCoPronouncementDetails", null, "## Pronouncement Details")
-            .field("bulkListCaseReference")
+            .field("bulkListCaseReferenceLink")
             .field("coCourt")
             .field("coDateAndTimeOfHearing")
             .field("coPronouncementJudge")

@@ -13,6 +13,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -56,7 +57,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class
 })
-public class CaseworkerIssueBailiffIT {
+public class CaseworkerIssueBailiffPackIT {
     @Autowired
     private MockMvc mockMvc;
 
@@ -117,6 +118,36 @@ public class CaseworkerIssueBailiffIT {
             .andExpect(
                 content().json(expectedResponse("classpath:caseworker-issue-bailiff-pack-response.json"))
             );
+    }
+
+    @Test
+    public void shouldGenerateCertificateOfServiceDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
+        setMockClock(clock);
+        final CaseData caseData = caseData();
+        caseData.setDocuments(CaseDocuments.builder().build());
+        caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Certificate_Of_Service_CY.docx");
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_ISSUE_BAILIFF_PACK)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk());
     }
 
     @Test
