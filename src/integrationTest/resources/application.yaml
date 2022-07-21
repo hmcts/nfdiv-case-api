@@ -216,4 +216,3 @@ SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 
 toggle:
   enable_entitlement_email: ${ENABLE_ENTITLEMENT_EMAIL:true}
-  enable_updated_migration_query: ${ENABLE_UPDATED_MIGRATION_QUERY:false}
