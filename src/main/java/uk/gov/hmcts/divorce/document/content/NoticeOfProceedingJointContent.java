@@ -9,19 +9,25 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PROCEEDINGS_CY;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
@@ -46,6 +52,8 @@ public class NoticeOfProceedingJointContent {
     public static final String END_A_CIVIL_PARTNERSHIP_SERVICE = "End A Civil Partnership Service";
     public static final String DIVORCE_PROCEEDINGS = "divorce proceedings";
     public static final String DIVORCE_APPLICATION = "divorce application";
+    public static final String DIVORCE_PROCESS = "divorce process";
+    public static final String DIVORCE_PROCESS_CY = "broses ysgaru";
     public static final String YOUR_DIVORCE = "your divorce";
     public static final String DIVORCE = "divorce";
     public static final String DIVORCE_URL = "https://www.gov.uk/divorce";
@@ -55,6 +63,8 @@ public class NoticeOfProceedingJointContent {
     public static final String TO_END_YOUR_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String CIVIL_PARTNER = "civil partner";
     public static final String APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP = "application to end your civil partnership";
+    public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP = "process to end your civil partnership";
+    public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY = "proses i ddod â’ch partneriaeth sifil i ben";
     public static final String YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP = "your application to end your civil partnership";
     public static final String ENDING_YOUR_CIVIL_PARTNERSHIP = "ending your civil partnership";
     public static final String ENDING_A_CIVIL_PARTNERSHIP = "ending a civil partnership";
@@ -82,6 +92,7 @@ public class NoticeOfProceedingJointContent {
                                      Applicant applicant,
                                      Applicant partner) {
 
+        final LanguagePreference applicantLanguagePreference = applicant.getLanguagePreference();
         final Map<String, Object> templateContent = new HashMap<>();
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
@@ -91,7 +102,7 @@ public class NoticeOfProceedingJointContent {
 
         templateContent.put(ADDRESS, applicant.getPostalAddress());
 
-        templateContent.put(RELATION, commonContent.getPartner(caseData, partner));
+        templateContent.put(RELATION, commonContent.getPartner(caseData, partner, applicantLanguagePreference));
 
         boolean displayEmailConfirmation = !applicant.isOffline() && ObjectUtils.isNotEmpty(applicant.getEmail());
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
@@ -107,10 +118,17 @@ public class NoticeOfProceedingJointContent {
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
-            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
-            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION);
-            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS, DIVORCE_PROCESS);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS,
+                WELSH.equals(applicantLanguagePreference) ? DIVORCE_PROCEEDINGS_CY : DIVORCE_PROCEEDINGS);
+            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP,
+                WELSH.equals(applicantLanguagePreference) ? FOR_A_DIVORCE_CY : FOR_A_DIVORCE);
+            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION,
+                WELSH.equals(applicantLanguagePreference) ? DIVORCE_APPLICATION_CY : DIVORCE_APPLICATION);
+            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS,
+                WELSH.equals(applicantLanguagePreference)
+                    ? DIVORCE_PROCESS_CY
+                    : DIVORCE_PROCESS
+            );
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, YOUR_DIVORCE);
             templateContent.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
@@ -121,11 +139,23 @@ public class NoticeOfProceedingJointContent {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         } else {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP);
-            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP);
-            templateContent.put(RELATION, CIVIL_PARTNER);
-            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
-            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS,
+                WELSH.equals(applicantLanguagePreference)
+                    ? PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY
+                    : PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP
+            );
+            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP,
+                WELSH.equals(applicantLanguagePreference) ? TO_END_YOUR_CIVIL_PARTNERSHIP_CY : TO_END_YOUR_CIVIL_PARTNERSHIP);
+            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION,
+                WELSH.equals(applicantLanguagePreference)
+                    ? APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY
+                    : APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP
+            );
+            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS,
+                WELSH.equals(applicantLanguagePreference)
+                    ? PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY
+                    : PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP
+            );
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
 
             templateContent.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, ENDING_A_CIVIL_PARTNERSHIP);
