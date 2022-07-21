@@ -244,10 +244,10 @@ public class NoticeOfProceedingContent {
         return templateContent;
     }
 
-    private void generateDivorceOrDissolutionContent(final Map<String, Object> templateContent,
-                                                     final CaseData caseData,
-                                                     final Applicant partner,
-                                                     final LanguagePreference languagePreference) {
+    private void generateDivorceOrDissolutionContent(Map<String, Object> templateContent,
+                                                     CaseData caseData,
+                                                     Applicant partner,
+                                                     LanguagePreference languagePreference) {
 
         templateContent.put(RELATION, commonContent.getPartner(caseData, partner, languagePreference));
 
