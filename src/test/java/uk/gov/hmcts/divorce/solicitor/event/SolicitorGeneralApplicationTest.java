@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
@@ -222,7 +223,10 @@ public class SolicitorGeneralApplicationTest {
     @Test
     void shouldReturnErrorsIfCaseIsCurrentlyLinkedToActiveBulkCase() {
         final CaseData caseData = caseData();
-        caseData.setBulkListCaseReference("1234");
+        caseData.setBulkListCaseReferenceLink(CaseLink
+            .builder()
+            .caseReference("1234")
+            .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);

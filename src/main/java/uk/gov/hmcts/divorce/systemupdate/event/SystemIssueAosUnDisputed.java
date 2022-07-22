@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -31,7 +32,7 @@ public class SystemIssueAosUnDisputed implements CCDConfig<CaseData, State, User
 
         new PageBuilder(configBuilder
             .event(SYSTEM_ISSUE_AOS_UNDISPUTED)
-            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue))
+            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue, OfflineDocumentReceived))
             .name("AoS undisputed")
             .description("AoS undisputed")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)

@@ -18,6 +18,8 @@
     "dateAosSubmitted": "${json-unit.any-string}",
     "statementOfTruth": "Yes",
     "prayerHasBeenGiven": "Yes",
+    "confirmReadPetition": "Yes",
+    "howToRespondApplication": "withoutDisputeDivorce",
     "divorceUnit": "serviceCentre",
     "documentsGenerated": [
       {

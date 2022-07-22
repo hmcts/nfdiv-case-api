@@ -98,14 +98,14 @@ public class CaseworkerRejectedIT {
                 objectMapper.writeValueAsString(
                     callbackRequest(caseData,
                         CASEWORKER_REJECTED,
-                        Submitted.getName())))
+                        Submitted.name())))
             .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk()
             )
             .andExpect(jsonPath("$.data.previousState")
-                .value(Submitted.getName()));
+                .value(Submitted.name()));
 
         verify(ccdAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(

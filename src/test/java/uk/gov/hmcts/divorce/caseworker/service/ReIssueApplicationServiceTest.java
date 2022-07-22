@@ -13,15 +13,18 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.systemupdate.service.ReissueProcessingException;
+import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
@@ -48,6 +51,9 @@ class ReIssueApplicationServiceTest {
 
     @Mock
     private SendAosPackToRespondent sendAosPackToRespondent;
+
+    @Mock
+    private SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
 
     @Mock
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
@@ -80,13 +86,17 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
         var expectedCaseData = caseData();
+        expectedCaseData.getApplication().setPreviousReissueOption(DIGITAL_AOS);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
+
+        verifyNoInteractions(sendAosPackToApplicant);
+        verifyNoInteractions(sendAosPackToRespondent);
+        verifyNoInteractions(sendApplicationIssueNotifications);
     }
 
     @Test
@@ -102,20 +112,23 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
         var expectedCaseData = caseData();
         expectedCaseData.getApplicant2().setOffline(YES);
+        expectedCaseData.getApplication().setPreviousReissueOption(OFFLINE_AOS);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
+
+        verifyNoInteractions(sendAosPackToApplicant);
+        verifyNoInteractions(sendAosPackToRespondent);
+        verifyNoInteractions(sendApplicationIssueNotifications);
     }
 
     @Test
@@ -131,19 +144,22 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
         var expectedCaseData = caseData();
+        expectedCaseData.getApplication().setPreviousReissueOption(REISSUE_CASE);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
+
+        verifyNoInteractions(sendAosPackToApplicant);
+        verifyNoInteractions(sendAosPackToRespondent);
+        verifyNoInteractions(sendApplicationIssueNotifications);
     }
 
     @Test
@@ -171,7 +187,6 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -179,8 +194,13 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
+        expectedCaseData.getApplication().setPreviousReissueOption(DIGITAL_AOS);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
+
+        verifyNoInteractions(sendAosPackToApplicant);
+        verifyNoInteractions(sendAosPackToRespondent);
+        verifyNoInteractions(sendApplicationIssueNotifications);
     }
 
     @Test
@@ -205,13 +225,11 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -221,8 +239,13 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplicant2().setEmail(null);
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
+        expectedCaseData.getApplication().setPreviousReissueOption(OFFLINE_AOS);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
+
+        verifyNoInteractions(sendAosPackToApplicant);
+        verifyNoInteractions(sendAosPackToRespondent);
+        verifyNoInteractions(sendApplicationIssueNotifications);
     }
 
     @Test
@@ -247,13 +270,11 @@ class ReIssueApplicationServiceTest {
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -261,12 +282,17 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
+        expectedCaseData.getApplication().setPreviousReissueOption(REISSUE_CASE);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
+
+        verifyNoInteractions(sendAosPackToApplicant);
+        verifyNoInteractions(sendAosPackToRespondent);
+        verifyNoInteractions(sendApplicationIssueNotifications);
     }
 
     @Test
-    void shouldThrowReissueProcessingExceptionWhenReissueOptionIsNotSet() {
+    void shouldThrowInvalidReissueOptionExceptionWhenReissueOptionIsNotSet() {
 
         final CaseData caseData = caseData();
         caseData.getApplicant2().setSolicitorRepresented(YES);
@@ -278,7 +304,6 @@ class ReIssueApplicationServiceTest {
             .email(TEST_SOLICITOR_EMAIL)
             .build();
 
-
         caseData.getApplicant2().setSolicitor(solicitor);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -287,8 +312,73 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
-            .isExactlyInstanceOf(ReissueProcessingException.class)
-            .hasMessage("Exception occurred while processing reissue application for case id 1");
+            .isExactlyInstanceOf(InvalidReissueOptionException.class)
+            .hasMessage("Invalid reissue option for CaseId: 1");
 
+    }
+
+    @Test
+    public void shouldNotSendBulkPrintNotificationsWhenReissueOptionIsDigitalAos() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData());
+        caseDetails.setId(1L);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        reIssueApplicationService.sendNotifications(caseDetails, DIGITAL_AOS);
+
+        verify(sendApplicationIssueNotifications).apply(caseDetails);
+        verifyNoInteractions(sendAosPackToApplicant);
+        verifyNoInteractions(sendAosPackToRespondent);
+    }
+
+    @Test
+    public void shouldSendEmailAndBulkPrintNotificationsWhenReissueOptionIsOfflineAos() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData());
+        caseDetails.setId(1L);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
+
+        reIssueApplicationService.sendNotifications(caseDetails, OFFLINE_AOS);
+
+        verify(sendApplicationIssueNotifications).apply(caseDetails);
+        verify(sendAosPackToApplicant).apply(caseDetails);
+        verify(sendAosPackToRespondent).apply(caseDetails);
+    }
+
+    @Test
+    public void shouldSendEmailAndBulkPrintNotificationsWhenReissueOptionIsReissueCase() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData());
+        caseDetails.setId(1L);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
+
+        reIssueApplicationService.sendNotifications(caseDetails, REISSUE_CASE);
+
+        verify(sendApplicationIssueNotifications).apply(caseDetails);
+        verify(sendAosPackToApplicant).apply(caseDetails);
+        verify(sendAosPackToRespondent).apply(caseDetails);
+    }
+
+    @Test
+    void shouldThrowReissueProcessingExceptionWhenSendingNotificationsWithUnknownReissueOption() {
+
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(1L);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        assertThatThrownBy(() -> reIssueApplicationService.sendNotifications(caseDetails, null))
+            .isExactlyInstanceOf(InvalidReissueOptionException.class)
+            .hasMessage("Exception occurred while sending reissue application notifications for case id 1");
     }
 }

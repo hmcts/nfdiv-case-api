@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -81,11 +83,12 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
     private void generateSoleNoticeOfProceedings(final CaseData caseData, final Long caseId) {
 
-        if (caseData.getApplicant2().isRepresented()) {
+        final Applicant applicant2 = caseData.getApplicant2();
+        if (applicant2.isRepresented()) {
             log.info("Generating notice of proceedings for respondent solicitor for case id {} ", caseId);
 
-            var hasSolicitor = caseData.getApplicant2().getSolicitor() != null;
-            var hasOrgPolicy = hasSolicitor && caseData.getApplicant2().getSolicitor().getOrganisationPolicy() != null;
+            var hasSolicitor = applicant2.getSolicitor() != null;
+            var hasOrgPolicy = hasSolicitor && applicant2.getSolicitor().getOrganisationPolicy() != null;
 
             if (hasOrgPolicy) {
                 if (!caseData.getApplication().isCourtServiceMethod()) {
@@ -109,18 +112,15 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         } else {
             log.info("Generating notice of proceedings for respondent for sole case id {} ", caseId);
 
-            if (isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isOffline()) {
+            final LanguagePreference applicant2LanguagePreference = applicant2.getLanguagePreference();
+            final Applicant applicant1 = caseData.getApplicant1();
+
+            if (isEmpty(applicant2.getEmail()) || applicant2.isOffline()) {
                 generateNoticeOfProceedings(
                     caseData,
                     caseId,
                     NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
-                    noticeOfProceedingContent.apply(
-                        caseData,
-                        caseId,
-                        caseData.getApplicant1(),
-                        caseData.getApplicant2().getLanguagePreference()
-                    )
-                );
+                    noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference));
                 generateCoversheet(
                     caseData,
                     caseId,
@@ -131,13 +131,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                     caseData,
                     caseId,
                     NFD_NOP_R1_SOLE_APP2_CIT_ONLINE,
-                    noticeOfProceedingContent.apply(
-                        caseData,
-                        caseId,
-                        caseData.getApplicant1(),
-                        caseData.getApplicant2().getLanguagePreference()
-                    )
-                );
+                    noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference));
                 if (!caseData.getApplication().isCourtServiceMethod()) {
                     generateCoversheet(
                         caseData,
@@ -183,7 +177,11 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             caseData,
             caseId,
             templateId,
-            noticeOfProceedingContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference()));
+            noticeOfProceedingContent.apply(
+                caseData,
+                caseId,
+                caseData.getApplicant1(),
+                caseData.getApplicant2().getLanguagePreference()));
     }
 
     private void generateNoticeOfProceedings(final CaseData caseData,

@@ -81,6 +81,7 @@ import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -98,6 +99,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -113,8 +119,10 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
@@ -442,7 +450,6 @@ public class TestDataHelper {
         caseData.getApplicant2().setLegalProceedings(NO);
         caseData.getAcknowledgementOfService().setConfirmReadPetition(YES);
         caseData.getAcknowledgementOfService().setJurisdictionAgree(YES);
-        caseData.getAcknowledgementOfService().setPrayerHasBeenGiven(YES);
         caseData.getAcknowledgementOfService().setStatementOfTruth(YES);
 
         return caseData;
@@ -745,6 +752,20 @@ public class TestDataHelper {
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME));
         templateVars.put(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, APPLICANT_2_LAST_NAME));
+        return templateVars;
+    }
+
+    public static Map<String, String> solicitorTemplateVars(CaseData data, Applicant applicant) {
+        Map<String, String> templateVars = getBasicTemplateVars();
+        templateVars.put(ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+        templateVars.put(SOLICITOR_REFERENCE,
+            isNotEmpty(applicant.getSolicitor().getReference())
+                ? applicant.getSolicitor().getReference()
+                : NOT_PROVIDED);
+        templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
+        templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
+        templateVars.put(SIGN_IN_URL, getConfigTemplateVars().get(SIGN_IN_DIVORCE_URL));
         return templateVars;
     }
 

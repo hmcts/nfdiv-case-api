@@ -7,8 +7,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant2Represented;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicantTemplateDataProvider;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataProvider;
+import uk.gov.hmcts.divorce.notification.FormatUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +40,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
@@ -48,11 +51,11 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JURISDICTIONS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 
 @Component
 @Slf4j
@@ -74,23 +77,29 @@ public class DivorceApplicationSoleTemplateContent {
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
 
+        LanguagePreference languagePreference = applicant1.getLanguagePreference();
+
+        templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
+
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce from");
             templateContent.put(DIVORCE_OR_DISSOLUTION, "divorce application");
             templateContent.put(MARRIAGE_OR_RELATIONSHIP, MARRIAGE);
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                LanguagePreference.WELSH.equals(languagePreference) ? MARRIAGE_CY : MARRIAGE);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce");
         } else {
             templateContent.put(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH);
             templateContent.put(DIVORCE_OR_DISSOLUTION, "application to end your civil partnership");
             templateContent.put(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP);
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                LanguagePreference.WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership");
         }
 
-        templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
+        templateContent.put(CCD_CASE_REFERENCE, FormatUtil.formatId(caseId));
         if (application.getIssueDate() != null) {
-            templateContent.put(ISSUE_DATE, application.getIssueDate().format(DATE_TIME_FORMATTER));
+            templateContent.put(ISSUE_DATE, application.getIssueDate().format(FormatUtil.DATE_TIME_FORMATTER));
         }
         templateContent.put(ISSUE_DATE_POPULATED, application.getIssueDate() != null);
 
@@ -126,7 +135,8 @@ public class DivorceApplicationSoleTemplateContent {
 
         applicationTemplateDataProvider.mapMarriageDetails(templateContent, application);
 
-        templateContent.put(JURISDICTIONS, applicationTemplateDataProvider.deriveJurisdictionList(application, caseId));
+        templateContent.put(JURISDICTIONS, applicationTemplateDataProvider.deriveJurisdictionList(application, caseId,
+            applicant1.getLanguagePreference()));
 
         return templateContent;
     }
