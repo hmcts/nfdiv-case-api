@@ -40,7 +40,7 @@ public class UpdateJointConditionalOrder implements CCDConfig<CaseData, State, U
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(UPDATE_JOINT_CONDITIONAL_ORDER)
-            .forStateTransition(ConditionalOrderDrafted, ConditionalOrderDrafted)
+            .forState(ConditionalOrderDrafted)
             .name("Update conditional order")
             .description("Update joint conditional order")
             .endButtonLabel("Save conditional order")
