@@ -315,6 +315,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
+        expectedEntries.put(IS_DIVORCE, true);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -597,6 +598,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
+        expectedEntries.put(IS_DIVORCE, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -1091,7 +1093,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put("hasCaseBeenReissued", true);
         expectedEntries.put("reissueDate", "19 June 2021");
-        expectedEntries.put("divorceOrCivilPartnershipEmail", "divorcecase@justice.gov.uk");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", "ymholiadaucymraeg@justice.gov.uk");
         expectedEntries.put("divorceOrCivilPartnershipUrl", "https://www.gov.uk/divorce");
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true);
         expectedEntries.put(RELATIONS_SOLICITOR, "cyfreithiwr eich gwraig");
@@ -1146,7 +1148,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(SERVE_PAPERS_BEFORE_DATE, "16 July 2021");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
-        expectedEntries.put("divorceOrCivilPartnershipEmail", "divorcecase@justice.gov.uk");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", "ymholiadaucymraeg@justice.gov.uk");
         expectedEntries.put("divorceOrCivilPartnershipUrl", "https://www.gov.uk/end-civil-partnership");
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
         expectedEntries.put(RELATION, "partner sifil");
