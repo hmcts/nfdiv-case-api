@@ -333,12 +333,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildOutcomeOfConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("outcomeOfConditionalOrder", "Outcome of Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, SUPER_USER)
-            .showCondition(showForState(
-                AwaitingAdminClarification,
-                AwaitingClarification,
-                AwaitingAmendedApplication,
-                ClarificationSubmitted
-            ))
+            .showCondition("coGranted=\"*\" OR "
+                + showForState(
+                    AwaitingAdminClarification,
+                    AwaitingClarification,
+                    AwaitingAmendedApplication,
+                    ClarificationSubmitted)
+            )
             .label("labelLegalAdvisorDecision", null, "## Legal advisor decision")
             .field("coDecisionDate")
             .field("coGranted")
