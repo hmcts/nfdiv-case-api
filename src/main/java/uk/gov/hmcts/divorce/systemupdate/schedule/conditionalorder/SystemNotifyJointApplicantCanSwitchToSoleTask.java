@@ -119,8 +119,8 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
         ConditionalOrderQuestions app1Questions = caseData.getConditionalOrder().getConditionalOrderApplicant1Questions();
         ConditionalOrderQuestions app2Questions = caseData.getConditionalOrder().getConditionalOrderApplicant2Questions();
 
-        boolean app1Submitted = app1Questions != null && app1Questions.getIsSubmitted().toBoolean();
-        boolean app2Submitted = app2Questions != null && app2Questions.getIsSubmitted().toBoolean();
+        boolean app1Submitted = app1Questions != null && YES.equals(app1Questions.getIsSubmitted());
+        boolean app2Submitted = app2Questions != null && YES.equals(app2Questions.getIsSubmitted());
 
         if (app1Submitted && !app2Submitted) {
             return LocalDate.now(clock).minusDays(submitCOrderReminderOffsetDays)
@@ -129,7 +129,7 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
 
         if (app2Submitted && !app1Submitted) {
             return LocalDate.now(clock).minusDays(submitCOrderReminderOffsetDays)
-                .isAfter(app1Questions.getSubmittedDate().toLocalDate());
+                .isAfter(app2Questions.getSubmittedDate().toLocalDate());
         }
 
         return false;
