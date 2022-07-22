@@ -319,7 +319,7 @@ docmosis:
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: ${NFD_NOP_A1_SOLE_APP1_CIT_CS_TEMPLATE_ID:NFD_Notice_Of_Proceedings_Sole_V2.docx}
-      NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3.docx
+      NFD_NOP_A2_SOLE_APP1_CIT_PS: ${NFD_NOP_A2_SOLE_APP1_CIT_PS_WELSH_TEMPLATE_ID:NFD_Notice_Of_Proceedings_Overseas_Sole_V3.docx}
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: ${NOP_ONLINE_RESPONDENT_SOLE_TEMPLATE_ID:NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5.docx}
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: ${NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_TEMPLATE_ID:FL-NFD-GOR-ENG-Notice_Of_Proceedings_Paper_Respondent_V6.docx}
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: NFD_Notice_Of_Proceedings_Sole_Respondent_V2.docx
