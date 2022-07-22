@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
@@ -261,7 +262,10 @@ public class SolicitorGeneralApplicationIT {
     public void shouldReturnErrorsIfCaseIsPartOfActiveBulkCase() throws Exception {
 
         final CaseData caseData = CaseData.builder()
-            .bulkListCaseReference("1234")
+            .bulkListCaseReferenceLink(CaseLink
+                .builder()
+                .caseReference("1234")
+                .build())
             .build();
 
         CallbackRequest request = callbackRequest(caseData, SOLICITOR_GENERAL_APPLICATION);

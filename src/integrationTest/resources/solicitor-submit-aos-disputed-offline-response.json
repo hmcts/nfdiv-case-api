@@ -18,7 +18,6 @@
     "jurisdictionAgree": "Yes",
     "dateAosSubmitted": "${json-unit.any-string}",
     "statementOfTruth": "Yes",
-    "prayerHasBeenGiven": "Yes",
     "howToRespondApplication": "disputeDivorce",
     "coRespondentAnswersLink": {
       "document_url": "${json-unit.any-string}",

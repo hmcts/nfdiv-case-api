@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -96,9 +97,8 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         log.info("Submit AoS about to submit callback invoked for Case Id: {}", details.getId());
 
         final var caseData = details.getData();
-        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
-        final List<String> errors = validateAos(acknowledgementOfService);
+        final List<String> errors = validateAos(caseData);
 
         if (!errors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -115,20 +115,42 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .build();
     }
 
-    private List<String> validateAos(final AcknowledgementOfService acknowledgementOfService) {
+    private List<String> validateAos(final CaseData caseData) {
+        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
         final List<String> errors = new ArrayList<>();
 
-        if (NO.equals(acknowledgementOfService.getStatementOfTruth())) {
+        if (!YES.equals(acknowledgementOfService.getStatementOfTruth())) {
             errors.add("You must be authorised by the respondent to sign this statement.");
         }
 
-        if (NO.equals(acknowledgementOfService.getPrayerHasBeenGiven())) {
-            errors.add("The respondent must have given their prayer.");
+        if (!YES.equals(acknowledgementOfService.getConfirmReadPetition())) {
+            errors.add("The respondent must have read the application.");
         }
 
-        if (NO.equals(acknowledgementOfService.getConfirmReadPetition())) {
-            errors.add("The respondent must have read the application for divorce.");
+        if (acknowledgementOfService.getJurisdictionAgree() == null) {
+            errors.add("The respondent must agree or disagree to claimed jurisdiction.");
+        }
+
+        if (NO.equals(acknowledgementOfService.getJurisdictionAgree())) {
+            if (acknowledgementOfService.getReasonCourtsOfEnglandAndWalesHaveNoJurisdiction() == null) {
+                errors.add("The respondent must have a reason for refusing jurisdiction.");
+            }
+            if (acknowledgementOfService.getInWhichCountryIsYourLifeMainlyBased() == null) {
+                errors.add("The respondent must answer in which country is their life mainly based question.");
+            }
+        }
+
+        if (acknowledgementOfService.getHowToRespondApplication() == null) {
+            errors.add("The respondent must answer how they want to respond to the application.");
+        }
+
+        if (caseData.getApplicant2().getLegalProceedings() == null) {
+            errors.add("The respondent must confirm if they have any other legal proceedings.");
+        }
+
+        if (YES.equals(caseData.getApplicant2().getLegalProceedings()) && caseData.getApplicant2().getLegalProceedingsDetails() == null) {
+            errors.add("The respondent must enter the details of their other legal proceedings.");
         }
 
         return errors;

@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -40,8 +39,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getTemplateFormatDate;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
@@ -51,9 +50,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 
 @ExtendWith(MockitoExtension.class)
 class ConditionalOrderPronouncedTemplateContentTest {
-
-    @Mock
-    private Clock clock;
 
     @Mock
     private CommonContent commonContent;
@@ -71,8 +67,6 @@ class ConditionalOrderPronouncedTemplateContentTest {
 
         LocalDate coPronouncedDate = LocalDate.of(2022, 6, 10);
         LocalDate marriageDate = LocalDate.of(2000, 1, 2);
-
-        setMockClock(clock);
 
         when(commonContent.getPartner(any(), any())).thenReturn("husband");
 
@@ -98,6 +92,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
                     .build())
                 .build())
             .conditionalOrder(ConditionalOrder.builder()
+                .dateAndTimeOfHearing(getExpectedLocalDateTime())
                 .court(ConditionalOrderCourt.BIRMINGHAM)
                 .grantedDate(coPronouncedDate)
                 .pronouncementJudge("District Judge")
