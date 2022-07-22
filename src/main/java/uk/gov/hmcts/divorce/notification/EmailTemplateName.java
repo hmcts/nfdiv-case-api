@@ -76,6 +76,7 @@ public enum EmailTemplateName {
     BAILIFF_SERVICE_UNSUCCESSFUL,
     BAILIFF_SERVICE_SUCCESSFUL,
     DISPUTE_FORM_OVERDUE,
+    APPLICANT_SOLICITOR_SWITCH_TO_SOLE_CO_OVERDUE, // TODO: (Aaron) - Add new templateId to application.yaml once it's been split on gov notify.
     APPLICANT_SWITCH_TO_SOLE,
     JOINT_APPLICATION_ENDED,
     APPLICANT_APPLY_FOR_FINAL_ORDER,
