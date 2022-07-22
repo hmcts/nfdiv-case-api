@@ -24,7 +24,8 @@ public class JointApplicantCanSwitchToSoleNotification implements ApplicantNotif
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        if (caseData.getConditionalOrder().isConditionalOrderPending()) {
+        if (!caseData.getApplicationType().isSole()
+            && nonNull(caseData.getApplicant1().getEmail())) {
             log.info("Notifying applicant 1 that they can switch to sole: {}", id);
 
             final Applicant applicant1 = caseData.getApplicant1();
@@ -40,7 +41,7 @@ public class JointApplicantCanSwitchToSoleNotification implements ApplicantNotif
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        if (!caseData.getConditionalOrder().isConditionalOrderPending()
+        if (!caseData.getApplicationType().isSole()
             && nonNull(caseData.getApplicant2().getEmail())) {
             log.info("Notifying applicant 2 that they can switch to sole: {}", id);
             final Applicant applicant2 = caseData.getApplicant2();

@@ -1,11 +1,15 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -16,17 +20,20 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.stream.Stream;
 
+import static java.util.stream.Stream.ofNullable;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyJointApplicantCanSwitchToSole.SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
@@ -53,6 +60,12 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private Clock clock;
+
     @Value("${submit_co.reminder_offset_days}")
     private int submitCOrderReminderOffsetDays;
 
@@ -69,12 +82,12 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
                             .should(matchQuery(STATE, ConditionalOrderPending))
                             .minimumShouldMatch(1)
                     )
-                    .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().minusDays(submitCOrderReminderOffsetDays)))
-                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
+                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YES));
 
-            ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization,
-                AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted)
-                    .forEach(caseDetails -> remindJointApplicant(caseDetails, user, serviceAuthorization));
+            ofNullable(ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, ConditionalOrderPending))
+                .flatMap(Collection::stream)
+                .filter(this::isJointConditionalOrderOverdue)
+                .forEach(caseDetails -> remindJointApplicant(caseDetails, user, serviceAuthorization));
 
             log.info("SystemNotifyJointApplicantCanSwitchToSoleTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
@@ -97,5 +110,28 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
         } catch (final IllegalArgumentException e) {
             log.error(DESERIALIZATION_ERROR, caseDetails.getId());
         }
+    }
+
+    public boolean isJointConditionalOrderOverdue(final CaseDetails caseDetails) {
+
+        final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
+
+        ConditionalOrderQuestions app1Questions = caseData.getConditionalOrder().getConditionalOrderApplicant1Questions();
+        ConditionalOrderQuestions app2Questions = caseData.getConditionalOrder().getConditionalOrderApplicant2Questions();
+
+        boolean app1Submitted = app1Questions != null && app1Questions.getIsSubmitted().toBoolean();
+        boolean app2Submitted = app2Questions != null && app2Questions.getIsSubmitted().toBoolean();
+
+        if (app1Submitted && !app2Submitted) {
+            return LocalDate.now(clock).minusDays(submitCOrderReminderOffsetDays)
+                .isAfter(app1Questions.getSubmittedDate().toLocalDate());
+        }
+
+        if (app2Submitted && !app1Submitted) {
+            return LocalDate.now(clock).minusDays(submitCOrderReminderOffsetDays)
+                .isAfter(app1Questions.getSubmittedDate().toLocalDate());
+        }
+
+        return false;
     }
 }
