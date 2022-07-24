@@ -150,6 +150,19 @@ public class Applicant {
     private String legalProceedingsDetails;
 
     @CCD(
+        label = "Provide details of the other legal proceedings(Translated)",
+        typeOverride = TextArea
+    )
+    private String legalProceedingsDetailsTranslated;
+
+    @CCD(
+        label = "Translated To?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "TranslatedToLanguage"
+    )
+    private TranslatedToLanguage legalProceedingsDetailsTranslatedTo;
+
+    @CCD(
         label = "PCQ ID"
     )
     private String pcqId;

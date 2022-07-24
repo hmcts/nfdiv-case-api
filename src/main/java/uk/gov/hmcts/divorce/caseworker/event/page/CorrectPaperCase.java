@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SOT_REQ
 public class CorrectPaperCase implements CcdPageConfiguration {
 
     private static final String TITLE = "Correct paper case";
-    private static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
+    private static final String JOINT_APPLICATION = "c";
     private static final String JOINT_DIVORCE_APPLICATION = "applicationType=\"jointApplication\" AND divorceOrDissolution = \"divorce\"";
     private static final String JOINT_DISSOLUTION_APPLICATION
         = "applicationType=\"jointApplication\" AND divorceOrDissolution = \"dissolution\" ";

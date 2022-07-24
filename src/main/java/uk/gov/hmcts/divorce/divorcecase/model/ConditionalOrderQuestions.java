@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.time.LocalDateTime;
 
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
@@ -62,6 +63,19 @@ public class ConditionalOrderQuestions {
         label = "Is the information in this application still correct?"
     )
     private YesOrNo confirmInformationStillCorrect;
+
+    @CCD(
+        label = "Is the information in this application still correct?(Translated)",
+        typeOverride = TextArea
+    )
+    private String confirmInformationStillCorrectTranslated;
+
+    @CCD(
+        label = "Translated To?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "TranslatedToLanguage"
+    )
+    private TranslatedToLanguage confirmInformationStillCorrectTranslatedTo;
 
     @CCD(
         label = "Provide details of any other information that needs updating.",
