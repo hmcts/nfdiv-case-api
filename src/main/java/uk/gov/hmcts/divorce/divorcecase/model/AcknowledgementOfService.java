@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
@@ -81,6 +82,21 @@ public class AcknowledgementOfService {
         access = {AosAccess.class}
     )
     private String reasonCourtsOfEnglandAndWalesHaveNoJurisdiction;
+
+    @CCD(
+        label = "Reason respondent disagreed to claimed jurisdiction(Translated)",
+        typeOverride = TextArea,
+        access = {AosAccess.class}
+    )
+    private String reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated;
+
+    @CCD(
+        label = "Translated To?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "TranslatedToLanguage"
+    )
+    private TranslatedToLanguage reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslatedTo;
+
 
     @CCD(
         label = "In which country is the respondents life mainly based?",

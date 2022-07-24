@@ -148,7 +148,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelLanguageDetails-Applicant", null, "### The applicant")
             .field("applicant1LanguagePreferenceWelsh")
             .label("LabelLanguageDetails-Respondent", null, "### The respondent")
-            .field("applicant2LanguagePreferenceWelsh");
+            .field("applicant2LanguagePreferenceWelsh")
+            .field("applicant1LegalProceedingsDetailsTranslated")
+            .field("applicant2LegalProceedingsDetailsTranslated")
+            .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated")
+            .field("coApplicant1ReasonInformationNotCorrectTranslated")
+            .field("coApplicant2ReasonInformationNotCorrectTranslated")
+            .field("refusalClarificationAdditionalInfoTranslated")
+            .field("applicant1FinalOrderLateExplanationTranslated");
     }
 
     private void buildDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
