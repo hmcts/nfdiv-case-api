@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.systemupdate.service.print.CertificateOfEntitlementPrinter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -49,6 +50,9 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
     @Autowired
     private CommonContent commonContent;
 
+    @Autowired
+    private CertificateOfEntitlementPrinter certificateOfEntitlementPrinter;
+
     @Value("${toggle.enable_entitlement_email}")
     private boolean enableSolicitorEntitlementEmail;
 
@@ -73,6 +77,16 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
                 SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
                 templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
                 caseData.getApplicant1().getLanguagePreference());
+        }
+    }
+
+    @Override
+    public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
+        log.info("Sending certificate of entitlement letter to applicant 1 for case: {}", caseId);
+
+        if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()) {
+            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant1());
+            caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant1(true);
         }
     }
 
@@ -103,6 +117,16 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
                 SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
                 templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseData.getApplicant2().getLanguagePreference());
+        }
+    }
+
+    @Override
+    public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
+        log.info("Sending certificate of entitlement letter to applicant 2 for case: {}", caseId);
+
+        if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()) {
+            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant2());
+            caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(true);
         }
     }
 

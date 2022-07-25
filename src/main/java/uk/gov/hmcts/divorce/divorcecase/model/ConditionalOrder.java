@@ -189,6 +189,16 @@ public class ConditionalOrder {
     private DivorceDocument certificateOfEntitlementDocument;
 
     @CCD(
+        label = "Has offline certificate of entitlement been sent to Applicant 1"
+    )
+    private boolean offlineCertificateOfEntitlementDocumentSentToApplicant1;
+
+    @CCD(
+        label = "Has offline certificate of entitlement been sent to Applicant 2"
+    )
+    private boolean offlineCertificateOfEntitlementDocumentSentToApplicant2;
+
+    @CCD(
         label = "Refusal Rejection reasons"
     )
     private Document refusalOrderDocument;
@@ -238,6 +248,16 @@ public class ConditionalOrder {
         this.setClarificationResponses(new ArrayList<>());
         this.setCannotUploadClarificationDocuments(null);
         this.setClarificationUploadDocuments(new ArrayList<>());
+    }
+
+    @JsonIgnore
+    public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant1() {
+        return offlineCertificateOfEntitlementDocumentSentToApplicant1;
+    }
+
+    @JsonIgnore
+    public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant2() {
+        return offlineCertificateOfEntitlementDocumentSentToApplicant2;
     }
 
     @JsonIgnore

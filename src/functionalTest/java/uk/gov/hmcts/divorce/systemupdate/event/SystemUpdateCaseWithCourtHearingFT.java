@@ -73,4 +73,22 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(RESPONSE)));
     }
+
+    @Test
+    public void shouldSendLettersToApplicantsAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
+        throws IOException {
+
+        Map<String, Object> request = caseData(JOINT_REQUEST);
+        request.put("applicant1Offline", true);
+        request.put("applicant2Offline", true);
+
+        Response response = triggerCallback(request, SYSTEM_UPDATE_CASE_COURT_HEARING, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE)));
+    }
 }

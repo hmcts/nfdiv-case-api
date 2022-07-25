@@ -60,9 +60,9 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
 
         CaseData data = details.getData();
 
-        notificationDispatcher.send(entitlementGrantedConditionalOrderNotification, data, details.getId());
-
         final CaseDetails<CaseData, State> updatedDetails = caseTasks(generateCertificateOfEntitlement).run(details);
+
+        notificationDispatcher.send(entitlementGrantedConditionalOrderNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedDetails.getData())
