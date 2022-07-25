@@ -60,6 +60,7 @@ public class CaseworkerAddTranslation implements CCDConfig<CaseData, State, User
             .done()
             .page("addTranslationConditionalOrder")
             .pageLabel("Conditional Order details")
+            .readonlyNoSummary(CaseData::getApplicationType, "coApplicant1ReasonInformationNotCorrect=\"ALWAYS_HIDE\"")
             .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                     .readonlyNoSummary(ConditionalOrderQuestions::getReasonInformationNotCorrect)
