@@ -217,6 +217,35 @@ class CaseDocumentsTest {
         assertEquals(AMENDED_APPLICATION, caseDocuments.getDocumentsGenerated().get(0).getValue().getDocumentType());
     }
 
+    @Test
+    void shouldReturnFirstUploadedDocumentOfGivenType() {
+
+        final Document documentLink1 = Document.builder()
+            .filename("dispensedDocument1.pdf")
+            .build();
+        final Document documentLink2 = Document.builder()
+            .filename("deemedDocument1.pdf")
+            .build();
+        final Document documentLink3 = Document.builder()
+            .filename("dispensedDocument2.pdf")
+            .build();
+        final Document documentLink4 = Document.builder()
+            .filename("deemedDocument2.pdf")
+            .build();
+
+        final ListValue<DivorceDocument> documentListValue1 = documentWithType(DISPENSE_WITH_SERVICE_GRANTED, documentLink1);
+        final ListValue<DivorceDocument> documentListValue2 = documentWithType(DEEMED_AS_SERVICE_GRANTED, documentLink2);
+        final ListValue<DivorceDocument> documentListValue3 = documentWithType(DISPENSE_WITH_SERVICE_GRANTED, documentLink3);
+        final ListValue<DivorceDocument> documentListValue4 = documentWithType(DEEMED_AS_SERVICE_GRANTED, documentLink4);
+
+        final CaseDocuments caseDocuments = CaseDocuments.builder()
+            .documentsUploaded(List.of(documentListValue4, documentListValue2, documentListValue3, documentListValue1))
+            .build();
+
+        assertThat(caseDocuments.getFirstUploadedDocumentLinkWith(DISPENSE_WITH_SERVICE_GRANTED)).isEqualTo(Optional.of(documentLink3));
+        assertThat(caseDocuments.getFirstUploadedDocumentLinkWith(DEEMED_AS_SERVICE_GRANTED)).isEqualTo(Optional.of(documentLink4));
+    }
+
     private ListValue<ScannedDocument> getDocumentListValue(final String url,
                                                             final String filename,
                                                             final ScannedDocumentType scannedDocumentType) {

@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddLastAlternativeServiceDocumentLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
+import uk.gov.hmcts.divorce.solicitor.service.task.AddOfflineRespondentAnswersLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressDraftConditionalOrderState;
 
 import java.util.List;
@@ -64,6 +65,9 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
 
     @Autowired
     private AddLastAlternativeServiceDocumentLink addLastAlternativeServiceDocumentLink;
+
+    @Autowired
+    private AddOfflineRespondentAnswersLink addOfflineRespondentAnswersLink;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -128,7 +132,8 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
             .data(caseTasks(
                 addMiniApplicationLink,
                 addLastAlternativeServiceDocumentLink,
-                setLatestBailiffApplicationStatus)
+                setLatestBailiffApplicationStatus,
+                addOfflineRespondentAnswersLink)
                 .run(details)
                 .getData())
             .build();

@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddLastAlternativeServiceDocumentLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
+import uk.gov.hmcts.divorce.solicitor.service.task.AddOfflineRespondentAnswersLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressDraftConditionalOrderState;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +44,9 @@ class DraftConditionalOrderTest {
 
     @Mock
     private SetLatestBailiffApplicationStatus setLatestBailiffApplicationStatus;
+
+    @Mock
+    private AddOfflineRespondentAnswersLink addOfflineRespondentAnswersLink;
 
     @InjectMocks
     private DraftConditionalOrder draftConditionalOrder;
@@ -137,7 +141,8 @@ class DraftConditionalOrderTest {
 
         when(addMiniApplicationLink.apply(caseDetails)).thenReturn(caseDetails);
         when(addLastAlternativeServiceDocumentLink.apply(caseDetails)).thenReturn(caseDetails);
-        when(setLatestBailiffApplicationStatus.apply(caseDetails)).thenReturn(updateCaseDetails);
+        when(setLatestBailiffApplicationStatus.apply(caseDetails)).thenReturn(caseDetails);
+        when(addOfflineRespondentAnswersLink.apply(caseDetails)).thenReturn(updateCaseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = draftConditionalOrder.aboutToStart(caseDetails);
 
@@ -146,5 +151,6 @@ class DraftConditionalOrderTest {
         verify(addMiniApplicationLink).apply(caseDetails);
         verify(addLastAlternativeServiceDocumentLink).apply(caseDetails);
         verify(setLatestBailiffApplicationStatus).apply(caseDetails);
+        verify(addOfflineRespondentAnswersLink).apply(caseDetails);
     }
 }
