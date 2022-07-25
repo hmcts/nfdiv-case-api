@@ -65,23 +65,23 @@ public class ConditionalOrderQuestions {
     private YesOrNo confirmInformationStillCorrect;
 
     @CCD(
-        label = "Is the information in this application still correct?(Translated)",
+        label = "Provide details of any other information that needs updating.",
         typeOverride = TextArea
     )
-    private String confirmInformationStillCorrectTranslated;
+    private String reasonInformationNotCorrect;
+
+    @CCD(
+        label = "Provide details of any other information that needs updating.(Translated)",
+        typeOverride = TextArea
+    )
+    private String reasonInformationNotCorrectTranslated;
 
     @CCD(
         label = "Translated To?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "TranslatedToLanguage"
     )
-    private TranslatedToLanguage confirmInformationStillCorrectTranslatedTo;
-
-    @CCD(
-        label = "Provide details of any other information that needs updating.",
-        typeOverride = TextArea
-    )
-    private String reasonInformationNotCorrect;
+    private TranslatedToLanguage reasonInformationNotCorrectTranslatedTo;
 
     @CCD(
         label = "Has the applicant started the process to apply for conditional order?"

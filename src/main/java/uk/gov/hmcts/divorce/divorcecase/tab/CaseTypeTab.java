@@ -154,7 +154,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated")
             .field("coApplicant1ReasonInformationNotCorrectTranslated")
             .field("coApplicant2ReasonInformationNotCorrectTranslated")
-            .field("refusalClarificationAdditionalInfoTranslated")
+            .field("coRefusalClarificationAdditionalInfoTranslated")
             .field("applicant1FinalOrderLateExplanationTranslated");
     }
 

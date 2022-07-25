@@ -63,17 +63,17 @@ public class CaseworkerAddTranslation implements CCDConfig<CaseData, State, User
             .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                     .readonlyNoSummary(ConditionalOrderQuestions::getReasonInformationNotCorrect)
-                    .optional(ConditionalOrderQuestions::getConfirmInformationStillCorrectTranslated,
+                    .optional(ConditionalOrderQuestions::getReasonInformationNotCorrectTranslated,
                         "coApplicant1ReasonInformationNotCorrect=\"*\"")
-                    .optional(ConditionalOrderQuestions::getConfirmInformationStillCorrectTranslatedTo,
+                    .optional(ConditionalOrderQuestions::getReasonInformationNotCorrectTranslatedTo,
                         "coApplicant1ReasonInformationNotCorrect=\"*\"")
                 .done()
             .label("conditionalOrderLineSep","<hr>","applicationType=\"jointApplication\"")
                 .complex(ConditionalOrder::getConditionalOrderApplicant2Questions,"applicationType=\"jointApplication\"")
                     .readonlyNoSummary(ConditionalOrderQuestions::getReasonInformationNotCorrect)
-                    .optional(ConditionalOrderQuestions::getConfirmInformationStillCorrectTranslated,
+                    .optional(ConditionalOrderQuestions::getReasonInformationNotCorrectTranslated,
                         "coApplicant2ReasonInformationNotCorrect=\"*\"")
-                    .optional(ConditionalOrderQuestions::getConfirmInformationStillCorrectTranslatedTo,
+                    .optional(ConditionalOrderQuestions::getReasonInformationNotCorrectTranslatedTo,
                         "coApplicant2ReasonInformationNotCorrect=\"*\"")
                 .done()
             .done()
@@ -82,9 +82,9 @@ public class CaseworkerAddTranslation implements CCDConfig<CaseData, State, User
             .complex(CaseData::getConditionalOrder)
                 .readonlyNoSummary(ConditionalOrder::getRefusalClarificationAdditionalInfo)
                 .optional(ConditionalOrder::getRefusalClarificationAdditionalInfoTranslated,
-                    "refusalClarificationAdditionalInfo=\"*\"")
+                    "coRefusalClarificationAdditionalInfo=\"*\"")
                 .optional(ConditionalOrder::getRefusalClarificationAdditionalInfoTranslatedTo,
-                    "refusalClarificationAdditionalInfo=\"*\"")
+                    "coRefusalClarificationAdditionalInfo=\"*\"")
             .done()
             .page("addTranslationFinalOrderOverdue")
             .pageLabel("Final Order Overdue details")
