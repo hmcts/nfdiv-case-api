@@ -345,6 +345,13 @@ public enum State {
     Submitted,
 
     @CCD(
+        label = "Welsh Translation requested",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    WelshTranslationRequested,
+
+    @CCD(
         label = "Welsh Translation review",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}

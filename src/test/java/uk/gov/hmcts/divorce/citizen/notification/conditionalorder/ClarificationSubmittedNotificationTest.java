@@ -1,0 +1,252 @@
+package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+
+import java.time.Clock;
+import javax.servlet.http.HttpServletRequest;
+
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.common.notification.SoleAppliedForFinalOrderNotification.NOW_PLUS_14_DAYS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CLARIFICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_PARTNER_CLARIFICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
+
+@ExtendWith(MockitoExtension.class)
+public class ClarificationSubmittedNotificationTest {
+
+    @Mock
+    private NotificationService notificationService;
+
+    @Mock
+    private CommonContent commonContent;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private CcdAccessService ccdAccessService;
+
+    @Mock
+    private Clock clock;
+
+    @InjectMocks
+    private ClarificationSubmittedNotification clarificationSubmittedNotification;
+
+    @Test
+    void shouldSendEmailToSoleApplicant1WithDivorceContent() {
+
+        setMockClock(clock);
+
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        clarificationSubmittedNotification.sendToApplicant1(caseData, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_CLARIFICATION_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(FIRST_NAME, TEST_FIRST_NAME),
+                hasEntry(LAST_NAME, TEST_LAST_NAME),
+                hasEntry(PARTNER, "partner"),
+                hasEntry(COURT_EMAIL, "courtEmail"),
+                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent)
+            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+    }
+
+    @Test
+    void shouldSendEmailToJointApplicant1WithDivorceContentIfTheySubmittedClarification() {
+
+        setMockClock(clock);
+
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(true);
+        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        clarificationSubmittedNotification.sendToApplicant1(caseData, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_CLARIFICATION_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(FIRST_NAME, TEST_FIRST_NAME),
+                hasEntry(LAST_NAME, TEST_LAST_NAME),
+                hasEntry(PARTNER, "partner"),
+                hasEntry(COURT_EMAIL, "courtEmail"),
+                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent)
+            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+    }
+
+    @Test
+    void shouldSendEmailToJointApplicant1WithDivorceContentIfTheirPartnerSubmittedClarification() {
+
+        setMockClock(clock);
+
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(false);
+        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        clarificationSubmittedNotification.sendToApplicant1(caseData, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(FIRST_NAME, TEST_FIRST_NAME),
+                hasEntry(LAST_NAME, TEST_LAST_NAME),
+                hasEntry(PARTNER, "partner"),
+                hasEntry(COURT_EMAIL, "courtEmail"),
+                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent)
+            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+    }
+
+    @Test
+    void shouldSendEmailToJointApplicant2WithDivorceContentIfTheySubmittedClarification() {
+
+        setMockClock(clock);
+
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(false);
+        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        clarificationSubmittedNotification.sendToApplicant2(caseData, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_CLARIFICATION_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(FIRST_NAME, TEST_FIRST_NAME),
+                hasEntry(LAST_NAME, TEST_LAST_NAME),
+                hasEntry(PARTNER, "partner"),
+                hasEntry(COURT_EMAIL, "courtEmail"),
+                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent)
+            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
+    }
+
+    @Test
+    void shouldSendEmailToJointApplicant2WithDivorceContentIfTheirPartnerSubmittedClarification() {
+
+        setMockClock(clock);
+
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(true);
+        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        clarificationSubmittedNotification.sendToApplicant2(caseData, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(FIRST_NAME, TEST_FIRST_NAME),
+                hasEntry(LAST_NAME, TEST_LAST_NAME),
+                hasEntry(PARTNER, "partner"),
+                hasEntry(COURT_EMAIL, "courtEmail"),
+                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent)
+            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendEmailToApplicant2IfSoleCase() {
+
+        CaseData caseData = new CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+        clarificationSubmittedNotification.sendToApplicant2(caseData, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+}
