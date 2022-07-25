@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @Component
 public class UpdateConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
+
     public static final String UPDATE_CONDITIONAL_ORDER = "update-conditional-order";
 
     private final List<CcdPageConfiguration> pages = asList(
