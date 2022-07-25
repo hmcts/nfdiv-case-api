@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderAnswersTemplateContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -51,6 +52,8 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIE
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getFormattedExpectedDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -70,6 +73,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISAT
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(SpringExtension.class)
@@ -321,5 +325,99 @@ public class SubmitConditionalOrderIT {
             .sendEmail(eq("app2@gm.com"), eq(applicant2EmailTemplateId), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendEmailToApplicant1SolicitorWhenJointConditionalOrderIsSubmittedByApplicant1Solicitor() throws Exception {
+
+        final Map<String, Object> mockedTemplateContent = new HashMap<>();
+
+        setMockClock(clock);
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Conditional_Order_Answers.docx");
+
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
+
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplication().setIssueDate(getExpectedLocalDate());
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitor(Solicitor.builder()
+            .name("app1sol")
+            .email("app1sol@gm.com")
+            .reference("refxxx")
+            .build());
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+            .build());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=SolConfirmService")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CONDITIONAL_ORDER)))
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(jsonPath("$.data.coApplicant1SubmittedDate").value(getFormattedExpectedDateTime()));
+
+        verify(notificationService)
+            .sendEmail(eq("app1sol@gm.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2SolicitorWhenJointConditionalOrderIsSubmittedByApplicant2Solicitor() throws Exception {
+
+        final Map<String, Object> mockedTemplateContent = new HashMap<>();
+
+        setMockClock(clock);
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Conditional_Order_Answers.docx");
+
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(false);
+
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.getApplication().setIssueDate(getExpectedLocalDate());
+        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant2().setSolicitor(Solicitor.builder()
+            .name("app2sol")
+            .email("app2sol@gm.com")
+            .reference("refxxx")
+            .build());
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+            .build());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=SolConfirmService")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CONDITIONAL_ORDER)))
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(jsonPath("$.data.coApplicant2SubmittedDate").value(getFormattedExpectedDateTime()));
+
+        verify(notificationService)
+            .sendEmail(eq("app2sol@gm.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
     }
 }
