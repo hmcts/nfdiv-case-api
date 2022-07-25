@@ -41,8 +41,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyJointApplicantCanSwitchToSole.SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemNotifyJointApplicantCanSwitchToSoleTask.NOTIFICATION_FLAG;
@@ -95,22 +93,14 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
         user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        ReflectionTestUtils.setField(notifyJointApplicantCanSwitchToSoleTask, "submitCOrderReminderOffsetDays", DUE_DATE_OFFSET_DAYS);
+        ReflectionTestUtils.setField(notifyJointApplicantCanSwitchToSoleTask,
+            "submitCOrderReminderOffsetDays", DUE_DATE_OFFSET_DAYS);
     }
 
     @Test
     void shouldSubmitNotifySwitchToSoleEventWhenJointConditionalOrderOverdueFromApplicant2() {
 
         setMockClock(clock, NOW);
-
-        CaseData caseData = CaseData.builder()
-            .conditionalOrder(ConditionalOrder.builder()
-                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .submittedDate(NOW.minusDays(15).atStartOfDay())
-                    .isSubmitted(YesOrNo.YES)
-                    .build())
-                .build())
-            .build();
 
         Map<String, Object> data = new HashMap<>();
         data.put("coApplicant1IsSubmitted", "Yes");
@@ -124,6 +114,14 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
+        CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .submittedDate(NOW.minusDays(15).atStartOfDay())
+                    .isSubmitted(YesOrNo.YES)
+                    .build())
+                .build())
+            .build();
         when(mapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData);
         when(mapper.convertValue(caseDetails2.getData(), CaseData.class)).thenReturn(CaseData.builder().build());
 
@@ -183,15 +181,6 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         setMockClock(clock, NOW);
 
-        CaseData caseData = CaseData.builder()
-            .conditionalOrder(ConditionalOrder.builder()
-                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .submittedDate(NOW.minusDays(2).atStartOfDay())
-                    .isSubmitted(YesOrNo.YES)
-                    .build())
-                .build())
-            .build();
-
         Map<String, Object> data = new HashMap<>();
         data.put("coApplicant1IsSubmitted", "Yes");
         data.put("coApplicant1SubmittedDate", "2022-07-20T00:00:00.000Z");
@@ -203,6 +192,15 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
         CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
 
         List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+
+        CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .submittedDate(NOW.minusDays(2).atStartOfDay())
+                    .isSubmitted(YesOrNo.YES)
+                    .build())
+                .build())
+            .build();
 
         when(mapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData);
         when(mapper.convertValue(caseDetails2.getData(), CaseData.class)).thenReturn(CaseData.builder().build());
@@ -231,15 +229,6 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
     void shouldStopProcessingIfThereIsConflictDuringSubmission() {
         setMockClock(clock, NOW);
 
-        CaseData caseData = CaseData.builder()
-            .conditionalOrder(ConditionalOrder.builder()
-                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .submittedDate(NOW.minusDays(15).atStartOfDay())
-                    .isSubmitted(YesOrNo.YES)
-                    .build())
-                .build())
-            .build();
-
         Map<String, Object> data = new HashMap<>();
         data.put("coApplicant2IsSubmitted", "Yes");
         data.put("coApplicant2SubmittedDate", "2022-07-07T00:00:00.000Z");
@@ -252,8 +241,16 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
+        CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                    .submittedDate(NOW.minusDays(15).atStartOfDay())
+                    .isSubmitted(YesOrNo.YES)
+                    .build())
+                .build())
+            .build();
+
         when(mapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData);
-        when(mapper.convertValue(caseDetails2.getData(), CaseData.class)).thenReturn(CaseData.builder().build());
 
         when(ccdSearchService.searchForAllCasesWithQuery(
             query, user, SERVICE_AUTHORIZATION, ConditionalOrderPending))
@@ -272,12 +269,49 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
-        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L).build();
-        final CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+        setMockClock(clock, NOW);
+
+        Map<String, Object> data1 = new HashMap<>();
+        data1.put("coApplicant1IsSubmitted", "Yes");
+        data1.put("coApplicant1SubmittedDate", "2022-07-07T00:00:00.000Z");
+
+        CaseDetails caseDetails1 = CaseDetails.builder()
+            .data(data1)
+            .id(1L).build();
+
+        Map<String, Object> data2 = new HashMap<>();
+        data2.put("coApplicant2IsSubmitted", "Yes");
+        data2.put("coApplicant2SubmittedDate", "2022-07-01T00:00:00.000Z");
+
+        CaseDetails caseDetails2 = CaseDetails.builder().id(2L)
+            .data(data2)
+            .build();
+
+        List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+
+        CaseData caseData1 = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .submittedDate(NOW.minusDays(15).atStartOfDay())
+                    .isSubmitted(YesOrNo.YES)
+                    .build())
+                .build())
+            .build();
+
+        CaseData caseData2 = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                    .submittedDate(NOW.minusDays(20).atStartOfDay())
+                    .isSubmitted(YesOrNo.YES)
+                    .build())
+                .build())
+            .build();
+
+        when(mapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData1);
+        when(mapper.convertValue(caseDetails2.getData(), CaseData.class)).thenReturn(caseData2);
 
         when(ccdSearchService.searchForAllCasesWithQuery(
-            query, user, SERVICE_AUTHORIZATION, AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted))
+            query, user, SERVICE_AUTHORIZATION, ConditionalOrderPending))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))

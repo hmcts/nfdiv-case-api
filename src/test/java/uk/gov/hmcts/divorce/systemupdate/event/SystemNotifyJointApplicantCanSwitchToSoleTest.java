@@ -1,0 +1,102 @@
+package uk.gov.hmcts.divorce.systemupdate.event;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.notification.JointApplicantCanSwitchToSoleNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.time.LocalDate;
+import javax.servlet.http.HttpServletRequest;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
+
+@ExtendWith(SpringExtension.class)
+class SystemNotifyJointApplicantCanSwitchToSoleTest {
+
+    @Mock
+    private HttpServletRequest httpServletRequest;
+
+    @Mock
+    private JointApplicantCanSwitchToSoleNotification jointApplicantCanSwitchToSoleNotification;
+
+    @InjectMocks
+    private SystemNotifyJointApplicantCanSwitchToSole systemNotifyJointApplicantCanSwitchToSole;
+
+    @Test
+    void shouldAddConfigurationToConfigBuilder() {
+        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
+
+        systemNotifyJointApplicantCanSwitchToSole.configure(configBuilder);
+
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getId)
+            .contains(SystemNotifyJointApplicantCanSwitchToSole.SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE);
+    }
+
+    @Test
+    void shouldSenNotificationToApplicant1WhenApplicant2ConditionalOrderIsOverdue() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant2(respondent());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .submittedDate(LocalDate.now().minusDays(15).atStartOfDay())
+                    .isSubmitted(YesOrNo.YES)
+                    .build())
+                .build());
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setData(caseData);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemNotifyJointApplicantCanSwitchToSole.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getApplication().getJointApplicantNotifiedCanSwitchToSole()).isEqualTo(YesOrNo.YES);
+        verify(jointApplicantCanSwitchToSoleNotification).sendToApplicant1(caseData, details.getId());
+    }
+
+    @Test
+    void shouldSenNotificationToApplicant2WhenApplicant1ConditionalOrderIsOverdue() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant2(respondent());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                .submittedDate(LocalDate.now().minusDays(15).atStartOfDay())
+                .isSubmitted(YesOrNo.YES)
+                .build())
+            .build());
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setData(caseData);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemNotifyJointApplicantCanSwitchToSole.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getApplication().getJointApplicantNotifiedCanSwitchToSole()).isEqualTo(YesOrNo.YES);
+        verify(jointApplicantCanSwitchToSoleNotification).sendToApplicant2(caseData, details.getId());
+    }
+}
