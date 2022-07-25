@@ -17,6 +17,8 @@ import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.ASSISTANT_JUSTICES_CLERK;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.HER_HONOUR_JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.HIS_HONOUR_JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.PROPER_OFFICER_OF_THE_COURT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -66,7 +68,7 @@ public class GeneralOrderTemplateContentIT {
             entry(CASE_REFERENCE, 1616591401473378L),
             entry(GENERAL_ORDER_DATE, "1 January 2021"),
             entry(GENERAL_ORDER_DETAILS, "some details"),
-            entry(GENERAL_ORDER_MADE_BY, "judge some name"),
+            entry(GENERAL_ORDER_MADE_BY, "District Judge some name"),
             entry("sitting", ", sitting"),
             entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
@@ -126,7 +128,7 @@ public class GeneralOrderTemplateContentIT {
         Map<String, Object> templateContent = generalOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
-            entry(GENERAL_ORDER_MADE_BY, "an assistant justices clerk")
+            entry(GENERAL_ORDER_MADE_BY, "an Assistant Justice's Clerk")
         );
     }
 
@@ -144,7 +146,43 @@ public class GeneralOrderTemplateContentIT {
         Map<String, Object> templateContent = generalOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
-            entry(GENERAL_ORDER_MADE_BY, "a proper officer of the court")
+            entry(GENERAL_ORDER_MADE_BY, "a Proper Officer of the Court")
+        );
+    }
+
+    @Test
+    public void shouldApplyHisHonourJudgeContent() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setGeneralOrder(getGeneralOrder());
+        caseData.getGeneralOrder().setGeneralOrderJudgeOrLegalAdvisorType(HIS_HONOUR_JUDGE);
+        caseData.getApplicant1().setFirstName("pet full");
+        caseData.getApplicant1().setLastName("name");
+        caseData.getApplicant2().setFirstName("resp full");
+        caseData.getApplicant2().setLastName("name");
+
+        Map<String, Object> templateContent = generalOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(templateContent).contains(
+            entry(GENERAL_ORDER_MADE_BY, "His Honour Judge some name")
+        );
+    }
+
+    @Test
+    public void shouldApplyHerHonourJudgeContent() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setGeneralOrder(getGeneralOrder());
+        caseData.getGeneralOrder().setGeneralOrderJudgeOrLegalAdvisorType(HER_HONOUR_JUDGE);
+        caseData.getApplicant1().setFirstName("pet full");
+        caseData.getApplicant1().setLastName("name");
+        caseData.getApplicant2().setFirstName("resp full");
+        caseData.getApplicant2().setLastName("name");
+
+        Map<String, Object> templateContent = generalOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(templateContent).contains(
+            entry(GENERAL_ORDER_MADE_BY, "Her Honour Judge some name")
         );
     }
 }

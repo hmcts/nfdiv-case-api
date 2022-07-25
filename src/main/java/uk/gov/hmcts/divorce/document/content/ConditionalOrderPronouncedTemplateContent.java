@@ -8,8 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
-import java.time.Clock;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,9 +37,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 public class ConditionalOrderPronouncedTemplateContent {
 
     @Autowired
-    private Clock clock;
-
-    @Autowired
     private CommonContent commonContent;
 
     @Value("${final_order.eligible_from_offset_days}")
@@ -68,7 +63,8 @@ public class ConditionalOrderPronouncedTemplateContent {
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
         templateContent.put(IS_DIVORCE, isDivorce);
         templateContent.put(CASE_REFERENCE, formatId(caseId));
-        templateContent.put(DOCUMENTS_ISSUED_ON, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
+        templateContent.put(DOCUMENTS_ISSUED_ON, conditionalOrder.getDateAndTimeOfHearing() != null
+            ? conditionalOrder.getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER) : null);
         templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
         templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, isDivorce ? MARRIAGE : CIVIL_PARTNERSHIP);
