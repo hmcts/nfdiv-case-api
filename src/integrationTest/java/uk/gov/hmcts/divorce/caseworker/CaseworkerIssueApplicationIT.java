@@ -729,6 +729,45 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
+    void shouldSendApplicationIssueNotificationInWelshToApplicant1ForSoleCitizenApplicationWhenRespondentIsOverseasBased()
+        throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 20));
+        caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().getAddress().setCountry("France");
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+
+        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION, "AwaitingService")))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk());
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
+                anyMap(),
+                eq(WELSH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
     void shouldIssueApplicationAndgenerateDocumentsForSoleCitizenApplicationWhenPersonalService() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
