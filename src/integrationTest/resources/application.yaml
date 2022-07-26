@@ -110,7 +110,7 @@ docmosis:
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole_V2.docx  #TODO: update content
       JOINT_NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Joint_V2.docx #TODO: update content
-      CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement_V2.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-WEL-Certificate-Of-Entitlement.docx
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers.docx #TODO: update content
@@ -127,6 +127,7 @@ docmosis:
       GENERAL_LETTER: NFD_General_Letter.docx
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2_CY.docx
+      NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3_Cy.docx
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered_V3.docx
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5_Cy.docx
