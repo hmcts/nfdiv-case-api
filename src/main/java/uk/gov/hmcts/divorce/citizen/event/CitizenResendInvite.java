@@ -22,7 +22,7 @@ public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole>
         configBuilder
             .event(CITIZEN_RESEND_INVITE)
             .forStates(AwaitingApplicant2Response)
-            .name("Update applicant 2 email by applicant 1")
+            .name("Update applicant 2 email")
             .description("Citizen event for applicant 1 to update applicant 2 email pre-submission")
             .grant(CREATE_READ_UPDATE, CREATOR);
     }
