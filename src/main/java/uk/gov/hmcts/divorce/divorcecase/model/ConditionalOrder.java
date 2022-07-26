@@ -191,12 +191,12 @@ public class ConditionalOrder {
     @CCD(
         label = "Has offline certificate of entitlement been sent to Applicant 1"
     )
-    private boolean offlineCertificateOfEntitlementDocumentSentToApplicant1;
+    private YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant1;
 
     @CCD(
         label = "Has offline certificate of entitlement been sent to Applicant 2"
     )
-    private boolean offlineCertificateOfEntitlementDocumentSentToApplicant2;
+    private YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant2;
 
     @CCD(
         label = "Refusal Rejection reasons"
@@ -252,12 +252,12 @@ public class ConditionalOrder {
 
     @JsonIgnore
     public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant1() {
-        return offlineCertificateOfEntitlementDocumentSentToApplicant1;
+        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant1);
     }
 
     @JsonIgnore
     public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant2() {
-        return offlineCertificateOfEntitlementDocumentSentToApplicant2;
+        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant2);
     }
 
     @JsonIgnore

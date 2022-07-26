@@ -305,7 +305,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
     @Test
     void shouldNotSendLetterToOfflineApplicant1IfHasAlreadyBeenSent() {
         CaseData data = validCaseWithCourtHearing();
-        data.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant1(true);
+        data.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant1(YesOrNo.YES);
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, 1234567890123456L);
 
@@ -325,7 +325,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
     @Test
     void shouldNotSendLetterToOfflineApplicant2IfHasAlreadyBeenSent() {
         CaseData data = validCaseWithCourtHearing();
-        data.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(true);
+        data.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(YesOrNo.YES);
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
 

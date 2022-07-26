@@ -14,6 +14,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -79,12 +80,14 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
         throws IOException {
 
         Map<String, Object> request = caseData(JOINT_REQUEST);
-        request.put("applicant1Offline", true);
-        request.put("applicant2Offline", true);
+        request.put("applicant1Offline", YES);
+        request.put("applicant2Offline", YES);
 
         Response response = triggerCallback(request, SYSTEM_UPDATE_CASE_COURT_HEARING, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        System.out.println(response.asString());
 
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)

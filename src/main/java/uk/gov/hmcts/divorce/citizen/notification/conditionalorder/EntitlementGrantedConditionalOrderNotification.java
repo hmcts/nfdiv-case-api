@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -82,11 +83,11 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
 
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
-        log.info("Sending certificate of entitlement letter to applicant 1 for case: {}", caseId);
-
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()) {
+            log.info("Sending certificate of entitlement letter to applicant 1 for case: {}", caseId);
+
             certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant1());
-            caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant1(true);
+            caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant1(YesOrNo.YES);
         }
     }
 
@@ -122,11 +123,11 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
-        log.info("Sending certificate of entitlement letter to applicant 2 for case: {}", caseId);
-
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()) {
+            log.info("Sending certificate of entitlement letter to applicant 2 for case: {}", caseId);
+
             certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant2());
-            caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(true);
+            caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(YesOrNo.YES);
         }
     }
 
