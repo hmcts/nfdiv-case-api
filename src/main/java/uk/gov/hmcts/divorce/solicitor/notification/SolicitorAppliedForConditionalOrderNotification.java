@@ -41,6 +41,8 @@ public class SolicitorAppliedForConditionalOrderNotification implements Applican
         if (!caseData.getApplicationType().isSole()) {
             var templateVars = solicitorTemplateVars(caseData, caseId, caseData.getApplicant1());
 
+            log.info("Sending Applicant 1 Solicitor notification informing them that they have applied for conditional order: {}", caseId);
+
             notificationService.sendEmail(
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
@@ -54,6 +56,8 @@ public class SolicitorAppliedForConditionalOrderNotification implements Applican
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
             var templateVars = solicitorTemplateVars(caseData, caseId, caseData.getApplicant2());
+
+            log.info("Sending Applicant 2 Solicitor notification informing them that they have applied for conditional order: {}", caseId);
 
             notificationService.sendEmail(
                 caseData.getApplicant2().getSolicitor().getEmail(),

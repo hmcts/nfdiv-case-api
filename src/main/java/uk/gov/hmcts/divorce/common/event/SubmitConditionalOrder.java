@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -86,12 +87,12 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .page("ConditionalOrderSoT")
             .pageLabel("Statement of Truth - submit conditional order")
             .complex(CaseData::getConditionalOrder)
-            .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
-            .mandatory(ConditionalOrderQuestions::getStatementOfTruth)
-            .mandatory(ConditionalOrderQuestions::getSolicitorName)
-            .mandatory(ConditionalOrderQuestions::getSolicitorFirm)
-            .optional(ConditionalOrderQuestions::getSolicitorAdditionalComments)
-            .done()
+                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
+                .mandatory(ConditionalOrderQuestions::getStatementOfTruth)
+                .mandatory(ConditionalOrderQuestions::getSolicitorName)
+                .mandatory(ConditionalOrderQuestions::getSolicitorFirm)
+                .optional(ConditionalOrderQuestions::getSolicitorAdditionalComments)
+                .done()
             .done();
     }
 
@@ -137,10 +138,10 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     }
 
     private List<String> validate(CaseData data) {
-        return data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth() == null
-            || data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth().toBoolean()
-            ? emptyList()
-            : of("The applicant must agree that the facts stated in the application are true");
+        var statementOfTruth = data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth();
+
+        return statementOfTruth == null || statementOfTruth.toBoolean()
+            ? emptyList() : of("The applicant must agree that the facts stated in the application are true");
     }
 
     private void setSubmittedDate(ConditionalOrder conditionalOrder) {

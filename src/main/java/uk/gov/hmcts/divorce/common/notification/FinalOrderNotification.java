@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class AppliedForFinalOrderNotification implements ApplicantNotification {
+public class FinalOrderNotification implements ApplicantNotification {
 
     public static final String WILL_BE_CHECKED_WITHIN_2_DAYS = "will be checked within 2 days";
     public static final String WILL_BE_CHECKED_WITHIN_14_DAYS = "will be checked within 14 days";

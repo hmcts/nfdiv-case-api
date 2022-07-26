@@ -29,9 +29,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.notification.AppliedForFinalOrderNotification.NOW_PLUS_14_DAYS;
-import static uk.gov.hmcts.divorce.common.notification.AppliedForFinalOrderNotification.WILL_BE_CHECKED_WITHIN_14_DAYS;
-import static uk.gov.hmcts.divorce.common.notification.AppliedForFinalOrderNotification.WILL_BE_CHECKED_WITHIN_2_DAYS;
+import static uk.gov.hmcts.divorce.common.notification.FinalOrderNotification.NOW_PLUS_14_DAYS;
+import static uk.gov.hmcts.divorce.common.notification.FinalOrderNotification.WILL_BE_CHECKED_WITHIN_14_DAYS;
+import static uk.gov.hmcts.divorce.common.notification.FinalOrderNotification.WILL_BE_CHECKED_WITHIN_2_DAYS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -54,7 +54,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
-class AppliedForFinalOrderNotificationTest {
+class FinalOrderNotificationTest {
 
     private static final String DUMMY_AUTH_TOKEN = "ASAFSDFASDFASDFASDFASDF";
 
@@ -71,7 +71,7 @@ class AppliedForFinalOrderNotificationTest {
     private NotificationService notificationService;
 
     @InjectMocks
-    private AppliedForFinalOrderNotification notification;
+    private FinalOrderNotification notification;
 
     @Mock
     private Clock clock;
