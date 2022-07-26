@@ -1,11 +1,14 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -154,6 +157,16 @@ public final class ValidationUtil {
             notNull(marriageDetails.getApplicant2Name(), "MarriageApplicant2Name"),
             notNull(marriageDetails.getPlaceOfMarriage(), "PlaceOfMarriage")
         );
+    }
+
+    public static List<String> validateCitizenResendInvite(CaseDetails<CaseData, State> details) {
+        var data = details.getData();
+        boolean isApplicant2EmailUpdatePossible = details.getState() == State.AwaitingApplicant2Response
+            && data.getCaseInvite().accessCode() != null
+            && data.getApplicationType() == ApplicationType.JOINT_APPLICATION;
+        return isApplicant2EmailUpdatePossible
+            ? emptyList()
+            : singletonList("Not possible to update email address");
     }
 
     @SafeVarargs
