@@ -36,6 +36,9 @@ public class CommonContent {
     public static final String IS_DIVORCE = "isDivorce";
     public static final String IS_DISSOLUTION = "isDissolution";
 
+    public static final String IS_CONDITIONAL_ORDER = "isConditionalOrder";
+    public static final String IS_FINAL_ORDER = "isFinalOrder";
+
     public static final String IS_REMINDER = "isReminder";
     public static final String YES = "yes";
     public static final String NO = "no";
@@ -71,6 +74,7 @@ public class CommonContent {
     public static final String WIFE_JOINT = "wifeJoint";
     public static final String CIVIL_PARTNER_JOINT = "civilPartnerJoint";
 
+    public static final String DUE_DATE = " due date";
     public static final String ISSUE_DATE = " issue date";
 
     public static final String UNION_TYPE = "union type";
