@@ -59,6 +59,8 @@ public class CertificateOfEntitlementPrinter {
     public static final String GET_A_DIVORCE = "get a divorce";
     public static final String END_YOUR_CIVIL_PARTNERSHIP = "end your civil partnership";
 
+    private static final int EXPECTED_DOCUMENTS_SIZE = 2;
+
     @Autowired
     private BulkPrintService bulkPrintService;
 
@@ -83,7 +85,7 @@ public class CertificateOfEntitlementPrinter {
 
         final List<Letter> certificateOfEntitlementLetters = certificateOfEntitlementLetters(caseData);
 
-        if (!isEmpty(certificateOfEntitlementLetters)) {
+        if (!isEmpty(certificateOfEntitlementLetters) && certificateOfEntitlementLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
             final String caseIdString = caseId.toString();
             final Print print =
                 new Print(certificateOfEntitlementLetters, caseIdString, caseIdString, LETTER_TYPE_CERTIFICATE_OF_ENTITLEMENT);
@@ -103,21 +105,18 @@ public class CertificateOfEntitlementPrinter {
             caseData.getDocuments().getDocumentsGenerated(),
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER);
 
-        final List<Letter> certificateOfEntitlements = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            CERTIFICATE_OF_ENTITLEMENT);
-
         final Letter coverLetter = firstElement(coverLetters);
-        final Letter certificateOfEntitlement = firstElement(certificateOfEntitlements);
+        final Letter certificateOfEntitlement =
+            new Letter(caseData.getConditionalOrder().getCertificateOfEntitlementDocument(), 1);
 
         final List<Letter> currentCertificateOfEntitlementLetters = new ArrayList<>();
 
         if (null != coverLetter) {
             currentCertificateOfEntitlementLetters.add(coverLetter);
         }
-        if (null != certificateOfEntitlement) {
-            currentCertificateOfEntitlementLetters.add(certificateOfEntitlement);
-        }
+
+        currentCertificateOfEntitlementLetters.add(certificateOfEntitlement);
+
         return currentCertificateOfEntitlementLetters;
     }
 

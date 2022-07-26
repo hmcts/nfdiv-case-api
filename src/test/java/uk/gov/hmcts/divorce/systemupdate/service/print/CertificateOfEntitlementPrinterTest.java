@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static java.time.LocalDateTime.now;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -255,13 +255,14 @@ public class CertificateOfEntitlementPrinterTest {
                     .build())
             .documents(
                 CaseDocuments.builder()
-                    .documentsGenerated(asList(certificateOfEntitlementDoc, certificateOfEntitlementCoverLetter))
+                    .documentsGenerated(singletonList(certificateOfEntitlementCoverLetter))
                     .build()
             )
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .dateAndTimeOfHearing(LocalDateTime.of(2022, 4, 28, 10, 0, 0))
                     .court(BURY_ST_EDMUNDS)
+                    .certificateOfEntitlementDocument(certificateOfEntitlementDocValue)
                     .build()
             )
             .build();
