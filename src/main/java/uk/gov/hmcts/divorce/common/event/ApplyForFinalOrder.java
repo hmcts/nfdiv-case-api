@@ -21,6 +21,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -83,6 +84,13 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             }
 
             endState = FinalOrderRequested;
+
+            if (data.isWelshApplication()) {
+                data.getApplication().setWelshPreviousState(endState);
+                endState = WelshTranslationReview;
+                log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                    data.getApplication().getWelshPreviousState(), details.getId());
+            }
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
