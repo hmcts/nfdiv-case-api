@@ -6,12 +6,14 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.notification.JointApplicantCanSwitchToSoleNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant1CanSwitchToSoleNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant2CanSwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -25,7 +27,13 @@ public class SystemNotifyJointApplicantCanSwitchToSole implements CCDConfig<Case
         = "system-notify-joint-applicant-switch-to-sole";
 
     @Autowired
-    private JointApplicantCanSwitchToSoleNotification notification;
+    private Applicant1CanSwitchToSoleNotification applicant1CanSwitchToSoleNotification;
+
+    @Autowired
+    private Applicant2CanSwitchToSoleNotification applicant2CanSwitchToSoleNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -51,10 +59,10 @@ public class SystemNotifyJointApplicantCanSwitchToSole implements CCDConfig<Case
         ConditionalOrderQuestions coQuestionsApp2 = conditionalOrder.getConditionalOrderApplicant2Questions();
 
         if (coQuestionsApp1 != null && YES.equals(coQuestionsApp1.getIsSubmitted())) {
-            notification.sendToApplicant1(data, caseId);
+            notificationDispatcher.send(applicant1CanSwitchToSoleNotification, data, caseId);
             data.getApplication().setJointApplicantNotifiedCanSwitchToSole(YES);
         } else if (coQuestionsApp2 != null && YES.equals(coQuestionsApp2.getIsSubmitted())) {
-            notification.sendToApplicant2(data, caseId);
+            notificationDispatcher.send(applicant2CanSwitchToSoleNotification, data, caseId);
             data.getApplication().setJointApplicantNotifiedCanSwitchToSole(YES);
         }
 

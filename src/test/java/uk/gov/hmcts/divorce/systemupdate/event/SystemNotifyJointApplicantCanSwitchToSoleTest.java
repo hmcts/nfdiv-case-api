@@ -10,18 +10,21 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.notification.JointApplicantCanSwitchToSoleNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant1CanSwitchToSoleNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant2CanSwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.LocalDate;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -36,7 +39,13 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private JointApplicantCanSwitchToSoleNotification jointApplicantCanSwitchToSoleNotification;
+    private Applicant1CanSwitchToSoleNotification applicant1CanSwitchToSoleNotification;
+
+    @Mock
+    private Applicant2CanSwitchToSoleNotification applicant2CanSwitchToSoleNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SystemNotifyJointApplicantCanSwitchToSole systemNotifyJointApplicantCanSwitchToSole;
@@ -73,7 +82,8 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
             systemNotifyJointApplicantCanSwitchToSole.aboutToSubmit(details, details);
 
         assertThat(response.getData().getApplication().getJointApplicantNotifiedCanSwitchToSole()).isEqualTo(YesOrNo.YES);
-        verify(jointApplicantCanSwitchToSoleNotification).sendToApplicant1(caseData, details.getId());
+        verify(notificationDispatcher).send(applicant1CanSwitchToSoleNotification, caseData, details.getId());
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
@@ -97,6 +107,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
             systemNotifyJointApplicantCanSwitchToSole.aboutToSubmit(details, details);
 
         assertThat(response.getData().getApplication().getJointApplicantNotifiedCanSwitchToSole()).isEqualTo(YesOrNo.YES);
-        verify(jointApplicantCanSwitchToSoleNotification).sendToApplicant2(caseData, details.getId());
+        verify(notificationDispatcher).send(applicant2CanSwitchToSoleNotification, caseData, details.getId());
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 }
