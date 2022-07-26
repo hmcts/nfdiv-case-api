@@ -152,9 +152,9 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
             .build();
 
         final CaseData caseData = caseData();
@@ -193,12 +193,13 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
             .build();
 
         final CaseData caseData = caseData();
+        caseData.getApplicant2().setLegalProceedings(NO);
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
 
@@ -230,7 +231,6 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
             .build();
@@ -429,7 +429,6 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .howToRespondApplication(DISPUTE_DIVORCE)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
