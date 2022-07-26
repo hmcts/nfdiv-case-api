@@ -69,9 +69,6 @@ public class CcdSearchService {
     @Setter
     private int bulkActionPageSize;
 
-    @Value("${toggle.enable_updated_migration_query}")
-    private boolean enableUpdatedMigrationQuery;
-
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
 
@@ -131,7 +128,18 @@ public class CcdSearchService {
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
-            .query(getMigrationQuery(latestVersion))
+            .query(
+                boolQuery()
+                    .must(boolQuery()
+                        .mustNot(matchQuery("data.dataVersion", 0))
+                    )
+                    .must(boolQuery()
+                        .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
+                        .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
+                    )
+                    .mustNot(matchQuery(STATE, Withdrawn))
+                    .mustNot(matchQuery(STATE, Rejected))
+            )
             .from(0)
             .size(500);
 
@@ -141,31 +149,6 @@ public class CcdSearchService {
             CASE_TYPE,
             sourceBuilder.toString()
         ).getCases();
-    }
-
-    private QueryBuilder getMigrationQuery(int latestVersion) {
-
-        if (enableUpdatedMigrationQuery) {
-            return boolQuery()
-                .must(boolQuery()
-                    .mustNot(matchQuery("data.dataVersion", 0))
-                )
-                .must(boolQuery()
-                    .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
-                    .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
-                )
-                .mustNot(matchQuery(STATE, Withdrawn))
-                .mustNot(matchQuery(STATE, Rejected));
-        } else {
-            return boolQuery()
-                .must(boolQuery()
-                    .mustNot(matchQuery("data.dataVersion", 0))
-                )
-                .must(boolQuery()
-                    .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
-                    .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
-                );
-        }
     }
 
     public List<CaseDetails> searchForBulkCasesWithVersionLessThan(int latestVersion, User user, String serviceAuth) {

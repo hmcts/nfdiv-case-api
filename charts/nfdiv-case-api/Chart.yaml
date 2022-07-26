@@ -3,7 +3,7 @@ appVersion: "1.0"
 description: A Helm chart for nfdiv-case-api App
 name: nfdiv-case-api
 home: https://github.com/hmcts/nfdiv-case-api
-version: 0.0.58
+version: 0.0.59
 maintainers:
   - name: HMCTS nfdiv team
 dependencies:
@@ -16,7 +16,7 @@ dependencies:
     tags:
         - ccd-idam-pr
   - name: xui-webapp
-    version: ~0.2.28
+    version: ~1.0.0
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
     condition: xui-webapp.enabled
   - name: xui-mo-webapp
