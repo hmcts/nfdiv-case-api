@@ -10,8 +10,10 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ClarificationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.PostInformationToCourtNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -22,15 +24,16 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitClarification.SUBMIT_CLARIFICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
@@ -54,6 +57,9 @@ class SubmitClarificationTest {
     private PostInformationToCourtNotification postInformationToCourtNotification;
 
     @Mock
+    private ClarificationSubmittedNotification clarificationSubmittedNotification;
+
+    @Mock
     private Clock clock;
 
     @Test
@@ -65,46 +71,6 @@ class SubmitClarificationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(SUBMIT_CLARIFICATION);
-    }
-
-    @Test
-    void shouldResetClarificationFieldsWhenAboutToStartCallbackIsInvoked() {
-
-        final ListValue<String> listValue1 =
-            ListValue.<String>builder()
-                .value("Clarification")
-                .build();
-        final List<ListValue<String>> clarifications = new ArrayList<>();
-        clarifications.add(listValue1);
-
-        final ListValue<DivorceDocument> listValue2 =
-            ListValue.<DivorceDocument>builder()
-                .value(DivorceDocument.builder().build())
-                .build();
-        final List<ListValue<DivorceDocument>> clarificationDocuments = new ArrayList<>();
-        clarificationDocuments.add(listValue2);
-
-        final CaseData caseData = CaseData.builder()
-            .conditionalOrder(
-                ConditionalOrder
-                    .builder()
-                    .clarificationResponses(clarifications)
-                    .cannotUploadClarificationDocuments(YES)
-                    .clarificationUploadDocuments(clarificationDocuments)
-                    .build()
-            )
-            .build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            submitClarification.aboutToStart(caseDetails);
-
-        ConditionalOrder actualConditionalOrder = response.getData().getConditionalOrder();
-        assertThat(actualConditionalOrder.getClarificationResponses()).isEmpty();
-        assertThat(actualConditionalOrder.getCannotUploadClarificationDocuments()).isNull();
-        assertThat(actualConditionalOrder.getClarificationUploadDocuments()).isEmpty();
     }
 
     @Test
@@ -120,6 +86,7 @@ class SubmitClarificationTest {
         submitClarification.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(postInformationToCourtNotification, caseData, 1L);
+        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, 1L);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -135,7 +102,8 @@ class SubmitClarificationTest {
 
         submitClarification.aboutToSubmit(caseDetails, null);
 
-        verifyNoInteractions(notificationDispatcher);
+        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, 1L);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
 
@@ -150,7 +118,8 @@ class SubmitClarificationTest {
 
         submitClarification.aboutToSubmit(caseDetails, null);
 
-        verifyNoInteractions(notificationDispatcher);
+        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, 1L);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
@@ -241,4 +210,36 @@ class SubmitClarificationTest {
 
         assertThat(response.getData().getConditionalOrder().getClarificationResponsesSubmitted()).hasSize(2);
     }
+
+    @Test
+    void shouldResetRefusalReasonFieldsUponClarificationSubmission() {
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .refusalDecision(MORE_INFO)
+                    .refusalClarificationReason(Set.of(ClarificationReason.MARRIAGE_CERTIFICATE, ClarificationReason.OTHER))
+                    .refusalClarificationAdditionalInfo("Test refusalClarificationAdditionalInfo")
+                    .refusalAdminErrorInfo("Test refusalAdminErrorInfo")
+                    .refusalRejectionAdditionalInfo("Rejected comments")
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            submitClarification.aboutToSubmit(caseDetails, null);
+
+        ConditionalOrder actualConditionalOrder = response.getData().getConditionalOrder();
+        assertThat(actualConditionalOrder.getRefusalDecision()).isNull();
+        assertThat(actualConditionalOrder.getRefusalClarificationReason()).isNull();
+        assertThat(actualConditionalOrder.getRefusalClarificationAdditionalInfo()).isNull();
+        assertThat(actualConditionalOrder.getRefusalAdminErrorInfo()).isNull();
+        assertThat(actualConditionalOrder.getRefusalRejectionAdditionalInfo()).isNull();
+    }
 }
+

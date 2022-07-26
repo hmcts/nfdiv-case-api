@@ -23,10 +23,10 @@ public enum GeneralOrderJudgeOrLegalAdvisorType implements HasLabel {
     HER_HONOUR_JUDGE("Her Honour Judge"),
 
     @JsonProperty("assistantJusticesClerk")
-    ASSISTANT_JUSTICES_CLERK("Assistant Justices Clerk"),
+    ASSISTANT_JUSTICES_CLERK("Assistant Justice's Clerk"),
 
     @JsonProperty("properOfficerOfTheCourt")
-    PROPER_OFFICER_OF_THE_COURT("A Proper Officer of the Court");
+    PROPER_OFFICER_OF_THE_COURT("Proper Officer of the Court");
 
     private final String label;
 }

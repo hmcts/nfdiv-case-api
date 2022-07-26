@@ -9,30 +9,29 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 public enum ExceptionRecordState {
 
     @CCD(
-        name = "A scanned record has been received"
+        label = "A scanned record has been received"
     )
-    ScannedRecordReceived("ScannedRecordReceived"),
+    ScannedRecordReceived,
 
     @CCD(
-        name = "The scanned record has been attached to existing case"
+        label = "The scanned record has been attached to existing case"
     )
-    ScannedRecordAttachedToCase("ScannedRecordAttachedToCase"),
+    ScannedRecordAttachedToCase,
 
     @CCD(
-        name = "A new case is created from scanned record"
+        label = "A new case is created from scanned record"
     )
-    ScannedRecordCaseCreated("ScannedRecordCaseCreated"),
+    ScannedRecordCaseCreated,
 
     @CCD(
-        name = "The scanned record has been rejected"
+        label = "The scanned record has been rejected"
     )
-    ScannedRecordRejected("ScannedRecordRejected"),
+    ScannedRecordRejected,
 
     @CCD(
-        name = "The scanned record has been handled by CW manually"
+        label = "The scanned record has been handled by CW manually"
     )
-    ScannedRecordManuallyHandled("ScannedRecordManuallyHandled");
+    ScannedRecordManuallyHandled;
 
-    private final String name;
 }
 

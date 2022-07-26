@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.service.task.AddLastAlternativeServiceDocumentLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +32,9 @@ class DraftConditionalOrderTest {
 
     @Mock
     private AddMiniApplicationLink addMiniApplicationLink;
+
+    @Mock
+    private AddLastAlternativeServiceDocumentLink addLastAlternativeServiceDocumentLink;
 
     @InjectMocks
     private DraftConditionalOrder draftConditionalOrder;
@@ -85,12 +89,14 @@ class DraftConditionalOrderTest {
         final CaseDetails<CaseData, State> updateCaseDetails = new CaseDetails<>();
         updateCaseDetails.setData(expectedCaseData);
 
-        when(addMiniApplicationLink.apply(caseDetails)).thenReturn(updateCaseDetails);
+        when(addMiniApplicationLink.apply(caseDetails)).thenReturn(caseDetails);
+        when(addLastAlternativeServiceDocumentLink.apply(caseDetails)).thenReturn(updateCaseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = draftConditionalOrder.aboutToStart(caseDetails);
 
         assertThat(response.getData()).isSameAs(expectedCaseData);
 
         verify(addMiniApplicationLink).apply(caseDetails);
+        verify(addLastAlternativeServiceDocumentLink).apply(caseDetails);
     }
 }

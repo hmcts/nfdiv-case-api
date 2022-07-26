@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.ASSISTANT_JUSTICES_CLERK;
@@ -41,8 +40,9 @@ public class GeneralOrderTemplateContent {
     private static final String RESPONDENT = "Respondent";
     private static final String SITTING = "sitting";
     private static final String SITTING_CONTENT = ", sitting";
-    private static final String JUDGE_NAME = "judge %s";
+    private static final String JUDGE_NAME = "%s %s";
     private static final String AN_ASSISTANT_JUDGES_CLERK = "an %s";
+    private static final String A_PROPER_OFFICER_OF_THE_COURT = "a %s";
 
     @Autowired
     private Clock clock;
@@ -77,18 +77,18 @@ public class GeneralOrderTemplateContent {
         if (DEPUTY_DISTRICT_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())
             || DISTRICT_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())
             || HER_HONOUR_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())
-            || HIS_HONOUR_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())
-        ) {
+            || HIS_HONOUR_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())) {
             templateContent.put(GENERAL_ORDER_MADE_BY,
-                String.format(JUDGE_NAME, generalOrder.getGeneralOrderJudgeOrLegalAdvisorName()));
+                String.format(JUDGE_NAME, generalOrder.getGeneralOrderJudgeOrLegalAdvisorType().getLabel(),
+                    generalOrder.getGeneralOrderJudgeOrLegalAdvisorName()));
             templateContent.put(SITTING, SITTING_CONTENT);
         } else if (ASSISTANT_JUSTICES_CLERK.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())) {
             templateContent.put(GENERAL_ORDER_MADE_BY,
-                String.format(AN_ASSISTANT_JUDGES_CLERK, ASSISTANT_JUSTICES_CLERK.getLabel().toLowerCase(Locale.ROOT))
+                String.format(AN_ASSISTANT_JUDGES_CLERK, ASSISTANT_JUSTICES_CLERK.getLabel())
             );
         } else if (PROPER_OFFICER_OF_THE_COURT.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())) {
             templateContent.put(GENERAL_ORDER_MADE_BY,
-                PROPER_OFFICER_OF_THE_COURT.getLabel().toLowerCase(Locale.ROOT));
+                String.format(A_PROPER_OFFICER_OF_THE_COURT, PROPER_OFFICER_OF_THE_COURT.getLabel()));
         }
 
         if (caseData.getApplicationType().isSole()) {

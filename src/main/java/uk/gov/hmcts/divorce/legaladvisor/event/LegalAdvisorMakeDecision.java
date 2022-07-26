@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorAmendApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -48,7 +49,10 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     public static final String LEGAL_ADVISOR_MAKE_DECISION = "legal-advisor-make-decision";
 
     @Autowired
-    private LegalAdvisorMoreInfoDecisionNotification notification;
+    private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
+
+    @Autowired
+    private LegalAdvisorAmendApplicationDecisionNotification amendApplicationDecisionNotification;
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -70,7 +74,6 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .name("Make a decision")
             .description("Grant Conditional Order")
             .endButtonLabel("Submit")
-            .aboutToStartCallback(this::aboutToStart)
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -108,19 +111,8 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .pageLabel("Request amended application - Make a Decision")
             .showCondition("coRefusalDecision=\"reject\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getRefusalRejectionReason)
-                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo,
-                "coRefusalRejectionReasonCONTAINS \"other\" "
-                    + "OR coRefusalRejectionReasonCONTAINS \"noCriteria\" " // added for backward compatibility
-                    + "OR coRefusalRejectionReasonCONTAINS \"insufficentDetails\"") // added for backward compatibility
+                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo)
             .done();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("Legal advisor grant conditional order about to start callback invoked. CaseID: {}", details.getId());
-        CaseData caseData = details.getData();
-        caseData.getConditionalOrder().resetRefusalFields();
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData).build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -139,6 +131,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingPronouncement;
 
         } else if (REJECT.equals(conditionalOrder.getRefusalDecision())) {
+            notificationDispatcher.send(amendApplicationDecisionNotification, caseData, details.getId());
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
                 details.getId()
@@ -146,7 +139,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingAmendedApplication;
 
         } else if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
-            notificationDispatcher.send(notification, caseData, details.getId());
+            notificationDispatcher.send(moreInfoDecisionNotification, caseData, details.getId());
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
                 details.getId()
@@ -163,6 +156,8 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
                 conditionalOrder.populateLegalAdvisorDecision(LocalDate.now(clock))
             )
         );
+
+        caseData.getConditionalOrder().resetClarificationFields();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
