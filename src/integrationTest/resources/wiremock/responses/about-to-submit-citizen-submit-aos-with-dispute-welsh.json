@@ -12,17 +12,20 @@
     "applicant1MiddleName": "test_middle_name",
     "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
     "applicant1StatementOfTruth": "Yes",
-    "applicant2ContactDetailsType": "public",
-    "applicant2SolicitorEmail": "solicitor@test.com",
-    "applicant2SolicitorName": "The Solicitor",
-    "applicant2SolicitorRepresented": "Yes",
+    "welshPreviousState": "Holding",
     "applicant1SolicitorRepresented": "No",
-    "applicant2Email": "test@test.com",
+    "applicant2Email": "applicant2@test.com",
     "applicant2FinancialOrder": "No",
     "applicant2FirstName": "test_first_name",
-    "applicant2Gender": "female",
+    "applicant2Gender": "male",
+    "applicant2Address": {
+      "AddressLine1": "line 1",
+      "PostCode": "postcode",
+      "PostTown": "town",
+      "Country": "UK"
+    },
     "applicant2InviteEmailAddress": "applicant2@test.com",
-    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2LanguagePreferenceWelsh": "Yes",
     "applicant2LastName": "test_last_name",
     "applicant2LegalProceedings": "No",
     "applicant2MiddleName": "test_middle_name",
@@ -42,11 +45,10 @@
       }
     ],
     "applicationType": "soleApplication",
-    "howToRespondApplication": "withoutDisputeDivorce",
+    "howToRespondApplication": "disputeDivorce",
     "divorceOrDissolution": "divorce",
     "documentUploadComplete": "Yes",
-    "dueDate": "2021-09-16",
-    "issueDate": "2021-04-28",
+    "dueDate": "${json-unit.any-string}",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionConnections": [
@@ -61,6 +63,7 @@
     "statementOfTruth": "Yes",
     "confirmReadPetition": "Yes",
     "jurisdictionAgree": "Yes",
+    "issueDate": "2021-04-28",
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
@@ -84,5 +87,5 @@
     "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
-  "state": "Holding"
+  "state": "WelshTranslationReview"
 }
