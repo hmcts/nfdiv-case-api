@@ -251,7 +251,7 @@ public class ConditionalOrder {
     private YesOrNo serviceConfirmed;
 
     @CCD(
-        label = "Documents uploaded for Proof of Service ",
+        label = "Documents uploaded for Proof of Service",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument"
     )
