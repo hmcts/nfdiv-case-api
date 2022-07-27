@@ -52,8 +52,9 @@ public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole>
         CaseData data = details.getData();
 
         if (!data.getApplicant2().isRepresented()) {
-            final List<String> validationErrors = validateCitizenResendInvite(details);
             log.info("Validating case for citizen-resend-invite event. Case Id: {}", details.getId());
+            final List<String> validationErrors = validateCitizenResendInvite(details);
+
             if (!validationErrors.isEmpty()) {
                 log.info("Validation errors: {} ", validationErrors);
 
@@ -62,13 +63,12 @@ public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole>
                     .errors(validationErrors)
                     .build();
             }
+            log.info("Setting new due date for Case Id: {} (citizen-resend-invite)", details.getId());
+            data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
             log.info("Applicant 2 is not represented. Resetting access code and sending notification to allow joining. Case Id: {}", details.getId());
             data.setCaseInvite(data.getCaseInvite().generateAccessCode());
             applicationSentForReviewNotification.sendToApplicant2(data, details.getId());
-
-            log.info("Setting new due date for Case Id: {} (citizen-resend-invite)", details.getId());
-            data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
         } else {
             log.info("Applicant 2 is represented in case: {} therefore skipping case invite notification", details.getId());
         }
