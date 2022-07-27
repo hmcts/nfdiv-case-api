@@ -199,4 +199,11 @@ public class CaseDocuments {
                 .removeIf(document -> documentType.equals(document.getValue().getDocumentType()));
         }
     }
+    
+    public Optional<ListValue<DivorceDocument>> getDocumentGeneratedWithType(final DocumentType documentType) {
+        return !isEmpty(this.getDocumentsGenerated())
+            ? this.getDocumentsGenerated().stream()
+            .filter(document -> documentType.equals(document.getValue().getDocumentType())).findFirst()
+            : Optional.empty();
+    }
 }

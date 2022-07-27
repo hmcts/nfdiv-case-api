@@ -450,7 +450,6 @@ public class TestDataHelper {
         caseData.getApplicant2().setLegalProceedings(NO);
         caseData.getAcknowledgementOfService().setConfirmReadPetition(YES);
         caseData.getAcknowledgementOfService().setJurisdictionAgree(YES);
-        caseData.getAcknowledgementOfService().setPrayerHasBeenGiven(YES);
         caseData.getAcknowledgementOfService().setStatementOfTruth(YES);
 
         return caseData;
