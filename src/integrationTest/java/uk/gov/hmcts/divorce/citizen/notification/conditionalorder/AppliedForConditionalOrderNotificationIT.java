@@ -23,7 +23,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
-import static uk.gov.hmcts.divorce.notification.CommonContent.DUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
@@ -139,7 +138,6 @@ public class AppliedForConditionalOrderNotificationIT {
             entry(APPLICANT_NAME, "Bob Smith"),
             entry(RESPONDENT_NAME, "Jane Smith"),
             entry(ISSUE_DATE, date.format(DATE_TIME_FORMATTER)),
-            entry(DUE_DATE, date.format(DATE_TIME_FORMATTER)),
             entry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
             entry(SOLICITOR_REFERENCE, "REF01"),
             entry(COURT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK)
