@@ -76,7 +76,8 @@ public class CitizenResendInviteIT {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -101,7 +102,8 @@ public class CitizenResendInviteIT {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
@@ -130,7 +132,8 @@ public class CitizenResendInviteIT {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -156,7 +159,8 @@ public class CitizenResendInviteIT {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
@@ -186,7 +190,8 @@ public class CitizenResendInviteIT {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()

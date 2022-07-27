@@ -66,7 +66,7 @@ public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole>
             log.info("Setting new due date for Case Id: {} (citizen-resend-invite)", details.getId());
             data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
-            log.info("Applicant 2 is not represented. Resetting access code and sending notification to allow joining. Case Id: {}", details.getId());
+            log.info("Resetting access code and sending notification to allow joining. Case Id: {}", details.getId());
             data.setCaseInvite(data.getCaseInvite().generateAccessCode());
             applicationSentForReviewNotification.sendToApplicant2(data, details.getId());
         } else {
