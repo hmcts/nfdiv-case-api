@@ -358,24 +358,6 @@ public enum State {
     )
     WelshTranslationReview;
 
-    public static final EnumSet<State> PRE_CONDITIONAL_ORDER_STATES = EnumSet.of(
-        AwaitingHWFDecision,
-        AwaitingPayment,
-        AwaitingDocuments,
-        Submitted,
-        AwaitingAos,
-        AwaitingService,
-        AosOverdue,
-        AosDrafted,
-        AwaitingServicePayment,
-        AwaitingServiceConsideration,
-        AwaitingBailiffReferral,
-        AwaitingBailiffService,
-        IssuedToBailiff,
-        Holding,
-        AwaitingConditionalOrder
-    );
-
     public static final EnumSet<State> POST_SUBMISSION_STATES = EnumSet.complementOf(EnumSet.of(
         Draft,
         AwaitingApplicant1Response,

@@ -19,16 +19,11 @@ import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 
-import java.util.List;
-
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUnlinkApplicantFromCase.SYSTEM_UNLINK_APPLICANT;
-import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCitizenCcdCaseRoles;
-import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CITIZEN_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
@@ -36,8 +31,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
@@ -82,10 +75,6 @@ public class SystemUnlinkApplicantFromCaseIT {
     public void shouldUnlinkCreatorFromDraftCase() throws Exception {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
-        stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-        stubForIdamToken(CASEWORKER_AUTH_TOKEN);
-
-        stubForCitizenCcdCaseRoles();
 
         CallbackRequest callbackRequest = callbackRequest(caseData(), SYSTEM_UNLINK_APPLICANT);
 
@@ -103,6 +92,6 @@ public class SystemUnlinkApplicantFromCaseIT {
             .getContentAsString();
 
         verify(ccdAccessService)
-            .removeUsersWithRole(callbackRequest.getCaseDetails().getId(), List.of(CREATOR.getRole()));
+            .unlinkUserFromCase(callbackRequest.getCaseDetails().getId(), APP_2_CITIZEN_USER_ID);
     }
 }
