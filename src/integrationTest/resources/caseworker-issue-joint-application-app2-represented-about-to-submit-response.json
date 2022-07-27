@@ -68,7 +68,6 @@
       }
     },
     "noticeOfProceedingsEmail":"solicitor@test.com",
-    "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
         "id": "Divorce application",
