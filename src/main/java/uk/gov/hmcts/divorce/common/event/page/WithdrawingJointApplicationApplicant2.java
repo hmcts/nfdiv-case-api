@@ -2,18 +2,28 @@ package uk.gov.hmcts.divorce.common.event.page;
 
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 
 public class WithdrawingJointApplicationApplicant2 implements CcdPageConfiguration {
+
+    private static final String NEVER_SHOW = "coApplicant2ApplyForConditionalOrder=\"NEVER_SHOW\"";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("WithdrawingJointApplicationApplicant2")
+            .page("WithdrawingJointApplicationFirstApp2")
             .pageLabel("Withdrawing a joint application")
             .showCondition("coApplicant2ApplyForConditionalOrder=\"No\"")
-            .label("withdrawLabelApplicant2", "If you want to withdraw this joint application then both parties need to jointly fill out a D11 form and send it to the court. Details of where to send it are on the form.")
-            .label("firstInTimeApplicant2",
+            .complex(CaseData::getConditionalOrder)
+                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
+                    .readonlyNoSummary(ConditionalOrderQuestions::getConfirmInformationStillCorrect, NEVER_SHOW)
+                .done()
+            .done()
+            .label("withdrawLabelApp2", "If you want to withdraw this joint application then both parties need to jointly fill out a <a href=\"https://www.gov.uk/government/publications/form-d11-application-notice\" target=\"_blank\" rel=\"noopener noreferrer\">D11 form</a> and send it to the court. Details of where to send it are on the form.")
+            .label("firstInTimeApp2",
                 "<details>" +
                     "  <summary>" +
                     "    <span>" +
@@ -26,8 +36,8 @@ public class WithdrawingJointApplicationApplicant2 implements CcdPageConfigurati
                     "    <p>If you want to apply for a conditional order as a sole applicant now, then you need to download and fill out a paper D84 form. Details of where to post it are on the form. Your application will be lodged as soon as the form is received by the court but it could take up to 3 weeks to process the application.</p>" +
                     "  </div>" +
                     "</details>" +
-                    "<br>")
-            .label("secondInTimeApplicant2",
+                    "<br>", "coApplicant2ConfirmInformationStillCorrect!=\"*\"")
+            .label("secondInTimeApp2",
                 "<details>" +
                     "  <summary>" +
                     "    <span>" +
@@ -36,11 +46,12 @@ public class WithdrawingJointApplicationApplicant2 implements CcdPageConfigurati
                     "  </summary>" +
                     "  <div>" +
                     "    <p>The other applicant has already confirmed they want to continue with the joint application. The quickest way for you to progress the ${labelContentDivorceOrEndingCivilPartnership} is for you to also confirm you want to continue with the joint application.</p>" +
-                    "    <p>If you want to change to a sole application then it will delay the ${labelContentDivorceOrEndingCivilPartnership}. You will have to make a separate application by downloading and filling out a D84 paper form. Details of where to send it are on the form. If you want to change to a sole application then you should go back to ‘manage cases’, sign out and send in the form.</p>" +
+                    "    <p>If you want to change to a sole application then it will delay the ${labelContentDivorceOrEndingCivilPartnership}. You will have to make a separate application by <a href=\"https://www.gov.uk/government/publications/form-d84-application-for-a-decree-nisi-conditional-order-or-judicial-separation-decreeorder\" target=\"_blank\" rel=\"noopener noreferrer\">downloading and filling out a D84 paper form.</a> Details of where to send it are on the form. If you want to change to a sole application then you should go back to ‘manage cases’, sign out and send in the form.</p>" +
                     "    <p>The quickest way to progress the ${labelContentDivorceOrEndingCivilPartnership} is to confirm you want to continue with the joint application.</p>" +
                     "  </div>" +
                     "</details>" +
-                    "<br>")
-            .done();
+                    "<br>", "coApplicant1ConfirmInformationStillCorrect=\"*\"")
+            .done()
+        ;
     }
 }

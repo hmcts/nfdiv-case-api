@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoS;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant1;
 import uk.gov.hmcts.divorce.common.event.page.WithdrawingJointApplicationApplicant1;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddLastAlternativeServiceDocumentLink;
@@ -21,6 +22,8 @@ import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
@@ -82,12 +85,20 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
         log.info("Draft conditional order about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseData data = details.getData();
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(YES);
+        final ConditionalOrder conditionalOrder = data.getConditionalOrder();
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(ConditionalOrderDrafted)
-            .build();
+        if (NO.equals(conditionalOrder.getConditionalOrderApplicant1Questions().getApplyForConditionalOrder())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList("Applicant must select yes to apply for a conditional order"))
+                .build();
+        } else {
+            data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(YES);
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .state(ConditionalOrderDrafted)
+                .build();
+        }
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
