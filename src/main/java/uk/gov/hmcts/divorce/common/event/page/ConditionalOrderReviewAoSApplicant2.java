@@ -22,39 +22,13 @@ public class ConditionalOrderReviewAoSApplicant2 implements CcdPageConfiguration
     public void addTo(PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("ConditionalOrderReviewAoSApplicant2", this::midEvent)
+            .page("ConditionalOrderReviewAoSApplicant2")
             .pageLabel("Review Acknowledgement of Service - Draft Conditional Order Application")
             .complex(CaseData::getConditionalOrder)
                 .readonly(ConditionalOrder::getRespondentAnswersLink)
-            .done()
-            .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
-                .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
+                    .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
                 .done()
-                .label(
-                    "ConditionalOrderReviewAoSNo",
-                    "You must select yes to apply for a conditional order",
-                    "coApplicant2ApplyForConditionalOrder=\"No\""
-                )
             .done();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
-        CaseDetails<CaseData, State> details,
-        CaseDetails<CaseData, State> detailsBefore
-    ) {
-        log.info("Mid-event callback triggered for ConditionalOrderReviewAoSApplicant2");
-
-        CaseData data = details.getData();
-        List<String> errors = new ArrayList<>();
-        ConditionalOrder conditionalOrder = data.getConditionalOrder();
-
-        if (!conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrder().toBoolean()) {
-            errors.add("Applicant must select yes to apply for a conditional order");
-        }
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .errors(errors)
-            .build();
     }
 }

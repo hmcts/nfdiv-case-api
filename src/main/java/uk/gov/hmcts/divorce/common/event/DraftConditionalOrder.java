@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoS;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant1;
+import uk.gov.hmcts.divorce.common.event.page.WithdrawingJointApplicationApplicant1;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -41,6 +42,7 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
 
     private final List<CcdPageConfiguration> pages = asList(
         new ConditionalOrderReviewAoS(),
+        new WithdrawingJointApplicationApplicant1(),
         new ConditionalOrderReviewApplicant1()
     );
 
