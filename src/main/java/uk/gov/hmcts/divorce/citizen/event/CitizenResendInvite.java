@@ -31,9 +31,6 @@ public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole>
     @Autowired
     private ApplicationSentForReviewNotification applicationSentForReviewNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
