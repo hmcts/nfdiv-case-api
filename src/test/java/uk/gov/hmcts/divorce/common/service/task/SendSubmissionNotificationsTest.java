@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -60,6 +61,36 @@ class SendSubmissionNotificationsTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingHWFDecision);
+
+        sendSubmissionNotifications.apply(caseDetails);
+
+        verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldDispatchSubmittedNotificationsAndOutstandingActionNotificationsIfWelshPreviousStateSubmitted() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setWelshPreviousState(Submitted);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        caseDetails.setState(WelshTranslationReview);
+
+        sendSubmissionNotifications.apply(caseDetails);
+
+        verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldDispatchSubmittedNotificationsAndOutstandingActionNotificationsIfWelshPreviousStateAwaitingHwfDecision() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setWelshPreviousState(AwaitingHWFDecision);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        caseDetails.setState(WelshTranslationReview);
 
         sendSubmissionNotifications.apply(caseDetails);
 
