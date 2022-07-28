@@ -14,27 +14,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class ConditionalOrderReviewAoSApplicant2Test {
+public class ConditionalOrderReviewAoSIfNoTest {
 
-    private final ConditionalOrderReviewAoSApplicant2 page = new ConditionalOrderReviewAoSApplicant2();
+    private final ConditionalOrderReviewAoSIfNo page = new ConditionalOrderReviewAoSIfNo();
 
-    private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP2 = "Applicant must select yes to apply for a conditional order";
+    private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1 = "Applicant must select yes to apply for a conditional order";
 
     @Test
-    public void shouldPreventProgressIfNoIsSelectedForSoleApplicationOnApplyForConditionalOrderQuestion() {
+    public void shouldPreventProgressIfNoIsSelectedForJointApplicationOnApplyForConditionalOrderQuestion() {
 
         final CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setApplicationType(JOINT_APPLICATION);
         ConditionalOrderQuestions conditionalOrderQuestions = new ConditionalOrderQuestions();
-        conditionalOrderQuestions.setApplyForConditionalOrder(NO);
+        conditionalOrderQuestions.setApplyForConditionalOrderIfNo(NO);
 
         caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant2Questions(conditionalOrderQuestions)
+            .conditionalOrderApplicant1Questions(conditionalOrderQuestions)
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -47,42 +46,20 @@ public class ConditionalOrderReviewAoSApplicant2Test {
         assertEquals(response.getErrors().size(), 1);
         assertEquals(
             response.getErrors().get(0),
-            APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP2
+            APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1
         );
-    }
-
-    @Test
-    public void shouldNotPreventProgressIfNoIsSelectedForJointApplicationOnApplyForConditionalOrderQuestion() {
-
-        final CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        ConditionalOrderQuestions conditionalOrderQuestions = new ConditionalOrderQuestions();
-        conditionalOrderQuestions.setApplyForConditionalOrder(NO);
-
-        caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant2Questions(conditionalOrderQuestions)
-            .build());
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(1L);
-        details.setCreatedDate(LOCAL_DATE_TIME);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
-
-        assertEquals(response.getErrors().size(), 0);
     }
 
     @Test
     public void shouldAllowProgressIfYesIsSelectedOnApplyForConditionalOrderQuestion() {
 
         final CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setApplicationType(JOINT_APPLICATION);
         ConditionalOrderQuestions conditionalOrderQuestions = new ConditionalOrderQuestions();
-        conditionalOrderQuestions.setApplyForConditionalOrder(YES);
+        conditionalOrderQuestions.setApplyForConditionalOrderIfNo(YES);
 
         caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant2Questions(conditionalOrderQuestions)
+            .conditionalOrderApplicant1Questions(conditionalOrderQuestions)
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

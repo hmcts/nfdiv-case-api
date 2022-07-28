@@ -16,21 +16,21 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class ConditionalOrderReviewAoSIfNo implements CcdPageConfiguration {
+public class ConditionalOrderReviewAoSApplicant2IfNo implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
-            .page("ConditionalOrderReviewAoSIfNoApp1", this::midEvent)
-            .showCondition("applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"No\"")
+            .page("ConditionalOrderReviewAoSIfNoApp2", this::midEvent)
+            .showCondition("applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"No\"")
             .complex(CaseData::getConditionalOrder)
-                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
-                    .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrderIfNo)
-                .done()
+            .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
+            .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrderIfNo)
+            .done()
             .label(
-                "ConditionalOrderReviewAoSNoIfNo",
+                "ConditionalOrderReviewAoSNoApp2IfNo",
                 "You must select yes to apply for a conditional order",
-                "coApplicant1ApplyForConditionalOrderIfNo=\"No\""
+                "coApplicant2ApplyForConditionalOrderIfNo=\"No\""
             );
     }
 
@@ -44,7 +44,7 @@ public class ConditionalOrderReviewAoSIfNo implements CcdPageConfiguration {
         List<String> errors = new ArrayList<>();
         ConditionalOrder conditionalOrder = data.getConditionalOrder();
 
-        if (!conditionalOrder.getConditionalOrderApplicant1Questions().getApplyForConditionalOrderIfNo().toBoolean()) {
+        if (!conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrderIfNo().toBoolean()) {
             errors.add("Applicant must select yes to apply for a conditional order");
         }
 
