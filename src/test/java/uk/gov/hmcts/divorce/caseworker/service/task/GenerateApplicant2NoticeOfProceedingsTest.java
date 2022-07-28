@@ -114,6 +114,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock)));
 
         assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
         classMock.close();
     }
 
@@ -144,6 +145,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         verifyInteractions(caseData, templateContent, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
 
         assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
         classMock.close();
     }
 
@@ -180,6 +182,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 caseData.getApplicant2().getLanguagePreference(),
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock)));
         assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
         classMock.close();
     }
 
@@ -211,6 +214,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
             );
         assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
         classMock.close();
     }
 
@@ -233,6 +237,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         verifyInteractions(caseData, templateContent, NFD_NOP_R1_SOLE_APP2_CIT_ONLINE);
 
         assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
         classMock.close();
     }
 
@@ -255,6 +260,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         verifyInteractions(caseData, templateContent, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
 
         assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNull();
         classMock.close();
     }
 
@@ -278,6 +284,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         verifyInteractions(caseData, templateContent, NFD_NOP_JA1_JOINT_APP1APP2_CIT);
 
         assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNull();
         classMock.close();
     }
 

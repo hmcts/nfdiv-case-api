@@ -27,7 +27,7 @@ plugins {
   id 'org.springframework.boot' version '2.7.2'
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'hmcts.ccd.sdk' version '4.0.2'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.274'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.278'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -231,7 +231,7 @@ repositories {
 
 def versions = [
   jackson           : '2.13.3',
-  junit             : '5.8.2',
+  junit             : '5.9.0',
   junitPlatform     : '1.8.2',
   lombok            : '1.18.22',
   springBoot        : springBoot.class.package.implementationVersion
@@ -272,7 +272,7 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.18.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.18.0'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.63'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.22'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.23'
   implementation group: 'org.elasticsearch', name: 'elasticsearch'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.9'

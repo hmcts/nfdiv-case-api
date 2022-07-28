@@ -30,12 +30,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 public class GenerateD10FormTest {
@@ -57,7 +60,8 @@ public class GenerateD10FormTest {
 
     @Test
     void shouldGenerateD10DocumentAndAddToListOfDocumentsGenerated() {
-        final CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
@@ -103,7 +107,8 @@ public class GenerateD10FormTest {
 
     @Test
     void shouldNotGenerateD10DocumentIfSolicitorServiceMethodHasNotBeenSelected() {
-        CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -131,11 +136,26 @@ public class GenerateD10FormTest {
                 .build())
             .build();
 
-        final CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getDocuments().setDocumentsGenerated(singletonList(d10Document));
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final var result = generateD10Form.apply(caseDetails);
+
+        verifyNoInteractions(documentUploadClientApi);
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldNotGenerateD10DocumentIfJointApplication() {
+        CaseData caseData = CaseData.builder().build();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
