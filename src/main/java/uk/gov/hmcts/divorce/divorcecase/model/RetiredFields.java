@@ -131,7 +131,10 @@ public class RetiredFields {
 
         return (data, key, val) -> {
 
-            YesOrNo applicant1ScreenHasMarriageBroken = convertApplicant1ScreenHasMarriageBroken(data.get("applicant1ScreenHasMarriageBroken"));
+            YesOrNo applicant1ScreenHasMarriageBroken = convertApplicant1ScreenHasMarriageBroken(
+                data.get("applicant1ScreenHasMarriageBroken")
+            );
+
             if (applicant1ScreenHasMarriageBroken.toBoolean()) {
 
                 var divorceOrDissolutionValue = data.get("divorceOrDissolution");
