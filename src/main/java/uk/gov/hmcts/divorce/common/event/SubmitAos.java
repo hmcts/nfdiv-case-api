@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolStatementOfTruth;
 import uk.gov.hmcts.divorce.common.event.page.SolicitorDetailsWithStatementOfTruth;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
+import uk.gov.hmcts.divorce.common.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -60,6 +61,9 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private SendAosNotifications sendAosNotifications;
 
     private final List<CcdPageConfiguration> pages = List.of(
         new Applicant2SolStatementOfTruth(),
@@ -115,6 +119,28 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .build();
     }
 
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Submit AoS submitted callback invoked for Case Id: {}", details.getId());
+
+        submitAosService.submitAosNotifications(details);
+
+        final AcknowledgementOfService acknowledgementOfService = details.getData().getAcknowledgementOfService();
+
+        String eventId = DISPUTE_DIVORCE.equals(acknowledgementOfService.getHowToRespondApplication())
+            ? SYSTEM_ISSUE_AOS_DISPUTED
+            : SYSTEM_ISSUE_AOS_UNDISPUTED;
+
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuthorization = authTokenGenerator.generate();
+
+        log.info("Submitting event id {} for case id {}", eventId, details.getId());
+        ccdUpdateService.submitEvent(details, eventId, user, serviceAuthorization);
+
+        return SubmittedCallbackResponse.builder().build();
+    }
+
     private List<String> validateAos(final CaseData caseData) {
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
@@ -158,39 +184,19 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(SUBMIT_AOS)
-            .forStates(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived))
-            .name("Submit AoS")
-            .description("Submit AoS")
-            .showCondition("applicationType=\"soleApplication\"")
-            .showSummary()
-            .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted)
-            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
-            .grantHistoryOnly(
-                CASE_WORKER,
-                LEGAL_ADVISOR,
-                SUPER_USER));
-    }
-
-    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
-                                               final CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("Submit AoS submitted callback invoked for Case Id: {}", details.getId());
-
-        final AcknowledgementOfService acknowledgementOfService = details.getData().getAcknowledgementOfService();
-
-        String eventId = DISPUTE_DIVORCE.equals(acknowledgementOfService.getHowToRespondApplication())
-            ? SYSTEM_ISSUE_AOS_DISPUTED
-            : SYSTEM_ISSUE_AOS_UNDISPUTED;
-
-        final User user = idamService.retrieveSystemUpdateUserDetails();
-        final String serviceAuthorization = authTokenGenerator.generate();
-
-        log.info("Submitting event id {} for case id {}", eventId, details.getId());
-        ccdUpdateService.submitEvent(details, eventId, user, serviceAuthorization);
-
-        return SubmittedCallbackResponse.builder().build();
+                .event(SUBMIT_AOS)
+                .forStates(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived))
+                .name("Submit AoS")
+                .description("Submit AoS")
+                .showCondition("applicationType=\"soleApplication\"")
+                .showSummary()
+                .aboutToStartCallback(this::aboutToStart)
+                .aboutToSubmitCallback(this::aboutToSubmit)
+                .submittedCallback(this::submitted)
+                .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
+                .grantHistoryOnly(
+                        CASE_WORKER,
+                        LEGAL_ADVISOR,
+                        SUPER_USER));
     }
 }

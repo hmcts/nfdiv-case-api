@@ -50,6 +50,7 @@ import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
@@ -90,6 +91,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -263,7 +265,7 @@ public class SubmitAosIT {
     }
 
     @Test
-    public void givenValidCaseDataWithoutDisputeWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
+    public void givenValidCaseDataWithoutDisputeWhenCallbackIsInvokedThenSuccess() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
@@ -291,17 +293,11 @@ public class SubmitAosIT {
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulWithoutDisputeResponse()));
 
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
-
-        verifyNoMoreInteractions(notificationService);
+        verifyNoInteractions(notificationService);
     }
 
     @Test
-    public void givenValidCaseDataWithDisputeWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
+    public void givenValidCaseDataWithDisputeWhenCallbackIsInvokedThenSuccess() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LOCAL_DATE);
         data.getApplication().setIssueDate(LOCAL_DATE);
@@ -329,17 +325,11 @@ public class SubmitAosIT {
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulWithDisputeResponse()));
 
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
-
-        verifyNoMoreInteractions(notificationService);
+        verifyNoInteractions(notificationService);
     }
 
     @Test
-    public void givenValidCaseDataWithDisputeWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondentWhenLangPrefIsWelsh()
+    public void givenValidCaseDataWithDisputeWhenCallbackIsInvokedThenSuccessWhenLangPrefIsWelsh()
         throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LOCAL_DATE);
@@ -371,22 +361,11 @@ public class SubmitAosIT {
         assertThatJson(actualResponse)
             .isEqualTo(jsonDocument.json());
 
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_APPLICANT_2_USER_EMAIL),
-                eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
-                argThat(allOf(hasEntry(PARTNER, "gwraig"))),
-                eq(WELSH)
-            );
-
-        verifyNoMoreInteractions(notificationService);
+        verifyNoInteractions(notificationService);
     }
 
     @Test
-    public void givenValidCaseDataForRespondentRepresentedWhenCallbackIsInvokedThenSendEmailToRespondentSolicitor() throws Exception {
+    public void givenValidCaseDataForRespondentRepresentedWhenCallbackIsInvokedThenSubmitAos() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getApplicant1().setSolicitor(null);
@@ -415,13 +394,7 @@ public class SubmitAosIT {
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulWithRepresentedRespondent()));
 
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR), anyMap(), eq(ENGLISH));
-
-        verifyNoMoreInteractions(notificationService);
+        verifyNoInteractions(notificationService);
     }
 
     @Test
@@ -469,23 +442,134 @@ public class SubmitAosIT {
             .isEqualTo(expectedResponse("classpath:solicitor-submit-aos-disputed-offline-response.json"));
     }
 
-    private ListValue<ScannedDocument> aosScannedDocument() {
-        return ListValue.<ScannedDocument>builder()
-            .value(
-                ScannedDocument
-                    .builder()
-                    .url(
-                        Document
-                            .builder()
-                            .url("http://localhost:8080/4cacfcd1-3588-40c2-94da-c22fb59e1068")
-                            .binaryUrl("http://localhost:8080/4cacfcd1-3588-40c2-94da-c22fb59e1068/binary")
-                            .build()
-                    )
-                    .subtype("aos")
-                    .build())
-            .build();
+    @Test
+    public void givenValidCaseDataWithoutDisputeWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.getApplication().setIssueDate(LOCAL_DATE);
+        data.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
+        data.getApplicant1().setSolicitor(null);
+        data.getApplicant1().setSolicitorRepresented(NO);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.setDueDate(LOCAL_DATE);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                        .contentType(APPLICATION_JSON)
+                        .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                        .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                        .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS, AosDrafted.name())))
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
     }
 
+    @Test
+    public void givenValidCaseDataForRespondentRepresentedWhenCallbackIsInvokedThenSendEmailToRespondentSolicitor() throws Exception {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.getApplication().setIssueDate(LOCAL_DATE);
+        data.getApplicant1().setSolicitor(null);
+        data.getApplicant1().setSolicitorRepresented(NO);
+        data.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
+        data.setApplicant2(applicantRepresentedBySolicitor());
+        data.getApplicant2().setLegalProceedings(NO);
+        data.setDueDate(LOCAL_DATE);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                        .contentType(APPLICATION_JSON)
+                        .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                        .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                        .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS, AosDrafted.name())))
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenValidCaseDataWithDisputeWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondentWhenLangPrefIsWelsh()
+            throws Exception {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.setDueDate(LOCAL_DATE);
+        data.getApplication().setIssueDate(LOCAL_DATE);
+        data.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
+        data.getApplicant1().setSolicitor(null);
+        data.getApplicant1().setSolicitorRepresented(NO);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                        .contentType(APPLICATION_JSON)
+                        .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                        .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS, AosDrafted.name())))
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
+                argThat(allOf(hasEntry(PARTNER, "gwraig"))),
+                eq(WELSH)
+            );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    private ListValue<ScannedDocument> aosScannedDocument() {
+        return ListValue.<ScannedDocument>builder()
+                .value(
+                        ScannedDocument
+                                .builder()
+                                .url(
+                                        Document
+                                                .builder()
+                                                .url("http://localhost:8080/4cacfcd1-3588-40c2-94da-c22fb59e1068")
+                                                .binaryUrl("http://localhost:8080/4cacfcd1-3588-40c2-94da-c22fb59e1068/binary")
+                                                .build()
+                                )
+                                .subtype("aos")
+                                .build())
+                .build();
+    }
     private String expectedCcdAboutToStartCallbackSuccessfulWithoutDisputeResponse() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-citizen-submit-aos-without-dispute.json");
     }
