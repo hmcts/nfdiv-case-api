@@ -16,12 +16,17 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.CivilPartnershipBroken.CIVIL_PARTNERSHIP_BROKEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken.MARRIAGE_BROKEN;
 
 @Data
@@ -126,20 +131,40 @@ public class RetiredFields {
 
         return (data, key, val) -> {
 
-            var applicant1ScreenHasMarriageBrokenKey = data.get("applicant1ScreenHasMarriageBroken");
-            if (applicant1ScreenHasMarriageBrokenKey != null) {
+            YesOrNo applicant1ScreenHasMarriageBroken = convertApplicant1ScreenHasMarriageBroken(data.get("applicant1ScreenHasMarriageBroken"));
+            if (applicant1ScreenHasMarriageBroken.toBoolean()) {
 
-                YesOrNo applicant1ScreenHasMarriageBroken = (YesOrNo)applicant1ScreenHasMarriageBrokenKey;
-                if (applicant1ScreenHasMarriageBroken.toBoolean()) {
+                var divorceOrDissolutionValue = data.get("divorceOrDissolution");
+                if (divorceOrDissolutionValue != null) {
 
-                    DivorceOrDissolution divorceOrDissolution = (DivorceOrDissolution)data.get("divorceOrDissolution");
+                    DivorceOrDissolution divorceOrDissolution = convertDivorceOrDissolution(divorceOrDissolutionValue);
                     if (divorceOrDissolution.isDivorce()) {
-                        data.put("applicant1HasMarriageBroken", MARRIAGE_BROKEN);
+                        Set<MarriageBroken> marriageBroken = new HashSet<>();
+                        marriageBroken.add(MARRIAGE_BROKEN);
+                        data.put("applicant1HasMarriageBroken", marriageBroken);
                     } else {
-                        data.put("applicant1HasCivilPartnershipBroken", CIVIL_PARTNERSHIP_BROKEN);
+                        Set<CivilPartnershipBroken> civilPartnershipBroken = new HashSet<>();
+                        civilPartnershipBroken.add(CIVIL_PARTNERSHIP_BROKEN);
+                        data.put("applicant1HasCivilPartnershipBroken", civilPartnershipBroken);
                     }
                 }
             }
         };
+    }
+
+    private static YesOrNo convertApplicant1ScreenHasMarriageBroken(Object applicant1ScreenHasMarriageBrokenKey) {
+        if (applicant1ScreenHasMarriageBrokenKey.toString().equals(YES.getValue())) {
+            return YES;
+        }
+
+        return NO;
+    }
+
+    private static DivorceOrDissolution convertDivorceOrDissolution(Object divorceOrDissolutionKey) {
+        if (divorceOrDissolutionKey.toString().equals(DIVORCE.getLabel().toLowerCase())) {
+            return DIVORCE;
+        }
+
+        return DISSOLUTION;
     }
 }

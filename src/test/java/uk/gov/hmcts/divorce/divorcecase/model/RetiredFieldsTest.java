@@ -8,14 +8,13 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.CivilPartnershipBroken.CIVIL_PARTNERSHIP_BROKEN;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.MarriageBroken.MARRIAGE_BROKEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 
@@ -92,13 +91,15 @@ class RetiredFieldsTest {
     @Test
     void shouldMigrateApplicant1ScreenHasMarriageBrokenToApplicant1HasMarriageBrokenDivorce() {
         final var data = new HashMap<String, Object>();
-        data.put("applicant1ScreenHasMarriageBroken", YES);
-        data.put("divorceOrDissolution", DIVORCE);
+        data.put("applicant1ScreenHasMarriageBroken", "Yes");
+        data.put("divorceOrDissolution", "divorce");
 
         final var result = RetiredFields.migrate(data);
 
+        Set<MarriageBroken> marriageBroken = new HashSet<>();
+        marriageBroken.add(MARRIAGE_BROKEN);
         assertThat(result).contains(
-            entry("applicant1HasMarriageBroken", MARRIAGE_BROKEN),
+            entry("applicant1HasMarriageBroken", marriageBroken),
             entry("applicant1ScreenHasMarriageBroken", null)
         );
     }
@@ -106,13 +107,15 @@ class RetiredFieldsTest {
     @Test
     void shouldMigrateApplicant1ScreenHasMarriageBrokenToApplicant1HasMarriageBrokenDissolution() {
         final var data = new HashMap<String, Object>();
-        data.put("applicant1ScreenHasMarriageBroken", YES);
-        data.put("divorceOrDissolution", DISSOLUTION);
+        data.put("applicant1ScreenHasMarriageBroken", "Yes");
+        data.put("divorceOrDissolution", "dissolution");
 
         final var result = RetiredFields.migrate(data);
 
+        Set<CivilPartnershipBroken> civilPartnershipBroken = new HashSet<>();
+        civilPartnershipBroken.add(CIVIL_PARTNERSHIP_BROKEN);
         assertThat(result).contains(
-            entry("applicant1HasCivilPartnershipBroken", CIVIL_PARTNERSHIP_BROKEN),
+            entry("applicant1HasCivilPartnershipBroken", civilPartnershipBroken),
             entry("applicant1ScreenHasMarriageBroken", null)
         );
     }
