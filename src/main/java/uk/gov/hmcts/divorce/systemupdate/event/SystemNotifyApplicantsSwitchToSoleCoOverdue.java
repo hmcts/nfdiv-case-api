@@ -34,7 +34,7 @@ public class SystemNotifyApplicantsSwitchToSoleCoOverdue implements CCDConfig<Ca
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
-    public static final String SYSTEM_CONDITIONAL_ORDER_OVERDUE = "system-conditional-order-overdue";
+    public static final String SYSTEM_CONDITIONAL_ORDER_OVERDUE = "system-co-overdue";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
