@@ -32,8 +32,8 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Slf4j
 /**
  * Any joint cases which are in 'ConditionalOrderPending (Awaiting Joint Conditional Order)' state and where the current date is
- * 14 days after the first in time applicant submitted their conditional order but the second in time has not submitted their conditional order,
- * then notify the first in time applicant that they can switch to sole.
+ * 14 days after the first in time applicant submitted their conditional order but the second in time has not submitted
+ * their conditional order, then notify the first in time applicant that they can switch to sole.
  */
 public class SystemNotifyApplicantsApplySwitchToSoleCoOverdueTask implements Runnable {
 
@@ -99,7 +99,7 @@ public class SystemNotifyApplicantsApplySwitchToSoleCoOverdueTask implements Run
 
     private void triggerSwitchToSoleCoOverdueNotificationForEligibleCases(User user, String serviceAuth, CaseDetails caseDetails) {
         try {
-            log.info("Submitting Final Order Overdue Event for Case {}", caseDetails.getId());
+            log.info("Submitting Conditional order Overdue Event for Case {}", caseDetails.getId());
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_CONDITIONAL_ORDER_OVERDUE, user, serviceAuth);
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());

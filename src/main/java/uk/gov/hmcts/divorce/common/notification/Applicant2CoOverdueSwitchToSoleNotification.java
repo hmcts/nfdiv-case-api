@@ -24,7 +24,8 @@ public class Applicant2CoOverdueSwitchToSoleNotification implements ApplicantNot
 
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
-        log.info("Notifying applicant2 solicitor they can apply for switch to sole (Conditional order overdue) for application {} is overdue", id);
+        log.info("Notifying applicant2 solicitor they can apply for switch to sole" +
+            " (Conditional order overdue) for application {} is overdue", id);
 
         // TODO: (Aaron) - Once template has been split on gov notify, set correct template vars.
         Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
