@@ -127,20 +127,16 @@ public class RetiredFields {
         return (data, key, val) -> {
 
             var applicant1ScreenHasMarriageBrokenKey = data.get("applicant1ScreenHasMarriageBroken");
-
             if (applicant1ScreenHasMarriageBrokenKey != null) {
+
                 YesOrNo applicant1ScreenHasMarriageBroken = (YesOrNo)applicant1ScreenHasMarriageBrokenKey;
-
                 if (applicant1ScreenHasMarriageBroken.toBoolean()) {
-                    var divorceOrDissolutionKey = data.get("divorceOrDissolution");
 
-                    if (divorceOrDissolutionKey != null) {
-                        DivorceOrDissolution divorceOrDissolution = (DivorceOrDissolution)divorceOrDissolutionKey;
-                        if (divorceOrDissolution.isDivorce()) {
-                            data.put("applicant1HasMarriageBroken", MARRIAGE_BROKEN);
-                        } else {
-                            data.put("applicant1HasCivilPartnershipBroken", CIVIL_PARTNERSHIP_BROKEN);
-                        }
+                    DivorceOrDissolution divorceOrDissolution = (DivorceOrDissolution)data.get("divorceOrDissolution");
+                    if (divorceOrDissolution.isDivorce()) {
+                        data.put("applicant1HasMarriageBroken", MARRIAGE_BROKEN);
+                    } else {
+                        data.put("applicant1HasCivilPartnershipBroken", CIVIL_PARTNERSHIP_BROKEN);
                     }
                 }
             }
