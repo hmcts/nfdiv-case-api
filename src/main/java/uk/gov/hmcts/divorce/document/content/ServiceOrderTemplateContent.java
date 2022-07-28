@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
@@ -98,9 +99,7 @@ public class ServiceOrderTemplateContent {
         }
 
         if (alternativeService.isApplicationGranted()) {
-            if (caseData.getDueDate() != null) {
-                templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
-            }
+            templateContent.put(DUE_DATE, caseData.getDueDate() != null ? caseData.getDueDate().format(DATE_TIME_FORMATTER) : EMPTY);
         } else {
             templateContent.put(REFUSAL_REASON, alternativeService.getServiceApplicationRefusalReason());
             templateContent.put(PARTNER,
