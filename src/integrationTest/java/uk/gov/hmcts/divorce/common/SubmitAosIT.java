@@ -360,8 +360,7 @@ public class SubmitAosIT {
             .getResponse()
             .getContentAsString();
 
-        DocumentContext jsonDocument = JsonPath.parse(expectedCcdAboutToStartCallbackSuccessfulWithDisputeResponse());
-        jsonDocument.set("data.applicant2LanguagePreferenceWelsh", "Yes");
+        DocumentContext jsonDocument = JsonPath.parse(expectedCcdAboutToStartCallbackSuccessfulWithDisputeResponseWelsh());
 
         assertThatJson(actualResponse)
             .isEqualTo(jsonDocument.json());
@@ -555,6 +554,10 @@ public class SubmitAosIT {
 
     private String expectedCcdAboutToStartCallbackSuccessfulWithDisputeResponse() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-citizen-submit-aos-with-dispute.json");
+    }
+
+    private String expectedCcdAboutToStartCallbackSuccessfulWithDisputeResponseWelsh() throws IOException {
+        return expectedResponse("classpath:wiremock/responses/about-to-submit-citizen-submit-aos-with-dispute-welsh.json");
     }
 
     private String expectedCcdAboutToStartCallbackSuccessfulWithRepresentedRespondent() throws IOException {
