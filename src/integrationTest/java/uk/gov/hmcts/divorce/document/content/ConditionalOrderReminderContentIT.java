@@ -28,7 +28,6 @@ import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderCont
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_JOINT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -64,7 +63,6 @@ public class ConditionalOrderReminderContentIT {
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(IS_JOINT, !caseData.getApplicationType().isSole());
-        expectedEntries.put(RELATION, "wife");
 
         Map<String, Object> templateContent = conditionalOrderReminderContent.apply(
             caseData,
@@ -96,7 +94,6 @@ public class ConditionalOrderReminderContentIT {
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, TO_END_A_CIVIL_PARTNERSHIP);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, END_THE_CIVIL_PARTNERSHIP);
         expectedEntries.put(IS_JOINT, !caseData.getApplicationType().isSole());
-        expectedEntries.put(RELATION, "civil partner");
 
         Map<String, Object> templateContent = conditionalOrderReminderContent.apply(
             caseData,

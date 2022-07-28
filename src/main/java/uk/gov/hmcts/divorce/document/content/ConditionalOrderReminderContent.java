@@ -1,11 +1,9 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,16 +11,12 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_JOINT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
 public class ConditionalOrderReminderContent {
-
-    @Autowired
-    private CommonContent commonContent;
 
     public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION = "divorceOrEndCivilPartnershipApplication";
     public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP = "divorceOrEndCivilPartnership";
@@ -44,7 +38,6 @@ public class ConditionalOrderReminderContent {
         templateContent.put(APPLICANT_FIRST_NAME, applicant.getFirstName());
         templateContent.put(APPLICANT_LAST_NAME, applicant.getLastName());
         templateContent.put(APPLICANT_ADDRESS, applicant.getAddress());
-        templateContent.put(RELATION, commonContent.getPartner(caseData, partner));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION);

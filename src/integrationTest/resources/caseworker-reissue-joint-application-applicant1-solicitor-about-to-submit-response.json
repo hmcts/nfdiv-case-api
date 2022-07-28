@@ -19,6 +19,7 @@
     "applicant2LastName": "test_last_name",
     "applicant2Email": "applicant2@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
+    "previousReissueOption": "reissueCase",
     "applicant2Address": {
       "AddressLine1": "line 1",
       "PostTown": "town",
@@ -61,7 +62,6 @@
       }
     ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
-    "accessCode": "${json-unit.any-string}",
     "noticeOfProceedingsEmail":"applicant2@test.com",
     "documentsGenerated": [
       {

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -80,6 +81,25 @@ class RetiredFieldsTest {
                     .build()
             ),
             entry("generalApplicationFeeAccountNumber", null)
+        );
+    }
+
+    @Test
+    void shouldMigrateBulkListCaseReferenceToCaseLink() {
+        var value = "1234";
+
+        final var data = new HashMap<String, Object>();
+        data.put("bulkListCaseReference", value);
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("bulkListCaseReferenceLink",
+                CaseLink
+                    .builder()
+                    .caseReference(value)
+                    .build()
+            )
         );
     }
 }

@@ -95,14 +95,6 @@ public class AcknowledgementOfService {
     private YesOrNo statementOfTruth;
 
     @CCD(
-        label = "The respondent has given their \"prayer\".",
-        hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
-            + " and have decided how money and property will be split (\"financial order\").",
-        access = AosAccess.class
-    )
-    private YesOrNo prayerHasBeenGiven;
-
-    @CCD(
         label = "How do you want to respond?",
         access = {AosAccess.class}
     )
@@ -156,7 +148,7 @@ public class AcknowledgementOfService {
         if (applicant.isRepresented()) {
             final OrganisationPolicy<UserRole> organisationPolicy = applicant.getSolicitor().getOrganisationPolicy();
 
-            if (nonNull(organisationPolicy)) {
+            if (nonNull(organisationPolicy) && nonNull(organisationPolicy.getOrganisation())) {
                 noticeOfProceedingsSolicitorFirm = organisationPolicy.getOrganisation().getOrganisationName();
             } else {
                 noticeOfProceedingsSolicitorFirm = applicant.getSolicitor().getFirmName();

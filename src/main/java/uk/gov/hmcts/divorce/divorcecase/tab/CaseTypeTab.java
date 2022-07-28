@@ -9,12 +9,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
@@ -88,8 +94,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .showCondition("applicationType=\"soleApplication\" AND "
                 + notShowForState(
-                    Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
-                    AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
+                Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
+                AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
             .field("applicant2Offline", "applicationType=\"NEVER_SHOW\"")
             .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"", "## This is an online AoS response")
             .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"", "## This is an offline AoS response")
@@ -115,7 +121,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .label("LabelApplicant1-PaymentHeading", IS_JOINT, "### The applicant")
-            .field("applicant1HWFReferenceNumber")
+            .field("applicant2HWFNeedHelp", NEVER_SHOW)
+            .field("applicant1HWFReferenceNumber", "applicationType=\"soleApplication\" OR applicant2HWFReferenceNumber=\"*\"")
             .label("LabelApplicant2-PaymentHeading", IS_JOINT_AND_HWF_ENTERED, "### ${labelContentTheApplicant2UC}")
             .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED)
             .field("newPaperCase", "applicationType=\"NEVER_SHOW\"")
@@ -291,7 +298,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("conditionalOrder", "Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, SUPER_USER)
-            .showCondition("coApplicant1SubmittedDate=\"*\" OR coApplicant2SubmittedDate=\"*\"")
+            .showCondition("coApplicant1SubmittedDate=\"*\" OR coApplicant2SubmittedDate=\"*\" OR "
+                + showForState(ConditionalOrderDrafted, ConditionalOrderPending)
+            )
             .label("labelConditionalOrderDetails-Applicant1",
                 "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
                 "### Applicant 1")
@@ -324,7 +333,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildOutcomeOfConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("outcomeOfConditionalOrder", "Outcome of Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, SUPER_USER)
-            .showCondition("coGranted=\"*\"")
+            .showCondition("coGranted=\"*\" OR "
+                + showForState(
+                    AwaitingAdminClarification,
+                    AwaitingClarification,
+                    AwaitingAmendedApplication,
+                    ClarificationSubmitted)
+            )
             .label("labelLegalAdvisorDecision", null, "## Legal advisor decision")
             .field("coDecisionDate")
             .field("coGranted")
@@ -335,8 +350,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "coGranted=\"*\" AND coClarificationResponsesSubmitted=\"*\"",
                 "## Clarification Responses")
             .field("coClarificationResponsesSubmitted")
+            .field("coCannotUploadClarificationDocuments")
             .label("labelCoPronouncementDetails", null, "## Pronouncement Details")
-            .field("bulkListCaseReference")
+            .field("bulkListCaseReferenceLink")
             .field("coCourt")
             .field("coDateAndTimeOfHearing")
             .field("coPronouncementJudge")
