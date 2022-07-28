@@ -41,8 +41,8 @@ public class SystemNotifyApplicantsSwitchToSoleCoOverdue implements CCDConfig<Ca
         configBuilder
             .event(SYSTEM_CONDITIONAL_ORDER_OVERDUE)
             .forState(ConditionalOrderPending)
-            .name("Notify applicant CO overdue - switch to sole")
-            .description("Notify Applicant that CO is overdue and they can switch to sole")
+            .name("Notify applicant CO overdue")
+            .description("System notify Applicant that CO is overdue and they can switch to sole")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR);
     }
