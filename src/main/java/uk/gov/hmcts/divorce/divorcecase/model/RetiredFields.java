@@ -16,7 +16,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -142,13 +141,9 @@ public class RetiredFields {
 
                     DivorceOrDissolution divorceOrDissolution = convertDivorceOrDissolution(divorceOrDissolutionValue);
                     if (divorceOrDissolution.isDivorce()) {
-                        Set<MarriageBroken> marriageBroken = new HashSet<>();
-                        marriageBroken.add(MARRIAGE_BROKEN);
-                        data.put("applicant1HasMarriageBroken", marriageBroken);
+                        data.put("applicant1HasMarriageBroken", Set.of(MARRIAGE_BROKEN));
                     } else {
-                        Set<CivilPartnershipBroken> civilPartnershipBroken = new HashSet<>();
-                        civilPartnershipBroken.add(CIVIL_PARTNERSHIP_BROKEN);
-                        data.put("applicant1HasCivilPartnershipBroken", civilPartnershipBroken);
+                        data.put("applicant1HasCivilPartnershipBroken", Set.of(CIVIL_PARTNERSHIP_BROKEN));
                     }
                 }
             }

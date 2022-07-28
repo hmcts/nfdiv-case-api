@@ -96,10 +96,8 @@ class RetiredFieldsTest {
 
         final var result = RetiredFields.migrate(data);
 
-        Set<MarriageBroken> marriageBroken = new HashSet<>();
-        marriageBroken.add(MARRIAGE_BROKEN);
         assertThat(result).contains(
-            entry("applicant1HasMarriageBroken", marriageBroken),
+            entry("applicant1HasMarriageBroken", Set.of(MARRIAGE_BROKEN)),
             entry("applicant1ScreenHasMarriageBroken", null)
         );
     }
@@ -112,10 +110,8 @@ class RetiredFieldsTest {
 
         final var result = RetiredFields.migrate(data);
 
-        Set<CivilPartnershipBroken> civilPartnershipBroken = new HashSet<>();
-        civilPartnershipBroken.add(CIVIL_PARTNERSHIP_BROKEN);
         assertThat(result).contains(
-            entry("applicant1HasCivilPartnershipBroken", civilPartnershipBroken),
+            entry("applicant1HasCivilPartnershipBroken", Set.of(CIVIL_PARTNERSHIP_BROKEN)),
             entry("applicant1ScreenHasMarriageBroken", null)
         );
     }
