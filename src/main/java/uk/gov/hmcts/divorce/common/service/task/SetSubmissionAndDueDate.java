@@ -30,7 +30,7 @@ public class SetSubmissionAndDueDate implements CaseTask {
 
         final CaseData caseData = caseDetails.getData();
 
-        if (caseDetails.getState().equals(Holding)) {
+        if (caseDetails.getState().equals(Holding) || caseData.getApplication().getWelshPreviousState() == Holding) {
             final LocalDate issueDate = caseData.getApplication().getIssueDate();
             caseData.setDueDate(holdingPeriodService.getDueDateFor(issueDate));
 
