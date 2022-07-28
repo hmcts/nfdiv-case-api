@@ -62,9 +62,6 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private SendAosNotifications sendAosNotifications;
-
     private final List<CcdPageConfiguration> pages = List.of(
         new Applicant2SolStatementOfTruth(),
         new SolicitorDetailsWithStatementOfTruth()
