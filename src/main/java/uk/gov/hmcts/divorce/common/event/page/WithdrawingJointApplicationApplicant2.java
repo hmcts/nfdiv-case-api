@@ -33,10 +33,10 @@ public class WithdrawingJointApplicationApplicant2 implements CcdPageConfigurati
                     "  <div>" +
                     "    <p>If you want to progress the application but you do not think the other party will confirm the joint application for a conditional order, then you can change to a sole application. This means the other party will become the respondent.</p>" +
                     "    <p>You should still continue to draft and submit a joint conditional order application. If the other party does not confirm the application then you will be able to change to a sole application online.</p>" +
-                    "    <p>If you want to apply for a conditional order as a sole applicant now, then you need to download and fill out a paper D84 form. Details of where to post it are on the form. Your application will be lodged as soon as the form is received by the court but it could take up to 3 weeks to process the application.</p>" +
+                    "    <p>If you want to apply for a conditional order as a sole applicant now, then you need to <a href=\"https://www.gov.uk/government/publications/form-d84-application-for-a-decree-nisi-conditional-order-or-judicial-separation-decreeorder\" target=\"_blank\" rel=\"noopener noreferrer\">download and fill out a paper D84 form</a>. Details of where to post it are on the form. Your application will be lodged as soon as the form is received by the court but it could take up to 3 weeks to process the application.</p>" +
                     "  </div>" +
                     "</details>" +
-                    "<br>", "coApplicant2ConfirmInformationStillCorrect!=\"*\"")
+                    "<br>", "coApplicant1ConfirmInformationStillCorrect!=\"*\"")
             .label("secondInTimeApp2",
                 "<details>" +
                     "  <summary>" +

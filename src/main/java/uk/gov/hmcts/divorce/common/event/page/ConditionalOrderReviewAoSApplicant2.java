@@ -18,17 +18,46 @@ import java.util.List;
 @Component
 public class ConditionalOrderReviewAoSApplicant2 implements CcdPageConfiguration {
 
+    private static final String NEVER_SHOW = "coApplicant2ConfirmInformationStillCorrect=\"NEVER_SHOW\"";
+
     @Override
     public void addTo(PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("ConditionalOrderReviewAoSApplicant2")
+            .page("ConditionalOrderReviewAoSApplicant2", this::midEvent)
             .pageLabel("Review Acknowledgement of Service - Draft Conditional Order Application")
+            .readonlyNoSummary(CaseData::getApplicationType, NEVER_SHOW)
             .complex(CaseData::getConditionalOrder)
                 .readonly(ConditionalOrder::getRespondentAnswersLink)
                 .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
                     .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
                 .done()
+            .label(
+                "ConditionalOrderReviewAoSNo",
+                "You must select yes to apply for a conditional order",
+                "coApplicant2ApplyForConditionalOrder=\"No\" AND applicationType=\"soleApplication\""
+            )
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        CaseDetails<CaseData, State> details,
+        CaseDetails<CaseData, State> detailsBefore
+    ) {
+        log.info("Mid-event callback triggered for ConditionalOrderReviewAoSApplicant2");
+
+        CaseData data = details.getData();
+        List<String> errors = new ArrayList<>();
+        ConditionalOrder conditionalOrder = data.getConditionalOrder();
+
+        if (data.getApplicationType().isSole()
+            && !conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrder().toBoolean()) {
+
+            errors.add("Applicant must select yes to apply for a conditional order");
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .errors(errors)
+            .build();
     }
 }

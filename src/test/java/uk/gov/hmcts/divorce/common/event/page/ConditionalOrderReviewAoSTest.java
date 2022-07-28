@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -20,11 +19,11 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class ConditionalOrderReviewAoSApplicant2Test {
+public class ConditionalOrderReviewAoSTest {
 
-    private final ConditionalOrderReviewAoSApplicant2 page = new ConditionalOrderReviewAoSApplicant2();
+    private final ConditionalOrderReviewAoS page = new ConditionalOrderReviewAoS();
 
-    private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP2 = "Applicant must select yes to apply for a conditional order";
+    private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1 = "Applicant must select yes to apply for a conditional order";
 
     @Test
     public void shouldPreventProgressIfNoIsSelectedForSoleApplicationOnApplyForConditionalOrderQuestion() {
@@ -35,7 +34,7 @@ public class ConditionalOrderReviewAoSApplicant2Test {
         conditionalOrderQuestions.setApplyForConditionalOrder(NO);
 
         caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant2Questions(conditionalOrderQuestions)
+            .conditionalOrderApplicant1Questions(conditionalOrderQuestions)
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -48,7 +47,7 @@ public class ConditionalOrderReviewAoSApplicant2Test {
         assertEquals(response.getErrors().size(), 1);
         assertEquals(
             response.getErrors().get(0),
-            APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP2
+            APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1
         );
     }
 
@@ -61,7 +60,7 @@ public class ConditionalOrderReviewAoSApplicant2Test {
         conditionalOrderQuestions.setApplyForConditionalOrder(NO);
 
         caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant2Questions(conditionalOrderQuestions)
+            .conditionalOrderApplicant1Questions(conditionalOrderQuestions)
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -83,7 +82,7 @@ public class ConditionalOrderReviewAoSApplicant2Test {
         conditionalOrderQuestions.setApplyForConditionalOrder(YES);
 
         caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant2Questions(conditionalOrderQuestions)
+            .conditionalOrderApplicant1Questions(conditionalOrderQuestions)
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
