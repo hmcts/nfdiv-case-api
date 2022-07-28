@@ -30,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -72,7 +73,7 @@ public class SystemPronounceCaseTest {
     }
 
     @Test
-    void shouldSendNotificationAndGenerateConditionalOrderGrantedDoc() {
+    void shouldGenerateConditionalOrderGrantedDoc() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .id(1L)
@@ -82,9 +83,22 @@ public class SystemPronounceCaseTest {
 
         underTest.aboutToSubmit(details, details);
 
-        verify(notificationDispatcher).send(notification, caseData, details.getId());
-
         verify(generateConditionalOrderPronouncedDocument).apply(details);
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldSendNotification() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .id(1L)
+            .data(caseData)
+            .build();
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
+
+        underTest.submitted(details, details);
+
+        verify(notificationDispatcher).send(notification, caseData, details.getId());
     }
 
     @Test
@@ -101,12 +115,14 @@ public class SystemPronounceCaseTest {
             .when(notificationDispatcher)
             .send(notification, caseData, details.getId());
 
-        underTest.aboutToSubmit(details, details);
+        underTest.submitted(details, details);
+
+        verify(logger)
+            .info("SystemPronounceCase submitted callback invoked for case id: {}", 1L);
 
         verify(logger)
             .error("Notification failed with message: {}", "Message", notificationTemplateException);
-        verify(logger)
-            .info("Conditional order pronounced for Case({})", 1L);
+
         verifyNoMoreInteractions(logger);
     }
 
@@ -128,9 +144,9 @@ public class SystemPronounceCaseTest {
 
         underTest.aboutToSubmit(details, details);
 
-        verify(notificationDispatcher).send(notification, caseData, details.getId());
         verify(generateConditionalOrderPronouncedDocument).getConditionalOrderGrantedDoc(caseData);
         verifyNoMoreInteractions(generateConditionalOrderPronouncedDocument);
+        verifyNoInteractions(notificationDispatcher);
     }
 
     @Test
@@ -159,9 +175,9 @@ public class SystemPronounceCaseTest {
 
         underTest.aboutToSubmit(detailsNew, detailsOld);
 
-        verify(notificationDispatcher).send(notification, caseDataNew, detailsOld.getId());
         verify(generateConditionalOrderPronouncedDocument).getConditionalOrderGrantedDoc(caseDataNew);
         verify(generateConditionalOrderPronouncedDocument).removeExistingAndGenerateNewConditionalOrderGrantedDoc(detailsNew);
+        verifyNoInteractions(notificationDispatcher);
     }
 
     private void setConditionalOrder(final CaseData caseData) {
