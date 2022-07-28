@@ -84,7 +84,7 @@ class CitizenResendInviteTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenResendInvite.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).containsExactly("Not possible to update email address");
+        assertThat(response.getErrors()).containsExactly("Not possible to update applicant 2 invite email address");
     }
 
     @Test

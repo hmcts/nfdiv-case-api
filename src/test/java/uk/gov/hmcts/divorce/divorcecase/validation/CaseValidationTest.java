@@ -387,7 +387,7 @@ public class CaseValidationTest {
 
         List<String> errors = validateCitizenResendInvite(caseDetails);
         assertThat(errors).hasSize(1);
-        assertThat(errors).containsExactly("Not possible to update email address");
+        assertThat(errors).containsExactly("Not possible to update applicant 2 invite email address");
     }
 
     @Test
@@ -403,7 +403,7 @@ public class CaseValidationTest {
 
         List<String> errors = validateCitizenResendInvite(caseDetails);
         assertThat(errors).hasSize(1);
-        assertThat(errors).containsExactly("Not possible to update email address");
+        assertThat(errors).containsExactly("Not possible to update applicant 2 invite email address");
     }
 
     @Test
@@ -419,7 +419,7 @@ public class CaseValidationTest {
 
         List<String> errors = validateCitizenResendInvite(caseDetails);
         assertThat(errors).hasSize(1);
-        assertThat(errors).containsExactly("Not possible to update email address");
+        assertThat(errors).containsExactly("Not possible to update applicant 2 invite email address");
     }
 
     private BulkActionCaseData bulkActionCaseData() {

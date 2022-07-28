@@ -20,5 +20,5 @@
     "applicant1FinancialOrder": "No",
     "applicant2ScreenHasMarriageBroken": "No"
   },
-  "errors": ["Not possible to update email address"]
+  "errors": ["Not possible to update applicant 2 invite email address"]
 }

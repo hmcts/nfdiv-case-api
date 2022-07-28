@@ -166,7 +166,7 @@ public final class ValidationUtil {
             && data.getApplicationType() == ApplicationType.JOINT_APPLICATION;
         return isApplicant2EmailUpdatePossible
             ? emptyList()
-            : singletonList("Not possible to update email address");
+            : singletonList("Not possible to update applicant 2 invite email address");
     }
 
     @SafeVarargs
