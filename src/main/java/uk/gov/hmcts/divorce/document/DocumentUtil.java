@@ -63,6 +63,15 @@ public final class DocumentUtil {
             .anyMatch(document -> documentType.equals(document.getDocumentType()));
     }
 
+    public static List<Letter> getLettersBasedOnContactPrivacy(final CaseData caseData, final DocumentType documentType) {
+        if (isConfidential(caseData, documentType)) {
+            return lettersWithConfidentialDocumentType(caseData.getDocuments().getConfidentialDocumentsGenerated(),
+                getConfidentialDocumentType(documentType));
+        } else {
+            return lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), documentType);
+        }
+    }
+
     public static List<Letter> lettersWithDocumentType(final List<ListValue<DivorceDocument>> documents,
                                                        final DocumentType documentType) {
 
@@ -104,33 +113,6 @@ public final class DocumentUtil {
             .collect(toList());
     }
 
-    public static boolean isApplicableForConfidentiality(final DocumentType documentType, final Boolean isApplicant1) {
-        List<DocumentType> documentsForApplicant1 = Lists.newArrayList(NOTICE_OF_PROCEEDINGS_APP_1);
-
-        List<DocumentType> documentsForApplicant2 = Lists.newArrayList(NOTICE_OF_PROCEEDINGS_APP_2);
-
-        List<DocumentType> documentsForBothApplicants = Lists.newArrayList(
-            NOTICE_OF_PROCEEDINGS_APP_1,
-            NOTICE_OF_PROCEEDINGS_APP_2,
-            GENERAL_LETTER
-        );
-
-        return isApplicant1 == null ? documentsForBothApplicants.contains(documentType)
-            : isApplicant1 ? documentsForApplicant1.contains(documentType) : documentsForApplicant2.contains(documentType);
-    }
-
-    public static boolean isApplicableForConfidentiality(final ConfidentialDocumentsReceived documentType, final Boolean isApplicant1) {
-        List<ConfidentialDocumentsReceived> documentsForApplicant1 = Lists.newArrayList(
-            ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1
-        );
-
-        List<ConfidentialDocumentsReceived> documentsForApplicant2 = Lists.newArrayList(
-            ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2
-        );
-
-        return isApplicant1 ? documentsForApplicant1.contains(documentType) : documentsForApplicant2.contains(documentType);
-    }
-
     public static boolean isConfidential(final CaseData caseData, final DocumentType documentType) {
         if (NOTICE_OF_PROCEEDINGS_APP_1.equals(documentType)
             || GENERAL_LETTER.equals(documentType) && APPLICANT.equals(caseData.getGeneralLetter().getGeneralLetterParties())) {
@@ -143,9 +125,20 @@ public final class DocumentUtil {
         }
     }
 
+    public static boolean isDocumentApplicableForConfidentiality(final DocumentType documentType, final boolean isApplicant1) {
+        List<DocumentType> documentsForApplicant1 = Lists.newArrayList(NOTICE_OF_PROCEEDINGS_APP_1, GENERAL_LETTER);
+
+        List<DocumentType> documentsForApplicant2 = Lists.newArrayList(NOTICE_OF_PROCEEDINGS_APP_2, GENERAL_LETTER);
+
+        return isApplicant1 ? documentsForApplicant1.contains(documentType) : documentsForApplicant2.contains(documentType);
+    }
+
     public static ConfidentialDocumentsReceived getConfidentialDocumentType(final DocumentType documentType) {
-        return NOTICE_OF_PROCEEDINGS_APP_1.equals(documentType)
-            ? ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1
-            : ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2;
+        return switch (documentType) {
+            case NOTICE_OF_PROCEEDINGS_APP_1 -> ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1;
+            case NOTICE_OF_PROCEEDINGS_APP_2 -> ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2;
+            case GENERAL_LETTER -> ConfidentialDocumentsReceived.GENERAL_LETTER;
+            default -> ConfidentialDocumentsReceived.OTHER;
+        };
     }
 }
