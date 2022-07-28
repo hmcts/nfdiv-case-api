@@ -570,6 +570,7 @@ public class SubmitAosIT {
                                 .build())
                 .build();
     }
+
     private String expectedCcdAboutToStartCallbackSuccessfulWithoutDisputeResponse() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-citizen-submit-aos-without-dispute.json");
     }
