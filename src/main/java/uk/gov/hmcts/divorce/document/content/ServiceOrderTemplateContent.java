@@ -91,14 +91,17 @@ public class ServiceOrderTemplateContent {
         templateContent.put(SERVICE_APPLICATION_RECEIVED_DATE,
             alternativeService.getReceivedServiceApplicationDate().format(DATE_TIME_FORMATTER));
         templateContent.put(IS_SERVICE_ORDER_TYPE_DEEMED, DEEMED.equals(alternativeService.getAlternativeServiceType()) ? YES : NO);
-        templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
         if (serviceApplicationDecisionDate != null) {
             templateContent.put(SERVICE_APPLICATION_DECISION_DATE,
                 serviceApplicationDecisionDate.format(DATE_TIME_FORMATTER));
         }
 
-        if (NO.equals(alternativeService.getServiceApplicationGranted())) {
+        if (alternativeService.isApplicationGranted()) {
+            if (caseData.getDueDate() != null) {
+                templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+            }
+        } else {
             templateContent.put(REFUSAL_REASON, alternativeService.getServiceApplicationRefusalReason());
             templateContent.put(PARTNER,
                 commonContent.getPartner(caseData, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference()));
