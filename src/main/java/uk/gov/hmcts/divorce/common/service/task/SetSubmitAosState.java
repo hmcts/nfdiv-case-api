@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -18,6 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOr
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 
 @Component
 @Slf4j
@@ -25,6 +27,8 @@ public class SetSubmitAosState implements CaseTask {
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
+
+        CaseData caseData = caseDetails.getData();
 
         List<State> applicableStates = Arrays.stream(
                 ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived, AwaitingService))
@@ -35,6 +39,13 @@ public class SetSubmitAosState implements CaseTask {
             log.info("Setting submit AoS state to Holding for CaseID: {}", caseDetails.getId());
         } else {
             log.info("State not changed for AOS submission task for CaseID: {}", caseDetails.getId());
+        }
+
+        if (caseData.getApplicant2().getLanguagePreferenceWelsh() == YesOrNo.YES) {
+            caseData.getApplication().setWelshPreviousState(caseDetails.getState());
+            caseDetails.setState(WelshTranslationReview);
+            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                caseData.getApplication().getWelshPreviousState(), caseDetails.getId());
         }
 
         return caseDetails;
