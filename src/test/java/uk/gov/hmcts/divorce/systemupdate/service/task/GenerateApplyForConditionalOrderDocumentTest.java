@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,14 +27,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_CAN_APPLY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
-import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
-import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForConditionalOrderDocument.FIRST_NAME;
+import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForConditionalOrderDocument.LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -72,6 +75,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(LAST_NAME, TEST_LAST_NAME);
         templateContent.put(ADDRESS, "line 1\ntown\npostcode");
         templateContent.put(PARTNER, "husband");
+        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, false);
         templateContent.put(IS_DIVORCE, true);
 
@@ -114,6 +118,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(LAST_NAME, TEST_LAST_NAME);
         templateContent.put(ADDRESS, "line 1\ntown\npostcode");
         templateContent.put(PARTNER, "husband");
+        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, true);
         templateContent.put(IS_DIVORCE, true);
 
@@ -156,6 +161,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(LAST_NAME, TEST_LAST_NAME);
         templateContent.put(ADDRESS, "line 1\ntown\npostcode");
         templateContent.put(PARTNER, "civil partner");
+        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, false);
         templateContent.put(IS_DIVORCE, false);
 
