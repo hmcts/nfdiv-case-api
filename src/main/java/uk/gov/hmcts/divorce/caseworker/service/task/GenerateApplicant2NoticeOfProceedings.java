@@ -70,9 +70,8 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final boolean isSoleApplication = caseData.getApplicationType().isSole();
 
-        caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
-
         if (isSoleApplication) {
+            caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
             generateSoleNoticeOfProceedings(caseData, caseId);
         } else {
             generateJointNoticeOfProceedings(caseData, caseId);

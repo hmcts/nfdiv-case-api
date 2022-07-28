@@ -16,7 +16,6 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.isApplicableForConfidentiality;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
@@ -87,7 +86,7 @@ public class CaseDataDocumentService {
                                 final Long caseId,
                                 final String templateId) {
 
-        if (isApplicableForConfidentiality(documentType, null) && isConfidential(caseData, documentType)) {
+        if (isConfidential(caseData, documentType)) {
 
             log.info("Adding confidential document to case data for templateId : {} case id: {}", templateId, caseId);
 
