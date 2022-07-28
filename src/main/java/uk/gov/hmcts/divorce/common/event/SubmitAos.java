@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolStatementOfTruth;
 import uk.gov.hmcts.divorce.common.event.page.SolicitorDetailsWithStatementOfTruth;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
-import uk.gov.hmcts.divorce.common.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
