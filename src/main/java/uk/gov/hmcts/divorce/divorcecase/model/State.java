@@ -345,29 +345,18 @@ public enum State {
     Submitted,
 
     @CCD(
+        label = "Welsh Translation requested",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    WelshTranslationRequested,
+
+    @CCD(
         label = "Welsh Translation review",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
     WelshTranslationReview;
-
-    public static final EnumSet<State> PRE_CONDITIONAL_ORDER_STATES = EnumSet.of(
-        AwaitingHWFDecision,
-        AwaitingPayment,
-        AwaitingDocuments,
-        Submitted,
-        AwaitingAos,
-        AwaitingService,
-        AosOverdue,
-        AosDrafted,
-        AwaitingServicePayment,
-        AwaitingServiceConsideration,
-        AwaitingBailiffReferral,
-        AwaitingBailiffService,
-        IssuedToBailiff,
-        Holding,
-        AwaitingConditionalOrder
-    );
 
     public static final EnumSet<State> POST_SUBMISSION_STATES = EnumSet.complementOf(EnumSet.of(
         Draft,

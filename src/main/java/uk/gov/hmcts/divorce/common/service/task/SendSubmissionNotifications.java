@@ -11,6 +11,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.util.EnumSet;
+
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -35,7 +37,10 @@ public class SendSubmissionNotifications implements CaseTask {
         final Long caseId = caseDetails.getId();
         final State state = caseDetails.getState();
 
-        if (state == Submitted || state == AwaitingHWFDecision && isEmpty(caseData.getApplication().getMissingDocumentTypes())) {
+        EnumSet<State> submittedStates = EnumSet.of(Submitted, AwaitingHWFDecision);
+
+        if ((submittedStates.contains(state) || submittedStates.contains(caseData.getApplication().getWelshPreviousState()))
+            && isEmpty(caseData.getApplication().getMissingDocumentTypes())) {
             log.info("Sending application submitted notifications for case : {}", caseId);
             notificationDispatcher.send(applicationSubmittedNotification, caseData, caseId);
         }
