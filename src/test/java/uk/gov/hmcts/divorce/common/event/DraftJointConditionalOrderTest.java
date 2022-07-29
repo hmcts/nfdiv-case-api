@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -58,7 +57,7 @@ class DraftJointConditionalOrderTest {
             .applicationType(JOINT_APPLICATION)
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES)
+                    .statementOfTruth(YES)
                     .build())
                 .build())
             .build();
@@ -70,7 +69,7 @@ class DraftJointConditionalOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = draftJointConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted())
-            .isEqualTo(YesOrNo.YES);
+            .isEqualTo(YES);
     }
 
     @Test
@@ -105,7 +104,7 @@ class DraftJointConditionalOrderTest {
             .applicationType(JOINT_APPLICATION)
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES)
+                    .statementOfTruth(YES)
                     .build())
                 .build())
             .build();
