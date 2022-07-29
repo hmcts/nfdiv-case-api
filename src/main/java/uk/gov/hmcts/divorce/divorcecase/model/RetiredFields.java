@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -159,7 +160,7 @@ public class RetiredFields {
     }
 
     private static DivorceOrDissolution convertDivorceOrDissolution(Object divorceOrDissolutionKey) {
-        if (divorceOrDissolutionKey.toString().equals(DIVORCE.getLabel().toLowerCase())) {
+        if (divorceOrDissolutionKey.toString().equals(DIVORCE.getLabel().toLowerCase(Locale.ENGLISH))) {
             return DIVORCE;
         }
 
