@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -106,7 +106,7 @@ public class CaseworkerRescindConditionalOrderTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRescindConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getConditionalOrder().getRescindedDate()).isEqualTo(getExpectedLocalDateTime());
+        assertThat(response.getData().getConditionalOrder().getRescindedDate()).isEqualTo(getExpectedLocalDate());
         assertThat(response.getData().getConditionalOrder().getConditionalOrderGrantedDocument()).isNull();
         assertThat(response.getData().getDocuments().getDocumentsGenerated()).isEmpty();
     }

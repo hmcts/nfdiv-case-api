@@ -215,8 +215,8 @@ public class ConditionalOrder {
     @CCD(
         label = "Date and time Conditional Order rescinded"
     )
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime rescindedDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate rescindedDate;
 
     @JsonIgnore
     public boolean areClaimsGranted() {
