@@ -144,6 +144,7 @@ ccd:
     clusterName: "es"
     imageTag: "7.17.0"
     replicas: 1
+    nameOverride: ${SERVICE_NAME}-es
     initResources:
       limits:
         cpu: "500m"
