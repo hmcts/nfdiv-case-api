@@ -6,9 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronouncedNotification;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
@@ -29,8 +26,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -137,7 +138,7 @@ class ConditionalOrderPronouncedNotificationTest {
     void shouldSendEmailToApplicant2WithDivorceContentForSoleApplication() {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.setApplicationType(SOLE_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.setConditionalOrder(ConditionalOrder.builder()
             .court(ConditionalOrderCourt.BIRMINGHAM)
@@ -168,7 +169,7 @@ class ConditionalOrderPronouncedNotificationTest {
     void shouldSendEmailToApplicant2WithDissolutionContentForSoleApplication() {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.setApplicationType(SOLE_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.setConditionalOrder(ConditionalOrder.builder()
             .court(ConditionalOrderCourt.BIRMINGHAM)
@@ -202,7 +203,7 @@ class ConditionalOrderPronouncedNotificationTest {
     void shouldSendEmailToApplicant2WithDivorceContentForJointApplication() {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.setApplicationType(JOINT_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.setConditionalOrder(ConditionalOrder.builder()
             .court(ConditionalOrderCourt.BIRMINGHAM)
@@ -233,7 +234,7 @@ class ConditionalOrderPronouncedNotificationTest {
     void shouldSendEmailToApplicant2WithDissolutionContentForJointApplication() {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.setApplicationType(JOINT_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.setConditionalOrder(ConditionalOrder.builder()
             .court(ConditionalOrderCourt.BIRMINGHAM)
@@ -348,7 +349,7 @@ class ConditionalOrderPronouncedNotificationTest {
     @Test
     void shouldSendWelshEmailToApplicant2WithDissolutionContentForJointApplication() {
         CaseData data = caseData();
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.setApplicationType(JOINT_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
@@ -387,7 +388,7 @@ class ConditionalOrderPronouncedNotificationTest {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicant1(applicantRepresentedBySolicitor());
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setIssueDate(now.minusDays(10).toLocalDate());
         data.setConditionalOrder(ConditionalOrder.builder()
             .grantedDate(now.toLocalDate())
@@ -418,7 +419,7 @@ class ConditionalOrderPronouncedNotificationTest {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicant1(applicantRepresentedBySolicitor());
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.setApplicationType(JOINT_APPLICATION);
         data.getApplication().setIssueDate(now.minusDays(10).toLocalDate());
         data.setConditionalOrder(ConditionalOrder.builder()
             .grantedDate(now.toLocalDate())
@@ -447,7 +448,7 @@ class ConditionalOrderPronouncedNotificationTest {
     @Test
     void shouldNotSendEmailToApplicant2SolicitorWhenSoleApplication() {
         CaseData data = caseData();
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.setApplicationType(SOLE_APPLICATION);
 
         notification.sendToApplicant2Solicitor(data, 1234567890123456L);
 
@@ -460,7 +461,7 @@ class ConditionalOrderPronouncedNotificationTest {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicant2(applicantRepresentedBySolicitor());
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.setApplicationType(JOINT_APPLICATION);
         data.getApplication().setIssueDate(now.minusDays(10).toLocalDate());
         data.setConditionalOrder(ConditionalOrder.builder()
             .grantedDate(now.toLocalDate())
@@ -488,29 +489,27 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendLetterToApplicant1IfOffline() {
-        Applicant applicant1 = Applicant.builder().build();
-        CaseData data = CaseData.builder().applicant1(applicant1).build();
+        CaseData data = CaseData.builder().build();
 
         notification.sendToApplicant1Offline(data, 1234567890123456L);
 
         verify(printer).sendLetter(
             eq(data),
             eq(1234567890123456L),
-            eq(applicant1)
+            eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
         );
     }
 
     @Test
     void shouldSendLetterToApplicant21IfOffline() {
-        Applicant applicant2 = Applicant.builder().build();
-        CaseData data = CaseData.builder().applicant2(applicant2).build();
+        CaseData data = CaseData.builder().build();
 
         notification.sendToApplicant2Offline(data, 1234567890123456L);
 
         verify(printer).sendLetter(
             eq(data),
             eq(1234567890123456L),
-            eq(applicant2)
+            eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)
         );
     }
 }

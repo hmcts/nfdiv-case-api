@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -26,7 +27,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -53,12 +55,22 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
 
         if (caseData.getApplicant1().isOffline()) {
             log.info("Generating applicant 1 conditional order pronounced coversheet for case id {} ", caseId);
-            generateConditionalOrderPronouncedCoversheet(caseData, caseId, caseData.getApplicant1());
+            generateConditionalOrderPronouncedCoversheet(
+                caseData,
+                caseId,
+                caseData.getApplicant1(),
+                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1
+            );
         }
 
         if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
             log.info("Generating applicant 2 conditional order pronounced coversheet for case id {} ", caseId);
-            generateConditionalOrderPronouncedCoversheet(caseData, caseId, caseData.getApplicant2());
+            generateConditionalOrderPronouncedCoversheet(
+                caseData,
+                caseId,
+                caseData.getApplicant2(),
+                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2
+            );
         }
 
         return caseDetails;
@@ -66,11 +78,12 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
 
     private void generateConditionalOrderPronouncedCoversheet(final CaseData caseData,
                                                               final Long caseId,
-                                                              final Applicant applicant) {
+                                                              final Applicant applicant,
+                                                              final DocumentType documentType) {
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET,
+            documentType,
             templateVars(caseData, caseId, applicant),
             caseId,
             CO_GRANTED_COVER_LETTER_TEMPLATE_ID,

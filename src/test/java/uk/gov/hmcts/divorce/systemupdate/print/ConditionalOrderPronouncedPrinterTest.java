@@ -31,7 +31,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronouncedPrinter.LETTER_TYPE_CO_PRONOUNCED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -55,7 +56,7 @@ public class ConditionalOrderPronouncedPrinterTest {
 
     private static final DivorceDocument coGrantedCoversheetValue =
         DivorceDocument.builder()
-            .documentType(CONDITIONAL_ORDER_GRANTED_COVERSHEET)
+            .documentType(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
             .build();
 
     @Test
@@ -65,7 +66,7 @@ public class ConditionalOrderPronouncedPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        conditionalOrderPronouncedPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        conditionalOrderPronouncedPrinter.sendLetter(caseData, TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -82,7 +83,7 @@ public class ConditionalOrderPronouncedPrinterTest {
         CaseData caseData = caseData();
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
-        conditionalOrderPronouncedPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        conditionalOrderPronouncedPrinter.sendLetter(caseData, TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
 
         verifyNoInteractions(bulkPrintService);
     }

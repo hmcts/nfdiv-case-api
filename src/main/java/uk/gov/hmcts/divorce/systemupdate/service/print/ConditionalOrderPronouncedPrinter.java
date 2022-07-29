@@ -3,8 +3,8 @@ package uk.gov.hmcts.divorce.systemupdate.service.print;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -17,7 +17,7 @@ import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 
 @Component
 @Slf4j
@@ -28,9 +28,9 @@ public class ConditionalOrderPronouncedPrinter {
     @Autowired
     private BulkPrintService bulkPrintService;
 
-    public void sendLetter(final CaseData caseData, final Long caseId, final Applicant applicant) {
+    public void sendLetter(final CaseData caseData, final Long caseId, final DocumentType coversheetDocumentType) {
 
-        final List<Letter> conditionalOrderPronouncedLetters = conditionalOrderPronouncedLetters(caseData);
+        final List<Letter> conditionalOrderPronouncedLetters = conditionalOrderPronouncedLetters(caseData, coversheetDocumentType);
 
         if (!isEmpty(conditionalOrderPronouncedLetters)) {
             final String caseIdString = caseId.toString();
@@ -41,15 +41,14 @@ public class ConditionalOrderPronouncedPrinter {
         } else {
             log.warn(
                 "Conditional Order Pronounced print has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(CONDITIONAL_ORDER_GRANTED_COVERSHEET, CONDITIONAL_ORDER_GRANTED),
+                List.of(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, CONDITIONAL_ORDER_GRANTED),
                 caseId);
         }
     }
 
-    private List<Letter> conditionalOrderPronouncedLetters(CaseData caseData) {
+    private List<Letter> conditionalOrderPronouncedLetters(CaseData caseData, DocumentType coversheetDocumentType) {
         final List<Letter> coversheetLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET);
+            caseData.getDocuments().getDocumentsGenerated(), coversheetDocumentType);
 
         final List<Letter> conditionalOrderGrantedLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),

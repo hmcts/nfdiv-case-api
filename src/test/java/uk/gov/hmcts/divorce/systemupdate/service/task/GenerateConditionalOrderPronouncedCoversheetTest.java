@@ -38,7 +38,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -96,7 +97,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
             applicant1TemplateVars,
             TEST_CASE_ID,
             CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
@@ -106,7 +107,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
             applicant2TemplateVars,
             TEST_CASE_ID,
             CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
@@ -164,7 +165,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
             applicant1TemplateVars,
             TEST_CASE_ID,
             CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
@@ -174,7 +175,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
             applicant2TemplateVars,
             TEST_CASE_ID,
             CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
@@ -209,7 +210,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET,
+                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
             templateVars,
             TEST_CASE_ID,
             CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
