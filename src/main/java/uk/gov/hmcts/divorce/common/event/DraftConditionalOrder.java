@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddLastAlternativeServiceDocumentLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
+import uk.gov.hmcts.divorce.solicitor.service.task.ProgressDraftConditionalOrderState;
 
 import java.util.List;
 
@@ -46,6 +47,9 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
 
     @Autowired
     private AddMiniApplicationLink addMiniApplicationLink;
+
+    @Autowired
+    private ProgressDraftConditionalOrderState progressDraftConditionalOrderState;
 
     @Autowired
     private AddLastAlternativeServiceDocumentLink addLastAlternativeServiceDocumentLink;
@@ -84,7 +88,9 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(ConditionalOrderDrafted)
+            .state(caseTasks(progressDraftConditionalOrderState)
+                .run(details)
+                .getState())
             .build();
     }
 
