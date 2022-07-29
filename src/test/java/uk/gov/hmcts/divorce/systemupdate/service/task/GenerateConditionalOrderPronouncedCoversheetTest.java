@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET;
@@ -44,6 +45,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet.ADDRESS;
 import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet.NAME;
 import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet.PRONOUNCEMENT_DATE_PLUS_43;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -70,6 +72,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
         Map<String, Object> applicant1TemplateVars = new HashMap<>();
         applicant1TemplateVars.put(NAME, "Bob Smith");
         applicant1TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        applicant1TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
         applicant1TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         applicant1TemplateVars.put(IS_DIVORCE, true);
         applicant1TemplateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
@@ -79,6 +82,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
         Map<String, Object> applicant2TemplateVars = new HashMap<>();
         applicant2TemplateVars.put(NAME, "Julie Smith");
         applicant2TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        applicant2TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         applicant2TemplateVars.put(IS_DIVORCE, true);
         applicant2TemplateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
@@ -136,6 +140,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
         Map<String, Object> applicant1TemplateVars = new HashMap<>();
         applicant1TemplateVars.put(NAME, "App1 Sol");
         applicant1TemplateVars.put(ADDRESS, "5 The Street,\n London,\n W1 1BW");
+        applicant1TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
         applicant1TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         applicant1TemplateVars.put(IS_DIVORCE, true);
         applicant1TemplateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
@@ -145,6 +150,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
         Map<String, Object> applicant2TemplateVars = new HashMap<>();
         applicant2TemplateVars.put(NAME, "App2 Sol");
         applicant2TemplateVars.put(ADDRESS, "221B Baker Street,\n London,\n NW1 6XE\n");
+        applicant2TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         applicant2TemplateVars.put(IS_DIVORCE, true);
         applicant2TemplateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
@@ -189,6 +195,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
         Map<String, Object> templateVars = new HashMap<>();
         templateVars.put(NAME, "Bob Smith");
         templateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        templateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
         templateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(IS_DIVORCE, false);
         templateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);

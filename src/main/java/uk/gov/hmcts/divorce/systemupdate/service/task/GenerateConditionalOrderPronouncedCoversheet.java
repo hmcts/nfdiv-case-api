@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET;
@@ -90,6 +92,7 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
         }
 
         templateContent.put(ADDRESS, applicant.getPostalAddress());
+        templateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
         templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
