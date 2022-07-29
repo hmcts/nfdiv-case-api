@@ -170,7 +170,7 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("coGrantedCoversheet")
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1("Applicant 1 Conditional Order Granted Coversheet"),
 
-    @JsonProperty("coGrantedCoversheet")
+    @JsonProperty("coGrantedCoversheetApp2")
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2("Applicant 2 Conditional Order Granted Coversheet");
 
     private final String label;
