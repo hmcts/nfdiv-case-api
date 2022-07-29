@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,6 +27,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_DEEMED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
@@ -51,18 +53,20 @@ public class ServiceOrderTemplateContentIT {
     public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingDispensedWithServiceGrantedDocument() {
         CaseData caseData = buildCaseData(YES, DISPENSED);
 
-        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021");
+        expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
+        expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
+        expectedEntries.put(DUE_DATE, "20 June 2021");
+        expectedEntries.put("ctscContactDetails", buildCtscContactDetails());
 
-        assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
-            entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
-            entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
-            entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
-            entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, NO),
-            entry("ctscContactDetails", buildCtscContactDetails())
-        );
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
 
     @Test
@@ -70,18 +74,20 @@ public class ServiceOrderTemplateContentIT {
         CaseData caseData = buildCaseData(YES, DEEMED);
         caseData.getAlternativeService().setDeemedServiceDate(LocalDate.of(2021, 6, 20));
 
-        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "20 June 2021");
+        expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
+        expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
+        expectedEntries.put(DUE_DATE, "20 June 2021");
+        expectedEntries.put("ctscContactDetails", buildCtscContactDetails());
 
-        assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
-            entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
-            entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
-            entry(SERVICE_APPLICATION_DECISION_DATE, "20 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
-            entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, YES),
-            entry("ctscContactDetails", buildCtscContactDetails())
-        );
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
 
     @Test
@@ -89,24 +95,25 @@ public class ServiceOrderTemplateContentIT {
         CaseData caseData = buildCaseData(NO, DISPENSED);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
-        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
-
         var ctscContactDetails = buildCtscContactDetails();
         ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
-        assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
-            entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
-            entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
-            entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
-            entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, NO),
-            entry(REFUSAL_REASON, "refusal reasons"),
-            entry(PARTNER, "spouse"),
-            entry(IS_DIVORCE, YES),
-            entry("ctscContactDetails", ctscContactDetails)
-        );
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021");
+        expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
+        expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
+        expectedEntries.put(REFUSAL_REASON, "refusal reasons");
+        expectedEntries.put(PARTNER, "spouse");
+        expectedEntries.put(IS_DIVORCE, YES);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
+        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
 
     @Test
@@ -115,24 +122,25 @@ public class ServiceOrderTemplateContentIT {
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
-        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
-
         var ctscContactDetails = buildCtscContactDetails();
         ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
-        assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
-            entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
-            entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
-            entry(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
-            entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, NO),
-            entry(REFUSAL_REASON, "refusal reasons"),
-            entry(PARTNER, "civil partner"),
-            entry(IS_DIVORCE, NO),
-            entry("ctscContactDetails", ctscContactDetails)
-        );
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021");
+        expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
+        expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
+        expectedEntries.put(REFUSAL_REASON, "refusal reasons");
+        expectedEntries.put(PARTNER, "civil partner");
+        expectedEntries.put(IS_DIVORCE, NO);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
+        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
 
     @Test
@@ -140,24 +148,25 @@ public class ServiceOrderTemplateContentIT {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
-        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
-
         var ctscContactDetails = buildCtscContactDetails();
         ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
-        assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
-            entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
-            entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
-            entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, YES),
-            entry(REFUSAL_REASON, "refusal reasons"),
-            entry(PARTNER, "spouse"),
-            entry(IS_DIVORCE, YES),
-            entry(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS),
-            entry("ctscContactDetails", ctscContactDetails)
-        );
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
+        expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
+        expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
+        expectedEntries.put(REFUSAL_REASON, "refusal reasons");
+        expectedEntries.put(PARTNER, "spouse");
+        expectedEntries.put(IS_DIVORCE, YES);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
+        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
 
     @Test
@@ -166,24 +175,24 @@ public class ServiceOrderTemplateContentIT {
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
-        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
-
         var ctscContactDetails = buildCtscContactDetails();
         ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
-        assertThat(templateContent).contains(
-            entry(CASE_REFERENCE, "1616-5914-0147-3378"),
-            entry(DOCUMENTS_ISSUED_ON, "18 June 2021"),
-            entry(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021"),
-            entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
-            entry(RESPONDENT_FULL_NAME, "resp full name"),
-            entry(IS_SERVICE_ORDER_TYPE_DEEMED, YES),
-            entry(REFUSAL_REASON, "refusal reasons"),
-            entry(PARTNER, "civil partner"),
-            entry(IS_DIVORCE, NO),
-            entry(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP),
-            entry("ctscContactDetails", ctscContactDetails)
-        );
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
+        expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
+        expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
+        expectedEntries.put(REFUSAL_REASON, "refusal reasons");
+        expectedEntries.put(PARTNER, "civil partner");
+        expectedEntries.put(IS_DIVORCE, NO);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
+        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
 
     @Test
