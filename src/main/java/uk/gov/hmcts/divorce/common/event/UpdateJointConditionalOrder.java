@@ -17,6 +17,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -44,7 +45,7 @@ public class UpdateJointConditionalOrder implements CCDConfig<CaseData, State, U
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(UPDATE_JOINT_CONDITIONAL_ORDER)
-            .forStateTransition(ConditionalOrderDrafted, ConditionalOrderDrafted)
+            .forStates(ConditionalOrderDrafted, ConditionalOrderPending)
             .name("Update conditional order")
             .description("Update joint conditional order")
             .endButtonLabel("Save conditional order")

@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
+import uk.gov.hmcts.divorce.solicitor.service.task.ProgressDraftConditionalOrderState;
 
 import java.util.List;
 
@@ -44,6 +45,9 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private AddMiniApplicationLink addMiniApplicationLink;
+
+    @Autowired
+    private ProgressDraftConditionalOrderState progressDraftConditionalOrderState;
 
     private final List<CcdPageConfiguration> pages = asList(
         new ConditionalOrderReviewAoSApplicant2(),
@@ -95,8 +99,10 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(ConditionalOrderDrafted)
+            .data(data)
+            .state(caseTasks(progressDraftConditionalOrderState)
+                .run(details)
+                .getState())
             .build();
     }
 
