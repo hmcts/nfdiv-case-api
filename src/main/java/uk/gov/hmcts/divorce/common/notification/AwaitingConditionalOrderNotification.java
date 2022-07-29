@@ -130,8 +130,10 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long id) {
-        log.info("Notifying applicant 2 offline that they can apply for a conditional order: {}", id);
-        applyForConditionalOrderPrinter.sendLetters(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+        if (!caseData.getApplicationType().isSole()) {
+            log.info("Notifying applicant 2 offline that they can apply for a conditional order: {}", id);
+            applyForConditionalOrderPrinter.sendLetters(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+        }
     }
 
     private Map<String, String> commonSolicitorTemplateVars(CaseData caseData, final Long id, Applicant applicant) {

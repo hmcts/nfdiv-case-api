@@ -287,8 +287,19 @@ class AwaitingConditionalOrderNotificationTest {
     }
 
     @Test
-    void shouldCanApplyForConditionalOrderLetterToApplicant2() {
+    void shouldNotSendLetterToApplicant2IfSoleCase() {
+        final var data = validApplicant2CaseData();
+        data.setApplicationType(SOLE_APPLICATION);
+
+        notification.sendToApplicant2Offline(data, 1234567890123456L);
+
+        verifyNoInteractions(applyForConditionalOrderPrinter);
+    }
+
+    @Test
+    void shouldSendCanApplyForConditionalOrderLetterToApplicant2IfJointCase() {
         CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(getApplicant2(FEMALE));
 
         notification.sendToApplicant2Offline(caseData, 1234567890123456L);
