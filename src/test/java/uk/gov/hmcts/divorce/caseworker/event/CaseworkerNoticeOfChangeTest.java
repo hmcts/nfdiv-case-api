@@ -53,19 +53,6 @@ class CaseworkerNoticeOfChangeTest {
             .contains(CASEWORKER_NOTICE_OF_CHANGE);
     }
 
-    private CaseDetails<CaseData, State> getCaseDetails() {
-        final var details = new CaseDetails<CaseData, State>();
-        final var data = caseData();
-
-        data.setApplicant1(applicantRepresentedBySolicitor());
-        data.setApplicant2(applicantRepresentedBySolicitor());
-        data.getApplicant1().setOffline(NO);
-        data.getApplicant2().setOffline(NO);
-        details.setData(data);
-        details.setId(1L);
-
-        return details;
-    }
 
     @Test
     public void testApp1NowCitizen() {
@@ -203,4 +190,17 @@ class CaseworkerNoticeOfChangeTest {
         ));
     }
 
+    private CaseDetails<CaseData, State> getCaseDetails() {
+        final var details = new CaseDetails<CaseData, State>();
+        final var data = caseData();
+
+        data.setApplicant1(applicantRepresentedBySolicitor());
+        data.setApplicant2(applicantRepresentedBySolicitor());
+        data.getApplicant1().setOffline(NO);
+        data.getApplicant2().setOffline(NO);
+        details.setData(data);
+        details.setId(1L);
+
+        return details;
+    }
 }
