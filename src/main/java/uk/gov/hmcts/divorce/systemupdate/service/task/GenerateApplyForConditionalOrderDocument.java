@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_CAN_APPLY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
@@ -24,11 +26,15 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
 public class GenerateApplyForConditionalOrderDocument {
+
+    public static final String FIRST_NAME = "firstName";
+    public static final String LAST_NAME = "lastName";
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -72,6 +78,7 @@ public class GenerateApplyForConditionalOrderDocument {
         templateContent.put(LAST_NAME, applicant.getLastName());
         templateContent.put(ADDRESS, applicant.getPostalAddress());
         templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
+        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
 
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
         templateContent.put(IS_DIVORCE, caseData.isDivorce());

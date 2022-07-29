@@ -10,10 +10,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.RejectionReason;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,17 +141,7 @@ public class ConditionalOrderRefusalContent {
             return legalAdvisorComments;
 
         } else {
-
-            Set<RejectionReason> refusalRejectionReason = conditionalOrder.getRefusalRejectionReason();
-
-            if (isEmpty(refusalRejectionReason)) {
-                return emptyList();
-            }
-
-            List<RefusalReason> legalAdvisorComments = refusalRejectionReason.stream()
-                .filter(rejectionReason -> !rejectionReason.equals(RejectionReason.OTHER))
-                .map(reason -> new RefusalReason(reason.getLabel()))
-                .collect(Collectors.toList());
+            List<RefusalReason> legalAdvisorComments = new ArrayList<>();
 
             String refusalRejectionAdditionalInfo = conditionalOrder.getRefusalRejectionAdditionalInfo();
             if (isNotEmpty(refusalRejectionAdditionalInfo)) {

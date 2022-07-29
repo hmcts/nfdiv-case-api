@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorRejectedDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
@@ -31,6 +32,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -44,18 +46,23 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(MockitoExtension.class)
 class LegalAdvisorMakeDecisionTest {
 
     @Mock
-    private LegalAdvisorMoreInfoDecisionNotification notification;
+    private LegalAdvisorRejectedDecisionNotification rejectedNotification;
+
+    @Mock
+    private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -200,6 +207,9 @@ class LegalAdvisorMakeDecisionTest {
 
         assertThat(response.getData().getConditionalOrder().getDecisionDate()).isNull();
         assertThat(response.getState()).isEqualTo(AwaitingAmendedApplication);
+
+        verify(notificationDispatcher).send(rejectedNotification, caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
@@ -238,7 +248,8 @@ class LegalAdvisorMakeDecisionTest {
 
         legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(notificationDispatcher).send(notification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(moreInfoDecisionNotification, caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
@@ -277,33 +288,7 @@ class LegalAdvisorMakeDecisionTest {
 
         legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
-        verifyNoInteractions(notification);
-    }
-
-    @Test
-    void shouldResetConditionalOrderRefusalFieldsWhenAboutToStartCallbackIsInvoked() {
-
-        final CaseData caseData = CaseData.builder()
-            .conditionalOrder(
-                ConditionalOrder
-                    .builder()
-                    .granted(NO)
-                    .refusalDecision(MORE_INFO)
-                    .refusalClarificationAdditionalInfo("some info")
-                    .build()
-            )
-            .build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            legalAdvisorMakeDecision.aboutToStart(caseDetails);
-
-        ConditionalOrder actualConditionalOrder = response.getData().getConditionalOrder();
-        assertThat(actualConditionalOrder.getRefusalDecision()).isNull();
-        assertThat(actualConditionalOrder.getRefusalClarificationAdditionalInfo()).isNull();
-        assertThat(actualConditionalOrder.getGranted()).isNull();
+        verifyNoInteractions(moreInfoDecisionNotification);
     }
 
     @Test
@@ -402,5 +387,39 @@ class LegalAdvisorMakeDecisionTest {
             legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getConditionalOrder().getLegalAdvisorDecisions()).hasSize(2);
+    }
+
+    @Test
+    void shouldResetClarificationResponseFieldsUponDecision() {
+        setMockClock(clock);
+
+        final ListValue<String> listValue1 =
+            ListValue.<String>builder()
+                .value("Clarification")
+                .build();
+        final List<ListValue<String>> clarifications = new ArrayList<>();
+        clarifications.add(listValue1);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .clarificationResponses(clarifications)
+                    .cannotUploadClarificationDocuments(NO)
+                    .clarificationUploadDocuments(List.of(documentWithType(CONDITIONAL_ORDER_REFUSAL)))
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.aboutToSubmit(caseDetails, null);
+
+        ConditionalOrder actualConditionalOrder = response.getData().getConditionalOrder();
+        assertThat(actualConditionalOrder.getClarificationResponses()).hasSize(0);
+        assertThat(actualConditionalOrder.getCannotUploadClarificationDocuments()).isNull();
+        assertThat(actualConditionalOrder.getClarificationUploadDocuments()).hasSize(0);
     }
 }

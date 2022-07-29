@@ -32,6 +32,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -123,6 +124,13 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
         if (state == AwaitingLegalAdvisorReferral) {
             generateConditionalOrderAnswersDocument.apply(details);
+        }
+
+        if (state == AwaitingLegalAdvisorReferral && data.isWelshApplication()) {
+            data.getApplication().setWelshPreviousState(state);
+            state = WelshTranslationReview;
+            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                data.getApplication().getWelshPreviousState(), details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

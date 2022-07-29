@@ -33,9 +33,11 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -98,6 +100,20 @@ public class CertificateOfEntitlementContentTest {
     }
 
     @Test
+    void shouldReturnWelshTemplateContentForDivorceIfLanguagePreferenceIsWelsh() {
+
+        final CaseData caseData = getCaseDataFor(JOINT_APPLICATION);
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(contentMap).contains(
+            entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE_CY)
+        );
+    }
+
+    @Test
     void shouldReturnTemplateContentForCivilPartnership() {
 
         final CaseData caseData = getCaseDataFor(JOINT_APPLICATION);
@@ -107,6 +123,20 @@ public class CertificateOfEntitlementContentTest {
 
         assertThat(contentMap).contains(
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP)
+        );
+    }
+
+    @Test
+    void shouldReturnWelshTemplateContentForCivilPartnershipIfLanguagePreferenceIsWelsh() {
+
+        final CaseData caseData = getCaseDataFor(JOINT_APPLICATION);
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(contentMap).contains(
+            entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP_CY)
         );
     }
 

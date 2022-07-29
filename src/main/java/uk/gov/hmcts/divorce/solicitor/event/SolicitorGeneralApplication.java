@@ -91,8 +91,8 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_GENERAL_APPLICATION, details.getId());
         final CaseData data = details.getData();
 
-        if (AwaitingPronouncement == details.getState()
-            && !isEmpty(data.getBulkListCaseReference())) {
+        if (AwaitingPronouncement == details.getState() && !isNull(data.getBulkListCaseReferenceLink())
+            && !isEmpty(data.getBulkListCaseReferenceLink().getCaseReference())) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList(GENERAL_APPLICATION_BULK_CASE_ERROR))

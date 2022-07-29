@@ -15,7 +15,6 @@ import java.time.Clock;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -27,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.RejectionReason.NO_JURISDICTION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent.LEGAL_ADVISOR_COMMENTS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -88,7 +86,7 @@ public class GenerateCoRefusedCoverLetterTest {
             )
             .conditionalOrder(
                 ConditionalOrder.builder()
-                    .refusalRejectionReason(Set.of(NO_JURISDICTION))
+                    .refusalRejectionAdditionalInfo("Court does not have jurisdiction")
                     .build()
             )
             .build();
@@ -145,7 +143,7 @@ public class GenerateCoRefusedCoverLetterTest {
             )
             .conditionalOrder(
                 ConditionalOrder.builder()
-                    .refusalRejectionReason(Set.of(NO_JURISDICTION))
+                    .refusalRejectionAdditionalInfo("Court does not have jurisdiction")
                     .build()
             )
             .build();

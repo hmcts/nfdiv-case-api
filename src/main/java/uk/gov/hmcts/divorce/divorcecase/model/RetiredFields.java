@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
+
 @Data
 @NoArgsConstructor
 public class RetiredFields {
@@ -45,6 +47,14 @@ public class RetiredFields {
     private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
     private ServiceMethod solServiceMethod;
     private DivorceDocument d11Document;
+    private String bulkListCaseReference;
+
+    @CCD(
+        label = "Refusal rejection reasons",
+        typeOverride = MultiSelectList,
+        typeParameterOverride = "RejectionReason"
+    )
+    private Set<RejectionReason> coRefusalRejectionReason;
 
     @JsonIgnore
     private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {
@@ -67,6 +77,12 @@ public class RetiredFields {
                 .builder()
                 .value(DynamicListElement.builder().label(String.valueOf(val)).build())
                 .listItems(List.of(DynamicListElement.builder().label(String.valueOf(val)).build()))
+                .build()
+        ),
+        "bulkListCaseReference", (data, key, val) -> data.put("bulkListCaseReferenceLink",
+            CaseLink
+                .builder()
+                .caseReference(String.valueOf(val))
                 .build()
         )
     );

@@ -121,7 +121,7 @@ class CitizenSwitchedToSoleTest {
 
         verify(notificationDispatcher).send(applicant1SwitchToSoleNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getCaseInvite().accessCode()).isNull();
     }
@@ -144,7 +144,7 @@ class CitizenSwitchedToSoleTest {
         verify(notificationDispatcher).send(applicant2SwitchToSoleNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
         verifyNoInteractions(applicant1SwitchToSoleNotification);
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
     }
 
@@ -177,7 +177,7 @@ class CitizenSwitchedToSoleTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetailsBefore);
 
         assertThat(response.getData().getApplicant2().getAddress()).isNull();
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
     }
 
     @Test
@@ -218,7 +218,7 @@ class CitizenSwitchedToSoleTest {
                     .postCode("POSTCODE")
                     .build()
             );
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
     }
 
     @Test
@@ -294,7 +294,7 @@ class CitizenSwitchedToSoleTest {
         assertThat(response.getData().getApplication().getApplicant2ReminderSent()).isNull();
 
         assertThat(response.getData().getApplicant2().getApplicantPrayer().getPrayerDissolveDivorce()).isNull();
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
     }
 
     @Test
@@ -312,7 +312,7 @@ class CitizenSwitchedToSoleTest {
 
         citizenSwitchedToSole.aboutToSubmit(caseDetails, beforeDetails);
 
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
     }
 
     @Test
@@ -330,7 +330,7 @@ class CitizenSwitchedToSoleTest {
 
         citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetailsBefore);
 
-        verify(ccdAccessService, times(0)).unlinkUserFromApplication(anyLong(), anyString());
+        verify(ccdAccessService, times(0)).unlinkApplicant2FromCase(anyLong(), anyString());
     }
 
     @Test

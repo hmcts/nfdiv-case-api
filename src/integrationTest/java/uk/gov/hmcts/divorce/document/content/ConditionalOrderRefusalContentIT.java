@@ -26,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
-import static uk.gov.hmcts.divorce.divorcecase.model.RejectionReason.NO_JURISDICTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
@@ -141,7 +140,8 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
-        expectedEntries.put("legalAdvisorComments", emptyList());
+        expectedEntries.put("legalAdvisorComments",
+            List.of(new ConditionalOrderRefusalContent.RefusalReason("Rejected comments")));
         expectedEntries.put("isAmendedApplication", true);
         expectedEntries.put("isClarification", false);
         expectedEntries.put("isOffline", false);
@@ -160,7 +160,6 @@ public class ConditionalOrderRefusalContentIT {
         ConditionalOrder conditionalOrder = ConditionalOrder.builder()
             .granted(NO)
             .refusalDecision(REJECT)
-            .refusalRejectionReason(Set.of(NO_JURISDICTION))
             .refusalRejectionAdditionalInfo("Rejected comments")
             .build();
         caseData.setConditionalOrder(conditionalOrder);
@@ -195,8 +194,7 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusalContent.RefusalReason(NO_JURISDICTION.getLabel()),
-                new ConditionalOrderRefusalContent.RefusalReason("Rejected comments")));
+            List.of(new ConditionalOrderRefusalContent.RefusalReason("Rejected comments")));
         expectedEntries.put("isAmendedApplication", true);
         expectedEntries.put("isClarification", false);
         expectedEntries.put("isOffline", false);
