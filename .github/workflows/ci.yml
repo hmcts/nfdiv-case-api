@@ -34,6 +34,6 @@ jobs:
       - name: Cache Docker images.
         uses: ScribeMD/docker-cache@0.2.1
         with:
-          key: docker-${{ runner.os }}-${{ hashFiles('.') }}
+          key: docker-${{ runner.os }}-${{ hashFiles('build.gradle') }}
       - name: Run XUI tests
         run: ./gradlew cftlibTest
