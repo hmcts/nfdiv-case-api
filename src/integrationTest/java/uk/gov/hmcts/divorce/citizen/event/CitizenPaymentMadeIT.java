@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenPaymentMade.CITIZEN_PAYMENT_MADE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -66,7 +66,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrde
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class CitizenAddPaymentIT {
+public class CitizenPaymentMadeIT {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -114,7 +114,7 @@ public class CitizenAddPaymentIT {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -140,7 +140,7 @@ public class CitizenAddPaymentIT {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -168,7 +168,7 @@ public class CitizenAddPaymentIT {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -200,7 +200,7 @@ public class CitizenAddPaymentIT {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -232,7 +232,7 @@ public class CitizenAddPaymentIT {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -269,7 +269,7 @@ public class CitizenAddPaymentIT {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -300,7 +300,7 @@ public class CitizenAddPaymentIT {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -334,7 +334,7 @@ public class CitizenAddPaymentIT {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string("All template params not passed"));
