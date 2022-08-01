@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenResendInvite.CITIZEN_RESEND_INVITE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -31,6 +33,9 @@ class CitizenResendInviteTest {
 
     @Mock
     private ApplicationSentForReviewNotification applicationSentForReviewNotification;
+
+    @Mock
+    private Clock clock;
 
     @InjectMocks
     private CitizenResendInvite citizenResendInvite;
@@ -89,6 +94,8 @@ class CitizenResendInviteTest {
 
     @Test
     public void newDueDateAndCaseInviteSetUponSuccess() {
+        setMockClock(clock);
+
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -104,7 +111,7 @@ class CitizenResendInviteTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenResendInvite.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getDueDate()).isEqualTo(LocalDate.now().plus(2, ChronoUnit.WEEKS));
+        assertThat(response.getData().getDueDate()).isEqualTo(LocalDate.now(clock).plus(2, ChronoUnit.WEEKS));
         assertThat(response.getData().getCaseInvite().accessCode()).isNotEqualTo("ACCESS_CODE");
         assertThat(response.getData().getCaseInvite().accessCode()).isNotBlank();
     }
