@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -30,6 +31,8 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenResendInviteTest {
+
+    public static final int TO_LINK_TO_CASE_BY_OFFSET_DAYS = 14;
 
     @Mock
     private ApplicationSentForReviewNotification applicationSentForReviewNotification;
@@ -94,6 +97,7 @@ class CitizenResendInviteTest {
 
     @Test
     public void newDueDateAndCaseInviteSetUponSuccess() {
+        ReflectionTestUtils.setField(citizenResendInvite, "toLinkToCaseOffsetDays", TO_LINK_TO_CASE_BY_OFFSET_DAYS);
         setMockClock(clock);
 
         final long caseId = 1L;
