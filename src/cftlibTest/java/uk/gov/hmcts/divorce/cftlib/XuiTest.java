@@ -25,7 +25,6 @@ public class XuiTest extends CftlibTest {
             page.navigate("http://localhost:3000");
 
             // page.pause();
-            // page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/example.png")));
 
             page.locator("[placeholder=\"Enter Username\"]").fill("DivCaseWorkerUser@AAT.com");
             page.locator("[placeholder=\"Enter Password\"]").fill("anythingWillWork");
