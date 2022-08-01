@@ -40,7 +40,7 @@ public class Applicant2SwitchToSoleCoNotification implements ApplicantNotificati
     @Override
     public void sendToApplicant2(CaseData caseData, Long id) {
         log.info("Notifying applicant 1 of his CO application for case : {}", id);
-        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(PLUS_21_DUE_DATE,
             caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().getSubmittedDate().plusDays(21).format(DATE_TIME_FORMATTER));
 
