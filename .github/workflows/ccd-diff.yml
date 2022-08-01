@@ -13,7 +13,6 @@ jobs:
         with:
           distribution: corretto
           java-version: 17
-          cache: 'gradle'
 
   buildBranch:
     runs-on: ubuntu-latest
