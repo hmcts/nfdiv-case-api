@@ -1,4 +1,4 @@
-name: Template CI
+name: CI
 
 on:
   pull_request:
@@ -31,5 +31,9 @@ jobs:
           distribution: corretto
           java-version: 17
           cache: 'gradle'
+      - name: Cache Docker images.
+        uses: ScribeMD/docker-cache@0.2.1
+        with:
+          key: docker-${{ runner.os }}-${{ hashFiles(...) }}
       - name: Run XUI tests
         run: ./gradlew cftlibTest
