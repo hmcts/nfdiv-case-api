@@ -189,7 +189,8 @@ public class ConditionalOrder {
     private DivorceDocument certificateOfEntitlementDocument;
 
     @CCD(
-        label = "Refusal Rejection reasons"
+        label = "Refusal Rejection reasons",
+        access = {DefaultAccess.class}
     )
     private Document refusalOrderDocument;
 
