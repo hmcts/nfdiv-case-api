@@ -72,7 +72,7 @@
         "documentType": "application"
       }
     }],
-    "dataVersion": 4,
+    "dataVersion": 5,
     "warnings": []
   },
   "state": "AwaitingAmendedApplication"

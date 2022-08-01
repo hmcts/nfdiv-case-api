@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,13 +32,17 @@ import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalConte
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CP_CASE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,6 +71,8 @@ public class GenerateCoRefusedCoverLetterTest {
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         templateContent.put(FIRST_NAME, "Bob");
         templateContent.put(LAST_NAME, "Smith");
+        templateContent.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, false);
         templateContent.put(LEGAL_ADVISOR_COMMENTS, refusalReasons);
         templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
@@ -77,6 +84,7 @@ public class GenerateCoRefusedCoverLetterTest {
                 Applicant.builder()
                     .firstName("Bob")
                     .lastName("Smith")
+                    .address(APPLICANT_ADDRESS)
                     .build()
             )
             .applicant2(
@@ -123,6 +131,8 @@ public class GenerateCoRefusedCoverLetterTest {
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         templateContent.put(FIRST_NAME, "Bob");
         templateContent.put(LAST_NAME, "Smith");
+        templateContent.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, true);
         templateContent.put(LEGAL_ADVISOR_COMMENTS, refusalReasons);
         templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CP_CASE_EMAIL);
@@ -134,6 +144,7 @@ public class GenerateCoRefusedCoverLetterTest {
                 Applicant.builder()
                     .firstName("Bob")
                     .lastName("Smith")
+                    .address(APPLICANT_ADDRESS)
                     .build()
             )
             .applicant2(
