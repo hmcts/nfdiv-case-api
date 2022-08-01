@@ -44,16 +44,12 @@ public class XuiTest extends CftlibTest {
             assertThat(page).hasURL(compile("http://localhost:3000/cases/case-details/*"));
 
             page.locator("select").selectOption("1: Object");
-
             page.locator("text=Go").click();
-
             page.locator("textarea").click();
-
             page.locator("textarea").fill("Note");
-
             page.locator("text=Continue").click();
-
             page.locator("text=Save and continue").click();
+
             assertThat(page).hasURL(compile("http://localhost:3000/cases/case-details/*"));
         }
     }
