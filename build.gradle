@@ -325,6 +325,7 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.24.0'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
@@ -424,6 +425,12 @@ bootWithCCD {
         }
         environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
     }
+}
+
+cftlibTest {
+  // IDAM simulator will be started on port 5000,
+  // S2S simulator on port 8489
+  authMode = uk.gov.hmcts.rse.AuthMode.Local
 }
 
 tasks.withType(Test).configureEach {

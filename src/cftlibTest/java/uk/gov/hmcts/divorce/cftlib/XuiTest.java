@@ -1,0 +1,63 @@
+package uk.gov.hmcts.divorce.cftlib;
+
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
+
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static java.util.regex.Pattern.compile;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class XuiTest extends CftlibTest {
+
+
+    @Test
+    public void logsIn() {
+        try (Playwright playwright = Playwright.create()) {
+            Browser browser = playwright.chromium().launch();
+//            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(50));
+            Page page = browser.newPage();
+            page.navigate("http://localhost:3000");
+
+//            page.pause();
+//            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/example.png")));
+
+            // Fill [placeholder="Enter Username"]
+            page.locator("[placeholder=\"Enter Username\"]").fill("DivCaseWorkerUser@AAT.com");
+            page.locator("[placeholder=\"Enter Password\"]").fill("anythingWillWork");
+            page.locator("text=Sign in").click();
+            assertThat(page).hasURL("http://localhost:3000/cases");
+            // Click text=Create case
+            page.locator("text=Create case").click();
+            assertThat(page).hasURL("http://localhost:3000/cases/case-filter");
+            // Select NFD
+            page.locator("select[name=\"case-type\"]").selectOption("NFD");
+            // Click text=Start
+            page.locator("text=Start").click();
+            assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/create-paper-case/submit");
+            // Click text=Save and continue
+            page.locator("text=Save and continue").click();
+            assertThat(page).hasURL(compile("http://localhost:3000/cases/case-details/*"));
+            // Select 1: Object
+            page.locator("select").selectOption("1: Object");
+            // Click text=Go
+            page.locator("text=Go").click();
+            // Click textarea
+            page.locator("textarea").click();
+            // Fill textarea
+            page.locator("textarea").fill("Note");
+            // Click text=Continue
+            page.locator("text=Continue").click();
+            // Click text=Save and continue
+            page.locator("text=Save and continue").click();
+            assertThat(page).hasURL(compile("http://localhost:3000/cases/case-details/*"));
+        }
+    }
+
+}
