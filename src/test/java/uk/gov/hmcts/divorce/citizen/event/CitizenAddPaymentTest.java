@@ -25,6 +25,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -36,6 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -180,5 +182,32 @@ public class CitizenAddPaymentTest {
         assertThat(result.getData()).isSameAs(caseData);
         assertThat(result.getState()).isEqualTo(AwaitingPayment);
         verifyNoInteractions(submissionService);
+    }
+
+    @Test
+    void shouldSetStateAsAwaitingDocumentsWhenSoleCaseAndApplicantWishToServeByAlternativeMeans() {
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
+        final CaseData expectedCaseData = CaseData.builder().build();
+
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
+
+        Payment payment = Payment.builder().amount(55000).status(SUCCESS).build();
+        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
+        expectedDetails.setData(expectedCaseData);
+        expectedDetails.setState(AwaitingDocuments);
+
+        when(submissionService.submitApplication(details)).thenReturn(expectedDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> result = citizenAddPayment.aboutToSubmit(details, details);
+
+        assertThat(result.getData()).isSameAs(expectedCaseData);
+        assertThat(result.getState()).isSameAs(AwaitingDocuments);
+        verify(submissionService).submitApplication(details);
     }
 }

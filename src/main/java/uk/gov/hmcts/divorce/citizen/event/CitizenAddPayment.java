@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -15,6 +16,7 @@ import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -84,6 +86,11 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
         }
 
         final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
+
+        if (caseData.getApplicationType().isSole()
+                && YesOrNo.YES.equals(caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay())) {
+            details.setState(AwaitingDocuments);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedCaseDetails.getData())

@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.citizen;
 
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -101,6 +103,26 @@ public class CitizenAddPaymentFT extends FunctionalTestSuite {
     }
 
     @Test
+    public void shouldPassValidationAndGiveSuccessWhenSoleCaseAndApplicantWantToServePapersAlternatively() throws IOException {
+        Map<String, Object> request = caseData(AWAITING_DOCUMENTS_REQUEST);
+        request.put("applicationType", "soleApplication");
+        request.put("applicant1WantsToHavePapersServedAnotherWay", "Yes");
+        request.remove("applicant1CannotUploadSupportingDocument");
+
+        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(AWAITING_DOCUMENTS_RESPONSE));
+        jsonDocument.delete("data.applicant1CannotUploadSupportingDocument");
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(jsonDocument.json());
+    }
+
+    @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValidAndAwaitingDocumentJointApplication() throws IOException {
         Map<String, Object> request = caseData(JOINT_AWAITING_DOCUMENTS_REQUEST);
         Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
@@ -113,5 +135,4 @@ public class CitizenAddPaymentFT extends FunctionalTestSuite {
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(JOINT_AWAITING_DOCUMENTS_RESPONSE)));
     }
-
 }
