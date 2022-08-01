@@ -8,8 +8,12 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.util.Map;
+
+import static uk.gov.hmcts.divorce.notification.CommonContent.PLUS_21_DUE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCHED_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
@@ -36,11 +40,14 @@ public class Applicant2SwitchToSoleCoNotification implements ApplicantNotificati
     @Override
     public void sendToApplicant2(CaseData caseData, Long id) {
         log.info("Notifying applicant 1 of his CO application for case : {}", id);
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+        templateVars.put(PLUS_21_DUE_DATE,
+            caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().getSubmittedDate().plusDays(21).format(DATE_TIME_FORMATTER));
 
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
             CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER,
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+            templateVars,
             caseData.getApplicant2().getLanguagePreference()
         );
     }
