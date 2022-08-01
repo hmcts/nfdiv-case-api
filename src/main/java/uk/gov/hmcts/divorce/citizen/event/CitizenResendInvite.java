@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -14,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
@@ -26,9 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_RESEND_INVITE = "citizen-resend-invite";
-
-    @Value("${applicant_2.to_link_to_case_offset_days}")
-    private int toLinkToCaseOffsetDays;
 
     @Autowired
     private ApplicationSentForReviewNotification applicationSentForReviewNotification;
@@ -63,7 +60,7 @@ public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole>
                     .build();
             }
             log.info("Setting new due date for Case Id: {} (citizen-resend-invite)", details.getId());
-            data.setDueDate(LocalDate.now().plusDays(toLinkToCaseOffsetDays));
+            data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
             log.info("Resetting access code and sending notification to allow joining. Case Id: {}", details.getId());
             data.setCaseInvite(data.getCaseInvite().generateAccessCode());

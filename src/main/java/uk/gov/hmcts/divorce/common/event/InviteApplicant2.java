@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.common.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -15,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
@@ -32,9 +32,6 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 public class InviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String INVITE_APPLICANT_2 = "invite-applicant2";
-
-    @Value("${applicant_2.to_link_to_case_offset_days}")
-    private int toLinkToCaseOffsetDays;
 
     @Autowired
     private ApplicationSentForReviewNotification applicationSentForReviewNotification;
@@ -87,7 +84,7 @@ public class InviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
             data.setCaseInvite(data.getCaseInvite().generateAccessCode());
         }
 
-        data.setDueDate(LocalDate.now().plusDays(toLinkToCaseOffsetDays));
+        data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
         notificationDispatcher.send(applicationSentForReviewNotification, data, details.getId());
 
         if (!data.getApplicant2().isRepresented()) {
