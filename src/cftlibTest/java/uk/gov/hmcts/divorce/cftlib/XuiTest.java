@@ -35,7 +35,6 @@ public class XuiTest extends CftlibTest {
             assertThat(page).hasURL("http://localhost:3000/cases/case-filter");
 
             page.locator("select[name=\"case-type\"]").selectOption("NFD");
-
             page.locator("text=Start").click();
             assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/create-paper-case/submit");
 
