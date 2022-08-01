@@ -45,7 +45,7 @@ public class UpdateConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .name("Update conditional order")
             .description("Update conditional order")
             .endButtonLabel("Save conditional order")
-            .showCondition("coApplicant1IsDrafted=\"Yes\"")
+            .showCondition("coApplicant1IsDrafted=\"Yes\" AND coApplicant1IsSubmitted=\"No\"")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR)
             .grantHistoryOnly(
                 CASE_WORKER,
