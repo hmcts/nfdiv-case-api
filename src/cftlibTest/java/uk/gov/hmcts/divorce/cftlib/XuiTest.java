@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.cftlib;
 
 import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.Test;
@@ -21,12 +20,12 @@ public class XuiTest extends CftlibTest {
     public void logsIn() {
         try (Playwright playwright = Playwright.create()) {
             Browser browser = playwright.chromium().launch();
-//            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(50));
+            // Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(50));
             Page page = browser.newPage();
             page.navigate("http://localhost:3000");
 
-//            page.pause();
-//            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/example.png")));
+            // page.pause();
+            // page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/example.png")));
 
             // Fill [placeholder="Enter Username"]
             page.locator("[placeholder=\"Enter Username\"]").fill("DivCaseWorkerUser@AAT.com");
