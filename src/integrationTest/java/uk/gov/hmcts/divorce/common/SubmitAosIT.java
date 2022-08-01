@@ -270,7 +270,7 @@ public class SubmitAosIT {
     }
 
     @Test
-    public void givenValidCaseDataWithoutDisputeWhenCallbackIsInvokedThenSuccess() throws Exception {
+    public void givenValidCaseDataWithoutDisputeWhenAboutToSubmitCallbackIsInvokedThenSuccess() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
@@ -302,7 +302,7 @@ public class SubmitAosIT {
     }
 
     @Test
-    public void givenValidCaseDataWithDisputeWhenCallbackIsInvokedThenSuccess() throws Exception {
+    public void givenValidCaseDataWithDisputeWhenAboutToSubmitCallbackIsInvokedThenSuccess() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LOCAL_DATE);
         data.getApplication().setIssueDate(LOCAL_DATE);
@@ -334,7 +334,7 @@ public class SubmitAosIT {
     }
 
     @Test
-    public void givenValidCaseDataWithDisputeWhenCallbackIsInvokedThenSuccessWhenLangPrefIsWelsh()
+    public void givenValidCaseDataWithDisputeWhenAboutToSubmitCallbackIsInvokedThenSuccessWhenLangPrefIsWelsh()
         throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LOCAL_DATE);
@@ -369,7 +369,7 @@ public class SubmitAosIT {
     }
 
     @Test
-    public void givenValidCaseDataForRespondentRepresentedWhenCallbackIsInvokedThenSubmitAos() throws Exception {
+    public void givenValidCaseDataForRespondentRepresentedWhenAboutToSubmitCallbackIsInvokedThenSubmitAos() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getApplicant1().setSolicitor(null);
@@ -447,7 +447,7 @@ public class SubmitAosIT {
     }
 
     @Test
-    public void givenValidCaseDataDisputeWhenSubmitCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
+    public void givenValidCaseDataDisputeWhenSubmittedCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
@@ -489,7 +489,7 @@ public class SubmitAosIT {
     }
 
     @Test
-    public void givenValidCaseDataForRespondentRepresentedWhenCallbackIsInvokedThenSendEmailToRespondentSolicitor() throws Exception {
+    public void givenValidCaseDataForRespondentRepresentedWhenSubmittedCallbackIsInvokedThenSendEmailToRespSolicitor() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getApplicant1().setSolicitor(null);
