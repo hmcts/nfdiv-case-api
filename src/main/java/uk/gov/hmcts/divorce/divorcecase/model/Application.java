@@ -465,6 +465,12 @@ public class Application {
     )
     private YesOrNo newPaperCase;
 
+    @CCD(
+        label = "Has the application been switched from JOINT to SOLE?",
+        access = {DefaultAccess.class, Applicant2Access.class}
+    )
+    private YesOrNo switchedToSoleCo;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary
