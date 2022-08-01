@@ -27,33 +27,32 @@ public class XuiTest extends CftlibTest {
             // page.pause();
             // page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/example.png")));
 
-            // Fill [placeholder="Enter Username"]
             page.locator("[placeholder=\"Enter Username\"]").fill("DivCaseWorkerUser@AAT.com");
             page.locator("[placeholder=\"Enter Password\"]").fill("anythingWillWork");
             page.locator("text=Sign in").click();
             assertThat(page).hasURL("http://localhost:3000/cases");
-            // Click text=Create case
+
             page.locator("text=Create case").click();
             assertThat(page).hasURL("http://localhost:3000/cases/case-filter");
-            // Select NFD
+
             page.locator("select[name=\"case-type\"]").selectOption("NFD");
-            // Click text=Start
+
             page.locator("text=Start").click();
             assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/create-paper-case/submit");
-            // Click text=Save and continue
+
             page.locator("text=Save and continue").click();
             assertThat(page).hasURL(compile("http://localhost:3000/cases/case-details/*"));
-            // Select 1: Object
+
             page.locator("select").selectOption("1: Object");
-            // Click text=Go
+
             page.locator("text=Go").click();
-            // Click textarea
+
             page.locator("textarea").click();
-            // Fill textarea
+
             page.locator("textarea").fill("Note");
-            // Click text=Continue
+
             page.locator("text=Continue").click();
-            // Click text=Save and continue
+
             page.locator("text=Save and continue").click();
             assertThat(page).hasURL(compile("http://localhost:3000/cases/case-details/*"));
         }
