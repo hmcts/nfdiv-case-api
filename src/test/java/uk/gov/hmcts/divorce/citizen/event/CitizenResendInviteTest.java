@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -115,7 +114,7 @@ class CitizenResendInviteTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenResendInvite.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getDueDate()).isEqualTo(LocalDate.now(clock).plus(2, ChronoUnit.WEEKS));
+        assertThat(response.getData().getDueDate()).isEqualTo(LocalDate.now(clock).plusDays(TO_LINK_TO_CASE_BY_OFFSET_DAYS));
         assertThat(response.getData().getCaseInvite().accessCode()).isNotEqualTo("ACCESS_CODE");
         assertThat(response.getData().getCaseInvite().accessCode()).isNotBlank();
     }
