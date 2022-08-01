@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        build-dir: ['check', 'cftlibTest', 'integration']
+        task: ['check', 'cftlibTest', 'integration']
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v3
@@ -27,4 +27,4 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('build.gradle') }}
       - name: Run XUI tests
-        run: ./gradlew cftlibTest
+        run: ./gradlew ${{ matrix.task }}
