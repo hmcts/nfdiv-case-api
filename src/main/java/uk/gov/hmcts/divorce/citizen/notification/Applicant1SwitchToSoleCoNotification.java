@@ -8,9 +8,13 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.util.Map;
+
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SWITCH_TO_SOLE;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ENDED;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PLUS_21_DUE_DATE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCHED_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
@@ -25,11 +29,14 @@ public class Applicant1SwitchToSoleCoNotification implements ApplicantNotificati
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Notifying applicant 1 of his CO application for case : {}", id);
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+        templateVars.put(PLUS_21_DUE_DATE,
+            caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate().plusDays(21).format(DATE_TIME_FORMATTER));
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            APPLICANT_SWITCH_TO_SOLE,
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER,
+            templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -41,7 +48,7 @@ public class Applicant1SwitchToSoleCoNotification implements ApplicantNotificati
 
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
-                JOINT_APPLICATION_ENDED,
+                PARTNER_SWITCHED_TO_SOLE_CO,
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseData.getApplicant2().getLanguagePreference()
             );
