@@ -31,9 +31,10 @@ jobs:
           distribution: corretto
           java-version: 17
           cache: 'gradle'
-      - name: Cache Docker images.
-        uses: ScribeMD/docker-cache@0.2.1
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
         with:
-          key: docker-${{ runner.os }}-${{ hashFiles('build.gradle') }}
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('build.gradle') }}
       - name: Run XUI tests
         run: ./gradlew cftlibTest
