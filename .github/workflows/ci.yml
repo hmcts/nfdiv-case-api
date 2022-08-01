@@ -26,5 +26,5 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('build.gradle') }}
-      - name: Run XUI tests
+      - name: Run task
         run: ./gradlew ${{ matrix.task }}
