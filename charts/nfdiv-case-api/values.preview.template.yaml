@@ -86,6 +86,7 @@ ccd:
     java:
       environment:
         CCD_DATA_STORE_URL: http://${SERVICE_NAME}-ccd-data-store-api
+        RUN_LD_ON_STARTUP: false
       keyVaults: []
 
   ccd-definition-store-api:
