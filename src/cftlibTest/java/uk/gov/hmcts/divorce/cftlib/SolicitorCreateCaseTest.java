@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.cftlib;
 import org.junit.jupiter.api.Test;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static java.util.regex.Pattern.compile;
 
 public class SolicitorCreateCaseTest extends XuiTest {
 
