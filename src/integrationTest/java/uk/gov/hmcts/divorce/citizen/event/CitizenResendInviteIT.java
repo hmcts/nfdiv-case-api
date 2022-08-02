@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -28,6 +27,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenResendInvite.CITIZEN_RESEND_INVITE;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenResendInviteTest.TO_LINK_TO_CASE_BY_OFFSET_DAYS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -113,7 +113,7 @@ public class CitizenResendInviteIT {
         assertThatJson(jsonStringResponse)
             .inPath("$.data.dueDate")
             .isString()
-            .isEqualTo(LocalDate.now().plus(2, ChronoUnit.WEEKS).toString());
+            .isEqualTo(LocalDate.now().plusDays(TO_LINK_TO_CASE_BY_OFFSET_DAYS).toString());
 
         assertThatJson(jsonStringResponse)
             .inPath("$.data.accessCode")
