@@ -949,7 +949,8 @@ public class CaseworkerReIssueApplicationIT {
             .thenReturn("Notice of proceeding respondent");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx");
-        stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_ONLINE_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Online_Respondent_Sole_V6.docx");
+        stubForDocAssemblyWith(CITIZEN_RESP_AOS_INVITATION_ONLINE_ID,
+            "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Online_Respondent_Sole_V6.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
