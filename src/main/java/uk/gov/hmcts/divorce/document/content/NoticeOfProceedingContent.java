@@ -124,7 +124,7 @@ public class NoticeOfProceedingContent {
     private static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
 
     private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
-    private static final String RESPONDENTg_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
+    private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
 
     @Autowired
     private HoldingPeriodService holdingPeriodService;
