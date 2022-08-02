@@ -72,6 +72,9 @@ public final class DocumentConstants {
     public static final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID = "CONDITIONAL_ORDER_ANSWERS";
     public static final String CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME = "conditionalOrderAnswers";
 
+    public static final String CONDITIONAL_ORDER_REMINDER_TEMPLATE_ID = "CONDITIONAL_ORDER_REMINDER";
+    public static final String CONDITIONAL_ORDER_REMINDER_DOCUMENT_NAME = "conditionalOrderReminder";
+
     public static final String AOS_RESPONSE_LETTER_DOCUMENT_NAME = "aosResponseLetter";
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";
     public static final String AOS_OVERDUE_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED";
