@@ -68,6 +68,7 @@ public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole>
             }
             log.info("Setting new due date for Case Id: {} (citizen-resend-invite)", details.getId());
             data.setDueDate(LocalDate.now(clock).plusDays(toLinkToCaseOffsetDays));
+            data.getApplication().setApplicant2ReminderSent(null);
 
             log.info("Resetting access code and sending notification to allow joining. Case Id: {}", details.getId());
             data.setCaseInvite(data.getCaseInvite().generateAccessCode());

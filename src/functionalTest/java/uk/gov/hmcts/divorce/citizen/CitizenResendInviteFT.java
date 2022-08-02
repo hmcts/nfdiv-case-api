@@ -80,5 +80,9 @@ public class CitizenResendInviteFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(RESPONSE)));
+
+        assertThatJson(response.asString())
+            .inPath("$.data.applicant2ReminderSent")
+            .isAbsent();
     }
 }

@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -95,7 +96,7 @@ class CitizenResendInviteTest {
     }
 
     @Test
-    public void newDueDateAndCaseInviteSetUponSuccess() {
+    public void correctFieldsSetUponSuccess() {
         ReflectionTestUtils.setField(citizenResendInvite, "toLinkToCaseOffsetDays", TO_LINK_TO_CASE_BY_OFFSET_DAYS);
         setMockClock(clock);
 
@@ -104,6 +105,7 @@ class CitizenResendInviteTest {
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
 
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplication().setApplicant2ReminderSent(YesOrNo.YES);
         caseDetails.setState(State.AwaitingApplicant2Response);
         caseData.setCaseInvite(
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
@@ -117,6 +119,7 @@ class CitizenResendInviteTest {
         assertThat(response.getData().getDueDate()).isEqualTo(LocalDate.now(clock).plusDays(TO_LINK_TO_CASE_BY_OFFSET_DAYS));
         assertThat(response.getData().getCaseInvite().accessCode()).isNotEqualTo("ACCESS_CODE");
         assertThat(response.getData().getCaseInvite().accessCode()).isNotBlank();
+        assertThat(response.getData().getApplication().getApplicant2ReminderSent()).isNull();
     }
 
 }

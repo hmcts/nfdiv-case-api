@@ -18,5 +18,6 @@
   "applicant2ScreenHasMarriageBroken": "No",
   "accessCode": "ACCESS12",
   "applicationType": "jointApplication",
-  "dueDate": "2020-04-28"
+  "dueDate": "2020-04-28",
+  "applicant2ReminderSent": "Yes"
 }
