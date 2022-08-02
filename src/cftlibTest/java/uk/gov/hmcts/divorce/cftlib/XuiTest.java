@@ -57,4 +57,12 @@ public class XuiTest extends CftlibTest {
         // page.pause();
     }
 
+    void signInWithCaseworker() {
+        signInWith("DivCaseWorkerUser@AAT.com");
+    }
+
+    void signInWithSolicitor() {
+        signInWith("TEST_SOLICITOR@mailinator.com");
+    }
+
 }

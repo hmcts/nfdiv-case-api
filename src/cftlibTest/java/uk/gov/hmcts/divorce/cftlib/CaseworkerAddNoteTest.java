@@ -9,7 +9,7 @@ public class CaseworkerAddNoteTest extends XuiTest {
 
     @Test
     public void addNote() {
-        signInWith("DivCaseWorkerUser@AAT.com");
+        signInWithCaseworker();
         page.locator("text=Create case").click();
         assertThat(page).hasURL("http://localhost:3000/cases/case-filter");
 
