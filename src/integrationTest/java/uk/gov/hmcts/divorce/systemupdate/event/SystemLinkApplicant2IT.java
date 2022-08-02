@@ -167,6 +167,7 @@ public class SystemLinkApplicant2IT {
     }
 
     @Test
+    @Disabled
     public void givenNoCaseIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
         CaseData data = caseData();
         data.setCaseInvite(new CaseInvite(null, "D8BC9AQR", null));
