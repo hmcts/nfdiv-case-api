@@ -5,6 +5,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
 public class WithdrawingJointApplicationApplicant1 implements CcdPageConfiguration {
 
@@ -17,6 +18,9 @@ public class WithdrawingJointApplicationApplicant1 implements CcdPageConfigurati
             .page("WithdrawingJointApplicationFirstApp1")
             .pageLabel("Withdrawing a joint application")
             .showCondition("coApplicant1ApplyForConditionalOrder=\"No\"")
+            .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getDivorceOrEndingCivilPartnership, NEVER_SHOW)
+            .done()
             .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
                     .readonlyNoSummary(ConditionalOrderQuestions::getConfirmInformationStillCorrect, NEVER_SHOW)
