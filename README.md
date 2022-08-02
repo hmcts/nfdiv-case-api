@@ -71,7 +71,7 @@ Generating the CCD JSON files will happen on every `./gradlew bootWithCcd` but y
 
     ./gradlew generateTypeScript
 
-### Crons
+### Cronss
 
 You can manually run a cron task from the cli:
 
