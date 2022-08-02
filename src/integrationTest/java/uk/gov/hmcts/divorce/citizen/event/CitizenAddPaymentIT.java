@@ -153,6 +153,7 @@ public class CitizenAddPaymentIT {
         CaseData data = caseDataWithOrderSummary();
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
+        data.getApplication().setApplicant1KnowsApplicant2Address(NO);
         data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
         data.getApplication().setDateSubmitted(LocalDateTime.now());
 
@@ -186,6 +187,7 @@ public class CitizenAddPaymentIT {
         data.getApplicant1().setLanguagePreferenceWelsh(YES);
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
+        data.getApplication().setApplicant1KnowsApplicant2Address(NO);
         data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
         data.getApplication().setDateSubmitted(LocalDateTime.now());
 

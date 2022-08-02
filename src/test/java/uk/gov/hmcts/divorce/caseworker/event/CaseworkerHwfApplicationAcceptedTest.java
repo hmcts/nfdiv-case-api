@@ -52,6 +52,7 @@ class CaseworkerHwfApplicationAcceptedTest {
                 Application
                     .builder()
                     .applicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES)
+                    .applicant1KnowsApplicant2Address(YesOrNo.NO)
                     .build()
             )
             .build();

@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -185,9 +186,11 @@ public class CitizenAddPaymentTest {
     }
 
     @Test
-    void shouldSetStateAsAwaitingDocumentsWhenSoleCaseAndApplicantWishToServeByAlternativeMeans() {
+    void shouldSetStateAsAwaitingDocumentsWhenSoleCaseAndApplicantDoesNotKnowRespondentAddressAndWishToServeByAlternativeMeans() {
         final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(NO);
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         final CaseData expectedCaseData = CaseData.builder().build();
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
@@ -200,7 +203,6 @@ public class CitizenAddPaymentTest {
         details.setData(caseData);
         final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
         expectedDetails.setData(expectedCaseData);
-        expectedDetails.setState(AwaitingDocuments);
 
         when(submissionService.submitApplication(details)).thenReturn(expectedDetails);
 

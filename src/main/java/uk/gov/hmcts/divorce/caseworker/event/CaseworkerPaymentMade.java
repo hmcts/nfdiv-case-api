@@ -44,6 +44,7 @@ public class CaseworkerPaymentMade implements CCDConfig<CaseData, State, UserRol
         CaseData caseData = details.getData();
 
         if (caseData.getApplicationType().isSole()
+            && YesOrNo.NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address())
             && YesOrNo.YES.equals(caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay())) {
             details.setState(AwaitingDocuments);
         } else {

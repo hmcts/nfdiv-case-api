@@ -105,8 +105,8 @@ public class CitizenAddPaymentFT extends FunctionalTestSuite {
     @Test
     public void shouldPassValidationAndGiveSuccessWhenSoleCaseAndApplicantWantToServePapersAlternatively() throws IOException {
         Map<String, Object> request = caseData(AWAITING_DOCUMENTS_REQUEST);
-        request.put("applicationType", "soleApplication");
         request.put("applicant1WantsToHavePapersServedAnotherWay", "Yes");
+        request.put("applicant1KnowsApplicant2Address", "No");
         request.remove("applicant1CannotUploadSupportingDocument");
 
         Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
