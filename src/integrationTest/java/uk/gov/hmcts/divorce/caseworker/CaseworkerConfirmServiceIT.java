@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,22 +13,27 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.SOLICITOR_CONFIRM_SERVICE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerConfirmService.CASEWORKER_CONFIRM_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.start;
@@ -92,12 +98,61 @@ public class CaseworkerConfirmServiceIT {
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SOLICITOR_CONFIRM_SERVICE)))
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_CONFIRM_SERVICE)))
                 .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk()
             )
             .andExpect(jsonPath("$.data.dueDate").value(serviceDate.plusDays(16).toString()));
+    }
+
+    @Test
+    void shouldSetDueDateTo14DaysFromTodayAndAddAttachmentsToDocumentsUploadedList() throws Exception {
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        setMockClock(clock);
+        final LocalDate serviceDate = getExpectedLocalDate();
+
+        final SolicitorService solicitorService = SolicitorService.builder()
+            .dateOfService(serviceDate)
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
+        caseData.getApplication().setIssueDate(serviceDate);
+        caseData.getApplication().setSolicitorService(solicitorService);
+
+        final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentLink(new Document("url", "filename.pdf", "url/binary"))
+                .build())
+            .build();
+
+        caseData.setDocuments(CaseDocuments.builder()
+            .documentsUploaded(new ArrayList<>())
+            .build());
+
+        caseData.getDocuments().setDocumentsUploadedOnConfirmService(Lists.newArrayList(confirmServiceAttachments));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=CaseworkerConfirmService")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_CONFIRM_SERVICE)))
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(jsonPath("$.data.dueDate").value(serviceDate.plusDays(16).toString()))
+            .andExpect(
+                jsonPath("$.data.documentsUploaded[0].value.documentLink.document_url").value("url"))
+            .andExpect(
+                jsonPath("$.data.documentsUploaded[0].value.documentLink.document_filename").value("filename.pdf"))
+            .andExpect(
+                jsonPath("$.data.documentsUploaded[0].value.documentLink.document_binary_url").value("url/binary"));
     }
 }
