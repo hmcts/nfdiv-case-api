@@ -38,9 +38,11 @@ public class SolicitorCreateCaseTest extends XuiTest {
         // Click text=I confirm I’m willing to accept service of all correspondence and orders by emai
         page.locator("text=I confirm I’m willing to accept service of all correspondence and orders by emai").click();
         // Click text=Search for an organisation You can only search for organisations already registe >> input[type="text"]
-        page.locator("text=Search for an organisation You can only search for organisations already registe >> input[type=\"text\"]").click();
+        page.locator("text=Search for an organisation You can only search for organisations already registe >> input[type=\"text\"]")
+            .click();
         // Fill text=Search for an organisation You can only search for organisations already registe >> input[type="text"]
-        page.locator("text=Search for an organisation You can only search for organisations already registe >> input[type=\"text\"]").fill("org");
+        page.locator("text=Search for an organisation You can only search for organisations already registe >> input[type=\"text\"]")
+            .fill("org");
         // Click text=38 Delisle RoadLondonLondonSE28 0JESelect >> a
         page.locator("text=38 Delisle RoadLondonLondonSE28 0JESelect >> a").click();
 
@@ -50,7 +52,8 @@ public class SolicitorCreateCaseTest extends XuiTest {
         page.locator("#applicant1ScreenHasMarriageBroken_Yes").check();
         // Click text=Continue
         page.locator("text=Continue").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-applicationSolAboutApplicant1");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-appli"
+            + "cationSolAboutApplicant1");
         // Click #applicant1FirstName
         page.locator("#applicant1FirstName").click();
         // Fill #applicant1FirstName
@@ -58,7 +61,8 @@ public class SolicitorCreateCaseTest extends XuiTest {
         // Press Tab
         page.locator("#applicant1FirstName").press("Tab");
         // Press Tab
-        page.locator("text=Applicant’s middle name (Optional)If they have a middle name then you must enter >> input[type=\"text\"]").press("Tab");
+        page.locator("text=Applicant’s middle name (Optional)If they have a middle name then you must enter >> input[type=\"text\"]")
+            .press("Tab");
         // Fill #applicant1LastName
         page.locator("#applicant1LastName").fill("James");
         // Press Tab
@@ -87,7 +91,8 @@ public class SolicitorCreateCaseTest extends XuiTest {
         page.locator("text=Do not need to keep contact details private").click();
         // Click text=Continue
         page.locator("text=Continue").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-applicationSolAboutApplicant2");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-appli"
+            + "cationSolAboutApplicant2");
         // Click #applicant2FirstName
         page.locator("#applicant2FirstName").click();
         // Fill #applicant2FirstName
@@ -95,14 +100,16 @@ public class SolicitorCreateCaseTest extends XuiTest {
         // Press Tab
         page.locator("#applicant2FirstName").press("Tab");
         // Press Tab
-        page.locator("text=Respondent's middle name (Optional)If they have a middle name then you must ente >> input[type=\"text\"]").press("Tab");
+        page.locator("text=Respondent's middle name (Optional)If they have a middle name then you must ente >> input[type=\"text\"]")
+            .press("Tab");
         // Fill #applicant2LastName
         page.locator("#applicant2LastName").fill("Bob");
         // Click #applicant2NameDifferentToMarriageCertificate_radio >> text=No
         page.locator("#applicant2NameDifferentToMarriageCertificate_radio >> text=No").click();
         // Click text=Continue
         page.locator("text=Continue").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-applicationApplicant2ServiceDetails");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-appli"
+            + "cationApplicant2ServiceDetails");
         // Check #applicant2SolicitorRepresented_No
         page.locator("#applicant2SolicitorRepresented_No").check();
         // Click input[name="postcode"]
@@ -115,7 +122,8 @@ public class SolicitorCreateCaseTest extends XuiTest {
         page.locator("select[name=\"address\"]").selectOption("1: Object");
         // Click text=Continue
         page.locator("text=Continue").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-applicationMarriageCertificateDetails");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-appli"
+            + "cationMarriageCertificateDetails");
         // Click input[name="marriageDate-day"]
         page.locator("input[name=\"marriageDate-day\"]").click();
         // Fill input[name="marriageDate-day"]
@@ -131,20 +139,25 @@ public class SolicitorCreateCaseTest extends XuiTest {
         // Press Tab
         page.locator("input[name=\"marriageDate-year\"]").press("Tab");
         // Fill text=Applicant’s full nameExactly as it appears on the certificate. Include any addit >> input[type="text"]
-        page.locator("text=Applicant’s full nameExactly as it appears on the certificate. Include any addit >> input[type=\"text\"]").fill("Billy");
+        page.locator("text=Applicant’s full nameExactly as it appears on the certificate. Include any addit >> input[type=\"text\"]")
+            .fill("Billy");
         // Press Tab
-        page.locator("text=Applicant’s full nameExactly as it appears on the certificate. Include any addit >> input[type=\"text\"]").press("Tab");
+        page.locator("text=Applicant’s full nameExactly as it appears on the certificate. Include any addit >> input[type=\"text\"]")
+            .press("Tab");
         // Fill text=Respondent's full nameExactly as it appears on the certificate. Include any addi >> input[type="text"]
-        page.locator("text=Respondent's full nameExactly as it appears on the certificate. Include any addi >> input[type=\"text\"]").fill("Bob");
+        page.locator("text=Respondent's full nameExactly as it appears on the certificate. Include any addi >> input[type=\"text\"]")
+            .fill("Bob");
         // Check #marriageMarriedInUk_Yes
         page.locator("#marriageMarriedInUk_Yes").check();
         // Click text=Continue
         page.locator("text=Continue").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-applicationJurisdictionApplyForDivorce");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-appli"
+            + "cationJurisdictionApplyForDivorce");
         // Check #jurisdictionConnections-A
         page.locator("#jurisdictionConnections-A").check();
         // Click #jurisdictionConnections div:has-text("Both parties to the marriage or civil partnership are habitually resident in Eng")
-        page.locator("#jurisdictionConnections div:has-text(\"Both parties to the marriage or civil partnership are habitually resident in Eng\")").click();
+        page.locator("#jurisdictionConnections div:has-text(\"Both parties to the marriage or civil partnership are habitually resident "
+            + "in Eng\")").click();
         // Check #jurisdictionConnections-B
         page.locator("#jurisdictionConnections-B").check();
         // Check #jurisdictionConnections-A
@@ -155,17 +168,20 @@ public class SolicitorCreateCaseTest extends XuiTest {
         page.locator("#jurisdictionConnections-C2").check();
         // Click button:has-text("Continue")
         page.locator("button:has-text(\"Continue\")").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-applicationOtherLegalProceedings");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-appli"
+            + "cationOtherLegalProceedings");
         // Check #applicant1LegalProceedings_No
         page.locator("#applicant1LegalProceedings_No").check();
         // Click text=Continue
         page.locator("text=Continue").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-applicationFinancialOrders");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-appli"
+            + "cationFinancialOrders");
         // Check #applicant1FinancialOrder_No
         page.locator("#applicant1FinancialOrder_No").check();
         // Click text=Continue
         page.locator("text=Continue").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-applicationUploadSupportingDocuments");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/solicitor-create-appli"
+            + "cationUploadSupportingDocuments");
         // Click text=Continue
         page.locator("text=Continue").click();
         assertThat(page).hasURL("http://localhost:3000/cases/case-create/DIVORCE/NFD/solicitor-create-application/submit");
