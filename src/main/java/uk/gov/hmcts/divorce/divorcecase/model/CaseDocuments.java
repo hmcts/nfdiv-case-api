@@ -117,6 +117,13 @@ public class CaseDocuments {
     )
     private List<ListValue<DivorceDocument>> amendedApplications;
 
+    @CCD(
+        label = "Documents uploaded",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<DivorceDocument>> documentsUploadedOnConfirmService;
 
     public static <T> List<ListValue<T>> addDocumentToTop(final List<ListValue<T>> documents, final T value) {
         return addDocumentToTop(documents, value, null);
@@ -193,6 +200,13 @@ public class CaseDocuments {
     }
 
     @JsonIgnore
+    public void removeDocumentGeneratedWithType(final DocumentType documentType) {
+        if (!isEmpty(this.getDocumentsGenerated())) {
+            this.getDocumentsGenerated()
+                .removeIf(document -> documentType.equals(document.getValue().getDocumentType()));
+        }
+    }
+    
     public Optional<ListValue<DivorceDocument>> getDocumentGeneratedWithType(final DocumentType documentType) {
         return !isEmpty(this.getDocumentsGenerated())
             ? this.getDocumentsGenerated().stream()
