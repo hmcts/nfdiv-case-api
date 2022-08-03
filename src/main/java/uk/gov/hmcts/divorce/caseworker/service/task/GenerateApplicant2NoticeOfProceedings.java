@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.CoversheetApplicant2TemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
@@ -25,7 +25,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
@@ -33,7 +32,6 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_AP
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 @Component
@@ -44,7 +42,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private CoversheetApplicant2TemplateContent coversheetApplicant2TemplateContent;
+    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
 
     @Autowired
     private NoticeOfProceedingContent noticeOfProceedingContent;
@@ -60,6 +58,9 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
     @Autowired
     private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
+
+    @Autowired
+    private GenerateCoversheet generateCoversheet;
 
     @Autowired
     private Clock clock;
@@ -92,21 +93,23 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             if (hasOrgPolicy) {
                 if (!caseData.getApplication().isCourtServiceMethod()) {
                     generateNoticeOfProceedingsWithoutAddress(caseData, caseId, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
-                    generateCoversheet(
+                    generateCoversheet.generateCoversheet(
                         caseData,
                         caseId,
                         COVERSHEET_APPLICANT2_SOLICITOR,
-                        coversheetSolicitorTemplateContent.apply(caseData, caseId));
+                        coversheetSolicitorTemplateContent.apply(caseData, caseId),
+                        caseData.getApplicant2().getLanguagePreference());
                 } else {
                     generateNoticeOfProceedingsWithAddress(caseData, caseId);
                 }
             } else {
                 generateNoticeOfProceedingsWithoutAddress(caseData, caseId, NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE);
-                generateCoversheet(
+                generateCoversheet.generateCoversheet(
                     caseData,
                     caseId,
                     COVERSHEET_APPLICANT2_SOLICITOR,
-                    coversheetSolicitorTemplateContent.apply(caseData, caseId));
+                    coversheetSolicitorTemplateContent.apply(caseData, caseId),
+                    caseData.getApplicant2().getLanguagePreference());
             }
         } else {
             log.info("Generating notice of proceedings for respondent for sole case id {} ", caseId);
@@ -120,11 +123,12 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                     caseId,
                     NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                     noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference));
-                generateCoversheet(
+                generateCoversheet.generateCoversheet(
                     caseData,
                     caseId,
                     COVERSHEET_APPLICANT,
-                    coversheetApplicant2TemplateContent.apply(caseData, caseId));
+                    coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
+                    caseData.getApplicant2().getLanguagePreference());
             } else {
                 generateNoticeOfProceedings(
                     caseData,
@@ -132,11 +136,12 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                     NFD_NOP_R1_SOLE_APP2_CIT_ONLINE,
                     noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference));
                 if (!caseData.getApplication().isCourtServiceMethod()) {
-                    generateCoversheet(
+                    generateCoversheet.generateCoversheet(
                         caseData,
                         caseId,
                         COVERSHEET_APPLICANT,
-                        coversheetApplicant2TemplateContent.apply(caseData, caseId));
+                        coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
+                        caseData.getApplicant2().getLanguagePreference());
                 }
             }
         }
@@ -195,22 +200,6 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             templateId,
             caseData.getApplicant2().getLanguagePreference(),
             formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
-        );
-    }
-
-    private void generateCoversheet(final CaseData caseData,
-                                    final Long caseId,
-                                    final String templateId,
-                                    final Map<String, Object> templateContent) {
-        log.info("Generating coversheet for sole case id {} ", caseId);
-        caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            COVERSHEET,
-            templateContent,
-            caseId,
-            templateId,
-            caseData.getApplicant2().getLanguagePreference(),
-            formatDocumentName(caseId, COVERSHEET_DOCUMENT_NAME, now(clock))
         );
     }
 }
