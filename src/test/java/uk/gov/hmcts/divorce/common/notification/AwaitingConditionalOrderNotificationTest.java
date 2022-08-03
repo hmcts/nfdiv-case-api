@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForConditionalOrderPrinter;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -51,7 +53,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
@@ -64,6 +68,9 @@ class AwaitingConditionalOrderNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private ApplyForConditionalOrderPrinter applyForConditionalOrderPrinter;
 
     @InjectMocks
     private AwaitingConditionalOrderNotification notification;
@@ -226,6 +233,21 @@ class AwaitingConditionalOrderNotificationTest {
     }
 
     @Test
+    void shouldCanApplyForConditionalOrderLetterToApplicant1() {
+        CaseData caseData = caseData();
+        caseData.setApplicant2(getApplicant2(FEMALE));
+
+        notification.sendToApplicant1Offline(caseData, 1234567890123456L);
+
+        verify(applyForConditionalOrderPrinter).sendLetters(
+            caseData,
+            1234567890123456L,
+            caseData.getApplicant1(),
+            caseData.getApplicant2()
+        );
+    }
+
+    @Test
     void shouldSendEmailToApplicant2IfJointApplication() {
         final var data = validApplicant2CaseData();
         when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
@@ -262,5 +284,31 @@ class AwaitingConditionalOrderNotificationTest {
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verifyNoInteractions(notificationService, commonContent);
+    }
+
+    @Test
+    void shouldNotSendLetterToApplicant2IfSoleCase() {
+        final var data = validApplicant2CaseData();
+        data.setApplicationType(SOLE_APPLICATION);
+
+        notification.sendToApplicant2Offline(data, 1234567890123456L);
+
+        verifyNoInteractions(applyForConditionalOrderPrinter);
+    }
+
+    @Test
+    void shouldSendCanApplyForConditionalOrderLetterToApplicant2IfJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicant2(getApplicant2(FEMALE));
+
+        notification.sendToApplicant2Offline(caseData, 1234567890123456L);
+
+        verify(applyForConditionalOrderPrinter).sendLetters(
+            caseData,
+            1234567890123456L,
+            caseData.getApplicant2(),
+            caseData.getApplicant1()
+        );
     }
 }
