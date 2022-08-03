@@ -25,6 +25,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -34,6 +35,7 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
@@ -330,5 +332,24 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getScannedDocumentNames().getListItems())
             .extracting("label")
             .contains("doc1.pdf", "doc2.pdf");
+    }
+
+    @Test
+    void shouldSendOfflineNotifications() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+                .application(Application.builder()
+                        .issueDate(LocalDate.of(2022, 01, 01))
+                        .stateToTransitionApplicationTo(Holding)
+                        .build())
+                .build();
+        details.setData(caseData);
+
+        SubmittedCallbackResponse response =
+                caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verify(submitAosService).submitAosNotifications(details);
+
+        verifyNoMoreInteractions(submitAosService);
     }
 }

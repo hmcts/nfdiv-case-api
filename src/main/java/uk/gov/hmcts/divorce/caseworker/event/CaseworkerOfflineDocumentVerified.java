@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -66,6 +67,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .description("Offline Document Verified")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .aboutToStartCallback(this::aboutToStart)
+            .submittedCallback(this::submitted)
             .showEventNotes()
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER))
@@ -146,6 +148,16 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .state(state)
                 .build();
         }
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                                CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("{} submitted callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
+
+        submitAosService.submitAosNotifications(details);
+
+        return SubmittedCallbackResponse.builder().build();
     }
 
     private void reclassifyAosScannedDocumentToRespondentAnswers(CaseData caseData) {

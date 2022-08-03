@@ -63,9 +63,7 @@ public class SubmitAosService {
             setSubmitAosState,
             setSubmissionAndDueDate,
             addRespondentAnswersLink,
-            sendAosNotifications,
-            generateAosResponseLetterDocument,
-            sendAosResponseLetterPackToApplicant
+            generateAosResponseLetterDocument
         ).run(caseDetails);
     }
 }
