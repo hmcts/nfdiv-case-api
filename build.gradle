@@ -27,7 +27,7 @@ plugins {
   id 'org.springframework.boot' version '2.7.2'
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'hmcts.ccd.sdk' version '4.0.2'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.282'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.287'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -439,6 +439,7 @@ cftlibTest {
     'junit.jupiter.execution.parallel.mode.classes.default': 'concurrent',
   ])
 
+  environment 'RD_PROFESSIONAL_API_URL', 'http://host.docker.internal:8765'
 }
 
 tasks.withType(Test).configureEach {

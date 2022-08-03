@@ -37,7 +37,16 @@ public class SolicitorCreateCaseTest extends XuiTest {
         page.locator("input[type=\"email\"]").fill("james@mcdee.com");
         // Click text=I confirm I’m willing to accept service of all correspondence and orders by emai
         page.locator("text=I confirm I’m willing to accept service of all correspondence and orders by emai").click();
+        // Click text=Search for an organisation You can only search for organisations already registe >> input[type="text"]
+        page.locator("text=Search for an organisation You can only search for organisations already registe >> input[type=\"text\"]").click();
+        // Fill text=Search for an organisation You can only search for organisations already registe >> input[type="text"]
+        page.locator("text=Search for an organisation You can only search for organisations already registe >> input[type=\"text\"]").fill("org");
+        // Click text=38 Delisle RoadLondonLondonSE28 0JESelect >> a
+        page.locator("text=38 Delisle RoadLondonLondonSE28 0JESelect >> a").click();
+
+        page.pause();
+
         // Click text=Continue
-        page.locator("text=Continue").click();
+        // page.locator("text=Continue").click();
     }
 }

@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.cftlib;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.AfterAll;
@@ -24,8 +25,8 @@ public class XuiTest extends CftlibTest {
     @BeforeAll
     void launchBrowser() {
         playwright = Playwright.create();
-        browser = playwright.chromium().launch();
-        // browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(50));
+        // browser = playwright.chromium().launch();
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(50));
     }
 
     @AfterAll
@@ -54,7 +55,6 @@ public class XuiTest extends CftlibTest {
         page.locator("[placeholder=\"Enter Password\"]").fill("anythingWillWork");
         page.locator("text=Sign in").click();
         assertThat(page).hasURL("http://localhost:3000/cases");
-        // page.pause();
     }
 
     void signInWithCaseworker() {
