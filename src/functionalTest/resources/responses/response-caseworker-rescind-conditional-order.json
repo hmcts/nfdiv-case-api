@@ -1,0 +1,9 @@
+{
+  "data": {
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "coRescindedDate": "${json-unit.any-string}",
+    "documentsGenerated": [],
+    "dataVersion": 5,
+    "warnings": []
+  }
+}
