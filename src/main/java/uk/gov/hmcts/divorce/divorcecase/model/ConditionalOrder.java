@@ -189,7 +189,8 @@ public class ConditionalOrder {
     private DivorceDocument certificateOfEntitlementDocument;
 
     @CCD(
-        label = "Refusal Rejection reasons"
+        label = "Refusal Rejection reasons",
+        access = {DefaultAccess.class}
     )
     private Document refusalOrderDocument;
 
@@ -212,6 +213,11 @@ public class ConditionalOrder {
     )
     private List<ListValue<ClarificationResponse>> clarificationResponsesSubmitted;
 
+    @CCD(
+        label = "Date Conditional Order rescinded"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate rescindedDate;
 
     @JsonIgnore
     public boolean areClaimsGranted() {
