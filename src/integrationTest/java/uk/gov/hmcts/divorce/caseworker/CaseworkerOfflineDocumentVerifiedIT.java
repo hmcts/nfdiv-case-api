@@ -189,7 +189,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    void shouldTriggerCallbackAndMoveCaseStateToUserSelectedStateIfDocumentTypeOtherSelected()
+    void shouldTriggerAboutToSubmitCallbackAndMoveCaseStateToUserSelectedStateIfDocumentTypeOtherSelected()
         throws Exception {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
@@ -225,7 +225,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    void shouldTriggerCallbackAndSetDueDateAndMoveCaseStateToUserSelectedStateIfDocumentTypeOtherAndIsTransitioningToHolding()
+    void shouldTriggerAboutToSubmitCallbackAndSetDueDateAndMoveCaseStateToUserSelectedStateIfDocumentTypeOtherAndIsTransitioningToHolding()
         throws Exception {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
@@ -307,7 +307,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    public void givenValidCaseDataForRespondentRepresentedWhenSubmittedCallbackIsInvokedThenSendEmailToRespSolicitor() throws Exception {
+    public void shouldTriggerSubmittedCallbackAndSendAosResponseLetterToApplicant() throws Exception {
 
         RetiredFields retiredFields = new RetiredFields();
         retiredFields.setDataVersion(5);
