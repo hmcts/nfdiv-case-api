@@ -27,17 +27,19 @@ public class Applicant1SwitchToSoleCoNotification implements ApplicantNotificati
     private CommonContent commonContent;
 
     @Override
-    public void sendToApplicant1(final CaseData caseData, final Long id) {
+    public void sendToApplicant1(final CaseData data, final Long id) {
         log.info("Notifying applicant 1 of his CO application for case : {}", id);
-        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.put(PLUS_21_DUE_DATE,
-            caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate().plusDays(21).format(DATE_TIME_FORMATTER));
+        Map<String, String> templateVars = commonContent.mainTemplateVars(data, id, data.getApplicant1(), data.getApplicant2());
+        templateVars.put(
+            PLUS_21_DUE_DATE,
+            data.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate().plusDays(21).format(DATE_TIME_FORMATTER)
+        );
 
         notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
+            data.getApplicant1().getEmail(),
             CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            data.getApplicant1().getLanguagePreference()
         );
     }
 
