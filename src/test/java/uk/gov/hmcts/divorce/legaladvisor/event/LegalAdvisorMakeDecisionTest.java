@@ -422,4 +422,40 @@ class LegalAdvisorMakeDecisionTest {
         assertThat(actualConditionalOrder.getCannotUploadClarificationDocuments()).isNull();
         assertThat(actualConditionalOrder.getClarificationUploadDocuments()).hasSize(0);
     }
+
+    @Test
+    public void midEventShouldGenerateTheRefusalOrderDoc() {
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(MORE_INFO).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        String documentUrl = "http://localhost:8080/4567";
+        var refusalConditionalOrderDoc = new Document(
+            documentUrl,
+            REFUSAL_ORDER_DOCUMENT_NAME,
+            documentUrl + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                REFUSAL_ORDER_TEMPLATE_ID,
+                ENGLISH,
+                REFUSAL_ORDER_DOCUMENT_NAME
+            ))
+            .thenReturn(refusalConditionalOrderDoc);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.midEvent(caseDetails, null);
+
+        assertThat(response.getData().getConditionalOrder().getRefusalOrderDocument()).isEqualTo(refusalConditionalOrderDoc);
+    }
 }
