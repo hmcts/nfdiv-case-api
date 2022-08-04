@@ -36,6 +36,9 @@ public class CftLibConfig implements CFTLibConfigurer {
             "DivCaseWorkerUser@AAT.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"),
             "TEST_CASE_WORKER_USER@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"),
             "TEST_SOLICITOR@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-solicitor"),
+            "dummysystemupdate@test.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-systemupdate"),
+            "role.assignment.admin@gmail.com", List.of("caseworker"),
+            "data.store.idam.system.user@gmail.com", List.of("caseworker"),
             "divorce_as_caseworker_admin@mailinator.com", List.of("caseworker-divorce", "caseworker-divorce-superuser"));
 
         for (var entry : users.entrySet()) {

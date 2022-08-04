@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.cftlib;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.AfterAll;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static java.lang.System.getenv;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -24,8 +26,9 @@ public class XuiTest extends CftlibTest {
     @BeforeAll
     void launchBrowser() {
         playwright = Playwright.create();
-        browser = playwright.chromium().launch();
-        // browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(50));
+        browser = getenv("CI") != null
+            ? playwright.chromium().launch()
+            : playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(50));
     }
 
     @AfterAll

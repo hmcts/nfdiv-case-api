@@ -441,6 +441,8 @@ cftlibTest {
 
   environment 'RD_PROFESSIONAL_API_URL', 'http://host.docker.internal:8765'
   environment 'PRD_API_BASEURL', 'http://localhost:8765'
+  environment 'DOC_ASSEMBLY_URL', 'http://localhost:8765'
+  environment 'CCD_DOCUMENT_URL_PATTERN', '.*'
 }
 
 tasks.withType(Test).configureEach {
