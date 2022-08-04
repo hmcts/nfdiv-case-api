@@ -33,5 +33,4 @@ public final class CaseFieldsConstants {
     // required for Checkstyle
     private CaseFieldsConstants() {
     }
-
 }

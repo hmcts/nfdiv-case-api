@@ -29,7 +29,11 @@ public class BulkActionSearchResultFieldsTest {
         assertThat(getSearchResultFields(configBuilder).getFields())
             .extracting("id", "label")
             .contains(
-                tuple("[CASE_REFERENCE]", "Case Number")
+                tuple("[CASE_REFERENCE]", "Case Reference"),
+                tuple("[CREATED_DATE]", "Case created date"),
+                tuple("[LAST_MODIFIED_DATE]", "Last modified date"),
+                tuple("[STATE]", "Case Status"),
+                tuple("pronouncedDate", "Pronouncement date")
             );
     }
 }
