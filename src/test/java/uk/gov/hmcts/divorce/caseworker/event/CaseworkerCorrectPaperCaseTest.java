@@ -69,6 +69,7 @@ public class CaseworkerCorrectPaperCaseTest {
             .respondentsOrApplicant2s("Applicant 2's")
             .theApplicantOrApplicant1UC("Applicant 1")
             .applicantOrApplicant1UC("Applicant 1")
+            .divorceOrEndingCivilPartnership("divorce")
             .build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
