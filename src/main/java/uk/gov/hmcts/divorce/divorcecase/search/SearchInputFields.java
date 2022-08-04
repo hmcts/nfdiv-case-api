@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_WELSH_TRANSLATION;
@@ -42,7 +43,8 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Application Type (sole or joint)").id(APPLICANT_TYPE).build(),
         SearchField.<UserRole>builder().label("Marriage date").id(MARRIAGE_DATE).build(),
         SearchField.<UserRole>builder().label("Payment method").id(SOL_PAYMENT_METHOD).build(),
-        SearchField.<UserRole>builder().label("HWF reference").id(APPLICANT_1_HWF).build(),
+        SearchField.<UserRole>builder().label("Applicant 1 HWF reference").id(APPLICANT_1_HWF).build(),
+        SearchField.<UserRole>builder().label("Applicant 2 HWF reference").id(APPLICANT_2_HWF).build(),
         SearchField.<UserRole>builder().label("Urgent case").id(URGENT_CASE).build(),
         SearchField.<UserRole>builder().label("Urgent general referral case").id(GENERAL_REFERRAL_URGENT_CASE).build(),
         SearchField.<UserRole>builder().label("Solicitor firm name").id(APPLICANT_1_FIRM_NAME).build(),
