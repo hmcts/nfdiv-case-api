@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.common;
 
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,5 +57,25 @@ public class SubmitClarificationFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(DOCUMENTS_UPLOADED_RESPONSE)));
+    }
+
+    @Test
+    public void shouldAddClarificationDocumentsToDocumentsUploadedWhenLangPreferredIsWelsh() throws IOException {
+        Map<String, Object> request = caseData(DOCUMENTS_UPLOADED_REQUEST);
+        request.put("applicant1LanguagePreferenceWelsh", "Yes");
+        request.put("applicant2LanguagePreferenceWelsh", "Yes");
+
+        Response response = triggerCallback(request, SUBMIT_CLARIFICATION, ABOUT_TO_SUBMIT_URL);
+
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(DOCUMENTS_UPLOADED_RESPONSE));
+        jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
+        jsonDocument.set("data.applicant2LanguagePreferenceWelsh", "Yes");
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(jsonDocument.json());
     }
 }
