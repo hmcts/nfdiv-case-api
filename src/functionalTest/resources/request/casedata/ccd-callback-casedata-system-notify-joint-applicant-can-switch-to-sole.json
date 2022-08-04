@@ -1,0 +1,16 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "jointApplication",
+  "dueDate": "2020-04-28",
+  "issueDate": "2020-05-28",
+  "applicant1Gender": "female",
+  "applicant1FirstName": "test_first_name",
+  "applicant1LastName": "test_last_name",
+  "applicant2FirstName": "test_first_name",
+  "applicant2LastName": "test_last_name",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2Email": "applicant2@example.com",
+  "applicant2LanguagePreferenceWelsh": "No",
+  "applicant2Gender": "female",
+  "coCourt": "birmingham"
+}

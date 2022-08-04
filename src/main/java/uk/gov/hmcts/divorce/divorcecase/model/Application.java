@@ -409,6 +409,12 @@ public class Application {
     private YesOrNo applicantsRemindedCanApplyForConditionalOrder;
 
     @CCD(
+        label = "Notification sent to Joint Applicant indicating they can switch to sole",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jointApplicantNotifiedCanSwitchToSole;
+
+    @CCD(
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "ReissueOption"
