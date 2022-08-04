@@ -443,6 +443,8 @@ cftlibTest {
   environment 'PRD_API_BASEURL', 'http://localhost:8765'
   environment 'DOC_ASSEMBLY_URL', 'http://localhost:8765'
   environment 'CCD_DOCUMENT_URL_PATTERN', '.*'
+  environment 'DM_STORE_BASE_URL', 'http://localhost:8765'
+  environment 'CASE_DOCUMENT_AM_API_ATTACH_DOCUMENT_ENABLED', 'false'
 }
 
 tasks.withType(Test).configureEach {
