@@ -2,12 +2,12 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetHoldingDueDate;
 import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceSuccessfulNotification;
 import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceUnsuccessfulNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -33,15 +33,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Component
 @Slf4j
 public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_ADD_BAILIFF_RETURN = "caseworker-add-bailiff-return";
-
-    @Value("${aos_pack.due_date_offset_days}")
-    private long dueDateOffsetDays;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -51,6 +49,9 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private BailiffServiceSuccessfulNotification successfulNotification;
+
+    @Autowired
+    private SetHoldingDueDate setHoldingDueDate;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -86,15 +87,15 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         final Long caseId = details.getId();
-        final CaseData caseData = details.getData();
+        CaseData caseData = details.getData();
         final State state;
 
         log.info("Caseworker add bailiff return about to submit callback invoked for case id: {}", caseId);
 
         if (YES == caseData.getAlternativeService().getBailiff().getSuccessfulServedByBailiff()) {
             log.info("Setting state to Holding and due date for case id: {}", caseId);
-            caseData.setDueDate(caseData.getAlternativeService().getBailiff().getCertificateOfServiceDate().plusDays(dueDateOffsetDays));
             state = Holding;
+            caseData = caseTasks(setHoldingDueDate).run(details).getData();
             notificationDispatcher.send(successfulNotification, caseData, caseId);
         } else {
             log.info("Setting state to AwaitingAos for case id: {}", caseId);
