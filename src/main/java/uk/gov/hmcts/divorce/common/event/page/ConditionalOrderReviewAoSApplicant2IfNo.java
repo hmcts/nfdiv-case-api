@@ -6,7 +6,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -17,30 +16,21 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
-
-    private static final String NEVER_SHOW = "coApplicant1ConfirmInformationStillCorrect=\"NEVER_SHOW\"";
+public class ConditionalOrderReviewAoSApplicant2IfNo implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
-            .page("ConditionalOrderReviewAoS", this::midEvent)
-            .readonlyNoSummary(CaseData::getApplicationType, NEVER_SHOW)
-            .complex(CaseData::getAcknowledgementOfService)
-                .readonlyNoSummary(AcknowledgementOfService::getDateAosSubmitted, NEVER_SHOW)
-            .done()
+            .page("ConditionalOrderReviewAoSIfNoApp2", this::midEvent)
+            .showCondition("applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"No\"")
             .complex(CaseData::getConditionalOrder)
-                .readonly(ConditionalOrder::getLastAlternativeServiceDocumentLink,
-                " applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\"")
-                .readonly(ConditionalOrder::getRespondentAnswersLink,
-                    "applicationType=\"soleApplication\" AND dateAosSubmitted=\"*\"")
-                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
-                    .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
-                .done()
+            .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
+            .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrderIfNo)
+            .done()
             .label(
-                "ConditionalOrderReviewAoSNo",
+                "ConditionalOrderReviewAoSNoApp2IfNo",
                 "You must select yes to apply for a conditional order",
-                "coApplicant1ApplyForConditionalOrder=\"No\" AND applicationType=\"soleApplication\""
+                "coApplicant2ApplyForConditionalOrderIfNo=\"No\""
             );
     }
 
@@ -48,15 +38,13 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
         CaseDetails<CaseData, State> details,
         CaseDetails<CaseData, State> detailsBefore
     ) {
-        log.info("Mid-event callback triggered for ConditionalOrderReviewAoS");
+        log.info("Mid-event callback triggered for ConditionalOrderReviewAoSIfNo");
 
         CaseData data = details.getData();
         List<String> errors = new ArrayList<>();
         ConditionalOrder conditionalOrder = data.getConditionalOrder();
 
-        if (data.getApplicationType().isSole()
-            && !conditionalOrder.getConditionalOrderApplicant1Questions().getApplyForConditionalOrder().toBoolean()) {
-
+        if (!conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrderIfNo().toBoolean()) {
             errors.add("Applicant must select yes to apply for a conditional order");
         }
 

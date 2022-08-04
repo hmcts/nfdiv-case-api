@@ -72,6 +72,9 @@ public final class DocumentConstants {
     public static final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID = "CONDITIONAL_ORDER_ANSWERS";
     public static final String CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME = "conditionalOrderAnswers";
 
+    public static final String CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID = "CONDITIONAL_ORDER_CAN_APPLY";
+    public static final String CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME = "conditionalOrderCanApply";
+
     public static final String CONDITIONAL_ORDER_REMINDER_TEMPLATE_ID = "CONDITIONAL_ORDER_REMINDER";
     public static final String CONDITIONAL_ORDER_REMINDER_DOCUMENT_NAME = "conditionalOrderReminder";
 

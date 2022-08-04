@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Map;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -23,12 +27,18 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressHeldCase.SYS
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
 public class SystemProgressHeldCasesFT extends FunctionalTestSuite {
 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-progress-held-cases.json";
+
+    private static final String OFFLINE_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-system-progress-held-cases-offline.json";
+    private static final String OFFLINE_RESPONSE =
+        "classpath:responses/response-system-progress-held-cases-offline.json";
 
     @Test
     public void shouldPassValidationAndSendEmailsToJointApplicants() throws IOException {
@@ -37,6 +47,20 @@ public class SystemProgressHeldCasesFT extends FunctionalTestSuite {
         Response response = triggerCallback(request, SYSTEM_PROGRESS_HELD_CASE, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldPassValidationAndSendLettersToOfflineApplicants() throws IOException {
+        Map<String, Object> request = caseData(OFFLINE_REQUEST);
+
+        Response response = triggerCallback(request, SYSTEM_PROGRESS_HELD_CASE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(OFFLINE_RESPONSE)));
     }
 
     @Test

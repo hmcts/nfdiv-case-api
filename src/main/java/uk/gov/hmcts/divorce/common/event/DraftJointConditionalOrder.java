@@ -10,8 +10,11 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoSApplicant2;
+import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoSApplicant2IfNo;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant2;
+import uk.gov.hmcts.divorce.common.event.page.WithdrawingJointApplicationApplicant2;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
@@ -20,6 +23,7 @@ import uk.gov.hmcts.divorce.solicitor.service.task.ProgressDraftConditionalOrder
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
@@ -47,6 +51,8 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
 
     private final List<CcdPageConfiguration> pages = asList(
         new ConditionalOrderReviewAoSApplicant2(),
+        new WithdrawingJointApplicationApplicant2(),
+        new ConditionalOrderReviewAoSApplicant2IfNo(),
         new ConditionalOrderReviewApplicant2()
     );
 
@@ -80,6 +86,16 @@ public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, Us
         log.info("Draft joint conditional order about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseData data = details.getData();
+        final ConditionalOrder conditionalOrder = data.getConditionalOrder();
+
+        if (!data.getApplicationType().isSole()
+            && NO.equals(conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrder())
+            && YES.equals(conditionalOrder.getConditionalOrderApplicant2Questions().getApplyForConditionalOrderIfNo())) {
+
+            conditionalOrder.getConditionalOrderApplicant2Questions().setApplyForConditionalOrder(YES);
+            conditionalOrder.getConditionalOrderApplicant2Questions().setApplyForConditionalOrderIfNo(null);
+        }
+
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
