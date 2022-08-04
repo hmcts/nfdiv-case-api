@@ -54,12 +54,12 @@ public class ConditionalOrderQuestions {
     private LocalDateTime submittedDate;
 
     @CCD(
-        label = "Does the applicant want to continue with the divorce and apply for a conditional order?"
+        label = "Does the applicant want to continue with the ${labelContentUnionType} and apply for a conditional order?"
     )
     private YesOrNo applyForConditionalOrder;
 
     @CCD(
-        label = "Does the applicant want to continue with the divorce and apply for a conditional order?"
+        label = "Does the applicant want to continue with the ${labelContentUnionType} and apply for a conditional order?"
     )
     private YesOrNo applyForConditionalOrderIfNo;
 
