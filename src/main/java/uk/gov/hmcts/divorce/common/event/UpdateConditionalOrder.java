@@ -6,7 +6,9 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoS;
+import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoSIfNo;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant1;
+import uk.gov.hmcts.divorce.common.event.page.WithdrawingJointApplicationApplicant1;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -15,6 +17,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -28,6 +31,8 @@ public class UpdateConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
     private final List<CcdPageConfiguration> pages = asList(
         new ConditionalOrderReviewAoS(),
+        new WithdrawingJointApplicationApplicant1(),
+        new ConditionalOrderReviewAoSIfNo(),
         new ConditionalOrderReviewApplicant1()
     );
 
@@ -40,7 +45,7 @@ public class UpdateConditionalOrder implements CCDConfig<CaseData, State, UserRo
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(UPDATE_CONDITIONAL_ORDER)
-            .forStateTransition(ConditionalOrderDrafted, ConditionalOrderDrafted)
+            .forStates(ConditionalOrderDrafted, ConditionalOrderPending)
             .name("Update conditional order")
             .description("Update conditional order")
             .endButtonLabel("Save conditional order")
