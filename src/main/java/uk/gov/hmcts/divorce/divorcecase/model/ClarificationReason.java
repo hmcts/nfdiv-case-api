@@ -22,7 +22,7 @@ public enum ClarificationReason implements HasLabel {
     PREVIOUS_PROCEEDINGS_DETAILS("Previous proceedings details"),
 
     @JsonProperty("other")
-    OTHER("Enter free Text / Make free text order");
+    OTHER("Make free text order");
 
     private final String label;
 }
