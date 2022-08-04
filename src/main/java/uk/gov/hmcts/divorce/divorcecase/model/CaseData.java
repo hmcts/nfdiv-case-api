@@ -267,6 +267,15 @@ public class CaseData {
     }
 
     @JsonIgnore
+    public boolean isWelshApplication() {
+        if (applicationType.isSole()) {
+            return applicant1.getLanguagePreferenceWelsh() == YesOrNo.YES;
+        } else {
+            return applicant1.getLanguagePreferenceWelsh() == YesOrNo.YES || applicant2.getLanguagePreferenceWelsh() == YesOrNo.YES;
+        }
+    }
+
+    @JsonIgnore
     public String getApplicant2EmailAddress() {
         final String applicant2Email = applicant2.getEmail();
 

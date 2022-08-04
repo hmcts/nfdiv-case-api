@@ -8,8 +8,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
@@ -62,6 +66,62 @@ class CaseDataTest {
             .build();
 
         assertThat(caseData.getApplicant2EmailAddress()).isNull();
+    }
+
+    @Test
+    void shouldReturnTrueForIsWelshApplicationIfSoleAndApp1LanguagePreferenceWelshYes() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(Applicant.builder().languagePreferenceWelsh(YES).build())
+            .build();
+
+        assertThat(caseData.isWelshApplication()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseForIsWelshApplicationIfSoleAndApp1LanguagePreferenceWelshNo() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
+            .build();
+
+        assertThat(caseData.isWelshApplication()).isFalse();
+    }
+
+    @Test
+    void shouldReturnTrueForIsWelshApplicationIfJointAndApp1LanguagePreferenceWelshYes() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder().languagePreferenceWelsh(YES).build())
+            .build();
+
+        assertThat(caseData.isWelshApplication()).isTrue();
+    }
+
+    @Test
+    void shouldReturnTrueForIsWelshApplicationIfJointAndApp2LanguagePreferenceWelshYes() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant2(Applicant.builder().languagePreferenceWelsh(YES).build())
+            .build();
+
+        assertThat(caseData.isWelshApplication()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseForIsWelshApplicationIfJointAndApp1AndApp2LanguagePreferenceWelshNo() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
+            .applicant2(Applicant.builder().languagePreferenceWelsh(NO).build())
+            .build();
+
+        assertThat(caseData.isWelshApplication()).isFalse();
     }
 
     @Test
