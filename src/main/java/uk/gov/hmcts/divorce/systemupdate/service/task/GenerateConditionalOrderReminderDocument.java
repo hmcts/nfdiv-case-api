@@ -32,7 +32,10 @@ public class GenerateConditionalOrderReminderDocument {
     @Autowired
     private Clock clock;
 
-    public void generateConditionalOrderReminder(final CaseData caseData, final Long caseId, Applicant applicant, Applicant partner) {
+    public void generateConditionalOrderReminder(final CaseData caseData,
+                                                 final Long caseId,
+                                                 final Applicant applicant,
+                                                 final Applicant partner) {
 
         log.info("Generating conditional order reminder pdf for CaseID: {}", caseId);
 
