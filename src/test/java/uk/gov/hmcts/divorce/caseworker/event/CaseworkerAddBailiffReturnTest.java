@@ -1,19 +1,19 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetHoldingDueDate;
 import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceSuccessfulNotification;
 import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceUnsuccessfulNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.Bailiff;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -24,6 +24,7 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAddBailiffReturn.CASEWORKER_ADD_BAILIFF_RETURN;
@@ -37,8 +38,6 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 @ExtendWith(MockitoExtension.class)
 class CaseworkerAddBailiffReturnTest {
 
-    private static final long DUE_DATE_OFFSET = 16L;
-
     @Mock
     private NotificationDispatcher notificationDispatcher;
 
@@ -48,13 +47,11 @@ class CaseworkerAddBailiffReturnTest {
     @Mock
     private BailiffServiceSuccessfulNotification successfulNotification;
 
+    @Mock
+    private SetHoldingDueDate setHoldingDueDate;
+
     @InjectMocks
     private CaseworkerAddBailiffReturn caseworkerAddBailiffReturn;
-
-    @BeforeEach
-    void setdueDateOffset() {
-        ReflectionTestUtils.setField(caseworkerAddBailiffReturn, "dueDateOffsetDays", DUE_DATE_OFFSET);
-    }
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -68,9 +65,10 @@ class CaseworkerAddBailiffReturnTest {
     }
 
     @Test
-    void shouldSetStateToHoldingAndDueDateToCertificateOfServiceDatePlusDueDateOffsetIfSuccessfullyServed() {
+    void shouldSetStateToHoldingAndDueDateToHoldingDueDateIfSuccessfullyServed() {
 
-        final LocalDate certificateOfServiceDate = getExpectedLocalDate();
+        final LocalDate issueDate = getExpectedLocalDate();
+        final LocalDate expectedDueDate = issueDate.plusDays(141);
 
         final CaseData caseData = CaseData.builder()
             .alternativeService(
@@ -82,22 +80,51 @@ class CaseworkerAddBailiffReturnTest {
                         Bailiff
                             .builder()
                             .successfulServedByBailiff(YES)
-                            .certificateOfServiceDate(certificateOfServiceDate)
                             .build()
                     )
+                    .build())
+            .application(
+                Application.builder()
+                    .issueDate(issueDate)
                     .build()
             )
+            .build();
+
+        final CaseData expectedCaseData = CaseData.builder()
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .serviceApplicationGranted(YES)
+                    .alternativeServiceType(BAILIFF)
+                    .bailiff(
+                        Bailiff
+                            .builder()
+                            .successfulServedByBailiff(YES)
+                            .build()
+                    )
+                    .build())
+            .application(
+                Application.builder()
+                    .issueDate(issueDate)
+                    .build())
+            .dueDate(expectedDueDate)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(12345L);
 
+        final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
+        expectedCaseDetails.setData(expectedCaseData);
+        expectedCaseDetails.setId(12345L);
+
+        when(setHoldingDueDate.apply(caseDetails)).thenReturn(expectedCaseDetails);
+
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAddBailiffReturn.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getState()).isEqualTo(Holding);
-        assertThat(response.getData().getDueDate()).isEqualTo(certificateOfServiceDate.plusDays(DUE_DATE_OFFSET));
-        verify(notificationDispatcher).send(successfulNotification, caseData, 12345L);
+        assertThat(response.getData().getDueDate()).isEqualTo(expectedDueDate);
+        verify(notificationDispatcher).send(successfulNotification, expectedCaseData, 12345L);
     }
 
     @Test
