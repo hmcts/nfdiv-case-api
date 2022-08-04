@@ -330,7 +330,6 @@ class CaseDataDocumentServiceTest {
 
         MockedStatic<DocumentUtil> classMock = mockStatic(DocumentUtil.class);
         classMock.when(() -> DocumentUtil.isConfidential(caseData, DocumentType.OTHER)).thenReturn(true);
-        classMock.when(() -> DocumentUtil.isApplicableForConfidentiality(DocumentType.OTHER, null)).thenReturn(true);
 
         var confidentialDoc = ConfidentialDivorceDocument
             .builder()

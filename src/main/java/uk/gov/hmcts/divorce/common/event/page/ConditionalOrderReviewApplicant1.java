@@ -14,7 +14,6 @@ public class ConditionalOrderReviewApplicant1 implements CcdPageConfiguration {
 
         pageBuilder
             .page("ConditionalOrderReviewApplicant1")
-            .pageLabel("Review the applicant's application - Draft Conditional Order Application")
             .complex(CaseData::getApplication)
                 .readonly(Application::getMiniApplicationLink)
                 .done()
