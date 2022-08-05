@@ -5,12 +5,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderReminderPrinter;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderReminderDocument;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import java.util.HashMap;
 
@@ -29,6 +34,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -44,6 +52,21 @@ class AwaitingConditionalOrderReminderNotificationTest {
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private GenerateCoversheet generateCoversheet;
+
+    @Mock
+    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
+
+    @Mock
+    private GenerateD84Form generateD84Form;
+
+    @Mock
+    private GenerateConditionalOrderReminderDocument generateConditionalOrderReminderDocument;
+
+    @Mock
+    private ConditionalOrderReminderPrinter conditionalOrderReminderPrinter;
 
     @InjectMocks
     private AwaitingConditionalOrderReminderNotification awaitingConditionalOrderReminderNotification;
@@ -76,7 +99,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
     void shouldSendNotificationInWelshToApplicant1WhenApp1LangPrefIsWelsh() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
-        
+
         when(commonContent
             .conditionalOrderTemplateVars(
                 caseData,
@@ -175,5 +198,23 @@ class AwaitingConditionalOrderReminderNotificationTest {
         awaitingConditionalOrderReminderNotification.sendToApplicant2Solicitor(caseData, 1234567890123456L);
 
         verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendToApplicant1WhenOffline() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).offline(YES).build());
+        awaitingConditionalOrderReminderNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+
+        verify(conditionalOrderReminderPrinter).sendLetters(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendToApplicant2WhenOffline() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant2(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).offline(YES).build());
+        awaitingConditionalOrderReminderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verify(conditionalOrderReminderPrinter).sendLetters(caseData, TEST_CASE_ID);
     }
 }

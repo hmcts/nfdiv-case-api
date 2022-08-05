@@ -135,6 +135,8 @@ uk:
             SERVICE_APPLICATION_GRANTED: '2b7cc04e-2c21-4c06-9ae4-e7109a3efde4'
             RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED: 'e872dbc4-e1f9-454c-830c-3e86ccb03251'
             JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR: '00c04fec-dc80-4ec9-82f1-f6eab43d656c'
+            JOINT_APPLICANT_CAN_SWITCH_TO_SOLE: '4fa1278a-8c8c-49da-b1ee-9d289f5e2436'
+            JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE: '979f2885-7856-45d9-81a5-3c6b2979f906'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: ${OUTSTANDING_ACTIONS_WELSH_NOTIFICATION_ID:544c4297-e1c5-44bc-8f02-5661494beb4f}
@@ -186,8 +188,8 @@ uk:
             APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '9bd841f2-0989-45c5-a08b-348ecd09711f'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
             SOLICITOR_CLARIFICATION_SUBMITTED: '7636dc7a-039d-4963-805d-33f539a0b48d'
-            CITIZEN_CLARIFICATION_SUBMITTED: '1a9f328b-262d-4797-ad66-a9564e0c2a52'
-            CITIZEN_PARTNER_CLARIFICATION_SUBMITTED: '36ccff54-1d6b-4bcc-8bf8-c5a10d1d7cf9'
+            CITIZEN_CLARIFICATION_SUBMITTED: ${CITIZEN_CLARIFICATION_SUBMITTED_WELSH_NOTIFICATION_ID:1a9f328b-262d-4797-ad66-a9564e0c2a52}
+            CITIZEN_PARTNER_CLARIFICATION_SUBMITTED: ${CITIZEN_PARTNER_CLARIFICATION_SUBMITTED_WELSH_NOTIFICATION_ID:36ccff54-1d6b-4bcc-8bf8-c5a10d1d7cf9}
             SOLICITOR_CO_REFUSED_SOLE_JOINT: 'b1590f77-3cdb-4f80-abae-4f4f13f06e26'
             CITIZEN_APPLICATION_WITHDRAWN: '952beacb-0e73-4fde-94d4-60cfcbec2d63'
             SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED: '4789bd02-0d9b-40cc-ab08-4790b0480323'
@@ -224,7 +226,8 @@ uk:
             BAILIFF_SERVICE_UNSUCCESSFUL: ${BAILIFF_SERVICE_UNSUCCESSFUL_NOTIFICATION_ID:c40abaaf-dc6a-4dc0-815c-a411822d988b}
             BAILIFF_SERVICE_SUCCESSFUL: ${BAILIFF_SERVICE_SUCCESSFUL_NOTIFICATION_ID:61332826-713e-49a7-ba37-563cb9261c65}
             JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR: '00c04fec-dc80-4ec9-82f1-f6eab43d656c'
-
+            JOINT_APPLICANT_CAN_SWITCH_TO_SOLE: '4fa1278a-8c8c-49da-b1ee-9d289f5e2436'
+            JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE: '979f2885-7856-45d9-81a5-3c6b2979f906'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
@@ -277,6 +280,7 @@ docmosis:
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
+      CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed_V2.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
@@ -293,6 +297,7 @@ docmosis:
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered_V3.docx
       CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
+      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: ${DIVORCE_APPLICATION_SOLE_WELSH_TEMPLATE_ID:NFD_CP_Application_Sole_V5.docx}
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -312,6 +317,7 @@ docmosis:
       BAILIFF_APPLICATION_APPROVED: ${BAILIFF_APPLICATION_APPROVED_TEMPLATE_ID:NFD_Bailiff_Application_Approved.docx}
       BAILIFF_APPLICATION_NOT_APPROVED: ${BAILIFF_APPLICATION_NOT_APPROVED_TEMPLATE_ID:NFD_Bailiff_Application_Not_Approved.docx}
       CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
+      CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed_V2.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
@@ -330,6 +336,7 @@ docmosis:
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: NFD_Notice_Of_Proceedings_Sole_Applicant_Solicitor_Registered_V3.docx
       CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
+      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order.docx #TODO: update welsh content
   templateVars:
     applicant2SignInDivorceUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2}
     applicant2SignInDissolutionUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2}

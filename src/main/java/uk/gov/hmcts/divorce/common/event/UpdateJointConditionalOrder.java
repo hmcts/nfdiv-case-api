@@ -6,7 +6,9 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoSApplicant2;
+import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoSApplicant2IfNo;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant2;
+import uk.gov.hmcts.divorce.common.event.page.WithdrawingJointApplicationApplicant2;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -29,6 +31,8 @@ public class UpdateJointConditionalOrder implements CCDConfig<CaseData, State, U
 
     private final List<CcdPageConfiguration> pages = asList(
         new ConditionalOrderReviewAoSApplicant2(),
+        new WithdrawingJointApplicationApplicant2(),
+        new ConditionalOrderReviewAoSApplicant2IfNo(),
         new ConditionalOrderReviewApplicant2()
     );
 
