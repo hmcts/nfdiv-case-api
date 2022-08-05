@@ -165,6 +165,9 @@ public final class DocmosisTemplateConstants {
     public static final String CO_PRONOUNCED_DATE = "coPronouncedDate";
     public static final String DATE_FO_ELIGIBLE_FROM = "dateFinalOrderEligibleFrom";
 
+    public static final String CO_CONFIRM_INFO_STILL_CORRECT = "confirmInformationStillCorrect";
+    public static final String CO_REASON_INFO_NOT_CORRECT = "reasonInformationNotCorrect";
+
     private DocmosisTemplateConstants() {
     }
 }
