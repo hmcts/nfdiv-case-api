@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.ArrayList;
@@ -18,11 +19,16 @@ import java.util.List;
 @Component
 public class ConditionalOrderReviewAoSApplicant2IfNo implements CcdPageConfiguration {
 
+    private static final String NEVER_SHOW = "coApplicant2ApplyForConditionalOrder=\"NEVER_SHOW\"";
+
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
             .page("ConditionalOrderReviewAoSIfNoApp2", this::midEvent)
             .showCondition("applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"No\"")
+            .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
+            .done()
             .complex(CaseData::getConditionalOrder)
             .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
             .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrderIfNo)
