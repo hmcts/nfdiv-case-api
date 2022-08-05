@@ -114,8 +114,6 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
 
         log.info("Draft conditional order about to start callback invoked for Case Id: {}", details.getId());
 
-        System.out.println(details.getData().getLabelContent());
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseTasks(addMiniApplicationLink, addLastAlternativeServiceDocumentLink)
                 .run(details)
