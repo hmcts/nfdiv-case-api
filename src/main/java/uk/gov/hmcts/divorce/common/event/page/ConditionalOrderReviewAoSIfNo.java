@@ -26,9 +26,6 @@ public class ConditionalOrderReviewAoSIfNo implements CcdPageConfiguration {
         pageBuilder
             .page("ConditionalOrderReviewAoSIfNoApp1", this::midEvent)
             .showCondition("applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"No\"")
-            .complex(CaseData::getLabelContent)
-                .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
-            .done()
             .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                     .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrderIfNo)

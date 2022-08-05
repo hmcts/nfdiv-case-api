@@ -26,9 +26,6 @@ public class ConditionalOrderReviewAoSApplicant2IfNo implements CcdPageConfigura
         pageBuilder
             .page("ConditionalOrderReviewAoSIfNoApp2", this::midEvent)
             .showCondition("applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"No\"")
-            .complex(CaseData::getLabelContent)
-                .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
-            .done()
             .complex(CaseData::getConditionalOrder)
             .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
             .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrderIfNo)
