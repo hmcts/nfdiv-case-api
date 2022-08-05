@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CCD_REFERENCE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LAST_MODIFIED_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LAST_STATE_MODIFIED_DATE;
@@ -25,7 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LAST_S
 public class SearchResultFields implements CCDConfig<CaseData, State, UserRole> {
 
     public static final List<SearchField<UserRole>> SEARCH_RESULT_FIELD_LIST = of(
-        SearchField.<UserRole>builder().id("[CASE_REFERENCE]").label("Case Number").build(),
+        SearchField.<UserRole>builder().id(CCD_REFERENCE).label("Case Number").build(),
         SearchField.<UserRole>builder().id(APPLICANT_TYPE).label("Application Type").build(),
         SearchField.<UserRole>builder().id(APPLICANT_1_FIRST_NAME).label("Applicant's First Name").build(),
         SearchField.<UserRole>builder().id(APPLICANT_1_LAST_NAME).label("Applicant's Last Name").build(),
