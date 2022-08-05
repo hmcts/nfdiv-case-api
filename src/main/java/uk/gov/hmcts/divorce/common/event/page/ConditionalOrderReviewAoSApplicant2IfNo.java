@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
-import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.ArrayList;
@@ -18,8 +17,6 @@ import java.util.List;
 @Slf4j
 @Component
 public class ConditionalOrderReviewAoSApplicant2IfNo implements CcdPageConfiguration {
-
-    private static final String NEVER_SHOW = "coApplicant2ApplyForConditionalOrder=\"NEVER_SHOW\"";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
