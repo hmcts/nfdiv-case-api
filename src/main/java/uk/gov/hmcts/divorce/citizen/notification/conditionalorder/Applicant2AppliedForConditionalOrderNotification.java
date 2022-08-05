@@ -16,6 +16,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER;
 
 @Component
 @Slf4j
@@ -84,6 +85,19 @@ public class Applicant2AppliedForConditionalOrderNotification
                 caseData.getApplicant2().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER,
                 solicitorTemplateVars(caseData, caseId, caseData.getApplicant2(), APPLICANT2),
+                ENGLISH
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
+        if (!caseData.getApplicationType().isSole()) {
+            log.info("Notifying applicant 1 solicitor that other party has applied for Conditional Order for case: {}", id);
+            notificationService.sendEmail(
+                caseData.getApplicant1().getSolicitor().getEmail(),
+                JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER,
+                solicitorTemplateVars(caseData, id, caseData.getApplicant1(), APPLICANT2),
                 ENGLISH
             );
         }
