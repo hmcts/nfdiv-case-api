@@ -114,7 +114,7 @@ public class Application {
     private String solUrgentCaseSupportingInformation;
 
     @CCD(
-        label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
+        label = "Want to apply to have the papers 'served' (sent to respondent) in another way",
         hint = "For example by email, text message or social media. This is a separate application with "
             + "an additional fee, which will need to be reviewed by a judge.",
         access = {DefaultAccess.class}

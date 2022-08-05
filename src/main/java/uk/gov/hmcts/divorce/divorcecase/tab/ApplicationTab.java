@@ -108,6 +108,10 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1Address", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
             .field("applicant1CannotUpload")
             .field("applicant1CannotUploadSupportingDocument")
+            .field("applicant1KnowsApplicant2Address",
+                "applicant1WantsToHavePapersServedAnotherWay=\"Yes\"")
+            .field("applicant1WantsToHavePapersServedAnotherWay",
+                "applicant1WantsToHavePapersServedAnotherWay=\"Yes\"")
 
             //Applicant 1 Solicitor
             .field("applicant1SolicitorRepresented", NEVER_SHOW)
