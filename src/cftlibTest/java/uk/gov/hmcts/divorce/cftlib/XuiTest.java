@@ -43,7 +43,6 @@ public class XuiTest extends CftlibTest {
     void createContextAndPage() {
         context = browser.newContext();
         page = context.newPage();
-        page.setDefaultTimeout(10000);
     }
 
     @AfterEach
