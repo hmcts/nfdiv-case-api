@@ -96,16 +96,14 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     @Override
     public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
 
-        if (!caseData.getApplicationType().isSole()) {
-            log.info("Notifying applicant 2 solicitor that their conditional order application has been pronounced: {}", caseId);
+        log.info("Notifying applicant 2 solicitor that their conditional order application has been pronounced: {}", caseId);
 
-            notificationService.sendEmail(
-                caseData.getApplicant2().getSolicitor().getEmail(),
-                SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED,
-                solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
-                caseData.getApplicant2().getLanguagePreference()
-            );
-        }
+        notificationService.sendEmail(
+            caseData.getApplicant2().getSolicitor().getEmail(),
+            SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED,
+            solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
+            caseData.getApplicant2().getLanguagePreference()
+        );
     }
 
     @Override
@@ -140,8 +138,8 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     }
 
     private Map<String, String> solicitorTemplateVars(final CaseData caseData,
-                                             final Long caseId,
-                                             final Applicant applicant) {
+                                                      final Long caseId,
+                                                      final Applicant applicant) {
 
         final Map<String, String> templateVars = commonContent.solicitorTemplateVars(caseData, caseId, applicant);
         templateVars.put(APPLICANT1_LABEL, caseData.getApplicationType().isSole() ? APPLICANT : APPLICANT_1);
