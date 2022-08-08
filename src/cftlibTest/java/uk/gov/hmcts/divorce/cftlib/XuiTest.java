@@ -9,7 +9,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
@@ -18,6 +20,7 @@ import static java.lang.System.getenv;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class XuiTest extends CftlibTest {
 
     Playwright playwright;
@@ -43,6 +46,7 @@ public class XuiTest extends CftlibTest {
     void createContextAndPage() {
         context = browser.newContext();
         page = context.newPage();
+        page.setDefaultTimeout(10000);
     }
 
     @AfterEach

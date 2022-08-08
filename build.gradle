@@ -442,9 +442,15 @@ cftlibTest {
   environment 'RD_PROFESSIONAL_API_URL', 'http://host.docker.internal:8765'
   environment 'PRD_API_BASEURL', 'http://localhost:8765'
   environment 'DOC_ASSEMBLY_URL', 'http://localhost:8765'
+  environment 'FEE_API_URL', 'http://localhost:8765'
+  environment 'PAYMENT_API_BASEURL', 'http://localhost:8765'
   environment 'CCD_DOCUMENT_URL_PATTERN', '.*'
   environment 'DM_STORE_BASE_URL', 'http://localhost:8765'
   environment 'CASE_DOCUMENT_AM_API_ATTACH_DOCUMENT_ENABLED', 'false'
+  environment 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
+  environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
+  environment 'CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES', 'nfdiv_case_api'
+  environment 'DATA_STORE_S2S_AUTHORISED_SERVICES', 'ccd_gw,fpl_case_service,ccd_data,ccd_ps,divorce_frontend,payment-api,xui_webapp,nfdiv_case_api,ccd_case_document_am_api,am_role_assignment_service'
 }
 
 tasks.withType(Test).configureEach {
