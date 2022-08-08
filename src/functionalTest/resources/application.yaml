@@ -129,4 +129,4 @@ toggle:
 
 feign:
   httpclient:
-    disableSslValidation: true
+    disable-ssl-validation: true
