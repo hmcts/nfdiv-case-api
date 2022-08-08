@@ -22,10 +22,5 @@ jobs:
           distribution: corretto
           java-version: 17
           cache: 'gradle'
-      - name: Cache Playwright browsers
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('build.gradle') }}
       - name: Run task
         run: ./gradlew ${{ matrix.task }}
