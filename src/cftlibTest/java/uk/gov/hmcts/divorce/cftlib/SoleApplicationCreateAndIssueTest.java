@@ -262,7 +262,7 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
         page.locator("text=Continue").click();
         // Click text=Submit Application
         page.locator("text=Submit Application").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-details/" + caseRef);
+        assertThat(page).hasURL(compile("http://localhost:3000/cases/case-details/.+"));
     }
 
     @Test
