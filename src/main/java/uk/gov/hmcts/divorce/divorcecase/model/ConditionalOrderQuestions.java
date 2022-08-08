@@ -60,6 +60,11 @@ public class ConditionalOrderQuestions {
     private YesOrNo applyForConditionalOrder;
 
     @CCD(
+        label = "Does the applicant want to continue with the divorce and apply for a conditional order?"
+    )
+    private YesOrNo applyForConditionalOrderIfNo;
+
+    @CCD(
         label = "Is the information in this application still correct?"
     )
     private YesOrNo confirmInformationStillCorrect;

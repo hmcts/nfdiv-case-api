@@ -25,25 +25,22 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
             .page("ConditionalOrderReviewAoS", this::midEvent)
-            .pageLabel("Review Acknowledgement of Service - Draft Conditional Order Application")
             .readonlyNoSummary(CaseData::getApplicationType, NEVER_SHOW)
             .complex(CaseData::getAcknowledgementOfService)
                 .readonlyNoSummary(AcknowledgementOfService::getDateAosSubmitted, NEVER_SHOW)
-                .done()
+            .done()
             .complex(CaseData::getConditionalOrder)
                 .readonly(ConditionalOrder::getLastAlternativeServiceDocumentLink,
                 " applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\"")
                 .readonly(ConditionalOrder::getRespondentAnswersLink,
                     "applicationType=\"soleApplication\" AND dateAosSubmitted=\"*\"")
-                .done()
-            .complex(CaseData::getConditionalOrder)
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
-                .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
+                    .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
                 .done()
             .label(
                 "ConditionalOrderReviewAoSNo",
                 "You must select yes to apply for a conditional order",
-                "coApplicant1ApplyForConditionalOrder=\"No\""
+                "coApplicant1ApplyForConditionalOrder=\"No\" AND applicationType=\"soleApplication\""
             );
     }
 
@@ -57,7 +54,9 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
         List<String> errors = new ArrayList<>();
         ConditionalOrder conditionalOrder = data.getConditionalOrder();
 
-        if (!conditionalOrder.getConditionalOrderApplicant1Questions().getApplyForConditionalOrder().toBoolean()) {
+        if (data.getApplicationType().isSole()
+            && !conditionalOrder.getConditionalOrderApplicant1Questions().getApplyForConditionalOrder().toBoolean()) {
+
             errors.add("Applicant must select yes to apply for a conditional order");
         }
 

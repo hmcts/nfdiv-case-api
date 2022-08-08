@@ -44,6 +44,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitClarification.SUBMIT_CLARIFICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CLARIFICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_PARTNER_CLARIFICATION_SUBMITTED;
@@ -299,6 +300,35 @@ public class SubmitClarificationIT {
     }
 
     @Test
+    void shouldSendEmailInWelshToApplicant1IfSubmittedClarificationForSoleCase() throws Exception {
+
+        setMockClock(clock);
+
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH));
+    }
+
+
+    @Test
     void shouldSendEmailToApplicant1AndApplicant2IfClarificationSubmittedByApplicant1ForJointCase() throws Exception {
 
         setMockClock(clock);
@@ -325,6 +355,37 @@ public class SubmitClarificationIT {
             .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH));
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+    }
+
+    @Test
+    void shouldSendEmailInWelshToApplicant1AndApplicant2IfClarificationSubmittedByApplicant1ForJointCase() throws Exception {
+
+        setMockClock(clock);
+
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
+
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH));
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH));
     }
 
     @Test
@@ -355,5 +416,37 @@ public class SubmitClarificationIT {
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH));
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+    }
+
+    @Test
+    void shouldSendEmailInWelshToApplicant1AndApplicant2IfClarificationSubmittedByApplicant2ForJointCase() throws Exception {
+
+        setMockClock(clock);
+
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(false);
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH));
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH));
     }
 }
