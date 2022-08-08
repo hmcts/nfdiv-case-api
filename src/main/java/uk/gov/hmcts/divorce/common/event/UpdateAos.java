@@ -46,7 +46,7 @@ public class UpdateAos implements CCDConfig<CaseData, State, UserRole> {
             .aboutToStartCallback(this::aboutToStart)
             .showSummary()
             .endButtonLabel("Save Updated AoS Response")
-            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
