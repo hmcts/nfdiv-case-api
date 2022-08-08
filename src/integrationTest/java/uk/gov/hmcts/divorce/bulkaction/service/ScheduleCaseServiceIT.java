@@ -91,7 +91,7 @@ public class ScheduleCaseServiceIT {
 
         var userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
         var user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
-        when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -184,7 +184,7 @@ public class ScheduleCaseServiceIT {
 
         var userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
         var user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
-        when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
