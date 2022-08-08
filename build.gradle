@@ -45,7 +45,7 @@ sourceSets {
     java {
       compileClasspath += main.output
       runtimeClasspath += main.output
-      srcDir file('src/functionalTest/java')
+      srcDir file('java/uk/gov/hmcts/divorce/caseworker')
     }
   }
 
