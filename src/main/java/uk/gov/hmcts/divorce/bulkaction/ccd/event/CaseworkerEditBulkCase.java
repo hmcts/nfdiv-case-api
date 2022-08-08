@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -9,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.service.PronouncementListDocService;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -25,6 +27,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
+@Slf4j
 public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String CASEWORKER_EDIT_BULK_CASE = "caseworker-edit-bulk-case";
@@ -34,6 +37,9 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
 
     @Autowired
     private HttpServletRequest request;
+
+    @Autowired
+    private PronouncementListDocService pronouncementListDocService;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -63,6 +69,11 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
                 .errors(List.of("Please enter a hearing date and time in the future"))
                 .data(bulkCaseDetails.getData())
                 .build();
+        }
+
+        if (bulkCaseDetails.getData().getPronouncementListDocument() != null) {
+            log.info("Regenerating Pronouncement List document for bulk case {}", bulkCaseDetails.getId());
+            pronouncementListDocService.generateDocument(bulkCaseDetails, bulkCaseDetails.getData().getBulkListCaseDetails());
         }
 
         return AboutToStartOrSubmitResponse

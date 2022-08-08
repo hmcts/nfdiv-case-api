@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,19 +10,28 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.service.PronouncementListDocService;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerEditBulkCase.CASEWORKER_EDIT_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
@@ -36,6 +46,9 @@ public class CaseworkerEditBulkCaseTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
+
+    @Mock
+    private PronouncementListDocService pronouncementListDocService;
 
     @InjectMocks
     private CaseworkerEditBulkCase caseworkerEditBulkCase;
@@ -80,6 +93,8 @@ public class CaseworkerEditBulkCaseTest {
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = caseworkerEditBulkCase.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNull();
+
+        verifyNoInteractions(pronouncementListDocService);
     }
 
     @Test
@@ -95,5 +110,49 @@ public class CaseworkerEditBulkCaseTest {
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = caseworkerEditBulkCase.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).containsExactly("Please enter a hearing date and time in the future");
+
+        verifyNoInteractions(pronouncementListDocService);
+    }
+
+    @Test
+    void shouldRegeneratePronouncementListDocumentWhenPresent() {
+        final CaseLink caseLink1 = CaseLink.builder()
+            .caseReference("12345")
+            .build();
+        final CaseLink caseLink2 = CaseLink.builder()
+            .caseReference("98765")
+            .build();
+        final ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue1 =
+            ListValue.<BulkListCaseDetails>builder()
+                .value(BulkListCaseDetails.builder()
+                    .caseReference(caseLink1)
+                    .build())
+                .build();
+        final ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue2 =
+            ListValue.<BulkListCaseDetails>builder()
+                .value(BulkListCaseDetails.builder()
+                    .caseReference(caseLink2)
+                    .build())
+                .build();
+        final List<ListValue<BulkListCaseDetails>> bulkCaseList = Lists.newArrayList(
+            bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue2);
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+        bulkCaseDetails.setData(BulkActionCaseData.builder()
+                .dateAndTimeOfHearing(LocalDateTime.now().plusDays(5))
+                .pronouncementListDocument(DivorceDocument.builder()
+                    .documentType(DocumentType.PRONOUNCEMENT_LIST)
+                    .documentLink(new Document())
+                    .build())
+                .bulkListCaseDetails(bulkCaseList)
+            .build());
+        bulkCaseDetails.setId(1L);
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response
+            = caseworkerEditBulkCase.aboutToSubmit(bulkCaseDetails, bulkCaseDetails);
+
+        assertThat(response.getErrors()).isNull();
+
+        verify(pronouncementListDocService).generateDocument(bulkCaseDetails, bulkCaseList);
     }
 }
