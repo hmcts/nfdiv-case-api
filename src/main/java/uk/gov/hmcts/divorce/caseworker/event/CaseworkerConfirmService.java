@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -22,6 +21,7 @@ import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitConfirmService;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -54,26 +54,26 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
             .page("caseworkerConfirmService")
             .pageLabel("Confirm Service")
             .complex(CaseData::getDocuments)
-                .optional(CaseDocuments::getDocumentsUploadedOnConfirmService)
-                .done()
+            .optional(CaseDocuments::getDocumentsUploadedOnConfirmService)
+            .done()
             .label("applicantLabel", "Name of Applicant - ${applicant1FirstName} ${applicant1LastName}")
             .label("respondentLabel", "Name of Respondent - ${applicant2FirstName} ${applicant2LastName}")
             .complex(CaseData::getApplication)
-                .complex(Application::getSolicitorService)
-                    .mandatory(SolicitorService::getDateOfService)
-                    .mandatory(SolicitorService::getDocumentsServed)
-                    .mandatory(SolicitorService::getOnWhomServed)
-                    .mandatory(SolicitorService::getHowServed)
-                    .mandatory(SolicitorService::getServiceDetails,
-                        "solServiceHowServed=\"deliveredTo\" OR solServiceHowServed=\"postedTo\"")
-                    .mandatory(SolicitorService::getAddressServed)
-                    .mandatory(SolicitorService::getBeingThe)
-                    .mandatory(SolicitorService::getLocationServed)
-                    .mandatory(SolicitorService::getSpecifyLocationServed, "solServiceLocationServed=\"otherSpecify\"")
-                    .mandatoryWithLabel(SolicitorService::getServiceSotName, "Solicitor's/Applicant's name")
-                    .optional(SolicitorService::getServiceSotFirm)
-                    .mandatory(SolicitorService::getStatementOfTruth)
-                .done()
+            .complex(Application::getSolicitorService)
+            .mandatory(SolicitorService::getDateOfService)
+            .mandatory(SolicitorService::getDocumentsServed)
+            .mandatory(SolicitorService::getOnWhomServed)
+            .mandatory(SolicitorService::getHowServed)
+            .mandatory(SolicitorService::getServiceDetails,
+                "solServiceHowServed=\"deliveredTo\" OR solServiceHowServed=\"postedTo\"")
+            .mandatory(SolicitorService::getAddressServed)
+            .mandatory(SolicitorService::getBeingThe)
+            .mandatory(SolicitorService::getLocationServed)
+            .mandatory(SolicitorService::getSpecifyLocationServed, "solServiceLocationServed=\"otherSpecify\"")
+            .mandatoryWithLabel(SolicitorService::getServiceSotName, "Solicitor's/Applicant's name")
+            .optional(SolicitorService::getServiceSotFirm)
+            .mandatory(SolicitorService::getStatementOfTruth)
+            .done()
             .done();
     }
 
@@ -106,9 +106,15 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
 
         List<ListValue<DivorceDocument>> documentsUploadedOnConfirmService = caseDocuments.getDocumentsUploadedOnConfirmService();
 
-        if (!CollectionUtils.isEmpty(documentsUploadedOnConfirmService)) {
+        if (!isEmpty(documentsUploadedOnConfirmService)) {
             log.info("Adding attachments to documents uploaded.  Case ID: {}", caseDetails.getId());
-            caseDocuments.getDocumentsUploaded().addAll(documentsUploadedOnConfirmService);
+
+            if (isNull(caseDocuments.getDocumentsUploaded())) {
+                caseDocuments.setDocumentsUploaded(documentsUploadedOnConfirmService);
+            } else {
+                caseDocuments.getDocumentsUploaded().addAll(documentsUploadedOnConfirmService);
+            }
+
             caseDocuments.setDocumentsUploadedOnConfirmService(null);
         }
     }
