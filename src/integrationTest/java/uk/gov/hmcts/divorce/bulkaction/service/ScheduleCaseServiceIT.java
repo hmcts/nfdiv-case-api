@@ -133,7 +133,7 @@ public class ScheduleCaseServiceIT {
             caseDataContent
         )).thenReturn(getCaseCourtHearingDetails());
 
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails, CASEWORKER_AUTH_TOKEN);
+        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails);
 
         verify(coreCaseDataApi)
             .startEventForCaseWorker(
@@ -226,7 +226,7 @@ public class ScheduleCaseServiceIT {
             caseDataContent
         )).thenReturn(getCasePronouncementDetails());
 
-        scheduleCaseService.updatePronouncementJudgeDetailsForCasesInBulk(bulkActionCaseDetails, CASEWORKER_AUTH_TOKEN);
+        scheduleCaseService.updatePronouncementJudgeDetailsForCasesInBulk(bulkActionCaseDetails);
 
         verify(coreCaseDataApi)
             .startEventForCaseWorker(
