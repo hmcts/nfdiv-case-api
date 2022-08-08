@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Data
@@ -107,6 +108,20 @@ public class FinalOrder {
         access = {DefaultAccess.class}
     )
     private String applicant1FinalOrderLateExplanation;
+
+    @CCD(
+        label = "Final order late explanation",
+        access = {DefaultAccess.class}
+    )
+    private String applicant1FinalOrderLateExplanationTranslated;
+
+    @CCD(
+        label = "Translated To?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "TranslatedToLanguage"
+    )
+    private TranslatedToLanguage applicant1FinalOrderLateExplanationTranslatedTo;
+
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
