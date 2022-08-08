@@ -28,7 +28,7 @@ public class Applicant1SwitchToSoleCoNotification implements ApplicantNotificati
 
     @Override
     public void sendToApplicant1(final CaseData data, final Long id) {
-        log.info("Notifying applicant 1 of his CO application for case : {}", id);
+        log.info("Notifying applicant 1 of CO application for case : {}", id);
         Map<String, String> templateVars = commonContent.mainTemplateVars(data, id, data.getApplicant1(), data.getApplicant2());
         templateVars.put(
             PLUS_21_DUE_DATE,
@@ -46,7 +46,7 @@ public class Applicant1SwitchToSoleCoNotification implements ApplicantNotificati
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         if (caseData.getApplication().getApplicant2ScreenHasMarriageBroken() != NO) {
-            log.info("Notifying applicant 1 of his partner's CO application as Sole for case : {}", id);
+            log.info("Notifying applicant 1 of partner's CO application as Sole for case : {}", id);
 
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
