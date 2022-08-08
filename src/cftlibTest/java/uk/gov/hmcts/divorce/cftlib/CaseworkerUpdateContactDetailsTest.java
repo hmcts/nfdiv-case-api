@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.util.regex.Pattern.compile;
+import static uk.gov.hmcts.divorce.cftlib.util.PlaywrightHelpers.select;
 
 public class CaseworkerUpdateContactDetailsTest extends XuiTest {
 
@@ -21,10 +22,8 @@ public class CaseworkerUpdateContactDetailsTest extends XuiTest {
         // Click text=Save and continue
         page.locator("text=Save and continue").click();
         assertThat(page).hasURL(compile("http://localhost:3000/cases/case-details/*"));
-        // Click form:has-text("Next stepSelect actionAdd noteAttach scanned docsAwaiting ApplicantConfirm servi")
-        page.locator("form:has-text(\"Next stepSelect actionAdd noteAttach scanned docsAwaiting ApplicantConfirm servi\")").click();
         // Select 19: Object
-        page.locator("select").selectOption("19: Object");
+        page.locator("select").selectOption(select("Update contact details"));
         // Click text=Go
         page.locator("text=Go").click();
         // Click #applicant1FirstName
