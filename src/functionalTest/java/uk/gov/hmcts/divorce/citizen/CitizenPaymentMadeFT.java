@@ -109,7 +109,7 @@ public class CitizenPaymentMadeFT extends FunctionalTestSuite {
         request.put("applicant1KnowsApplicant2Address", "No");
         request.remove("applicant1CannotUploadSupportingDocument");
 
-        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, CITIZEN_PAYMENT_MADE, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
