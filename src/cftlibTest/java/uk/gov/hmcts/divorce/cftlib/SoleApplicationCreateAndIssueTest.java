@@ -2,11 +2,10 @@ package uk.gov.hmcts.divorce.cftlib;
 
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.divorce.cftlib.util.PlaywrightHelpers;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.util.regex.Pattern.compile;
-import static uk.gov.hmcts.divorce.cftlib.util.PlaywrightHelpers.*;
+import static uk.gov.hmcts.divorce.cftlib.util.PlaywrightHelpers.LONG_WAIT;
 import static uk.gov.hmcts.divorce.cftlib.util.PlaywrightHelpers.select;
 
 public class SoleApplicationCreateAndIssueTest extends XuiTest {
@@ -209,8 +208,8 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
         page.locator("select").selectOption(select("Sign and submit"));
         // Click text=Go
         page.locator("text=Go").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-details/" + caseRef + "/trigger/solicitor-submit-application/solicitor" +
-            "-submit-applicationSolStatementOfTruth");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-details/" + caseRef + "/trigger/solicitor-submit-application/solicitor"
+            + "-submit-applicationSolStatementOfTruth");
         // Check #solUrgentCase_No
         page.locator("#solUrgentCase_No").check();
         // Check #serviceMethod-solicitorService
@@ -241,16 +240,14 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
 
         // Click text=Continue
         page.locator("text=Continue").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-details/" + caseRef + "/trigger/solicitor-submit-application/solicitor" +
-            "-submit" +
-            "-applicationSolPayment");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-details/" + caseRef + "/trigger/solicitor-submit-application/solicitor"
+            + "-submit-applicationSolPayment");
 
         page.locator("#solPaymentHowToPay-feePayByAccount").check();
         // Click text=Continue
         page.locator("text=Continue").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-details/" + caseRef + "/trigger/solicitor-submit-application/solicitor" +
-            "-submit" +
-            "-applicationSolPayAccount");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-details/" + caseRef + "/trigger/solicitor-submit-application/solicitor"
+            + "-submit-applicationSolPayAccount");
         // Select 1: 05af69c6-72f8-478d-bd11-56f533e980e0
         page.locator("select").selectOption(select("PBA0077597"));
         // Click input[type="text"]
@@ -259,9 +256,8 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
         page.locator("input[type=\"text\"]").fill("123");
         // Click text=Continue
         page.locator("text=Continue").click();
-        assertThat(page).hasURL("http://localhost:3000/cases/case-details/" + caseRef + "/trigger/solicitor-submit-application/solicitor" +
-            "-submit" +
-            "-applicationSolPaymentSummary");
+        assertThat(page).hasURL("http://localhost:3000/cases/case-details/" + caseRef + "/trigger/solicitor-submit-application/solicitor"
+            + "-submit-applicationSolPaymentSummary");
 
         page.locator("text=Continue").click();
         // Click text=Submit Application

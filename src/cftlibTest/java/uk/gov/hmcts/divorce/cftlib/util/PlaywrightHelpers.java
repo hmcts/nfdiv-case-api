@@ -6,6 +6,9 @@ import com.microsoft.playwright.options.SelectOption;
 public class PlaywrightHelpers {
     public static final Page.WaitForURLOptions LONG_WAIT = new Page.WaitForURLOptions().setTimeout(30000);
 
+    private PlaywrightHelpers() {
+    }
+
     public static SelectOption select(String label) {
         return new SelectOption().setLabel(label);
     }
