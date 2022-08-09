@@ -326,6 +326,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplicant2SolicitorName")
             .field("coApplicant2SolicitorFirm")
             .field("coApplicant2SolicitorAdditionalComments")
+            .field("coScannedD84Form")
             .field("coCourt")
             .field("coDateAndTimeOfHearing")
             .field("coPronouncementJudge")
