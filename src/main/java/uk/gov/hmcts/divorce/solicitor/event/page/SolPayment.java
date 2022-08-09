@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,24 +40,31 @@ public class SolPayment implements CcdPageConfiguration {
         CaseDetails<CaseData, State> details,
         CaseDetails<CaseData, State> detailsBefore
     ) {
-        log.info("Mid-event callback triggered for SolPayment page");
+
+        final Long caseId = details.getId();
+        log.info("Mid-event callback triggered for SolPayment page Case Id: {}", caseId);
 
         CaseData caseData = details.getData();
 
         if (!caseData.getApplication().isSolicitorPaymentMethodPba()) {
-            log.info("Payment method is not PBA for case id {}  :", details.getId());
+            log.info("Payment method is not PBA for case id {}  :", caseId);
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .build();
         }
 
-        DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
+        try {
+            DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
 
-        log.info("DynamicList {}", pbaNumbersDynamicList);
-        caseData.getApplication().setPbaNumbers(pbaNumbersDynamicList);
+            log.info("DynamicList {}, Case Id: {}", pbaNumbersDynamicList, caseId);
+            caseData.getApplication().setPbaNumbers(pbaNumbersDynamicList);
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .build();
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .build();
+        } catch (final FeignException e) {
+            log.error("Failed to retrieve PBA numbers for Case Id: {}", caseId);
+            throw e;
+        }
     }
 }
