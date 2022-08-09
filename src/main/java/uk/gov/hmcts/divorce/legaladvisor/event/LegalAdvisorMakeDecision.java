@@ -74,7 +74,6 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .name("Make a decision")
             .description("Grant Conditional Order")
             .endButtonLabel("Submit")
-            .aboutToStartCallback(this::aboutToStart)
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -94,7 +93,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalDecision)
             .done()
-            .page("refusalOrderClarification")
+            .page("refusalOrderClarification", this::midEvent)
             .pageLabel("Refusal Order:Clarify - Make a Decision")
             .showCondition("coRefusalDecision=\"moreInfo\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
@@ -108,23 +107,19 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalAdminErrorInfo)
             .done()
-            .page("amendApplication")
+            .page("amendApplication", this::midEvent)
             .pageLabel("Request amended application - Make a Decision")
             .showCondition("coRefusalDecision=\"reject\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getRefusalRejectionReason)
-                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo,
-                "coRefusalRejectionReasonCONTAINS \"other\" "
-                    + "OR coRefusalRejectionReasonCONTAINS \"noCriteria\" " // added for backward compatibility
-                    + "OR coRefusalRejectionReasonCONTAINS \"insufficentDetails\"") // added for backward compatibility
+                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo)
+            .done()
+            .page("refusalDraft")
+            .pageLabel("Refusal Draft")
+            .showCondition("coGranted=\"No\" AND coRefusalDecision!=\"adminError\"")
+            .complex(CaseData::getConditionalOrder)
+            .readonlyWithLabel(ConditionalOrder::getRefusalOrderDocument, "View refusal order:")
+            .done()
             .done();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("Legal advisor grant conditional order about to start callback invoked. CaseID: {}", details.getId());
-        CaseData caseData = details.getData();
-        caseData.getConditionalOrder().resetRefusalFields();
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData).build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -169,41 +164,58 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             )
         );
 
+        caseData.getConditionalOrder().resetClarificationFields();
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .state(endState)
             .build();
     }
 
-    private void generateAndSetConditionalOrderRefusedDocument(final CaseData caseData,
-                                                               final Long caseId) {
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
+                                                                  final CaseDetails<CaseData, State> detailsBefore) {
+        CaseData caseData = details.getData();
 
+        caseData.getConditionalOrder().setRefusalOrderDocument(generateRefusalDocument(caseData, details.getId()));
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
+    private void generateAndSetConditionalOrderRefusedDocument(final CaseData caseData, final Long caseId) {
+
+        Document refusalOrderDocument = caseData.getConditionalOrder().getRefusalOrderDocument();
+
+        if (refusalOrderDocument == null) {
+            refusalOrderDocument = generateRefusalDocument(caseData, caseId);
+            caseData.getConditionalOrder().setRefusalOrderDocument(refusalOrderDocument);
+        }
+
+        caseData.getDocuments().setDocumentsGenerated(addDocumentToTop(
+            caseData.getDocuments().getDocumentsGenerated(),
+            DivorceDocument
+                .builder()
+                .documentLink(refusalOrderDocument)
+                .documentFileName(refusalOrderDocument.getFilename())
+                .documentType(CONDITIONAL_ORDER_REFUSAL)
+                .build()
+        ));
+    }
+
+    private Document generateRefusalDocument(final CaseData caseData, final Long caseId) {
         log.info("Generating conditional order refused document for templateId : {} caseId: {}",
             REFUSAL_ORDER_TEMPLATE_ID, caseId);
 
         var templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
 
-        Document document = caseDataDocumentService.renderDocument(
+        return caseDataDocumentService.renderDocument(
             templateContents,
             caseId,
             REFUSAL_ORDER_TEMPLATE_ID,
             ENGLISH,
             REFUSAL_ORDER_DOCUMENT_NAME
         );
-
-        var refusalConditionalOrderDoc = DivorceDocument
-            .builder()
-            .documentLink(document)
-            .documentFileName(document.getFilename())
-            .documentType(CONDITIONAL_ORDER_REFUSAL)
-            .build();
-
-        caseData.getConditionalOrder().setRefusalOrderDocument(refusalConditionalOrderDoc.getDocumentLink());
-
-        caseData.getDocuments().setDocumentsGenerated(addDocumentToTop(
-            caseData.getDocuments().getDocumentsGenerated(),
-            refusalConditionalOrderDoc
-        ));
     }
 }
 

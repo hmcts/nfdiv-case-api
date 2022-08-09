@@ -19,6 +19,8 @@ import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -38,6 +40,11 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
 
     private static final String CO_REJECTED_JOINT_RESPONSE
         = "classpath:responses/response-legal-advisor-make-decision-co-rejected-joint.json";
+
+    private static final String CO_MORE_INFO_MID_EVENT_RESPONSE
+        = "classpath:responses/response-legal-advisor-make-decision-co-more-info-mid-event.json";
+    private static final String CO_REJECTED_MID_EVENT_RESPONSE
+        = "classpath:responses/response-legal-advisor-make-decision-co-rejected-mid-event.json";
 
     @Test
     public void shouldSendEmailToApp1SolicitorAndGenerateRefusalOrderWhenMoreInfoSelected() throws IOException {
@@ -143,5 +150,35 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(CO_REJECTED_JOINT_APPS_REPRESENTED_MORE_INFO_RESPONSE)));
+    }
+
+    @Test
+    public void midEventShouldGenerateRefusalOrderWhenMoreInfoSelected() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("coRefusalDecision", "moreInfo");
+
+        Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(CO_MORE_INFO_MID_EVENT_RESPONSE)));
+    }
+
+    @Test
+    public void midEventShouldGenerateRefusalOrderWhenAmendApplicationSelected() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("coRefusalDecision", "reject");
+
+        Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(CO_REJECTED_MID_EVENT_RESPONSE)));
     }
 }

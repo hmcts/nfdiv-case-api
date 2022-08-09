@@ -1,0 +1,18 @@
+{
+  "data": {
+    "applicant1ContactDetailsType": "public",
+    "applicant1Email": "test@test.com",
+    "applicant1FirstName": "test_first_name",
+    "applicant1Gender": "female",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1LastName": "test_last_name",
+    "applicant1MiddleName": "test_middle_name",
+    "divorceOrDissolution": "divorce",
+    "dueDate": "${json-unit.ignore}",
+    "applicant1FinancialOrder": "No",
+    "applicant2UserId": "3",
+    "dataVersion": "${json-unit.ignore}",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "warnings": []
+  }
+}

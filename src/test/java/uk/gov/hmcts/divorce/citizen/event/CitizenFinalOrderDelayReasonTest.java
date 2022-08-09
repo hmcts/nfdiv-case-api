@@ -19,8 +19,10 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenFinalOrderDelayReason.CITIZEN_FINAL_ORDER_DELAY_REASON;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -59,5 +61,44 @@ public class CitizenFinalOrderDelayReasonTest {
 
         verify(notificationDispatcher).send(soleAppliedForFinalOrderNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldSetStateToWelshTranslationReviewIfSoleAndApp1LanguagePreferenceWelshYes() {
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.SOLE_APPLICATION).build();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(State.FinalOrderOverdue).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenFinalOrderDelayReason.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
+        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(FinalOrderRequested);
+    }
+
+    @Test
+    void shouldSetStateToWelshTranslationReviewIfJointAndApp1LanguagePreferenceWelshYes() {
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(State.FinalOrderOverdue).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenFinalOrderDelayReason.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
+        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(FinalOrderRequested);
+    }
+
+    @Test
+    void shouldSetStateToWelshTranslationReviewIfJointAndApp2LanguagePreferenceWelshYes() {
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(State.FinalOrderOverdue).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenFinalOrderDelayReason.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
+        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(FinalOrderRequested);
     }
 }

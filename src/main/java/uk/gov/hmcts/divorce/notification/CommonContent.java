@@ -32,9 +32,13 @@ public class CommonContent {
     public static final String PARTNER = "partner";
     public static final String FIRST_NAME = "first name";
     public static final String LAST_NAME = "last name";
+    public static final String ADDRESS = "address";
 
     public static final String IS_DIVORCE = "isDivorce";
     public static final String IS_DISSOLUTION = "isDissolution";
+
+    public static final String IS_CONDITIONAL_ORDER = "isConditionalOrder";
+    public static final String IS_FINAL_ORDER = "isFinalOrder";
 
     public static final String IS_REMINDER = "isReminder";
     public static final String YES = "yes";
@@ -97,6 +101,8 @@ public class CommonContent {
     public static final String APPLICANT_1 = "Applicant 1";
     public static final String APPLICANT_2 = "Applicant 2";
     public static final String RESPONDENT = "Respondent";
+    public static final String APPLICANT1_LABEL = "applicant1Label";
+    public static final String APPLICANT2_LABEL = "applicant2Label";
 
     @Autowired
     private EmailTemplatesConfig config;
@@ -156,8 +162,8 @@ public class CommonContent {
         templateVars.put("moreInfo", MORE_INFO.equals(refusalOption) ? YES : NO);
         templateVars.put("amendApplication", REJECT.equals(refusalOption) ? YES : NO);
         templateVars.put("isJoint", isSole ? NO : YES);
-        templateVars.put("applicant1Label", isSole ? APPLICANT : APPLICANT_1);
-        templateVars.put("applicant2Label", isSole ? RESPONDENT : APPLICANT_2);
+        templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
+        templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
 
         return templateVars;
     }

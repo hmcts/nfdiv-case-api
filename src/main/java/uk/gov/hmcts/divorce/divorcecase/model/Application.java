@@ -114,7 +114,7 @@ public class Application {
     private String solUrgentCaseSupportingInformation;
 
     @CCD(
-        label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
+        label = "Want to apply to have the papers 'served' (sent to respondent) in another way",
         hint = "For example by email, text message or social media. This is a separate application with "
             + "an additional fee, which will need to be reviewed by a judge.",
         access = {DefaultAccess.class}
@@ -358,6 +358,12 @@ public class Application {
     private State previousState;
 
     @CCD(
+        label = "Welsh previous state",
+        access = {CaseworkerAccess.class}
+    )
+    private State welshPreviousState;
+
+    @CCD(
         label = "Bulk Scan state to transition to",
         typeOverride = FixedList,
         typeParameterOverride = "State"
@@ -403,11 +409,22 @@ public class Application {
     private YesOrNo applicantsRemindedCanApplyForConditionalOrder;
 
     @CCD(
+        label = "Notification sent to Joint Applicant indicating they can switch to sole",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jointApplicantNotifiedCanSwitchToSole;
+
+    @CCD(
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "ReissueOption"
     )
     private ReissueOption reissueOption;
+
+    @CCD(
+        access = {DefaultAccess.class}
+    )
+    private ReissueOption previousReissueOption;
 
     @CCD(
         label = "Does Applicant 2 need help with fees?",

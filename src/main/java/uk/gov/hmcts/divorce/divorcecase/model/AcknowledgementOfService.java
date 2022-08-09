@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
@@ -83,6 +84,21 @@ public class AcknowledgementOfService {
     private String reasonCourtsOfEnglandAndWalesHaveNoJurisdiction;
 
     @CCD(
+        label = "Reason respondent disagreed to claimed jurisdiction(Translated)",
+        typeOverride = TextArea,
+        access = {AosAccess.class}
+    )
+    private String reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated;
+
+    @CCD(
+        label = "Translated To?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "TranslatedToLanguage"
+    )
+    private TranslatedToLanguage reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslatedTo;
+
+
+    @CCD(
         label = "In which country is the respondents life mainly based?",
         access = {AosAccess.class}
     )
@@ -93,14 +109,6 @@ public class AcknowledgementOfService {
         access = AosAccess.class
     )
     private YesOrNo statementOfTruth;
-
-    @CCD(
-        label = "The respondent has given their \"prayer\".",
-        hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
-            + " and have decided how money and property will be split (\"financial order\").",
-        access = AosAccess.class
-    )
-    private YesOrNo prayerHasBeenGiven;
 
     @CCD(
         label = "How do you want to respond?",
@@ -156,7 +164,7 @@ public class AcknowledgementOfService {
         if (applicant.isRepresented()) {
             final OrganisationPolicy<UserRole> organisationPolicy = applicant.getSolicitor().getOrganisationPolicy();
 
-            if (nonNull(organisationPolicy)) {
+            if (nonNull(organisationPolicy) && nonNull(organisationPolicy.getOrganisation())) {
                 noticeOfProceedingsSolicitorFirm = organisationPolicy.getOrganisation().getOrganisationName();
             } else {
                 noticeOfProceedingsSolicitorFirm = applicant.getSolicitor().getFirmName();

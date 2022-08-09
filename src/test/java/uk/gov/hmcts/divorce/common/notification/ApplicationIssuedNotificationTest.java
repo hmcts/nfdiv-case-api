@@ -424,6 +424,35 @@ public class ApplicationIssuedNotificationTest {
     }
 
     @Test
+    void shouldSendWelshNotificationToApplicantSolicitorIfLanguagePreferenceIsWelsh() {
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicantRepresentedBySolicitor())
+            .applicant2(respondent())
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().issueDate(LOCAL_DATE).build())
+            .build();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+
+        notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            TEST_SOLICITOR_EMAIL,
+            SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+            nopSolicitorTemplateVars(),
+            WELSH
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
     void shouldSendNotificationToApplicantSolicitorOnReissue() {
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)

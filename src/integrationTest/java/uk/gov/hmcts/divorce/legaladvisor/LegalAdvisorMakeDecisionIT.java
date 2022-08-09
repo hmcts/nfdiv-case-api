@@ -76,6 +76,8 @@ import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -719,5 +721,79 @@ public class LegalAdvisorMakeDecisionIT {
         );
 
         verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void midEventShouldGenerateRefusalOrderDocumentWhenCORejectedWithMoreInfo() throws Exception {
+        setMockClock(clock);
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .granted(NO)
+            .refusalDecision(MORE_INFO)
+            .build());
+
+        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+
+        mockMvc.perform(post(CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_MAKE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                jsonPath("$.data.coRefusalOrderDocument.document_filename").value("NoticeOfRefusalDocument.pdf")
+            );
+    }
+
+    @Test
+    public void midEventShouldGenerateRefusalOrderDocumentWhenCORejectedWithAmendments() throws Exception {
+        setMockClock(clock);
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .granted(NO)
+            .refusalDecision(REJECT)
+            .build());
+
+        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+
+        mockMvc.perform(post(CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_MAKE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                jsonPath("$.data.coRefusalOrderDocument.document_filename").value("NoticeOfRefusalDocument.pdf")
+            );
     }
 }
