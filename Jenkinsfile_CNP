@@ -153,7 +153,7 @@ withPipeline(type, product, component) {
 
     onPR {
       env.ENVIRONMENT="preview"
-      env.CASE_API_URL = "http://nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+      env.CASE_API_URL = "https://nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
       env.CCD_DEF_NAME = "preview"
       env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
       env.CASE_DATA_STORE_BASEURL = "https://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
@@ -178,7 +178,7 @@ withPipeline(type, product, component) {
 
     after('functionalTest:aat') {
         env.ENVIRONMENT="prod"
-        env.CASE_API_URL="http://nfdiv-case-api-prod.service.core-compute-prod.internal"
+        env.CASE_API_URL="https://nfdiv-case-api-prod.service.core-compute-prod.internal"
         env.CCD_DEF_NAME="prod"
         env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-prod.service.core-compute-prod.internal"
         env.CITIZEN_UPDATE_CASE_STATE_ENABLED=false
