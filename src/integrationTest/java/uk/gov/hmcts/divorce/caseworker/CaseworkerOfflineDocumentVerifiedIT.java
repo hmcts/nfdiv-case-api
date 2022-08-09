@@ -20,8 +20,10 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
+import uk.gov.hmcts.divorce.caseworker.service.print.AppliedForCoPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -35,6 +37,11 @@ import java.time.LocalDate;
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,6 +51,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
@@ -57,6 +65,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -91,6 +100,9 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
     @MockBean
     private NotificationService notificationService;
+
+    @MockBean
+    private AppliedForCoPrinter appliedForCoPrinter;
 
     @BeforeAll
     static void setUp() {
@@ -196,14 +208,13 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicant2(getApplicant(FEMALE));
         caseData.setDocuments(
             CaseDocuments.builder()
                 .typeOfDocumentAttached(CO_D84)
                 .scannedDocuments(singletonList(doc1))
                 .build()
         );
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -220,6 +231,9 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(expectedResponse(CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_D84_RESPONSE));
+
+        verify(appliedForCoPrinter, times(2)).print(any(CaseData.class), anyLong(), any(Applicant.class));
+        verifyNoMoreInteractions(appliedForCoPrinter);
     }
 
     @Test
