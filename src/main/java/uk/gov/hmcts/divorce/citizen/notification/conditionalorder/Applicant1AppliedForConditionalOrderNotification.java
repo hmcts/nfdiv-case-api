@@ -106,7 +106,7 @@ public class Applicant1AppliedForConditionalOrderNotification
 
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
-        if (!caseData.getApplicationType().isSole()) {
+        if (!caseData.getApplicationType().isSole() && !alreadyApplied(caseData, APPLICANT2)) {
             log.info("Notifying applicant 2 solicitor that other party has applied for Conditional Order for case: {}", id);
             notificationService.sendEmail(
                 caseData.getApplicant2().getSolicitor().getEmail(),
