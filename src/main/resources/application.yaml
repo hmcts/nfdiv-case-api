@@ -136,6 +136,7 @@ uk:
             RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED: 'e872dbc4-e1f9-454c-830c-3e86ccb03251'
             JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR: '00c04fec-dc80-4ec9-82f1-f6eab43d656c'
             JOINT_APPLICANT_CAN_SWITCH_TO_SOLE: '4fa1278a-8c8c-49da-b1ee-9d289f5e2436'
+            JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE: '979f2885-7856-45d9-81a5-3c6b2979f906'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: ${OUTSTANDING_ACTIONS_WELSH_NOTIFICATION_ID:544c4297-e1c5-44bc-8f02-5661494beb4f}
@@ -226,6 +227,7 @@ uk:
             BAILIFF_SERVICE_SUCCESSFUL: ${BAILIFF_SERVICE_SUCCESSFUL_NOTIFICATION_ID:61332826-713e-49a7-ba37-563cb9261c65}
             JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR: '00c04fec-dc80-4ec9-82f1-f6eab43d656c'
             JOINT_APPLICANT_CAN_SWITCH_TO_SOLE: '4fa1278a-8c8c-49da-b1ee-9d289f5e2436'
+            JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE: '979f2885-7856-45d9-81a5-3c6b2979f906'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
@@ -283,7 +285,7 @@ docmosis:
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
       COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
-      NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
+      NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended.docx
       GENERAL_LETTER: NFD_General_Letter.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3.docx
@@ -320,7 +322,7 @@ docmosis:
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
       COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
-      NFD_RESP_RESPONDED_UNDEFENDED: NFD_Respondent_Responded_Undefended.docx
+      NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended.docx
       GENERAL_LETTER: NFD_General_Letter.docx
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       REFUSAL_ORDER: NFD_Refusal_Order_V2.docx

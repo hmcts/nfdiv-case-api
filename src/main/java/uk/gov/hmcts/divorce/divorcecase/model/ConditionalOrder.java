@@ -127,10 +127,23 @@ public class ConditionalOrder {
     private Set<ClarificationReason> refusalClarificationReason;
 
     @CCD(
-        label = "Clarification additional information (Translated)",
+        label = "Clarification additional information",
         typeOverride = TextArea
     )
     private String refusalClarificationAdditionalInfo;
+
+    @CCD(
+        label = "Clarification additional information (Translated)",
+        typeOverride = TextArea
+    )
+    private String refusalClarificationAdditionalInfoTranslated;
+
+    @CCD(
+        label = "Translated To?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "TranslatedToLanguage"
+    )
+    private TranslatedToLanguage refusalClarificationAdditionalInfoTranslatedTo;
 
     @CCD(
         label = "List of responses for Conditional Order clarification",
