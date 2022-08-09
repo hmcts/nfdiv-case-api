@@ -16,6 +16,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
@@ -308,7 +309,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("conditionalOrder", "Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, SUPER_USER)
             .showCondition("coApplicant1SubmittedDate=\"*\" OR coApplicant2SubmittedDate=\"*\" OR "
-                + showForState(ConditionalOrderDrafted, ConditionalOrderPending)
+                + showForState(ConditionalOrderDrafted, ConditionalOrderPending, AwaitingLegalAdvisorReferral)
             )
             .label("labelConditionalOrderDetails-Applicant1",
                 "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
