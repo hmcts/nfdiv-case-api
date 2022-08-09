@@ -21,17 +21,21 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.UUID.randomUUID;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 
@@ -296,11 +300,18 @@ public class ConditionalOrder {
 
         } else if (MORE_INFO.equals(getRefusalDecision())) {
 
+            Set<ClarificationReason> reasonsSet =  new HashSet<>();
+            if (isNotEmpty(getRefusalClarificationReason())) {
+                reasonsSet.addAll(getRefusalClarificationReason().stream()
+                    .filter(reason -> !OTHER.equals(reason))
+                    .collect(Collectors.toSet()));
+            }
+
             return LegalAdvisorDecision.builder()
                 .granted(getGranted())
                 .decisionDate(decisionDate)
                 .refusalDecision(getRefusalDecision())
-                .refusalClarificationReason(getRefusalClarificationReason())
+                .refusalClarificationReason(reasonsSet)
                 .refusalClarificationAdditionalInfo(getRefusalClarificationAdditionalInfo())
                 .build();
 
