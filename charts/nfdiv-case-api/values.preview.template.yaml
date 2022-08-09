@@ -8,6 +8,7 @@ java:
   environment:
     CASE_DATA_STORE_BASEURL: http://{{ .Release.Name }}-ccd-data-store-api
     CITIZEN_UPDATE_CASE_STATE_ENABLED: true
+    CASE_API_URL: http://{{ .Release.Name }}-java
   keyVaults:
     nfdiv:
       secrets:
