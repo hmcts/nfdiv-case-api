@@ -123,10 +123,23 @@ public class ConditionalOrder {
     private Set<ClarificationReason> refusalClarificationReason;
 
     @CCD(
-        label = "Clarification additional information (Translated)",
+        label = "Clarification additional information",
         typeOverride = TextArea
     )
     private String refusalClarificationAdditionalInfo;
+
+    @CCD(
+        label = "Clarification additional information (Translated)",
+        typeOverride = TextArea
+    )
+    private String refusalClarificationAdditionalInfoTranslated;
+
+    @CCD(
+        label = "Translated To?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "TranslatedToLanguage"
+    )
+    private TranslatedToLanguage refusalClarificationAdditionalInfoTranslatedTo;
 
     @CCD(
         label = "List of responses for Conditional Order clarification",
@@ -189,7 +202,8 @@ public class ConditionalOrder {
     private DivorceDocument certificateOfEntitlementDocument;
 
     @CCD(
-        label = "Refusal Rejection reasons"
+        label = "Refusal Rejection reasons",
+        access = {DefaultAccess.class}
     )
     private Document refusalOrderDocument;
 
@@ -212,6 +226,11 @@ public class ConditionalOrder {
     )
     private List<ListValue<ClarificationResponse>> clarificationResponsesSubmitted;
 
+    @CCD(
+        label = "Date Conditional Order rescinded"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate rescindedDate;
 
     @JsonIgnore
     public boolean areClaimsGranted() {

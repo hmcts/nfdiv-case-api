@@ -33,7 +33,23 @@ class BulkActionWorkBasketResultFieldsTest {
                 "showCondition")
             .contains(
                 tuple("[CASE_REFERENCE]",
-                    "Case Number",
+                    "Case Reference",
+                    null,
+                    null),
+                tuple("[CREATED_DATE]",
+                    "Case created date",
+                    null,
+                    null),
+                tuple("[LAST_MODIFIED_DATE]",
+                    "Last modified date",
+                    null,
+                    null),
+                tuple("[STATE]",
+                    "Case Status",
+                    null,
+                    null),
+                tuple("pronouncedDate",
+                    "Pronouncement date",
                     null,
                     null)
             );

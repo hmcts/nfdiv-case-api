@@ -6,7 +6,7 @@ java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
   environment:
-    CASE_DATA_STORE_BASEURL: "http://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    CASE_DATA_STORE_BASEURL: http://{{ .Release.Name }}-ccd-data-store-api
     CITIZEN_UPDATE_CASE_STATE_ENABLED: true
   keyVaults:
     nfdiv:
@@ -141,6 +141,7 @@ ccd:
       enabled: false
 
   elasticsearch:
+    nameOverride: ${SERVICE_NAME}-es
     clusterName: "es"
     imageTag: "7.17.0"
     replicas: 1

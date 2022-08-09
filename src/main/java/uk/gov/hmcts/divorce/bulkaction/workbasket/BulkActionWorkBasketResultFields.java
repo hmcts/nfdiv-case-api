@@ -7,6 +7,8 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.bulkaction.search.BulkActionSearchResultFields.SEARCH_RESULT_FIELD_LIST;
+
 @Component
 public class BulkActionWorkBasketResultFields implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
@@ -14,6 +16,6 @@ public class BulkActionWorkBasketResultFields implements CCDConfig<BulkActionCas
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         configBuilder
             .workBasketResultFields()
-            .caseReferenceField();
+            .fields(SEARCH_RESULT_FIELD_LIST);
     }
 }
