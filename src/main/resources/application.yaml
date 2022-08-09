@@ -279,7 +279,7 @@ docmosis:
       SERVICE_REFUSAL: NFD_Refusal_Order_Deemed_Dispensed_Service_V2.docx
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx
-      CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
+      CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Conditional_Order_Answers.docx
       CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed_V2.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
@@ -316,7 +316,7 @@ docmosis:
       SERVICE_REFUSAL: ${SERVICE_REFUSAL_TEMPLATE_ID:NFD_Refusal_Order_Deemed_Dispensed_Service_V2.docx}
       BAILIFF_APPLICATION_APPROVED: ${BAILIFF_APPLICATION_APPROVED_TEMPLATE_ID:NFD_Bailiff_Application_Approved.docx}
       BAILIFF_APPLICATION_NOT_APPROVED: ${BAILIFF_APPLICATION_NOT_APPROVED_TEMPLATE_ID:NFD_Bailiff_Application_Not_Approved.docx}
-      CONDITIONAL_ORDER_ANSWERS: NFD_Conditional_Order_Answers.docx
+      CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Conditional_Order_Answers.docx
       CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed_V2.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
