@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CO_REFUSED_SOLE_JOINT;
@@ -59,6 +61,27 @@ class LegalAdvisorAmendApplicationDecisionNotificationTest {
     }
 
     @Test
+    void shouldSendConditionalOrderRefusedForAmendmentEmailInWelshToApplicant1WhenApplicant1() {
+
+        final var data = validApplicant1CaseData();
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .refusalDecision(REJECT)
+            .build());
+
+        coRefusalDecisionNotification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
+            anyMap(),
+            eq(WELSH)
+        );
+
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
     void shouldSendConditionalOrderRefusedForAmendmentEmailToApplicant2InJointApplication() {
 
         final var data = validJointApplicant1CaseData();
@@ -74,6 +97,28 @@ class LegalAdvisorAmendApplicationDecisionNotificationTest {
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
             eq(ENGLISH)
+        );
+
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendConditionalOrderRefusedForAmendmentEmailInWelshToApplicant2InJointApplication() {
+
+        final var data = validJointApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .refusalDecision(REJECT)
+            .build());
+
+        coRefusalDecisionNotification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
+            anyMap(),
+            eq(WELSH)
         );
 
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());

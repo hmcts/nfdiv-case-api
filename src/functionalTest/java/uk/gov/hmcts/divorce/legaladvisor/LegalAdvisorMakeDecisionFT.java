@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.legaladvisor;
 
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +38,9 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     private static final String CO_REJECTED_JOINT_APPS_REPRESENTED_MORE_INFO_RESPONSE
         = "classpath:responses/response-legal-advisor-make-decision-co-rejected-more-info-joint-apps-represented.json";
 
+    private static final String CO_REJECTED_JOINT_RESPONSE
+        = "classpath:responses/response-legal-advisor-make-decision-co-rejected-joint.json";
+
     private static final String CO_MORE_INFO_MID_EVENT_RESPONSE
         = "classpath:responses/response-legal-advisor-make-decision-co-more-info-mid-event.json";
     private static final String CO_REJECTED_MID_EVENT_RESPONSE
@@ -71,7 +76,7 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendWelshNotificationsIfJointConditionalOrderNotGranted() throws IOException {
+    public void shouldSendWelshNotificationsIfJointConditionalOrderNotGrantedForMoreInfo() throws IOException {
         Map<String, Object> request = caseData(JOINT_WELSH_REQUEST);
         request.put("coRefusalDecision", "moreInfo");
 
@@ -92,6 +97,44 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(CO_REJECTED_JOINT_APPS_REPRESENTED_RESPONSE)));
+    }
+
+    @Test
+    public void shouldSendEmailToBothApplicantsAndGenerateRefusalOrderWhenRejectedSelectedForJointApplication() throws IOException {
+        Map<String, Object> request = caseData(JOINT_WELSH_REQUEST);
+        request.put("coRefusalDecision", "reject");
+        request.put("applicant1LanguagePreferenceWelsh", "No");
+        request.put("applicant2LanguagePreferenceWelsh", "No");
+
+        Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(CO_REJECTED_JOINT_RESPONSE)));
+    }
+
+    @Test
+    public void shouldSendEmailInWelshToBothApplicantsAndGenerateRefusalOrderWhenRejectedSelectedForJointApplication() throws IOException {
+        Map<String, Object> request = caseData(JOINT_WELSH_REQUEST);
+        request.put("coRefusalDecision", "reject");
+        request.put("applicant1LanguagePreferenceWelsh", "Yes");
+        request.put("applicant2LanguagePreferenceWelsh", "Yes");
+
+        Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(CO_REJECTED_JOINT_RESPONSE));
+        jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
+        jsonDocument.set("data.applicant2LanguagePreferenceWelsh", "Yes");
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(jsonDocument.json());
     }
 
     @Test

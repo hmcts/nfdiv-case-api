@@ -460,6 +460,72 @@ public class LegalAdvisorMakeDecisionIT {
     }
 
     @Test
+    public void shouldSendNotificationInWelshToBothApplicantsIfConditionalOrderIsRejectedForAmendmentAndLanguagePrefferedIsWelsh()
+        throws Exception {
+
+        setMockClock(clock);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseData caseData = validJointApplicant1CaseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .granted(NO)
+            .refusalDecision(REJECT)
+            .build());
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_MAKE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                jsonPath("$.state").value(AwaitingAmendedApplication.name())
+            );
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
+            anyMap(),
+            eq(WELSH)
+        );
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
+            anyMap(),
+            eq(WELSH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
     public void shouldAddLegalAdvisorDecisionToAuditList() throws Exception {
 
         setMockClock(clock);
