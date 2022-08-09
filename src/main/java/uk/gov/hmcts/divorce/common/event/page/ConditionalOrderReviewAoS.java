@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
         pageBuilder
             .page("ConditionalOrderReviewAoS", this::midEvent)
             .readonlyNoSummary(CaseData::getApplicationType, NEVER_SHOW)
+            .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
+            .done()
             .complex(CaseData::getAcknowledgementOfService)
                 .readonlyNoSummary(AcknowledgementOfService::getDateAosSubmitted, NEVER_SHOW)
             .done()
