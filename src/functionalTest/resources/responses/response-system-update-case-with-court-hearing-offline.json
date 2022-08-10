@@ -3,7 +3,7 @@
     "coClaimsGranted": "No",
     "coDecisionDate": "2021-05-10",
     "coCourt": "birmingham",
-    "coDateAndTimeOfHearing": "2013-09-29T18:46",
+    "coDateAndTimeOfHearing": "2013-09-29T18:46:00.000",
     "coCertificateOfEntitlementDocument": {
       "documentFileName": "${json-unit.any-string}",
       "documentType": "certificateOfEntitlement",
