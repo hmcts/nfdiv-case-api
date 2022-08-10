@@ -37,6 +37,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -152,38 +153,7 @@ public class CitizenAddPaymentIT {
         CaseData data = caseDataWithOrderSummary();
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
-        data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
-        data.getApplication().setDateSubmitted(LocalDateTime.now());
-
-        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.getApplication().setApplicationFeeOrderSummary(orderSummary);
-
-        Payment payment = Payment.builder()
-            .amount(55000)
-            .status(SUCCESS)
-            .build();
-
-        data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
-            .accept(APPLICATION_JSON))
-            .andExpect(status().isOk());
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
-
-        verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
-    public void givenValidSoleCaseDataWhenCallbackIsInvokedThenSendEmailsInWelshToApplicant1() throws Exception {
-        CaseData data = caseDataWithOrderSummary();
-        data.getApplicant1().setLanguagePreferenceWelsh(YES);
-        data.setApplicationType(SOLE_APPLICATION);
-        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
+        data.getApplication().setApplicant1KnowsApplicant2Address(NO);
         data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
         data.getApplication().setDateSubmitted(LocalDateTime.now());
 
@@ -202,7 +172,42 @@ public class CitizenAddPaymentIT {
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
                 .accept(APPLICATION_JSON))
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.state").value("AwaitingDocuments"));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenValidSoleCaseDataWhenCallbackIsInvokedThenSendEmailsInWelshToApplicant1() throws Exception {
+        CaseData data = caseDataWithOrderSummary();
+        data.getApplicant1().setLanguagePreferenceWelsh(YES);
+        data.setApplicationType(SOLE_APPLICATION);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
+        data.getApplication().setApplicant1KnowsApplicant2Address(NO);
+        data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
+        data.getApplication().setDateSubmitted(LocalDateTime.now());
+
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        data.getApplication().setApplicationFeeOrderSummary(orderSummary);
+
+        Payment payment = Payment.builder()
+            .amount(55000)
+            .status(SUCCESS)
+            .build();
+
+        data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.state").value("AwaitingDocuments"));
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(WELSH));

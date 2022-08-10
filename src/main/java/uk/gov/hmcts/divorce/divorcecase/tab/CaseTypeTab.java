@@ -109,7 +109,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("howToRespondApplication")
             .field("applicant2LanguagePreferenceWelsh")
             .field("applicant2SolicitorRepresented")
-            .field("noticeOfProceedingsEmail")
+            .field("applicant2SolicitorEmail","applicant2SolicitorRepresented=\"Yes\"")
+            .field("noticeOfProceedingsEmail","applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\"")
             .field("noticeOfProceedingsSolicitorFirm")
             .field("applicant2SolicitorRepresented", NEVER_SHOW)
             .field("statementOfTruth")
@@ -147,8 +148,16 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("languageDetails", "Language")
             .label("LabelLanguageDetails-Applicant", null, "### The applicant")
             .field("applicant1LanguagePreferenceWelsh")
+            .field("applicant1LegalProceedingsDetailsTranslated")
+            .field("coApplicant1ReasonInformationNotCorrectTranslated")
+            .field("applicant1FinalOrderLateExplanationTranslated")
+
             .label("LabelLanguageDetails-Respondent", null, "### The respondent")
-            .field("applicant2LanguagePreferenceWelsh");
+            .field("applicant2LanguagePreferenceWelsh")
+            .field("applicant2LegalProceedingsDetailsTranslated")
+            .field("coApplicant2ReasonInformationNotCorrectTranslated")
+            .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated")
+            .field("coRefusalClarificationAdditionalInfoTranslated");
     }
 
     private void buildDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -304,6 +313,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("labelConditionalOrderDetails-Applicant1",
                 "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
                 "### Applicant 1")
+            .field("labelContentUnionType", "applicationType=\"NEVER_SHOW\"")
             .field("coApplicant1ApplyForConditionalOrder")
             .field("coApplicant1ConfirmInformationStillCorrect")
             .field("coApplicant1ReasonInformationNotCorrect")
@@ -327,7 +337,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplicant2SolicitorAdditionalComments")
             .field("coCourt")
             .field("coDateAndTimeOfHearing")
-            .field("coPronouncementJudge");
+            .field("coPronouncementJudge")
+            .field("coRescindedDate");
     }
 
     private void buildOutcomeOfConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -365,7 +376,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coJudgeCostsClaimGranted")
             .field("coJudgeCostsOrderAdditionalInfo")
             .field("coCertificateOfEntitlementDocument")
-            .field("coConditionalOrderGrantedDocument");
+            .field("coConditionalOrderGrantedDocument")
+            .field("coRescindedDate");
     }
 
     private void buildFinalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

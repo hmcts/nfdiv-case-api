@@ -11,24 +11,22 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerSetRespondentSolicitorOrganisation.CASEWORKER_UPDATE_RESPONDENT_SOL_ORG;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class CaseworkerSetTestRespondentSolicitorOrganisationTest {
-
+class CaseworkerAddTranslationTest {
     @InjectMocks
-    private CaseworkerSetRespondentSolicitorOrganisation setRespondentSolicitorOrganisation;
+    private CaseworkerAddTranslation caseworkerAddTranslation;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() {
+    void shouldAddConfigurationToConfigBuilder() throws Exception {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        setRespondentSolicitorOrganisation.configure(configBuilder);
+        caseworkerAddTranslation.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CASEWORKER_UPDATE_RESPONDENT_SOL_ORG);
+            .contains(CaseworkerAddTranslation.CASEWORKER_ADD_TRANSLATION);
     }
 }
