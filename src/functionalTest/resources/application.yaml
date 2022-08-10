@@ -129,4 +129,3 @@ SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-com
 
 toggle:
   enable_entitlement_email: ${ENABLE_ENTITLEMENT_EMAIL:true}
-
