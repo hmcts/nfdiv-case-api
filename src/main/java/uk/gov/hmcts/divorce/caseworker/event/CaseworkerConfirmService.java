@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -22,6 +21,7 @@ import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitConfirmService;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -106,9 +106,15 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
 
         List<ListValue<DivorceDocument>> documentsUploadedOnConfirmService = caseDocuments.getDocumentsUploadedOnConfirmService();
 
-        if (!CollectionUtils.isEmpty(documentsUploadedOnConfirmService)) {
+        if (!isEmpty(documentsUploadedOnConfirmService)) {
             log.info("Adding attachments to documents uploaded.  Case ID: {}", caseDetails.getId());
-            caseDocuments.getDocumentsUploaded().addAll(documentsUploadedOnConfirmService);
+
+            if (isNull(caseDocuments.getDocumentsUploaded())) {
+                caseDocuments.setDocumentsUploaded(documentsUploadedOnConfirmService);
+            } else {
+                caseDocuments.getDocumentsUploaded().addAll(documentsUploadedOnConfirmService);
+            }
+
             caseDocuments.setDocumentsUploadedOnConfirmService(null);
         }
     }
