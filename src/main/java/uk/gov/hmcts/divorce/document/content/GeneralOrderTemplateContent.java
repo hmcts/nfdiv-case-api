@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_MADE_BY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_RECITALS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_HEADING;
@@ -73,6 +75,10 @@ public class GeneralOrderTemplateContent {
         templateContent.put(PETITIONER_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(GENERAL_ORDER_DETAILS, generalOrder.getGeneralOrderDetails());
+
+        if (StringUtils.isNotBlank(generalOrder.getGeneralOrderRecitals())) {
+            templateContent.put(GENERAL_ORDER_RECITALS, generalOrder.getGeneralOrderRecitals());
+        }
 
         if (DEPUTY_DISTRICT_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())
             || DISTRICT_JUDGE.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())
