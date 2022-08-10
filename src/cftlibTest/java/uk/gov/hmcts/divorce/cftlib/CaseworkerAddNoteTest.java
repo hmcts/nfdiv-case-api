@@ -4,11 +4,12 @@ import org.junitpioneer.jupiter.RetryingTest;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.util.regex.Pattern.compile;
+import static uk.gov.hmcts.divorce.cftlib.util.PlaywrightHelpers.RETRIES;
 import static uk.gov.hmcts.divorce.cftlib.util.PlaywrightHelpers.select;
 
 public class CaseworkerAddNoteTest extends XuiTest {
 
-    @RetryingTest(maxAttempts = 3)
+    @RetryingTest(maxAttempts = RETRIES)
     public void addNote() {
         signInWithCaseworker();
         page.locator("text=Create case").click();

@@ -6,13 +6,14 @@ import org.junitpioneer.jupiter.RetryingTest;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.util.regex.Pattern.compile;
 import static uk.gov.hmcts.divorce.cftlib.util.PlaywrightHelpers.LONG_WAIT;
+import static uk.gov.hmcts.divorce.cftlib.util.PlaywrightHelpers.RETRIES;
 import static uk.gov.hmcts.divorce.cftlib.util.PlaywrightHelpers.select;
 
 public class SoleApplicationCreateAndIssueTest extends XuiTest {
 
     String caseRef;
 
-    @RetryingTest(maxAttempts = 3)
+    @RetryingTest(maxAttempts = RETRIES)
     @Order(1)
     public void createCase() {
         signInWithSolicitor();
