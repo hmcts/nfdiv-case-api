@@ -432,6 +432,7 @@ cftlibTest {
   // IDAM simulator will be started on port 5000,
   // S2S simulator on port 8489
   authMode = uk.gov.hmcts.rse.AuthMode.Local
+  group = 'verification'
 
   systemProperties([
     // Configuration parameters to execute top-level classes in parallel but methods in same thread
