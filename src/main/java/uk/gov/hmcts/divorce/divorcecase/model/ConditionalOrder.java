@@ -178,7 +178,7 @@ public class ConditionalOrder {
     @CCD(
         label = "Date and time of hearing"
     )
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateAndTimeOfHearing;
 
     @CCD(
