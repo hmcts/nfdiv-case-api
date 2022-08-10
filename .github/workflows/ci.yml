@@ -14,9 +14,8 @@ jobs:
     strategy:
       matrix:
         task: ['check', 'cftlibTest', 'integration']
+        browser: ['chromium']
         include:
-          - task: 'cftlibTest'
-            browser: chromium
           - task: 'cftlibTest'
             browser: firefox
           - task: 'cftlibTest'
