@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -44,6 +45,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84ApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -110,9 +112,11 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getScannedDocumentNames, "typeOfDocumentAttached=\"D10\"")
             .done()
-            .complex()
-                .mandatory( , "typeOfDocumentAttached=\"D84\"")
-                .mandatory( , "typeOfDocumentAttached=\"D84\" AND newFieldName=\"switchedToSole\"")
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getD84ApplicationType,
+                    "typeOfDocumentAttached=\"D84\"")
+                .mandatory(ConditionalOrder::getD84WhoApplying,
+                    "typeOfDocumentAttached=\"D84\" AND d84ApplicationType=\"switchedToSole\"")
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
@@ -257,15 +261,16 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         final CaseData caseData = details.getData();
 
-        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) { // and switch to sole selected
+        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
+
             log.info(
                 "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
                 details.getId());
 
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuth = authTokenGenerator.generate();
-
-            ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
+            // final User user = idamService.retrieveSystemUpdateUserDetails();
+            // final String serviceAuth = authTokenGenerator.generate();
+            // ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
         }
 
         return SubmittedCallbackResponse.builder().build();
