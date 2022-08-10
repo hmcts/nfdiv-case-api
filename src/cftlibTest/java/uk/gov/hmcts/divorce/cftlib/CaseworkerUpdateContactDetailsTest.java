@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.cftlib;
 
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.util.regex.Pattern.compile;
@@ -8,7 +8,7 @@ import static uk.gov.hmcts.divorce.cftlib.util.PlaywrightHelpers.select;
 
 public class CaseworkerUpdateContactDetailsTest extends XuiTest {
 
-    @Test
+    @RetryingTest(maxAttempts = 3)
     public void updateContactDetails() {
         signInWithCaseworker();
         // Click text=Create case

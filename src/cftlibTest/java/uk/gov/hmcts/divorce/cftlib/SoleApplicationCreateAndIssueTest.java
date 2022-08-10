@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.cftlib;
 
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.util.regex.Pattern.compile;
@@ -12,7 +12,7 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
 
     String caseRef;
 
-    @Test
+    @RetryingTest(maxAttempts = 3)
     @Order(1)
     public void createCase() {
         signInWithSolicitor();
@@ -199,7 +199,7 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
         caseRef = page.url().substring(page.url().lastIndexOf("/") + 1);
     }
 
-    @Test
+    @RetryingTest(maxAttempts = 3)
     @Order(2)
     public void submitCase() {
         signInWithSolicitor();
@@ -265,7 +265,7 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
         assertThat(page).hasURL(compile("http://localhost:3000/cases/case-details/.+"));
     }
 
-    @Test
+    @RetryingTest(maxAttempts = 3)
     @Order(3)
     public void issueCase() {
         signInWithCaseworker();
