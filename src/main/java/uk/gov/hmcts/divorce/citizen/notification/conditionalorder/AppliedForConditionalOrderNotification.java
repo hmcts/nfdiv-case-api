@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PLUS_21_DUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -30,7 +31,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Slf4j
 public class AppliedForConditionalOrderNotification {
 
-    static final String PLUS_21_DUE_DATE = "date email received plus 21 days";
     static final String PLUS_14_DUE_DATE = "application for CO date plus 14 days";
     static final String WIFE_APPLIED = "wifeApplied";
     static final String HUSBAND_APPLIED = "husbandApplied";
