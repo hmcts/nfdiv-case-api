@@ -52,6 +52,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -59,6 +60,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -268,6 +270,49 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         notification.sendToApplicant2Solicitor(caseData, 1234567890123456L);
 
         verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendEmailToJointApplicant1SolicitorToNotifyApplicant2HasSubmittedCO() {
+        CaseData data = validApplicant2CaseData();
+
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .name("app1sol")
+            .email("app1sol@gm.com")
+            .reference("refxxx")
+            .build());
+
+        LocalDate issueDate = getExpectedLocalDate().minusDays(5);
+        data.getApplication().setIssueDate(issueDate);
+        setSubmittedDate(data, List.of(APPLICANT2));
+
+        when(commonContent.basicTemplateVars(data, 1234567890123456L))
+            .thenReturn(getMainTemplateVars());
+
+        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L))
+            .thenReturn("/signInUrl");
+
+        setMockClock(clock);
+
+        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq("app1sol@gm.com"),
+            eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(SOLICITOR_NAME, "app1sol"),
+                hasEntry(SOLICITOR_REFERENCE, "refxxx"),
+                hasEntry(ISSUE_DATE, issueDate.format(DATE_TIME_FORMATTER)),
+                hasEntry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
+                hasEntry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name"),
+                hasEntry(SIGN_IN_URL,"/signInUrl")
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }
 
     private void setSubmittedDate(CaseData caseData, List<String> applicants) {
