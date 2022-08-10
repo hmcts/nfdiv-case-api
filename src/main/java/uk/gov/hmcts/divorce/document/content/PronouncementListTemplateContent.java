@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -13,15 +14,17 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static java.util.stream.Stream.ofNullable;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -55,8 +58,7 @@ public class PronouncementListTemplateContent {
 
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Map<String, Object> apply(final BulkActionCaseData caseData,
-                                     final Long bulkListCaseId,
-                                     final LocalDate createdDate) {
+                                     final Long bulkListCaseId) {
 
         final DateTimeFormatter hearingDateFormat = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.UK);
         final DateTimeFormatter hearingTimeFormat = DateTimeFormatter.ofPattern("hh:mm a", Locale.UK);
@@ -66,9 +68,11 @@ public class PronouncementListTemplateContent {
 
         log.info("Creating document content for bulk case id {} title {}", bulkListCaseId, caseData.getCaseTitle());
 
-        for (CaseDetails mainCase : retrieveBulkListCases(bulkListCaseId)) {
+        Map<String, Object> caseLinkMap;
 
-            Map<String, Object> caseLinkMap = new HashMap<>();
+        for (CaseDetails mainCase : retrieveBulkListCases(bulkListCaseId, caseData)) {
+
+            caseLinkMap = new HashMap<>();
 
             var mainCaseData = objectMapper.convertValue(mainCase.getData(), CaseData.class);
 
@@ -93,7 +97,7 @@ public class PronouncementListTemplateContent {
         return templateContent;
     }
 
-    public List<CaseDetails> retrieveBulkListCases(Long bulkListCaseReference) {
+    public List<CaseDetails> retrieveBulkListCases(final Long bulkListCaseReference, final BulkActionCaseData bulkCaseData) {
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();
@@ -106,10 +110,20 @@ public class PronouncementListTemplateContent {
         final List<CaseDetails> bulkListCases =
             ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, AwaitingPronouncement);
 
-        for (final CaseDetails caseDetails : bulkListCases) {
-            final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-            log.info("Found case in Bulk List {} Name {}", caseDetails.getId(), caseData.getApplicant1().getLastName());
-        }
-        return bulkListCases;
+        return bulkListCases
+            .stream()
+            .filter(caseDetails -> !isCaseToBeRemoved(bulkCaseData, caseDetails))
+            .peek(caseDetails -> {
+                final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
+                log.info("Found case in Bulk List {} Name {}", caseDetails.getId(), caseData.getApplicant1().getLastName());
+            })
+            .collect(Collectors.toList());
+    }
+
+    private boolean isCaseToBeRemoved(final BulkActionCaseData caseData, final CaseDetails caseDetails) {
+        return ofNullable(caseData.getCasesToBeRemoved())
+            .flatMap(Collection::stream)
+            .map(ListValue::getValue)
+            .anyMatch(bulkCase -> caseDetails.getId().toString().equals(bulkCase.getCaseReference().getCaseReference()));
     }
 }

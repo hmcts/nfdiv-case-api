@@ -389,4 +389,18 @@ public class CaseData {
             .map(ListValue::getValue)
             .findFirst();
     }
+
+    @JsonIgnore
+    public void unlinkFromTheBulkCase() {
+        setBulkListCaseReferenceLink(null);
+
+        ConditionalOrder conditionalOrder = getConditionalOrder();
+
+        if (conditionalOrder != null) {
+            conditionalOrder.setCourt(null);
+            conditionalOrder.setDateAndTimeOfHearing(null);
+            conditionalOrder.setPronouncementJudge(null);
+            conditionalOrder.setCertificateOfEntitlementDocument(null);
+        }
+    }
 }

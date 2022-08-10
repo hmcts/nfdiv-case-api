@@ -72,7 +72,7 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
 
         final BulkActionCaseData caseData = bulkCaseDetails.getData();
 
-        pronouncementListDocService.generateDocument(bulkCaseDetails, bulkCaseDetails.getData().getBulkListCaseDetails());
+        pronouncementListDocService.generateDocument(bulkCaseDetails);
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
             .data(caseData)
