@@ -1,21 +1,15 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -29,9 +23,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Component
 @Slf4j
 public class ConditionalOrderAnswersTemplateContent {
-
-    public static final String CO_REASON_INFO_NOT_CORRECT = "reasonInformationNotCorrect";
-    public static final String CO_CONFIRM_INFO_STILL_CORRECT = "confirmInformationStillCorrect";
 
     @Autowired
     private Clock clock;
@@ -61,40 +52,6 @@ public class ConditionalOrderAnswersTemplateContent {
         templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
         templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
 
-        mapConditionalOrderDetails(caseData, templateContent);
-
         return templateContent;
-    }
-
-    private void mapConditionalOrderDetails(final CaseData caseData, Map<String, Object> templateContent) {
-        ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
-        ConditionalOrderQuestions applicant1Questions = conditionalOrder.getConditionalOrderApplicant1Questions();
-        ConditionalOrderQuestions applicant2Questions = conditionalOrder.getConditionalOrderApplicant2Questions();
-
-        boolean confirmInfoStillCorrect;
-
-        if (caseData.getApplicationType().isSole()) {
-            confirmInfoStillCorrect = YES.equals(applicant1Questions.getConfirmInformationStillCorrect());
-
-            if (!confirmInfoStillCorrect) {
-                templateContent.put(CO_REASON_INFO_NOT_CORRECT, applicant1Questions.getReasonInformationNotCorrect());
-            }
-        } else {
-            confirmInfoStillCorrect = YES.equals(applicant1Questions.getConfirmInformationStillCorrect())
-                && YES.equals(applicant2Questions.getConfirmInformationStillCorrect());
-
-            if (!confirmInfoStillCorrect) {
-                String reason = Stream.of(
-                        applicant1Questions.getReasonInformationNotCorrect(),
-                        applicant2Questions.getReasonInformationNotCorrect()
-                    )
-                    .filter(StringUtils::isNotBlank)
-                    .collect(joining("\n"));
-
-                templateContent.put(CO_REASON_INFO_NOT_CORRECT, reason);
-            }
-        }
-
-        templateContent.put(CO_CONFIRM_INFO_STILL_CORRECT, confirmInfoStillCorrect);
     }
 }
