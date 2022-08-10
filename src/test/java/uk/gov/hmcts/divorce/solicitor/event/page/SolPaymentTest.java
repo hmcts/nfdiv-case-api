@@ -48,7 +48,7 @@ public class SolPaymentTest {
     private SolPayment solPayment;
 
     @Test
-    public void shouldRetrieveAndSetPbaNumbersWhenPaymentMethodIsPba() {
+    void shouldRetrieveAndSetPbaNumbersWhenPaymentMethodIsPba() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicationType(SOLE_APPLICATION);
@@ -84,7 +84,7 @@ public class SolPaymentTest {
     }
 
     @Test
-    public void shouldLogErrorAndRethrowFeignException() {
+    void shouldLogErrorAndRethrowFeignException() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicationType(SOLE_APPLICATION);
@@ -107,7 +107,7 @@ public class SolPaymentTest {
     }
 
     @Test
-    public void shouldDoNothingAndReturnCaseDataIfHelpWithFeesSelected() {
+    void shouldDoNothingAndReturnCaseDataIfHelpWithFeesSelected() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicationType(SOLE_APPLICATION);
