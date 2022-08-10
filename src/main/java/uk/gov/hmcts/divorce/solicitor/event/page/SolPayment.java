@@ -47,7 +47,7 @@ public class SolPayment implements CcdPageConfiguration {
         final CaseData caseData = details.getData();
 
         if (!caseData.getApplication().isSolicitorPaymentMethodPba()) {
-            log.info("Payment method is not PBA for case id {}  :", caseId);
+            log.info("Payment method is not PBA for Case Id: {}", caseId);
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .build();
