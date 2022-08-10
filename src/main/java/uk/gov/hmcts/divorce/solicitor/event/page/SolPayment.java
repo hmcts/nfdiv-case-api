@@ -37,14 +37,14 @@ public class SolPayment implements CcdPageConfiguration {
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
-        CaseDetails<CaseData, State> details,
-        CaseDetails<CaseData, State> detailsBefore
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> detailsBefore
     ) {
 
         final Long caseId = details.getId();
         log.info("Mid-event callback triggered for SolPayment page Case Id: {}", caseId);
 
-        CaseData caseData = details.getData();
+        final CaseData caseData = details.getData();
 
         if (!caseData.getApplication().isSolicitorPaymentMethodPba()) {
             log.info("Payment method is not PBA for case id {}  :", caseId);
@@ -54,9 +54,9 @@ public class SolPayment implements CcdPageConfiguration {
         }
 
         try {
-            DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
+            final DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
 
-            log.info("DynamicList {}, Case Id: {}", pbaNumbersDynamicList, caseId);
+            log.info("PBA Numbers {}, Case Id: {}", pbaNumbersDynamicList, caseId);
             caseData.getApplication().setPbaNumbers(pbaNumbersDynamicList);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
