@@ -23,7 +23,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -67,6 +72,15 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
 
     @Autowired
+    private CcdUpdateService ccdUpdateService;
+
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
     private Clock clock;
 
     public static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED = "caseworker-offline-document-verified";
@@ -79,8 +93,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .forState(OfflineDocumentReceived)
             .name("Offline Document Verified")
             .description("Offline Document Verified")
-            .aboutToSubmitCallback(this::aboutToSubmit)
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .showEventNotes()
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER))
@@ -94,6 +109,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .done()
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getScannedDocumentNames, "typeOfDocumentAttached=\"D10\"")
+            .done()
+            .complex()
+                .mandatory( , "typeOfDocumentAttached=\"D84\"")
+                .mandatory( , "typeOfDocumentAttached=\"D84\" AND newFieldName=\"switchedToSole\"")
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
@@ -232,5 +251,23 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .documentType(documentType)
             .documentComment("Reclassified scanned document")
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+
+        final CaseData caseData = details.getData();
+
+        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) { // and switch to sole selected
+            log.info(
+                "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
+                details.getId());
+
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuth = authTokenGenerator.generate();
+
+            ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
