@@ -50,6 +50,9 @@ public final class DocumentConstants {
     public static final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT";
     public static final String CERTIFICATE_OF_ENTITLEMENT_NAME = "certificateOfEntitlement";
 
+    public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME = "certificateOfEntitlementCoverLetter";
+
     public static final String USER_ROLES = "user-roles";
     public static final String USER_ID = "user-id";
     public static final String DOCUMENT_DELETE_URI = "document_delete_uri";
@@ -71,6 +74,12 @@ public final class DocumentConstants {
 
     public static final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID = "CONDITIONAL_ORDER_ANSWERS";
     public static final String CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME = "conditionalOrderAnswers";
+
+    public static final String CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID = "CONDITIONAL_ORDER_CAN_APPLY";
+    public static final String CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME = "conditionalOrderCanApply";
+
+    public static final String CONDITIONAL_ORDER_REMINDER_TEMPLATE_ID = "CONDITIONAL_ORDER_REMINDER";
+    public static final String CONDITIONAL_ORDER_REMINDER_DOCUMENT_NAME = "conditionalOrderReminder";
 
     public static final String AOS_RESPONSE_LETTER_DOCUMENT_NAME = "aosResponseLetter";
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";

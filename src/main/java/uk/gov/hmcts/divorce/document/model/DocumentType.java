@@ -37,6 +37,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("bailiffServiceRefused")
     BAILIFF_SERVICE_REFUSED("Bailiff Service Refused"),
 
+    @JsonProperty("certificateOfEntitlementCoverLetter")
+    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER("Certificate of entitlement cover letter"),
+
     @JsonProperty("certificateOfEntitlement")
     CERTIFICATE_OF_ENTITLEMENT("Certificate of entitlement"),
 
@@ -48,6 +51,12 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("conditionalOrderApplication")
     CONDITIONAL_ORDER_APPLICATION("Conditional order application (D84)"),
+
+    @JsonProperty("conditionalOrderCanApply")
+    CONDITIONAL_ORDER_CAN_APPLY("Conditional order can apply"),
+    
+    @JsonProperty("conditionalOrderReminder")
+    CONDITIONAL_ORDER_REMINDER("Conditional order reminder"),
 
     @JsonProperty("conditionalOrderGranted")
     CONDITIONAL_ORDER_GRANTED("Conditional Order Granted"),
