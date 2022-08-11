@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
+package uk.gov.hmcts.divorce.common.notification;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +11,14 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronouncedPrinter;
 
 import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
@@ -43,6 +46,9 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     @Autowired
     private CommonContent commonContent;
 
+    @Autowired
+    private ConditionalOrderPronouncedPrinter conditionalOrderPronouncedPrinter;
+
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
         log.info("Notifying applicant 1 that their conditional order application has been pronounced: {}", caseId);
@@ -53,6 +59,24 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
             templateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
+    }
+
+    @Override
+    public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
+        log.info("Notifying applicant 1 solicitor that their conditional order application has been pronounced: {}", caseId);
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getSolicitor().getEmail(),
+            SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED,
+            solicitorTemplateVars(caseData, caseId, caseData.getApplicant1()),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    @Override
+    public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
+        log.info("Sending conditional order letter to applicant 1 for case: {}", caseId);
+        conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
     }
 
     @Override
@@ -70,18 +94,6 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     }
 
     @Override
-    public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
-        log.info("Notifying applicant 1 solicitor that their conditional order application has been pronounced: {}", caseId);
-
-        notificationService.sendEmail(
-            caseData.getApplicant1().getSolicitor().getEmail(),
-            SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED,
-            solicitorTemplateVars(caseData, caseId, caseData.getApplicant1()),
-            caseData.getApplicant1().getLanguagePreference()
-        );
-    }
-
-    @Override
     public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
 
         if (!caseData.getApplicationType().isSole()) {
@@ -94,6 +106,12 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
+    }
+
+    @Override
+    public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
+        log.info("Sending conditional order letter to applicant 2 for case: {}", caseId);
+        conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
     }
 
     private Map<String, String> templateVars(final CaseData caseData,

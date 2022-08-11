@@ -25,6 +25,8 @@ public final class DocumentConstants {
     public static final String NFD_NOP_R1_SOLE_APP2_CIT_ONLINE = "NFD_NOP_R1_SOLE_APP2_CIT_ONLINE";
     public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE = "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE";
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
+    public static final String CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "conditionalOrderGrantedCoversheet";
+
 
     public static final String CERTIFICATE_OF_SERVICE_DOCUMENT_NAME = "certificateOfService";
 
@@ -49,6 +51,9 @@ public final class DocumentConstants {
 
     public static final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT";
     public static final String CERTIFICATE_OF_ENTITLEMENT_NAME = "certificateOfEntitlement";
+
+    public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME = "certificateOfEntitlementCoverLetter";
 
     public static final String USER_ROLES = "user-roles";
     public static final String USER_ID = "user-id";
@@ -90,6 +95,8 @@ public final class DocumentConstants {
 
     public static final String CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME = "conditionalOrderGranted";
     public static final String CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID = "CONDITIONAL_ORDER_PRONOUNCED";
+
+    public static final String CO_GRANTED_COVER_LETTER_TEMPLATE_ID = "CO_GRANTED_COVER_LETTER";
 
     private DocumentConstants() {
     }

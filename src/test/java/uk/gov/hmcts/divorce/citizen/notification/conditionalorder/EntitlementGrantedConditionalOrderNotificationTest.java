@@ -13,9 +13,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.systemupdate.service.print.CertificateOfEntitlementPrinter;
 
 import java.time.LocalDate;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
@@ -55,6 +57,9 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private CertificateOfEntitlementPrinter certificateOfEntitlementPrinter;
 
     @InjectMocks
     private EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
@@ -285,5 +290,45 @@ class EntitlementGrantedConditionalOrderNotificationTest {
             )),
             eq(ENGLISH)
         );
+    }
+
+    @Test
+    void shouldSendLetterToOfflineApplicant1IfNotBeenSentAlready() {
+        CaseData data = validCaseWithCourtHearing();
+
+        entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, 1234567890123456L);
+
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant1());
+        assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()).isTrue();
+    }
+
+    @Test
+    void shouldNotSendLetterToOfflineApplicant1IfHasAlreadyBeenSent() {
+        CaseData data = validCaseWithCourtHearing();
+        data.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant1(YesOrNo.YES);
+
+        entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, 1234567890123456L);
+
+        verifyNoInteractions(certificateOfEntitlementPrinter);
+    }
+
+    @Test
+    void shouldSendLetterToOfflineApplicant2IfNotBeenSentAlready() {
+        CaseData data = validCaseWithCourtHearing();
+
+        entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
+
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant2());
+        assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()).isTrue();
+    }
+
+    @Test
+    void shouldNotSendLetterToOfflineApplicant2IfHasAlreadyBeenSent() {
+        CaseData data = validCaseWithCourtHearing();
+        data.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(YesOrNo.YES);
+
+        entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
+
+        verifyNoInteractions(certificateOfEntitlementPrinter);
     }
 }
