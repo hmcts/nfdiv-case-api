@@ -16,26 +16,19 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.LocalDateTime;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerEditBulkCase.CASEWORKER_EDIT_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerEditBulkCaseTest {
 
     @Mock
     private ScheduleCaseService scheduleCaseService;
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
     private CaseworkerEditBulkCase caseworkerEditBulkCase;
@@ -57,14 +50,12 @@ public class CaseworkerEditBulkCaseTest {
         details.setData(BulkActionCaseData.builder().build());
         details.setId(1L);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
-
-        doNothing().when(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details, CASEWORKER_AUTH_TOKEN);
+        doNothing().when(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
 
         SubmittedCallbackResponse submittedCallbackResponse = caseworkerEditBulkCase.submitted(details, details);
 
         assertThat(submittedCallbackResponse).isNotNull();
-        verify(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details, CASEWORKER_AUTH_TOKEN);
+        verify(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
     }
 
     @Test
