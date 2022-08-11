@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.legaladvisor.service.printer.AwaitingAmendedApplicationPrinter;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -18,13 +19,16 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CO_R
 
 @Component
 @Slf4j
-public class LegalAdvisorAmendApplicationDecisionNotification implements ApplicantNotification {
+public class LegalAdvisorRejectedDecisionNotification implements ApplicantNotification {
 
     @Autowired
     private NotificationService notificationService;
 
     @Autowired
     private CommonContent commonContent;
+
+    @Autowired
+    private AwaitingAmendedApplicationPrinter awaitingAmendedApplicationPrinter;
 
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
@@ -78,6 +82,11 @@ public class LegalAdvisorAmendApplicationDecisionNotification implements Applica
         log.info("Successfully sent CO refused notification to applicant 1 solicitor as some amendments needed for case : {}", caseId);
     }
 
+    public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
+        log.info("Notifying applicant 1 offline that their conditional order is rejected: {}", caseId);
+        awaitingAmendedApplicationPrinter.sendLetters(caseData, caseId, caseData.getApplicant1());
+    }
+
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
 
@@ -93,5 +102,12 @@ public class LegalAdvisorAmendApplicationDecisionNotification implements Applica
         );
 
         log.info("Successfully sent CO refused notification to applicant 2 solicitor as some amendments needed for case : {}", caseId);
+    }
+
+    public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
+        if (!caseData.getApplicationType().isSole()) {
+            log.info("Notifying applicant 2 offline that their conditional order is rejected: {}", caseId);
+            awaitingAmendedApplicationPrinter.sendLetters(caseData, caseId, caseData.getApplicant2());
+        }
     }
 }
