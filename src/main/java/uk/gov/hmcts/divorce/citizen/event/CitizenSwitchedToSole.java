@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
@@ -86,7 +87,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         CaseData beforeDetailsData = beforeDetails.getData();
         CaseInvite caseInviteBefore = beforeDetailsData.getCaseInvite();
 
-        if (isNull(caseInviteBefore.accessCode()) && beforeDetailsData.getApplicant2().getEmail() != null) {
+        if (isNull(caseInviteBefore.accessCode()) && isNotEmpty(beforeDetailsData.getApplicant2().getEmail())) {
             log.info("Unlinking Applicant 2 from Case Id: {}", caseId);
             ccdAccessService.unlinkApplicant2FromCase(caseId, caseInviteBefore.applicant2UserId());
         }
