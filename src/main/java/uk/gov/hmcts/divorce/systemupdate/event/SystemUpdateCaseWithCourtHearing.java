@@ -58,11 +58,13 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
 
         log.info("System update case court hearing about to submit callback invoked for case id: {}", details.getId());
 
-        CaseData data = details.getData();
-
-        notificationDispatcher.send(entitlementGrantedConditionalOrderNotification, data, details.getId());
-
         final CaseDetails<CaseData, State> updatedDetails = caseTasks(generateCertificateOfEntitlement).run(details);
+
+        notificationDispatcher.send(
+            entitlementGrantedConditionalOrderNotification,
+            updatedDetails.getData(),
+            updatedDetails.getId()
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedDetails.getData())

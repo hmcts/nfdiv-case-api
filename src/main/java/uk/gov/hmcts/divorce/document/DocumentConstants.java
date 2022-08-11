@@ -53,6 +53,9 @@ public final class DocumentConstants {
     public static final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT";
     public static final String CERTIFICATE_OF_ENTITLEMENT_NAME = "certificateOfEntitlement";
 
+    public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME = "certificateOfEntitlementCoverLetter";
+
     public static final String USER_ROLES = "user-roles";
     public static final String USER_ID = "user-id";
     public static final String DOCUMENT_DELETE_URI = "document_delete_uri";

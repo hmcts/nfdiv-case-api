@@ -10,8 +10,11 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.util.Map;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CO_REFUSED_SOLE_JOINT;
 
 @Component
@@ -26,6 +29,41 @@ public class LegalAdvisorRejectedDecisionNotification implements ApplicantNotifi
 
     @Autowired
     private AwaitingAmendedApplicationPrinter awaitingAmendedApplicationPrinter;
+
+    @Override
+    public void sendToApplicant1(CaseData caseData, Long caseId) {
+
+        final Map<String, String> templateVars = commonContent.conditionalOrderTemplateVars(caseData, caseId, caseData.getApplicant1(),
+            caseData.getApplicant2());
+
+        log.info("Sending Conditional order refused for amendment notification to applicant 1 for case : {}", caseId);
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT,
+            templateVars,
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    @Override
+    public void sendToApplicant2(CaseData caseData, Long caseId) {
+
+        if (!caseData.getApplicationType().isSole()) {
+
+            final Map<String, String> templateVars = commonContent.conditionalOrderTemplateVars(caseData, caseId, caseData.getApplicant2(),
+                caseData.getApplicant1());
+
+            log.info("Sending Conditional order refused for amendment notification to applicant 2 for case : {}", caseId);
+
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT,
+                templateVars,
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        }
+    }
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {

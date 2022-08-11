@@ -32,10 +32,10 @@ public class ScheduleCaseService {
     private BulkCaseProcessingService bulkCaseProcessingService;
 
     @Async
-    public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-                                                        final String authorization) {
+    public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails
+    ) {
 
-        final User user = idamService.retrieveUser(authorization);
+        final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
         bulkCaseProcessingService.updateAllBulkCases(
@@ -47,10 +47,10 @@ public class ScheduleCaseService {
     }
 
     @Async
-    public void updatePronouncementJudgeDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-                                                              final String authorization) {
+    public void updatePronouncementJudgeDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails
+    ) {
 
-        final User user = idamService.retrieveUser(authorization);
+        final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
         bulkCaseProcessingService.updateAllBulkCases(

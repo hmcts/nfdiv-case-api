@@ -73,6 +73,7 @@ public class CaseworkerCreatePaperCaseTest {
             .respondentsOrApplicant2s("Applicant 2's")
             .applicantOrApplicant1UC("Applicant 1")
             .theApplicantOrApplicant1UC("Applicant 1")
+            .divorceOrEndingCivilPartnership("divorce")
             .build();
 
         assertThat(submitResponse.getData().getLabelContent()).isEqualTo(labelContent);
