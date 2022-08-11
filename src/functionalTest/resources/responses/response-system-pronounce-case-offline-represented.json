@@ -1,0 +1,72 @@
+{
+  "data":{
+    "applicationType":"soleApplication",
+    "divorceOrDissolution":"divorce",
+    "applicant1FirstName":"test_first_name",
+    "applicant1LastName":"test_last_name",
+    "applicant1Gender":"female",
+    "applicant1Offline": "Yes",
+    "applicant2FirstName":"test_first_name",
+    "applicant2LastName":"test_last_name",
+    "applicant2Offline": "Yes",
+    "applicant1SolicitorRepresented": "Yes",
+    "applicant2SolicitorRepresented": "Yes",
+    "applicant2LanguagePreferenceWelsh":"No",
+    "applicant2Gender":"female",
+    "solServiceTruthStatement":"I believe that the facts stated in the application are true.",
+    "issueDate":"2020-05-28",
+    "coGrantedDate":"2022-01-06",
+    "coCourt":"birmingham",
+    "coDateAndTimeOfHearing":"2022-01-06T10:30:00.000",
+    "coConditionalOrderGrantedDocument":{
+      "documentLink":{
+        "document_url":"${json-unit.any-string}",
+        "document_filename":"conditionalOrderGranted.pdf",
+        "document_binary_url":"${json-unit.any-string}"
+      },
+      "documentFileName":"conditionalOrderGranted.pdf",
+      "documentType":"conditionalOrderGranted"
+    },
+    "documentsGenerated":[
+      {
+        "id":"${json-unit.any-string}",
+        "value":{
+          "documentLink":{
+            "document_url":"${json-unit.any-string}",
+            "document_filename":"${json-unit.any-string}",
+            "document_binary_url":"${json-unit.any-string}"
+          },
+          "documentFileName":"${json-unit.any-string}",
+          "documentType":"coGrantedCoversheet"
+        }
+      },
+      {
+        "id":"${json-unit.any-string}",
+        "value":{
+          "documentLink":{
+            "document_url":"${json-unit.any-string}",
+            "document_filename":"${json-unit.any-string}",
+            "document_binary_url":"${json-unit.any-string}"
+          },
+          "documentFileName":"${json-unit.any-string}",
+          "documentType":"coGrantedCoversheetApp2"
+        }
+      },
+      {
+        "id":"${json-unit.any-string}",
+        "value":{
+          "documentLink":{
+            "document_url":"${json-unit.any-string}",
+            "document_filename":"conditionalOrderGranted.pdf",
+            "document_binary_url":"${json-unit.any-string}"
+          },
+          "documentFileName":"conditionalOrderGranted.pdf",
+          "documentType":"conditionalOrderGranted"
+        }
+      }
+    ],
+    "dueDate":"2020-04-28",
+    "dataVersion":5,
+    "warnings":[]
+  }
+}
