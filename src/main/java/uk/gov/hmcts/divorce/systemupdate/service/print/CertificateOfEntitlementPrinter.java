@@ -162,12 +162,12 @@ public class CertificateOfEntitlementPrinter {
         templateContent.put(COURT_NAME, conditionalOrder.getCourt() != null ? conditionalOrder.getCourt().getLabel() : null);
         templateContent.put(DATE_OF_HEARING, dateOfHearing);
         templateContent.put(TIME_OF_HEARING, timeOfHearing);
-        templateContent.put(
-            DATE_FO_ELIGIBLE_FROM, nonNull(dateAndTimeOfHearing)
-                ? dateAndTimeOfHearing.plusDays(finalOrderOffsetDays).format(DATE_TIME_FORMATTER) :
-                null
-        );
-
+        if (nonNull(dateAndTimeOfHearing)) {
+            templateContent.put(DATE_FO_ELIGIBLE_FROM, dateAndTimeOfHearing.plusDays(finalOrderOffsetDays).format(DATE_TIME_FORMATTER));
+        } else {
+            templateContent.put(DATE_FO_ELIGIBLE_FROM, null);
+        }
+        
         final var ctscContactDetails = CtscContactDetails
             .builder()
             .emailAddress(email)
