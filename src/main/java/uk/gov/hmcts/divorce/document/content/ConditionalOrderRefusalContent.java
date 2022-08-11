@@ -33,18 +33,20 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 public class ConditionalOrderRefusalContent {
 
+    public static final String LEGAL_ADVISOR_COMMENTS = "legalAdvisorComments";
     private static final String IS_SOLE = "isSole";
     private static final String IS_JOINT = "isJoint";
-    private static final String LEGAL_ADVISOR_COMMENTS = "legalAdvisorComments";
     private static final String IS_CLARIFICATION = "isClarification";
     private static final String IS_AMENDED_APPLICATION = "isAmendedApplication";
     private static final String IS_OFFLINE = "isOffline";
@@ -70,8 +72,7 @@ public class ConditionalOrderRefusalContent {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
-    public Map<String, Object> apply(final CaseData caseData,
-                                     final Long ccdCaseReference) {
+    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         Map<String, Object> templateContent = new HashMap<>();
 
@@ -88,9 +89,11 @@ public class ConditionalOrderRefusalContent {
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
         } else {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
         }
 
@@ -115,7 +118,7 @@ public class ConditionalOrderRefusalContent {
         return templateContent;
     }
 
-    private List<RefusalReason> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
+    public List<RefusalReason> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
 
         if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
 

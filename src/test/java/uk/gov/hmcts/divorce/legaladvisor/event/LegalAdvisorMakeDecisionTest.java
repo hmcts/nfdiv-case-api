@@ -19,8 +19,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
-import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorAmendApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorRejectedDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
@@ -62,10 +62,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 class LegalAdvisorMakeDecisionTest {
 
     @Mock
-    private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
+    private LegalAdvisorRejectedDecisionNotification rejectedNotification;
 
     @Mock
-    private LegalAdvisorAmendApplicationDecisionNotification amendApplicationDecisionNotification;
+    private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -211,7 +211,7 @@ class LegalAdvisorMakeDecisionTest {
         assertThat(response.getData().getConditionalOrder().getDecisionDate()).isNull();
         assertThat(response.getState()).isEqualTo(AwaitingAmendedApplication);
 
-        verify(notificationDispatcher).send(amendApplicationDecisionNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(rejectedNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
