@@ -18,25 +18,18 @@ import uk.gov.hmcts.divorce.document.content.PronouncementListTemplateContent;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerPrintPronouncement.CASEWORKER_PRINT_PRONOUNCEMENT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerPrintPronouncementTest {
     @Mock
     private ScheduleCaseService scheduleCaseService;
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
     private CaseworkerPrintPronouncement printPronounceCase;
@@ -67,14 +60,12 @@ public class CaseworkerPrintPronouncementTest {
         details.setData(BulkActionCaseData.builder().build());
         details.setId(1L);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
-
-        doNothing().when(scheduleCaseService).updatePronouncementJudgeDetailsForCasesInBulk(details, CASEWORKER_AUTH_TOKEN);
+        doNothing().when(scheduleCaseService).updatePronouncementJudgeDetailsForCasesInBulk(details);
 
         SubmittedCallbackResponse submittedCallbackResponse = printPronounceCase.submitted(details, details);
 
         assertThat(submittedCallbackResponse).isNotNull();
-        verify(scheduleCaseService).updatePronouncementJudgeDetailsForCasesInBulk(details, CASEWORKER_AUTH_TOKEN);
+        verify(scheduleCaseService).updatePronouncementJudgeDetailsForCasesInBulk(details);
     }
 
     @Test
