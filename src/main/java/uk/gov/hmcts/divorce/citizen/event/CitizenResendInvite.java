@@ -18,7 +18,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCitizenResendInvite;
 
@@ -46,7 +49,8 @@ public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole>
             .name("Update applicant 2 email")
             .description("Citizen event for applicant 1 to update applicant 2 email pre-submission")
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, CREATOR);
+            .grant(CREATE_READ_UPDATE, CREATOR)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
