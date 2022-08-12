@@ -45,6 +45,10 @@ public class ConditionalOrderClarificationContent {
     private static final String IS_SOLE = "isSole";
     private static final String IS_JOINT = "isJoint";
     public static final String JUDICIAL_SEPARATION = "judicialSeparation";
+    public static final String REASON_JURISDICTION_DETAILS = "jurisdictionDetails";
+    public static final String REASON_MARRIAGE_CERT_TRANSLATION = "marriageCertTranslation";
+    public static final String REASON_MARRIAGE_CERTIFICATE = "marriageCertificate";
+    public static final String REASON_PREVIOUS_PROCEEDINGS_DETAILS = "previousProceedingDetails";
 
     @Autowired
     private Clock clock;
@@ -70,26 +74,32 @@ public class ConditionalOrderClarificationContent {
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         Map<String, Object> templateContent = new HashMap<>();
+
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
+        final Set<ClarificationReason> clarificationReasons = conditionalOrder.getRefusalClarificationReason();
 
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
 
-        templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
-        templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
-
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
 
-        templateContent.put(LEGAL_ADVISOR_COMMENTS, generateLegalAdvisorComments(conditionalOrder));
+        templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
+        templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
 
+        templateContent.put(JUDICIAL_SEPARATION, caseData.getIsJudicialSeparation());
+
+        templateContent.put(REASON_JURISDICTION_DETAILS, clarificationReasons.contains(ClarificationReason.JURISDICTION_DETAILS));
+        templateContent.put(REASON_MARRIAGE_CERT_TRANSLATION, clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE_TRANSLATION));
+        templateContent.put(REASON_MARRIAGE_CERTIFICATE, clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE));
+        templateContent.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS, clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
+
+        templateContent.put(LEGAL_ADVISOR_COMMENTS, generateLegalAdvisorComments(conditionalOrder));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
-            templateContent.put(JUDICIAL_SEPARATION, caseData.getIsJudicialSeparation());
-
         } else {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
@@ -105,7 +115,6 @@ public class ConditionalOrderClarificationContent {
             .postcode(postcode)
             .phoneNumber(phoneNumber)
             .build();
-
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;

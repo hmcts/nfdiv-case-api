@@ -45,8 +45,8 @@ public final class DocumentConstants {
     public static final String SERVICE_ORDER_TEMPLATE_ID = "SERVICE_ORDER";
 
     public static final String REFUSAL_ORDER_TEMPLATE_ID = "REFUSAL_ORDER";
-    // TODO: AARON - Add the new template application.yaml name here.
-    public static final String REFUSAL_ORDER_OFFLINE_CLARIFICATION_TEMPLATE_ID = "";
+
+    public static final String CLARIFICATION_REFUSAL_ORDER_OFFLINE_TEMPLATE_ID = "CLARIFICATION_REFUSAL_ORDER_OFFLINE_LETTER";
     public static final String CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID = "CLARIFICATION_REFUSAL_ORDER_COVER_LETTER";
 
     public static final String REFUSAL_ORDER_OFFLINE_REJECT_TEMPLATE_ID = "REFUSAL_ORDER_OFFLINE_REJECT";

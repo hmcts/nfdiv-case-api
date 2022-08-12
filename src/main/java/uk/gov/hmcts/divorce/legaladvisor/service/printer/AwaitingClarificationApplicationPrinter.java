@@ -44,7 +44,7 @@ public class AwaitingClarificationApplicationPrinter {
     @Autowired
     private GenerateCoRefusedCoverLetter generateCoRefusedCoverLetter;
 
-    private static final int EXPECTED_DOCUMENTS_SIZE = 4;
+    private static final int EXPECTED_DOCUMENTS_SIZE = 3;
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         generateLetters(caseData, caseId, applicant);
@@ -89,30 +89,15 @@ public class AwaitingClarificationApplicationPrinter {
             CONDITIONAL_ORDER_REFUSAL
         );
 
-        final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            APPLICATION
-        );
+        final List<Letter> awaitingClarificationLetters = new ArrayList<>();
 
         final Letter coversheetLetter = firstElement(coversheetLetters);
         final Letter refusalCoverLetter = firstElement(refusalCoverLetters);
         final Letter refusalLetter = firstElement(refusalLetters);
-        final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
 
-        final List<Letter> awaitingClarificationLetters = new ArrayList<>();
-
-        if (coversheetLetter != null) {
-            awaitingClarificationLetters.add(coversheetLetter);
-        }
-        if (refusalCoverLetter != null) {
-            awaitingClarificationLetters.add(refusalCoverLetter);
-        }
-        if (refusalLetter != null) {
-            awaitingClarificationLetters.add(refusalLetter);
-        }
-        if (null != divorceApplicationLetter) {
-            awaitingClarificationLetters.add(divorceApplicationLetter);
-        }
+        if (coversheetLetter != null) awaitingClarificationLetters.add(coversheetLetter);
+        if (refusalCoverLetter != null) awaitingClarificationLetters.add(refusalCoverLetter);
+        if (refusalLetter != null) awaitingClarificationLetters.add(refusalLetter);
 
         return awaitingClarificationLetters;
     }
