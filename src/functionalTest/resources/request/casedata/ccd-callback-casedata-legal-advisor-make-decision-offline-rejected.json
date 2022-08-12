@@ -1,0 +1,17 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "soleApplication",
+  "coGranted": "No",
+  "coRefusalDecision": "reject",
+  "solSignStatementOfTruth": "Yes",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant1Offline": "Yes",
+  "applicant2FirstName": "Olive",
+  "applicant2LastName": "Oil",
+  "applicant2Offline": "Yes",
+  "applicant1SolicitorRepresented": "No",
+  "applicant1LanguagePreferenceWelsh": "No",
+  "applicant2SolicitorRepresented": "No",
+  "applicant2LanguagePreferenceWelsh": "No"
+}
