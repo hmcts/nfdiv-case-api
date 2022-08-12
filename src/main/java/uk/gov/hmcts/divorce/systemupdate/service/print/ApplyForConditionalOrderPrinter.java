@@ -71,7 +71,7 @@ public class ApplyForConditionalOrderPrinter {
 
     }
 
-    private List<Letter> conditionalOrderLetters(CaseData caseData) {
+    private List<Letter> conditionalOrderLetters(final CaseData caseData) {
 
         final List<Letter> coversheetLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
