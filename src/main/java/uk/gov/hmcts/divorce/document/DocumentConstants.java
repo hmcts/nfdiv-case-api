@@ -25,6 +25,8 @@ public final class DocumentConstants {
     public static final String NFD_NOP_R1_SOLE_APP2_CIT_ONLINE = "NFD_NOP_R1_SOLE_APP2_CIT_ONLINE";
     public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE = "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE";
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
+    public static final String CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "conditionalOrderGrantedCoversheet";
+
 
     public static final String CERTIFICATE_OF_SERVICE_DOCUMENT_NAME = "certificateOfService";
 
@@ -43,7 +45,10 @@ public final class DocumentConstants {
     public static final String SERVICE_ORDER_TEMPLATE_ID = "SERVICE_ORDER";
 
     public static final String REFUSAL_ORDER_TEMPLATE_ID = "REFUSAL_ORDER";
+    public static final String REFUSAL_ORDER_OFFLINE_TEMPLATE_ID = "REFUSAL_ORDER_OFFLINE";
+    public static final String REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID = "REJECTED_REFUSAL_ORDER_COVER_LETTER";
     public static final String REFUSAL_ORDER_DOCUMENT_NAME = "NoticeOfRefusalDocument";
+    public static final String REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME = "NoticeOfRefusalCoverLetter";
 
     public static final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID = "CERTIFICATE_OF_SERVICE";
 
@@ -93,6 +98,8 @@ public final class DocumentConstants {
 
     public static final String CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME = "conditionalOrderGranted";
     public static final String CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID = "CONDITIONAL_ORDER_PRONOUNCED";
+
+    public static final String CO_GRANTED_COVER_LETTER_TEMPLATE_ID = "CO_GRANTED_COVER_LETTER";
 
     private DocumentConstants() {
     }
