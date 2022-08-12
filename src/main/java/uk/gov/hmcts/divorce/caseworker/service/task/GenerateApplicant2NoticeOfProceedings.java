@@ -119,13 +119,13 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             final LanguagePreference applicant2LanguagePreference = applicant2.getLanguagePreference();
             final Applicant applicant1 = caseData.getApplicant1();
 
-            boolean isReissuedAsOfflineAOS = ReissueOption.OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
+            boolean reissuedAsOfflineAOS = ReissueOption.OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
 
-            if (isEmpty(applicant2.getEmail()) || applicant2.isOffline() || isReissuedAsOfflineAOS) {
+            if (isEmpty(applicant2.getEmail()) || applicant2.isOffline() || reissuedAsOfflineAOS) {
                 generateNoticeOfProceedings(
                     caseData,
                     caseId,
-                    isReissuedAsOfflineAOS ? NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE : NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
+                    reissuedAsOfflineAOS ? NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE : NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                     noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference));
                 generateCoversheet.generateCoversheet(
                     caseData,
