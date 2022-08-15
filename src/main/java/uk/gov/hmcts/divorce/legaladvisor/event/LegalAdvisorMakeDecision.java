@@ -39,7 +39,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_OFFLINE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 
@@ -206,17 +205,14 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
 
     private Document generateRefusalDocument(final CaseData caseData, final Long caseId) {
         var templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
-        final String templateId = caseData.getApplicant1().isOffline()
-            ? REFUSAL_ORDER_OFFLINE_TEMPLATE_ID
-            : REFUSAL_ORDER_TEMPLATE_ID;
 
         log.info("Generating conditional order refused document for templateId : {} caseId: {}",
-            templateId, caseId);
+            REFUSAL_ORDER_TEMPLATE_ID, caseId);
 
         return caseDataDocumentService.renderDocument(
             templateContents,
             caseId,
-            templateId,
+            REFUSAL_ORDER_TEMPLATE_ID,
             ENGLISH,
             REFUSAL_ORDER_DOCUMENT_NAME
         );

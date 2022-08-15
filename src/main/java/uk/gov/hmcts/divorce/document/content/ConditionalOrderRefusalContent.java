@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -38,6 +40,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE_WELSH;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
@@ -72,6 +77,9 @@ public class ConditionalOrderRefusalContent {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
+    @Autowired
+    private CommonContent commonContent;
+
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         Map<String, Object> templateContent = new HashMap<>();
@@ -102,6 +110,7 @@ public class ConditionalOrderRefusalContent {
         templateContent.put(IS_CLARIFICATION, MORE_INFO.equals(conditionalOrder.getRefusalDecision()));
         templateContent.put(IS_AMENDED_APPLICATION, REJECT.equals(conditionalOrder.getRefusalDecision()));
         templateContent.put(IS_OFFLINE, caseData.getApplicant1().isOffline());
+        templateContent.put(PARTNER, getPartner(caseData));
 
         final var ctscContactDetails = CtscContactDetails
             .builder()
@@ -151,6 +160,17 @@ public class ConditionalOrderRefusalContent {
             return legalAdvisorComments;
 
         }
+    }
+
+    private String getPartner(final CaseData caseData) {
+        String partner = commonContent.getPartner(caseData, caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference());
+
+        if (caseData.getApplicant1().isOffline()) {
+            partner = WELSH.equals(caseData.getApplicant1().getLanguagePreference()) ? SPOUSE_WELSH : SPOUSE;
+        }
+
+        return partner;
     }
 
     @Getter
