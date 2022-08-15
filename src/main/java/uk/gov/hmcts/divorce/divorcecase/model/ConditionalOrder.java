@@ -21,17 +21,21 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.UUID.randomUUID;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 
@@ -123,10 +127,23 @@ public class ConditionalOrder {
     private Set<ClarificationReason> refusalClarificationReason;
 
     @CCD(
-        label = "Clarification additional information (Translated)",
+        label = "Clarification additional information",
         typeOverride = TextArea
     )
     private String refusalClarificationAdditionalInfo;
+
+    @CCD(
+        label = "Clarification additional information (Translated)",
+        typeOverride = TextArea
+    )
+    private String refusalClarificationAdditionalInfoTranslated;
+
+    @CCD(
+        label = "Translated To?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "TranslatedToLanguage"
+    )
+    private TranslatedToLanguage refusalClarificationAdditionalInfoTranslatedTo;
 
     @CCD(
         label = "List of responses for Conditional Order clarification",
@@ -161,7 +178,7 @@ public class ConditionalOrder {
     @CCD(
         label = "Date and time of hearing"
     )
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateAndTimeOfHearing;
 
     @CCD(
@@ -187,6 +204,16 @@ public class ConditionalOrder {
         access = {CaseworkerAccess.class}
     )
     private DivorceDocument certificateOfEntitlementDocument;
+
+    @CCD(
+        label = "Has offline certificate of entitlement been sent to Applicant 1"
+    )
+    private YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant1;
+
+    @CCD(
+        label = "Has offline certificate of entitlement been sent to Applicant 2"
+    )
+    private YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant2;
 
     @CCD(
         label = "Refusal Rejection reasons",
@@ -263,6 +290,16 @@ public class ConditionalOrder {
     }
 
     @JsonIgnore
+    public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant1() {
+        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant1);
+    }
+
+    @JsonIgnore
+    public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant2() {
+        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant2);
+    }
+
+    @JsonIgnore
     public boolean isConditionalOrderPending() {
         return isNull(conditionalOrderApplicant1Questions.getSubmittedDate());
     }
@@ -299,11 +336,18 @@ public class ConditionalOrder {
 
         } else if (MORE_INFO.equals(getRefusalDecision())) {
 
+            Set<ClarificationReason> reasonsSet =  new HashSet<>();
+            if (isNotEmpty(getRefusalClarificationReason())) {
+                reasonsSet.addAll(getRefusalClarificationReason().stream()
+                    .filter(reason -> !OTHER.equals(reason))
+                    .collect(Collectors.toSet()));
+            }
+
             return LegalAdvisorDecision.builder()
                 .granted(getGranted())
                 .decisionDate(decisionDate)
                 .refusalDecision(getRefusalDecision())
-                .refusalClarificationReason(getRefusalClarificationReason())
+                .refusalClarificationReason(reasonsSet)
                 .refusalClarificationAdditionalInfo(getRefusalClarificationAdditionalInfo())
                 .build();
 
