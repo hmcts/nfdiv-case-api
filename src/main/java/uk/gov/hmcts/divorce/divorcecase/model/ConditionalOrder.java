@@ -120,6 +120,11 @@ public class ConditionalOrder {
     }
 
     @CCD(
+        label = "Switched to sole"
+    )
+    private YesOrNo switchedToSole;
+
+    @CCD(
         label = "Link to alternative service document"
     )
     private Document lastAlternativeServiceDocumentLink;

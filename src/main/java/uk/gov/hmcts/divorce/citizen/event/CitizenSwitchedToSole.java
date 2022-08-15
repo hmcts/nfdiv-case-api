@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleNotification;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -22,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Objects.isNull;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
@@ -79,7 +79,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         } else {
             notificationDispatcher.send(applicant2SwitchToSoleNotification, data, caseId);
         }
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.setApplicationType(SOLE_APPLICATION);
         removeApplicant2AnswersFromCase(data);
         data.getApplication().setJurisdiction(null);
 

@@ -117,7 +117,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .mandatory(ConditionalOrder::getD84ApplicationType,
                     "typeOfDocumentAttached=\"D84\"")
                 .mandatory(ConditionalOrder::getD84WhoApplying,
-                    "typeOfDocumentAttached=\"D84\" AND d84ApplicationType=\"switchedToSole\"")
+                    "typeOfDocumentAttached=\"D84\" AND coD84ApplicationType=\"switchedToSole\"")
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")

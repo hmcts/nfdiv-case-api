@@ -340,7 +340,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coCourt")
             .field("coDateAndTimeOfHearing")
             .field("coPronouncementJudge")
-            .field("coRescindedDate");
+            .field("coRescindedDate")
+            .field("coSwitchedToSole");
     }
 
     private void buildOutcomeOfConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

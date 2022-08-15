@@ -167,7 +167,7 @@ public class CcdAccessService {
         }
     }
 
-    private CaseAssignmentUserRolesRequest getCaseAssignmentRequest(Long caseId, String userId, String orgId, UserRole role) {
+    public CaseAssignmentUserRolesRequest getCaseAssignmentRequest(Long caseId, String userId, String orgId, UserRole role) {
         return CaseAssignmentUserRolesRequest.builder()
             .caseAssignmentUserRolesWithOrganisation(
                 List.of(getCaseAssignmentUserRole(caseId, orgId, role.getRole(), userId))
