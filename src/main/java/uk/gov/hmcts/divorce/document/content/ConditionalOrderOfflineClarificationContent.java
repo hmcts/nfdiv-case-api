@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
-public class ConditionalOrderClarificationContent {
+public class ConditionalOrderOfflineClarificationContent {
 
     public static final String LEGAL_ADVISOR_COMMENTS = "legalAdvisorComments";
     private static final String IS_SOLE = "isSole";
@@ -87,7 +87,7 @@ public class ConditionalOrderClarificationContent {
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
 
-        templateContent.put(JUDICIAL_SEPARATION, caseData.getIsJudicialSeparation().toBoolean());
+        templateContent.put(JUDICIAL_SEPARATION, caseData.getIsJudicialSeparation() != null && caseData.getIsJudicialSeparation().toBoolean());
 
         templateContent.put(REASON_JURISDICTION_DETAILS, clarificationReasons.contains(ClarificationReason.JURISDICTION_DETAILS));
         templateContent.put(REASON_MARRIAGE_CERT_TRANSLATION, clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE_TRANSLATION));

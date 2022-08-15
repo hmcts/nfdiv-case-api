@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderClarificationContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClarificationContent;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
@@ -41,8 +41,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_OFFLINE_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_OFFLINE_REJECT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
@@ -66,7 +66,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
 
     @Autowired
-    private ConditionalOrderClarificationContent conditionalOrderClarificationContent;
+    private ConditionalOrderOfflineClarificationContent conditionalOrderOfflineClarificationContent;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -228,7 +228,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
                 templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
             } else {
                 templateId = CLARIFICATION_REFUSAL_ORDER_OFFLINE_TEMPLATE_ID;
-                templateContents = conditionalOrderClarificationContent.apply(caseData, caseId);
+                templateContents = conditionalOrderOfflineClarificationContent.apply(caseData, caseId);
             }
         } else {
             templateId = REFUSAL_ORDER_TEMPLATE_ID;
