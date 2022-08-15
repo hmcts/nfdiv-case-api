@@ -89,10 +89,14 @@ public class ConditionalOrderOfflineClarificationContent {
 
         templateContent.put(JUDICIAL_SEPARATION, caseData.getIsJudicialSeparation() != null && caseData.getIsJudicialSeparation().toBoolean());
 
-        templateContent.put(REASON_JURISDICTION_DETAILS, clarificationReasons.contains(ClarificationReason.JURISDICTION_DETAILS));
-        templateContent.put(REASON_MARRIAGE_CERT_TRANSLATION, clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE_TRANSLATION));
-        templateContent.put(REASON_MARRIAGE_CERTIFICATE, clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE));
-        templateContent.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS, clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
+        templateContent.put(REASON_JURISDICTION_DETAILS,
+            clarificationReasons.contains(ClarificationReason.JURISDICTION_DETAILS));
+        templateContent.put(REASON_MARRIAGE_CERT_TRANSLATION,
+            clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE_TRANSLATION));
+        templateContent.put(REASON_MARRIAGE_CERTIFICATE,
+            clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE));
+        templateContent.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
+            clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
 
         templateContent.put(LEGAL_ADVISOR_COMMENTS, generateLegalAdvisorComments(conditionalOrder));
 

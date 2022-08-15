@@ -95,9 +95,15 @@ public class AwaitingClarificationApplicationPrinter {
         final Letter refusalCoverLetter = firstElement(refusalCoverLetters);
         final Letter refusalLetter = firstElement(refusalLetters);
 
-        if (coversheetLetter != null) awaitingClarificationLetters.add(coversheetLetter);
-        if (refusalCoverLetter != null) awaitingClarificationLetters.add(refusalCoverLetter);
-        if (refusalLetter != null) awaitingClarificationLetters.add(refusalLetter);
+        if (coversheetLetter != null) {
+            awaitingClarificationLetters.add(coversheetLetter);
+        }
+        if (refusalCoverLetter != null) {
+            awaitingClarificationLetters.add(refusalCoverLetter);
+        }
+        if (refusalLetter != null) {
+            awaitingClarificationLetters.add(refusalLetter);
+        }
 
         return awaitingClarificationLetters;
     }
