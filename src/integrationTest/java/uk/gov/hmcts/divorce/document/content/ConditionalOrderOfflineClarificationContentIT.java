@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,13 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.MARRIAGE_CERTIFICATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.MARRIAGE_CERTIFICATE_TRANSLATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
-import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClarificationContent.REASON_JURISDICTION_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClarificationContent.REASON_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClarificationContent.REASON_MARRIAGE_CERT_TRANSLATION;
@@ -36,7 +31,6 @@ import static uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClari
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
@@ -104,10 +98,15 @@ public class ConditionalOrderOfflineClarificationContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
 
         final Set<ClarificationReason> clarificationReasons = caseData.getConditionalOrder().getRefusalClarificationReason();
-        expectedEntries.put(REASON_JURISDICTION_DETAILS, clarificationReasons.contains(ClarificationReason.JURISDICTION_DETAILS));
-        expectedEntries.put(REASON_MARRIAGE_CERT_TRANSLATION, clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE_TRANSLATION));
-        expectedEntries.put(REASON_MARRIAGE_CERTIFICATE, clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE));
-        expectedEntries.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS, clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
+
+        expectedEntries.put(REASON_JURISDICTION_DETAILS,
+            clarificationReasons.contains(ClarificationReason.JURISDICTION_DETAILS));
+        expectedEntries.put(REASON_MARRIAGE_CERT_TRANSLATION,
+            clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE_TRANSLATION));
+        expectedEntries.put(REASON_MARRIAGE_CERTIFICATE,
+            clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE));
+        expectedEntries.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
+            clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
 
         expectedEntries.put("legalAdvisorComments", emptyList());
 
