@@ -1,8 +1,5 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -14,14 +11,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.ObjectUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
@@ -52,6 +44,9 @@ public class ConditionalOrderOfflineClarificationContent {
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
 
     @Value("${court.locations.serviceCentre.serviceCentreName}")
     private String serviceCentre;
@@ -99,7 +94,7 @@ public class ConditionalOrderOfflineClarificationContent {
         templateContent.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
 
-        templateContent.put(LEGAL_ADVISOR_COMMENTS, generateLegalAdvisorComments(conditionalOrder));
+        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderRefusalContent.generateLegalAdvisorComments(conditionalOrder));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
@@ -123,33 +118,5 @@ public class ConditionalOrderOfflineClarificationContent {
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;
-    }
-
-    public List<RefusalReason> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
-
-
-        Set<ClarificationReason> refusalClarificationReason = conditionalOrder.getRefusalClarificationReason();
-        if (isEmpty(refusalClarificationReason)) {
-            return emptyList();
-        }
-
-        List<RefusalReason> legalAdvisorComments = refusalClarificationReason.stream()
-            .filter(clarificationReason -> !clarificationReason.equals(ClarificationReason.OTHER))
-            .map(reason -> new RefusalReason(reason.getLabel()))
-            .collect(Collectors.toList());
-
-        String refusalClarificationAdditionalInfo = conditionalOrder.getRefusalClarificationAdditionalInfo();
-        if (isNotEmpty(refusalClarificationAdditionalInfo)) {
-            legalAdvisorComments.add(new RefusalReason(refusalClarificationAdditionalInfo));
-        }
-
-        return legalAdvisorComments;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @EqualsAndHashCode
-    public static class RefusalReason {
-        private String comment;
     }
 }
