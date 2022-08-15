@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -39,7 +40,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class AwaitingAmendedApplicationPrinterTest {
+public class AwaitingClarificationApplicationPrinterTest {
 
     @Mock
     private BulkPrintService bulkPrintService;
@@ -54,13 +55,13 @@ public class AwaitingAmendedApplicationPrinterTest {
     private GenerateCoRefusedCoverLetter generateCoRefusedCoverLetter;
 
     @InjectMocks
-    private AwaitingAmendedApplicationPrinter awaitingAmendedApplicationPrinter;
+    private AwaitingClarificationApplicationPrinter awaitingClarificationApplicationPrinter;
 
     @Captor
     ArgumentCaptor<Print> printCaptor;
 
     @Test
-    void shouldPrintAwaitingAmendedApplicationPack() {
+    void shouldPrintAwaitingClarificationPack() {
 
         final ListValue<DivorceDocument> coversheetDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -80,26 +81,20 @@ public class AwaitingAmendedApplicationPrinterTest {
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> applicationDoc = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
-                .build())
-            .build();
-
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
             .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
             .applicant2(Applicant.builder().build())
             .documents(
                 CaseDocuments.builder()
-                    .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc, applicationDoc))
+                    .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc))
                     .build()
             )
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
 
-        awaitingAmendedApplicationPrinter.sendLetters(
+        awaitingClarificationApplicationPrinter.sendLetters(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1()
@@ -116,25 +111,24 @@ public class AwaitingAmendedApplicationPrinterTest {
         verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+            CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("awaiting-amended-application-letter");
-        assertThat(print.getLetters().size()).isEqualTo(4);
+        assertThat(print.getLetterType()).isEqualTo("awaiting-clarification-application-letter");
+        assertThat(print.getLetters().size()).isEqualTo(3);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(coversheetDoc.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coCanApplyDoc.getValue());
         assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(coRefusalDoc.getValue());
-        assertThat(print.getLetters().get(3).getDivorceDocument()).isSameAs(applicationDoc.getValue());
 
         verify(bulkPrintService).print(print);
     }
 
     @Test
-    void shouldNotPrintIfAwaitingAmendedApplicationLettersNotFound() {
+    void shouldNotPrintIfAwaitingClarificationLettersNotFound() {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
@@ -147,7 +141,7 @@ public class AwaitingAmendedApplicationPrinterTest {
             )
             .build();
 
-        awaitingAmendedApplicationPrinter.sendLetters(
+        awaitingClarificationApplicationPrinter.sendLetters(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1()
@@ -157,7 +151,7 @@ public class AwaitingAmendedApplicationPrinterTest {
     }
 
     @Test
-    void shouldNotPrintIfNumberOfAwaitingAmendedApplicationLettersDoesNotMatchExpectedDocumentsSize() {
+    void shouldNotPrintIfNumberOfAwaitingClarificationLettersDoesNotMatchExpectedDocumentsSize() {
 
         final ListValue<DivorceDocument> coversheetDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -182,7 +176,7 @@ public class AwaitingAmendedApplicationPrinterTest {
             )
             .build();
 
-        awaitingAmendedApplicationPrinter.sendLetters(
+        awaitingClarificationApplicationPrinter.sendLetters(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1()
@@ -199,7 +193,7 @@ public class AwaitingAmendedApplicationPrinterTest {
         verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+            CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 

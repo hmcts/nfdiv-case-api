@@ -48,7 +48,7 @@ public class AwaitingClarificationApplicationPrinter {
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         generateLetters(caseData, caseId, applicant);
-        final List<Letter> currentAwaitingClarificationApplicationLetters = awaitingClarificationpplicationLetters(caseData);
+        final List<Letter> currentAwaitingClarificationApplicationLetters = awaitingClarificationApplicationLetters(caseData);
 
         if (!isEmpty(currentAwaitingClarificationApplicationLetters)
             && currentAwaitingClarificationApplicationLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
@@ -72,7 +72,7 @@ public class AwaitingClarificationApplicationPrinter {
         }
     }
 
-    private List<Letter> awaitingClarificationpplicationLetters(final CaseData caseData) {
+    private List<Letter> awaitingClarificationApplicationLetters(final CaseData caseData) {
 
         final List<Letter> coversheetLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
