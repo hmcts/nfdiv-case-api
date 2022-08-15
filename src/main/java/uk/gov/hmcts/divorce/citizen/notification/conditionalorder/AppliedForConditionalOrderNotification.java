@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NO
 import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PLUS_21_DUE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -84,6 +85,7 @@ public class AppliedForConditionalOrderNotification {
         templateVars.put(CO_OR_FO, "conditional");
         templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
         return templateVars;
     }
 

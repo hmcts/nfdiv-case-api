@@ -15,9 +15,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -31,9 +29,6 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
 
     @Autowired
     private ScheduleCaseService scheduleCaseService;
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -75,7 +70,7 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
         CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkCaseDetails, request.getHeader(AUTHORIZATION));
+        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkCaseDetails);
         return SubmittedCallbackResponse.builder().build();
     }
 }

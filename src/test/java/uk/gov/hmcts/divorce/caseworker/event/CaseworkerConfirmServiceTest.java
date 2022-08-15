@@ -132,4 +132,37 @@ public class CaseworkerConfirmServiceTest {
         assertThat(confirmServiceDoc.getDocumentLink().getBinaryUrl()).isEqualTo("url/binary");
         assertThat(response.getData().getDocuments().getDocumentsUploadedOnConfirmService()).isNull();
     }
+
+    @Test
+    public void shouldAddAnyConfirmServiceAttachmentsToDocumentsUploadedListWhenDocumentsUploadedIsNull() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+
+        final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentLink(new Document("url", "filename.pdf", "url/binary"))
+                .build())
+            .build();
+
+        caseData.getDocuments().setDocumentsUploadedOnConfirmService(Lists.newArrayList(confirmServiceAttachments));
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        when(solicitorSubmitConfirmService.submitConfirmService(caseDetails)).thenReturn(caseDetails);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNotEmpty();
+
+        DivorceDocument confirmServiceDoc = response.getData().getDocuments().getDocumentsUploaded().get(0).getValue();
+
+        assertThat(confirmServiceDoc.getDocumentLink().getUrl()).isEqualTo("url");
+        assertThat(confirmServiceDoc.getDocumentLink().getFilename()).isEqualTo("filename.pdf");
+        assertThat(confirmServiceDoc.getDocumentLink().getBinaryUrl()).isEqualTo("url/binary");
+        assertThat(response.getData().getDocuments().getDocumentsUploadedOnConfirmService()).isNull();
+    }
 }

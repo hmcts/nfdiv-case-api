@@ -7,14 +7,15 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ConditionalOrderPronouncedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronouncedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -43,6 +44,9 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
     @Autowired
     private GenerateConditionalOrderPronouncedDocument generateDocument;
 
+    @Autowired
+    private GenerateConditionalOrderPronouncedCoversheet generateCoversheetDocument;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -67,7 +71,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
 
         log.info("Conditional order pronounced for Case({})", caseId);
 
-        generateConditionalOrderGrantedDoc(details, beforeDetails);
+        generateConditionalOrderGrantedDocs(details, beforeDetails);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -86,8 +90,11 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private void generateConditionalOrderGrantedDoc(CaseDetails<CaseData, State> details,
+    private void generateConditionalOrderGrantedDocs(CaseDetails<CaseData, State> details,
                                                     CaseDetails<CaseData, State> beforeDetails) {
+
+        generateCoversheetDocument.apply(details);
+
         if (generateDocument.getConditionalOrderGrantedDoc(details.getData()).isPresent()) {
             ConditionalOrder oldCO = beforeDetails.getData().getConditionalOrder();
             ConditionalOrder newCO = details.getData().getConditionalOrder();
@@ -102,5 +109,4 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             generateDocument.apply(details);
         }
     }
-
 }
