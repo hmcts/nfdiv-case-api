@@ -235,8 +235,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
         }
 
-        log.info("Generating conditional order refusal document for templateId : {} caseId: {}",
-            templateId, caseId);
+        log.info("Generating conditional order refusal document for templateId : {} caseId: {}", templateId, caseId);
 
         return caseDataDocumentService.renderDocument(
             templateContents,

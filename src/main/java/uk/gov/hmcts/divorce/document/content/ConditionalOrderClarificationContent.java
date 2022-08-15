@@ -87,7 +87,7 @@ public class ConditionalOrderClarificationContent {
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
 
-        templateContent.put(JUDICIAL_SEPARATION, caseData.getIsJudicialSeparation());
+        templateContent.put(JUDICIAL_SEPARATION, caseData.getIsJudicialSeparation().toBoolean());
 
         templateContent.put(REASON_JURISDICTION_DETAILS, clarificationReasons.contains(ClarificationReason.JURISDICTION_DETAILS));
         templateContent.put(REASON_MARRIAGE_CERT_TRANSLATION, clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE_TRANSLATION));
