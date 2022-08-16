@@ -30,6 +30,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -45,6 +46,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -84,10 +86,10 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
 
         configBuilder
             .event(SWITCH_TO_SOLE_CO)
-            .forStateTransition(ConditionalOrderPending, AwaitingLegalAdvisorReferral)
+            .forStateTransition(EnumSet.of(ConditionalOrderPending, AwaitingLegalAdvisorReferral), AwaitingLegalAdvisorReferral)
             .name("SwitchedToSoleCO")
             .description("Application type switched to sole post CO submission")
-            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
