@@ -170,7 +170,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("documentsUploaded")
             .field(CaseData::getGeneralEmails)
             .field("certificateOfServiceDocument")
-            .field("coCertificateOfEntitlementDocument");
+            .field("coCertificateOfEntitlementDocument")
+            .field("coProofOfServiceUploadDocuments");
     }
 
     private void buildCorrespondenceTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

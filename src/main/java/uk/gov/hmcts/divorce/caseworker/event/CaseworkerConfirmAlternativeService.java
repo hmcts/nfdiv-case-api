@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetHoldingDueDate;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.task.SetServiceConfirmed;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -32,6 +33,9 @@ public class CaseworkerConfirmAlternativeService implements CCDConfig<CaseData, 
     @Autowired
     private SetHoldingDueDate setHoldingDueDate;
 
+    @Autowired
+    private SetServiceConfirmed setServiceConfirmed;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -54,7 +58,7 @@ public class CaseworkerConfirmAlternativeService implements CCDConfig<CaseData, 
 
         log.info("Caseworker confirm alternative service about to submit callback invoked with Case Id: {}", details.getId());
 
-        final CaseDetails<CaseData, State> updatedDetails = caseTasks(setHoldingDueDate).run(details);
+        final CaseDetails<CaseData, State> updatedDetails = caseTasks(setHoldingDueDate, setServiceConfirmed).run(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedDetails.getData())
