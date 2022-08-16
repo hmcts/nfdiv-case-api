@@ -246,6 +246,22 @@ public class ConditionalOrder {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate rescindedDate;
 
+    @CCD(
+        label = "Is latest approved service application a bailiff application?"
+    )
+    private YesOrNo lastApprovedServiceApplicationIsBailiffApplication;
+
+    @CCD(
+        label = "Certificate of service date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate certificateOfServiceDate;
+
+    @CCD(
+        label = "Did bailiff serve successfully?"
+    )
+    private YesOrNo successfulServedByBailiff;
+
     @JsonIgnore
     public boolean areClaimsGranted() {
         return nonNull(claimsGranted) && claimsGranted.toBoolean();

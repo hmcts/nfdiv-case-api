@@ -34,6 +34,11 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
                 .readonlyNoSummary(AcknowledgementOfService::getDateAosSubmitted, NEVER_SHOW)
             .done()
             .complex(CaseData::getConditionalOrder)
+                .readonlyNoSummary(ConditionalOrder::getLastApprovedServiceApplicationIsBailiffApplication, NEVER_SHOW)
+                .readonly(ConditionalOrder::getSuccessfulServedByBailiff,
+                    "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
+                .readonly(ConditionalOrder::getCertificateOfServiceDate,
+                    "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
                 .readonly(ConditionalOrder::getLastAlternativeServiceDocumentLink,
                 " applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\"")
                 .readonly(ConditionalOrder::getRespondentAnswersLink,
