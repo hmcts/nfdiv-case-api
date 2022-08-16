@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoS;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoSIfNo;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant1;
 import uk.gov.hmcts.divorce.common.event.page.WithdrawingJointApplicationApplicant1;
+import uk.gov.hmcts.divorce.common.service.task.SetLatestBailiffApplicationStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -56,6 +57,9 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
 
     @Autowired
     private ProgressDraftConditionalOrderState progressDraftConditionalOrderState;
+
+    @Autowired
+    private SetLatestBailiffApplicationStatus setLatestBailiffApplicationStatus;
 
     @Autowired
     private AddLastAlternativeServiceDocumentLink addLastAlternativeServiceDocumentLink;
@@ -115,7 +119,10 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
         log.info("Draft conditional order about to start callback invoked for Case Id: {}", details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseTasks(addMiniApplicationLink, addLastAlternativeServiceDocumentLink)
+            .data(caseTasks(
+                addMiniApplicationLink,
+                addLastAlternativeServiceDocumentLink,
+                setLatestBailiffApplicationStatus)
                 .run(details)
                 .getData())
             .build();
