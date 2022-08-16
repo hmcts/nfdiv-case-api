@@ -64,6 +64,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("conditionalOrderRefusal")
     CONDITIONAL_ORDER_REFUSAL("Conditional order refusal - clarification response"),
 
+    @JsonProperty("conditionalOrderRefusalCoverLetter")
+    CONDITIONAL_ORDER_REFUSAL_COVER_LETTER("Conditional order refusal cover letter"),
+
     @JsonProperty("correspondence")
     CORRESPONDENCE("Correspondence"),
 
