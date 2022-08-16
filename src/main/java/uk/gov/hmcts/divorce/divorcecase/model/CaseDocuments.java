@@ -189,14 +189,24 @@ public class CaseDocuments {
                 .anyMatch(beforeValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
     }
 
-    @JsonIgnore
-    public Optional<Document> getFirstGeneratedDocumentLinkWith(final DocumentType documentType) {
-        return Stream.ofNullable(getDocumentsGenerated())
+    public static Optional<Document> getFirstDocumentLink(final List<ListValue<DivorceDocument>> documents,
+                                                          final DocumentType documentType) {
+        return Stream.ofNullable(documents)
             .flatMap(java.util.Collection::stream)
             .map(ListValue::getValue)
             .filter(divorceDocument -> documentType == divorceDocument.getDocumentType())
             .map(DivorceDocument::getDocumentLink)
             .findFirst();
+    }
+
+    @JsonIgnore
+    public Optional<Document> getFirstGeneratedDocumentLinkWith(final DocumentType documentType) {
+        return getFirstDocumentLink(getDocumentsGenerated(), documentType);
+    }
+
+    @JsonIgnore
+    public Optional<Document> getFirstUploadedDocumentLinkWith(final DocumentType documentType) {
+        return getFirstDocumentLink(getDocumentsUploaded(), documentType);
     }
 
     @JsonIgnore
@@ -206,7 +216,7 @@ public class CaseDocuments {
                 .removeIf(document -> documentType.equals(document.getValue().getDocumentType()));
         }
     }
-    
+
     public Optional<ListValue<DivorceDocument>> getDocumentGeneratedWithType(final DocumentType documentType) {
         return !isEmpty(this.getDocumentsGenerated())
             ? this.getDocumentsGenerated().stream()

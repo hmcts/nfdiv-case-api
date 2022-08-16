@@ -1,12 +1,10 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -65,11 +63,6 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
     @InjectMocks
     private EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
-
-    @BeforeEach
-    void setPageSize() {
-        ReflectionTestUtils.setField(entitlementGrantedConditionalOrderNotification, "enableSolicitorEntitlementEmail", true);
-    }
 
     @Test
     void shouldSendEmailToApplicant1WithCourtHearingContent() {
@@ -199,18 +192,6 @@ class EntitlementGrantedConditionalOrderNotificationTest {
     }
 
     @Test
-    void shouldNotSendEmailToApplicant1SolicitorIfNotDigitalApplication() {
-        CaseData data = validCaseWithCourtHearing();
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        data.getApplicant1().setOffline(YesOrNo.YES);
-        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
-
-        entitlementGrantedConditionalOrderNotification.sendToApplicant1Solicitor(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
     void shouldSendEmailToApplicant2SolicitorWithCourtHearingContent() {
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -251,22 +232,6 @@ class EntitlementGrantedConditionalOrderNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-    }
-
-    @Test
-    void shouldNotSendEmailToApplicant2SolicitorIfNotDigitalApplication() {
-        CaseData data = validCaseWithCourtHearing();
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        data.getApplicant2().setOffline(YesOrNo.YES);
-        data.getApplicant2().setEmail("");
-        data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
-
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getMainTemplateVars());
-
-        entitlementGrantedConditionalOrderNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
     }
 
     @Test
