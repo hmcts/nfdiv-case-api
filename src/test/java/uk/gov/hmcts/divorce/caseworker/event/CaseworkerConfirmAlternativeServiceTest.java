@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetHoldingDueDate;
+import uk.gov.hmcts.divorce.common.service.task.SetServiceConfirmed;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -29,6 +30,9 @@ class CaseworkerConfirmAlternativeServiceTest {
     @Mock
     private SetHoldingDueDate setHoldingDueDate;
 
+    @Mock
+    private SetServiceConfirmed setServiceConfirmed;
+
     @InjectMocks
     private CaseworkerConfirmAlternativeService caseworkerConfirmAlternativeService;
 
@@ -44,7 +48,7 @@ class CaseworkerConfirmAlternativeServiceTest {
     }
 
     @Test
-    void shouldCallSetHoldingDueDateTaskOnAboutToSubmit() {
+    void shouldCallSetHoldingDueDateAndSetServiceConfirmedTaskOnAboutToSubmit() {
 
         final CaseData caseData = caseData();
         final CaseData updatedCaseData = caseData();
@@ -56,7 +60,8 @@ class CaseworkerConfirmAlternativeServiceTest {
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         updatedCaseDetails.setData(updatedCaseData);
 
-        when(setHoldingDueDate.apply(caseDetails)).thenReturn(updatedCaseDetails);
+        when(setHoldingDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(setServiceConfirmed.apply(caseDetails)).thenReturn(updatedCaseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmAlternativeService.aboutToSubmit(
             caseDetails,
@@ -64,5 +69,6 @@ class CaseworkerConfirmAlternativeServiceTest {
 
         assertThat(response.getData()).isEqualTo(updatedCaseData);
         verify(setHoldingDueDate).apply(caseDetails);
+        verify(setServiceConfirmed).apply(caseDetails);
     }
 }
