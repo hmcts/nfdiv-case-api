@@ -97,7 +97,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 + notShowForState(
                 Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
                 AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
-            .field("applicant2Offline", "applicationType=\"NEVER_SHOW\"")
+            .field("applicant2Offline", NEVER_SHOW)
             .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"", "## This is an online AoS response")
             .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"", "## This is an offline AoS response")
             .field("confirmReadPetition")
@@ -116,7 +116,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2SolicitorRepresented", NEVER_SHOW)
             .field("statementOfTruth")
             .field("applicant2StatementOfTruth", "statementOfTruth!=\"*\"")
-            .field("dateAosSubmitted");
+            .field("dateAosSubmitted")
+            .field("aosIsDrafted", NEVER_SHOW);
     }
 
     private void buildPaymentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -127,13 +128,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1HWFReferenceNumber", "applicationType=\"soleApplication\" OR applicant2HWFReferenceNumber=\"*\"")
             .label("LabelApplicant2-PaymentHeading", IS_JOINT_AND_HWF_ENTERED, "### ${labelContentTheApplicant2UC}")
             .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED)
-            .field("newPaperCase", "applicationType=\"NEVER_SHOW\"")
+            .field("newPaperCase", NEVER_SHOW)
             .label("LabelPaperCase-PaymentHeading", IS_NEW_PAPER_CASE, "### Paper Case Payment")
             .field("paperCasePaymentMethod", IS_NEW_PAPER_CASE)
-            .field("paperFormApplicant1NoPaymentIncluded", "applicationType=\"NEVER_SHOW\"")
-            .field("paperFormApplicant2NoPaymentIncluded", "applicationType=\"NEVER_SHOW\"")
-            .field("paperFormSoleOrApplicant1PaymentOther", "applicationType=\"NEVER_SHOW\"")
-            .field("paperFormApplicant2PaymentOther", "applicationType=\"NEVER_SHOW\"")
+            .field("paperFormApplicant1NoPaymentIncluded", NEVER_SHOW)
+            .field("paperFormApplicant2NoPaymentIncluded", NEVER_SHOW)
+            .field("paperFormSoleOrApplicant1PaymentOther", NEVER_SHOW)
+            .field("paperFormApplicant2PaymentOther", NEVER_SHOW)
             .label("LabelPaperForm-App1PaymentHeading", PAPER_FORM_PAYMENT_OTHER_DETAILS, "### Paper Form Payment Details")
             .field("paperFormSoleOrApplicant1PaymentOtherDetail", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS)
             .field("paperFormApplicant2PaymentOtherDetail", PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS)

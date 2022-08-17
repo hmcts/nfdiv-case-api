@@ -136,6 +136,12 @@ public class AcknowledgementOfService {
     @CCD(access = {CaseworkerAccessOnlyAccess.class})
     private FeeDetails disputingFee = new FeeDetails();
 
+    @CCD(
+        label = "AoS is drafted",
+        access = {AosAccess.class}
+    )
+    private YesOrNo aosIsDrafted;
+
     @JsonIgnore
     public void setNoticeOfProceedings(final Applicant applicant) {
         noticeOfProceedingsEmail = applicant.getCorrespondenceEmail();
