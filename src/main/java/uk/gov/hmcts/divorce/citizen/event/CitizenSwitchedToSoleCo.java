@@ -14,7 +14,9 @@ import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleCoNotific
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.SwitchedToSole;
@@ -28,11 +30,10 @@ import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
@@ -106,15 +107,15 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
-        if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
-            switchUserRoles(caseId);
-            switchApplicantData(data);
-        }
-
         if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant1SwitchToSoleCoNotification, data, caseId);
         } else {
             notificationDispatcher.send(applicant2SwitchToSoleCoNotification, data, caseId);
+        }
+
+        if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
+            switchUserRoles(caseId);
+            switchApplicantData(data);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -175,13 +176,19 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
     }
 
     private void switchApplicantData(final CaseData data) {
-
-        Applicant applicant1 = data.getApplicant1();
-        Applicant applicant2 = data.getApplicant2();
+        final Application application = data.getApplication();
+        final Applicant applicant1 = data.getApplicant1();
+        final Applicant applicant2 = data.getApplicant2();
         data.setApplicant1(applicant2);
         data.setApplicant2(applicant1);
 
-        Application application = data.getApplication();
+        switchApplicationData(data, application, data.getApplicant2());
+        populateSwitchedToSoleData(application);
+        switchConditionalOrderAnswers(data.getConditionalOrder());
+        data.setCaseInvite(new CaseInvite(data.getApplicant2().getEmail(), null, null));
+    }
+
+    private void switchApplicationData(final CaseData data, final Application application, final Applicant applicant2) {
 
         if (isNotEmpty(applicant2.getGender())) {
             application.setDivorceWho(MALE.equals(applicant2.getGender()) ? HUSBAND : WIFE);
@@ -250,6 +257,16 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         Document currentApplicant2SolicitorAnswersLink = application.getApplicant2SolicitorAnswersLink();
         application.setApplicant1SolicitorAnswersLink(currentApplicant2SolicitorAnswersLink);
         application.setApplicant2SolicitorAnswersLink(currentApplicant1SolicitorAnswersLink);
+    }
+
+    private void switchConditionalOrderAnswers(ConditionalOrder conditionalOrder) {
+        ConditionalOrderQuestions conditionalOrderApplicant1Questions = conditionalOrder.getConditionalOrderApplicant1Questions();
+        ConditionalOrderQuestions conditionalOrderApplicant2Questions = conditionalOrder.getConditionalOrderApplicant2Questions();
+        conditionalOrder.setConditionalOrderApplicant1Questions(conditionalOrderApplicant2Questions);
+        conditionalOrder.setConditionalOrderApplicant2Questions(conditionalOrderApplicant1Questions);
+    }
+
+    private void populateSwitchedToSoleData(final Application application) {
 
         SwitchedToSole switchedToSole = SwitchedToSole.builder()
             .applicant1KnowsApplicant2EmailAddress(application.getApplicant1KnowsApplicant2EmailAddress())

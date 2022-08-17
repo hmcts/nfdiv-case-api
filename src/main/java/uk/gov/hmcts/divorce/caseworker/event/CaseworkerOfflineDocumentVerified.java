@@ -31,7 +31,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
