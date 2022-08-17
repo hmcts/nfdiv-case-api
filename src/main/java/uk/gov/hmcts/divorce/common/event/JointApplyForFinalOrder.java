@@ -18,6 +18,8 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.List;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
@@ -80,12 +82,14 @@ public class JointApplyForFinalOrder implements CCDConfig<CaseData, State, UserR
         CaseData data = details.getData();
         State state = details.getState();
 
+        data.getFinalOrder().setApplicant2AppliedForFinalOrderFirst(YES);
+        data.getFinalOrder().setApplicant1AppliedForFinalOrderFirst(NO);
+
         if (state != FinalOrderOverdue) {
             if (state == AwaitingFinalOrder) {
                 notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, data, details.getId());
             }
 
-            // TODO: AARON - After Final Order class refactor (into 2 question classes), set app2 applied first var to true
             var isSole = data.getApplicationType().isSole();
             state = isSole ? FinalOrderRequested : beforeDetails.getState() == AwaitingFinalOrder
                 ? AwaitingJointFinalOrder

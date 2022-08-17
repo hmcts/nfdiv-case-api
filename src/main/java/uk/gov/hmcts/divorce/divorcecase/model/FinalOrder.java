@@ -85,10 +85,22 @@ public class FinalOrder {
     private YesOrNo doesApplicant1WantToApplyForFinalOrder;
 
     @CCD(
+        label = "Has applicant1 applied for a final order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1AppliedForFinalOrderFirst;
+
+    @CCD(
         label = "Does ${labelContentTheApplicant2} want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
         access = {Applicant2Access.class}
     )
     private YesOrNo doesApplicant2WantToApplyForFinalOrder;
+
+    @CCD(
+        label = "Has ${labelContentApplicant2} applied for a final order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2AppliedForFinalOrderFirst;
 
     @CCD(
         label = "${labelContentTheApplicant2UC} final order explanation",

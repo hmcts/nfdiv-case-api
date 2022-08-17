@@ -12,12 +12,15 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.List;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
@@ -80,12 +83,14 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
         CaseData data = details.getData();
         State state = details.getState();
 
+        data.getFinalOrder().setApplicant1AppliedForFinalOrderFirst(YES);
+        data.getFinalOrder().setApplicant2AppliedForFinalOrderFirst(NO);
+
         if (state != FinalOrderOverdue) {
             if (state == AwaitingFinalOrder) {
                 notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, data, details.getId());
             }
 
-            // TODO: AARON - After Final Order class refactor (into 2 question classes), set app1 applied first var to true
             var isSole = data.getApplicationType().isSole();
             state = isSole ? FinalOrderRequested : beforeDetails.getState() == AwaitingFinalOrder
                 ? AwaitingJointFinalOrder
