@@ -178,7 +178,7 @@ public class ConditionalOrder {
     @CCD(
         label = "Date and time of hearing"
     )
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateAndTimeOfHearing;
 
     @CCD(
@@ -204,6 +204,16 @@ public class ConditionalOrder {
         access = {CaseworkerAccess.class}
     )
     private DivorceDocument certificateOfEntitlementDocument;
+
+    @CCD(
+        label = "Has offline certificate of entitlement been sent to Applicant 1"
+    )
+    private YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant1;
+
+    @CCD(
+        label = "Has offline certificate of entitlement been sent to Applicant 2"
+    )
+    private YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant2;
 
     @CCD(
         label = "Refusal Rejection reasons",
@@ -235,6 +245,33 @@ public class ConditionalOrder {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate rescindedDate;
+    @CCD(
+        label = "Service Confirmed"
+    )
+    private YesOrNo serviceConfirmed;
+
+    @CCD(
+        label = "Documents uploaded for Proof of Service",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument"
+    )
+    private List<ListValue<DivorceDocument>> proofOfServiceUploadDocuments;
+
+    @CCD(
+        label = "Is latest approved service application a bailiff application?"
+    )
+    private YesOrNo lastApprovedServiceApplicationIsBailiffApplication;
+
+    @CCD(
+        label = "Certificate of service date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate certificateOfServiceDate;
+
+    @CCD(
+        label = "Did bailiff serve successfully?"
+    )
+    private YesOrNo successfulServedByBailiff;
 
     @JsonIgnore
     public boolean areClaimsGranted() {
@@ -261,6 +298,16 @@ public class ConditionalOrder {
         this.setClarificationResponses(new ArrayList<>());
         this.setCannotUploadClarificationDocuments(null);
         this.setClarificationUploadDocuments(new ArrayList<>());
+    }
+
+    @JsonIgnore
+    public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant1() {
+        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant1);
+    }
+
+    @JsonIgnore
+    public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant2() {
+        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant2);
     }
 
     @JsonIgnore
