@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.common.event.JointApplyForFinalOrder.JOINT_AP
 @Slf4j
 public class Applicant2ApplyForFinalOrderDetails implements CcdPageConfiguration {
 
-    private static final String ALWAYS_HIDE = "doesApplicant1WantToApplyForFinalOrder=\"ALWAYS_HIDE\"";
+    private static final String ALWAYS_HIDE = "doesApplicant2WantToApplyForFinalOrder=\"ALWAYS_HIDE\"";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
