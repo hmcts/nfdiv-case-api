@@ -91,11 +91,11 @@ public class JointApplyForFinalOrder implements CCDConfig<CaseData, State, UserR
         }
 
         details.setData(data);
-        details = progressFinalOrderState.apply(details);
+        var updatedDetails = progressFinalOrderState.apply(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(details.getState())
+            .data(updatedDetails.getData())
+            .state(updatedDetails.getState())
             .build();
     }
 }
