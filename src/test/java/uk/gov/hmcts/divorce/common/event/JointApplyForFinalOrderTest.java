@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.event.JointApplyForFinalOrder.JOINT_FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
@@ -58,6 +59,7 @@ class JointApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(AwaitingFinalOrder);
 
+        when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
         jointApplyForFinalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(applicant2AppliedForFinalOrderNotification, caseData, caseDetails.getId());
@@ -70,6 +72,7 @@ class JointApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(FinalOrderOverdue);
 
+        when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
         jointApplyForFinalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher, never()).send(applicant2AppliedForFinalOrderNotification, caseData, caseDetails.getId());
