@@ -120,6 +120,7 @@ class CitizenSwitchedToSoleCoTest {
             .build();
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app2-token");
         when(ccdAccessService.isApplicant1("app2-token", caseId)).thenReturn(false);
+        when(ccdAccessService.isApplicant2("app2-token", caseId)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 

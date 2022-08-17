@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
@@ -145,6 +146,24 @@ public class CcdAccessService {
             .map(CaseAssignmentUserRole::getCaseRole)
             .collect(Collectors.toList());
         return userRoles.contains(CREATOR.getRole()) || userRoles.contains(APPLICANT_1_SOLICITOR.getRole());
+    }
+
+    @Retryable(value = {FeignException.class, RuntimeException.class})
+    public boolean isApplicant2(String userToken, Long caseId) {
+        log.info("Retrieving roles for user on case {}", caseId);
+        User user = idamService.retrieveUser(userToken);
+        List<String> userRoles =
+            caseAssignmentApi.getUserRoles(
+                userToken,
+                authTokenGenerator.generate(),
+                List.of(String.valueOf(caseId)),
+                List.of(user.getUserDetails().getId())
+            )
+                .getCaseAssignmentUserRoles()
+                .stream()
+                .map(CaseAssignmentUserRole::getCaseRole)
+                .collect(Collectors.toList());
+        return userRoles.contains(APPLICANT_2.getRole()) || userRoles.contains(APPLICANT_2_SOLICITOR.getRole());
     }
 
     public void removeUsersWithRole(Long caseId, List<String> roles) {

@@ -104,7 +104,7 @@ public class CitizenSwitchedToSoleCoIT {
         data.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
-        setupMocks(true);
+        setupMocks(true, false);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -138,7 +138,7 @@ public class CitizenSwitchedToSoleCoIT {
         data.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
-        setupMocks(false);
+        setupMocks(false, true);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -175,7 +175,7 @@ public class CitizenSwitchedToSoleCoIT {
             .d84WhoApplying(APPLICANT_2)
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
-        setupMocks(false);
+        setupMocks(false, false);
 
         final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
             .caseAssignmentUserRoles(List.of(
@@ -207,7 +207,7 @@ public class CitizenSwitchedToSoleCoIT {
             .d84WhoApplying(APPLICANT_1)
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
-        setupMocks(false);
+        setupMocks(false, false);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -220,8 +220,9 @@ public class CitizenSwitchedToSoleCoIT {
             .andExpect(content().json(expectedResponse(SWITCH_TO_SOLE_CO_APPLICANT_1_RESPONSE)));
     }
 
-    private void setupMocks(boolean isApplicant1) {
+    private void setupMocks(boolean isApplicant1, boolean isApplicant2) {
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(isApplicant1);
+        when(ccdAccessService.isApplicant2(anyString(), anyLong())).thenReturn(isApplicant2);
         when(idamService.retrieveSystemUpdateUserDetails())
             .thenReturn(new User("system-user-token", UserDetails.builder().build()));
     }
