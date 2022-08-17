@@ -9,7 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.FINAL_ORDER_REQUESTED;
+import static uk.gov.hmcts.divorce.common.event.JointApplyForFinalOrder.JOINT_FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
@@ -31,26 +31,26 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class ApplyForFinalOrderTest {
+class JointApplyForFinalOrderTest {
 
     @Mock
-    private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
+    private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
-    private ApplyForFinalOrder applyForFinalOrder;
+    private JointApplyForFinalOrder jointApplyForFinalOrder;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        applyForFinalOrder.configure(configBuilder);
+        jointApplyForFinalOrder.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(FINAL_ORDER_REQUESTED);
+            .contains(JOINT_FINAL_ORDER_REQUESTED);
     }
 
     @Test
@@ -59,7 +59,7 @@ class ApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.AwaitingFinalOrder).id(1L).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = jointApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(FinalOrderRequested);
     }
@@ -70,7 +70,7 @@ class ApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.AwaitingFinalOrder).id(1L).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = jointApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(AwaitingJointFinalOrder);
     }
@@ -81,7 +81,7 @@ class ApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(FinalOrderOverdue).id(1L).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = jointApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(FinalOrderOverdue);
     }
@@ -92,9 +92,9 @@ class ApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(AwaitingFinalOrder);
 
-        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+        jointApplyForFinalOrder.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher).send(applicant1AppliedForFinalOrderNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicant2AppliedForFinalOrderNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -104,9 +104,9 @@ class ApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(FinalOrderOverdue);
 
-        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+        jointApplyForFinalOrder.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher, never()).send(applicant1AppliedForFinalOrderNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher, never()).send(applicant2AppliedForFinalOrderNotification, caseData, caseDetails.getId());
     }
 
     @Test
@@ -116,7 +116,7 @@ class ApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.AwaitingFinalOrder).id(1L).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applyForFinalOrder.aboutToSubmit(caseDetails, null);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = jointApplyForFinalOrder.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getState()).isEqualTo(WelshTranslationReview);
         assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(FinalOrderRequested);
@@ -132,7 +132,7 @@ class ApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.AwaitingFinalOrder).id(1L).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applyForFinalOrder.aboutToSubmit(caseDetails, beforeDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = jointApplyForFinalOrder.aboutToSubmit(caseDetails, beforeDetails);
 
         assertThat(response.getState()).isEqualTo(WelshTranslationReview);
         assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(AwaitingJointFinalOrder);

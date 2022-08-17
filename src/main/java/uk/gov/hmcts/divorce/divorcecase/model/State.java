@@ -156,6 +156,13 @@ public enum State {
     AwaitingFinalOrder,
 
     @CCD(
+        label = "Awaiting joint final order",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    AwaitingJointFinalOrder,
+
+    @CCD(
         label = "Awaiting general consideration",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
