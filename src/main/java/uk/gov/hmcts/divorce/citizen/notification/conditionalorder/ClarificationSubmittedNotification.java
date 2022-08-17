@@ -17,7 +17,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.common.notification.SoleAppliedForFinalOrderNotification.NOW_PLUS_14_DAYS;
+import static uk.gov.hmcts.divorce.common.notification.SoleAppliedForFinalOrderNotification.NOW_PLUS_28_DAYS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CLARIFICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_PARTNER_CLARIFICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -104,7 +104,7 @@ public class ClarificationSubmittedNotification implements ApplicantNotification
                                                    final Applicant partner) {
 
         Map<String, String> templateContent = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
-        templateContent.put(NOW_PLUS_14_DAYS, LocalDate.now(clock).plusDays(14).format(DATE_TIME_FORMATTER));
+        templateContent.put(NOW_PLUS_28_DAYS, LocalDate.now(clock).plusDays(28).format(DATE_TIME_FORMATTER));
         return templateContent;
     }
 }

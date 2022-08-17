@@ -48,7 +48,7 @@ import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 @Builder
 public class Application {
     @CCD(ignore = true)
-    private static final int SUBMISSION_RESPONSE_DAYS = 14;
+    private static final int SUBMISSION_RESPONSE_DAYS = 28;
 
     @CCD(
         label = "Has the applicant's ${labelContentMarriageOrCivilPartnership} broken down irretrievably?",

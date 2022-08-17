@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applica
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.PLUS_14_DUE_DATE;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.WIFE_DID_NOT_APPLY;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.CO_OR_FO;
-import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.PLUS_21_DUE_DATE;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.PLUS_28_DUE_DATE;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.RESPONSE_DUE_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -101,7 +101,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
     @InjectMocks
     private Applicant1AppliedForConditionalOrderNotification notification;
 
-    private static final String CO_REVIEWED_BY_DATE = "date email received plus 21 days";
+    private static final String CO_REVIEWED_BY_DATE = "date email received plus 28 days";
+
 
     @Test
     void shouldSendEmailToSoleApplicant1WhoSubmittedCoWithDivorceContent() {
@@ -118,7 +119,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, YES),
-                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -142,7 +143,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -166,7 +167,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, YES),
-                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -193,7 +194,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -240,7 +241,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(PLUS_21_DUE_DATE, LocalDate.now().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(PLUS_28_DUE_DATE, LocalDate.now().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -353,7 +354,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(PLUS_21_DUE_DATE, LocalDate.now().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(PLUS_28_DUE_DATE, LocalDate.now().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
