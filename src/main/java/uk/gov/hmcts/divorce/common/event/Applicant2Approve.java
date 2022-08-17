@@ -22,6 +22,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -61,6 +62,7 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
             .grant(CREATE_READ_UPDATE, APPLICANT_2, SYSTEMUPDATE)
             .grantHistoryOnly(
                 CASE_WORKER,
+                APPLICANT_1_SOLICITOR,
                 SUPER_USER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
