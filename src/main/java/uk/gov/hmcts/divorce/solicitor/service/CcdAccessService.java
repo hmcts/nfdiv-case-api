@@ -141,10 +141,10 @@ public class CcdAccessService {
                 List.of(String.valueOf(caseId)),
                 List.of(user.getUserDetails().getId())
             )
-            .getCaseAssignmentUserRoles()
-            .stream()
-            .map(CaseAssignmentUserRole::getCaseRole)
-            .collect(Collectors.toList());
+                .getCaseAssignmentUserRoles()
+                .stream()
+                .map(CaseAssignmentUserRole::getCaseRole)
+                .collect(Collectors.toList());
         return userRoles.contains(CREATOR.getRole()) || userRoles.contains(APPLICANT_1_SOLICITOR.getRole());
     }
 
@@ -184,6 +184,10 @@ public class CcdAccessService {
 
             caseAssignmentApi.removeCaseUserRoles(auth, s2sToken, caseAssignmentUserRolesReq);
         }
+    }
+
+    public CaseAssignmentUserRolesRequest getCaseAssignmentRequest(Long caseId, String userId, UserRole role) {
+        return getCaseAssignmentRequest(caseId, userId, null, role);
     }
 
     public CaseAssignmentUserRolesRequest getCaseAssignmentRequest(Long caseId, String userId, String orgId, UserRole role) {
