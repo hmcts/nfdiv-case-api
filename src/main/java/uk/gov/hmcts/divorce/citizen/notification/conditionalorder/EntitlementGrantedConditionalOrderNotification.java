@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.TIME_OF_HEARING;
@@ -70,7 +71,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         notificationService.sendEmail(
             caseData.getApplicant1().getCorrespondenceEmail(),
             SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
-            templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+                solicitorTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference());
     }
 
@@ -107,7 +108,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         notificationService.sendEmail(
             caseData.getApplicant2().getCorrespondenceEmail(),
             SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
-            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+                solicitorTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference());
     }
 
@@ -147,6 +148,12 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
                 : "not provided");
         }
 
+        return templateVars;
+    }
+
+    private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
+        Map<String, String> templateVars = templateVars(caseData, id, applicant, partner);
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
         return templateVars;
     }
 }
