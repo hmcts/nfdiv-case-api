@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
@@ -61,6 +62,9 @@ public class ApplyForFinalOrderIT {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private ProgressFinalOrderState progressFinalOrderState;
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;

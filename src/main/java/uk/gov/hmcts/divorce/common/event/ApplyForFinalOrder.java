@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
 
 import java.util.List;
 
@@ -23,8 +24,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -46,6 +45,9 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private ProgressFinalOrderState progressFinalOrderState;
 
     private static final List<CcdPageConfiguration> pages = List.of(
         new ApplyForFinalOrderDetails()
@@ -85,27 +87,16 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
         data.getFinalOrder().setApplicant1AppliedForFinalOrderFirst(YES);
         data.getFinalOrder().setApplicant2AppliedForFinalOrderFirst(NO);
 
-        if (state != FinalOrderOverdue) {
-            if (state == AwaitingFinalOrder) {
-                notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, data, details.getId());
-            }
-
-            var isSole = data.getApplicationType().isSole();
-            state = isSole ? FinalOrderRequested : beforeDetails.getState() == AwaitingFinalOrder
-                ? AwaitingJointFinalOrder
-                : FinalOrderRequested;
-
-            if (data.isWelshApplication()) {
-                data.getApplication().setWelshPreviousState(state);
-                state = WelshTranslationReview;
-                log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
-                    data.getApplication().getWelshPreviousState(), details.getId());
-            }
+        if (state == AwaitingFinalOrder) {
+            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, data, details.getId());
         }
 
+        details.setData(data);
+        details = progressFinalOrderState.apply(details);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
-            .state(state)
+            .data(details.getData())
+            .state(details.getState())
             .build();
     }
 }
