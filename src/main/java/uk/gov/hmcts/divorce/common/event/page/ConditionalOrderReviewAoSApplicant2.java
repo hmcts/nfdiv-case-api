@@ -36,6 +36,7 @@ public class ConditionalOrderReviewAoSApplicant2 implements CcdPageConfiguration
                     "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
                 .readonly(ConditionalOrder::getCertificateOfServiceDate,
                     "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
+                .readonly(ConditionalOrder::getRespondentAnswersLink)
                 .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
                     .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
                 .done()
