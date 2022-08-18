@@ -23,6 +23,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -61,7 +62,7 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(APPLICANT2_FINAL_ORDER_REQUESTED)
-            .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder)
+            .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder, FinalOrderOverdue)
             .name(APPLICANT2_APPLY_FOR_FINAL_ORDER)
             .description(APPLICANT2_APPLY_FOR_FINAL_ORDER)
             .showSummary()
