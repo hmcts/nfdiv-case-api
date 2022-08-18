@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -327,7 +326,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .value(
                 ScannedDocument.builder()
                     .scannedDate(now(clock))
-                    .fileName("D84")
+                    .fileName("D84.pdf")
                     .type(FORM)
                     .url(document)
                     .build()
@@ -342,6 +341,17 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                 CaseDocuments.builder()
                     .typeOfDocumentAttached(CO_D84)
                     .scannedDocuments(List.of(scannedD84Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D84.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
                     .build()
             )
             .build();
@@ -376,7 +386,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .value(
                 ScannedDocument.builder()
                     .scannedDate(now(clock))
-                    .fileName("D84")
+                    .fileName("D84.pdf")
                     .type(FORM)
                     .url(document)
                     .build()
@@ -392,6 +402,17 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                 CaseDocuments.builder()
                     .typeOfDocumentAttached(CO_D84)
                     .scannedDocuments(List.of(scannedD84Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D84.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
                     .build()
             )
             .build();
@@ -410,26 +431,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         verify(notificationDispatcher)
             .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
-    }
-
-    @Test
-    void shouldReturnErrorIfD84SelectedButNotFoundInScannedDocuments() {
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        CaseData caseData = CaseData.builder()
-            .documents(
-                CaseDocuments.builder()
-                    .typeOfDocumentAttached(CO_D84)
-                    .scannedDocuments(emptyList())
-                    .build()
-            )
-            .build();
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
-
-        assertThat(response.getErrors()).isNotEmpty();
-        assertThat(response.getErrors()).contains("Could not find D84 form in Scanned Documents List");
     }
 
     @Test
