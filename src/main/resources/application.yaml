@@ -336,7 +336,7 @@ docmosis:
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended.docx
       GENERAL_LETTER: NFD_General_Letter.docx
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
-      REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order.docx #TODO: update welsh content
+      REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order.docx
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter.docx #TODO: update welsh content
       CLARIFICATION_REFUSAL_ORDER_OFFLINE_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx #TODO: update welsh content
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter.docx #TODO: update welsh content

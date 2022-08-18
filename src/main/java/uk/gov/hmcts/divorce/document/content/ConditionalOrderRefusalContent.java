@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
@@ -28,11 +29,14 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE_WELSH;
@@ -67,12 +71,18 @@ public class ConditionalOrderRefusalContent {
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
 
+        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                WELSH.equals(languagePreference) ? MARRIAGE_CY : MARRIAGE);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP,
+                WELSH.equals(languagePreference) ? DIVORCE_WELSH : DIVORCE);
         } else {
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP,
+                WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
         }
 
         templateContent.put(LEGAL_ADVISOR_COMMENTS, generateLegalAdvisorComments(conditionalOrder));
