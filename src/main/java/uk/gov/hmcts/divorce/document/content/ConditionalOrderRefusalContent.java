@@ -121,7 +121,7 @@ public class ConditionalOrderRefusalContent {
         String partner = commonContent.getPartner(caseData, caseData.getApplicant2(),
             caseData.getApplicant1().getLanguagePreference());
 
-        if (caseData.getApplicant1().isOffline()) {
+        if (caseData.isDivorce() && caseData.getApplicant1().isOffline()) {
             partner = WELSH.equals(caseData.getApplicant1().getLanguagePreference()) ? SPOUSE_WELSH : SPOUSE;
         }
 
