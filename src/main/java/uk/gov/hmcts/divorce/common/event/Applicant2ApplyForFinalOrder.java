@@ -79,7 +79,7 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Joint Apply For Final Order event about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("Applicant2 Apply For Final Order event about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
         State state = details.getState();
