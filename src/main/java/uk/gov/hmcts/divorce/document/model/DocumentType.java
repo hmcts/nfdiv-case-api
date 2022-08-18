@@ -27,6 +27,9 @@ public enum DocumentType implements HasLabel {
     @JsonAlias("divorceApplication")
     APPLICATION("Application"),
 
+    @JsonProperty("appliedForCoLetter")
+    APPLIED_FOR_CO_LETTER("Applied for Conditional Order Letter"),
+
     @JsonProperty("bailiffCertificateOfService")
     BAILIFF_CERTIFICATE_OF_SERVICE("Bailiff certificate of service"),
 
@@ -54,7 +57,7 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("conditionalOrderCanApply")
     CONDITIONAL_ORDER_CAN_APPLY("Conditional order can apply"),
-    
+
     @JsonProperty("conditionalOrderReminder")
     CONDITIONAL_ORDER_REMINDER("Conditional order reminder"),
 
