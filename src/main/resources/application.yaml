@@ -270,7 +270,6 @@ docmosis:
       DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V5.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
       REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order.docx
-      REFUSAL_ORDER_OFFLINE_REJECT: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order-Offline.docx
       CLARIFICATION_REFUSAL_ORDER_OFFLINE_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter.docx
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter.docx
