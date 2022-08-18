@@ -92,6 +92,9 @@ aos_overdue:
 applicant:
   response_offset_days: ${APPLICANT_RESPOND_BY_OFFSET_DAYS:16}
 
+applicant_2:
+  to_link_to_case_offset_days: ${TO_LINK_TO_CASE_BY_OFFSET_DAYS:14}
+
 respondent_solicitor:
   response_offset_days: ${RESPONDENT_SOLICITOR_RESPOND_BY_OFFSET_DAYS:10}
 
@@ -123,7 +126,4 @@ bulk-action:
 
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
-
-toggle:
-  enable_entitlement_email: ${ENABLE_ENTITLEMENT_EMAIL:true}
 

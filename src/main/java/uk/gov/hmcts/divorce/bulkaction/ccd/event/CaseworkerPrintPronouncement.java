@@ -15,9 +15,6 @@ import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import javax.servlet.http.HttpServletRequest;
-
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -31,9 +28,6 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
 
     @Autowired
     private ScheduleCaseService scheduleCaseService;
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Autowired
     private PronouncementListDocService pronouncementListDocService;
@@ -62,7 +56,7 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
         CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
-        scheduleCaseService.updatePronouncementJudgeDetailsForCasesInBulk(bulkCaseDetails,request.getHeader(AUTHORIZATION));
+        scheduleCaseService.updatePronouncementJudgeDetailsForCasesInBulk(bulkCaseDetails);
         return SubmittedCallbackResponse.builder().build();
     }
 

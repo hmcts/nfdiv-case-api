@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.ArrayList;
@@ -25,9 +26,16 @@ public class ConditionalOrderReviewAoSApplicant2 implements CcdPageConfiguration
 
         pageBuilder
             .page("ConditionalOrderReviewAoSApplicant2", this::midEvent)
-            .pageLabel("Review Acknowledgement of Service - Draft Conditional Order Application")
             .readonlyNoSummary(CaseData::getApplicationType, NEVER_SHOW)
+            .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
+            .done()
             .complex(CaseData::getConditionalOrder)
+                .readonlyNoSummary(ConditionalOrder::getLastApprovedServiceApplicationIsBailiffApplication, NEVER_SHOW)
+                .readonly(ConditionalOrder::getSuccessfulServedByBailiff,
+                    "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
+                .readonly(ConditionalOrder::getCertificateOfServiceDate,
+                    "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
                 .readonly(ConditionalOrder::getRespondentAnswersLink)
                 .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
                     .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
