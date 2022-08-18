@@ -117,27 +117,32 @@ public abstract class FunctionalTestSuite {
     }
 
     protected Response triggerCallback(Map<String, Object> caseData, String eventId, String url) throws IOException {
+
+        return triggerCallback(caseData, eventId, url, 1234567890123456L);
+    }
+
+    protected Response triggerCallback(Map<String, Object> caseData, String eventId, String url, Long caseId) throws IOException {
         CallbackRequest request = CallbackRequest
-            .builder()
-            .eventId(eventId)
-            .caseDetailsBefore(
-                CaseDetails
-                    .builder()
-                    .id(1234567890123456L)
-                    .data(caseData)
-                    .createdDate(LOCAL_DATE_TIME)
-                    .caseTypeId(CASE_TYPE)
-                    .build())
-            .caseDetails(
-                CaseDetails
-                    .builder()
-                    .id(1234567890123456L)
-                    .data(caseData)
-                    .createdDate(LOCAL_DATE_TIME)
-                    .caseTypeId(CASE_TYPE)
-                    .build()
-            )
-            .build();
+                .builder()
+                .eventId(eventId)
+                .caseDetailsBefore(
+                        CaseDetails
+                                .builder()
+                                .id(caseId)
+                                .data(caseData)
+                                .createdDate(LOCAL_DATE_TIME)
+                                .caseTypeId(CASE_TYPE)
+                                .build())
+                .caseDetails(
+                        CaseDetails
+                                .builder()
+                                .id(caseId)
+                                .data(caseData)
+                                .createdDate(LOCAL_DATE_TIME)
+                                .caseTypeId(CASE_TYPE)
+                                .build()
+                )
+                .build();
 
         return triggerCallback(request, url);
     }
