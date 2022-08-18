@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.divorce.common.event.JointApplyForFinalOrder.JOINT_FINAL_ORDER_REQUESTED;
+import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APPLICANT2_FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -51,7 +51,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseDa
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class JointApplyForFinalOrderIT {
+public class Applicant2ApplyForFinalOrderIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -93,7 +93,7 @@ public class JointApplyForFinalOrderIT {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, JOINT_FINAL_ORDER_REQUESTED, "AwaitingFinalOrder")))
+            .content(objectMapper.writeValueAsString(callbackRequest(data, APPLICANT2_FINAL_ORDER_REQUESTED, "AwaitingFinalOrder")))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -114,7 +114,7 @@ public class JointApplyForFinalOrderIT {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, JOINT_FINAL_ORDER_REQUESTED, "finalOrderOverdue")))
+            .content(objectMapper.writeValueAsString(callbackRequest(data, APPLICANT2_FINAL_ORDER_REQUESTED, "finalOrderOverdue")))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()

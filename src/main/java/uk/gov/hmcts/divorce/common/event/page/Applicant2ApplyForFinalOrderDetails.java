@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static java.util.Collections.singletonList;
-import static uk.gov.hmcts.divorce.common.event.JointApplyForFinalOrder.JOINT_APPLY_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APPLICANT2_APPLY_FOR_FINAL_ORDER;
 
 @Slf4j
 public class Applicant2ApplyForFinalOrderDetails implements CcdPageConfiguration {
@@ -24,7 +24,7 @@ public class Applicant2ApplyForFinalOrderDetails implements CcdPageConfiguration
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
             .page("Applicant2SolicitorApplyForFinalOrder", this::midEvent)
-            .pageLabel(JOINT_APPLY_FOR_FINAL_ORDER)
+            .pageLabel(APPLICANT2_APPLY_FOR_FINAL_ORDER)
             .complex(CaseData::getLabelContent)
             .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, ALWAYS_HIDE)
             .readonlyNoSummary(LabelContent::getFinaliseDivorceOrEndCivilPartnership, ALWAYS_HIDE)

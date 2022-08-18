@@ -21,14 +21,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.common.event.JointApplyForFinalOrder.JOINT_FINAL_ORDER_REQUESTED;
+import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APPLICANT2_FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class JointApplyForFinalOrderTest {
+class Applicant2ApplyForFinalOrderTest {
 
     @Mock
     private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
@@ -40,17 +40,17 @@ class JointApplyForFinalOrderTest {
     private ProgressFinalOrderState progressFinalOrderState;
 
     @InjectMocks
-    private JointApplyForFinalOrder jointApplyForFinalOrder;
+    private Applicant2ApplyForFinalOrder applicant2ApplyForFinalOrder;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        jointApplyForFinalOrder.configure(configBuilder);
+        applicant2ApplyForFinalOrder.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(JOINT_FINAL_ORDER_REQUESTED);
+            .contains(APPLICANT2_FINAL_ORDER_REQUESTED);
     }
 
     @Test
@@ -60,7 +60,7 @@ class JointApplyForFinalOrderTest {
         caseDetails.setState(AwaitingFinalOrder);
 
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-        jointApplyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(applicant2AppliedForFinalOrderNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
@@ -73,7 +73,7 @@ class JointApplyForFinalOrderTest {
         caseDetails.setState(FinalOrderOverdue);
 
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-        jointApplyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher, never()).send(applicant2AppliedForFinalOrderNotification, caseData, caseDetails.getId());
     }

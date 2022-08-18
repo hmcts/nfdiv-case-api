@@ -33,11 +33,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
-public class JointApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> {
+public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String JOINT_FINAL_ORDER_REQUESTED = "joint-final-order-requested";
+    public static final String APPLICANT2_FINAL_ORDER_REQUESTED = "applicant2-final-order-requested";
 
-    public static final String JOINT_APPLY_FOR_FINAL_ORDER = "Apply for final order";
+    public static final String APPLICANT2_APPLY_FOR_FINAL_ORDER = "Apply for final order";
 
     @Autowired
     private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
@@ -60,10 +60,10 @@ public class JointApplyForFinalOrder implements CCDConfig<CaseData, State, UserR
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(JOINT_FINAL_ORDER_REQUESTED)
+            .event(APPLICANT2_FINAL_ORDER_REQUESTED)
             .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder)
-            .name(JOINT_APPLY_FOR_FINAL_ORDER)
-            .description(JOINT_APPLY_FOR_FINAL_ORDER)
+            .name(APPLICANT2_APPLY_FOR_FINAL_ORDER)
+            .description(APPLICANT2_APPLY_FOR_FINAL_ORDER)
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_2, APPLICANT_2_SOLICITOR)
