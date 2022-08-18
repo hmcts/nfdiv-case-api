@@ -43,8 +43,9 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
                 .readonly(ConditionalOrder::getLastAlternativeServiceDocumentLink,
                     " applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\" AND coServiceConfirmed!=\"Yes\"")
                 .readonly(ConditionalOrder::getRespondentAnswersLink,
-                    "applicationType=\"soleApplication\" AND dateAosSubmitted=\"*\"")
-                .readonly(ConditionalOrder::getServiceConfirmed, NEVER_SHOW)
+                    "applicationType=\"soleApplication\" AND coLastApprovedServiceApplicationIsBailiffApplication=\"No\""
+                        + " AND dateAosSubmitted=\"*\" AND coServiceConfirmed!=\"Yes\"")
+            .readonly(ConditionalOrder::getServiceConfirmed, NEVER_SHOW)
                 .optionalWithoutDefaultValue(ConditionalOrder::getProofOfServiceUploadDocuments,
                     "applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\" AND coServiceConfirmed=\"Yes\"",
                     "Please upload proof of service below")
