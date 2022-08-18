@@ -51,7 +51,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_OFFLINE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_OFFLINE_REJECT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
@@ -550,7 +549,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_OFFLINE_REJECT_TEMPLATE_ID,
+                REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
