@@ -19,8 +19,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.LegalAdvisorDecision;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClarificationContent;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorRejectedDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -49,9 +49,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarific
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_OFFLINE_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -77,10 +77,10 @@ class LegalAdvisorMakeDecisionTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
+    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
 
     @Mock
-    private ConditionalOrderOfflineClarificationContent conditionalOrderOfflineClarificationContent;
+    private ConditionalOrderRefusedForClarificationContent conditionalOrderRefusedForClarificationContent;
 
     @Mock
     private Clock clock;
@@ -132,7 +132,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setData(caseData);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -145,7 +145,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -192,7 +192,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setData(caseData);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -205,7 +205,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                REJECTED_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -236,7 +236,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -249,7 +249,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -276,7 +276,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setData(caseData);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -289,7 +289,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                REJECTED_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -333,7 +333,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -386,7 +386,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -434,7 +434,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -496,7 +496,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setData(caseData);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -509,7 +509,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -536,7 +536,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -549,7 +549,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                REJECTED_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -576,7 +576,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderOfflineClarificationContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -589,7 +589,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                CLARIFICATION_REFUSAL_ORDER_OFFLINE_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))

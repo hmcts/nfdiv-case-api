@@ -69,7 +69,10 @@ docmosis:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_V5.docx
       DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V5.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
-      REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order.docx
+      REJECTED_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order.docx
+      CLARIFICATION_REFUSAL_ORDER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx
+      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter.docx
+      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx
@@ -106,6 +109,10 @@ docmosis:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_V5.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      REJECTED_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order.docx
+      CLARIFICATION_REFUSAL_ORDER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx
+      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter.docx
+      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter.docx
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng_V3.docx   #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Cy.docx
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service_CY.docx

@@ -43,10 +43,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class ConditionalOrderRefusalContentIT {
+public class ConditionalOrderRefusedForAmendmentContentIT {
 
     @Autowired
-    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
+    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForClarificationConditionalOrderDocument() {
@@ -79,7 +79,7 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put("legalAdvisorComments", emptyList());
         expectedEntries.put(PARTNER, "spouse");
 
-        Map<String, Object> templateContent = conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -113,10 +113,10 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusalContent.RefusalReason("Rejected comments")));
+            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Rejected comments")));
         expectedEntries.put(PARTNER, "wife");
 
-        Map<String, Object> templateContent = conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -152,10 +152,10 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusalContent.RefusalReason("Rejected comments")));
+            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Rejected comments")));
         expectedEntries.put(PARTNER, "civil partner");
 
-        Map<String, Object> templateContent = conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -192,11 +192,11 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusalContent.RefusalReason(MARRIAGE_CERTIFICATE.getLabel()),
-                new ConditionalOrderRefusalContent.RefusalReason("Clarification comments")));
+            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason(MARRIAGE_CERTIFICATE.getLabel()),
+                new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Clarification comments")));
         expectedEntries.put(PARTNER, "civil partner");
 
-        Map<String, Object> templateContent = conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }

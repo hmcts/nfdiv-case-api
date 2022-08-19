@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
-public class ConditionalOrderRefusalContent {
+public class ConditionalOrderRefusedForAmendmentContent {
 
     public static final String LEGAL_ADVISOR_COMMENTS = "legalAdvisorComments";
     private static final String IS_SOLE = "isSole";
