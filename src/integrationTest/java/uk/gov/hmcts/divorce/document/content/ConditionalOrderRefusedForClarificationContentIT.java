@@ -82,7 +82,6 @@ public class ConditionalOrderRefusedForClarificationContentIT {
             .poBox("PO Box 13226")
             .town("Harlow")
             .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
             .build();
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
@@ -145,7 +144,6 @@ public class ConditionalOrderRefusedForClarificationContentIT {
             .poBox("PO Box 13226")
             .town("Harlow")
             .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
             .build();
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
