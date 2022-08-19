@@ -15,8 +15,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClarificationContent;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorRejectedDecisionNotification;
@@ -40,9 +40,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_OFFLINE_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 
 @Component
@@ -61,10 +61,10 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
+    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
 
     @Autowired
-    private ConditionalOrderOfflineClarificationContent conditionalOrderOfflineClarificationContent;
+    private ConditionalOrderRefusedForClarificationContent conditionalOrderRefusedForClarificationContent;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -220,17 +220,13 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
 
         String templateId;
         Map<String, Object> templateContents;
-        if (caseData.getApplicant1().isOffline()) {
-            if (REJECT.equals(refusalOption)) {
-                templateId = REFUSAL_ORDER_TEMPLATE_ID;
-                templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
-            } else {
-                templateId = CLARIFICATION_REFUSAL_ORDER_OFFLINE_TEMPLATE_ID;
-                templateContents = conditionalOrderOfflineClarificationContent.apply(caseData, caseId);
-            }
+
+        if (MORE_INFO.equals(refusalOption)) {
+            templateId = CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID;
+            templateContents = conditionalOrderRefusedForClarificationContent.apply(caseData, caseId);
         } else {
-            templateId = REFUSAL_ORDER_TEMPLATE_ID;
-            templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
+            templateId = REJECTED_REFUSAL_ORDER_TEMPLATE_ID;
+            templateContents = conditionalOrderRefusedForAmendmentContent.apply(caseData, caseId);
         }
 
         log.info("Generating conditional order refusal document for templateId : {} caseId: {}", templateId, caseId);

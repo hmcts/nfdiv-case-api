@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
-public class ConditionalOrderOfflineClarificationContent {
+public class ConditionalOrderRefusedForClarificationContent {
 
     public static final String LEGAL_ADVISOR_COMMENTS = "legalAdvisorComments";
     private static final String IS_SOLE = "isSole";
@@ -41,7 +41,7 @@ public class ConditionalOrderOfflineClarificationContent {
     private Clock clock;
 
     @Autowired
-    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
+    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
 
     @Value("${court.locations.serviceCentre.serviceCentreName}")
     private String serviceCentre;
@@ -57,9 +57,6 @@ public class ConditionalOrderOfflineClarificationContent {
 
     @Value("${court.locations.serviceCentre.postCode}")
     private String postcode;
-
-    @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
@@ -89,7 +86,8 @@ public class ConditionalOrderOfflineClarificationContent {
         templateContent.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
 
-        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderRefusalContent.generateLegalAdvisorComments(conditionalOrder));
+        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderRefusedForAmendmentContent
+            .generateLegalAdvisorComments(conditionalOrder));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
@@ -104,7 +102,6 @@ public class ConditionalOrderOfflineClarificationContent {
             .poBox(poBox)
             .town(town)
             .postcode(postcode)
-            .phoneNumber(phoneNumber)
             .build();
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
