@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -9,7 +10,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -33,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCitizenResendInvite;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJurisdictionConnections;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -353,6 +357,69 @@ public class CaseValidationTest {
             "MarriageDate cannot be empty or null",
             "JurisdictionConnections cannot be empty or null"
         );
+    }
+
+    @Test
+    public void validateCitizenResendInviteSuccess() {
+        CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .caseInvite(CaseInvite.builder().accessCode("12345").build()).build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseDetails.setState(State.AwaitingApplicant2Response);
+
+        List<String> errors = validateCitizenResendInvite(caseDetails);
+        assertThat(errors).hasSize(0);
+    }
+
+    @Test
+    public void validateCitizenResendInviteFailsWhenStateIsWrong() {
+        CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .caseInvite(CaseInvite.builder().accessCode("12345").build()).build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseDetails.setState(State.Submitted);
+
+        List<String> errors = validateCitizenResendInvite(caseDetails);
+        assertThat(errors).hasSize(1);
+        assertThat(errors).containsExactly("Not possible to update applicant 2 invite email address");
+    }
+
+    @Test
+    public void validateCitizenResendInviteFailsWhenApplicationTypeIsWrong() {
+        CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .caseInvite(CaseInvite.builder().accessCode("12345").build()).build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseDetails.setState(State.AwaitingApplicant2Response);
+
+        List<String> errors = validateCitizenResendInvite(caseDetails);
+        assertThat(errors).hasSize(1);
+        assertThat(errors).containsExactly("Not possible to update applicant 2 invite email address");
+    }
+
+    @Test
+    public void validateCitizenResendInviteFailsWhenAccessCodeIsWrong() {
+        CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .caseInvite(CaseInvite.builder().accessCode(null).build()).build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseDetails.setState(State.AwaitingApplicant2Response);
+
+        List<String> errors = validateCitizenResendInvite(caseDetails);
+        assertThat(errors).hasSize(1);
+        assertThat(errors).containsExactly("Not possible to update applicant 2 invite email address");
     }
 
     private BulkActionCaseData bulkActionCaseData() {

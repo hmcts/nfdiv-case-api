@@ -26,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,11 +65,11 @@ class ScheduleCaseServiceTest {
             .build();
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_UPDATE_CASE_COURT_HEARING))
             .thenReturn(caseTask);
 
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails);
 
         verify(bulkCaseProcessingService).updateAllBulkCases(
             bulkActionCaseDetails,
@@ -99,11 +98,11 @@ class ScheduleCaseServiceTest {
             .build();
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE))
             .thenReturn(caseTask);
 
-        scheduleCaseService.updatePronouncementJudgeDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        scheduleCaseService.updatePronouncementJudgeDetailsForCasesInBulk(bulkActionCaseDetails);
 
         verify(bulkCaseProcessingService).updateAllBulkCases(
             bulkActionCaseDetails,

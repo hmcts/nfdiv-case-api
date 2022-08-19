@@ -10,18 +10,25 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoS;
+import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoSIfNo;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant1;
+import uk.gov.hmcts.divorce.common.event.page.WithdrawingJointApplicationApplicant1;
+import uk.gov.hmcts.divorce.common.service.task.SetLatestBailiffApplicationStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddLastAlternativeServiceDocumentLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
+import uk.gov.hmcts.divorce.solicitor.service.task.AddOfflineRespondentAnswersLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressDraftConditionalOrderState;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -42,6 +49,8 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
 
     private final List<CcdPageConfiguration> pages = asList(
         new ConditionalOrderReviewAoS(),
+        new WithdrawingJointApplicationApplicant1(),
+        new ConditionalOrderReviewAoSIfNo(),
         new ConditionalOrderReviewApplicant1()
     );
 
@@ -52,7 +61,13 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
     private ProgressDraftConditionalOrderState progressDraftConditionalOrderState;
 
     @Autowired
+    private SetLatestBailiffApplicationStatus setLatestBailiffApplicationStatus;
+
+    @Autowired
     private AddLastAlternativeServiceDocumentLink addLastAlternativeServiceDocumentLink;
+
+    @Autowired
+    private AddOfflineRespondentAnswersLink addOfflineRespondentAnswersLink;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -84,7 +99,22 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
         log.info("Draft conditional order about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseData data = details.getData();
+        final ConditionalOrder conditionalOrder = data.getConditionalOrder();
+
+        if (!data.getApplicationType().isSole()
+            && NO.equals(conditionalOrder.getConditionalOrderApplicant1Questions().getApplyForConditionalOrder())
+            && YES.equals(conditionalOrder.getConditionalOrderApplicant1Questions().getApplyForConditionalOrderIfNo())) {
+
+            conditionalOrder.getConditionalOrderApplicant1Questions().setApplyForConditionalOrder(YES);
+            conditionalOrder.getConditionalOrderApplicant1Questions().setApplyForConditionalOrderIfNo(null);
+        }
+
         data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(YES);
+
+        data.getConditionalOrder().setProofOfServiceUploadDocuments(sortByNewest(
+            beforeDetails.getData().getConditionalOrder().getProofOfServiceUploadDocuments(),
+            data.getConditionalOrder().getProofOfServiceUploadDocuments()
+        ));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
@@ -99,7 +129,11 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
         log.info("Draft conditional order about to start callback invoked for Case Id: {}", details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseTasks(addMiniApplicationLink, addLastAlternativeServiceDocumentLink)
+            .data(caseTasks(
+                addMiniApplicationLink,
+                addLastAlternativeServiceDocumentLink,
+                setLatestBailiffApplicationStatus,
+                addOfflineRespondentAnswersLink)
                 .run(details)
                 .getData())
             .build();
