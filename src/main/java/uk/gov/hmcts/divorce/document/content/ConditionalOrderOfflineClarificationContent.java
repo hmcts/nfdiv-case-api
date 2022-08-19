@@ -58,9 +58,6 @@ public class ConditionalOrderOfflineClarificationContent {
     @Value("${court.locations.serviceCentre.postCode}")
     private String postcode;
 
-    @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
-
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         Map<String, Object> templateContent = new HashMap<>();
@@ -104,7 +101,6 @@ public class ConditionalOrderOfflineClarificationContent {
             .poBox(poBox)
             .town(town)
             .postcode(postcode)
-            .phoneNumber(phoneNumber)
             .build();
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
