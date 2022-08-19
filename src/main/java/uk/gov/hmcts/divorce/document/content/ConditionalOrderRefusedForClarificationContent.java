@@ -86,7 +86,8 @@ public class ConditionalOrderRefusedForClarificationContent {
         templateContent.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
 
-        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderRefusedForAmendmentContent.generateLegalAdvisorComments(conditionalOrder));
+        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderRefusedForAmendmentContent
+            .generateLegalAdvisorComments(conditionalOrder));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
