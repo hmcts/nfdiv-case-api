@@ -413,7 +413,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("amendedApplication", "Amended application")
-            .forRoles(CASE_WORKER, SUPER_USER)
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .showCondition("amendedApplications=\"*\"")
             .field("amendedApplications");
     }
