@@ -67,6 +67,17 @@ public class ConditionalOrder {
     private Document onlinePetitionLink;
 
     @CCD(
+        label = "Link to scanned D84 form"
+    )
+    private Document scannedD84Form;
+
+    @CCD(
+        label = "Date D84 form was scanned"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime dateD84FormScanned;
+
+    @CCD(
         label = "Link to alternative service document"
     )
     private Document lastAlternativeServiceDocumentLink;
@@ -245,6 +256,17 @@ public class ConditionalOrder {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate rescindedDate;
+    @CCD(
+        label = "Service Confirmed"
+    )
+    private YesOrNo serviceConfirmed;
+
+    @CCD(
+        label = "Documents uploaded for Proof of Service",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument"
+    )
+    private List<ListValue<DivorceDocument>> proofOfServiceUploadDocuments;
 
     @CCD(
         label = "Is latest approved service application a bailiff application?"

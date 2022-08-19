@@ -26,6 +26,7 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
             .page("ConditionalOrderReviewAoS", this::midEvent)
+            .pageLabel("Draft Conditional Order")
             .readonlyNoSummary(CaseData::getApplicationType, NEVER_SHOW)
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
@@ -40,11 +41,16 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
                 .readonly(ConditionalOrder::getCertificateOfServiceDate,
                     "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
                 .readonly(ConditionalOrder::getLastAlternativeServiceDocumentLink,
-                " applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\"")
+                    " applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\" AND coServiceConfirmed!=\"Yes\"")
                 .readonly(ConditionalOrder::getRespondentAnswersLink,
                     "applicationType=\"soleApplication\" AND dateAosSubmitted=\"*\"")
+                .readonly(ConditionalOrder::getServiceConfirmed, NEVER_SHOW)
+                .optionalWithoutDefaultValue(ConditionalOrder::getProofOfServiceUploadDocuments,
+                    "applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\" AND coServiceConfirmed=\"Yes\"",
+                    "Please upload proof of service below")
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                     .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
+                    .done()
                 .done()
             .label(
                 "ConditionalOrderReviewAoSNo",

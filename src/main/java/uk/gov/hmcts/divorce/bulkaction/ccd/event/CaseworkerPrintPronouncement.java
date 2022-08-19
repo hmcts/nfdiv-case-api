@@ -17,6 +17,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -44,7 +45,8 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .aboutToStartCallback(this::aboutToStart)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
+            .grantHistoryOnly(LEGAL_ADVISOR))
             .page("printPronouncement")
             .pageLabel("Print Cases for Pronouncement")
             .mandatory(BulkActionCaseData::getPronouncementJudge, null, "District Judge");

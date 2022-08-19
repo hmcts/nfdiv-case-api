@@ -1,9 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -31,6 +29,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.TIME_OF_HEARING;
@@ -54,9 +53,6 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
     @Autowired
     private CertificateOfEntitlementPrinter certificateOfEntitlementPrinter;
 
-    @Value("${toggle.enable_entitlement_email}")
-    private boolean enableSolicitorEntitlementEmail;
-
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Sending entitlement granted on conditional order notification to applicant 1 for case : {}", id);
@@ -70,15 +66,13 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
-        if (enableSolicitorEntitlementEmail && !caseData.getApplicant1().isOffline()) {
-            log.info("Sending entitlement granted on conditional order notification to applicant 1 solicitor for case : {}", id);
+        log.info("Sending entitlement granted on conditional order notification to applicant 1 solicitor for case : {}", id);
 
-            notificationService.sendEmail(
-                caseData.getApplicant1().getCorrespondenceEmail(),
-                SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
-                templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference());
-        }
+        notificationService.sendEmail(
+            caseData.getApplicant1().getCorrespondenceEmail(),
+            SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
+                solicitorTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            caseData.getApplicant1().getLanguagePreference());
     }
 
     @Override
@@ -108,17 +102,14 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
 
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
-        if (enableSolicitorEntitlementEmail
-            && !StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || !caseData.getApplicant2().isOffline()) {
 
-            log.info("Sending entitlement granted on conditional order notification to applicant 2 solicitor for case : {}", id);
+        log.info("Sending entitlement granted on conditional order notification to applicant 2 solicitor for case : {}", id);
 
-            notificationService.sendEmail(
-                caseData.getApplicant2().getCorrespondenceEmail(),
-                SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
-                templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference());
-        }
+        notificationService.sendEmail(
+            caseData.getApplicant2().getCorrespondenceEmail(),
+            SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
+                solicitorTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+            caseData.getApplicant2().getLanguagePreference());
     }
 
     @Override
@@ -157,6 +148,12 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
                 : "not provided");
         }
 
+        return templateVars;
+    }
+
+    private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
+        Map<String, String> templateVars = templateVars(caseData, id, applicant, partner);
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
         return templateVars;
     }
 }
