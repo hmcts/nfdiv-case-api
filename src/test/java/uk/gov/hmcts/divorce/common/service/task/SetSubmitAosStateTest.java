@@ -63,9 +63,38 @@ class SetSubmitAosStateTest {
     }
 
     @Test
-    void shouldNotSetStateToWelshTranslationReviewIfRespondentLanguagePreferenceWelshIsYes() {
+    void shouldNotSetStateToWelshTranslationReviewIfRespondentLanguagePreferenceWelshIsNo() {
         final CaseData caseData = caseData();
         caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(AosDrafted);
+        caseDetails.setData(caseData);
+
+        final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(Holding);
+    }
+
+    @Test
+    void shouldSetStateToWelshTranslationReviewIfRespondentUsedWelshTranslationOnSubmissionYes() {
+        final CaseData caseData = caseData();
+        caseData.getApplicant2().setUsedWelshTranslationOnSubmission(YES);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(AosDrafted);
+        caseDetails.setData(caseData);
+
+        final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(WelshTranslationReview);
+        assertThat(result.getData().getApplication().getWelshPreviousState()).isEqualTo(Holding);
+    }
+
+    @Test
+    void shouldNotSetStateToWelshTranslationReviewIfRespondentUsedWelshTranslationOnSubmissionNo() {
+        final CaseData caseData = caseData();
+        caseData.getApplicant2().setUsedWelshTranslationOnSubmission(NO);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setState(AosDrafted);

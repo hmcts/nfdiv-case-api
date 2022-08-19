@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @Slf4j
 public class CaseworkerRequestTranslationFromWLU implements CCDConfig<CaseData, State, UserRole> {
-    public static final String CASEWORKER_REQUEST_TRANSLATION_WLU = "caseworker-request--translation-wlu";
+    public static final String CASEWORKER_REQUEST_TRANSLATION_WLU = "caseworker-request-translation-wlu";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

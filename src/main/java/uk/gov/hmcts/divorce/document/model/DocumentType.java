@@ -27,6 +27,9 @@ public enum DocumentType implements HasLabel {
     @JsonAlias("divorceApplication")
     APPLICATION("Application"),
 
+    @JsonProperty("appliedForCoLetter")
+    APPLIED_FOR_CO_LETTER("Applied for Conditional Order Letter"),
+
     @JsonProperty("bailiffCertificateOfService")
     BAILIFF_CERTIFICATE_OF_SERVICE("Bailiff certificate of service"),
 
@@ -36,6 +39,9 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("bailiffServiceRefused")
     BAILIFF_SERVICE_REFUSED("Bailiff Service Refused"),
+
+    @JsonProperty("certificateOfEntitlementCoverLetter")
+    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER("Certificate of entitlement cover letter"),
 
     @JsonProperty("certificateOfEntitlement")
     CERTIFICATE_OF_ENTITLEMENT("Certificate of entitlement"),
@@ -51,7 +57,7 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("conditionalOrderCanApply")
     CONDITIONAL_ORDER_CAN_APPLY("Conditional order can apply"),
-    
+
     @JsonProperty("conditionalOrderReminder")
     CONDITIONAL_ORDER_REMINDER("Conditional order reminder"),
 
@@ -60,6 +66,9 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("conditionalOrderRefusal")
     CONDITIONAL_ORDER_REFUSAL("Conditional order refusal - clarification response"),
+
+    @JsonProperty("conditionalOrderRefusalCoverLetter")
+    CONDITIONAL_ORDER_REFUSAL_COVER_LETTER("Conditional order refusal cover letter"),
 
     @JsonProperty("correspondence")
     CORRESPONDENCE("Correspondence"),
@@ -171,7 +180,13 @@ public enum DocumentType implements HasLabel {
     AOS_OVERDUE_LETTER("Aos overdue letter"),
 
     @JsonProperty("generalLetter")
-    GENERAL_LETTER("General letter");
+    GENERAL_LETTER("General letter"),
+
+    @JsonProperty("coGrantedCoversheet")
+    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1("Applicant 1 Conditional Order Granted Coversheet"),
+
+    @JsonProperty("coGrantedCoversheetApp2")
+    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2("Applicant 2 Conditional Order Granted Coversheet");
 
     private final String label;
 }

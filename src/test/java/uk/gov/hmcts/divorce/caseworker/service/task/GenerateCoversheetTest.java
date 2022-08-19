@@ -37,7 +37,7 @@ public class GenerateCoversheetTest {
     private GenerateCoversheet generateCoversheet;
 
     @Test
-    void should() {
+    void shouldGenerateCoversheet() {
         setMockClock(clock);
 
         CaseData caseData = new CaseData();
@@ -64,7 +64,4 @@ public class GenerateCoversheetTest {
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
             );
     }
-
-
-
 }
