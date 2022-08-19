@@ -6,6 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.print.AppliedForCoPrinter;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -76,6 +78,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -94,6 +97,9 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private AppliedForCoPrinter appliedForCoPrinter;
 
     @Mock
     private Clock clock;
@@ -454,6 +460,36 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
+    }
+
+    @Test
+    void shouldSendLetterToApplicant1() {
+        CaseData data = caseData(DIVORCE, ApplicationType.JOINT_APPLICATION);
+        data.setApplicant1(Applicant.builder().build());
+
+        notification.sendToApplicant1Offline(data, TEST_CASE_ID);
+
+        verify(appliedForCoPrinter).print(data, TEST_CASE_ID, data.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendLetterToApplicant2IfSoleCase() {
+        CaseData data = caseData(DIVORCE, ApplicationType.SOLE_APPLICATION);
+
+        notification.sendToApplicant2Offline(data, TEST_CASE_ID);
+
+        verifyNoInteractions(appliedForCoPrinter);
+
+    }
+
+    @Test
+    void shouldSendLetterToApplicant2IfJointCase() {
+        CaseData data = caseData(DIVORCE, ApplicationType.JOINT_APPLICATION);
+        data.setApplicant2(Applicant.builder().build());
+
+        notification.sendToApplicant2Offline(data, TEST_CASE_ID);
+
+        verify(appliedForCoPrinter).print(data, TEST_CASE_ID, data.getApplicant2());
     }
 
     private CaseData caseData(DivorceOrDissolution divorceOrDissolution, ApplicationType applicationType) {
