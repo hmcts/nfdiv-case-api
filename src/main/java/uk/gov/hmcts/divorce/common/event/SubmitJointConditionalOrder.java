@@ -53,9 +53,6 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
     @Autowired
     private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
-
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder

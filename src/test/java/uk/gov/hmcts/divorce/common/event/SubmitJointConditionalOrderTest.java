@@ -58,9 +58,6 @@ public class SubmitJointConditionalOrderTest {
     @Mock
     private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
 
-    @Mock
-    private NotificationDispatcher notificationDispatcher;
-
     @InjectMocks
     private SubmitJointConditionalOrder submitJointConditionalOrder;
 
