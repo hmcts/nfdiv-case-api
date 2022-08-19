@@ -1,0 +1,29 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "soleApplication",
+  "dueDate": "2020-04-28",
+  "issueDate": "2020-05-28",
+  "applicant1Gender": "female",
+  "applicant1FirstName": "test_first_name",
+  "applicant1LastName": "test_last_name",
+  "applicant2FirstName": "test_first_name",
+  "applicant2LastName": "test_last_name",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2Email": "applicant2@example.com",
+  "applicant2LanguagePreferenceWelsh": "No",
+  "applicant2Gender": "female",
+  "coCourt": "birmingham",
+  "coDateAndTimeOfHearing": "2022-01-06T10:30:00.000",
+  "coGrantedDate": "2022-01-06",
+  "applicant1SolicitorRepresented": "Yes",
+  "applicant1SolicitorName": "Applicant 1 Solicitor",
+  "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+  "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+  "applicant1SolicitorAgreeToReceiveEmails": null,
+  "applicant1SolicitorOrganisationPolicy": {
+    "Organisation": {
+      "OrganisationName": "Test 1 Organisation",
+      "OrganisationID": "ABC456"
+    }
+  }
+}

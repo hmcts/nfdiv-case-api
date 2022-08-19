@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -21,10 +22,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.common.event.SubmitJointConditionalOrder.SUBMIT_JOINT_CONDITIONAL_ORDER;
@@ -48,6 +51,12 @@ public class SubmitJointConditionalOrderTest {
 
     @Mock
     private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -90,6 +99,9 @@ public class SubmitJointConditionalOrderTest {
             .isEqualTo(getExpectedLocalDateTime());
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted())
             .isEqualTo(YesOrNo.YES);
+
+        verify(notificationDispatcher, times(0))
+            .send(app2AppliedForConditionalOrderNotification, caseData, 1L);
     }
 
     @Test
@@ -139,6 +151,8 @@ public class SubmitJointConditionalOrderTest {
         assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
 
         verifyNoInteractions(generateConditionalOrderAnswersDocument);
+
+        verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, 1L);
     }
 
     @Test
@@ -154,5 +168,8 @@ public class SubmitJointConditionalOrderTest {
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
 
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
+
+        verify(notificationDispatcher, times(0))
+            .send(app2AppliedForConditionalOrderNotification, caseData, 1L);
     }
 }

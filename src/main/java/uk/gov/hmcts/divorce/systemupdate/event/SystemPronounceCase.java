@@ -7,15 +7,17 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ConditionalOrderPronouncedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronouncedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -42,6 +44,9 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
     @Autowired
     private GenerateConditionalOrderPronouncedDocument generateDocument;
 
+    @Autowired
+    private GenerateConditionalOrderPronouncedCoversheet generateCoversheetDocument;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -55,6 +60,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
                 .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
                 .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
                 .aboutToSubmitCallback(this::aboutToSubmit)
+                .submittedCallback(this::submitted)
         );
     }
 
@@ -65,21 +71,30 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
 
         log.info("Conditional order pronounced for Case({})", caseId);
 
-        generateConditionalOrderGrantedDoc(details, beforeDetails);
-
-        try {
-            notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, caseId);
-        } catch (final NotificationTemplateException e) {
-            log.error("Notification failed with message: {}", e.getMessage(), e);
-        }
+        generateConditionalOrderGrantedDocs(details, beforeDetails);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
     }
 
-    private void generateConditionalOrderGrantedDoc(CaseDetails<CaseData, State> details,
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+        log.info("SystemPronounceCase submitted callback invoked for case id: {}", details.getId());
+
+        try {
+            notificationDispatcher.send(conditionalOrderPronouncedNotification, details.getData(), details.getId());
+        } catch (final NotificationTemplateException e) {
+            log.error("Notification failed with message: {}", e.getMessage(), e);
+        }
+
+        return SubmittedCallbackResponse.builder().build();
+    }
+
+    private void generateConditionalOrderGrantedDocs(CaseDetails<CaseData, State> details,
                                                     CaseDetails<CaseData, State> beforeDetails) {
+
+        generateCoversheetDocument.apply(details);
+
         if (generateDocument.getConditionalOrderGrantedDoc(details.getData()).isPresent()) {
             ConditionalOrder oldCO = beforeDetails.getData().getConditionalOrder();
             ConditionalOrder newCO = details.getData().getConditionalOrder();
@@ -94,5 +109,4 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             generateDocument.apply(details);
         }
     }
-
 }
