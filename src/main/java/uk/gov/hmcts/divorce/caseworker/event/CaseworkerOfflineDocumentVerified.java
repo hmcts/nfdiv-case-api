@@ -91,9 +91,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .mandatory(AcknowledgementOfService::getHowToRespondApplication, "typeOfDocumentAttached=\"D10\"")
             .done()
             .complex(CaseData::getDocuments)
-                .mandatory(CaseDocuments::getScannedDocumentNames, "typeOfDocumentAttached=\"D10\"")
-                .mandatoryWithoutDefaultValue(CaseDocuments::getScannedDocumentNames,
-                    "typeOfDocumentAttached=\"D84\"", "Select D84 document")
+                .mandatory(CaseDocuments::getScannedDocumentNames,
+                    "typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\"")
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
