@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.SUBMISSION_DATE_PLUS_DAYS;
 import static uk.gov.hmcts.divorce.common.notification.SoleAppliedForFinalOrderNotification.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -94,7 +95,7 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "partner"),
                 hasEntry(COURT_EMAIL, "courtEmail"),
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -120,7 +121,7 @@ public class ClarificationSubmittedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -154,7 +155,7 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "partner"),
                 hasEntry(COURT_EMAIL, "courtEmail"),
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -182,7 +183,7 @@ public class ClarificationSubmittedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -216,7 +217,7 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "partner"),
                 hasEntry(COURT_EMAIL, "courtEmail"),
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -244,7 +245,7 @@ public class ClarificationSubmittedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -281,7 +282,7 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "partner"),
                 hasEntry(COURT_EMAIL, "courtEmail"),
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -310,7 +311,7 @@ public class ClarificationSubmittedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -345,7 +346,7 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "partner"),
                 hasEntry(COURT_EMAIL, "courtEmail"),
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -374,7 +375,7 @@ public class ClarificationSubmittedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );

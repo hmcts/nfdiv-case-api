@@ -56,7 +56,7 @@ public class AppliedForConditionalOrderNotification {
     protected Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, String whichApplicant) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(PRONOUNCE_BY_DATE,
-            coQuestions(caseData, whichApplicant).getSubmittedDate().plusDays(28).format(DATE_TIME_FORMATTER));
+            coQuestions(caseData, whichApplicant).getSubmittedDate().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER));
         if (!caseData.getApplicationType().isSole()) {
             templateVars.putAll(jointTemplateVars(caseData, partner, whichApplicant));
         }
