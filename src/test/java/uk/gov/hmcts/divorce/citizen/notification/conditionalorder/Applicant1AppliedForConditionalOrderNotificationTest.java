@@ -107,7 +107,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
     @InjectMocks
     private Applicant1AppliedForConditionalOrderNotification notification;
 
-    private static final String CO_REVIEWED_BY_DATE = "date email received plus 28 days";
+    private static final String CO_REVIEWED_BY_DATE = "pronounceByDate";
 
 
     @Test
