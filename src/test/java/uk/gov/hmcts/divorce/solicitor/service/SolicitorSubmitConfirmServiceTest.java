@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.common.service.task.SetServiceConfirmed;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetConfirmServiceDueDate;
@@ -22,6 +23,9 @@ public class SolicitorSubmitConfirmServiceTest {
 
     @Mock
     private SetConfirmServiceDueDate setConfirmServiceDueDate;
+
+    @Mock
+    private SetServiceConfirmed setServiceConfirmed;
 
     @InjectMocks
     private SolicitorSubmitConfirmService solicitorSubmitConfirmService;
@@ -43,6 +47,7 @@ public class SolicitorSubmitConfirmServiceTest {
         updatedCaseDetails.setData(updatedCaseData);
 
         when(setConfirmServiceDueDate.apply(caseDetails)).thenReturn(updatedCaseDetails);
+        when(setServiceConfirmed.apply(updatedCaseDetails)).thenReturn(updatedCaseDetails);
         final CaseDetails<CaseData, State> result = solicitorSubmitConfirmService.submitConfirmService(caseDetails);
 
         assertThat(result.getData().getDueDate()).isNotEqualTo(caseDetails.getData().getDueDate());

@@ -125,6 +125,62 @@ class CaseDataTest {
     }
 
     @Test
+    void shouldReturnTrueForIsWelshApplicationIfSoleAndApp1UsedWelshTranslationOnSubmissionYes() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(Applicant.builder().usedWelshTranslationOnSubmission(YES).build())
+            .build();
+
+        assertThat(caseData.isWelshApplication()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseForIsWelshApplicationIfSoleAndApp1UsedWelshTranslationOnSubmissionNull() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(Applicant.builder().usedWelshTranslationOnSubmission(null).build())
+            .build();
+
+        assertThat(caseData.isWelshApplication()).isFalse();
+    }
+
+    @Test
+    void shouldReturnTrueForIsWelshApplicationIfJointAndApp1UsedWelshTranslationOnSubmissionYes() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder().usedWelshTranslationOnSubmission(YES).build())
+            .build();
+
+        assertThat(caseData.isWelshApplication()).isTrue();
+    }
+
+    @Test
+    void shouldReturnTrueForIsWelshApplicationIfJointAndApp2UsedWelshTranslationOnSubmissionYes() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant2(Applicant.builder().usedWelshTranslationOnSubmission(YES).build())
+            .build();
+
+        assertThat(caseData.isWelshApplication()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseForIsWelshApplicationIfJointAndApp1AndApp2UsedWelshTranslationOnSubmissionNull() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder().usedWelshTranslationOnSubmission(null).build())
+            .applicant2(Applicant.builder().usedWelshTranslationOnSubmission(null).build())
+            .build();
+
+        assertThat(caseData.isWelshApplication()).isFalse();
+    }
+
+    @Test
     void shouldReturnTrueIfCaseDataIsDivorce() {
 
         final CaseData caseData = CaseData.builder()

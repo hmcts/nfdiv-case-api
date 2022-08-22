@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceSuccessfulNotific
 import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceUnsuccessfulNotification;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.Bailiff;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -71,19 +72,27 @@ public class CaseworkerAddBailiffReturnIT {
     @Test
     public void shouldChangeCaseStateToHoldingAndSetDueDateIfSuccessfullyServed() throws Exception {
 
-        final LocalDate certificateOfServiceDate = getExpectedLocalDate();
+        final LocalDate issueDate = getExpectedLocalDate();
+        final LocalDate expectedDueDate = issueDate.plusDays(141);
 
         final CaseData caseData = CaseData.builder()
             .alternativeService(
                 AlternativeService
                     .builder()
+                    .serviceApplicationGranted(YES)
                     .alternativeServiceType(BAILIFF)
                     .bailiff(
-                        Bailiff.builder()
+                        Bailiff
+                            .builder()
                             .successfulServedByBailiff(YES)
-                            .certificateOfServiceDate(certificateOfServiceDate)
-                        .build())
+                            .build()
+                    )
                     .build())
+            .application(
+                Application.builder()
+                    .issueDate(issueDate)
+                    .build()
+            )
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -106,7 +115,7 @@ public class CaseworkerAddBailiffReturnIT {
             .andExpect(
                 jsonPath("$.state").value(Holding.name()))
             .andExpect(
-                jsonPath("$.data.dueDate").value(certificateOfServiceDate.plusDays(16).toString())
+                jsonPath("$.data.dueDate").value(expectedDueDate.toString())
             );
     }
 
