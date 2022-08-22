@@ -148,14 +148,16 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildLanguageTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("languageDetails", "Language")
-            .label("LabelLanguageDetails-Applicant", null, "### The applicant")
+            .label("LabelLanguageDetails-Applicant-Sole", "applicationType=\"soleApplication\"", "### The applicant")
+            .label("LabelLanguageDetails-Applicant-Joint", "applicationType=\"jointApplication\"", "### Applicant 1")
             .field("applicant1LanguagePreferenceWelsh")
             .field("applicant1UsedWelshTranslationOnSubmission")
             .field("applicant1LegalProceedingsDetailsTranslated")
             .field("coApplicant1ReasonInformationNotCorrectTranslated")
             .field("applicant1FinalOrderLateExplanationTranslated")
 
-            .label("LabelLanguageDetails-Respondent", null, "### The respondent")
+            .label("LabelLanguageDetails-Respondent-Sole", "applicationType=\"soleApplication\"", "### The respondent")
+            .label("LabelLanguageDetails-Respondent-Joint", "applicationType=\"jointApplication\"", "### Applicant 2")
             .field("applicant2LanguagePreferenceWelsh")
             .field("applicant2LegalProceedingsDetailsTranslated")
             .field("applicant2UsedWelshTranslationOnSubmission")
