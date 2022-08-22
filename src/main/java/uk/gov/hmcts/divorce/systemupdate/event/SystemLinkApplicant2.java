@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -17,6 +16,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -61,7 +61,7 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
         );
 
         data.setCaseInvite(data.getCaseInvite().useAccessCode());
-        data.getApplicant2().setOffline(YesOrNo.NO);
+        data.getApplicant2().setOffline(NO);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

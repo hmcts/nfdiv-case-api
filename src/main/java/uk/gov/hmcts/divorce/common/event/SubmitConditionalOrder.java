@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 import static java.util.List.of;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -116,17 +118,26 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
+        if (AwaitingLegalAdvisorReferral.equals(state)
+            && isSole
+            && isEmpty(data.getAcknowledgementOfService().getDateAosSubmitted())
+            && isNotEmpty(data.getCaseInvite())
+            && isNotEmpty(data.getCaseInvite().accessCode())
+        ) {
+            data.getApplicant2().setOffline(YES);
+        }
+
         if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
             notificationDispatcher.send(app1AppliedForConditionalOrderNotification, data, details.getId());
         } else {
             notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
         }
 
-        if (state == AwaitingLegalAdvisorReferral) {
+        if (AwaitingLegalAdvisorReferral.equals(state)) {
             generateConditionalOrderAnswersDocument.apply(details);
         }
 
-        if (state == AwaitingLegalAdvisorReferral && data.isWelshApplication()) {
+        if (AwaitingLegalAdvisorReferral.equals(state) && data.isWelshApplication()) {
             data.getApplication().setWelshPreviousState(state);
             state = WelshTranslationReview;
             log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
