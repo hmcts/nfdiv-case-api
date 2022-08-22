@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -366,7 +367,8 @@ public class Application {
     @CCD(
         label = "Bulk Scan state to transition to",
         typeOverride = FixedList,
-        typeParameterOverride = "State"
+        typeParameterOverride = "State",
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private State stateToTransitionApplicationTo;
 
@@ -417,7 +419,8 @@ public class Application {
     @CCD(
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "ReissueOption"
+        typeParameterOverride = "ReissueOption",
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private ReissueOption reissueOption;
 
@@ -453,7 +456,8 @@ public class Application {
     @CCD(
         label = "Progress paper case",
         typeOverride = FixedList,
-        typeParameterOverride = "ProgressPaperCase"
+        typeParameterOverride = "ProgressPaperCase",
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private ProgressPaperCase progressPaperCase;
 

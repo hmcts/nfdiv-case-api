@@ -69,7 +69,8 @@ public class AcknowledgementOfService {
     private String noticeOfProceedingsEmail;
 
     @CCD(
-        label = "Notice of Proceedings solicitor's firm"
+        label = "Notice of Proceedings solicitor's firm",
+        access = {CaseworkerAndSuperUserAccess.class}
     )
     private String noticeOfProceedingsSolicitorFirm;
 
@@ -114,12 +115,14 @@ public class AcknowledgementOfService {
     private HowToRespondApplication howToRespondApplication;
 
     @CCD(
-        label = "Solicitor’s name"
+        label = "Solicitor’s name",
+        access = {AosAccess.class}
     )
     private String solicitorName;
 
     @CCD(
-        label = "Solicitor’s firm"
+        label = "Solicitor’s firm",
+        access = {AosAccess.class}
     )
     private String solicitorFirm;
 

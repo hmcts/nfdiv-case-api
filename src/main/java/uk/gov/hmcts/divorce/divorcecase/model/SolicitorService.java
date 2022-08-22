@@ -104,7 +104,8 @@ public class SolicitorService {
     private String serviceSotFirm;
 
     @CCD(
-        label = "I believe that the facts stated in the application are true."
+        label = "I believe that the facts stated in the application are true.",
+        access = {DefaultAccess.class}
     )
     private YesOrNo statementOfTruth;
 

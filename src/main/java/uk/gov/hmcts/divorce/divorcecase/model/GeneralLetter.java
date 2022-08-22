@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -25,14 +26,21 @@ public class GeneralLetter {
     @CCD(
         label = "Address to",
         typeOverride = FixedList,
-        typeParameterOverride = "GeneralParties"
+        typeParameterOverride = "GeneralParties",
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private GeneralParties generalLetterParties;
 
-    @CCD(label = "Recipient's name")
+    @CCD(
+        label = "Recipient's name",
+        access = {CaseworkerAccessOnlyAccess.class}
+    )
     private String otherRecipientName;
 
-    @CCD(label = "Recipient's address")
+    @CCD(
+        label = "Recipient's address",
+        access = {CaseworkerAccessOnlyAccess.class}
+    )
     private AddressGlobalUK otherRecipientAddress;
 
     @CCD(
@@ -45,7 +53,8 @@ public class GeneralLetter {
 
     @CCD(
         label = "Please provide details",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        access = {CaseworkerAccessOnlyAccess.class}
     )
     private String generalLetterDetails;
 
