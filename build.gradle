@@ -237,7 +237,7 @@ def versions = [
   springBoot        : springBoot.class.package.implementationVersion
 ]
 
-ext["rest-assured.version"] = '4.4.0'
+ext["rest-assured.version"] = '4.5.0'
 
 ext.libraries = [
   junit5: [
