@@ -94,7 +94,7 @@ public class SystemLinkApplicant2IT {
 
     @Test
     @Disabled
-    public void givenValidAccessCodeWhenCallbackIsInvokedThenAccessCodeIsRemovedAndSolicitorRolesAreSet() throws Exception {
+    public void givenValidAccessCodeThenAccessCodeIsRemovedAndApp2OfflineIsNoAndSolicitorRolesAreSet() throws Exception {
         CaseData data = caseData();
         data.setCaseInvite(new CaseInvite(null, "D8BC9AQR", "3"));
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));

@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -60,6 +61,7 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
         );
 
         data.setCaseInvite(data.getCaseInvite().useAccessCode());
+        data.getApplicant2().setOffline(YesOrNo.NO);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
