@@ -16,8 +16,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorAmendApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorRejectedDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_OFFLINE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 
@@ -49,10 +50,10 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     public static final String LEGAL_ADVISOR_MAKE_DECISION = "legal-advisor-make-decision";
 
     @Autowired
-    private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
+    private LegalAdvisorRejectedDecisionNotification rejectedNotification;
 
     @Autowired
-    private LegalAdvisorAmendApplicationDecisionNotification amendApplicationDecisionNotification;
+    private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -93,7 +94,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalDecision)
             .done()
-            .page("refusalOrderClarification")
+            .page("refusalOrderClarification", this::midEvent)
             .pageLabel("Refusal Order:Clarify - Make a Decision")
             .showCondition("coRefusalDecision=\"moreInfo\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
@@ -107,11 +108,18 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalAdminErrorInfo)
             .done()
-            .page("amendApplication")
+            .page("amendApplication", this::midEvent)
             .pageLabel("Request amended application - Make a Decision")
             .showCondition("coRefusalDecision=\"reject\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo)
+            .done()
+            .page("refusalDraft")
+            .pageLabel("Refusal Draft")
+            .showCondition("coGranted=\"No\" AND coRefusalDecision!=\"adminError\"")
+            .complex(CaseData::getConditionalOrder)
+            .readonlyWithLabel(ConditionalOrder::getRefusalOrderDocument, "View refusal order:")
+            .done()
             .done();
     }
 
@@ -131,19 +139,19 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingPronouncement;
 
         } else if (REJECT.equals(conditionalOrder.getRefusalDecision())) {
-            notificationDispatcher.send(amendApplicationDecisionNotification, caseData, details.getId());
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
                 details.getId()
             );
+            notificationDispatcher.send(rejectedNotification, caseData, details.getId());
             endState = AwaitingAmendedApplication;
 
         } else if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
-            notificationDispatcher.send(moreInfoDecisionNotification, caseData, details.getId());
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
                 details.getId()
             );
+            notificationDispatcher.send(moreInfoDecisionNotification, caseData, details.getId());
             endState = AwaitingClarification;
 
         } else {
@@ -165,35 +173,53 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .build();
     }
 
-    private void generateAndSetConditionalOrderRefusedDocument(final CaseData caseData,
-                                                               final Long caseId) {
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
+                                                                  final CaseDetails<CaseData, State> detailsBefore) {
+        CaseData caseData = details.getData();
 
-        log.info("Generating conditional order refused document for templateId : {} caseId: {}",
-            REFUSAL_ORDER_TEMPLATE_ID, caseId);
+        caseData.getConditionalOrder().setRefusalOrderDocument(generateRefusalDocument(caseData, details.getId()));
 
-        var templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
-
-        Document document = caseDataDocumentService.renderDocument(
-            templateContents,
-            caseId,
-            REFUSAL_ORDER_TEMPLATE_ID,
-            ENGLISH,
-            REFUSAL_ORDER_DOCUMENT_NAME
-        );
-
-        var refusalConditionalOrderDoc = DivorceDocument
-            .builder()
-            .documentLink(document)
-            .documentFileName(document.getFilename())
-            .documentType(CONDITIONAL_ORDER_REFUSAL)
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
             .build();
+    }
 
-        caseData.getConditionalOrder().setRefusalOrderDocument(refusalConditionalOrderDoc.getDocumentLink());
+    private void generateAndSetConditionalOrderRefusedDocument(final CaseData caseData, final Long caseId) {
+
+        Document refusalOrderDocument = caseData.getConditionalOrder().getRefusalOrderDocument();
+
+        if (refusalOrderDocument == null) {
+            refusalOrderDocument = generateRefusalDocument(caseData, caseId);
+            caseData.getConditionalOrder().setRefusalOrderDocument(refusalOrderDocument);
+        }
 
         caseData.getDocuments().setDocumentsGenerated(addDocumentToTop(
             caseData.getDocuments().getDocumentsGenerated(),
-            refusalConditionalOrderDoc
+            DivorceDocument
+                .builder()
+                .documentLink(refusalOrderDocument)
+                .documentFileName(refusalOrderDocument.getFilename())
+                .documentType(CONDITIONAL_ORDER_REFUSAL)
+                .build()
         ));
+    }
+
+    private Document generateRefusalDocument(final CaseData caseData, final Long caseId) {
+        var templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
+        final String templateId = caseData.getApplicant1().isOffline()
+            ? REFUSAL_ORDER_OFFLINE_TEMPLATE_ID
+            : REFUSAL_ORDER_TEMPLATE_ID;
+
+        log.info("Generating conditional order refused document for templateId : {} caseId: {}",
+            templateId, caseId);
+
+        return caseDataDocumentService.renderDocument(
+            templateContents,
+            caseId,
+            templateId,
+            ENGLISH,
+            REFUSAL_ORDER_DOCUMENT_NAME
+        );
     }
 }
 

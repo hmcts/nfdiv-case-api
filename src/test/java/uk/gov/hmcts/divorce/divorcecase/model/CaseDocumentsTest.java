@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -8,15 +9,19 @@ import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.CHERISHED;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.COVERSHEET;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.OTHER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.AMENDED_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_GRANTED;
@@ -185,6 +190,60 @@ class CaseDocumentsTest {
 
         assertThat(caseDocuments.getFirstGeneratedDocumentLinkWith(DISPENSE_WITH_SERVICE_GRANTED)).isEqualTo(Optional.of(documentLink3));
         assertThat(caseDocuments.getFirstGeneratedDocumentLinkWith(DEEMED_AS_SERVICE_GRANTED)).isEqualTo(Optional.of(documentLink4));
+    }
+
+    @Test
+    public void shouldRemoveGivenDocumentType() {
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseDocuments caseDocuments = CaseDocuments.builder()
+            .documentsGenerated(Lists.newArrayList(
+                ListValue.<DivorceDocument>builder()
+                    .id("1")
+                    .value(DivorceDocument.builder()
+                        .documentType(APPLICATION)
+                        .build())
+                    .build(),
+                ListValue.<DivorceDocument>builder()
+                    .id("2")
+                    .value(DivorceDocument.builder()
+                        .documentType(AMENDED_APPLICATION)
+                        .build()).build()
+            ))
+            .build();
+
+        caseDocuments.removeDocumentGeneratedWithType(APPLICATION);
+
+        assertEquals(1, caseDocuments.getDocumentsGenerated().size());
+        assertEquals(AMENDED_APPLICATION, caseDocuments.getDocumentsGenerated().get(0).getValue().getDocumentType());
+    }
+
+    @Test
+    void shouldReturnFirstUploadedDocumentOfGivenType() {
+
+        final Document documentLink1 = Document.builder()
+            .filename("dispensedDocument1.pdf")
+            .build();
+        final Document documentLink2 = Document.builder()
+            .filename("deemedDocument1.pdf")
+            .build();
+        final Document documentLink3 = Document.builder()
+            .filename("dispensedDocument2.pdf")
+            .build();
+        final Document documentLink4 = Document.builder()
+            .filename("deemedDocument2.pdf")
+            .build();
+
+        final ListValue<DivorceDocument> documentListValue1 = documentWithType(DISPENSE_WITH_SERVICE_GRANTED, documentLink1);
+        final ListValue<DivorceDocument> documentListValue2 = documentWithType(DEEMED_AS_SERVICE_GRANTED, documentLink2);
+        final ListValue<DivorceDocument> documentListValue3 = documentWithType(DISPENSE_WITH_SERVICE_GRANTED, documentLink3);
+        final ListValue<DivorceDocument> documentListValue4 = documentWithType(DEEMED_AS_SERVICE_GRANTED, documentLink4);
+
+        final CaseDocuments caseDocuments = CaseDocuments.builder()
+            .documentsUploaded(List.of(documentListValue4, documentListValue2, documentListValue3, documentListValue1))
+            .build();
+
+        assertThat(caseDocuments.getFirstUploadedDocumentLinkWith(DISPENSE_WITH_SERVICE_GRANTED)).isEqualTo(Optional.of(documentLink3));
+        assertThat(caseDocuments.getFirstUploadedDocumentLinkWith(DEEMED_AS_SERVICE_GRANTED)).isEqualTo(Optional.of(documentLink4));
     }
 
     private ListValue<ScannedDocument> getDocumentListValue(final String url,

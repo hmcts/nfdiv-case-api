@@ -7,9 +7,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,12 +20,18 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_CAN_SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -93,4 +101,43 @@ public class Applicant2CanSwitchToSoleNotificationTest {
         verifyNoInteractions(commonContent);
     }
 
+    @Test
+    public void shouldSendEmailToApplicant2SolicitorWhenJointApplication() {
+
+        CaseData data = validApplicant2CaseData();
+        data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        data.getApplicant2().setSolicitorRepresented(YES);
+        data.getApplicant2().setSolicitor(Solicitor
+            .builder()
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+
+        Map<String, String> templateVars = new HashMap<>(solicitorTemplateVars(data, data.getApplicant2()));
+        when(commonContent.solicitorTemplateVars(data, 1234567890123456L, data.getApplicant2()))
+            .thenReturn(templateVars);
+
+        applicant2CanSwitchToSoleNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE),
+            anyMap(),
+            eq(ENGLISH)
+        );
+
+        verify(commonContent).solicitorTemplateVars(data, 1234567890123456L, data.getApplicant2());
+    }
+
+    @Test
+    public void shouldNotSendEmailToApplicant2SolicitorWhenSoleApplication() {
+
+        CaseData data = validApplicant2CaseData();
+        data.setApplicationType(SOLE_APPLICATION);
+        data.getApplicant2().setSolicitorRepresented(YES);
+
+        applicant2CanSwitchToSoleNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
 }
