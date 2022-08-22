@@ -7,11 +7,13 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -32,6 +34,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_GRANT_FINAL_ORDER = "caseworker-grant-final-order";
+
+    @Autowired
+    private FinalOrderGrantedNotification finalOrderGrantedNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Autowired
     private Clock clock;
@@ -73,6 +81,9 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         }
 
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
+
+        // TODO: check which applicants receive email for sole vs joint cases (does any solicitor of represented applicant - app1 & app2 - receive it?)
+        notificationDispatcher.send(finalOrderGrantedNotification, caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
