@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -51,7 +52,7 @@ public class SystemLinkApplicant2Test {
     }
 
     @Test
-    void shouldRemoveAccessCodeAfterLinkingApplication() {
+    void shouldRemoveAccessCodeAfterLinkingApplicationAndSetApplicant2OfflineNo() {
         final CaseData caseData = caseData();
         caseData.setCaseInvite(
             CaseInvite.builder()
@@ -68,6 +69,7 @@ public class SystemLinkApplicant2Test {
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemLinkApplicant2.aboutToSubmit(details, details);
 
         assertThat(response.getData().getCaseInvite().accessCode()).isNull();
+        assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YesOrNo.NO);
         verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(1L), eq("Applicant2Id"));
     }
 }
