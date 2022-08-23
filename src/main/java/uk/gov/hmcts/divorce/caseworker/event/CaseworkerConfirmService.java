@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -18,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitConfirmService;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -35,6 +37,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerConfirmService implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_CONFIRM_SERVICE = "caseworker-confirm-service";
+    private static final String DOCUMENTS_NOT_UPLOADED_ERROR = "Please upload a document in order to continue";
 
     @Autowired
     private SolicitorSubmitConfirmService solicitorSubmitConfirmService;
@@ -51,7 +54,7 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
-            .page("caseworkerConfirmService")
+            .page("caseworkerConfirmService", this::midEvent)
             .pageLabel("Confirm Service")
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getDocumentsUploadedOnConfirmService)
@@ -64,6 +67,9 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
                     .mandatory(SolicitorService::getDocumentsServed)
                     .mandatory(SolicitorService::getOnWhomServed)
                     .mandatory(SolicitorService::getHowServed)
+                .done()
+                .optional(Application::getServiceProcessedByProcessServer)
+                .complex(Application::getSolicitorService)
                     .mandatory(SolicitorService::getServiceDetails,
                         "solServiceHowServed=\"deliveredTo\" OR solServiceHowServed=\"postedTo\"")
                     .mandatory(SolicitorService::getAddressServed)
@@ -75,6 +81,22 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
                     .mandatory(SolicitorService::getStatementOfTruth)
                 .done()
             .done();
+    }
+
+    private AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                   CaseDetails<CaseData, State> details1) {
+        final CaseData caseData = details.getData();
+
+        if (!isEmpty(caseData.getApplication().getServiceProcessedByProcessServer())
+                && isEmpty(caseData.getDocuments().getDocumentsUploadedOnConfirmService())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(DOCUMENTS_NOT_UPLOADED_ERROR))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
