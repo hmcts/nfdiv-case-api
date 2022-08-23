@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.service.notification;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
@@ -23,6 +25,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
+@Component
+@Slf4j
 public class FinalOrderGrantedNotification implements ApplicantNotification {
 
     @Autowired
@@ -32,6 +36,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     private CommonContent commonContent;
 
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
+        log.info("Sending Final Order Granted Notification to applicant solicitor for case id: {}", caseId);
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
             SOLICITOR_FINAL_ORDER_GRANTED,
@@ -41,6 +46,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     }
 
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
+        log.info("Sending Final Order Granted Notification to respondent solicitor for case id: {}", caseId);
         notificationService.sendEmail(
             caseData.getApplicant2().getSolicitor().getEmail(),
             SOLICITOR_FINAL_ORDER_GRANTED,
