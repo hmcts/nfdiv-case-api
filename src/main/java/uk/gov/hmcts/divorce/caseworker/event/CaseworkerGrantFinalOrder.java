@@ -82,7 +82,6 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
 
-        // TODO: check which applicants receive email for sole vs joint cases (does any solicitor of represented applicant - app1 & app2 - receive it?)
         notificationDispatcher.send(finalOrderGrantedNotification, caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

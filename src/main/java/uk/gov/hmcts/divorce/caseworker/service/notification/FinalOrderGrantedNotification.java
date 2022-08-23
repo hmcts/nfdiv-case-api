@@ -42,10 +42,10 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
 
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
         notificationService.sendEmail(
-            caseData.getApplicant1().getSolicitor().getEmail(),
+            caseData.getApplicant2().getSolicitor().getEmail(),
             SOLICITOR_FINAL_ORDER_GRANTED,
             solicitorTemplateContent(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference()
         );
     }
 
