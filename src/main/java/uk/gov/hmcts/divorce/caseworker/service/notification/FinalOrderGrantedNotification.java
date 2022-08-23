@@ -35,6 +35,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Autowired
     private CommonContent commonContent;
 
+    @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
         log.info("Sending Final Order Granted Notification to applicant solicitor for case id: {}", caseId);
         notificationService.sendEmail(
@@ -45,6 +46,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
         );
     }
 
+    @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
         log.info("Sending Final Order Granted Notification to respondent solicitor for case id: {}", caseId);
         notificationService.sendEmail(
