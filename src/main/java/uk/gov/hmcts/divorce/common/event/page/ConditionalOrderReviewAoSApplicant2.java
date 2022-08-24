@@ -30,6 +30,7 @@ public class ConditionalOrderReviewAoSApplicant2 implements CcdPageConfiguration
             .readonlyNoSummary(CaseData::getApplicationType, NEVER_SHOW)
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnershipApplication, NEVER_SHOW)
             .done()
             .complex(CaseData::getConditionalOrder)
                 .readonlyNoSummary(ConditionalOrder::getLastApprovedServiceApplicationIsBailiffApplication, NEVER_SHOW)
@@ -37,7 +38,6 @@ public class ConditionalOrderReviewAoSApplicant2 implements CcdPageConfiguration
                     "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
                 .readonly(ConditionalOrder::getCertificateOfServiceDate,
                     "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
-                .readonly(ConditionalOrder::getRespondentAnswersLink)
                 .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
                     .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
                 .done()
