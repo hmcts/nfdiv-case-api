@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceiv
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
@@ -85,7 +86,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .showEventNotes()
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR))
+            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR))
             .page("documentTypeReceived")
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
             .complex(CaseData::getDocuments)
