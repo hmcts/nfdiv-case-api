@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -30,14 +29,12 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -46,10 +43,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class ConditionalOrderRefusalContentIT {
+public class ConditionalOrderRefusedForAmendmentContentIT {
 
     @Autowired
-    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
+    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForClarificationConditionalOrderDocument() {
@@ -70,16 +67,6 @@ public class ConditionalOrderRefusalContentIT {
         caseData.getApplicant1().setGender(MALE);
         caseData.getApplicant2().setGender(FEMALE);
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CCD_CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
@@ -89,14 +76,10 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
         expectedEntries.put("legalAdvisorComments", emptyList());
-        expectedEntries.put("isAmendedApplication", false);
-        expectedEntries.put("isClarification", true);
-        expectedEntries.put("isOffline", true);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+        expectedEntries.put(PARTNER, "spouse");
 
-        Map<String, Object> templateContent = conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -120,16 +103,6 @@ public class ConditionalOrderRefusalContentIT {
         caseData.getApplicant1().setGender(MALE);
         caseData.getApplicant2().setGender(FEMALE);
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CCD_CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
@@ -139,15 +112,11 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusalContent.RefusalReason("Rejected comments")));
-        expectedEntries.put("isAmendedApplication", true);
-        expectedEntries.put("isClarification", false);
-        expectedEntries.put("isOffline", false);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Rejected comments")));
+        expectedEntries.put(PARTNER, "wife");
 
-        Map<String, Object> templateContent = conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -173,16 +142,6 @@ public class ConditionalOrderRefusalContentIT {
         caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CCD_CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
@@ -192,15 +151,11 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusalContent.RefusalReason("Rejected comments")));
-        expectedEntries.put("isAmendedApplication", true);
-        expectedEntries.put("isClarification", false);
-        expectedEntries.put("isOffline", false);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Rejected comments")));
+        expectedEntries.put(PARTNER, "civil partner");
 
-        Map<String, Object> templateContent = conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -227,16 +182,6 @@ public class ConditionalOrderRefusalContentIT {
         caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CCD_CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
@@ -246,16 +191,12 @@ public class ConditionalOrderRefusalContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusalContent.RefusalReason(MARRIAGE_CERTIFICATE.getLabel()),
-                new ConditionalOrderRefusalContent.RefusalReason("Clarification comments")));
-        expectedEntries.put("isAmendedApplication", false);
-        expectedEntries.put("isClarification", true);
-        expectedEntries.put("isOffline", false);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason(MARRIAGE_CERTIFICATE.getLabel()),
+                new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Clarification comments")));
+        expectedEntries.put(PARTNER, "civil partner");
 
-        Map<String, Object> templateContent = conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
