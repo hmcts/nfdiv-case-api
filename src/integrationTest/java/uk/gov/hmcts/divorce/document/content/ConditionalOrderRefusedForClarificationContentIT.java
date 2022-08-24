@@ -26,10 +26,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClarificationContent.REASON_JURISDICTION_DETAILS;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClarificationContent.REASON_MARRIAGE_CERTIFICATE;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClarificationContent.REASON_MARRIAGE_CERT_TRANSLATION;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClarificationContent.REASON_PREVIOUS_PROCEEDINGS_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_JURISDICTION_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_MARRIAGE_CERTIFICATE;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_MARRIAGE_CERT_TRANSLATION;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_PREVIOUS_PROCEEDINGS_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
@@ -46,10 +46,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class ConditionalOrderOfflineClarificationContentIT {
+public class ConditionalOrderRefusedForClarificationContentIT {
 
     @Autowired
-    private ConditionalOrderOfflineClarificationContent conditionalOrderOfflineClarificationContent;
+    private ConditionalOrderRefusedForClarificationContent conditionalOrderRefusedForClarificationContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForOfflineClarificationConditionalOrderDocumentSoleDissolution() {
@@ -109,7 +109,7 @@ public class ConditionalOrderOfflineClarificationContentIT {
 
         expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
-        Map<String, Object> templateContent = conditionalOrderOfflineClarificationContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -171,7 +171,7 @@ public class ConditionalOrderOfflineClarificationContentIT {
 
         expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
-        Map<String, Object> templateContent = conditionalOrderOfflineClarificationContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
