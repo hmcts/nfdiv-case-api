@@ -123,6 +123,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             && isEmpty(data.getAcknowledgementOfService().getDateAosSubmitted())
             && isNotEmpty(data.getCaseInvite())
             && isNotEmpty(data.getCaseInvite().accessCode())
+            && shouldSetApplicant2ToOffline(data)
         ) {
             data.getApplicant2().setOffline(YES);
         }
@@ -168,5 +169,11 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             && Objects.isNull(app2Questions.getSubmittedDate())) {
             app2Questions.setSubmittedDate(LocalDateTime.now(clock));
         }
+    }
+
+    private boolean shouldSetApplicant2ToOffline(CaseData caseData) {
+        return caseData.getConditionalOrder().hasServiceBeenConfirmed()
+            || caseData.getConditionalOrder().isLastApprovedServiceApplicationBailiffApplication()
+            || caseData.getAlternativeService().isApplicationGrantedDeemedOrDispensed();
     }
 }

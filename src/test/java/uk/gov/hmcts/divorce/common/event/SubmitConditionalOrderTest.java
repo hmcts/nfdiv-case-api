@@ -36,6 +36,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitConditionalOrder.SUBMIT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
@@ -274,11 +276,62 @@ class SubmitConditionalOrderTest {
     }
 
     @Test
-    void shouldSetIsApplicant2ToOfflineOnAboutToSubmitIfAreNotLinkedAndNotSubmittedAos() {
+    void shouldSetIsApplicant2ToOfflineIfTheyAreNotLinkedAndNotSubmittedAosAndSuccessfulBailiffApplication() {
         setupMocks(clock);
         final CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
+        caseData.getConditionalOrder().setLastApprovedServiceApplicationIsBailiffApplication(YES);
+        caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+    }
+
+    @Test
+    void shouldSetIsApplicant2ToOfflineIfTheyAreNotLinkedAndNotSubmittedAosAndServiceConfirmed() {
+        setupMocks(clock);
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
+        caseData.getConditionalOrder().setServiceConfirmed(YES);
+        caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+    }
+
+    @Test
+    void shouldSetIsApplicant2ToOfflineIfTheyAreNotLinkedAndNotSubmittedAosAndDeemedApplicationSuccessful() {
+        setupMocks(clock);
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+        caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
+        caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+    }
+
+    @Test
+    void shouldSetIsApplicant2ToOfflineIfTheyAreNotLinkedAndNotSubmittedAosAndDispensedApplicationSuccessful() {
+        setupMocks(clock);
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+        caseData.getAlternativeService().setAlternativeServiceType(DISPENSED);
         caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).id(1L).build();
