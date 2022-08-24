@@ -11,10 +11,12 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorRejectedDecisionNotification;
@@ -22,6 +24,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -38,9 +41,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_OFFLINE_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 
 @Component
@@ -59,7 +62,10 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
+    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
+
+    @Autowired
+    private ConditionalOrderRefusedForClarificationContent conditionalOrderRefusedForClarificationContent;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -141,16 +147,20 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
         } else if (REJECT.equals(conditionalOrder.getRefusalDecision())) {
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
-                details.getId()
+                details.getId(),
+                REJECT
             );
             notificationDispatcher.send(rejectedNotification, caseData, details.getId());
             endState = AwaitingAmendedApplication;
 
         } else if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
+
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,
-                details.getId()
+                details.getId(),
+                MORE_INFO
             );
+
             notificationDispatcher.send(moreInfoDecisionNotification, caseData, details.getId());
             endState = AwaitingClarification;
 
@@ -177,19 +187,22 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
                                                                   final CaseDetails<CaseData, State> detailsBefore) {
         CaseData caseData = details.getData();
 
-        caseData.getConditionalOrder().setRefusalOrderDocument(generateRefusalDocument(caseData, details.getId()));
+        caseData.getConditionalOrder().setRefusalOrderDocument(generateRefusalDocument(
+            caseData,
+            details.getId(),
+            caseData.getConditionalOrder().getRefusalDecision()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
     }
 
-    private void generateAndSetConditionalOrderRefusedDocument(final CaseData caseData, final Long caseId) {
+    private void generateAndSetConditionalOrderRefusedDocument(final CaseData caseData, final Long caseId, RefusalOption refusalOption) {
 
         Document refusalOrderDocument = caseData.getConditionalOrder().getRefusalOrderDocument();
 
         if (refusalOrderDocument == null) {
-            refusalOrderDocument = generateRefusalDocument(caseData, caseId);
+            refusalOrderDocument = generateRefusalDocument(caseData, caseId, refusalOption);
             caseData.getConditionalOrder().setRefusalOrderDocument(refusalOrderDocument);
         }
 
@@ -204,14 +217,20 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
         ));
     }
 
-    private Document generateRefusalDocument(final CaseData caseData, final Long caseId) {
-        var templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
-        final String templateId = caseData.getApplicant1().isOffline()
-            ? REFUSAL_ORDER_OFFLINE_TEMPLATE_ID
-            : REFUSAL_ORDER_TEMPLATE_ID;
+    private Document generateRefusalDocument(final CaseData caseData, final Long caseId, RefusalOption refusalOption) {
 
-        log.info("Generating conditional order refused document for templateId : {} caseId: {}",
-            templateId, caseId);
+        String templateId;
+        Map<String, Object> templateContents;
+
+        if (MORE_INFO.equals(refusalOption)) {
+            templateId = CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID;
+            templateContents = conditionalOrderRefusedForClarificationContent.apply(caseData, caseId);
+        } else {
+            templateId = REJECTED_REFUSAL_ORDER_TEMPLATE_ID;
+            templateContents = conditionalOrderRefusedForAmendmentContent.apply(caseData, caseId);
+        }
+
+        log.info("Generating conditional order refusal document for templateId : {} caseId: {}", templateId, caseId);
 
         return caseDataDocumentService.renderDocument(
             templateContents,
