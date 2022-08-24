@@ -1,11 +1,14 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -117,6 +120,35 @@ public class CaseDocuments {
     )
     private List<ListValue<DivorceDocument>> amendedApplications;
 
+    @CCD(
+        label = "Documents uploaded",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<DivorceDocument>> documentsUploadedOnConfirmService;
+
+
+    @CCD(
+        label = "What type of document was attached?"
+    )
+    private OfflineDocumentReceived typeOfDocumentAttached;
+
+    @Getter
+    @AllArgsConstructor
+    public enum OfflineDocumentReceived implements HasLabel {
+
+        @JsonProperty("D10")
+        AOS_D10("Acknowledgement of service (D10)"),
+
+        @JsonProperty("D84")
+        CO_D84("Application for a conditional order (D84)"),
+
+        @JsonProperty("Other")
+        OTHER("Other");
+
+        private final String label;
+    }
 
     public static <T> List<ListValue<T>> addDocumentToTop(final List<ListValue<T>> documents, final T value) {
         return addDocumentToTop(documents, value, null);
@@ -182,9 +214,9 @@ public class CaseDocuments {
                 .anyMatch(beforeValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
     }
 
-    @JsonIgnore
-    public Optional<Document> getFirstGeneratedDocumentLinkWith(final DocumentType documentType) {
-        return Stream.ofNullable(getDocumentsGenerated())
+    public static Optional<Document> getFirstDocumentLink(final List<ListValue<DivorceDocument>> documents,
+                                                          final DocumentType documentType) {
+        return Stream.ofNullable(documents)
             .flatMap(java.util.Collection::stream)
             .map(ListValue::getValue)
             .filter(divorceDocument -> documentType == divorceDocument.getDocumentType())
@@ -193,6 +225,23 @@ public class CaseDocuments {
     }
 
     @JsonIgnore
+    public Optional<Document> getFirstGeneratedDocumentLinkWith(final DocumentType documentType) {
+        return getFirstDocumentLink(getDocumentsGenerated(), documentType);
+    }
+
+    @JsonIgnore
+    public Optional<Document> getFirstUploadedDocumentLinkWith(final DocumentType documentType) {
+        return getFirstDocumentLink(getDocumentsUploaded(), documentType);
+    }
+
+    @JsonIgnore
+    public void removeDocumentGeneratedWithType(final DocumentType documentType) {
+        if (!isEmpty(this.getDocumentsGenerated())) {
+            this.getDocumentsGenerated()
+                .removeIf(document -> documentType.equals(document.getValue().getDocumentType()));
+        }
+    }
+
     public Optional<ListValue<DivorceDocument>> getDocumentGeneratedWithType(final DocumentType documentType) {
         return !isEmpty(this.getDocumentsGenerated())
             ? this.getDocumentsGenerated().stream()

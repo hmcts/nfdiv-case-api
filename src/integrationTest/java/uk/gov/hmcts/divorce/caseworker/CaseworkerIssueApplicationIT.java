@@ -86,6 +86,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.EndCivilPartnership.END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -592,6 +593,55 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
+    void shouldSendWelshApplicationIssueNotificationsForApplicant1SolicitorWhenLanguagePreferenceIsWelsh() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 20));
+        caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplicant1().getApplicantPrayer().setPrayerEndCivilPartnership(Set.of(END_CIVIL_PARTNERSHIP));
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant1().getSolicitor().setReference("TEST");
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setGender(FEMALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+
+        stubAosPackSendLetterToApplicant1CourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID);
+        stubAosPackSendLetterToApplicant2();
+
+        mockMvc.perform(post(SUBMITTED_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    CASEWORKER_ISSUE_APPLICATION)))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk());
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(WELSH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                anyMap(),
+                eq(WELSH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
     void shouldIssueApplicationAndGenerateDocumentsForSoleCitizenApplicationWhenRespondentIsOverseasBased() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
@@ -675,6 +725,45 @@ public class CaseworkerIssueApplicationIT {
                 eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
                 anyMap(),
                 eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendApplicationIssueNotificationInWelshToApplicant1ForSoleCitizenApplicationWhenRespondentIsOverseasBased()
+        throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 20));
+        caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().getAddress().setCountry("France");
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+
+        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION, "AwaitingService")))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk());
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
+                anyMap(),
+                eq(WELSH));
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -1659,9 +1748,9 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
-    void shouldGenerateD10DocumentWhenSolicitorMethodIsSelected() throws Exception {
+    void shouldGenerateD10DocumentWhenSoleApplicationAndSolicitorMethodIsSelected() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
@@ -1708,7 +1797,7 @@ public class CaseworkerIssueApplicationIT {
     @Test
     void shouldNotGenerateD10DocumentWhenCourtServiceMethodIsSelected() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
@@ -1751,7 +1840,7 @@ public class CaseworkerIssueApplicationIT {
     @Test
     void shouldNotGenerateD10DocumentWhenD10HasAlreadyBeenGeneratedForCase() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
@@ -1780,6 +1869,48 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubAosPackSendLetterToApplicant1NotCourtService(AOS_COVER_LETTER_TEMPLATE_ID, NOTICE_OF_PROCEEDING_TEMPLATE_ID);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        verifyNoInteractions(documentUploadClientApi);
+    }
+
+    @Test
+    void shouldNotGenerateD10DocumentWhenJointApplication() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setOffline(NO);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, "NFD_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Joint_V2.docx");
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetterToApplicant1CourtService(AOS_COVER_LETTER_TEMPLATE_ID);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

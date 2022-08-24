@@ -41,6 +41,10 @@ public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite 
 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-remind-applicants-conditional-order.json";
+
+    private static final String REQUEST_OFFLINE_APPLICANTS =
+        "classpath:request/casedata/ccd-callback-casedata-system-remind-applicants-conditional-order.json";
+
     private static final String RESPONSE = "classpath:responses/response-system-remind-applicants-conditional-order.json";
 
     @Value("${submit_co.reminder_offset_days}")
@@ -50,6 +54,20 @@ public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite 
     @Test
     public void shouldPassValidationAndSendReminderEmailToApplicants() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
+
+        Response response = triggerCallback(request, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE)));
+    }
+
+    @Test
+    public void shouldPassValidationAndSendReminderToOfflineApplicants() throws IOException {
+        Map<String, Object> request = caseData(REQUEST_OFFLINE_APPLICANTS);
 
         Response response = triggerCallback(request, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL);
 

@@ -152,9 +152,9 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
             .build();
 
         final CaseData caseData = caseData();
@@ -193,12 +193,13 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
             .build();
 
         final CaseData caseData = caseData();
+        caseData.getApplicant2().setLegalProceedings(NO);
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
 
@@ -230,7 +231,6 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
             .build();
@@ -365,8 +365,7 @@ public class SubmitAosIT {
             .getResponse()
             .getContentAsString();
 
-        DocumentContext jsonDocument = JsonPath.parse(expectedCcdAboutToStartCallbackSuccessfulWithDisputeResponse());
-        jsonDocument.set("data.applicant2LanguagePreferenceWelsh", "Yes");
+        DocumentContext jsonDocument = JsonPath.parse(expectedCcdAboutToStartCallbackSuccessfulWithDisputeResponseWelsh());
 
         assertThatJson(actualResponse)
             .isEqualTo(jsonDocument.json());
@@ -429,7 +428,6 @@ public class SubmitAosIT {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .howToRespondApplication(DISPUTE_DIVORCE)
             .confirmReadPetition(YES)
             .jurisdictionAgree(YES)
@@ -493,6 +491,10 @@ public class SubmitAosIT {
 
     private String expectedCcdAboutToStartCallbackSuccessfulWithDisputeResponse() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-citizen-submit-aos-with-dispute.json");
+    }
+
+    private String expectedCcdAboutToStartCallbackSuccessfulWithDisputeResponseWelsh() throws IOException {
+        return expectedResponse("classpath:wiremock/responses/about-to-submit-citizen-submit-aos-with-dispute-welsh.json");
     }
 
     private String expectedCcdAboutToStartCallbackSuccessfulWithRepresentedRespondent() throws IOException {

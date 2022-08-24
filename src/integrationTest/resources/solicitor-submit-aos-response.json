@@ -12,11 +12,11 @@
     "issueDate": "${json-unit.any-string}",
     "confirmReadPetition": "Yes",
     "jurisdictionAgree": "Yes",
+    "howToRespondApplication": "withoutDisputeDivorce",
     "applicant2LegalProceedings": "Yes",
     "applicant2LegalProceedingsDetails": "some description",
     "dateAosSubmitted": "${json-unit.any-string}",
     "statementOfTruth": "Yes",
-    "prayerHasBeenGiven": "Yes",
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",

@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -30,8 +31,10 @@ import java.time.LocalDate;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -93,6 +96,9 @@ public class SystemUpdateCaseWithCourtHearingIT {
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
 
+    @MockBean
+    private BulkPrintService bulkPrintService;
+
     @BeforeAll
     static void setUp() {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
@@ -143,17 +149,18 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Test
     public void givenBothApplicantsHaveWelshAsChosenLanguageThenSendWelshEmails() throws Exception {
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Certificate_Of_Entitlement_V2.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant1().setLanguagePreferenceWelsh(YES);
         data.getApplicant2().setLanguagePreferenceWelsh(YES);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-WEL-Certificate-Of-Entitlement.docx");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -215,7 +222,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Certificate_Of_Entitlement_V2.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -262,7 +269,8 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Certificate_Of_Entitlement_V2.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -297,6 +305,8 @@ public class SystemUpdateCaseWithCourtHearingIT {
             .getResponse()
             .getContentAsString();
 
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
         verifyNoInteractions(notificationService);
     }
 

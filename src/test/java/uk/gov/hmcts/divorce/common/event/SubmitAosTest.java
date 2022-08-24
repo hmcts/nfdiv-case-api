@@ -70,14 +70,14 @@ class SubmitAosTest {
 
     @Test
     void shouldReturnErrorsIfAosValidationFails() {
-
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(NO)
-            .prayerHasBeenGiven(NO)
             .confirmReadPetition(NO)
+            .jurisdictionAgree(null)
             .build();
 
         final CaseData caseData = caseData();
+        caseData.getApplicant2().setLegalProceedings(null);
         caseData.setAcknowledgementOfService(acknowledgementOfService);
 
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
@@ -90,8 +90,38 @@ class SubmitAosTest {
         assertThat(response.getErrors())
             .containsExactly(
                 "You must be authorised by the respondent to sign this statement.",
-                "The respondent must have given their prayer.",
-                "The respondent must have read the application for divorce.");
+                "The respondent must have read the application.",
+                "The respondent must agree or disagree to claimed jurisdiction.",
+                "The respondent must answer how they want to respond to the application.",
+                "The respondent must confirm if they have any other legal proceedings.");
+    }
+
+    @Test
+    void shouldReturnErrorsIfAosValidationFailsForJurisdictionAgreeAndOtherLegalProceedings() {
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .statementOfTruth(YES)
+            .confirmReadPetition(YES)
+            .jurisdictionAgree(NO)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant2().setLegalProceedings(YES);
+        caseData.getApplicant2().setLegalProceedingsDetails(null);
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitAos.aboutToSubmit(caseDetails, beforeDetails);
+
+        assertThat(response.getData()).isSameAs(caseData);
+        assertThat(response.getErrors())
+            .containsExactly(
+                "The respondent must have a reason for refusing jurisdiction.",
+                "The respondent must answer in which country is their life mainly based question.",
+                "The respondent must enter the details of their other legal proceedings.");
     }
 
     @Test
@@ -99,12 +129,14 @@ class SubmitAosTest {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
+            .jurisdictionAgree(YES)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
             .build();
 
         final CaseData caseData = caseData();
         caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.getApplicant2().setLegalProceedings(NO);
         final CaseData expectedCaseData = caseData();
 
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
@@ -128,7 +160,6 @@ class SubmitAosTest {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .howToRespondApplication(DISPUTE_DIVORCE)
             .build();
@@ -157,7 +188,6 @@ class SubmitAosTest {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
             .confirmReadPetition(YES)
             .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
             .build();

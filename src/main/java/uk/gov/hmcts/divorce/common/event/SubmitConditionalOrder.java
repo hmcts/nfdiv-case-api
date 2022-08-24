@@ -32,6 +32,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -75,7 +76,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
             .endButtonLabel("Save Conditional Order")
-            .showCondition("coApplicant1IsSubmitted=\"No\"")
+            .showCondition("coApplicant1IsDrafted=\"Yes\" AND coApplicant1IsSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
@@ -123,6 +124,13 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
         if (state == AwaitingLegalAdvisorReferral) {
             generateConditionalOrderAnswersDocument.apply(details);
+        }
+
+        if (state == AwaitingLegalAdvisorReferral && data.isWelshApplication()) {
+            data.getApplication().setWelshPreviousState(state);
+            state = WelshTranslationReview;
+            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                data.getApplication().getWelshPreviousState(), details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
