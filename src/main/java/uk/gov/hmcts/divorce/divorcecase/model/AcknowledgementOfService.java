@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.AosAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 
 import java.time.LocalDateTime;
 
@@ -70,7 +71,7 @@ public class AcknowledgementOfService {
 
     @CCD(
         label = "Notice of Proceedings solicitor's firm",
-        access = {CaseworkerAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private String noticeOfProceedingsSolicitorFirm;
 
@@ -116,13 +117,13 @@ public class AcknowledgementOfService {
 
     @CCD(
         label = "Solicitor’s name",
-        access = {AosAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private String solicitorName;
 
     @CCD(
         label = "Solicitor’s firm",
-        access = {AosAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private String solicitorFirm;
 
