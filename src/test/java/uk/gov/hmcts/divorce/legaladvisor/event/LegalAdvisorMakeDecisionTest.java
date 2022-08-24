@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -18,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.LegalAdvisorDecision;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderOfflineClarificationContent;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorRejectedDecisionNotification;
@@ -47,7 +49,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarific
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_OFFLINE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_OFFLINE_REJECT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
@@ -75,6 +79,9 @@ class LegalAdvisorMakeDecisionTest {
 
     @Mock
     private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
+
+    @Mock
+    private ConditionalOrderOfflineClarificationContent conditionalOrderOfflineClarificationContent;
 
     @Mock
     private Clock clock;
@@ -513,5 +520,85 @@ class LegalAdvisorMakeDecisionTest {
             legalAdvisorMakeDecision.midEvent(caseDetails, null);
 
         assertThat(response.getData().getConditionalOrder().getRefusalOrderDocument()).isEqualTo(refusalConditionalOrderDoc);
+    }
+
+    @Test
+    void shouldGenerateRefusalDocumentAndSendLettersIfConditionalOrderIsRejectedForAmendmentAndIsOfflineApplication() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(REJECT).build())
+            .applicant1(Applicant.builder().offline(YES).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        String documentUrl = "http://localhost:8080/4567";
+        var refusalConditionalOrderDoc = new Document(
+            documentUrl,
+            REFUSAL_ORDER_DOCUMENT_NAME,
+            documentUrl + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                REFUSAL_ORDER_OFFLINE_REJECT_TEMPLATE_ID,
+                ENGLISH,
+                REFUSAL_ORDER_DOCUMENT_NAME
+            ))
+            .thenReturn(refusalConditionalOrderDoc);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(rejectedNotification, caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldGenerateRefusalDocumentAndSendLettersIfConditionalOrderIsRejectedForMoreInfoAndIsOfflineApplication() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(MORE_INFO).build())
+            .applicant1(Applicant.builder().offline(YES).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(conditionalOrderOfflineClarificationContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        String documentUrl = "http://localhost:8080/4567";
+        var refusalConditionalOrderDoc = new Document(
+            documentUrl,
+            REFUSAL_ORDER_DOCUMENT_NAME,
+            documentUrl + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                CLARIFICATION_REFUSAL_ORDER_OFFLINE_TEMPLATE_ID,
+                ENGLISH,
+                REFUSAL_ORDER_DOCUMENT_NAME
+            ))
+            .thenReturn(refusalConditionalOrderDoc);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(moreInfoDecisionNotification, caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 }
