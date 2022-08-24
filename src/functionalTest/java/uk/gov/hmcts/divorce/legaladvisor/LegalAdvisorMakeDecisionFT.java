@@ -38,12 +38,18 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-casedata-legal-advisor-make-decision-joint-welsh.json";
     private static final String OFFLINE_CO_REJECTED_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-legal-advisor-make-decision-offline-rejected.json";
+    private static final String OFFLINE_CO_CLARIFICATION_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-legal-advisor-make-decision-offline-clarification.json";
     private static final String CO_MORE_INFO_RESPONSE = "classpath:responses/response-legal-advisor-make-decision-co-more-info.json";
     private static final String CO_REJECTED_RESPONSE = "classpath:responses/response-legal-advisor-make-decision-co-rejected.json";
     private static final String OFFLINE_CO_REJECTED_SOLE_RESPONSE =
         "classpath:responses/response-legal-advisor-make-decision-co-rejected-offline-sole.json";
     private static final String OFFLINE_CO_REJECTED_JOINT_RESPONSE =
         "classpath:responses/response-legal-advisor-make-decision-co-rejected-offline-joint.json";
+    private static final String OFFLINE_CO_CLARIFICATION_SOLE_RESPONSE =
+        "classpath:responses/response-legal-advisor-make-decision-co-clarification-offline-sole.json";
+    private static final String OFFLINE_CO_CLARIFICATION_JOINT_RESPONSE =
+        "classpath:responses/response-legal-advisor-make-decision-co-clarification-offline-joint.json";
     private static final String REQUEST_JOINT_APPS_REPRESENTED
         = "classpath:request/casedata/ccd-callback-casedata-legal-advisor-make-decision-joint-apps-represented.json";
     private static final String CO_REJECTED_JOINT_APPS_REPRESENTED_RESPONSE
@@ -151,6 +157,36 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(OFFLINE_CO_REJECTED_JOINT_RESPONSE)));
+    }
+
+    @Test
+    public void shouldSendAwaitingClarificationApplicationLettersToOfflineApplicantOnlyIfSoleCase() throws IOException {
+        Map<String, Object> request = caseData(OFFLINE_CO_CLARIFICATION_REQUEST);
+
+        Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(OFFLINE_CO_CLARIFICATION_SOLE_RESPONSE)));
+    }
+
+    @Test
+    public void shouldSendAwaitingClarificationApplicationLettersToBothOfflineApplicantsIfJointCase() throws IOException {
+        Map<String, Object> request = caseData(OFFLINE_CO_CLARIFICATION_REQUEST);
+
+        request.put("applicationType", "jointApplication");
+
+        Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(OFFLINE_CO_CLARIFICATION_JOINT_RESPONSE)));
     }
 
     @Test
