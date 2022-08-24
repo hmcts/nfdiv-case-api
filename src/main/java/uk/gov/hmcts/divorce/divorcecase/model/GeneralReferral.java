@@ -8,8 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.LegalAdvisorAndSystemUpdateAccess;
 
 import java.time.LocalDate;
 
@@ -26,29 +24,25 @@ public class GeneralReferral {
     @CCD(
         label = "Reason for referral?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "GeneralReferralReason",
-        access = {CaseworkerAccessOnlyAccess.class}
+        typeParameterOverride = "GeneralReferralReason"
     )
     private GeneralReferralReason generalReferralReason;
 
     @CCD(
         label = "Application from",
         typeOverride = FixedList,
-        typeParameterOverride = "GeneralParties",
-        access = {CaseworkerAccessOnlyAccess.class}
+        typeParameterOverride = "GeneralParties"
     )
     private GeneralParties generalApplicationFrom;
 
     @CCD(
-        label = "Application or referral date",
-        access = {CaseworkerAccessOnlyAccess.class}
+        label = "Application or referral date"
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate generalApplicationReferralDate;
 
     @CCD(
-        label = "General application added date",
-        access = {CaseworkerAccessOnlyAccess.class}
+        label = "General application added date"
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate generalApplicationAddedDate;
@@ -56,29 +50,25 @@ public class GeneralReferral {
     @CCD(
         label = "Type of referral",
         typeOverride = FixedList,
-        typeParameterOverride = "GeneralReferralType",
-        access = {CaseworkerAccessOnlyAccess.class}
+        typeParameterOverride = "GeneralReferralType"
     )
     private GeneralReferralType generalReferralType;
 
     @CCD(
         label = "Medium requested for alternative service",
         typeOverride = FixedList,
-        typeParameterOverride = "AlternativeServiceMediumType",
-        access = {CaseworkerAccessOnlyAccess.class}
+        typeParameterOverride = "AlternativeServiceMediumType"
     )
     private AlternativeServiceMediumType alternativeServiceMedium;
 
     @CCD(
         label = "Further details for Judge or Legal Advisor",
-        typeOverride = TextArea,
-        access = {CaseworkerAccessOnlyAccess.class}
+        typeOverride = TextArea
     )
     private String generalReferralJudgeOrLegalAdvisorDetails;
 
     @CCD(
-        label = "Is fee payment required?",
-        access = {CaseworkerAccessOnlyAccess.class}
+        label = "Is fee payment required?"
     )
     private YesOrNo generalReferralFeeRequired;
 
@@ -89,14 +79,12 @@ public class GeneralReferral {
     @CCD(
         label = "Approve general consideration?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "GeneralReferralDecision",
-        access = {LegalAdvisorAndSystemUpdateAccess.class}
+        typeParameterOverride = "GeneralReferralDecision"
     )
     private GeneralReferralDecision generalReferralDecision;
 
     @CCD(
-        label = "General referral decision date",
-        access = {LegalAdvisorAndSystemUpdateAccess.class}
+        label = "General referral decision date"
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate generalReferralDecisionDate;
@@ -104,21 +92,18 @@ public class GeneralReferral {
     @CCD(
         label = "Please provide further details",
         hint = "Provide direction for any general orders or general letters to be created by caseworkers.",
-        typeOverride = TextArea,
-        access = {LegalAdvisorAndSystemUpdateAccess.class}
+        typeOverride = TextArea
     )
     private String generalReferralDecisionReason;
 
     @CCD(
-        label = "Does this case require an Urgent Referral?",
-        access = {CaseworkerAccessOnlyAccess.class}
+        label = "Does this case require an Urgent Referral?"
     )
     private YesOrNo generalReferralUrgentCase;
 
     @CCD(
         label = "Urgent referral reason",
-        typeOverride = TextArea,
-        access = {CaseworkerAccessOnlyAccess.class}
+        typeOverride = TextArea
     )
     private String generalReferralUrgentCaseReason;
 }
