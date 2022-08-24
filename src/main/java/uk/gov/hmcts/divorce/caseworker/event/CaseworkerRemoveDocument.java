@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ_UPDATE_DELETE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
 @Component
 public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, UserRole> {
@@ -26,7 +26,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
             .name("Remove documents")
             .description("Remove uploaded and generated documents")
             .showEventNotes()
-            .grant(READ_UPDATE_DELETE, SUPER_USER)
+            .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER))
             .page("removeDocuments")
             .pageLabel("Remove uploaded and generated documents")
