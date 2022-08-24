@@ -38,6 +38,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MA
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;

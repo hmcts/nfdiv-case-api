@@ -107,15 +107,18 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
         }
     }
 
-    public boolean isJointConditionalOrderOverdue(final CaseDetails caseDetails) {
+    private boolean isJointConditionalOrderOverdue(final CaseDetails caseDetails) {
 
         final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
 
         ConditionalOrderQuestions app1Questions = caseData.getConditionalOrder().getConditionalOrderApplicant1Questions();
         ConditionalOrderQuestions app2Questions = caseData.getConditionalOrder().getConditionalOrderApplicant2Questions();
 
-        boolean app1Submitted = app1Questions != null && YES.equals(app1Questions.getIsSubmitted());
-        boolean app2Submitted = app2Questions != null && YES.equals(app2Questions.getIsSubmitted());
+        boolean app1Submitted = app1Questions != null && YES.equals(app1Questions.getIsSubmitted())
+            && app1Questions.getSubmittedDate() != null;
+
+        boolean app2Submitted = app2Questions != null && YES.equals(app2Questions.getIsSubmitted())
+            && app2Questions.getSubmittedDate() != null;
 
         if (app1Submitted && !app2Submitted) {
             return LocalDate.now(clock).minusDays(submitCOrderReminderOffsetDays)
