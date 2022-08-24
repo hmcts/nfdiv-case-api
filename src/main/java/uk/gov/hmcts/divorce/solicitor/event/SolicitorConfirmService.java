@@ -9,14 +9,13 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.common.service.ConfirmService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolConfirmService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitConfirmService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -29,7 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
-public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserRole> {
+public class SolicitorConfirmService extends ConfirmService implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_CONFIRM_SERVICE = "solicitor-confirm-service";
 
@@ -54,23 +53,15 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             caseData.getApplication().getServiceMethod().toString(),
             details.getId());
 
-        final List<String> validationErrors = validateConfirmService(caseData.getApplication());
+        final List<String> validationErrors = validateConfirmSolicitorService(caseData);
 
         if (!validationErrors.isEmpty()) {
-            log.info("ConfirmService Validation errors: ");
-            for (String error : validationErrors) {
-                log.info(error);
-            }
-
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(validationErrors)
-                .state(details.getState())
-                .build();
+            return getErrorResponse(details, validationErrors);
         }
 
-
         final CaseDetails<CaseData, State> updateDetails = solicitorSubmitConfirmService.submitConfirmService(details);
+
+        addToDocumentsUploaded(updateDetails);
 
         log.info("Due date after submit Task is {}", updateDetails.getData().getDueDate());
 
@@ -93,12 +84,13 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 
-    private List<String> validateConfirmService(Application application) {
-        List<String> errors = new ArrayList<>();
+    private List<String> validateConfirmSolicitorService(CaseData caseData) {
+        List<String> errors = validateConfirmService(caseData);
 
-        if (!application.isSolicitorServiceMethod()) {
-            errors.add("This event can only be used for a case with Solicitor Service as the service method");
+        if (!caseData.getApplication().isSolicitorServiceMethod()) {
+            errors.add(SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR);
         }
+
         return errors;
     }
 }

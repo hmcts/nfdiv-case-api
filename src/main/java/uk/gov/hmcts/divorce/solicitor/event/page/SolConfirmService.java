@@ -5,6 +5,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 
 @Component
@@ -16,6 +17,9 @@ public class SolConfirmService implements CcdPageConfiguration {
         pageBuilder
             .page("SolConfirmService")
             .pageLabel("Certificate of Service - Confirm Service")
+            .complex(CaseData::getDocuments)
+                .optional(CaseDocuments::getDocumentsUploadedOnConfirmService)
+            .done()
             .label("petitionerLabel", "Name of Applicant - ${applicant1FirstName} ${applicant1LastName}")
             .label("respondentLabel", "Name of Respondent - ${applicant2FirstName} ${applicant2LastName}")
             .complex(CaseData::getApplication)
@@ -24,6 +28,7 @@ public class SolConfirmService implements CcdPageConfiguration {
                 .mandatory(SolicitorService::getDocumentsServed)
                 .mandatory(SolicitorService::getOnWhomServed)
                 .mandatory(SolicitorService::getHowServed)
+                .optional(SolicitorService::getServiceProcessedByProcessServer)
                 .mandatory(SolicitorService::getServiceDetails, "solServiceHowServed=\"deliveredTo\" OR solServiceHowServed=\"postedTo\"")
                 .mandatory(SolicitorService::getAddressServed)
                 .mandatory(SolicitorService::getBeingThe)

@@ -474,21 +474,6 @@ public class Application {
     )
     private YesOrNo newPaperCase;
 
-    @CCD(
-        access = {DefaultAccess.class}
-    )
-    private Set<ServiceProcessedByProcessServer> serviceProcessedByProcessServer;
-
-    @Getter
-    @AllArgsConstructor
-    public enum ServiceProcessedByProcessServer implements HasLabel {
-
-        @JsonProperty("serviceProcessed")
-        CONFIRM("I confirm that this was processed by a process server");
-
-        private final String label;
-    }
-
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary
