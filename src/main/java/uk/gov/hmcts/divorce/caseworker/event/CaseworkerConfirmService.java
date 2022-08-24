@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitConfirmService;
+import uk.gov.hmcts.divorce.common.service.SubmitConfirmService;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class CaseworkerConfirmService extends ConfirmService implements CCDConfi
     public static final String CASEWORKER_CONFIRM_SERVICE = "caseworker-confirm-service";
 
     @Autowired
-    private SolicitorSubmitConfirmService submitConfirmService;
+    private SubmitConfirmService submitConfirmService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

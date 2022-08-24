@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service;
+package uk.gov.hmcts.divorce.common.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getSolicitorService;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorSubmitConfirmServiceTest {
+public class SubmitConfirmServiceTest {
 
     @Mock
     private SetConfirmServiceDueDate setConfirmServiceDueDate;
@@ -32,7 +32,7 @@ public class SolicitorSubmitConfirmServiceTest {
     private SetConfirmServiceState setConfirmServiceState;
 
     @InjectMocks
-    private SolicitorSubmitConfirmService solicitorSubmitConfirmService;
+    private SubmitConfirmService submitConfirmService;
 
     @Test
     void shouldOnlyUpdateConfirmServiceDueDate() {
@@ -54,7 +54,7 @@ public class SolicitorSubmitConfirmServiceTest {
         when(setServiceConfirmed.apply(updatedCaseDetails)).thenReturn(updatedCaseDetails);
         when(setConfirmServiceState.apply(updatedCaseDetails)).thenReturn(updatedCaseDetails);
 
-        final CaseDetails<CaseData, State> result = solicitorSubmitConfirmService.submitConfirmService(caseDetails);
+        final CaseDetails<CaseData, State> result = submitConfirmService.submitConfirmService(caseDetails);
 
         assertThat(result.getData().getDueDate()).isNotEqualTo(caseDetails.getData().getDueDate());
         assertThat(result.getData().getApplication().getSolicitorService()).isEqualTo(

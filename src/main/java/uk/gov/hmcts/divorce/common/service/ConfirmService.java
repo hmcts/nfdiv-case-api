@@ -22,7 +22,7 @@ public class ConfirmService {
 
     public static final String SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR =
         "This event can only be used for a case with Solicitor Service as the service method";
-    private static final String DOCUMENTS_NOT_UPLOADED_ERROR = "Please upload a document in order to continue";
+    public static final String DOCUMENTS_NOT_UPLOADED_ERROR = "Please upload a document in order to continue";
 
     public List<String> validateConfirmService(CaseData caseData) {
         List<String> errors = new ArrayList<>();

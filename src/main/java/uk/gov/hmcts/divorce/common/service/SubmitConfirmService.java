@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service;
+package uk.gov.hmcts.divorce.common.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
 @Slf4j
-public class SolicitorSubmitConfirmService {
+public class SubmitConfirmService {
     @Autowired
     private SetConfirmServiceDueDate setConfirmServiceDueDate;
 

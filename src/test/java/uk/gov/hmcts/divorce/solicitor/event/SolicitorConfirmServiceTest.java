@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.event;
+package uk.gov.hmcts.divorce.solicitor.event;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -29,54 +29,34 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerConfirmService.CASEWORKER_CONFIRM_SERVICE;
 import static uk.gov.hmcts.divorce.common.service.ConfirmService.DOCUMENTS_NOT_UPLOADED_ERROR;
+import static uk.gov.hmcts.divorce.common.service.ConfirmService.SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.SOLICITOR_CONFIRM_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerConfirmServiceTest {
+public class SolicitorConfirmServiceTest {
 
     @Mock
     private SubmitConfirmService submitConfirmService;
 
     @InjectMocks
-    private CaseworkerConfirmService caseworkerConfirmService;
+    private SolicitorConfirmService solicitorConfirmService;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        caseworkerConfirmService.configure(configBuilder);
+        solicitorConfirmService.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CASEWORKER_CONFIRM_SERVICE);
-    }
-
-    @Test
-    void shouldSetDueDateWhenServiceMethodIsCourtService() {
-        final CaseData caseData = caseData();
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setServiceMethod(COURT_SERVICE);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.setDueDate(LocalDate.of(2021, 1, 1));
-        updatedCaseDetails.setData(caseData);
-
-        when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(updatedCaseDetails);
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).isNull();
-        assertThat(response.getData().getDueDate()).isEqualTo(LocalDate.of(2021, 1, 1));
+            .contains(SOLICITOR_CONFIRM_SERVICE);
     }
 
     @Test
@@ -93,7 +73,7 @@ public class CaseworkerConfirmServiceTest {
         updatedCaseDetails.setData(caseData);
 
         when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(updatedCaseDetails);
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
@@ -123,7 +103,7 @@ public class CaseworkerConfirmServiceTest {
 
         when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(caseDetails);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
@@ -156,7 +136,7 @@ public class CaseworkerConfirmServiceTest {
 
         when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(caseDetails);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
@@ -171,6 +151,26 @@ public class CaseworkerConfirmServiceTest {
     }
 
     @Test
+    void shouldThrowErrorWhenServiceMethodIsNotSolicitorService() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.setDueDate(LocalDate.of(2021, 1, 1));
+        updatedCaseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).contains(SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR);
+
+        verifyNoInteractions(submitConfirmService);
+    }
+
+    @Test
     public void shouldThrowValidationErrorWhenProcessedByProcessServerButDocumentsNotUploaded() {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
@@ -182,7 +182,7 @@ public class CaseworkerConfirmServiceTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).contains(DOCUMENTS_NOT_UPLOADED_ERROR);
 
@@ -211,7 +211,7 @@ public class CaseworkerConfirmServiceTest {
 
         when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(caseDetails);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();

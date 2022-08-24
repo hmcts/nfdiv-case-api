@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolConfirmService;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitConfirmService;
+import uk.gov.hmcts.divorce.common.service.SubmitConfirmService;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class SolicitorConfirmService extends ConfirmService implements CCDConfig
     public static final String SOLICITOR_CONFIRM_SERVICE = "solicitor-confirm-service";
 
     @Autowired
-    private SolicitorSubmitConfirmService solicitorSubmitConfirmService;
+    private SubmitConfirmService submitConfirmService;
 
     private final List<CcdPageConfiguration> pages = List.of(
         new SolConfirmService()
@@ -59,7 +59,7 @@ public class SolicitorConfirmService extends ConfirmService implements CCDConfig
             return getErrorResponse(details, validationErrors);
         }
 
-        final CaseDetails<CaseData, State> updateDetails = solicitorSubmitConfirmService.submitConfirmService(details);
+        final CaseDetails<CaseData, State> updateDetails = submitConfirmService.submitConfirmService(details);
 
         addToDocumentsUploaded(updateDetails);
 
