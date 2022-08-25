@@ -44,9 +44,12 @@ public final class DocumentConstants {
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
     public static final String SERVICE_ORDER_TEMPLATE_ID = "SERVICE_ORDER";
 
-    public static final String REFUSAL_ORDER_TEMPLATE_ID = "REFUSAL_ORDER";
-    public static final String REFUSAL_ORDER_OFFLINE_TEMPLATE_ID = "REFUSAL_ORDER_OFFLINE";
+    public static final String REJECTED_REFUSAL_ORDER_TEMPLATE_ID = "REJECTED_REFUSAL_ORDER";
     public static final String REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID = "REJECTED_REFUSAL_ORDER_COVER_LETTER";
+
+    public static final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID = "CLARIFICATION_REFUSAL_ORDER";
+    public static final String CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID = "CLARIFICATION_REFUSAL_ORDER_COVER_LETTER";
+
     public static final String REFUSAL_ORDER_DOCUMENT_NAME = "NoticeOfRefusalDocument";
     public static final String REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME = "NoticeOfRefusalCoverLetter";
 
@@ -85,6 +88,9 @@ public final class DocumentConstants {
 
     public static final String CONDITIONAL_ORDER_REMINDER_TEMPLATE_ID = "CONDITIONAL_ORDER_REMINDER";
     public static final String CONDITIONAL_ORDER_REMINDER_DOCUMENT_NAME = "conditionalOrderReminder";
+
+    public static final String APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID = "APPLIED_FOR_CONDITIONAL_ORDER_LETTER";
+    public static final String APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME = "appliedForConditionalOrder";
 
     public static final String AOS_RESPONSE_LETTER_DOCUMENT_NAME = "aosResponseLetter";
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";

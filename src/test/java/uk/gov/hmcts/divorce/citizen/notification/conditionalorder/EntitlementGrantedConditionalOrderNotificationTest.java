@@ -1,12 +1,10 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -35,12 +33,14 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -63,11 +63,6 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
     @InjectMocks
     private EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
-
-    @BeforeEach
-    void setPageSize() {
-        ReflectionTestUtils.setField(entitlementGrantedConditionalOrderNotification, "enableSolicitorEntitlementEmail", true);
-    }
 
     @Test
     void shouldSendEmailToApplicant1WithCourtHearingContent() {
@@ -170,6 +165,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
+        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant1Solicitor(data, 1234567890123456L);
 
@@ -187,23 +183,12 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME),
                 hasEntry(RESPONDENT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME),
                 hasEntry(SOLICITOR_NAME, "App1 Solicitor"),
-                hasEntry(SOLICITOR_REFERENCE, "App1 Sol Ref")
+                hasEntry(SOLICITOR_REFERENCE, "App1 Sol Ref"),
+                hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
-    }
-
-    @Test
-    void shouldNotSendEmailToApplicant1SolicitorIfNotDigitalApplication() {
-        CaseData data = validCaseWithCourtHearing();
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        data.getApplicant1().setOffline(YesOrNo.YES);
-        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
-
-        entitlementGrantedConditionalOrderNotification.sendToApplicant1Solicitor(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
     }
 
     @Test
@@ -223,6 +208,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
+        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
 
@@ -240,27 +226,12 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME),
                 hasEntry(RESPONDENT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME),
                 hasEntry(SOLICITOR_NAME, "App2 Solicitor"),
-                hasEntry(SOLICITOR_REFERENCE, "App2 Sol Ref")
+                hasEntry(SOLICITOR_REFERENCE, "App2 Sol Ref"),
+                hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-    }
-
-    @Test
-    void shouldNotSendEmailToApplicant2SolicitorIfNotDigitalApplication() {
-        CaseData data = validCaseWithCourtHearing();
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        data.getApplicant2().setOffline(YesOrNo.YES);
-        data.getApplicant2().setEmail("");
-        data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
-
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getMainTemplateVars());
-
-        entitlementGrantedConditionalOrderNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
     }
 
     @Test

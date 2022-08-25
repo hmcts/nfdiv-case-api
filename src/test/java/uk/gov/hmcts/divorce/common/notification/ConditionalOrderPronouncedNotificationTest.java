@@ -23,7 +23,6 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -446,17 +445,6 @@ class ConditionalOrderPronouncedNotificationTest {
     }
 
     @Test
-    void shouldNotSendEmailToApplicant2SolicitorWhenSoleApplication() {
-        CaseData data = caseData();
-        data.setApplicationType(SOLE_APPLICATION);
-
-        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
-        verifyNoInteractions(commonContent);
-    }
-
-    @Test
     void shouldSendEmailToApplicant2SolicitorWhenJointApplicationAndApplicant2IsRepresented() {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
@@ -510,6 +498,37 @@ class ConditionalOrderPronouncedNotificationTest {
             eq(data),
             eq(1234567890123456L),
             eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)
+        );
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2SolicitorWhenSoleApplicationAndApplicant2IsRepresented() {
+        LocalDateTime now = LocalDateTime.now();
+        CaseData data = caseData();
+        data.setApplicant2(applicantRepresentedBySolicitor());
+        data.setApplicationType(SOLE_APPLICATION);
+        data.getApplication().setIssueDate(now.minusDays(10).toLocalDate());
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .grantedDate(now.toLocalDate())
+            .build()
+        );
+
+        when(commonContent.solicitorTemplateVars(data, 1234567890123456L, data.getApplicant2()))
+            .thenReturn(solicitorTemplateVars(data, data.getApplicant2()));
+        when(commonContent.getUnionType(data)).thenReturn("divorce");
+
+        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED),
+            argThat(allOf(
+                hasEntry(APPLICANT1_LABEL, "Applicant"),
+                hasEntry(APPLICANT2_LABEL, "Respondent"),
+                hasEntry(UNION_TYPE, "divorce"),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
         );
     }
 }

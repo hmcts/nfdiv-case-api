@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
@@ -40,6 +41,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
@@ -120,6 +122,7 @@ public class CaseData {
 
     @JsonUnwrapped
     @Builder.Default
+    @CCD(access = {SystemUpdateAndSuperUserAccess.class})
     private GeneralReferral generalReferral = new GeneralReferral();
 
     @JsonUnwrapped
@@ -263,9 +266,13 @@ public class CaseData {
     @JsonIgnore
     public boolean isWelshApplication() {
         if (applicationType.isSole()) {
-            return applicant1.getLanguagePreferenceWelsh() == YesOrNo.YES;
+            return YES.equals(applicant1.getLanguagePreferenceWelsh())
+                || YES.equals(applicant1.getUsedWelshTranslationOnSubmission());
         } else {
-            return applicant1.getLanguagePreferenceWelsh() == YesOrNo.YES || applicant2.getLanguagePreferenceWelsh() == YesOrNo.YES;
+            return YES.equals(applicant1.getLanguagePreferenceWelsh())
+                || YES.equals(applicant2.getLanguagePreferenceWelsh())
+                || YES.equals(applicant1.getUsedWelshTranslationOnSubmission())
+                || YES.equals(applicant2.getUsedWelshTranslationOnSubmission());
         }
     }
 
