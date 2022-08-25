@@ -44,8 +44,6 @@ public final class DocumentConstants {
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
     public static final String SERVICE_ORDER_TEMPLATE_ID = "SERVICE_ORDER";
 
-    public static final String REFUSAL_ORDER_TEMPLATE_ID = "REFUSAL_ORDER";
-
     public static final String REJECTED_REFUSAL_ORDER_TEMPLATE_ID = "REJECTED_REFUSAL_ORDER";
     public static final String REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID = "REJECTED_REFUSAL_ORDER_COVER_LETTER";
 

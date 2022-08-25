@@ -504,7 +504,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, "FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order.docx");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
