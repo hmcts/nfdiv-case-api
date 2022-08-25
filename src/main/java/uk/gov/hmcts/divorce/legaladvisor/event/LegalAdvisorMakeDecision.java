@@ -27,7 +27,6 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
@@ -236,7 +235,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             templateContents,
             caseId,
             templateId,
-            ENGLISH,
+            caseData.getApplicant1().getLanguagePreference(),
             REFUSAL_ORDER_DOCUMENT_NAME
         );
     }
