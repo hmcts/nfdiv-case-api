@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
@@ -199,29 +200,12 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getDocumentsUploaded())
             .extracting("value")
             .containsExactly(divorceDocument);
+        assertThat(response.getData().getAcknowledgementOfService().getStatementOfTruth()).isEqualTo(YES);
     }
 
     @Test
     void shouldSetStateToHoldingAndSkipReclassifyIfSelectedD10DocumentIsNotFoundInScannedDocNames() {
-        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
-            .value(
-                ScannedDocument
-                    .builder()
-                    .url(
-                        Document
-                            .builder()
-                            .filename("doc1.pdf")
-                            .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
-                            .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
-                            .build()
-                    )
-                    .fileName("doc1.pdf")
-                    .type(ScannedDocumentType.OTHER)
-                    .subtype("aos")
-                    .build()
-            )
-            .build();
-
+        final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf");
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
 
         CaseData caseData = CaseData.builder()
@@ -287,6 +271,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState().name()).isEqualTo(AwaitingAmendedApplication.name());
+        assertThat(response.getData().getAcknowledgementOfService().getStatementOfTruth()).isNull();
     }
 
     @Test
@@ -434,26 +419,8 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
     @Test
     void shouldSetDynamicListWithScannedDocumentNamesForAllTheScannedDocuments() {
-        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
-            .value(
-                ScannedDocument
-                    .builder()
-                    .fileName("doc1.pdf")
-                    .type(ScannedDocumentType.OTHER)
-                    .subtype("aos")
-                    .build()
-            )
-            .build();
-
-        final ListValue<ScannedDocument> doc2 = ListValue.<ScannedDocument>builder()
-            .value(
-                ScannedDocument
-                    .builder()
-                    .fileName("doc2.pdf")
-                    .type(ScannedDocumentType.OTHER)
-                    .build()
-            )
-            .build();
+        final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf");
+        final ListValue<ScannedDocument> doc2 = scannedDocument("doc2.pdf");
 
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder()
@@ -469,5 +436,21 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getScannedDocumentNames().getListItems())
             .extracting("label")
             .contains("doc1.pdf", "doc2.pdf");
+    }
+
+    private ListValue<ScannedDocument> scannedDocument(String filename) {
+        return ListValue.<ScannedDocument>builder()
+            .value(ScannedDocument.builder()
+                .url(Document.builder()
+                        .filename(filename)
+                        .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                        .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                        .build()
+                )
+                .fileName(filename)
+                .type(ScannedDocumentType.OTHER)
+                .subtype("aos")
+                .build()
+            ).build();
     }
 }
