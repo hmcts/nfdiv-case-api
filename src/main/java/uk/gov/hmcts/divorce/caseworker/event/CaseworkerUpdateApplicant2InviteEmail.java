@@ -12,8 +12,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATE
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
+
 @Component
-@lombok.extern.slf4j.Slf4j
 public class CaseworkerUpdateApplicant2InviteEmail implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_UPDATE_APP_2_INVITE_EMAIL = "caseworker-update-app2-invite-email";
 
@@ -29,7 +29,7 @@ public class CaseworkerUpdateApplicant2InviteEmail implements CCDConfig<CaseData
             .page("updateApp2InviteEmail")
             .pageLabel("Update applicant 2 invite email")
             .complex(CaseData::getCaseInvite)
-                .optional(CaseInvite::getApplicant2InviteEmailAddress)
+                .optional(CaseInvite::applicant2InviteEmailAddress)
             .done();
     }
 }
