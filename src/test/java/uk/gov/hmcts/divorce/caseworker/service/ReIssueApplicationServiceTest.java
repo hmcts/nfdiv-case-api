@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
@@ -80,6 +81,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(1L);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
+        caseData.getApplicant2().setOffline(NO);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
@@ -91,6 +93,7 @@ class ReIssueApplicationServiceTest {
 
         var expectedCaseData = caseData();
         expectedCaseData.getApplication().setPreviousReissueOption(DIGITAL_AOS);
+        expectedCaseData.getApplicant2().setOffline(NO);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
 
@@ -169,6 +172,7 @@ class ReIssueApplicationServiceTest {
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
+        caseData.getApplicant2().setOffline(NO);
 
         final Solicitor solicitor = Solicitor.builder()
             .name("testsol")
@@ -195,6 +199,7 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
         expectedCaseData.getApplication().setPreviousReissueOption(DIGITAL_AOS);
+        expectedCaseData.getApplicant2().setOffline(NO);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
 
