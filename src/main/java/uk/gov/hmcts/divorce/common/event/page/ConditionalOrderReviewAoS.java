@@ -45,11 +45,15 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
                     "applicationType=\"soleApplication\" AND coLastApprovedServiceApplicationIsBailiffApplication=\"No\""
                         + " AND dateAosSubmitted!=\"*\" AND coServiceConfirmed!=\"Yes\"")
                 .readonly(ConditionalOrder::getRespondentAnswersLink,
-                    "applicationType=\"soleApplication\" AND dateAosSubmitted=\"*\"")
-                .readonly(ConditionalOrder::getServiceConfirmed, NEVER_SHOW)
+                    "applicationType=\"soleApplication\" AND coLastApprovedServiceApplicationIsBailiffApplication=\"No\""
+                        + " AND dateAosSubmitted=\"*\" AND coServiceConfirmed!=\"Yes\"")
+            .readonly(ConditionalOrder::getServiceConfirmed, NEVER_SHOW)
                 .optionalWithoutDefaultValue(ConditionalOrder::getProofOfServiceUploadDocuments,
                     "applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\" AND coServiceConfirmed=\"Yes\"",
                     "Please upload proof of service below")
+                .label("CertificateOfServiceWarning",
+                    "If you are progressing using a certificate of service, then you must upload proof of service here",
+                    "applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\" AND coServiceConfirmed=\"Yes\"")
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                     .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
                     .done()
