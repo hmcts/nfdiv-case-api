@@ -14,6 +14,7 @@ import uk.gov.hmcts.reform.document.domain.Document;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -22,6 +23,10 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.JURISDICTION_DETAILS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.MARRIAGE_CERTIFICATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.MARRIAGE_CERTIFICATE_TRANSLATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
@@ -71,6 +76,7 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     @Test
     public void shouldSendEmailToApp1SolicitorAndGenerateRefusalOrderWhenMoreInfoSelected() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
+        request.put("coRefusalClarificationReason", Set.of(PREVIOUS_PROCEEDINGS_DETAILS));
 
         Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, ABOUT_TO_SUBMIT_URL);
 
@@ -101,6 +107,7 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     public void shouldSendWelshNotificationsIfJointConditionalOrderNotGrantedForMoreInfo() throws IOException {
         Map<String, Object> request = caseData(JOINT_WELSH_REQUEST);
         request.put("coRefusalDecision", "moreInfo");
+        request.put("coRefusalClarificationReason", Set.of(MARRIAGE_CERTIFICATE_TRANSLATION));
 
         Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, ABOUT_TO_SUBMIT_URL);
 
@@ -111,17 +118,18 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     public void shouldSendAwaitingAmendedApplicationLettersToOfflineApplicantOnlyIfSoleCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_REJECTED_REQUEST);
 
-        Document document = documentManagementStore.upload("", "draft-divorce-application-1234567890123456.pdf", "classpath:Test.pdf");
+        Document document = documentManagementStore.upload("", "draft-divorce-application-1234567890123456.pdf",
+            "classpath:Test.pdf");
 
         final ListValue<DivorceDocument> miniApplicationListValue = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(APPLICATION)
-                .documentLink(new uk.gov.hmcts.ccd.sdk.type.Document(document.links.self.href, document.originalDocumentName, document.links.binary.href))
+                .documentLink(new uk.gov.hmcts.ccd.sdk.type.Document(document.links.self.href, document.originalDocumentName,
+                    document.links.binary.href))
                 .build())
             .build();
 
         request.put("documentsGenerated", singletonList(miniApplicationListValue));
-
 
         Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, ABOUT_TO_SUBMIT_URL);
 
@@ -137,12 +145,14 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     public void shouldSendAwaitingAmendedApplicationLettersToBothOfflineApplicantsIfJointCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_REJECTED_REQUEST);
 
-        Document document = documentManagementStore.upload("", "draft-divorce-application-1234567890123456.pdf", "classpath:Test.pdf");
+        Document document = documentManagementStore.upload("", "draft-divorce-application-1234567890123456.pdf",
+            "classpath:Test.pdf");
 
         final ListValue<DivorceDocument> miniApplicationListValue = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(APPLICATION)
-                .documentLink(new uk.gov.hmcts.ccd.sdk.type.Document(document.links.self.href, document.originalDocumentName, document.links.binary.href))
+                .documentLink(new uk.gov.hmcts.ccd.sdk.type.Document(document.links.self.href, document.originalDocumentName,
+                    document.links.binary.href))
                 .build())
             .build();
 
@@ -245,6 +255,7 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     public void shouldSendEmailToBothApplicantSolicitorsAndGenerateRefusalOrderWhenMoreInfoSelected() throws IOException {
         Map<String, Object> request = caseData(REQUEST_JOINT_APPS_REPRESENTED);
         request.put("coRefusalDecision", "moreInfo");
+        request.put("coRefusalClarificationReason", Set.of(MARRIAGE_CERTIFICATE));
 
         Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, ABOUT_TO_SUBMIT_URL);
 
@@ -260,6 +271,7 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     public void midEventShouldGenerateRefusalOrderWhenMoreInfoSelected() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         request.put("coRefusalDecision", "moreInfo");
+        request.put("coRefusalClarificationReason", Set.of(JURISDICTION_DETAILS));
 
         Response response = triggerCallback(request, LEGAL_ADVISOR_MAKE_DECISION, CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL);
 

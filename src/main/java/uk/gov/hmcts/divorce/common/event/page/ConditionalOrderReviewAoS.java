@@ -30,6 +30,7 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
             .readonlyNoSummary(CaseData::getApplicationType, NEVER_SHOW)
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnershipApplication, NEVER_SHOW)
             .done()
             .complex(CaseData::getAcknowledgementOfService)
                 .readonlyNoSummary(AcknowledgementOfService::getDateAosSubmitted, NEVER_SHOW)
