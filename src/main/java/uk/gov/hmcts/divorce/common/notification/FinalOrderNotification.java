@@ -39,7 +39,6 @@ public class FinalOrderNotification implements ApplicantNotification {
     public static final String WILL_BE_CHECKED_WITHIN_2_DAYS = "will be checked within 2 days";
     public static final String WILL_BE_CHECKED_WITHIN_14_DAYS = "will be checked within 14 days";
     public static final String NOW_PLUS_14_DAYS = "now plus 14 days";
-    public static final String PRONOUNCE_BY_DATE = "pronounceByDate";
 
     @Autowired
     private CommonContent commonContent;
