@@ -17,7 +17,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.common.notification.SoleAppliedForFinalOrderNotification.PRONOUNCE_BY_DATE;
+import static uk.gov.hmcts.divorce.common.notification.FinalOrderNotification.NOW_PLUS_14_DAYS;
+import static uk.gov.hmcts.divorce.common.notification.FinalOrderNotification.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CLARIFICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_PARTNER_CLARIFICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;

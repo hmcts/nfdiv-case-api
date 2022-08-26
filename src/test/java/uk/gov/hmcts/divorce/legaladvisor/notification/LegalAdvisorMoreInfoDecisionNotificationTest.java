@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.legaladvisor.service.printer.AwaitingClarificationApplicationPrinter;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -30,6 +31,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDIT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CO_REFUSED_SOLE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
@@ -44,6 +46,9 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private AwaitingClarificationApplicationPrinter awaitingClarificationApplicationPrinter;
 
     @InjectMocks
     private LegalAdvisorMoreInfoDecisionNotification notification;
@@ -179,5 +184,32 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).getCoRefusedSolicitorTemplateVars(data, 1234567890123456L, data.getApplicant2(), MORE_INFO);
+    }
+
+    @Test
+    void shouldSendConditionalOrderClarificationLettersToApplicant1IfOffline() {
+        final var caseData = validApplicant1CaseData();
+
+        notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+
+        verify(awaitingClarificationApplicationPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
+    }
+
+    @Test
+    void shouldSendConditionalOrderClarificationLettersToApplicant2IfOfflineAndJointApplication() {
+        final var caseData = validJointApplicant1CaseData();
+
+        notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verify(awaitingClarificationApplicationPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2());
+    }
+
+    @Test
+    void shouldNotSendConditionalOrderClarificationLettersToApplicant2IfOfflineAndSoleApplication() {
+        final var caseData = validApplicant1CaseData();
+
+        notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(awaitingClarificationApplicationPrinter);
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ import java.util.Map;
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent.LEGAL_ADVISOR_COMMENTS;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent.LEGAL_ADVISOR_COMMENTS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CP_CASE_EMAIL;
@@ -38,7 +38,7 @@ public class GenerateCoRefusedCoverLetter {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
+    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
 
     @Autowired
     private Clock clock;
@@ -78,7 +78,7 @@ public class GenerateCoRefusedCoverLetter {
 
         templateContent.put(
             LEGAL_ADVISOR_COMMENTS,
-            conditionalOrderRefusalContent.generateLegalAdvisorComments(caseData.getConditionalOrder())
+            conditionalOrderRefusedForAmendmentContent.generateLegalAdvisorComments(caseData.getConditionalOrder())
         );
 
         templateContent.put(

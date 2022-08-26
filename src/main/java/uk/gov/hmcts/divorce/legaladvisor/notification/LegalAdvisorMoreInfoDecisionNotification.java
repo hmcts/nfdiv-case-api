@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.legaladvisor.service.printer.AwaitingClarificationApplicationPrinter;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -26,6 +27,9 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
     @Autowired
     private CommonContent commonContent;
 
+    @Autowired
+    private AwaitingClarificationApplicationPrinter awaitingClarificationApplicationPrinter;
+
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
 
@@ -42,6 +46,30 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );
+    }
+
+    @Override
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
+
+        log.info("Sending CO refused notification to applicant 1 solicitor as required more info for case : {}", caseId);
+
+        Applicant applicant = caseData.getApplicant1();
+
+        notificationService.sendEmail(
+            applicant.getSolicitor().getEmail(),
+            SOLICITOR_CO_REFUSED_SOLE_JOINT,
+            commonContent.getCoRefusedSolicitorTemplateVars(caseData, caseId, applicant, MORE_INFO),
+            ENGLISH
+        );
+
+        log.info("Successfully sent CO refused notification to applicant 1 solicitor as required more info for case : {}", caseId);
+    }
+
+
+    @Override
+    public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
+        log.info("Notifying applicant 1 offline that their conditional order is rejected - clarification needed: {}", caseId);
+        awaitingClarificationApplicationPrinter.sendLetters(caseData, caseId, caseData.getApplicant1());
     }
 
     @Override
@@ -64,23 +92,6 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
     }
 
     @Override
-    public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
-
-        log.info("Sending CO refused notification to applicant 1 solicitor as required more info for case : {}", caseId);
-
-        Applicant applicant = caseData.getApplicant1();
-
-        notificationService.sendEmail(
-            applicant.getSolicitor().getEmail(),
-            SOLICITOR_CO_REFUSED_SOLE_JOINT,
-            commonContent.getCoRefusedSolicitorTemplateVars(caseData, caseId, applicant, MORE_INFO),
-            ENGLISH
-        );
-
-        log.info("Successfully sent CO refused notification to applicant 1 solicitor as required more info for case : {}", caseId);
-    }
-
-    @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
 
         log.info("Sending CO refused notification to applicant 2 solicitor as required more info for case : {}", caseId);
@@ -95,5 +106,13 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
         );
 
         log.info("Successfully sent CO refused notification to applicant 2 solicitor as required more info for case : {}", caseId);
+    }
+
+    @Override
+    public void sendToApplicant2Offline(CaseData caseData, Long caseId) {
+        if (!caseData.getApplicationType().isSole()) {
+            log.info("Notifying applicant 2 offline that their conditional order is rejected - clarification needed: {}", caseId);
+            awaitingClarificationApplicationPrinter.sendLetters(caseData, caseId, caseData.getApplicant2());
+        }
     }
 }
