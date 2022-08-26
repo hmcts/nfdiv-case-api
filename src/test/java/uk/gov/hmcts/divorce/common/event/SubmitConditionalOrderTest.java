@@ -13,14 +13,17 @@ import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1Appl
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
@@ -45,11 +48,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOr
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
 class SubmitConditionalOrderTest {
@@ -61,6 +66,9 @@ class SubmitConditionalOrderTest {
 
     @Mock
     private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
+
+    @Mock
+    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -249,6 +257,49 @@ class SubmitConditionalOrderTest {
         submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, 1L);
+    }
+
+    @Test
+    void shouldSendApp1SolicitorAndApp2SolicitorNotificationsOnAboutToSubmit() {
+        setupMocks(clock);
+        CaseData caseData = caseData();
+        caseData.setApplicant1(Applicant
+            .builder()
+            .solicitorRepresented(YES)
+            .solicitor(Solicitor
+                .builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .build())
+            .build());
+        caseData.setApplicant2(Applicant
+            .builder()
+            .solicitorRepresented(YES)
+            .solicitor(Solicitor
+                .builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .build())
+            .build());
+
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(1L)
+            .data(caseData)
+            .state(AwaitingLegalAdvisorReferral)
+            .build();
+
+        CaseData caseDataBefore = caseData();
+        caseDataBefore.setApplicationType(JOINT_APPLICATION);
+
+        final CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
+            .id(1L)
+            .data(caseDataBefore)
+            .state(ConditionalOrderPronounced)
+            .build();
+
+        submitConditionalOrder.aboutToSubmit(caseDetails, beforeDetails);
+
+        verify(notificationDispatcher).send(solicitorAppliedForConditionalOrderNotification, caseData, 1L);
     }
 
     @Test
