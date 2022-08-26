@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
@@ -67,6 +68,9 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
     @Autowired
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
+    @Autowired
+    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -123,6 +127,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         }
 
         if (state == AwaitingLegalAdvisorReferral) {
+            notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, details.getId());
             generateConditionalOrderAnswersDocument.apply(details);
         }
 
@@ -140,10 +145,10 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     }
 
     private List<String> validate(CaseData data) {
-        return data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth() == null
-            || data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth().toBoolean()
-                ? emptyList()
-                : of("The applicant must agree that the facts stated in the application are true");
+        var statementOfTruth = data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth();
+
+        return statementOfTruth == null || statementOfTruth.toBoolean()
+            ? emptyList() : of("The applicant must agree that the facts stated in the application are true");
     }
 
     private void setSubmittedDate(ConditionalOrder conditionalOrder) {
