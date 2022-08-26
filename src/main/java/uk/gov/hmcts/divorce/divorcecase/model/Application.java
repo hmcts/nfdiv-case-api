@@ -78,6 +78,7 @@ public class Application {
 
     @JsonUnwrapped(prefix = "jurisdiction")
     @Builder.Default
+    @CCD(access = {SystemUpdateAndSuperUserAccess.class})
     private Jurisdiction jurisdiction = new Jurisdiction();
 
     @JsonUnwrapped(prefix = "solService")
