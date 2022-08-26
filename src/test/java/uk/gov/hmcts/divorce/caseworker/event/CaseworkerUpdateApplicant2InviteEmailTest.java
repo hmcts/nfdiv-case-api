@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -24,7 +25,8 @@ class CaseworkerUpdateApplicant2InviteEmailTest {
     void shouldAddConfigurationToConfigBuilder() throws Exception {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        caseworkerUpdateApplicant2InviteEmail.configure(configBuilder);
+        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+            .execute(() -> caseworkerUpdateApplicant2InviteEmail.configure(configBuilder));
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)

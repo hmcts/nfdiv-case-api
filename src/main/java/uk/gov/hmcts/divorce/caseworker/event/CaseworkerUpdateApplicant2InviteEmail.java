@@ -19,17 +19,20 @@ public class CaseworkerUpdateApplicant2InviteEmail implements CCDConfig<CaseData
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new uk.gov.hmcts.divorce.common.ccd.PageBuilder(configBuilder
-            .event(CASEWORKER_UPDATE_APP_2_INVITE_EMAIL)
-            .forStates(POST_SUBMISSION_STATES)
-            .name("Update applicant 2 invite email")
-            .description("UUpdate applicant 2 invite email")
-            .showEventNotes()
-            .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER, CASE_WORKER))
-            .page("updateApp2InviteEmail")
-            .pageLabel("Update applicant 2 invite email")
-            .complex(CaseData::getCaseInvite)
-                .optional(CaseInvite::applicant2InviteEmailAddress)
-            .done();
+        var updateCaseStateEnabled = Boolean.parseBoolean(System.getenv().get("CITIZEN_UPDATE_CASE_STATE_ENABLED"));
+        if (updateCaseStateEnabled) {
+            new uk.gov.hmcts.divorce.common.ccd.PageBuilder(configBuilder
+                .event(CASEWORKER_UPDATE_APP_2_INVITE_EMAIL)
+                .forStates(POST_SUBMISSION_STATES)
+                .name("Update applicant2 invite email")
+                .description("Update applicant 2 invite email")
+                .showEventNotes()
+                .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER, CASE_WORKER))
+                .page("updateApp2InviteEmail")
+                .pageLabel("Update applicant 2 invite email")
+                .complex(CaseData::getCaseInvite)
+                    .optional(CaseInvite::applicant2InviteEmailAddress)
+                .done();
+        }
     }
 }
