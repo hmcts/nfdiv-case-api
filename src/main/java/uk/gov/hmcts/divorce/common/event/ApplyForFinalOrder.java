@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ApplyForFinalOrderDetails;
-import uk.gov.hmcts.divorce.common.notification.SoleAppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.FinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -21,6 +21,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -38,7 +39,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     public static final String APPLY_FOR_FINAL_ORDER = "Apply for final order";
 
     @Autowired
-    private SoleAppliedForFinalOrderNotification soleAppliedForFinalOrderNotification;
+    private FinalOrderNotification finalOrderNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -78,11 +79,17 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
         State endState = details.getState();
 
         if (details.getState() == AwaitingFinalOrder) {
-            if (data.getApplicationType().isSole()) {
-                notificationDispatcher.send(soleAppliedForFinalOrderNotification, data, details.getId());
-            }
+
+            notificationDispatcher.send(finalOrderNotification, data, details.getId());
 
             endState = FinalOrderRequested;
+
+            if (data.isWelshApplication()) {
+                data.getApplication().setWelshPreviousState(endState);
+                endState = WelshTranslationReview;
+                log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                    data.getApplication().getWelshPreviousState(), details.getId());
+            }
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

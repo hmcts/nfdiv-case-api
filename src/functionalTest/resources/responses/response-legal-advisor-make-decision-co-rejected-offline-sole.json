@@ -1,0 +1,79 @@
+{
+  "data": {
+    "applicationType": "soleApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1SolicitorRepresented": "No",
+    "applicant1Offline": "Yes",
+    "applicant2FirstName": "Olive",
+    "applicant2LastName": "Oil",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2SolicitorRepresented": "No",
+    "applicant2Offline": "Yes",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "solSignStatementOfTruth": "Yes",
+    "coGranted": "No",
+    "coRefusalDecision": "reject",
+    "coRefusalOrderDocument": {
+      "document_url": "${json-unit.any-string}",
+      "document_filename": "NoticeOfRefusalDocument.pdf",
+      "document_binary_url": "${json-unit.any-string}"
+    },
+    "coLegalAdvisorDecisions": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "granted": "No",
+        "decisionDate": "${json-unit.any-string}",
+        "refusalDecision": "reject"
+      }
+    }],
+    "documentsGenerated": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "${json-unit.any-string}",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "${json-unit.any-string}",
+        "documentType": "conditionalOrderRefusalCoverLetter"
+      }
+    }, {
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "${json-unit.any-string}",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "${json-unit.any-string}",
+        "documentType": "coversheet"
+      }
+    }, {
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "NoticeOfRefusalDocument.pdf",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "NoticeOfRefusalDocument.pdf",
+        "documentType": "conditionalOrderRefusal"
+      }
+    }, {
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "${json-unit.any-string}",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentType": "application"
+      }
+    }],
+    "dataVersion": 5,
+    "warnings": []
+  },
+  "state": "AwaitingAmendedApplication"
+}

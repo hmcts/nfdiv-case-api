@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ConditionalOrderPronouncedNotification;
+import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronouncedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -57,6 +59,9 @@ public class SystemPronounceCaseTest {
     @Mock
     private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
 
+    @Mock
+    private GenerateConditionalOrderPronouncedCoversheet generateCoversheetDocument;
+
     @InjectMocks
     private SystemPronounceCase underTest;
 
@@ -72,7 +77,7 @@ public class SystemPronounceCaseTest {
     }
 
     @Test
-    void shouldSendNotificationAndGenerateConditionalOrderGrantedDoc() {
+    void shouldGenerateConditionalOrderGrantedDoc() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .id(1L)
@@ -82,9 +87,22 @@ public class SystemPronounceCaseTest {
 
         underTest.aboutToSubmit(details, details);
 
-        verify(notificationDispatcher).send(notification, caseData, details.getId());
-
         verify(generateConditionalOrderPronouncedDocument).apply(details);
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldSendNotification() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .id(1L)
+            .data(caseData)
+            .build();
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
+
+        underTest.submitted(details, details);
+
+        verify(notificationDispatcher).send(notification, caseData, details.getId());
     }
 
     @Test
@@ -101,17 +119,19 @@ public class SystemPronounceCaseTest {
             .when(notificationDispatcher)
             .send(notification, caseData, details.getId());
 
-        underTest.aboutToSubmit(details, details);
+        underTest.submitted(details, details);
+
+        verify(logger)
+            .info("SystemPronounceCase submitted callback invoked for case id: {}", 1L);
 
         verify(logger)
             .error("Notification failed with message: {}", "Message", notificationTemplateException);
-        verify(logger)
-            .info("Conditional order pronounced for Case({})", 1L);
+
         verifyNoMoreInteractions(logger);
     }
 
     @Test
-    public void shouldSkipDocGenerationWhenCoDocumentAlreadyExistsAndNoChangesToConditionalOrder() {
+    public void shouldSkipDocGenerationWhenOnlineCoDocumentAlreadyExistsAndNoChangesToConditionalOrder() {
         final CaseData caseData = caseData();
 
         setConditionalOrder(caseData);
@@ -128,9 +148,9 @@ public class SystemPronounceCaseTest {
 
         underTest.aboutToSubmit(details, details);
 
-        verify(notificationDispatcher).send(notification, caseData, details.getId());
         verify(generateConditionalOrderPronouncedDocument).getConditionalOrderGrantedDoc(caseData);
         verifyNoMoreInteractions(generateConditionalOrderPronouncedDocument);
+        verifyNoInteractions(notificationDispatcher);
     }
 
     @Test
@@ -159,9 +179,9 @@ public class SystemPronounceCaseTest {
 
         underTest.aboutToSubmit(detailsNew, detailsOld);
 
-        verify(notificationDispatcher).send(notification, caseDataNew, detailsOld.getId());
         verify(generateConditionalOrderPronouncedDocument).getConditionalOrderGrantedDoc(caseDataNew);
         verify(generateConditionalOrderPronouncedDocument).removeExistingAndGenerateNewConditionalOrderGrantedDoc(detailsNew);
+        verifyNoInteractions(notificationDispatcher);
     }
 
     private void setConditionalOrder(final CaseData caseData) {

@@ -17,5 +17,6 @@
   "applicant2LegalProceedings": "Yes",
   "applicant2LegalProceedingsDetails": "some description",
   "statementOfTruth": "Yes",
-  "prayerHasBeenGiven": "Yes"
+  "confirmReadPetition": "Yes",
+  "howToRespondApplication": "withoutDisputeDivorce"
 }

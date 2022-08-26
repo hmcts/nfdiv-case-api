@@ -13,6 +13,7 @@ public final class CaseFieldsConstants {
     public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1SolicitorOrganisationPolicy";
     public static final String MARRIAGE_DATE = "marriageDate";
     public static final String APPLICANT_1_HWF = "applicant1HWFReferenceNumber";
+    public static final String APPLICANT_2_HWF = "applicant2HWFReferenceNumber";
     public static final String URGENT_CASE = "solUrgentCase";
     public static final String GENERAL_REFERRAL_URGENT_CASE = "generalReferralUrgentCase";
     public static final String APPLICANT_1_FIRM_NAME = "applicant1SolicitorFirmName";
@@ -32,5 +33,4 @@ public final class CaseFieldsConstants {
     // required for Checkstyle
     private CaseFieldsConstants() {
     }
-
 }

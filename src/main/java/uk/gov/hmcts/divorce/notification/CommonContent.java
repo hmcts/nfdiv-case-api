@@ -32,6 +32,7 @@ public class CommonContent {
     public static final String PARTNER = "partner";
     public static final String FIRST_NAME = "first name";
     public static final String LAST_NAME = "last name";
+    public static final String ADDRESS = "address";
 
     public static final String IS_DIVORCE = "isDivorce";
     public static final String IS_DISSOLUTION = "isDissolution";
@@ -100,6 +101,11 @@ public class CommonContent {
     public static final String APPLICANT_1 = "Applicant 1";
     public static final String APPLICANT_2 = "Applicant 2";
     public static final String RESPONDENT = "Respondent";
+    public static final String APPLICANT1_LABEL = "applicant1Label";
+    public static final String APPLICANT2_LABEL = "applicant2Label";
+
+    public static final String SPOUSE = "spouse";
+    public static final String SPOUSE_WELSH = "priod";
 
     @Autowired
     private EmailTemplatesConfig config;
@@ -159,8 +165,8 @@ public class CommonContent {
         templateVars.put("moreInfo", MORE_INFO.equals(refusalOption) ? YES : NO);
         templateVars.put("amendApplication", REJECT.equals(refusalOption) ? YES : NO);
         templateVars.put("isJoint", isSole ? NO : YES);
-        templateVars.put("applicant1Label", isSole ? APPLICANT : APPLICANT_1);
-        templateVars.put("applicant2Label", isSole ? RESPONDENT : APPLICANT_2);
+        templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
+        templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
 
         return templateVars;
     }
@@ -188,7 +194,7 @@ public class CommonContent {
     public String getPartner(CaseData caseData, Applicant partner) {
         if (caseData.isDivorce()) {
             if (isNull(partner.getGender())) {
-                return "spouse";
+                return SPOUSE;
             } else {
                 return partner.getGender() == MALE ? "husband" : "wife";
             }
@@ -200,7 +206,7 @@ public class CommonContent {
     public String getPartnerWelshContent(CaseData caseData, Applicant partner) {
         if (caseData.isDivorce()) {
             if (isNull(partner.getGender())) {
-                return "priod";
+                return SPOUSE_WELSH;
             } else {
                 return partner.getGender() == MALE ? "gŵr" : "gwraig";
             }

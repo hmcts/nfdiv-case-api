@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -14,6 +15,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -40,6 +43,15 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
     @Autowired
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
+
+    @Autowired
+    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
+
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -48,7 +60,7 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
             .endButtonLabel("Save Conditional Order")
-            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsSubmitted=\"No\"")
+            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted=\"Yes\" AND coApplicant2IsSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
@@ -78,7 +90,10 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             : AwaitingLegalAdvisorReferral;
 
         if (state == AwaitingLegalAdvisorReferral) {
+            notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, details.getId());
             generateConditionalOrderAnswersDocument.apply(details);
+        } else {
+            notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

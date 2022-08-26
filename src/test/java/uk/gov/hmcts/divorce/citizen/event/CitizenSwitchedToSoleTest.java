@@ -104,7 +104,7 @@ class CitizenSwitchedToSoleTest {
     }
 
     @Test
-    void givenEventStartedWithValidJointCaseForApplicant1SwitchToSoleWithApplicant2NotLinkedShouldRemoveAccessCodeAndSendNotifications() {
+    void givenEventStartedWithValidJointCaseForApplicant1SwitchToSoleWithApplicant2NotLinkedShouldSendNotifications() {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
         CaseData caseDataBefore = validJointApplicant1CaseData();
@@ -121,7 +121,35 @@ class CitizenSwitchedToSoleTest {
 
         verify(notificationDispatcher).send(applicant1SwitchToSoleNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService, times(0)).unlinkApplicant2FromCase(anyLong(), anyString());
+        assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
+        assertThat(response.getData().getCaseInvite().accessCode()).isNull();
+    }
+
+    @Test
+    void givenEventStartedWithValidJointCaseForApplicant1SwitchToSoleWithApplicant2LinkedShouldRemoveAccessCodeAndSendNotifications() {
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        CaseData caseDataBefore = validJointApplicant1CaseData();
+        setValidCaseInviteData(caseData);
+        setValidCaseInviteData(caseDataBefore);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(caseId).build();
+        final CaseDetails<CaseData, State> caseDetailsBefore =
+            CaseDetails.<CaseData, State>builder().data(caseDataBefore).id(caseId).build();
+        caseDataBefore.setApplicant2(
+            Applicant.builder()
+                .email(TEST_APPLICANT_2_EMAIL)
+                .build()
+        );
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
+        when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetailsBefore);
+
+        verify(notificationDispatcher).send(applicant1SwitchToSoleNotification, caseData, caseDetails.getId());
+        verifyNoMoreInteractions(notificationDispatcher);
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getCaseInvite().accessCode()).isNull();
     }
@@ -136,6 +164,11 @@ class CitizenSwitchedToSoleTest {
         setValidCaseInviteData(caseDataBefore);
         final CaseDetails<CaseData, State> caseDetailsBefore =
             CaseDetails.<CaseData, State>builder().data(caseDataBefore).id(caseId).build();
+        caseDataBefore.setApplicant2(
+            Applicant.builder()
+                .email(TEST_APPLICANT_2_EMAIL)
+                .build()
+        );
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app2-token");
         when(ccdAccessService.isApplicant1("app2-token", caseId)).thenReturn(false);
 
@@ -144,7 +177,7 @@ class CitizenSwitchedToSoleTest {
         verify(notificationDispatcher).send(applicant2SwitchToSoleNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
         verifyNoInteractions(applicant1SwitchToSoleNotification);
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
     }
 
@@ -155,7 +188,7 @@ class CitizenSwitchedToSoleTest {
         setValidCaseInviteData(caseData);
         CaseData caseDataBefore = validJointApplicant1CaseData();
         setValidCaseInviteData(caseDataBefore);
-        caseData.setApplicant2(
+        Applicant applicant2 =
             Applicant.builder()
                 .address(
                     AddressGlobalUK.builder()
@@ -166,8 +199,10 @@ class CitizenSwitchedToSoleTest {
                         .postCode("POSTCODE")
                         .build())
                 .contactDetailsType(PRIVATE)
-                .build()
-        );
+                .email(TEST_APPLICANT_2_EMAIL)
+                .build();
+        caseData.setApplicant2(applicant2);
+        caseDataBefore.setApplicant2(applicant2);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(caseId).build();
         final CaseDetails<CaseData, State> caseDetailsBefore =
             CaseDetails.<CaseData, State>builder().data(caseDataBefore).id(caseId).build();
@@ -177,7 +212,7 @@ class CitizenSwitchedToSoleTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetailsBefore);
 
         assertThat(response.getData().getApplicant2().getAddress()).isNull();
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
     }
 
     @Test
@@ -185,24 +220,25 @@ class CitizenSwitchedToSoleTest {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
         setValidCaseInviteData(caseData);
-        caseData.setApplicant2(
-            Applicant.builder()
-                .address(
-                    AddressGlobalUK.builder()
-                        .addressLine1("123 The Street")
-                        .postTown("The town")
-                        .county("County Durham")
-                        .country("England")
-                        .postCode("POSTCODE")
-                        .build())
-                .contactDetailsType(PUBLIC)
-                .build()
-        );
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(caseId).build();
         CaseData caseDataBefore = validJointApplicant1CaseData();
         setValidCaseInviteData(caseDataBefore);
         final CaseDetails<CaseData, State> caseDetailsBefore =
             CaseDetails.<CaseData, State>builder().data(caseDataBefore).id(caseId).build();
+        Applicant applicant2 = Applicant.builder()
+            .address(
+                AddressGlobalUK.builder()
+                    .addressLine1("123 The Street")
+                    .postTown("The town")
+                    .county("County Durham")
+                    .country("England")
+                    .postCode("POSTCODE")
+                    .build())
+            .contactDetailsType(PUBLIC)
+            .email(TEST_APPLICANT_2_EMAIL)
+            .build();
+        caseData.setApplicant2(applicant2);
+        caseDataBefore.setApplicant2(applicant2);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
         when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
 
@@ -218,7 +254,7 @@ class CitizenSwitchedToSoleTest {
                     .postCode("POSTCODE")
                     .build()
             );
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
     }
 
     @Test
@@ -229,26 +265,6 @@ class CitizenSwitchedToSoleTest {
 
         setValidCaseInviteData(caseData);
         caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_EMAIL, ACCESS_CODE, null));
-        caseData.setApplicant2(
-            Applicant.builder()
-                .firstName("Bob")
-                .middleName("The")
-                .lastName("Build")
-                .email("bob@buildings.com")
-                .gender(MALE)
-                .financialOrder(YES)
-                .lastNameChangedWhenMarried(YES)
-                .address(
-                    AddressGlobalUK.builder()
-                        .addressLine1("123 The Street")
-                        .postTown("The town")
-                        .county("County Durham")
-                        .country("England")
-                        .postCode("POSTCODE")
-                        .build())
-                .contactDetailsType(PRIVATE)
-                .build()
-        );
         caseData.getDocuments().setApplicant2DocumentsUploaded(new ArrayList<>());
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder().build());
@@ -264,6 +280,27 @@ class CitizenSwitchedToSoleTest {
         setValidCaseInviteData(caseDataBefore);
         final CaseDetails<CaseData, State> caseDetailsBefore =
             CaseDetails.<CaseData, State>builder().data(caseDataBefore).id(caseId).build();
+        Applicant applicant2 = Applicant.builder()
+            .firstName("Bob")
+            .middleName("The")
+            .lastName("Build")
+            .email("bob@buildings.com")
+            .gender(MALE)
+            .financialOrder(YES)
+            .lastNameChangedWhenMarried(YES)
+            .address(
+                AddressGlobalUK.builder()
+                    .addressLine1("123 The Street")
+                    .postTown("The town")
+                    .county("County Durham")
+                    .country("England")
+                    .postCode("POSTCODE")
+                    .build())
+            .contactDetailsType(PRIVATE)
+            .email(TEST_APPLICANT_2_EMAIL)
+            .build();
+        caseData.setApplicant2(applicant2);
+        caseDataBefore.setApplicant2(applicant2);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
         when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
 
@@ -294,7 +331,7 @@ class CitizenSwitchedToSoleTest {
         assertThat(response.getData().getApplication().getApplicant2ReminderSent()).isNull();
 
         assertThat(response.getData().getApplicant2().getApplicantPrayer().getPrayerDissolveDivorce()).isNull();
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
     }
 
     @Test
@@ -308,11 +345,16 @@ class CitizenSwitchedToSoleTest {
         ).build();
         CaseDetails<CaseData, State> beforeDetails =
             CaseDetails.<CaseData, State>builder().data(caseDataBefore).id(caseId).build();
+        caseDataBefore.setApplicant2(
+            Applicant.builder()
+                .email(TEST_APPLICANT_2_EMAIL)
+                .build()
+        );
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(caseId).build();
 
         citizenSwitchedToSole.aboutToSubmit(caseDetails, beforeDetails);
 
-        verify(ccdAccessService).unlinkUserFromApplication(eq(caseId), eq("app2-user-id"));
+        verify(ccdAccessService).unlinkApplicant2FromCase(eq(caseId), eq("app2-user-id"));
     }
 
     @Test
@@ -330,7 +372,7 @@ class CitizenSwitchedToSoleTest {
 
         citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetailsBefore);
 
-        verify(ccdAccessService, times(0)).unlinkUserFromApplication(anyLong(), anyString());
+        verify(ccdAccessService, times(0)).unlinkApplicant2FromCase(anyLong(), anyString());
     }
 
     @Test

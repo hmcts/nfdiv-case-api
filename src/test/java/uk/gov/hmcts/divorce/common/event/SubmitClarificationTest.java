@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ClarificationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.PostInformationToCourtNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
@@ -28,7 +29,6 @@ import java.util.Set;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -57,6 +57,9 @@ class SubmitClarificationTest {
     private PostInformationToCourtNotification postInformationToCourtNotification;
 
     @Mock
+    private ClarificationSubmittedNotification clarificationSubmittedNotification;
+
+    @Mock
     private Clock clock;
 
     @Test
@@ -83,6 +86,7 @@ class SubmitClarificationTest {
         submitClarification.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(postInformationToCourtNotification, caseData, 1L);
+        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, 1L);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -98,7 +102,8 @@ class SubmitClarificationTest {
 
         submitClarification.aboutToSubmit(caseDetails, null);
 
-        verifyNoInteractions(notificationDispatcher);
+        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, 1L);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
 
@@ -113,7 +118,8 @@ class SubmitClarificationTest {
 
         submitClarification.aboutToSubmit(caseDetails, null);
 
-        verifyNoInteractions(notificationDispatcher);
+        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, 1L);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test

@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.notification.SoleAppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.FinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -28,7 +29,7 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
     public static final String CITIZEN_FINAL_ORDER_DELAY_REASON = "citizen-final-order-delay-reason";
 
     @Autowired
-    private SoleAppliedForFinalOrderNotification soleAppliedForFinalOrderNotification;
+    private FinalOrderNotification finalOrderNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -51,14 +52,20 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
         log.info("Citizen final order delay reason about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
+        State endState = FinalOrderRequested;
 
-        if (data.getApplicationType().isSole()) {
-            notificationDispatcher.send(soleAppliedForFinalOrderNotification, data, details.getId());
+        notificationDispatcher.send(finalOrderNotification, data, details.getId());
+
+        if (data.isWelshApplication()) {
+            data.getApplication().setWelshPreviousState(endState);
+            endState = WelshTranslationReview;
+            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                data.getApplication().getWelshPreviousState(), details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(FinalOrderRequested)
+            .state(endState)
             .build();
     }
 }

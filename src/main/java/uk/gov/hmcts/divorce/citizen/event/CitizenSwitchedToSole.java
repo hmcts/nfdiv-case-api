@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
@@ -70,23 +71,25 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen switched to sole about to submit callback invoked for Case Id: {}", details.getId());
+        Long caseId = details.getId();
+        log.info("Citizen switched to sole about to submit callback invoked for Case Id: {}", caseId);
         CaseData data = details.getData();
 
-        if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), details.getId())) {
-            notificationDispatcher.send(applicant1SwitchToSoleNotification, data, details.getId());
+        if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
+            notificationDispatcher.send(applicant1SwitchToSoleNotification, data, caseId);
         } else {
-            notificationDispatcher.send(applicant2SwitchToSoleNotification, data, details.getId());
+            notificationDispatcher.send(applicant2SwitchToSoleNotification, data, caseId);
         }
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         removeApplicant2AnswersFromCase(data);
         data.getApplication().setJurisdiction(null);
 
-        CaseInvite caseInviteBefore = beforeDetails.getData().getCaseInvite();
+        CaseData beforeDetailsData = beforeDetails.getData();
+        CaseInvite caseInviteBefore = beforeDetailsData.getCaseInvite();
 
-        if (isNull(caseInviteBefore.accessCode())) {
-            log.info("Unlinking Applicant 2 from Case");
-            ccdAccessService.unlinkUserFromApplication(details.getId(), caseInviteBefore.applicant2UserId());
+        if (isNull(caseInviteBefore.accessCode()) && isNotEmpty(beforeDetailsData.getApplicant2().getEmail())) {
+            log.info("Unlinking Applicant 2 from Case Id: {}", caseId);
+            ccdAccessService.unlinkApplicant2FromCase(caseId, caseInviteBefore.applicant2UserId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

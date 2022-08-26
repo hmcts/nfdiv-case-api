@@ -16,6 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
@@ -81,6 +82,7 @@ public class Application {
 
     @JsonUnwrapped(prefix = "solService")
     @Builder.Default
+    @CCD(access = {DefaultAccess.class})
     private SolicitorService solicitorService = new SolicitorService();
 
     @JsonUnwrapped(prefix = "applicant1HWF")
@@ -114,7 +116,7 @@ public class Application {
     private String solUrgentCaseSupportingInformation;
 
     @CCD(
-        label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
+        label = "Want to apply to have the papers 'served' (sent to respondent) in another way",
         hint = "For example by email, text message or social media. This is a separate application with "
             + "an additional fee, which will need to be reviewed by a judge.",
         access = {DefaultAccess.class}
@@ -366,7 +368,8 @@ public class Application {
     @CCD(
         label = "Bulk Scan state to transition to",
         typeOverride = FixedList,
-        typeParameterOverride = "State"
+        typeParameterOverride = "State",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private State stateToTransitionApplicationTo;
 
@@ -409,9 +412,16 @@ public class Application {
     private YesOrNo applicantsRemindedCanApplyForConditionalOrder;
 
     @CCD(
+        label = "Notification sent to Joint Applicant indicating they can switch to sole",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jointApplicantNotifiedCanSwitchToSole;
+
+    @CCD(
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "ReissueOption"
+        typeParameterOverride = "ReissueOption",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private ReissueOption reissueOption;
 
@@ -447,7 +457,8 @@ public class Application {
     @CCD(
         label = "Progress paper case",
         typeOverride = FixedList,
-        typeParameterOverride = "ProgressPaperCase"
+        typeParameterOverride = "ProgressPaperCase",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private ProgressPaperCase progressPaperCase;
 
