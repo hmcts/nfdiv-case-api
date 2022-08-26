@@ -39,7 +39,6 @@ public class ProgressFinalOrderState implements CaseTask {
             state = isSole ? FinalOrderRequested : state == AwaitingFinalOrder
                 ? AwaitingJointFinalOrder
                 : FinalOrderRequested;
-
         }
 
         details.setData(data);
