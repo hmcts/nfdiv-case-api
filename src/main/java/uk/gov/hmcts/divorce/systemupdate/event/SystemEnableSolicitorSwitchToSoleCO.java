@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class SystemEnableSolicitorSwitchToSoleCO implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SYSTEM_ENABLE_SWITCH_TO_SOLE_CO = "system-enable-switch-to-sole-co";
+    public static final String SYSTEM_ENABLE_SWITCH_TO_SOLE_CO = "enable-switch-to-sole-co";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
