@@ -52,11 +52,9 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
             .name("Withdraw")
             .description("Withdrawn")
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE,
-                CASE_WORKER)
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(
                 SOLICITOR,
-                SUPER_USER,
                 LEGAL_ADVISOR)
             .aboutToSubmitCallback(this::aboutToSubmit));
     }
