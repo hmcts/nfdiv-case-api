@@ -1,12 +1,14 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -27,7 +29,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class Applicant1SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO = "applicant1-solicitor-switch-to-sole-co";
+    public static final String APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO = "app1-sol-switch-to-sole-co";
+
+    @Autowired
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -68,6 +73,8 @@ public class Applicant1SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, 
         data.getApplication().setSwitchedToSoleCo(YES);
         data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
+
+        generateConditionalOrderAnswersDocument.apply(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

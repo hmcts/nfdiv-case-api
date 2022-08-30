@@ -10,12 +10,14 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
+import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorSwitchedToSoleCo.APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO;
@@ -27,6 +29,9 @@ public class Applicant2SolicitorSwitchedToSoleCoTest {
 
     @Mock
     private SwitchToSoleService switchToSoleService;
+
+    @Mock
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @InjectMocks
     private Applicant2SolicitorSwitchedToSoleCo applicant2SolicitorSwitchedToSoleCo;
@@ -58,5 +63,7 @@ public class Applicant2SolicitorSwitchedToSoleCoTest {
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
         assertThat(response.getData().getLabelContent().getApplicant2()).isEqualTo("respondent");
         assertThat(response.getData().getConditionalOrder().getSwitchedToSole()).isEqualTo(YES);
+
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
     }
 }

@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -29,10 +30,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class Applicant2SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO = "applicant2-solicitor-switch-to-sole-co";
+    public static final String APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO = "app2-sol-switch-to-sole-co";
 
     @Autowired
     private SwitchToSoleService switchToSoleService;
+
+    @Autowired
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -80,6 +84,8 @@ public class Applicant2SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, 
         }
 
         switchToSoleService.switchApplicantData(data);
+
+        generateConditionalOrderAnswersDocument.apply(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
