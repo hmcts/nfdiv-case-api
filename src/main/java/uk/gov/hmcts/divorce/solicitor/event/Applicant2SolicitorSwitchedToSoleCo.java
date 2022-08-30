@@ -45,7 +45,7 @@ public class Applicant2SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, 
             .event(APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO)
             .forStateTransition(ConditionalOrderPending, AwaitingLegalAdvisorReferral)
             .showCondition("coApplicant2EnableSolicitorSwitchToSoleCo=\"Yes\"")
-            .name("SwitchedToSoleCO")
+            .name("App2SwitchedToSoleCO")
             .description("Application type switched to sole post CO submission")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)

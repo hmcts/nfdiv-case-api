@@ -26,7 +26,7 @@ public class SystemEnableSolicitorSwitchToSoleCO implements CCDConfig<CaseData, 
         configBuilder
             .event(SYSTEM_ENABLE_SWITCH_TO_SOLE_CO)
             .forState(ConditionalOrderPending)
-            .name("Enable Solicitor Switch to Sole CO")
+            .name("Enable Sol Switch to Sole CO")
             .description("Enable Solicitor Switch to Sole CO")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .retries(120, 120)
