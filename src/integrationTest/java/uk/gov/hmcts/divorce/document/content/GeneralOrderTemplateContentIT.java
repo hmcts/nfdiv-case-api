@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_MADE_BY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_RECITALS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_HEADING;
@@ -74,6 +75,7 @@ public class GeneralOrderTemplateContentIT {
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry(APPLICANT_HEADING, "Applicant"),
             entry(RESPONDENT_HEADING, "Respondent"),
+            entry(GENERAL_ORDER_RECITALS, "test recitals"),
             entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
         );
     }
@@ -110,6 +112,7 @@ public class GeneralOrderTemplateContentIT {
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry(APPLICANT_HEADING, "Applicant 1"),
             entry(RESPONDENT_HEADING, "Applicant 2"),
+            entry(GENERAL_ORDER_RECITALS, "test recitals"),
             entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
         );
     }
