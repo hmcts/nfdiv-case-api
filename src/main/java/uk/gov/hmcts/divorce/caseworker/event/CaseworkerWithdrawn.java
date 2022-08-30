@@ -78,6 +78,7 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
 
         ccdAccessService.removeUsersWithRole(details.getId(), roles);
 
+        // Only send notification if applicant has accessed the case. Checking gender which is set if applicant has progressed the case.
         if (caseData.getApplicant1().getGender() != null) {
             notificationDispatcher.send(applicationWithdrawnNotification, caseData, details.getId());
         }
