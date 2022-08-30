@@ -151,7 +151,7 @@ class ApplicationTest {
             .dateSubmitted(dateSubmitted)
             .build();
 
-        assertThat(application.getDateOfSubmissionResponse()).isEqualTo(dateSubmitted.toLocalDate().plusDays(14));
+        assertThat(application.getDateOfSubmissionResponse()).isEqualTo(dateSubmitted.toLocalDate().plusDays(28));
     }
 
     @Test
