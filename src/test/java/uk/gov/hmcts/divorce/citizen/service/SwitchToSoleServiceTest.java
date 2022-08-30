@@ -115,7 +115,7 @@ public class SwitchToSoleServiceTest {
         when(ccdAccessService.getCaseAssignmentRequest(caseId, "2", UserRole.APPLICANT_2))
             .thenReturn(getCaseAssignmentRequest("2", UserRole.APPLICANT_2));
 
-        switchToSoleService.switchUserRoles(caseId);
+        switchToSoleService.switchCitizenUserRoles(caseId);
 
         verify(caseAssignmentApi)
             .getUserRoles(

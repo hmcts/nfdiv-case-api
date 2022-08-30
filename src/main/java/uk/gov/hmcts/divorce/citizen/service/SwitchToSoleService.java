@@ -27,7 +27,9 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
@@ -48,7 +50,7 @@ public class SwitchToSoleService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    public void switchUserRoles(final Long caseId) {
+    public void switchCitizenUserRoles(final Long caseId) {
         final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         final String s2sToken = authTokenGenerator.generate();
         final CaseAssignmentUserRolesResource response =
@@ -71,6 +73,67 @@ public class SwitchToSoleService {
         removeCaseUserRoles(caseId, auth, s2sToken, currentApplicant2UserId, APPLICANT_2);
 
         addCaseUserRoles(caseId, auth, s2sToken, currentApplicant2UserId, CREATOR);
+        addCaseUserRoles(caseId, auth, s2sToken, currentCreatorUserId, APPLICANT_2);
+    }
+
+    public void switchSolicitorUserRoles(final Long caseId) {
+        final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
+        final String s2sToken = authTokenGenerator.generate();
+        final CaseAssignmentUserRolesResource response =
+            caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));
+
+        final List<CaseAssignmentUserRole> applicant1SolicitorUser = response.getCaseAssignmentUserRoles().stream()
+            .filter(caseAssignmentUserRole -> APPLICANT_1_SOLICITOR.getRole().equals(caseAssignmentUserRole.getCaseRole()))
+            .limit(1)
+            .toList();
+
+        final List<CaseAssignmentUserRole> applicant2SolicitorUser = response.getCaseAssignmentUserRoles().stream()
+            .filter(caseAssignmentUserRole -> APPLICANT_2_SOLICITOR.getRole().equals(caseAssignmentUserRole.getCaseRole()))
+            .limit(1)
+            .toList();
+
+        final String currentApplicant1SolicitorUserId =
+            !applicant1SolicitorUser.isEmpty()
+                ? applicant1SolicitorUser.get(0).getUserId()
+                : "";
+        final String currentApplicant2SolicitorUserId =
+            !applicant2SolicitorUser.isEmpty()
+                ? applicant2SolicitorUser.get(0).getUserId()
+                : "";
+
+        removeCaseUserRoles(caseId, auth, s2sToken, currentApplicant1SolicitorUserId, APPLICANT_1_SOLICITOR);
+        removeCaseUserRoles(caseId, auth, s2sToken, currentApplicant2SolicitorUserId, APPLICANT_2_SOLICITOR);
+
+        addCaseUserRoles(caseId, auth, s2sToken, currentApplicant2SolicitorUserId, APPLICANT_1_SOLICITOR);
+        addCaseUserRoles(caseId, auth, s2sToken, currentApplicant1SolicitorUserId, APPLICANT_2_SOLICITOR);
+    }
+
+    public void switchSolicitorAndCitizenUserRoles(final Long caseId) {
+        final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
+        final String s2sToken = authTokenGenerator.generate();
+        final CaseAssignmentUserRolesResource response =
+            caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));
+
+        final List<CaseAssignmentUserRole> creatorUser = response.getCaseAssignmentUserRoles().stream()
+            .filter(caseAssignmentUserRole -> CREATOR.getRole().equals(caseAssignmentUserRole.getCaseRole()))
+            .limit(1)
+            .toList();
+
+        final List<CaseAssignmentUserRole> applicant2SolicitorUser = response.getCaseAssignmentUserRoles().stream()
+            .filter(caseAssignmentUserRole -> APPLICANT_2_SOLICITOR.getRole().equals(caseAssignmentUserRole.getCaseRole()))
+            .limit(1)
+            .toList();
+
+        final String currentCreatorUserId = !creatorUser.isEmpty() ? creatorUser.get(0).getUserId() : "";
+        final String currentApplicant2SolicitorUserId =
+            !applicant2SolicitorUser.isEmpty()
+                ? applicant2SolicitorUser.get(0).getUserId()
+                : "";
+
+        removeCaseUserRoles(caseId, auth, s2sToken, currentCreatorUserId, CREATOR);
+        removeCaseUserRoles(caseId, auth, s2sToken, currentApplicant2SolicitorUserId, APPLICANT_2_SOLICITOR);
+
+        addCaseUserRoles(caseId, auth, s2sToken, currentApplicant2SolicitorUserId, APPLICANT_1_SOLICITOR);
         addCaseUserRoles(caseId, auth, s2sToken, currentCreatorUserId, APPLICANT_2);
     }
 

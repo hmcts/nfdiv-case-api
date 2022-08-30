@@ -38,6 +38,8 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
@@ -439,5 +441,23 @@ public class ConditionalOrder {
                 .build();
 
         }
+    }
+
+    @JsonIgnore
+    public boolean shouldEnableSwitchToSoleCoForApplicant1Solicitor() {
+        return
+            YES.equals(getConditionalOrderApplicant1Questions().getIsSubmitted())
+                && NO.equals(getConditionalOrderApplicant2Questions().getIsSubmitted())
+                && isNotEmpty(getConditionalOrderApplicant1Questions().getSubmittedDate())
+                && getConditionalOrderApplicant1Questions().getSubmittedDate().plusDays(14).isBefore(LocalDateTime.now());
+    }
+
+    @JsonIgnore
+    public boolean shouldEnableSwitchToSoleCoForApplicant2Solicitor() {
+        return
+            YES.equals(getConditionalOrderApplicant2Questions().getIsSubmitted())
+                && NO.equals(getConditionalOrderApplicant1Questions().getIsSubmitted())
+                && isNotEmpty(getConditionalOrderApplicant2Questions().getSubmittedDate())
+                && getConditionalOrderApplicant2Questions().getSubmittedDate().plusDays(14).isBefore(LocalDateTime.now());
     }
 }

@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPendi
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -65,7 +66,7 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
             .name("SwitchedToSoleCO")
             .description("Application type switched to sole post CO submission")
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER)
+            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
@@ -88,7 +89,7 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         }
 
         if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
-            switchToSoleService.switchUserRoles(caseId);
+            switchToSoleService.switchCitizenUserRoles(caseId);
             switchToSoleService.switchApplicantData(data);
         }
 
