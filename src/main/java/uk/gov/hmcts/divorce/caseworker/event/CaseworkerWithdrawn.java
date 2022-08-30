@@ -20,7 +20,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import java.util.List;
 import java.util.Objects;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_EXCLUDING_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -48,7 +48,7 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_WITHDRAWN)
-            .forStateTransition(POST_SUBMISSION_STATES, Withdrawn)
+            .forStateTransition(STATES_EXCLUDING_WITHDRAWN_AND_REJECTED, Withdrawn)
             .name("Withdraw")
             .description("Withdrawn")
             .showEventNotes()
@@ -78,7 +78,9 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
 
         ccdAccessService.removeUsersWithRole(details.getId(), roles);
 
-        notificationDispatcher.send(applicationWithdrawnNotification, caseData, details.getId());
+        if (caseData.getApplicant1().getGender() != null) {
+            notificationDispatcher.send(applicationWithdrawnNotification, caseData, details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

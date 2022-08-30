@@ -367,6 +367,11 @@ public enum State {
         Rejected
     ));
 
+    public static final EnumSet<State> STATES_EXCLUDING_WITHDRAWN_AND_REJECTED = EnumSet.complementOf(EnumSet.of(
+        Withdrawn,
+        Rejected
+    ));
+
     public static final EnumSet<State> POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED = EnumSet.complementOf(EnumSet.of(
         Draft,
         AwaitingApplicant1Response,

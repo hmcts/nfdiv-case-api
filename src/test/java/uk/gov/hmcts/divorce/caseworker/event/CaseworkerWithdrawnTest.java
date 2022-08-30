@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.common.notification.ApplicationWithdrawnNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -62,6 +63,7 @@ class CaseworkerWithdrawnTest {
     public void shouldUnlinkApplicantsAndSendNotificationsToApplicant() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant2CaseData();
+        caseData.getApplicant1().setGender(Gender.FEMALE);
         caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), "12345", "12"));
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
@@ -85,6 +87,7 @@ class CaseworkerWithdrawnTest {
     public void shouldRemoveSolicitorOrganisationPolicyForRepresentedApplicants() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant2CaseData();
+        caseData.getApplicant1().setGender(Gender.FEMALE);
         caseData.setApplicant1(applicantRepresentedBySolicitor());
         caseData.setApplicant2(applicantRepresentedBySolicitor());
         caseDetails.setData(caseData);
@@ -103,5 +106,26 @@ class CaseworkerWithdrawnTest {
         ));
         verify(notificationDispatcher).send(applicationWithdrawnNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    public void shouldUnlinkApplicantsAndNotSendNotificationsToApplicantWhenApplicant1sGenderIsNotSet() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), "12345", "12"));
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        var result = caseworkerWithdrawn.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(result.getData().getCaseInvite().accessCode()).isNull();
+        assertThat(result.getData().getCaseInvite().applicant2UserId()).isNull();
+
+        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
+            List.of(
+                CREATOR.getRole(),
+                APPLICANT_2.getRole()
+            )
+        ));
     }
 }
