@@ -20,7 +20,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
@@ -31,6 +32,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
@@ -51,6 +53,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -98,6 +101,11 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @DirtiesContext
 public class LegalAdvisorMakeDecisionIT {
 
+    private static final String REJECTED_REFUSAL_ORDER_TEMPLATE_FILE_NAME = "FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order.docx";
+    private static final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME =
+        "FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx";
+    private static final String UUID = "49fa338b-1955-41c2-8e05-1df710a8ffaa";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -117,7 +125,10 @@ public class LegalAdvisorMakeDecisionIT {
     private NotificationService notificationService;
 
     @Mock
-    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
+    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
+
+    @Mock
+    private ConditionalOrderRefusedForClarificationContent conditionalOrderRefusedForClarificationContent;
 
     @BeforeAll
     static void setUp() {
@@ -174,6 +185,8 @@ public class LegalAdvisorMakeDecisionIT {
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
             .refusalDecision(MORE_INFO)
+            .refusalClarificationReason(Set.of(MARRIAGE_CERTIFICATE))
+            .refusalClarificationAdditionalInfo("Clarification comments")
             .build());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -208,15 +221,17 @@ public class LegalAdvisorMakeDecisionIT {
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
             .refusalDecision(MORE_INFO)
+            .refusalClarificationReason(Set.of(MARRIAGE_CERTIFICATE))
+            .refusalClarificationAdditionalInfo("Clarification comments")
             .build());
 
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -242,7 +257,6 @@ public class LegalAdvisorMakeDecisionIT {
             )),
             eq(ENGLISH)
         );
-        // test that document has been created and added
     }
 
     @Test
@@ -257,17 +271,19 @@ public class LegalAdvisorMakeDecisionIT {
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
             .refusalDecision(MORE_INFO)
+            .refusalClarificationReason(Set.of(MARRIAGE_CERTIFICATE))
+            .refusalClarificationAdditionalInfo("Clarification comments")
             .build());
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
 
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -358,14 +374,14 @@ public class LegalAdvisorMakeDecisionIT {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, REJECTED_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -415,14 +431,14 @@ public class LegalAdvisorMakeDecisionIT {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, REJECTED_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -481,14 +497,14 @@ public class LegalAdvisorMakeDecisionIT {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, "FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order.docx");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -534,17 +550,19 @@ public class LegalAdvisorMakeDecisionIT {
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
             .refusalDecision(MORE_INFO)
+            .refusalClarificationReason(Set.of(MARRIAGE_CERTIFICATE))
+            .refusalClarificationAdditionalInfo("Clarification comments")
             .build());
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -591,15 +609,17 @@ public class LegalAdvisorMakeDecisionIT {
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
             .refusalDecision(MORE_INFO)
+            .refusalClarificationReason(Set.of(MARRIAGE_CERTIFICATE))
+            .refusalClarificationAdditionalInfo("Clarification comments")
             .build());
 
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -665,13 +685,13 @@ public class LegalAdvisorMakeDecisionIT {
             .refusalDecision(REJECT)
             .build());
 
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, REJECTED_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -731,15 +751,17 @@ public class LegalAdvisorMakeDecisionIT {
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
             .refusalDecision(MORE_INFO)
+            .refusalClarificationReason(Set.of(MARRIAGE_CERTIFICATE))
+            .refusalClarificationAdditionalInfo("Clarification comments")
             .build());
 
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
 
         mockMvc.perform(post(CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL)
                 .contentType(APPLICATION_JSON)
@@ -770,13 +792,13 @@ public class LegalAdvisorMakeDecisionIT {
             .refusalDecision(REJECT)
             .build());
 
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("49fa338b-1955-41c2-8e05-1df710a8ffaa", "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, "NFD_Refusal_Order_V2.docx");
 
         mockMvc.perform(post(CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL)
                 .contentType(APPLICATION_JSON)

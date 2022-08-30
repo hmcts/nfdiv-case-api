@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -23,55 +23,40 @@ import java.util.stream.Collectors;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
-import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_WELSH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE_WELSH;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
-public class ConditionalOrderRefusalContent {
+public class ConditionalOrderRefusedForAmendmentContent {
 
+    public static final String LEGAL_ADVISOR_COMMENTS = "legalAdvisorComments";
     private static final String IS_SOLE = "isSole";
     private static final String IS_JOINT = "isJoint";
-    private static final String LEGAL_ADVISOR_COMMENTS = "legalAdvisorComments";
-    private static final String IS_CLARIFICATION = "isClarification";
-    private static final String IS_AMENDED_APPLICATION = "isAmendedApplication";
-    private static final String IS_OFFLINE = "isOffline";
 
     @Autowired
     private Clock clock;
 
-    @Value("${court.locations.serviceCentre.serviceCentreName}")
-    private String serviceCentre;
+    @Autowired
+    private CommonContent commonContent;
 
-    @Value("${court.locations.serviceCentre.centreName}")
-    private String centreName;
-
-    @Value("${court.locations.serviceCentre.poBox}")
-    private String poBox;
-
-    @Value("${court.locations.serviceCentre.town}")
-    private String town;
-
-    @Value("${court.locations.serviceCentre.postCode}")
-    private String postcode;
-
-    @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
-
-    public Map<String, Object> apply(final CaseData caseData,
-                                     final Long ccdCaseReference) {
+    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         Map<String, Object> templateContent = new HashMap<>();
 
@@ -86,36 +71,28 @@ public class ConditionalOrderRefusalContent {
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
 
+        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                WELSH.equals(languagePreference) ? MARRIAGE_CY : MARRIAGE);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP,
+                WELSH.equals(languagePreference) ? DIVORCE_WELSH : DIVORCE);
         } else {
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP,
+                WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
         }
 
         templateContent.put(LEGAL_ADVISOR_COMMENTS, generateLegalAdvisorComments(conditionalOrder));
 
-        templateContent.put(IS_CLARIFICATION, MORE_INFO.equals(conditionalOrder.getRefusalDecision()));
-        templateContent.put(IS_AMENDED_APPLICATION, REJECT.equals(conditionalOrder.getRefusalDecision()));
-        templateContent.put(IS_OFFLINE, caseData.getApplicant1().isOffline());
-
-        final var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName(centreName)
-            .serviceCentre(serviceCentre)
-            .poBox(poBox)
-            .town(town)
-            .postcode(postcode)
-            .phoneNumber(phoneNumber)
-            .build();
-
-        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+        templateContent.put(PARTNER, getPartner(caseData));
 
         return templateContent;
     }
 
-    private List<RefusalReason> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
+    public List<RefusalReason> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
 
         if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
 
@@ -148,6 +125,17 @@ public class ConditionalOrderRefusalContent {
             return legalAdvisorComments;
 
         }
+    }
+
+    private String getPartner(final CaseData caseData) {
+        String partner = commonContent.getPartner(caseData, caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference());
+
+        if (caseData.isDivorce() && caseData.getApplicant1().isOffline()) {
+            partner = WELSH.equals(caseData.getApplicant1().getLanguagePreference()) ? SPOUSE_WELSH : SPOUSE;
+        }
+
+        return partner;
     }
 
     @Getter

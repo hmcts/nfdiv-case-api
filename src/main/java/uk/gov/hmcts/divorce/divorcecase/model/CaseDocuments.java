@@ -1,11 +1,14 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -14,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -91,7 +95,8 @@ public class CaseDocuments {
     @CCD(
         label = "Scanned documents",
         typeOverride = Collection,
-        typeParameterOverride = "ScannedDocument"
+        typeParameterOverride = "ScannedDocument",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private List<ListValue<ScannedDocument>> scannedDocuments;
 
@@ -124,6 +129,29 @@ public class CaseDocuments {
         access = {DefaultAccess.class}
     )
     private List<ListValue<DivorceDocument>> documentsUploadedOnConfirmService;
+
+
+    @CCD(
+        label = "What type of document was attached?",
+        access = {SystemUpdateAndSuperUserAccess.class}
+    )
+    private OfflineDocumentReceived typeOfDocumentAttached;
+
+    @Getter
+    @AllArgsConstructor
+    public enum OfflineDocumentReceived implements HasLabel {
+
+        @JsonProperty("D10")
+        AOS_D10("Acknowledgement of service (D10)"),
+
+        @JsonProperty("D84")
+        CO_D84("Application for a conditional order (D84)"),
+
+        @JsonProperty("Other")
+        OTHER("Other");
+
+        private final String label;
+    }
 
     public static <T> List<ListValue<T>> addDocumentToTop(final List<ListValue<T>> documents, final T value) {
         return addDocumentToTop(documents, value, null);
@@ -189,14 +217,24 @@ public class CaseDocuments {
                 .anyMatch(beforeValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
     }
 
-    @JsonIgnore
-    public Optional<Document> getFirstGeneratedDocumentLinkWith(final DocumentType documentType) {
-        return Stream.ofNullable(getDocumentsGenerated())
+    public static Optional<Document> getFirstDocumentLink(final List<ListValue<DivorceDocument>> documents,
+                                                          final DocumentType documentType) {
+        return Stream.ofNullable(documents)
             .flatMap(java.util.Collection::stream)
             .map(ListValue::getValue)
             .filter(divorceDocument -> documentType == divorceDocument.getDocumentType())
             .map(DivorceDocument::getDocumentLink)
             .findFirst();
+    }
+
+    @JsonIgnore
+    public Optional<Document> getFirstGeneratedDocumentLinkWith(final DocumentType documentType) {
+        return getFirstDocumentLink(getDocumentsGenerated(), documentType);
+    }
+
+    @JsonIgnore
+    public Optional<Document> getFirstUploadedDocumentLinkWith(final DocumentType documentType) {
+        return getFirstDocumentLink(getDocumentsUploaded(), documentType);
     }
 
     @JsonIgnore
@@ -206,7 +244,7 @@ public class CaseDocuments {
                 .removeIf(document -> documentType.equals(document.getValue().getDocumentType()));
         }
     }
-    
+
     public Optional<ListValue<DivorceDocument>> getDocumentGeneratedWithType(final DocumentType documentType) {
         return !isEmpty(this.getDocumentsGenerated())
             ? this.getDocumentsGenerated().stream()
