@@ -72,7 +72,7 @@ public class Applicant1Resubmit implements CCDConfig<CaseData, State, UserRole> 
                 .build();
         }
 
-        data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
+        data.setDueDate(LocalDate.now().plus(4, ChronoUnit.WEEKS));
         data.getApplication().setApplicant2ConfirmApplicant1Information(null);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation(null);
 
