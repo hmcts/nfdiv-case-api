@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.FinalOrderTemplateContent;
+import uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent;
 
 import java.time.Clock;
 
@@ -26,7 +26,7 @@ public class GenerateFinalOrder implements CaseTask {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private FinalOrderTemplateContent templateContent;
+    private FinalOrderGrantedTemplateContent templateContent;
 
     @Autowired
     private Clock clock;

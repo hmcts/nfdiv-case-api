@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,7 +55,7 @@ class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
-    void shouldPopulateFinalOrderGrantedDateIfFinalOrderIsEligible() {
+    void shouldPopulateFinalOrderGrantedDateAndSendEmailIfFinalOrderIsEligible() {
         final CaseData caseData = caseData();
         caseData.setFinalOrder(
             FinalOrder.builder()
@@ -65,6 +66,7 @@ class CaseworkerGrantFinalOrderTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
+        details.setId(TEST_CASE_ID);
 
         setMockClock(clock);
 

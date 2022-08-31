@@ -14,8 +14,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -29,6 +33,12 @@ import java.time.ZoneId;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,6 +48,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
@@ -49,9 +61,12 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataForGrantFinalOrder;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -74,6 +89,9 @@ public class CaseworkerGrantFinalOrderIT {
 
     @MockBean
     private WebMvcConfig webMvcConfig;
+
+    @MockBean
+    private NotificationService notificationService;
 
     @MockBean
     private Clock clock;
@@ -127,6 +145,8 @@ public class CaseworkerGrantFinalOrderIT {
 
         assertThatJson(response)
             .isEqualTo(json(expectedResponse("classpath:caseworker-grant-final-order-response.json")));
+
+        verifyNoInteractions(notificationService);
     }
 
     @Test
@@ -155,6 +175,8 @@ public class CaseworkerGrantFinalOrderIT {
                 status().isOk())
             .andExpect(
                 jsonPath("$.errors").value("Case is not yet eligible for Final Order"));
+
+        verifyNoInteractions(notificationService);
     }
 
     @Test
@@ -181,5 +203,71 @@ public class CaseworkerGrantFinalOrderIT {
             .andExpect(
                 status().isUnauthorized()
             );
+    }
+
+    @Test
+    public void shouldGenerateFinalOrderAndSendNotificationToSolicitorsWhenAboutToSubmitCallbackIsInvoked() throws Exception {
+        final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitor(
+            Solicitor.builder()
+                .name("App1 Sol")
+                .email(TEST_SOLICITOR_EMAIL)
+                .reference("App1 Sol Ref")
+                .build()
+        );
+
+        final Applicant applicant2 = getApplicant();
+        applicant2.setSolicitorRepresented(YesOrNo.YES);
+        applicant2.setSolicitor(Solicitor.builder()
+            .name("App2 Sol")
+            .email(TEST_USER_EMAIL)
+            .reference("App2 Sol Ref")
+            .build());
+        caseData.setApplicant2(applicant2);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Final-Order-Granted.docx");
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_GRANT_FINAL_ORDER)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse().getContentAsString();
+
+        assertThatJson(response)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(json(expectedResponse("classpath:caseworker-grant-final-order-solicitor-response.json")));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(SOLICITOR_FINAL_ORDER_GRANTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOLICITOR_FINAL_ORDER_GRANTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
     }
 }

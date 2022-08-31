@@ -29,16 +29,16 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderTemplateContent.A_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderTemplateContent.DISSOLUTION_OF_A_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderTemplateContent.DIVORCE;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderTemplateContent.SECTION;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderTemplateContent.SECTION_18A;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderTemplateContent.SECTION_18C;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderTemplateContent.SPOUSE;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderTemplateContent.SPOUSE_OR_CP;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderTemplateContent.THE_MARRIAGE;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderTemplateContent.THE_MARRIAGE_OR_CP;
+import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.A_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.DISSOLUTION_OF_A_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SECTION;
+import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SECTION_18A;
+import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SECTION_18C;
+import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SPOUSE;
+import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SPOUSE_OR_CP;
+import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.THE_MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.THE_MARRIAGE_OR_CP;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -50,7 +50,7 @@ public class FinalOrderTemplateContentTest {
     private Clock clock;
 
     @InjectMocks
-    private FinalOrderTemplateContent finalOrderTemplateContent;
+    private FinalOrderGrantedTemplateContent finalOrderGrantedTemplateContent;
 
     @BeforeEach
     public void setUp() {
@@ -61,7 +61,7 @@ public class FinalOrderTemplateContentTest {
     public void shouldMapTemplateContentWhenDivorceCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.SOLE_APPLICATION, DivorceOrDissolution.DIVORCE);
 
-        final Map<String, Object> templateContent = finalOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
@@ -85,7 +85,7 @@ public class FinalOrderTemplateContentTest {
     public void shouldMapTemplateContentWhenDissolutionCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.JOINT_APPLICATION, DivorceOrDissolution.DISSOLUTION);
 
-        final Map<String, Object> templateContent = finalOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),

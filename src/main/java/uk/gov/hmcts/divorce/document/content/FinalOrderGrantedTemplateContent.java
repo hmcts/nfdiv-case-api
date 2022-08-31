@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class FinalOrderTemplateContent {
+public class FinalOrderGrantedTemplateContent {
 
     public static final String THE_MARRIAGE_OR_CP = "theMarriageOrCp";
     public static final String SECTION = "section";
