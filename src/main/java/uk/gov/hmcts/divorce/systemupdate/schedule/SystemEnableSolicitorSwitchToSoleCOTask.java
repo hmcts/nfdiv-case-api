@@ -47,7 +47,7 @@ public class SystemEnableSolicitorSwitchToSoleCOTask implements Runnable {
     @Override
     public void run() {
 
-        log.info("Remind applicant 2 scheduled task started");
+        log.info("Enable Solicitor Switch to Sole CO scheduled task started");
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();

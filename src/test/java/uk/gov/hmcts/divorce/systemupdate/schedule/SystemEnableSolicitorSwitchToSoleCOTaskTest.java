@@ -274,7 +274,7 @@ public class SystemEnableSolicitorSwitchToSoleCOTaskTest {
     }
 
     @Test
-    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
+    void shouldContinueToNextCaseIfManagementExceptionIsThrownWhileProcessingPreviousCase() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
@@ -338,6 +338,79 @@ public class SystemEnableSolicitorSwitchToSoleCOTaskTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_ENABLE_SWITCH_TO_SOLE_CO, user, SERVICE_AUTHORIZATION);
+
+        task.run();
+
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_ENABLE_SWITCH_TO_SOLE_CO, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_ENABLE_SWITCH_TO_SOLE_CO, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldContinueToNextCaseIfIllegalArgumentExceptionIsThrownWhileProcessingPreviousCase() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+
+        Map<String, Object> dataMap1 = Map.of(
+            "coApplicant1IsSubmitted", YES,
+            "coApplicant2IsSubmitted", NO,
+            "coApplicant1SubmittedDate", LocalDate.now().minusDays(15).toString()
+        );
+
+        Map<String, Object> dataMap2 = Map.of(
+            "coApplicant2IsSubmitted", YES,
+            "coApplicant1IsSubmitted", NO,
+            "coApplicant2SubmittedDate", LocalDate.now().minusDays(15).toString()
+        );
+
+        final CaseData caseData1 = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder.builder()
+                    .conditionalOrderApplicant1Questions(
+                        ConditionalOrderQuestions.builder()
+                            .isSubmitted(YES)
+                            .submittedDate(LocalDateTime.now().minusDays(15))
+                            .build()
+                    )
+                    .conditionalOrderApplicant2Questions(
+                        ConditionalOrderQuestions.builder()
+                            .isSubmitted(NO)
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+
+        final CaseData caseData2 = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder.builder()
+                    .conditionalOrderApplicant1Questions(
+                        ConditionalOrderQuestions.builder()
+                            .isSubmitted(NO)
+                            .build()
+                    )
+                    .conditionalOrderApplicant2Questions(
+                        ConditionalOrderQuestions.builder()
+                            .isSubmitted(YES)
+                            .submittedDate(LocalDateTime.now().minusDays(15))
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+
+        when(caseDetails1.getData()).thenReturn(dataMap1);
+        when(caseDetails2.getData()).thenReturn(dataMap2);
+
+        when(mapper.convertValue(dataMap1, CaseData.class)).thenReturn(caseData1);
+        when(mapper.convertValue(dataMap2, CaseData.class)).thenReturn(caseData2);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPending))
+            .thenReturn(caseDetailsList);
+
+        doThrow(new IllegalArgumentException())
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_ENABLE_SWITCH_TO_SOLE_CO, user, SERVICE_AUTHORIZATION);
 
         task.run();

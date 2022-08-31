@@ -27,6 +27,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
@@ -89,7 +91,7 @@ public class SwitchToSoleServiceTest {
     }
 
     @Test
-    void shouldSwitchUserRolesIfApplicant2TriggeredD84SwitchToSole() {
+    void shouldSwitchCitizenUserRolesIfApplicant2TriggeredD84SwitchToSole() {
         final long caseId = 1L;
 
         final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
@@ -140,6 +142,130 @@ public class SwitchToSoleServiceTest {
                 CASEWORKER_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 getCaseAssignmentRequest("1", CREATOR)
+            );
+        verify(caseAssignmentApi)
+            .addCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("2", UserRole.APPLICANT_2)
+            );
+        verifyNoMoreInteractions(caseAssignmentApi);
+    }
+
+    @Test
+    void shouldSwitchSolicitorUserRolesIfApplicant2SolicitorTriggeredSwitchToSoleCo() {
+        final long caseId = 1L;
+
+        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("[APPTWOSOLICITOR]").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("[APPONESOLICITOR]").build()
+            ))
+            .build();
+
+        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(CASEWORKER_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, List.of(String.valueOf(caseId))))
+            .thenReturn(caseRolesResponse);
+        when(ccdAccessService.getCaseAssignmentRequest(caseId, "2", APPLICANT_1_SOLICITOR))
+            .thenReturn(getCaseAssignmentRequest("2", APPLICANT_1_SOLICITOR));
+        when(ccdAccessService.getCaseAssignmentRequest(caseId, "1", APPLICANT_2_SOLICITOR))
+            .thenReturn(getCaseAssignmentRequest("1", APPLICANT_2_SOLICITOR));
+        when(ccdAccessService.getCaseAssignmentRequest(caseId, "1", APPLICANT_1_SOLICITOR))
+            .thenReturn(getCaseAssignmentRequest("1", APPLICANT_1_SOLICITOR));
+        when(ccdAccessService.getCaseAssignmentRequest(caseId, "2", APPLICANT_2_SOLICITOR))
+            .thenReturn(getCaseAssignmentRequest("2", APPLICANT_2_SOLICITOR));
+
+        switchToSoleService.switchSolicitorUserRoles(caseId);
+
+        verify(caseAssignmentApi)
+            .getUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                List.of(String.valueOf(caseId))
+            );
+        verify(caseAssignmentApi)
+            .removeCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("2", APPLICANT_1_SOLICITOR)
+            );
+        verify(caseAssignmentApi)
+            .removeCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("1", APPLICANT_2_SOLICITOR)
+            );
+        verify(caseAssignmentApi)
+            .addCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("1", APPLICANT_1_SOLICITOR)
+            );
+        verify(caseAssignmentApi)
+            .addCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("2", APPLICANT_2_SOLICITOR)
+            );
+        verifyNoMoreInteractions(caseAssignmentApi);
+    }
+
+    @Test
+    void shouldSwitchCitizenAndSolicitorUserRolesIfApplicant2SolicitorTriggeredSwitchToSoleAndApplicant1Citizen() {
+        final long caseId = 1L;
+
+        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("[APPTWOSOLICITOR]").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("[CREATOR]").build()
+            ))
+            .build();
+
+        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(CASEWORKER_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, List.of(String.valueOf(caseId))))
+            .thenReturn(caseRolesResponse);
+        when(ccdAccessService.getCaseAssignmentRequest(caseId, "2", CREATOR))
+            .thenReturn(getCaseAssignmentRequest("2", CREATOR));
+        when(ccdAccessService.getCaseAssignmentRequest(caseId, "1", APPLICANT_2_SOLICITOR))
+            .thenReturn(getCaseAssignmentRequest("1", APPLICANT_2_SOLICITOR));
+        when(ccdAccessService.getCaseAssignmentRequest(caseId, "1", APPLICANT_1_SOLICITOR))
+            .thenReturn(getCaseAssignmentRequest("1", APPLICANT_1_SOLICITOR));
+        when(ccdAccessService.getCaseAssignmentRequest(caseId, "2", UserRole.APPLICANT_2))
+            .thenReturn(getCaseAssignmentRequest("2", UserRole.APPLICANT_2));
+
+        switchToSoleService.switchSolicitorAndCitizenUserRoles(caseId);
+
+        verify(caseAssignmentApi)
+            .getUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                List.of(String.valueOf(caseId))
+            );
+        verify(caseAssignmentApi)
+            .removeCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("2", CREATOR)
+            );
+        verify(caseAssignmentApi)
+            .removeCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("1", APPLICANT_2_SOLICITOR)
+            );
+        verify(caseAssignmentApi)
+            .addCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("1", APPLICANT_1_SOLICITOR)
             );
         verify(caseAssignmentApi)
             .addCaseUserRoles(
