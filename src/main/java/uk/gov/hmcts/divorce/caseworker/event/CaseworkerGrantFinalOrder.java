@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.GrantFinalOrderService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -26,7 +27,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
-
 @Slf4j
 @Component
 public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, UserRole> {
@@ -35,6 +35,9 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private GrantFinalOrderService grantFinalOrderService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -62,20 +65,25 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
 
         CaseData caseData = details.getData();
+
         LocalDate dateFinalOrderEligibleFrom = caseData.getFinalOrder().getDateFinalOrderEligibleFrom();
 
+        LocalDateTime currentDateTime = LocalDateTime.now(clock);
+
         if (dateFinalOrderEligibleFrom != null
-            && dateFinalOrderEligibleFrom.isAfter(LocalDate.now())) {
+            && dateFinalOrderEligibleFrom.isAfter(currentDateTime.toLocalDate())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("Case is not yet eligible for Final Order"))
                 .build();
         }
 
-        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
+        caseData.getFinalOrder().setGrantedDate(currentDateTime);
+
+        CaseDetails<CaseData, State> updatedCaseDetails = grantFinalOrderService.process(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(updatedCaseDetails.getData())
             .build();
     }
 }

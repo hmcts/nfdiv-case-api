@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.GrantFinalOrderService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -19,6 +20,9 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -31,6 +35,9 @@ class CaseworkerGrantFinalOrderTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private GrantFinalOrderService grantFinalOrderService;
 
     @InjectMocks
     private CaseworkerGrantFinalOrder caseworkerGrantFinalOrder;
@@ -61,10 +68,14 @@ class CaseworkerGrantFinalOrderTest {
 
         setMockClock(clock);
 
+        when(grantFinalOrderService.process(details)).thenReturn(details);
+
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToSubmit(details, details);
 
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
+
+        verify(grantFinalOrderService).process(details);
     }
 
     @Test
@@ -80,9 +91,13 @@ class CaseworkerGrantFinalOrderTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
+        setMockClock(clock);
+
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToSubmit(details, details);
 
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isNull();
         assertThat(response.getErrors()).contains("Case is not yet eligible for Final Order");
+
+        verifyNoInteractions(grantFinalOrderService);
     }
 }
