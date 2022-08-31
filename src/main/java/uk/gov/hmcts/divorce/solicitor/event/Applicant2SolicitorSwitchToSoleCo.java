@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
-public class Applicant2SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
+public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO = "app2-sol-switch-to-sole-co";
 
@@ -44,12 +44,12 @@ public class Applicant2SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, 
         new PageBuilder(configBuilder
             .event(APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO)
             .forStateTransition(ConditionalOrderPending, AwaitingLegalAdvisorReferral)
-            .showCondition("coApplicant2EnableSolicitorSwitchToSoleCo=\"Yes\"")
-            .name("App2SwitchedToSoleCO")
-            .description("Application type switched to sole post CO submission")
+            //.showCondition("coApplicant2EnableSolicitorSwitchToSoleCo=\"Yes\"")
+            .name("Switch To Sole CO")
+            .description("Changing to a sole conditional order application")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
-            .showEventNotes()
+            .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit))
             .page("app2SolSwitchToSoleCo")
             .pageLabel("Changing to a sole conditional order application")
@@ -62,15 +62,19 @@ public class Applicant2SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, 
                     """
             )
             .complex(CaseData::getConditionalOrder)
-            .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
-            .mandatory(ConditionalOrderQuestions::getConfirmSwitchToSole);
+                .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
+                    .mandatory(ConditionalOrderQuestions::getConfirmSwitchToSole)
+                .done()
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        Long caseId = details.getId();
-        log.info("SolicitorSwitchedToSoleCO aboutToSubmit callback invoked for Case Id: {}", caseId);
+
         CaseData data = details.getData();
+        Long caseId = details.getId();
+
+        log.info("Applicant 2 Solicitor SwitchedToSoleCO aboutToSubmit callback invoked for Case Id: {}", caseId);
 
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setSwitchedToSoleCo(YES);
@@ -83,7 +87,7 @@ public class Applicant2SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, 
             switchToSoleService.switchSolicitorAndCitizenUserRoles(caseId);
         }
 
-        switchToSoleService.switchApplicantData(data);
+        switchToSoleService.switchApplicantData(data, caseId);
 
         generateConditionalOrderAnswersDocument.apply(details);
 

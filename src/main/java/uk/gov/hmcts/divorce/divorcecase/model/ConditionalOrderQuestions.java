@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -121,7 +122,7 @@ public class ConditionalOrderQuestions {
     @CCD(
         label = " "
     )
-    private ConfirmSwitchToSole confirmSwitchToSole;
+    private Set<ConfirmSwitchToSole> confirmSwitchToSole;
 
     @Getter
     @AllArgsConstructor

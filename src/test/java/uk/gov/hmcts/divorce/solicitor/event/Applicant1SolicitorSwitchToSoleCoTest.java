@@ -19,24 +19,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorSwitchedToSoleCo.APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorSwitchToSoleCo.APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant1SolicitorSwitchedToSoleCoTest {
+public class Applicant1SolicitorSwitchToSoleCoTest {
 
     @Mock
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @InjectMocks
-    private Applicant1SolicitorSwitchedToSoleCo applicant1SolicitorSwitchedToSoleCo;
+    private Applicant1SolicitorSwitchToSoleCo applicant1SolicitorSwitchToSoleCo;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        applicant1SolicitorSwitchedToSoleCo.configure(configBuilder);
+        applicant1SolicitorSwitchToSoleCo.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -53,7 +53,7 @@ public class Applicant1SolicitorSwitchedToSoleCoTest {
         caseDetails.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
-            applicant1SolicitorSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+            applicant1SolicitorSwitchToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);

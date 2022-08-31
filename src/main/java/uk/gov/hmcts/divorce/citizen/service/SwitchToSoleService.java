@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.service.ProcessConfidentialDocumentsService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -49,6 +50,9 @@ public class SwitchToSoleService {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private ProcessConfidentialDocumentsService confidentialDocumentsService;
 
     public void switchCitizenUserRoles(final Long caseId) {
         final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
@@ -163,7 +167,7 @@ public class SwitchToSoleService {
         );
     }
 
-    public void switchApplicantData(final CaseData data) {
+    public void switchApplicantData(final CaseData data, final Long caseId) {
         final Application application = data.getApplication();
         final Applicant applicant1 = data.getApplicant1();
         final Applicant applicant2 = data.getApplicant2();
@@ -174,6 +178,7 @@ public class SwitchToSoleService {
         populateSwitchedToSoleData(application);
         switchConditionalOrderAnswers(data.getConditionalOrder());
         data.setCaseInvite(new CaseInvite(data.getApplicant2().getEmail(), null, null));
+        confidentialDocumentsService.processDocuments(data, caseId);
     }
 
     private void switchApplicationData(final CaseData data, final Application application, final Applicant applicant2) {

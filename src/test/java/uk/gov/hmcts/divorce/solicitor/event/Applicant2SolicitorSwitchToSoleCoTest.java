@@ -21,13 +21,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorSwitchedToSoleCo.APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorSwitchToSoleCo.APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant2SolicitorSwitchedToSoleCoTest {
+public class Applicant2SolicitorSwitchToSoleCoTest {
 
     @Mock
     private SwitchToSoleService switchToSoleService;
@@ -36,13 +36,13 @@ public class Applicant2SolicitorSwitchedToSoleCoTest {
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @InjectMocks
-    private Applicant2SolicitorSwitchedToSoleCo applicant2SolicitorSwitchedToSoleCo;
+    private Applicant2SolicitorSwitchToSoleCo applicant2SolicitorSwitchToSoleCo;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        applicant2SolicitorSwitchedToSoleCo.configure(configBuilder);
+        applicant2SolicitorSwitchToSoleCo.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -60,7 +60,7 @@ public class Applicant2SolicitorSwitchedToSoleCoTest {
         caseDetails.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
-            applicant2SolicitorSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+            applicant2SolicitorSwitchToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
@@ -83,7 +83,7 @@ public class Applicant2SolicitorSwitchedToSoleCoTest {
         caseDetails.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
-            applicant2SolicitorSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+            applicant2SolicitorSwitchToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);

@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
-public class Applicant1SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
+public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO = "app1-sol-switch-to-sole-co";
 
@@ -40,12 +40,12 @@ public class Applicant1SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, 
         new PageBuilder(configBuilder
             .event(APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO)
             .forStateTransition(ConditionalOrderPending, AwaitingLegalAdvisorReferral)
-            .showCondition("coApplicant1EnableSolicitorSwitchToSoleCo=\"Yes\"")
-            .name("App1SwitchedToSoleCO")
-            .description("Application type switched to sole post CO submission")
+            //.showCondition("coApplicant1EnableSolicitorSwitchToSoleCo=\"Yes\"")
+            .name("Switch To Sole CO")
+            .description("Changing to a sole conditional order application")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
-            .showEventNotes()
+            .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit))
             .page("app1SolSwitchToSoleCo")
             .pageLabel("Changing to a sole conditional order application")
@@ -58,16 +58,19 @@ public class Applicant1SolicitorSwitchedToSoleCo implements CCDConfig<CaseData, 
                     """
             )
             .complex(CaseData::getConditionalOrder)
-            .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
-            .mandatory(ConditionalOrderQuestions::getConfirmSwitchToSole);
+                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
+                    .mandatory(ConditionalOrderQuestions::getConfirmSwitchToSole)
+                .done()
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+
         final CaseData data = details.getData();
         final Long caseId = details.getId();
 
-        log.info("SolicitorSwitchedToSoleCO aboutToSubmit callback invoked for Case Id: {}", caseId);
+        log.info("Applicant 1 Solicitor SwitchedToSoleCO aboutToSubmit callback invoked for Case Id: {}", caseId);
 
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setSwitchedToSoleCo(YES);
