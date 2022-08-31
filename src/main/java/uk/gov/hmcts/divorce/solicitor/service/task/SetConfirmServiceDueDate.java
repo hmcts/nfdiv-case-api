@@ -39,9 +39,9 @@ public class SetConfirmServiceDueDate implements CaseTask {
             dueDate = holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate());
         }
 
-        log.info("Setting dueDate of {}, for CaseId: {}", caseData.getDueDate(), caseDetails.getId());
+        caseData.setDueDate(dueDate);
 
-        caseDetails.getData().setDueDate(dueDate);
+        log.info("Setting dueDate of {}, for CaseId: {}", caseData.getDueDate(), caseDetails.getId());
 
         return caseDetails;
     }
