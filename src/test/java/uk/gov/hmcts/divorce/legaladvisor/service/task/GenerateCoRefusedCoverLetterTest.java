@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent.LEGAL_ADVISOR_COMMENTS;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent.LEGAL_ADVISOR_COMMENTS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CP_CASE_EMAIL;
@@ -52,7 +52,7 @@ public class GenerateCoRefusedCoverLetterTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
+    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
 
     @Mock
     private Clock clock;
@@ -64,8 +64,8 @@ public class GenerateCoRefusedCoverLetterTest {
     void shouldGenerateCoRefusedCoverLetterWithDivorceContent() {
         setMockClock(clock);
 
-        final List<ConditionalOrderRefusalContent.RefusalReason> refusalReasons =
-            List.of(new ConditionalOrderRefusalContent.RefusalReason("Court does not have jurisdiction"));
+        final List<ConditionalOrderRefusedForAmendmentContent.RefusalReason> refusalReasons =
+            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Court does not have jurisdiction"));
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
@@ -99,7 +99,7 @@ public class GenerateCoRefusedCoverLetterTest {
             )
             .build();
 
-        when(conditionalOrderRefusalContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
+        when(conditionalOrderRefusedForAmendmentContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
 
         generateCoRefusedCoverLetter.generateAndUpdateCaseData(
@@ -124,8 +124,8 @@ public class GenerateCoRefusedCoverLetterTest {
     void shouldGenerateCoRefusedCoverLetterWithDissolutionContent() {
         setMockClock(clock);
 
-        final List<ConditionalOrderRefusalContent.RefusalReason> refusalReasons =
-            List.of(new ConditionalOrderRefusalContent.RefusalReason("Court does not have jurisdiction"));
+        final List<ConditionalOrderRefusedForAmendmentContent.RefusalReason> refusalReasons =
+            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Court does not have jurisdiction"));
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
@@ -159,7 +159,7 @@ public class GenerateCoRefusedCoverLetterTest {
             )
             .build();
 
-        when(conditionalOrderRefusalContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
+        when(conditionalOrderRefusedForAmendmentContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
 
         generateCoRefusedCoverLetter.generateAndUpdateCaseData(
