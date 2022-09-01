@@ -27,6 +27,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.mockito.Mockito.when;
@@ -36,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerConfirmService.CASEWORKER_CONFIRM_SERVICE;
 import static uk.gov.hmcts.divorce.common.service.ConfirmService.DOCUMENTS_NOT_UPLOADED_ERROR;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.start;
@@ -47,6 +49,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -161,9 +164,8 @@ public class CaseworkerConfirmServiceIT {
     @Test
     void shouldThrowErrorWhenServiceProcessedByProcessServerAndDocumentsNotAttached() throws Exception {
 
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
         setMockClock(clock);
+
         final LocalDate serviceDate = getExpectedLocalDate();
 
         final SolicitorService solicitorService = SolicitorService.builder()
@@ -177,7 +179,7 @@ public class CaseworkerConfirmServiceIT {
         caseData.getApplication().setIssueDate(serviceDate);
         caseData.getApplication().setSolicitorService(solicitorService);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=CaseworkerConfirmService")
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/mid-event?page=CaseworkerConfirmService")
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -188,6 +190,74 @@ public class CaseworkerConfirmServiceIT {
                 status().isOk()
             )
             .andExpect(jsonPath("$.errors").value(DOCUMENTS_NOT_UPLOADED_ERROR));
+    }
+
+    @Test
+    void shouldNotThrowErrorWhenServiceProcessedByProcessServerAndDocumentsAreAttached() throws Exception {
+
+        setMockClock(clock);
+
+        final LocalDate serviceDate = getExpectedLocalDate();
+
+        final SolicitorService solicitorService = SolicitorService.builder()
+            .dateOfService(serviceDate)
+            .serviceProcessedByProcessServer(Set.of(SolicitorService.ServiceProcessedByProcessServer.CONFIRM))
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
+        caseData.getApplication().setIssueDate(serviceDate);
+        caseData.getApplication().setSolicitorService(solicitorService);
+        caseData.setDocuments(CaseDocuments.builder()
+            .documentsUploadedOnConfirmService(List.of(documentWithType(OTHER)))
+            .build());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/mid-event?page=CaseworkerConfirmService")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_CONFIRM_SERVICE)))
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(jsonPath("$.errors").doesNotExist());
+    }
+
+    @Test
+    void shouldNotThrowErrorWhenServiceNotProcessedByProcessServer() throws Exception {
+
+        setMockClock(clock);
+
+        final LocalDate serviceDate = getExpectedLocalDate();
+
+        final SolicitorService solicitorService = SolicitorService.builder()
+            .dateOfService(serviceDate)
+            .serviceProcessedByProcessServer(null)
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
+        caseData.getApplication().setIssueDate(serviceDate);
+        caseData.getApplication().setSolicitorService(solicitorService);
+        caseData.setDocuments(CaseDocuments.builder()
+            .documentsUploadedOnConfirmService(List.of(documentWithType(OTHER)))
+            .build());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/mid-event?page=CaseworkerConfirmService")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_CONFIRM_SERVICE)))
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(jsonPath("$.errors").doesNotExist());
     }
 
     @Test

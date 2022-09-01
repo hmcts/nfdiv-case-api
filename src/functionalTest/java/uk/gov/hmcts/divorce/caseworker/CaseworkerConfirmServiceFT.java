@@ -93,7 +93,8 @@ public class CaseworkerConfirmServiceFT extends FunctionalTestSuite {
 
         Map<String, Object> caseDataMap = objectMapper.convertValue(caseData, new TypeReference<>() {});
 
-        Response response = triggerCallback(caseDataMap, CASEWORKER_CONFIRM_SERVICE, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(caseDataMap, CASEWORKER_CONFIRM_SERVICE,
+            "/callbacks/mid-event?page=CaseworkerConfirmService");
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 

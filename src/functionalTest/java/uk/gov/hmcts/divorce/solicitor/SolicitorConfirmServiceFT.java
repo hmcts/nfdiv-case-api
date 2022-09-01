@@ -26,9 +26,9 @@ import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.common.service.ConfirmService.DOCUMENTS_NOT_UPLOADED_ERROR;
-import static uk.gov.hmcts.divorce.common.service.ConfirmService.SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.SOLICITOR_CONFIRM_SERVICE;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfirmServiceCaseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
@@ -95,7 +95,7 @@ public class SolicitorConfirmServiceFT extends FunctionalTestSuite {
 
         Map<String, Object> caseDataMap = objectMapper.convertValue(caseData, new TypeReference<>() {});
 
-        Response response = triggerCallback(caseDataMap, SOLICITOR_CONFIRM_SERVICE, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(caseDataMap, SOLICITOR_CONFIRM_SERVICE, "/callbacks/mid-event?page=SolConfirmService");
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
@@ -114,7 +114,7 @@ public class SolicitorConfirmServiceFT extends FunctionalTestSuite {
 
         Map<String, Object> caseDataMap = objectMapper.convertValue(caseData, new TypeReference<>() {});
 
-        Response response = triggerCallback(caseDataMap, SOLICITOR_CONFIRM_SERVICE, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(caseDataMap, SOLICITOR_CONFIRM_SERVICE, "/callbacks/mid-event?page=SolConfirmService");
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
