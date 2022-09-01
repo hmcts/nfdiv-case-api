@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -93,7 +94,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -126,7 +128,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -157,7 +160,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -191,7 +195,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -222,7 +227,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -256,7 +262,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -337,7 +344,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -375,7 +383,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );

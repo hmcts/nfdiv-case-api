@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_1;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.UNION_TYPE;
@@ -134,6 +135,8 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
         templateVars.put(DATE_OF_HEARING, conditionalOrder.getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER));
         templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43,
             conditionalOrder.getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER));
+        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS,
+            conditionalOrder.getGrantedDate().plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
