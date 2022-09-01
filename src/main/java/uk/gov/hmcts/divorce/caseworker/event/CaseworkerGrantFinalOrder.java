@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -50,6 +51,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .showEventNotes()
             .endButtonLabel("Submit")
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
             .page("grantFinalOrder")
@@ -85,5 +87,14 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedCaseDetails.getData())
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+        log.info("CitizenSaveAndClose submitted callback invoked for case id: {}", details.getId());
+
+        grantFinalOrderService.sendNotifications(details);
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }

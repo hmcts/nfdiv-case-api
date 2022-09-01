@@ -23,7 +23,12 @@ public class GrantFinalOrderService {
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
-            generateFinalOrder,
+            generateFinalOrder
+        ).run(caseDetails);
+    }
+
+    public CaseDetails<CaseData, State> sendNotifications(final CaseDetails<CaseData, State> caseDetails) {
+        return caseTasks(
             sendFinalOrderGrantedNotifications
         ).run(caseDetails);
     }

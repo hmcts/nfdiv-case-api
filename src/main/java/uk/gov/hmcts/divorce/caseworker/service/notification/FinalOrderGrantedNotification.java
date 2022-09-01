@@ -22,12 +22,16 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANTS_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
 public class FinalOrderGrantedNotification implements ApplicantNotification {
+
+    public static final String FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID =
+        "Sending Final Order Granted Notification to {} for case id: {}";
 
     @Autowired
     private NotificationService notificationService;
@@ -36,8 +40,42 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     private CommonContent commonContent;
 
     @Override
+    public void sendToApplicant1(CaseData caseData, Long caseId) {
+
+        boolean isSole = caseData.getApplicationType().isSole();
+
+        if (isSole) {
+            log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "applicant", caseId);
+            notificationService.sendEmail(
+                caseData.getApplicant1().getEmail(),
+                APPLICANTS_FINAL_ORDER_GRANTED,
+                solicitorTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant2(CaseData caseData, Long caseId) {
+
+        boolean isSole = caseData.getApplicationType().isSole();
+
+        if (isSole) {
+            log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "respondent", caseId);
+
+            notificationService.sendEmail(
+                caseData.getApplicant2().getEmail(),
+                APPLICANTS_FINAL_ORDER_GRANTED,
+                solicitorTemplateContent(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        }
+    }
+
+    @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
-        log.info("Sending Final Order Granted Notification to applicant solicitor for case id: {}", caseId);
+        log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID,
+            caseData.getApplicationType().isSole() ? "applicant solicitor" : "applicant 1 solicitor", caseId);
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
             SOLICITOR_FINAL_ORDER_GRANTED,
@@ -48,7 +86,8 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
-        log.info("Sending Final Order Granted Notification to respondent solicitor for case id: {}", caseId);
+        log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID,
+            caseData.getApplicationType().isSole() ? "respondent solicitor" : "applicant 2 solicitor", caseId);
         notificationService.sendEmail(
             caseData.getApplicant2().getSolicitor().getEmail(),
             SOLICITOR_FINAL_ORDER_GRANTED,
