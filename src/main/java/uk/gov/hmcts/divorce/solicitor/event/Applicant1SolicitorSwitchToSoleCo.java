@@ -40,7 +40,7 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
         new PageBuilder(configBuilder
             .event(APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO)
             .forStateTransition(ConditionalOrderPending, AwaitingLegalAdvisorReferral)
-            //.showCondition("coApplicant1EnableSolicitorSwitchToSoleCo=\"Yes\"")
+            .showCondition("coApplicant1EnableSolicitorSwitchToSoleCo=\"Yes\"")
             .name("Switch To Sole CO")
             .description("Changing to a sole conditional order application")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)

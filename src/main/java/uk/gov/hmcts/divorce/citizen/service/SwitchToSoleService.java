@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.service.ProcessConfidentialDocumentsService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.SwitchedToSole;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
@@ -50,9 +51,6 @@ public class SwitchToSoleService {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
-
-    @Autowired
-    private ProcessConfidentialDocumentsService confidentialDocumentsService;
 
     public void switchCitizenUserRoles(final Long caseId) {
         final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
@@ -178,7 +176,6 @@ public class SwitchToSoleService {
         populateSwitchedToSoleData(application);
         switchConditionalOrderAnswers(data.getConditionalOrder());
         data.setCaseInvite(new CaseInvite(data.getApplicant2().getEmail(), null, null));
-        confidentialDocumentsService.processDocuments(data, caseId);
     }
 
     private void switchApplicationData(final CaseData data, final Application application, final Applicant applicant2) {
@@ -250,6 +247,11 @@ public class SwitchToSoleService {
         Document currentApplicant2SolicitorAnswersLink = application.getApplicant2SolicitorAnswersLink();
         application.setApplicant1SolicitorAnswersLink(currentApplicant2SolicitorAnswersLink);
         application.setApplicant2SolicitorAnswersLink(currentApplicant1SolicitorAnswersLink);
+
+        List<ListValue<DivorceDocument>> currentApplicant1DocumentsUploaded = data.getDocuments().getApplicant1DocumentsUploaded();
+        List<ListValue<DivorceDocument>> currentApplicant2DocumentsUploaded = data.getDocuments().getApplicant2DocumentsUploaded();
+        data.getDocuments().setApplicant1DocumentsUploaded(currentApplicant2DocumentsUploaded);
+        data.getDocuments().setApplicant2DocumentsUploaded(currentApplicant1DocumentsUploaded);
     }
 
     private void switchConditionalOrderAnswers(ConditionalOrder conditionalOrder) {
