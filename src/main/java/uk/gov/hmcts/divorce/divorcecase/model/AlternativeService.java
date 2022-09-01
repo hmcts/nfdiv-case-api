@@ -16,6 +16,9 @@ import java.time.LocalDate;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 
 @Data
 @AllArgsConstructor
@@ -106,6 +109,11 @@ public class AlternativeService {
 
     @JsonIgnore
     public boolean isApplicationGranted() {
-        return YesOrNo.YES.equals(serviceApplicationGranted);
+        return YES.equals(serviceApplicationGranted);
+    }
+
+    @JsonIgnore
+    public boolean isApplicationGrantedDeemedOrDispensed() {
+        return YES.equals(serviceApplicationGranted) && DEEMED.equals(alternativeServiceType) || DISPENSED.equals(alternativeServiceType);
     }
 }

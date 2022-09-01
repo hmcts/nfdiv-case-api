@@ -37,7 +37,7 @@ class SetDateSubmittedTest {
 
         setMockClock(clock);
         final LocalDateTime expectedDateSubmitted = getExpectedLocalDateTime();
-        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(14).toLocalDate();
+        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(28).toLocalDate();
 
         final CaseData caseData = CaseData.builder().build();
 
@@ -59,7 +59,7 @@ class SetDateSubmittedTest {
 
         setMockClock(clock);
         final LocalDateTime expectedDateSubmitted = getExpectedLocalDateTime();
-        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(14).toLocalDate();
+        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(28).toLocalDate();
 
         final CaseData caseData = CaseData.builder().build();
 
@@ -81,7 +81,7 @@ class SetDateSubmittedTest {
 
         setMockClock(clock);
         final LocalDateTime expectedDateSubmitted = getExpectedLocalDateTime();
-        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(14).toLocalDate();
+        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(28).toLocalDate();
 
         final CaseData caseData = CaseData.builder().build();
 
@@ -103,7 +103,7 @@ class SetDateSubmittedTest {
 
         setMockClock(clock);
         final LocalDateTime expectedDateSubmitted = getExpectedLocalDateTime();
-        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(14).toLocalDate();
+        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(28).toLocalDate();
 
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setWelshPreviousState(Submitted);
@@ -126,7 +126,7 @@ class SetDateSubmittedTest {
 
         setMockClock(clock);
         final LocalDateTime expectedDateSubmitted = getExpectedLocalDateTime();
-        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(14).toLocalDate();
+        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(28).toLocalDate();
 
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setWelshPreviousState(AwaitingDocuments);
@@ -149,7 +149,7 @@ class SetDateSubmittedTest {
 
         setMockClock(clock);
         final LocalDateTime expectedDateSubmitted = getExpectedLocalDateTime();
-        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(14).toLocalDate();
+        final LocalDate expectedDueDate = expectedDateSubmitted.plusDays(28).toLocalDate();
 
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setWelshPreviousState(AwaitingHWFDecision);

@@ -18,6 +18,7 @@
     "howToRespondApplication": "disputeDivorce",
     "typeOfDocumentAttached": "D10",
     "dueDate": "${json-unit.any-string}",
+    "statementOfTruth": "Yes",
     "documentsUploaded": [
       {
         "id": "${json-unit.any-string}",
