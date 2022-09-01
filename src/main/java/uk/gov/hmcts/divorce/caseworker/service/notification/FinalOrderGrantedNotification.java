@@ -49,7 +49,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
             notificationService.sendEmail(
                 caseData.getApplicant1().getEmail(),
                 APPLICANTS_FINAL_ORDER_GRANTED,
-                solicitorTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
                 caseData.getApplicant1().getLanguagePreference()
             );
         }
@@ -66,7 +66,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
             notificationService.sendEmail(
                 caseData.getApplicant2().getEmail(),
                 APPLICANTS_FINAL_ORDER_GRANTED,
-                solicitorTemplateContent(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
+                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
