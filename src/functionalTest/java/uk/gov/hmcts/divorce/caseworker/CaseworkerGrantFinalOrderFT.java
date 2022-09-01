@@ -29,12 +29,12 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
     public static final String REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON =
         "classpath:request/casedata/ccd-callback-caseworker-grant-final-order.json";
 
-    private static final String REQUEST =
-        "classpath:request/casedata/ccd-callback-caseworker-grant-final-order-about-to-submit.json";
+    private static final String REQUEST_CASEWORKER_GRANT_FINAL_ORDER_SOLICITOR_JSON =
+        "classpath:request/casedata/ccd-callback-caseworker-grant-final-order-solicitor.json";
 
     @Test
     public void shouldSendBothSolicitorsEmailsWhenAboutToSubmitCallbackIsInvoked() throws Exception {
-        final Map<String, Object> caseData = caseData(REQUEST);
+        final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_GRANT_FINAL_ORDER_SOLICITOR_JSON);
 
         final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
