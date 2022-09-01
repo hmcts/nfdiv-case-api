@@ -150,6 +150,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             final CaseDetails<CaseData, State> response = submitAosService.submitOfflineAos(details);
             response.getData().getApplicant2().setOffline(YES);
+            response.getData().getAcknowledgementOfService().setStatementOfTruth(YES);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(response.getData())

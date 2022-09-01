@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -94,7 +95,8 @@ public class CaseDocuments {
     @CCD(
         label = "Scanned documents",
         typeOverride = Collection,
-        typeParameterOverride = "ScannedDocument"
+        typeParameterOverride = "ScannedDocument",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private List<ListValue<ScannedDocument>> scannedDocuments;
 
@@ -130,7 +132,8 @@ public class CaseDocuments {
 
 
     @CCD(
-        label = "What type of document was attached?"
+        label = "What type of document was attached?",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private OfflineDocumentReceived typeOfDocumentAttached;
 
