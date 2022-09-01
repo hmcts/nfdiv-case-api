@@ -109,7 +109,7 @@ public class CaseDocuments {
     private List<ListValue<DivorceDocument>> answerReceivedSupportingDocuments;
 
     @CCD(
-        label = "Select respondent answers document",
+        label = "Select scanned document name",
         access = {CaseworkerAccessOnlyAccess.class}
     )
     private DynamicList scannedDocumentNames;
