@@ -38,7 +38,9 @@ import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 
@@ -311,6 +313,29 @@ public class CcdSearchService {
             )
             .from(0)
             .size(50);
+
+        return coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
+    }
+
+    public List<CaseDetails> searchJointApplicationsWithAccessCodePastIssue(User user, String serviceAuth) {
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(
+                boolQuery()
+                    .must(boolQuery()
+                        .should(boolQuery().must(existsQuery("data.accessCode")))
+                        .should(boolQuery().must(existsQuery("data.issueDate")))
+                        .should(boolQuery().must(termsQuery("data.applicationType", "jointApplication")))
+                    )
+            )
+            .from(0)
+            .size(500);
 
         return coreCaseDataApi.searchCases(
             user.getAuthToken(),
