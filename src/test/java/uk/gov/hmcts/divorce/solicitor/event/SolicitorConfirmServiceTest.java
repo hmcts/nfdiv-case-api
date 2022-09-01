@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.common.service.ConfirmService;
 import uk.gov.hmcts.divorce.common.service.SubmitConfirmService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -23,17 +24,19 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.service.ConfirmService.DOCUMENTS_NOT_UPLOADED_ERROR;
-import static uk.gov.hmcts.divorce.common.service.ConfirmService.SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.SOLICITOR_CONFIRM_SERVICE;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -44,6 +47,9 @@ public class SolicitorConfirmServiceTest {
 
     @Mock
     private SubmitConfirmService submitConfirmService;
+
+    @Mock
+    private ConfirmService confirmService;
 
     @InjectMocks
     private SolicitorConfirmService solicitorConfirmService;
@@ -78,6 +84,8 @@ public class SolicitorConfirmServiceTest {
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
         assertThat(response.getData().getDueDate()).isEqualTo(LocalDate.of(2021, 1, 1));
+
+        verify(confirmService).addToDocumentsUploaded(caseDetails);
     }
 
     @Test
@@ -107,47 +115,8 @@ public class SolicitorConfirmServiceTest {
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNotEmpty();
 
-        DivorceDocument confirmServiceDoc = response.getData().getDocuments().getDocumentsUploaded().get(0).getValue();
-
-        assertThat(confirmServiceDoc.getDocumentLink().getUrl()).isEqualTo("url");
-        assertThat(confirmServiceDoc.getDocumentLink().getFilename()).isEqualTo("filename.pdf");
-        assertThat(confirmServiceDoc.getDocumentLink().getBinaryUrl()).isEqualTo("url/binary");
-        assertThat(response.getData().getDocuments().getDocumentsUploadedOnConfirmService()).isNull();
-    }
-
-    @Test
-    public void shouldAddAnyConfirmServiceAttachmentsToDocumentsUploadedListWhenDocumentsUploadedIsNull() {
-        final CaseData caseData = caseData();
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
-
-        final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentLink(new Document("url", "filename.pdf", "url/binary"))
-                .build())
-            .build();
-
-        caseData.getDocuments().setDocumentsUploadedOnConfirmService(Lists.newArrayList(confirmServiceAttachments));
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(caseDetails);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).isNull();
-        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNotEmpty();
-
-        DivorceDocument confirmServiceDoc = response.getData().getDocuments().getDocumentsUploaded().get(0).getValue();
-
-        assertThat(confirmServiceDoc.getDocumentLink().getUrl()).isEqualTo("url");
-        assertThat(confirmServiceDoc.getDocumentLink().getFilename()).isEqualTo("filename.pdf");
-        assertThat(confirmServiceDoc.getDocumentLink().getBinaryUrl()).isEqualTo("url/binary");
-        assertThat(response.getData().getDocuments().getDocumentsUploadedOnConfirmService()).isNull();
+        verify(confirmService).addToDocumentsUploaded(caseDetails);
     }
 
     @Test
@@ -163,11 +132,21 @@ public class SolicitorConfirmServiceTest {
         caseData.setDueDate(LocalDate.of(2021, 1, 1));
         updatedCaseDetails.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
+        List<String> validationErrors = Lists.newArrayList(SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR);
+        when(confirmService.validateConfirmService(caseData)).thenReturn(new ArrayList<>());
+        when(confirmService.getErrorResponse(caseDetails, validationErrors)).thenReturn(
+            AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseDetails.getData())
+                .errors(validationErrors)
+                .state(caseDetails.getState())
+                .build()
+        );
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).contains(SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR);
 
-        verifyNoInteractions(submitConfirmService);
+        verifyNoMoreInteractions(confirmService);
     }
 
     @Test
@@ -182,11 +161,21 @@ public class SolicitorConfirmServiceTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
+        List<String> validationErrors = Lists.newArrayList(DOCUMENTS_NOT_UPLOADED_ERROR);
+        when(confirmService.validateConfirmService(caseData)).thenReturn(validationErrors);
+        when(confirmService.getErrorResponse(caseDetails, validationErrors)).thenReturn(
+            AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseDetails.getData())
+                .errors(validationErrors)
+                .state(caseDetails.getState())
+                .build()
+        );
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).contains(DOCUMENTS_NOT_UPLOADED_ERROR);
 
-        verifyNoInteractions(submitConfirmService);
+        verifyNoMoreInteractions(confirmService);
     }
 
     @Test
@@ -209,9 +198,7 @@ public class SolicitorConfirmServiceTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(caseDetails);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();

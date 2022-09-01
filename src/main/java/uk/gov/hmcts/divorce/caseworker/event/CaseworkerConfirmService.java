@@ -30,12 +30,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
-public class CaseworkerConfirmService extends ConfirmService implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerConfirmService implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_CONFIRM_SERVICE = "caseworker-confirm-service";
 
     @Autowired
     private SubmitConfirmService submitConfirmService;
+
+    @Autowired
+    private ConfirmService confirmService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -49,7 +52,7 @@ public class CaseworkerConfirmService extends ConfirmService implements CCDConfi
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
-            .page("caseworkerConfirmService")
+            .page("CaseworkerConfirmService", this::midEvent)
             .pageLabel("Confirm Service")
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getDocumentsUploadedOnConfirmService)
@@ -76,6 +79,21 @@ public class CaseworkerConfirmService extends ConfirmService implements CCDConfi
             .done();
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                   CaseDetails<CaseData, State> beforeDetails) {
+        final CaseData caseData = details.getData();
+
+        final List<String> validationErrors = confirmService.validateConfirmService(caseData);
+
+        if (!validationErrors.isEmpty()) {
+            return confirmService.getErrorResponse(details, validationErrors);
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
@@ -88,17 +106,11 @@ public class CaseworkerConfirmService extends ConfirmService implements CCDConfi
             serviceMethod,
             details.getId());
 
-        final List<String> validationErrors = validateConfirmService(caseData);
-
-        if (!validationErrors.isEmpty()) {
-            return getErrorResponse(details, validationErrors);
-        }
-
         final CaseDetails<CaseData, State> updateDetails = submitConfirmService.submitConfirmService(details);
 
         log.info("Due date after submit task is {}", updateDetails.getData().getDueDate());
 
-        addToDocumentsUploaded(updateDetails);
+        confirmService.addToDocumentsUploaded(updateDetails);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())

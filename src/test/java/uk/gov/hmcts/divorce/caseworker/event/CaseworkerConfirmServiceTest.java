@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.common.service.ConfirmService;
 import uk.gov.hmcts.divorce.common.service.SubmitConfirmService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -23,10 +24,11 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerConfirmService.CASEWORKER_CONFIRM_SERVICE;
@@ -43,6 +45,9 @@ public class CaseworkerConfirmServiceTest {
 
     @Mock
     private SubmitConfirmService submitConfirmService;
+
+    @Mock
+    private ConfirmService confirmService;
 
     @InjectMocks
     private CaseworkerConfirmService caseworkerConfirmService;
@@ -77,6 +82,8 @@ public class CaseworkerConfirmServiceTest {
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
         assertThat(response.getData().getDueDate()).isEqualTo(LocalDate.of(2021, 1, 1));
+
+        verify(confirmService).addToDocumentsUploaded(caseDetails);
     }
 
     @Test
@@ -98,6 +105,7 @@ public class CaseworkerConfirmServiceTest {
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
         assertThat(response.getData().getDueDate()).isEqualTo(LocalDate.of(2021, 1, 1));
+        verify(confirmService).addToDocumentsUploaded(caseDetails);
     }
 
     @Test
@@ -127,47 +135,8 @@ public class CaseworkerConfirmServiceTest {
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNotEmpty();
 
-        DivorceDocument confirmServiceDoc = response.getData().getDocuments().getDocumentsUploaded().get(0).getValue();
-
-        assertThat(confirmServiceDoc.getDocumentLink().getUrl()).isEqualTo("url");
-        assertThat(confirmServiceDoc.getDocumentLink().getFilename()).isEqualTo("filename.pdf");
-        assertThat(confirmServiceDoc.getDocumentLink().getBinaryUrl()).isEqualTo("url/binary");
-        assertThat(response.getData().getDocuments().getDocumentsUploadedOnConfirmService()).isNull();
-    }
-
-    @Test
-    public void shouldAddAnyConfirmServiceAttachmentsToDocumentsUploadedListWhenDocumentsUploadedIsNull() {
-        final CaseData caseData = caseData();
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
-
-        final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentLink(new Document("url", "filename.pdf", "url/binary"))
-                .build())
-            .build();
-
-        caseData.getDocuments().setDocumentsUploadedOnConfirmService(Lists.newArrayList(confirmServiceAttachments));
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(caseDetails);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).isNull();
-        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNotEmpty();
-
-        DivorceDocument confirmServiceDoc = response.getData().getDocuments().getDocumentsUploaded().get(0).getValue();
-
-        assertThat(confirmServiceDoc.getDocumentLink().getUrl()).isEqualTo("url");
-        assertThat(confirmServiceDoc.getDocumentLink().getFilename()).isEqualTo("filename.pdf");
-        assertThat(confirmServiceDoc.getDocumentLink().getBinaryUrl()).isEqualTo("url/binary");
-        assertThat(response.getData().getDocuments().getDocumentsUploadedOnConfirmService()).isNull();
+        verify(confirmService).addToDocumentsUploaded(caseDetails);
     }
 
     @Test
@@ -182,11 +151,19 @@ public class CaseworkerConfirmServiceTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToSubmit(caseDetails, caseDetails);
+        List<String> validationErrors = Lists.newArrayList(DOCUMENTS_NOT_UPLOADED_ERROR);
+        when(confirmService.validateConfirmService(caseData)).thenReturn(validationErrors);
+        when(confirmService.getErrorResponse(caseDetails, validationErrors)).thenReturn(
+            AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseDetails.getData())
+                .errors(validationErrors)
+                .state(caseDetails.getState())
+                .build()
+        );
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).contains(DOCUMENTS_NOT_UPLOADED_ERROR);
-
-        verifyNoInteractions(submitConfirmService);
     }
 
     @Test

@@ -35,8 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.common.service.ConfirmService.DOCUMENTS_NOT_UPLOADED_ERROR;
-import static uk.gov.hmcts.divorce.common.service.ConfirmService.SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.SOLICITOR_CONFIRM_SERVICE;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.start;
@@ -113,8 +113,6 @@ public class SolicitorConfirmServiceIT {
     @Test
     void shouldFailValidationIfNotSolicitorService() throws Exception {
 
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
         setMockClock(clock);
         final LocalDate serviceDate = getExpectedLocalDate();
 
@@ -128,7 +126,7 @@ public class SolicitorConfirmServiceIT {
         caseData.getApplication().setIssueDate(serviceDate);
         caseData.getApplication().setSolicitorService(solicitorService);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=SolConfirmService")
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/mid-event?page=SolConfirmService")
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -144,8 +142,6 @@ public class SolicitorConfirmServiceIT {
     @Test
     void shouldThrowErrorWhenServiceProcessedByProcessServerAndDocumentsNotAttached() throws Exception {
 
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
         setMockClock(clock);
         final LocalDate serviceDate = getExpectedLocalDate();
 
@@ -160,7 +156,7 @@ public class SolicitorConfirmServiceIT {
         caseData.getApplication().setIssueDate(serviceDate);
         caseData.getApplication().setSolicitorService(solicitorService);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=SolConfirmService")
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/mid-event?page=SolConfirmService")
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
