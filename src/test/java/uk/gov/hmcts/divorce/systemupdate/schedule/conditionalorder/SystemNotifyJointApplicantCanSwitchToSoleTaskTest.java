@@ -25,7 +25,6 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +45,6 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyJointApplicant
 import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemNotifyJointApplicantCanSwitchToSoleTask.NOTIFICATION_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -69,15 +67,12 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
     @Mock
     private ObjectMapper mapper;
 
-    @Mock
-    private Clock clock;
-
     @InjectMocks
     private SystemNotifyJointApplicantCanSwitchToSoleTask notifyJointApplicantCanSwitchToSoleTask;
 
     private User user;
 
-    private static final LocalDate NOW = LocalDate.of(2022, 7, 22);
+    private static final LocalDate NOW = LocalDate.now();
 
     private static final BoolQueryBuilder query =
         boolQuery()
@@ -99,8 +94,6 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
     @Test
     void shouldSubmitNotifySwitchToSoleEventWhenJointConditionalOrderOverdueFromApplicant2() {
-
-        setMockClock(clock, NOW);
 
         Map<String, Object> data = new HashMap<>();
         data.put("coApplicant1IsSubmitted", "Yes");
@@ -139,8 +132,6 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
     @Test
     void shouldSubmitNotifySwitchToSoleEventWhenJointConditionalOrderOverdueFromApplicant1() {
 
-        setMockClock(clock, NOW);
-
         CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
@@ -178,8 +169,6 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
     @Test
     void shouldNotSubmitNotifySwitchToSoleEventWhenJointConditionalOrderIsNotYetOverdue() {
-
-        setMockClock(clock, NOW);
 
         Map<String, Object> data = new HashMap<>();
         data.put("coApplicant1IsSubmitted", "Yes");
@@ -227,7 +216,6 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
     @Test
     void shouldStopProcessingIfThereIsConflictDuringSubmission() {
-        setMockClock(clock, NOW);
 
         Map<String, Object> data = new HashMap<>();
         data.put("coApplicant2IsSubmitted", "Yes");
@@ -269,7 +257,6 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
-        setMockClock(clock, NOW);
 
         Map<String, Object> data1 = new HashMap<>();
         data1.put("coApplicant1IsSubmitted", "Yes");

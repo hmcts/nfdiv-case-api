@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.common.notification.Applicant1CanSwitchToSoleNotific
 import uk.gov.hmcts.divorce.common.notification.Applicant2CanSwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -55,15 +54,14 @@ public class SystemNotifyJointApplicantCanSwitchToSole implements CCDConfig<Case
 
         ConditionalOrder conditionalOrder = data.getConditionalOrder();
 
-        ConditionalOrderQuestions coQuestionsApp1 = conditionalOrder.getConditionalOrderApplicant1Questions();
-        ConditionalOrderQuestions coQuestionsApp2 = conditionalOrder.getConditionalOrderApplicant2Questions();
-
-        if (coQuestionsApp1 != null && YES.equals(coQuestionsApp1.getIsSubmitted())) {
+        if (conditionalOrder.shouldEnableSwitchToSoleCoForApplicant1Solicitor()) {
             notificationDispatcher.send(applicant1CanSwitchToSoleNotification, data, caseId);
             data.getApplication().setJointApplicantNotifiedCanSwitchToSole(YES);
-        } else if (coQuestionsApp2 != null && YES.equals(coQuestionsApp2.getIsSubmitted())) {
+            data.getConditionalOrder().getConditionalOrderApplicant1Questions().setEnableSolicitorSwitchToSoleCo(YES);
+        } else if (conditionalOrder.shouldEnableSwitchToSoleCoForApplicant2Solicitor()) {
             notificationDispatcher.send(applicant2CanSwitchToSoleNotification, data, caseId);
             data.getApplication().setJointApplicantNotifiedCanSwitchToSole(YES);
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setEnableSolicitorSwitchToSoleCo(YES);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
