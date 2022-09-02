@@ -25,4 +25,8 @@
         <cve>CVE-2020-11022</cve>
         <cve>CVE-2020-11023</cve>
     </suppress>
+  <suppress>
+    <notes>package org.yaml:snakeyaml</notes>
+    <cve>CVE-2022-25857</cve>
+  </suppress>
 </suppressions>
