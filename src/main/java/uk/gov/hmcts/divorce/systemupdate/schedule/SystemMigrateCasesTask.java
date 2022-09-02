@@ -49,7 +49,10 @@ public class SystemMigrateCasesTask implements Runnable {
 
         baseMigration(user, serviceAuthorization);
 
-        migrateJointApplications(user, serviceAuthorization);
+        var migrateJointAppEnabled = Boolean.parseBoolean(System.getenv().get("MIGRATE_JOINT_APP_ENABLED"));
+        if (migrateJointAppEnabled) {
+            migrateJointApplications(user, serviceAuthorization);
+        }
 
     }
 
