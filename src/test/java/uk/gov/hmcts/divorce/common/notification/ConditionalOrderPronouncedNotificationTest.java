@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -35,8 +36,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
-import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -59,6 +58,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars
 @ExtendWith(MockitoExtension.class)
 class ConditionalOrderPronouncedNotificationTest {
 
+    private static final int FINAL_ORDER_OFFSET_DAYS = 43;
+    private static final int FINAL_ORDER_RESPONDENT_OFFSET_MONTHS = 3;
+
     @Mock
     private NotificationService notificationService;
 
@@ -73,6 +75,8 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setConditionalOrder(ConditionalOrder.builder()
@@ -93,9 +97,7 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
+                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -104,6 +106,8 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WithDissolutionContent() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setConditionalOrder(ConditionalOrder.builder()
@@ -127,9 +131,7 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
+                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -138,6 +140,9 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2WithDivorceContentForSoleApplication() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+        ReflectionTestUtils.setField(notification, "finalOrderRespondentOffsetMonth", FINAL_ORDER_RESPONDENT_OFFSET_MONTHS);
+
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -159,9 +164,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
+                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -170,6 +173,9 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2WithDissolutionContentForSoleApplication() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+        ReflectionTestUtils.setField(notification, "finalOrderRespondentOffsetMonth", FINAL_ORDER_RESPONDENT_OFFSET_MONTHS);
+
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -194,9 +200,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
+                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -205,6 +209,8 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2WithDivorceContentForJointApplication() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicationType(JOINT_APPLICATION);
@@ -226,9 +232,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
+                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -237,6 +241,8 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2WithDissolutionContentForJointApplication() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicationType(JOINT_APPLICATION);
@@ -261,9 +267,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
+                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -320,6 +324,8 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendWelshEmailToApplicant1WithDivorceContent() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setConditionalOrder(ConditionalOrder.builder()
@@ -343,9 +349,7 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
+                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -355,6 +359,8 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendWelshEmailToApplicant2WithDissolutionContentForJointApplication() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+
         CaseData data = caseData();
         data.setApplicationType(JOINT_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
@@ -382,9 +388,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER)),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, now.plusDays(43).plusMonths(3).format(DATE_TIME_FORMATTER))
+                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -393,6 +397,8 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1SolicitorWhenSoleApplicationAndApplicant1IsRepresented() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicant1(applicantRepresentedBySolicitor());
@@ -415,8 +421,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICANT1_LABEL, "Applicant"),
                 hasEntry(APPLICANT2_LABEL, "Respondent"),
-                hasEntry(UNION_TYPE, "divorce"),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(UNION_TYPE, "divorce")
             )),
             eq(ENGLISH)
         );
@@ -424,6 +429,8 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1SolicitorWhenJointApplicationAndApplicant1IsRepresented() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicant1(applicantRepresentedBySolicitor());
@@ -446,8 +453,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICANT1_LABEL, "Applicant 1"),
                 hasEntry(APPLICANT2_LABEL, "Applicant 2"),
-                hasEntry(UNION_TYPE, "dissolution"),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(UNION_TYPE, "dissolution")
             )),
             eq(ENGLISH)
         );
@@ -455,6 +461,8 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2SolicitorWhenJointApplicationAndApplicant2IsRepresented() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicant2(applicantRepresentedBySolicitor());
@@ -477,8 +485,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICANT1_LABEL, "Applicant 1"),
                 hasEntry(APPLICANT2_LABEL, "Applicant 2"),
-                hasEntry(UNION_TYPE, "divorce"),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(UNION_TYPE, "divorce")
             )),
             eq(ENGLISH)
         );
@@ -512,6 +519,8 @@ class ConditionalOrderPronouncedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2SolicitorWhenSoleApplicationAndApplicant2IsRepresented() {
+        ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
+
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicant2(applicantRepresentedBySolicitor());
@@ -534,8 +543,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICANT1_LABEL, "Applicant"),
                 hasEntry(APPLICANT2_LABEL, "Respondent"),
-                hasEntry(UNION_TYPE, "divorce"),
-                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+                hasEntry(UNION_TYPE, "divorce")
             )),
             eq(ENGLISH)
         );
