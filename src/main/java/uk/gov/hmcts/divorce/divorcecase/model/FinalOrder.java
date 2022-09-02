@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -130,7 +131,8 @@ public class FinalOrder {
     @CCD(
         label = "Translated To?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "TranslatedToLanguage"
+        typeParameterOverride = "TranslatedToLanguage",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private TranslatedToLanguage applicant1FinalOrderLateExplanationTranslatedTo;
 

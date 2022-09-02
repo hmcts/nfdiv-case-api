@@ -78,6 +78,7 @@ public class Application {
 
     @JsonUnwrapped(prefix = "jurisdiction")
     @Builder.Default
+    @CCD(access = {SystemUpdateAndSuperUserAccess.class})
     private Jurisdiction jurisdiction = new Jurisdiction();
 
     @JsonUnwrapped(prefix = "solService")
@@ -620,4 +621,5 @@ public class Application {
         return Optional.ofNullable(pbaNumbers)
             .map(dynamicList -> dynamicList.getValue().getLabel());
     }
+
 }

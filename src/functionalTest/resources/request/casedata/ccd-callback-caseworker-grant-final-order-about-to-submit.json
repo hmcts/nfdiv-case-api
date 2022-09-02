@@ -1,0 +1,19 @@
+{
+  "applicationType": "soleApplication",
+  "divorceOrDissolution": "divorce",
+  "dateFinalOrderEligibleFrom": "2022-03-10",
+  "applicant1FirstName": "Bob",
+  "applicant1LastName": "Smith",
+  "applicant1Gender": "male",
+  "applicant1SolicitorRepresented": "Yes",
+  "applicant1SolicitorName": "App1 Sol",
+  "applicant1SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1SolicitorReference": "App1 Sol Reference",
+  "applicant2FirstName": "Julie",
+  "applicant2LastName": "Smith",
+  "applicant2Gender": "female",
+  "applicant2SolicitorRepresented": "Yes",
+  "applicant2SolicitorName": "App2 Sol",
+  "applicant2SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
+  "issueDate": "2021-04-28"
+}

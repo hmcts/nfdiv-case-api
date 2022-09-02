@@ -92,7 +92,8 @@ public class AcknowledgementOfService {
     @CCD(
         label = "Translated To?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "TranslatedToLanguage"
+        typeParameterOverride = "TranslatedToLanguage",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private TranslatedToLanguage reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslatedTo;
 
