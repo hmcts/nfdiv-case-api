@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -74,7 +75,7 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
-    void shouldRunBaseAndJointAppMigrations() {
+    void shouldRunBaseAndJointAppMigrations() throws Exception {
         final CaseDetails caseDetails = mock(CaseDetails.class);
 
         when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
@@ -83,9 +84,10 @@ class SystemMigrateCasesTaskTest {
         when(ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION))
             .thenReturn(singletonList(caseDetails));
 
-        systemMigrateCasesTask.run();
+        withEnvironmentVariable("MIGRATE_JOINT_APP_ENABLED", "true")
+            .execute(() -> systemMigrateCasesTask.run());
 
-        verify(ccdUpdateService,times(2)).submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, times(2)).submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -99,7 +101,7 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
-    void shouldNotRemoveAccessCodeWhenSearchFailsForJointAppMigration() {
+    void shouldNotRemoveAccessCodeWhenSearchFailsForJointAppMigration() throws Exception {
         final CaseDetails caseDetails = mock(CaseDetails.class);
 
         when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
@@ -108,9 +110,10 @@ class SystemMigrateCasesTaskTest {
         when(ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        systemMigrateCasesTask.run();
+        withEnvironmentVariable("MIGRATE_JOINT_APP_ENABLED", "true")
+            .execute(() -> systemMigrateCasesTask.run());
 
-        verify(ccdUpdateService,times(1)).submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, times(1)).submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -132,7 +135,7 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
-    void shouldContinueProcessingIfThereIsConflictDuringSubmissionForJointAppMigration() {
+    void shouldContinueProcessingIfThereIsConflictDuringSubmissionForJointAppMigration() throws Exception {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
 
         when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
@@ -149,7 +152,8 @@ class SystemMigrateCasesTaskTest {
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
-        systemMigrateCasesTask.run();
+        withEnvironmentVariable("MIGRATE_JOINT_APP_ENABLED", "true")
+            .execute(() -> systemMigrateCasesTask.run());
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
@@ -177,7 +181,7 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
-    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForJointAppMigration() {
+    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForJointAppMigration() throws Exception {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
 
         when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
@@ -195,7 +199,8 @@ class SystemMigrateCasesTaskTest {
             .doNothing()
             .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
-        systemMigrateCasesTask.run();
+        withEnvironmentVariable("MIGRATE_JOINT_APP_ENABLED", "true")
+            .execute(() -> systemMigrateCasesTask.run());
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails3, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
