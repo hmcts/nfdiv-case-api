@@ -525,15 +525,13 @@ class CcdSearchServiceTest {
             .searchSource()
             .query(
                 boolQuery()
-                    .must(boolQuery()
-                        .should(boolQuery().must(existsQuery("data.accessCode")))
-                        .should(boolQuery().must(existsQuery("data.issueDate")))
-                        .should(boolQuery().must(termsQuery("data.applicationType", "jointApplication")))
-                    )
+                    .must(boolQuery().must(existsQuery("data.accessCode")))
+                    .must(boolQuery().must(existsQuery("data.issueDate")))
+                    .must(boolQuery().must(termsQuery("data.applicationType", "jointApplication")))
             )
             .from(0)
             .size(500);
-
+        
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
