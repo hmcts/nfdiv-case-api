@@ -326,10 +326,12 @@ public class CcdSearchService {
             .searchSource()
             .query(
                 boolQuery()
-                    .must(existsQuery("data.accessCode"))
-                    .must(existsQuery("data.issueDate"))
-                    .must(termsQuery("data.applicationType", "jointApplication"))
+                    .must(boolQuery()
+                        .should(boolQuery().must(existsQuery("data.accessCode")))
+                        .should(boolQuery().must(existsQuery("data.issueDate")))
+                        .should(boolQuery().must(termsQuery("data.applicationType", "jointApplication")))
                     )
+            )
             .from(0)
             .size(500);
 
