@@ -57,6 +57,7 @@ public class SystemMigrateCasesTask implements Runnable {
     }
 
     private void migrateJointApplications(User user, String serviceAuthorization) {
+        log.info("Started migrating cases joint application");
         try {
             ccdSearchService
                 .searchJointApplicationsWithAccessCodePostIssueApplication(user, serviceAuthorization)
@@ -103,7 +104,7 @@ public class SystemMigrateCasesTask implements Runnable {
         final Long caseId = caseDetails.getId();
 
         try {
-            caseDetails.getData().put("accessCode", null);
+            caseDetails.getData().remove("accessCode");
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
             log.info("Removed access code successfully for case id: {}", caseId);
         } catch (final CcdConflictException e) {
