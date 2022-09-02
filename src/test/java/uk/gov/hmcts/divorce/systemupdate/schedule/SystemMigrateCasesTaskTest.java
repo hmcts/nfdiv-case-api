@@ -74,19 +74,22 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
-    void shouldMigrateCase() {
+    void shouldRunBaseAndJointAppMigrations() {
         final CaseDetails caseDetails = mock(CaseDetails.class);
 
         when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(singletonList(caseDetails));
 
+        when(ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION))
+            .thenReturn(singletonList(caseDetails));
+
         systemMigrateCasesTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService,times(2)).submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
-    void shouldNotSubmitEventIfSearchFails() {
+    void shouldNotSubmitEventIfSearchFailsForBaseMigration() {
         when(ccdSearchService.searchForCasesWithVersionLessThan(3, user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
@@ -96,7 +99,22 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
-    void shouldContinueProcessingIfThereIsConflictDuringSubmission() {
+    void shouldNotRemoveAccessCodeWhenSearchFailsForJointAppMigration() {
+        final CaseDetails caseDetails = mock(CaseDetails.class);
+
+        when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+            .thenReturn(singletonList(caseDetails));
+
+        when(ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION))
+            .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
+
+        systemMigrateCasesTask.run();
+
+        verify(ccdUpdateService,times(1)).submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldContinueProcessingIfThereIsConflictDuringSubmissionForBaseMigration() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
@@ -114,7 +132,7 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
-    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
+    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForBaseMigration() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
@@ -134,7 +152,32 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
-    void shouldSetDataVersionToZeroIfExceptionIsThrownWhileDeserializingCase() {
+    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForJointAppMigration() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+
+        when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+            .thenReturn(singletonList(caseDetails1));
+
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final CaseDetails caseDetails3 = mock(CaseDetails.class);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails2, caseDetails3);
+
+        when(ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+
+        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
+            .doNothing()
+            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+
+        systemMigrateCasesTask.run();
+
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails3, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldSetDataVersionToZeroIfExceptionIsThrownWhileDeserializingCaseForBaseMigration() {
         final CaseDetails caseDetails1 =
             CaseDetails.builder()
                 .data(new HashMap<>())
@@ -155,7 +198,7 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
-    void shouldSetDataVersionToZeroIfExceptionIsThrownWhilstSubmittingCcdUpdateEvent() {
+    void shouldSetDataVersionToZeroIfExceptionIsThrownWhilstSubmittingCcdUpdateEventForBaseMigration() {
         final CaseDetails caseDetails1 =
             CaseDetails.builder()
                 .data(new HashMap<>())
@@ -176,7 +219,7 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
-    void shouldNotSetDataVersionToZeroIfExceptionIsThrownWhilstSubmittingCcdUpdateEventAndStatusIsNotFound() {
+    void shouldNotSetDataVersionToZeroIfExceptionIsThrownWhilstSubmittingCcdUpdateEventAndStatusIsNotFoundForBaseMigration() {
         final CaseDetails caseDetails1 =
             CaseDetails.builder()
                 .data(new HashMap<>())

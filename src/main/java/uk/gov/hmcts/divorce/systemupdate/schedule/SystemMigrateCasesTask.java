@@ -56,7 +56,7 @@ public class SystemMigrateCasesTask implements Runnable {
     private void migrateJointApplications(User user, String serviceAuthorization) {
         try {
             ccdSearchService
-                .searchJointApplicationsWithAccessCodePastIssue(user, serviceAuthorization)
+                .searchJointApplicationsWithAccessCodePostIssueApplication(user, serviceAuthorization)
                 .parallelStream()
                 .forEach(details -> removeAccessCode(details, user, serviceAuthorization));
 
@@ -107,7 +107,6 @@ public class SystemMigrateCasesTask implements Runnable {
             log.error("Could not get lock for case id: {}, continuing to next case", caseId);
         } catch (final CcdManagementException e) {
             log.error("Submit event(after removing access code) failed for case id: {}, continuing to next case", caseId);
-            failedMigrationSetVersionToZero(caseDetails, user, serviceAuthorization, caseId, e);
         }
     }
 

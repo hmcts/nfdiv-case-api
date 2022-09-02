@@ -515,6 +515,38 @@ class CcdSearchServiceTest {
         assertThat(searchResult.size()).isEqualTo(4);
     }
 
+    @Test
+    void shouldReturnJointApplicationCasesContainingAccessCodePostIssueApplication() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(
+                boolQuery()
+                    .must(boolQuery()
+                        .should(boolQuery().must(existsQuery("data.accessCode")))
+                        .should(boolQuery().must(existsQuery("data.issueDate")))
+                        .should(boolQuery().must(termsQuery("data.applicationType", "jointApplication")))
+                    )
+            )
+            .from(0)
+            .size(500);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            sourceBuilder.toString()))
+            .thenReturn(expected);
+
+        final List<CaseDetails> searchResult =
+            ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(100);
+    }
+
     private List<CaseDetails> createCaseDetailsList(final int size) {
 
         final List<CaseDetails> caseDetails = new ArrayList<>();
