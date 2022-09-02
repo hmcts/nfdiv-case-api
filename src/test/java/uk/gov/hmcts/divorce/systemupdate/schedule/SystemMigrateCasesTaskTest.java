@@ -132,6 +132,31 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
+    void shouldContinueProcessingIfThereIsConflictDuringSubmissionForJointAppMigration() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+
+        when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+            .thenReturn(singletonList(caseDetails1));
+
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final CaseDetails caseDetails3 = mock(CaseDetails.class);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails2, caseDetails3);
+
+        when(ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+
+        doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
+            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+
+        systemMigrateCasesTask.run();
+
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails3, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForBaseMigration() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
