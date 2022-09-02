@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.Permission;
 import static org.assertj.core.data.MapEntry.entry;
 import static org.assertj.guava.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
+import static uk.gov.hmcts.ccd.sdk.api.Permission.D;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -26,7 +27,7 @@ class DefaultAccessTest {
         final SetMultimap<HasRole, Permission> grants = new DefaultAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(11)
+            .hasSize(12)
             .contains(
                 entry(CREATOR, C),
                 entry(CREATOR, R),
@@ -34,6 +35,7 @@ class DefaultAccessTest {
                 entry(SYSTEMUPDATE, C),
                 entry(SYSTEMUPDATE, R),
                 entry(SYSTEMUPDATE, U),
+                entry(SYSTEMUPDATE, D),
                 entry(CASE_WORKER, R),
                 entry(SOLICITOR, R),
                 entry(CITIZEN, R),
