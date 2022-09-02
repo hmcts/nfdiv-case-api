@@ -165,7 +165,7 @@ public class SwitchToSoleService {
         );
     }
 
-    public void switchApplicantData(final CaseData data, final Long caseId) {
+    public void switchApplicantData(final CaseData data) {
         final Application application = data.getApplication();
         final Applicant applicant1 = data.getApplicant1();
         final Applicant applicant2 = data.getApplicant2();

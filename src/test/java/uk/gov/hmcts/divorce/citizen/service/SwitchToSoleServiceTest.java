@@ -38,7 +38,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -69,7 +68,7 @@ public class SwitchToSoleServiceTest {
         final Applicant applicant1BeforeSwitch = caseData.getApplicant1();
         final Applicant applicant2BeforeSwitch = caseData.getApplicant2();
 
-        switchToSoleService.switchApplicantData(caseData, TEST_CASE_ID);
+        switchToSoleService.switchApplicantData(caseData);
 
         assertThat(caseData.getApplicant1()).isEqualTo(applicant2BeforeSwitch);
         assertThat(caseData.getApplicant2()).isEqualTo(applicant1BeforeSwitch);
@@ -91,7 +90,7 @@ public class SwitchToSoleServiceTest {
         final List<ListValue<DivorceDocument>> applicant1DocumentsBeforeSwitch = caseData.getDocuments().getApplicant1DocumentsUploaded();
         final List<ListValue<DivorceDocument>> applicant2DocumentsBeforeSwitch = caseData.getDocuments().getApplicant2DocumentsUploaded();
 
-        switchToSoleService.switchApplicantData(caseData, TEST_CASE_ID);
+        switchToSoleService.switchApplicantData(caseData);
 
         assertThat(caseData.getDocuments().getApplicant1DocumentsUploaded()).isEqualTo(applicant2DocumentsBeforeSwitch);
         assertThat(caseData.getDocuments().getApplicant2DocumentsUploaded()).isEqualTo(applicant1DocumentsBeforeSwitch);
@@ -102,7 +101,7 @@ public class SwitchToSoleServiceTest {
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
 
-        switchToSoleService.switchApplicantData(caseData, TEST_CASE_ID);
+        switchToSoleService.switchApplicantData(caseData);
 
         assertThat(caseData.getApplication().getDivorceWho()).isNotNull();
         assertThat(caseData.getApplication().getDivorceWho()).isEqualTo(WIFE);
@@ -114,7 +113,7 @@ public class SwitchToSoleServiceTest {
         caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
         caseData.getApplicant1().setGender(null);
 
-        switchToSoleService.switchApplicantData(caseData, TEST_CASE_ID);
+        switchToSoleService.switchApplicantData(caseData);
 
         assertThat(caseData.getApplication().getDivorceWho()).isNull();
     }

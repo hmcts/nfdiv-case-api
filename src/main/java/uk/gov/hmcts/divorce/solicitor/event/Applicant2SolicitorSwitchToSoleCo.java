@@ -87,7 +87,7 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
             switchToSoleService.switchSolicitorAndCitizenUserRoles(caseId);
         }
 
-        switchToSoleService.switchApplicantData(data, caseId);
+        switchToSoleService.switchApplicantData(data);
 
         generateConditionalOrderAnswersDocument.apply(details);
 
