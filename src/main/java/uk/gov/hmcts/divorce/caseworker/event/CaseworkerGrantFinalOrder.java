@@ -7,7 +7,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.GrantFinalOrderService;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendFinalOrderGrantedNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -38,7 +39,10 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
     private Clock clock;
 
     @Autowired
-    private GrantFinalOrderService grantFinalOrderService;
+    private GenerateFinalOrder generateFinalOrder;
+
+    @Autowired
+    private SendFinalOrderGrantedNotifications sendFinalOrderGrantedNotifications;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -82,10 +86,10 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         caseData.getFinalOrder().setGrantedDate(currentDateTime);
 
-        CaseDetails<CaseData, State> updatedCaseDetails = grantFinalOrderService.process(details);
+        generateFinalOrder.apply(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(updatedCaseDetails.getData())
+            .data(details.getData())
             .build();
     }
 
@@ -93,7 +97,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
                                                CaseDetails<CaseData, State> beforeDetails) {
         log.info("CitizenSaveAndClose submitted callback invoked for case id: {}", details.getId());
 
-        grantFinalOrderService.sendNotifications(details);
+        sendFinalOrderGrantedNotifications.apply(details);
 
         return SubmittedCallbackResponse.builder().build();
     }

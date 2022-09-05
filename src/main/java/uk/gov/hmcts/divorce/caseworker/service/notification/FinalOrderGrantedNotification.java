@@ -42,14 +42,12 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
 
-        boolean isSole = caseData.getApplicationType().isSole();
-
-        if (isSole) {
+        if (caseData.getApplicationType().isSole()) {
             log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "applicant", caseId);
             notificationService.sendEmail(
                 caseData.getApplicant1().getEmail(),
                 APPLICANTS_FINAL_ORDER_GRANTED,
-                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+                citizenTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
                 caseData.getApplicant1().getLanguagePreference()
             );
         }
@@ -58,15 +56,13 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2(CaseData caseData, Long caseId) {
 
-        boolean isSole = caseData.getApplicationType().isSole();
-
-        if (isSole) {
+        if (caseData.getApplicationType().isSole()) {
             log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "respondent", caseId);
 
             notificationService.sendEmail(
                 caseData.getApplicant2().getEmail(),
                 APPLICANTS_FINAL_ORDER_GRANTED,
-                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
+                citizenTemplateContent(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
@@ -114,6 +110,19 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
         templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant.getSolicitor().getReference())
             ? applicant.getSolicitor().getReference()
             : "not provided");
+
+        return templateVars;
+    }
+
+    private Map<String, String> citizenTemplateContent(final CaseData caseData,
+                                                         final Long caseId,
+                                                         final Applicant applicant,
+                                                         final Applicant partner) {
+        Map<String, String> templateVars =
+            commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
+
+        // temporarily set to false, need to update when Final Order switch to sole journey is being developed
+        templateVars.put("isSwitchedToSolePartner", "false");
 
         return templateVars;
     }

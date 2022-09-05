@@ -49,6 +49,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CA
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANTS_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
@@ -58,6 +59,7 @@ import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -254,6 +256,51 @@ public class CaseworkerGrantFinalOrderIT {
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse("classpath:caseworker-grant-final-order-solicitor-response.json")));
 
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldSendNotificationToSolicitorsWhenSubmittedCallbackIsInvoked() throws Exception {
+        final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitor(
+            Solicitor.builder()
+                .name("App1 Sol")
+                .email(TEST_SOLICITOR_EMAIL)
+                .reference("App1 Sol Ref")
+                .build()
+        );
+
+        final Applicant applicant2 = getApplicant();
+        applicant2.setSolicitorRepresented(YesOrNo.YES);
+        applicant2.setSolicitor(Solicitor.builder()
+            .name("App2 Sol")
+            .email(TEST_USER_EMAIL)
+            .reference("App2 Sol Ref")
+            .build());
+        caseData.setApplicant2(applicant2);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_GRANT_FINAL_ORDER)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk());
+
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
@@ -265,6 +312,53 @@ public class CaseworkerGrantFinalOrderIT {
             .sendEmail(
                 eq(TEST_USER_EMAIL),
                 eq(SOLICITOR_FINAL_ORDER_GRANTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldSendNotificationToApplicantAndRespondentWhenSubmittedCallbackIsInvokedForASoleCase() throws Exception {
+        final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getApplicant1().setEmail("applicant@email.com");
+
+        final Applicant applicant2 = getApplicant();
+        applicant2.setEmail("respondent@email.com");
+        caseData.setApplicant2(applicant2);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_GRANT_FINAL_ORDER)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk());
+
+        verify(notificationService)
+            .sendEmail(
+                eq("applicant@email.com"),
+                eq(APPLICANTS_FINAL_ORDER_GRANTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq("respondent@email.com"),
+                eq(APPLICANTS_FINAL_ORDER_GRANTED),
                 anyMap(),
                 eq(ENGLISH));
 
