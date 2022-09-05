@@ -339,7 +339,6 @@ public class CcdSearchService {
 
         log.info("Query to search joint app with access code and issue date present {} ", sourceBuilder.toString());
 
-
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
             serviceAuth,
@@ -347,9 +346,8 @@ public class CcdSearchService {
             sourceBuilder.toString()
         ).getCases();
 
-
         log.info("Cases retrieved joint app with access code and issue date present {}", caseDetails.size());
-        
+
         return caseDetails;
     }
 }
