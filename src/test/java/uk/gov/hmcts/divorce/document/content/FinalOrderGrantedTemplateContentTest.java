@@ -45,7 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataForGrantFinalOrder;
 
 @ExtendWith(MockitoExtension.class)
-public class FinalOrderTemplateContentTest {
+public class FinalOrderGrantedTemplateContentTest {
     @Mock
     private Clock clock;
 
