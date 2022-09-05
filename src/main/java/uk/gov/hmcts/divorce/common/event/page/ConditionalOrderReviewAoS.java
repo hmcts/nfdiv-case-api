@@ -26,20 +26,37 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
             .page("ConditionalOrderReviewAoS", this::midEvent)
+            .pageLabel("Draft Conditional Order")
             .readonlyNoSummary(CaseData::getApplicationType, NEVER_SHOW)
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnershipApplication, NEVER_SHOW)
             .done()
             .complex(CaseData::getAcknowledgementOfService)
                 .readonlyNoSummary(AcknowledgementOfService::getDateAosSubmitted, NEVER_SHOW)
             .done()
             .complex(CaseData::getConditionalOrder)
+                .readonlyNoSummary(ConditionalOrder::getLastApprovedServiceApplicationIsBailiffApplication, NEVER_SHOW)
+                .readonly(ConditionalOrder::getSuccessfulServedByBailiff,
+                    "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
+                .readonly(ConditionalOrder::getCertificateOfServiceDate,
+                    "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
                 .readonly(ConditionalOrder::getLastAlternativeServiceDocumentLink,
-                " applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\"")
+                    "applicationType=\"soleApplication\" AND coLastApprovedServiceApplicationIsBailiffApplication=\"No\""
+                        + " AND dateAosSubmitted!=\"*\" AND coServiceConfirmed!=\"Yes\"")
                 .readonly(ConditionalOrder::getRespondentAnswersLink,
-                    "applicationType=\"soleApplication\" AND dateAosSubmitted=\"*\"")
+                    "applicationType=\"soleApplication\" AND coLastApprovedServiceApplicationIsBailiffApplication=\"No\""
+                        + " AND dateAosSubmitted=\"*\" AND coServiceConfirmed!=\"Yes\"")
+            .readonly(ConditionalOrder::getServiceConfirmed, NEVER_SHOW)
+                .optionalWithoutDefaultValue(ConditionalOrder::getProofOfServiceUploadDocuments,
+                    "applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\" AND coServiceConfirmed=\"Yes\"",
+                    "Please upload proof of service below")
+                .label("CertificateOfServiceWarning",
+                    "If you are progressing using a certificate of service, then you must upload proof of service here",
+                    "applicationType=\"soleApplication\" AND dateAosSubmitted!=\"*\" AND coServiceConfirmed=\"Yes\"")
                 .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                     .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
+                    .done()
                 .done()
             .label(
                 "ConditionalOrderReviewAoSNo",

@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -43,10 +44,13 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @Autowired
-    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
+    private NotificationDispatcher notificationDispatcher;
 
     @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
+
+    @Autowired
+    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -56,7 +60,7 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
             .endButtonLabel("Save Conditional Order")
-            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsSubmitted=\"No\"")
+            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted=\"Yes\" AND coApplicant2IsSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
@@ -86,6 +90,7 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             : AwaitingLegalAdvisorReferral;
 
         if (state == AwaitingLegalAdvisorReferral) {
+            notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, details.getId());
             generateConditionalOrderAnswersDocument.apply(details);
         } else {
             notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());

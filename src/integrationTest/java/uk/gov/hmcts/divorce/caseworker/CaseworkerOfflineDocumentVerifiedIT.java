@@ -20,8 +20,10 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
+import uk.gov.hmcts.divorce.caseworker.service.print.AppliedForCoPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -35,13 +37,21 @@ import java.time.LocalDate;
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
-import static uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService.OfflineDocumentReceived.AOS_D10;
-import static uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService.OfflineDocumentReceived.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
@@ -55,6 +65,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -68,6 +79,9 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
     private static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_D10_RESPONSE =
         "classpath:caseworker-offline-document-verified-d10-response.json";
+
+    private static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_D84_RESPONSE =
+        "classpath:caseworker-offline-document-verified-d84-response.json";
 
     private static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_OTHER_RESPONSE =
         "classpath:caseworker-offline-document-verified-other-response.json";
@@ -87,6 +101,9 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     @MockBean
     private NotificationService notificationService;
 
+    @MockBean
+    private AppliedForCoPrinter appliedForCoPrinter;
+
     @BeforeAll
     static void setUp() {
         DocManagementStoreWireMock.start();
@@ -103,7 +120,6 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     void shouldTriggerAosSubmissionAndMoveCaseStateToHoldingIfD10Verified() throws Exception {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
-            .typeOfDocumentAttached(AOS_D10)
             .howToRespondApplication(DISPUTE_DIVORCE)
             .build();
 
@@ -134,6 +150,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         caseData.getApplicant2().setLegalProceedingsDetails("some description");
         caseData.setDocuments(
             CaseDocuments.builder()
+                .typeOfDocumentAttached(AOS_D10)
                 .scannedDocuments(singletonList(doc1))
                 .scannedDocumentNames(
                     DynamicList
@@ -169,18 +186,76 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    void shouldTriggerCallbackAndMoveCaseStateToUserSelectedStateIfDocumentTypeOtherSelected()
-        throws Exception {
+    void shouldTriggerCoSubmissionAndMoveCaseStateToAwaitingLegalAdvisorReferralIfD84Verified() throws Exception {
 
-        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
-            .typeOfDocumentAttached(OTHER)
+        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
+            .value(
+                ScannedDocument
+                    .builder()
+                    .url(
+                        Document
+                            .builder()
+                            .filename("doc1.pdf")
+                            .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                            .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                            .build()
+                    )
+                    .fileName("doc1.pdf")
+                    .type(ScannedDocumentType.FORM)
+                    .build()
+            )
             .build();
 
         final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicant2(getApplicant(FEMALE));
+        caseData.setDocuments(
+            CaseDocuments.builder()
+                .typeOfDocumentAttached(CO_D84)
+                .scannedDocuments(singletonList(doc1))
+                .scannedDocumentNames(
+                    DynamicList
+                        .builder()
+                        .value(
+                            DynamicListElement
+                                .builder()
+                                .label("doc1.pdf")
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        );
+
+        final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+            .content(
+                objectMapper.writeValueAsString(
+                    callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
+            .accept(APPLICATION_JSON))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(jsonStringResponse)
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(expectedResponse(CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_D84_RESPONSE));
+
+        verify(appliedForCoPrinter, times(2)).print(any(CaseData.class), anyLong(), any(Applicant.class));
+        verifyNoMoreInteractions(appliedForCoPrinter);
+    }
+
+    @Test
+    void shouldTriggerCallbackAndMoveCaseStateToUserSelectedStateIfDocumentTypeOtherSelected()
+        throws Exception {
+
+        final CaseData caseData = caseData();
+        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(OTHER).build());
         caseData.setApplication(Application.builder()
             .stateToTransitionApplicationTo(IssuedToBailiff)
             .build());
-        caseData.setAcknowledgementOfService(acknowledgementOfService);
 
         caseData.getApplicant2().setLegalProceedings(YES);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");
@@ -208,16 +283,12 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     void shouldTriggerCallbackAndSetDueDateAndMoveCaseStateToUserSelectedStateIfDocumentTypeOtherAndIsTransitioningToHolding()
         throws Exception {
 
-        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
-            .typeOfDocumentAttached(OTHER)
-            .build();
-
         final CaseData caseData = caseData();
+        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(OTHER).build());
         caseData.setApplication(Application.builder()
             .issueDate(LocalDate.of(2022, 01, 01))
             .stateToTransitionApplicationTo(Holding)
             .build());
-        caseData.setAcknowledgementOfService(acknowledgementOfService);
 
         caseData.getApplicant2().setLegalProceedings(YES);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");

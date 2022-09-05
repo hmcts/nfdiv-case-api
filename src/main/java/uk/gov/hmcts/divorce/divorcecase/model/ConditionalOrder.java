@@ -35,6 +35,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
@@ -65,6 +66,17 @@ public class ConditionalOrder {
         label = "Link to online petition"
     )
     private Document onlinePetitionLink;
+
+    @CCD(
+        label = "Link to scanned D84 form"
+    )
+    private Document scannedD84Form;
+
+    @CCD(
+        label = "Date D84 form was scanned"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime dateD84FormScanned;
 
     @CCD(
         label = "Link to alternative service document"
@@ -246,6 +258,34 @@ public class ConditionalOrder {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate rescindedDate;
 
+    @CCD(
+        label = "Service Confirmed"
+    )
+    private YesOrNo serviceConfirmed;
+
+    @CCD(
+        label = "Documents uploaded for Proof of Service",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument"
+    )
+    private List<ListValue<DivorceDocument>> proofOfServiceUploadDocuments;
+
+    @CCD(
+        label = "Is latest approved service application a bailiff application?"
+    )
+    private YesOrNo lastApprovedServiceApplicationIsBailiffApplication;
+
+    @CCD(
+        label = "Certificate of service date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate certificateOfServiceDate;
+
+    @CCD(
+        label = "Did bailiff serve successfully?"
+    )
+    private YesOrNo successfulServedByBailiff;
+
     @JsonIgnore
     public boolean areClaimsGranted() {
         return nonNull(claimsGranted) && claimsGranted.toBoolean();
@@ -253,7 +293,7 @@ public class ConditionalOrder {
 
     @JsonIgnore
     public boolean hasConditionalOrderBeenGranted() {
-        return YesOrNo.YES.equals(granted);
+        return YES.equals(granted);
     }
 
     @JsonIgnore
@@ -275,12 +315,12 @@ public class ConditionalOrder {
 
     @JsonIgnore
     public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant1() {
-        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant1);
+        return YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant1);
     }
 
     @JsonIgnore
     public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant2() {
-        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant2);
+        return YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant2);
     }
 
     @JsonIgnore
@@ -354,5 +394,15 @@ public class ConditionalOrder {
                 .build();
 
         }
+    }
+
+    @JsonIgnore
+    public boolean isLastApprovedServiceApplicationBailiffApplication() {
+        return YES.equals(lastApprovedServiceApplicationIsBailiffApplication);
+    }
+
+    @JsonIgnore
+    public boolean hasServiceBeenConfirmed() {
+        return YES.equals(serviceConfirmed);
     }
 }

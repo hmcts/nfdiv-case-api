@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.List;
@@ -25,14 +26,21 @@ public class GeneralLetter {
     @CCD(
         label = "Address to",
         typeOverride = FixedList,
-        typeParameterOverride = "GeneralParties"
+        typeParameterOverride = "GeneralParties",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private GeneralParties generalLetterParties;
 
-    @CCD(label = "Recipient's name")
+    @CCD(
+        label = "Recipient's name",
+        access = {SystemUpdateAndSuperUserAccess.class}
+    )
     private String otherRecipientName;
 
-    @CCD(label = "Recipient's address")
+    @CCD(
+        label = "Recipient's address",
+        access = {SystemUpdateAndSuperUserAccess.class}
+    )
     private AddressGlobalUK otherRecipientAddress;
 
     @CCD(
@@ -45,7 +53,8 @@ public class GeneralLetter {
 
     @CCD(
         label = "Please provide details",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private String generalLetterDetails;
 

@@ -26,13 +26,18 @@ public class ConditionalOrderReviewAoSApplicant2 implements CcdPageConfiguration
 
         pageBuilder
             .page("ConditionalOrderReviewAoSApplicant2", this::midEvent)
-            .pageLabel("Review Acknowledgement of Service - Draft Conditional Order Application")
+            .pageLabel("Draft joint conditional order")
             .readonlyNoSummary(CaseData::getApplicationType, NEVER_SHOW)
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnershipApplication, NEVER_SHOW)
             .done()
             .complex(CaseData::getConditionalOrder)
-                .readonly(ConditionalOrder::getRespondentAnswersLink)
+                .readonlyNoSummary(ConditionalOrder::getLastApprovedServiceApplicationIsBailiffApplication, NEVER_SHOW)
+                .readonly(ConditionalOrder::getSuccessfulServedByBailiff,
+                    "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
+                .readonly(ConditionalOrder::getCertificateOfServiceDate,
+                    "coLastApprovedServiceApplicationIsBailiffApplication=\"Yes\"")
                 .complex(ConditionalOrder::getConditionalOrderApplicant2Questions)
                     .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
                 .done()

@@ -6,6 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.print.AppliedForCoPrinter;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -40,8 +42,9 @@ import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applica
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.PLUS_14_DUE_DATE;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification.WIFE_DID_NOT_APPLY;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.CO_OR_FO;
-import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.PLUS_21_DUE_DATE;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.RESPONSE_DUE_DATE;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.SUBMISSION_DATE_PLUS_DAYS;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -76,6 +79,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -96,12 +100,14 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
     private CommonContent commonContent;
 
     @Mock
+    private AppliedForCoPrinter appliedForCoPrinter;
+
+    @Mock
     private Clock clock;
 
     @InjectMocks
     private Applicant1AppliedForConditionalOrderNotification notification;
 
-    private static final String CO_REVIEWED_BY_DATE = "date email received plus 21 days";
 
     @Test
     void shouldSendEmailToSoleApplicant1WhoSubmittedCoWithDivorceContent() {
@@ -118,7 +124,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, YES),
-                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -142,7 +148,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -166,7 +172,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, YES),
-                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -193,7 +199,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(CO_REVIEWED_BY_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -240,7 +246,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(PLUS_21_DUE_DATE, LocalDate.now().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, LocalDate.now().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -353,7 +359,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(PLUS_21_DUE_DATE, LocalDate.now().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, LocalDate.now().plusDays(SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -453,6 +459,36 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
+    }
+
+    @Test
+    void shouldSendLetterToApplicant1() {
+        CaseData data = caseData(DIVORCE, ApplicationType.JOINT_APPLICATION);
+        data.setApplicant1(Applicant.builder().build());
+
+        notification.sendToApplicant1Offline(data, TEST_CASE_ID);
+
+        verify(appliedForCoPrinter).print(data, TEST_CASE_ID, data.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendLetterToApplicant2IfSoleCase() {
+        CaseData data = caseData(DIVORCE, ApplicationType.SOLE_APPLICATION);
+
+        notification.sendToApplicant2Offline(data, TEST_CASE_ID);
+
+        verifyNoInteractions(appliedForCoPrinter);
+
+    }
+
+    @Test
+    void shouldSendLetterToApplicant2IfJointCase() {
+        CaseData data = caseData(DIVORCE, ApplicationType.JOINT_APPLICATION);
+        data.setApplicant2(Applicant.builder().build());
+
+        notification.sendToApplicant2Offline(data, TEST_CASE_ID);
+
+        verify(appliedForCoPrinter).print(data, TEST_CASE_ID, data.getApplicant2());
     }
 
     private CaseData caseData(DivorceOrDissolution divorceOrDissolution, ApplicationType applicationType) {
