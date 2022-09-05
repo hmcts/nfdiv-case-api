@@ -319,4 +319,27 @@ public class CcdSearchService {
             sourceBuilder.toString()
         ).getCases();
     }
+
+    public List<CaseDetails> searchJointApplicationsWithAccessCodePostIssueApplication(User user, String serviceAuth) {
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(
+                boolQuery()
+                    .must(boolQuery()
+                        .should(boolQuery().must(existsQuery("data.accessCode")))
+                        .should(boolQuery().must(existsQuery("data.issueDate")))
+                        .should(boolQuery().must(termsQuery("data.applicationType", "jointApplication")))
+                    )
+            )
+            .from(0)
+            .size(500);
+
+        return coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
+    }
 }
