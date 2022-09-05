@@ -129,12 +129,10 @@ class CitizenSwitchedToSoleCoTest {
     }
 
     @Test
-    void shouldNotSwitchRolesIfApplicant2TriggeredD84SwitchToSoleAndCaseIsOffline() {
+    void shouldNotSwitchRolesIfApplicant2TriggeredD84SwitchToSoleAndIsNewPaperCase() {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.getApplicant1().setOffline(YES);
-        caseData.getApplicant2().setOffline(YES);
-        caseData.getApplicant1().setEmail("");
+        caseData.getApplication().setNewPaperCase(YES);
         caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
