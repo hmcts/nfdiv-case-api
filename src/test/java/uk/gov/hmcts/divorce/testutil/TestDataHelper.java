@@ -99,6 +99,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
@@ -1048,6 +1049,31 @@ public class TestDataHelper {
         caseData.setGeneralLetter(generalLetter);
         caseData.setApplicant1(getApplicantWithAddress());
         caseData.setApplicant2(getApplicantWithAddress());
+        return caseData;
+    }
+
+    public static CaseData getConfirmServiceCaseData() {
+        LocalDate issueDate = LocalDate.of(2022, 8, 10);
+        LocalDate serviceDate = LocalDate.of(2022, 8, 12);
+        final var caseData = caseData();
+        caseData.getApplication().setIssueDate(issueDate);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().setSolicitorService(SolicitorService.builder()
+            .serviceDetails("service details")
+            .dateOfService(serviceDate)
+            .addressServed("address served")
+            .documentsServed("docs served")
+            .build());
+
+        final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentLink(new Document("url", "filename.pdf", "url/binary"))
+                .build())
+            .build();
+
+        caseData.getDocuments().setDocumentsUploadedOnConfirmService(Lists.newArrayList(confirmServiceAttachments));
+
         return caseData;
     }
 }
