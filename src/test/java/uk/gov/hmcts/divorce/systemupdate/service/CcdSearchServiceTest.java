@@ -521,16 +521,18 @@ class CcdSearchServiceTest {
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
 
+        final QueryBuilder accessCodeExist = existsQuery("data.accessCode");
+        final QueryBuilder issueDateExist = existsQuery("data.issueDate");
+        final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(accessCodeExist))
+            .must(boolQuery().must(issueDateExist))
+            .must(boolQuery().must(jointApplication));
+
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
-            .query(
-                boolQuery()
-                    .must(boolQuery()
-                        .should(boolQuery().must(existsQuery("data.accessCode")))
-                        .should(boolQuery().must(existsQuery("data.issueDate")))
-                        .should(boolQuery().must(termsQuery("data.applicationType", "jointApplication")))
-                    )
-            )
+            .query(query)
             .from(0)
             .size(500);
 
