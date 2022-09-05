@@ -17,13 +17,13 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenPaymentMade.CITIZEN_PAYMENT_MADE;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class CitizenPaymentMadeFT extends FunctionalTestSuite {
+public class CitizenAddPaymentFT extends FunctionalTestSuite {
 
     private static final String PAYMENT_IN_PROGRESS_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-payment-in-progress.json";
@@ -53,7 +53,7 @@ public class CitizenPaymentMadeFT extends FunctionalTestSuite {
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValidWaitingForPayment() throws IOException {
         Map<String, Object> request = caseData(PAYMENT_IN_PROGRESS_REQUEST);
-        Response response = triggerCallback(request, CITIZEN_PAYMENT_MADE, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
@@ -66,7 +66,7 @@ public class CitizenPaymentMadeFT extends FunctionalTestSuite {
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValidLastPaymentCancelled() throws IOException {
         Map<String, Object> request = caseData(PAYMENT_CANCELLED_REQUEST);
-        Response response = triggerCallback(request, CITIZEN_PAYMENT_MADE, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
@@ -79,7 +79,7 @@ public class CitizenPaymentMadeFT extends FunctionalTestSuite {
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValidAndSendEmailToApplicant1AndApplicant2() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
-        Response response = triggerCallback(request, CITIZEN_PAYMENT_MADE, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
@@ -92,7 +92,7 @@ public class CitizenPaymentMadeFT extends FunctionalTestSuite {
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValidAndAwaitingDocument() throws IOException {
         Map<String, Object> request = caseData(AWAITING_DOCUMENTS_REQUEST);
-        Response response = triggerCallback(request, CITIZEN_PAYMENT_MADE, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
@@ -109,7 +109,7 @@ public class CitizenPaymentMadeFT extends FunctionalTestSuite {
         request.put("applicant1KnowsApplicant2Address", "No");
         request.remove("applicant1CannotUploadSupportingDocument");
 
-        Response response = triggerCallback(request, CITIZEN_PAYMENT_MADE, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
@@ -125,7 +125,7 @@ public class CitizenPaymentMadeFT extends FunctionalTestSuite {
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValidAndAwaitingDocumentJointApplication() throws IOException {
         Map<String, Object> request = caseData(JOINT_AWAITING_DOCUMENTS_REQUEST);
-        Response response = triggerCallback(request, CITIZEN_PAYMENT_MADE, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
