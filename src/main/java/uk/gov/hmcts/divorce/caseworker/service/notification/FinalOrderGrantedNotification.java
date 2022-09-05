@@ -121,7 +121,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
 
-        // temporarily set to false, need to update when Final Order switch to sole journey is being developed
+        //TODO: temporarily set to false, need to update when Final Order switch to sole journey is being developed
         templateVars.put("isSwitchedToSolePartner", "false");
 
         return templateVars;
