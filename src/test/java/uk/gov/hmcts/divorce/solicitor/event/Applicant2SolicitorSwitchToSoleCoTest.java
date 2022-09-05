@@ -16,6 +16,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSwitchToSoleCoNotification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -34,6 +36,12 @@ public class Applicant2SolicitorSwitchToSoleCoTest {
 
     @Mock
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private SolicitorSwitchToSoleCoNotification solicitorSwitchToSoleCoNotification;
 
     @InjectMocks
     private Applicant2SolicitorSwitchToSoleCo applicant2SolicitorSwitchToSoleCo;
@@ -69,6 +77,7 @@ public class Applicant2SolicitorSwitchToSoleCoTest {
 
         verify(switchToSoleService).switchSolicitorAndCitizenUserRoles(TEST_CASE_ID);
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
+        verify(notificationDispatcher).send(solicitorSwitchToSoleCoNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -92,5 +101,6 @@ public class Applicant2SolicitorSwitchToSoleCoTest {
 
         verify(switchToSoleService).switchSolicitorUserRoles(TEST_CASE_ID);
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
+        verify(notificationDispatcher).send(solicitorSwitchToSoleCoNotification, caseData, TEST_CASE_ID);
     }
 }
