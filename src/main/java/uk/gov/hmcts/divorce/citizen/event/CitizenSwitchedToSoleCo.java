@@ -92,6 +92,8 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
                 switchToSoleService.switchUserRoles(caseId);
             }
             switchToSoleService.switchApplicantData(data);
+        } else if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
+            switchToSoleService.switchApplicantData(data);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
