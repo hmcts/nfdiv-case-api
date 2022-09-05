@@ -35,7 +35,6 @@ import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -394,10 +393,5 @@ public class CaseData {
             .flatMap(java.util.Collection::stream)
             .map(ListValue::getValue)
             .findFirst();
-    }
-
-    @JsonIgnore
-    public boolean isOfflineCase() {
-        return applicant1.isOffline() && isBlank(getApplicant2EmailAddress()) || applicant2.isOffline();
     }
 }
