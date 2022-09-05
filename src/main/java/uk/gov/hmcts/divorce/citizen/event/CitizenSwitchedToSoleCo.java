@@ -88,7 +88,9 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         }
 
         if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
-            switchToSoleService.switchUserRoles(caseId);
+            if (!data.isOfflineCase()) {
+                switchToSoleService.switchUserRoles(caseId);
+            }
             switchToSoleService.switchApplicantData(data);
         }
 
