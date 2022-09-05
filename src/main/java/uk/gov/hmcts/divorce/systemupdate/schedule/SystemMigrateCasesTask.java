@@ -104,7 +104,7 @@ public class SystemMigrateCasesTask implements Runnable {
         final Long caseId = caseDetails.getId();
 
         try {
-            caseDetails.getData().remove("accessCode");
+            caseDetails.getData().put("accessCode", "");
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
             log.info("Removed access code successfully for case id: {}", caseId);
         } catch (final CcdConflictException e) {
