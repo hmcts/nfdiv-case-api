@@ -129,6 +129,25 @@ class CitizenSwitchedToSoleCoTest {
     }
 
     @Test
+    void shouldNotSwitchRolesIfApplicant2TriggeredD84SwitchToSoleAndCaseIsOffline() {
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant1().setEmail("");
+        caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+
+        citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(switchToSoleService).switchApplicantData(caseData);
+        verifyNoMoreInteractions(switchToSoleService);
+    }
+
+    @Test
     void shouldNotSwitchUserDataOrRolesIfApplicant1TriggeredD84SwitchToSole() {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
