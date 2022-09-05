@@ -95,12 +95,8 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
     @Test
     void shouldSubmitNotifySwitchToSoleEventWhenJointConditionalOrderOverdueFromApplicant2() {
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("coApplicant1IsSubmitted", "Yes");
-        data.put("coApplicant1SubmittedDate", "2022-07-07T00:00:00.000Z");
-
         CaseDetails caseDetails1 = CaseDetails.builder()
-            .data(data)
+            .data(new HashMap<>())
             .id(1L).build();
 
         CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();

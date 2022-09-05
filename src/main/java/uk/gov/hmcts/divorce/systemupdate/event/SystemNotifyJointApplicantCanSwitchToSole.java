@@ -54,11 +54,11 @@ public class SystemNotifyJointApplicantCanSwitchToSole implements CCDConfig<Case
 
         ConditionalOrder conditionalOrder = data.getConditionalOrder();
 
-        if (conditionalOrder.shouldEnableSwitchToSoleCoForApplicant1Solicitor()) {
+        if (conditionalOrder.shouldEnableSwitchToSoleCoForApplicant1()) {
             notificationDispatcher.send(applicant1CanSwitchToSoleNotification, data, caseId);
             data.getApplication().setJointApplicantNotifiedCanSwitchToSole(YES);
             data.getConditionalOrder().getConditionalOrderApplicant1Questions().setEnableSolicitorSwitchToSoleCo(YES);
-        } else if (conditionalOrder.shouldEnableSwitchToSoleCoForApplicant2Solicitor()) {
+        } else if (conditionalOrder.shouldEnableSwitchToSoleCoForApplicant2()) {
             notificationDispatcher.send(applicant2CanSwitchToSoleNotification, data, caseId);
             data.getApplication().setJointApplicantNotifiedCanSwitchToSole(YES);
             data.getConditionalOrder().getConditionalOrderApplicant2Questions().setEnableSolicitorSwitchToSoleCo(YES);
