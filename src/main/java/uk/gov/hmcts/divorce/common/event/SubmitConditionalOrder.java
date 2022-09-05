@@ -116,14 +116,19 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
-        if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
+        final boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId());
+
+        if (isApplicant1) {
             notificationDispatcher.send(app1AppliedForConditionalOrderNotification, data, details.getId());
         } else {
             notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
         }
 
         if (state == AwaitingLegalAdvisorReferral) {
-            generateConditionalOrderAnswersDocument.apply(details);
+            generateConditionalOrderAnswersDocument.apply(
+                details,
+                isApplicant1 ? data.getApplicant1().getLanguagePreference() : data.getApplicant2().getLanguagePreference()
+            );
         }
 
         if (state == AwaitingLegalAdvisorReferral && data.isWelshApplication()) {

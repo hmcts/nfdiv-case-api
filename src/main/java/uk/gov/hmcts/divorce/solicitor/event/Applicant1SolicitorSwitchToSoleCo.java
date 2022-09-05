@@ -77,7 +77,7 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
         data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
-        generateConditionalOrderAnswersDocument.apply(details);
+        generateConditionalOrderAnswersDocument.apply(details, data.getApplicant1().getLanguagePreference());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

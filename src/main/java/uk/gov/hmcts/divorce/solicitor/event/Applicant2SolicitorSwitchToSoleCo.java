@@ -89,7 +89,7 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
 
         switchToSoleService.switchApplicantData(data);
 
-        generateConditionalOrderAnswersDocument.apply(details);
+        generateConditionalOrderAnswersDocument.apply(details, data.getApplicant2().getLanguagePreference());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

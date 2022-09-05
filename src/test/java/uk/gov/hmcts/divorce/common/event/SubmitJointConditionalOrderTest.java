@@ -26,7 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.common.event.SubmitJointConditionalOrder.SUBMIT_JOINT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
@@ -114,6 +116,7 @@ public class SubmitJointConditionalOrderTest {
         setMockClock(clock);
 
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.ConditionalOrderPending).id(1L).build();
 
@@ -121,7 +124,7 @@ public class SubmitJointConditionalOrderTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
 
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
 
         verify(notificationDispatcher, times(0))
             .send(app2AppliedForConditionalOrderNotification, caseData, 1L);

@@ -6,12 +6,9 @@
     "labelContentTheApplicant2": "the respondent",
     "labelContentTheApplicant2UC": "The respondent",
     "labelContentApplicant2UC": "Respondent",
-    "labelContentApplicantOrApplicant1": "the applicant’s",
-    "labelContentApplicantsOrApplicant1s": "Applicant’s",
     "labelContentTheApplicantOrApplicant1": "the applicant",
     "labelContentTheApplicantOrApplicant1UC": "The applicant",
     "labelContentApplicantOrApplicant1UC": "Applicant",
-    "labelContentRespondentsOrApplicant2s": "Respondent's",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -39,6 +36,18 @@
     "applicant2InviteEmailAddress": "test@test.com",
     "coD84WhoApplying": "applicant2",
     "coSwitchedToSole": "Yes",
+    "documentsGenerated": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentFileName": "conditionalOrderAnswers.pdf",
+        "documentType": "conditionalOrderAnswers",
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "conditionalOrderAnswers.pdf",
+          "document_binary_url": "${json-unit.any-string}"
+        }
+      }
+    }],
     "dataVersion": 5,
     "warnings": []
   }

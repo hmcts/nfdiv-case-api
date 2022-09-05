@@ -86,7 +86,7 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             : AwaitingLegalAdvisorReferral;
 
         if (state == AwaitingLegalAdvisorReferral) {
-            generateConditionalOrderAnswersDocument.apply(details);
+            generateConditionalOrderAnswersDocument.apply(details, data.getApplicant2().getLanguagePreference());
         } else {
             notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
         }
