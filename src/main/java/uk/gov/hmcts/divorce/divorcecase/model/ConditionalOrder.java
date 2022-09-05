@@ -443,7 +443,7 @@ public class ConditionalOrder {
     }
 
     @JsonIgnore
-    public boolean shouldEnableSwitchToSoleCoForApplicant1Solicitor() {
+    public boolean shouldEnableSwitchToSoleCoForApplicant1() {
         return
             YES.equals(getConditionalOrderApplicant1Questions().getIsSubmitted())
                 && !YES.equals(getConditionalOrderApplicant2Questions().getIsSubmitted())
@@ -452,7 +452,7 @@ public class ConditionalOrder {
     }
 
     @JsonIgnore
-    public boolean shouldEnableSwitchToSoleCoForApplicant2Solicitor() {
+    public boolean shouldEnableSwitchToSoleCoForApplicant2() {
         return
             YES.equals(getConditionalOrderApplicant2Questions().getIsSubmitted())
                 && !YES.equals(getConditionalOrderApplicant1Questions().getIsSubmitted())

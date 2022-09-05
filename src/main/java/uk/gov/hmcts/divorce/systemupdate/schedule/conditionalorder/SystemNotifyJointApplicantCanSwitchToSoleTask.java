@@ -107,8 +107,8 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
         final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
 
-        return conditionalOrder.shouldEnableSwitchToSoleCoForApplicant1Solicitor()
-            || conditionalOrder.shouldEnableSwitchToSoleCoForApplicant2Solicitor();
+        return conditionalOrder.shouldEnableSwitchToSoleCoForApplicant1()
+            || conditionalOrder.shouldEnableSwitchToSoleCoForApplicant2();
 
     }
 }
