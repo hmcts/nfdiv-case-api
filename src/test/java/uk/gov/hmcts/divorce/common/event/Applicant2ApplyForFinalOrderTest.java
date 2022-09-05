@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -21,17 +21,17 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.FINAL_ORDER_REQUESTED;
+import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APPLICANT2_FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class ApplyForFinalOrderTest {
+class Applicant2ApplyForFinalOrderTest {
 
     @Mock
-    private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
+    private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -40,17 +40,17 @@ class ApplyForFinalOrderTest {
     private ProgressFinalOrderState progressFinalOrderState;
 
     @InjectMocks
-    private ApplyForFinalOrder applyForFinalOrder;
+    private Applicant2ApplyForFinalOrder applicant2ApplyForFinalOrder;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        applyForFinalOrder.configure(configBuilder);
+        applicant2ApplyForFinalOrder.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(FINAL_ORDER_REQUESTED);
+            .contains(APPLICANT2_FINAL_ORDER_REQUESTED);
     }
 
     @Test
@@ -60,9 +60,9 @@ class ApplyForFinalOrderTest {
         caseDetails.setState(AwaitingFinalOrder);
 
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher).send(applicant1AppliedForFinalOrderNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicant2AppliedForFinalOrderNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -73,8 +73,8 @@ class ApplyForFinalOrderTest {
         caseDetails.setState(FinalOrderOverdue);
 
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher, never()).send(applicant1AppliedForFinalOrderNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher, never()).send(applicant2AppliedForFinalOrderNotification, caseData, caseDetails.getId());
     }
 }

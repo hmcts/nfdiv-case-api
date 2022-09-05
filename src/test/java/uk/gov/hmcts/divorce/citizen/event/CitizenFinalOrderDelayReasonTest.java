@@ -9,16 +9,21 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.notification.FinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
+import javax.servlet.http.HttpServletRequest;
+
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenFinalOrderDelayReason.CITIZEN_FINAL_ORDER_DELAY_REASON;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -29,11 +34,19 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 @ExtendWith(MockitoExtension.class)
 public class CitizenFinalOrderDelayReasonTest {
 
+    private static final String DUMMY_AUTH_TOKEN = "ASAFSDFASDFASDFASDFASDF";
+
     @Mock
-    private FinalOrderNotification finalOrderNotification;
+    private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private CcdAccessService ccdAccessService;
+
+    @Mock
+    private HttpServletRequest request;
 
     @InjectMocks
     private CitizenFinalOrderDelayReason citizenFinalOrderDelayReason;
@@ -55,11 +68,14 @@ public class CitizenFinalOrderDelayReasonTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.FinalOrderOverdue).id(1L).build();
 
+        when(request.getHeader(AUTHORIZATION)).thenReturn(DUMMY_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(true);
+
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenFinalOrderDelayReason.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(FinalOrderRequested);
 
-        verify(notificationDispatcher).send(finalOrderNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicant1AppliedForFinalOrderNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -69,6 +85,9 @@ public class CitizenFinalOrderDelayReasonTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.FinalOrderOverdue).id(1L).build();
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(DUMMY_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenFinalOrderDelayReason.aboutToSubmit(caseDetails, null);
 
@@ -83,6 +102,9 @@ public class CitizenFinalOrderDelayReasonTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.FinalOrderOverdue).id(1L).build();
 
+        when(request.getHeader(AUTHORIZATION)).thenReturn(DUMMY_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(true);
+
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenFinalOrderDelayReason.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getState()).isEqualTo(WelshTranslationReview);
@@ -95,6 +117,9 @@ public class CitizenFinalOrderDelayReasonTest {
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.FinalOrderOverdue).id(1L).build();
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(DUMMY_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenFinalOrderDelayReason.aboutToSubmit(caseDetails, null);
 
