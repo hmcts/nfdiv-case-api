@@ -46,7 +46,6 @@ public class AppliedForConditionalOrderNotification {
     static final String CO_OR_FO = "coOrFo";
     static final int SUBMISSION_DATE_PLUS_DAYS = 28;
 
-
     static final String APPLICANT1 = "applicant 1";
     static final String APPLICANT2 = "applicant 2";
 

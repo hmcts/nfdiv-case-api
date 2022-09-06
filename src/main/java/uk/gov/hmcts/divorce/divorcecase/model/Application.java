@@ -95,6 +95,13 @@ public class Application {
     private HelpWithFees applicant2HelpWithFees;
 
     @CCD(
+        access = {DefaultAccess.class}
+    )
+    @JsonUnwrapped(prefix = "sts")
+    @Builder.Default
+    private SwitchedToSole switchedToSole = new SwitchedToSole();
+
+    @CCD(
         label = "Who is the applicant divorcing?",
         hint = "Husband or Wife?",
         typeOverride = FixedList,

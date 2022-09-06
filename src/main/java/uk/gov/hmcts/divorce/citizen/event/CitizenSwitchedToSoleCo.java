@@ -7,25 +7,29 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleCoNotification;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
+import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
+import java.util.EnumSet;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
@@ -49,15 +53,18 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
+    @Autowired
+    private SwitchToSoleService switchToSoleService;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
             .event(SWITCH_TO_SOLE_CO)
-            .forStateTransition(ConditionalOrderPending, AwaitingLegalAdvisorReferral)
+            .forStateTransition(EnumSet.of(ConditionalOrderPending, AwaitingLegalAdvisorReferral), AwaitingLegalAdvisorReferral)
             .name("SwitchedToSoleCO")
             .description("Application type switched to sole post CO submission")
-            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
@@ -69,13 +76,22 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         log.info("SwitchedToSoleCO aboutToSubmit callback invoked for Case Id: {}", caseId);
         CaseData data = details.getData();
 
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        data.getApplication().setSwitchedToSoleCo(YesOrNo.YES);
+        data.setApplicationType(SOLE_APPLICATION);
+        data.getApplication().setSwitchedToSoleCo(YES);
+        data.getLabelContent().setApplicationType(SOLE_APPLICATION);
+        data.getConditionalOrder().setSwitchedToSole(YES);
 
         if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant1SwitchToSoleCoNotification, data, caseId);
-        } else {
+        } else if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant2SwitchToSoleCoNotification, data, caseId);
+        }
+
+        if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
+            if (!data.getApplication().isPaperCase()) {
+                switchToSoleService.switchUserRoles(caseId);
+            }
+            switchToSoleService.switchApplicantData(data);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
