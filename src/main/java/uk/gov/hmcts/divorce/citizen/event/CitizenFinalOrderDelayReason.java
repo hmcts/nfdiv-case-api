@@ -7,12 +7,17 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.notification.SoleAppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
+import javax.servlet.http.HttpServletRequest;
+
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
@@ -29,10 +34,19 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
     public static final String CITIZEN_FINAL_ORDER_DELAY_REASON = "citizen-final-order-delay-reason";
 
     @Autowired
-    private SoleAppliedForFinalOrderNotification soleAppliedForFinalOrderNotification;
+    private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
+
+    @Autowired
+    private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private CcdAccessService ccdAccessService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -54,8 +68,10 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
         CaseData data = details.getData();
         State endState = FinalOrderRequested;
 
-        if (data.getApplicationType().isSole()) {
-            notificationDispatcher.send(soleAppliedForFinalOrderNotification, data, details.getId());
+        if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
+            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, data, details.getId());
+        } else {
+            notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, data, details.getId());
         }
 
         if (data.isWelshApplication()) {

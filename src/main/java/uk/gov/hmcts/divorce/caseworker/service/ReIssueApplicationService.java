@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 
 import static java.lang.String.format;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
@@ -77,6 +78,9 @@ public class ReIssueApplicationService {
     private CaseDetails<CaseData, State> updateCase(CaseDetails<CaseData, State> caseDetails, ReissueOption reissueOption) {
         if (DIGITAL_AOS.equals(reissueOption)) {
             log.info("For case id {} processing reissue for digital aos ", caseDetails.getId());
+
+            caseDetails.getData().getApplicant2().setOffline(NO);
+
             return caseTasks(
                 setPostIssueState,
                 setReIssueAndDueDate,

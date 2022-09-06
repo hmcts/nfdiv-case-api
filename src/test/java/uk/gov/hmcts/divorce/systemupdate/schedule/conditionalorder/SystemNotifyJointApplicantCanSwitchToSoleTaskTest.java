@@ -200,6 +200,42 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
     }
 
     @Test
+    void shouldNotSubmitNotifySwitchToSoleEventWhenCOSubmittedDateIsNull() {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("coApplicant1IsSubmitted", "Yes");
+        data.put("coApplicant1SubmittedDate", null);
+
+        CaseDetails caseDetails1 = CaseDetails.builder()
+            .data(data)
+            .id(1L).build();
+
+        CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
+
+        List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+
+        CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .submittedDate(null)
+                    .isSubmitted(YesOrNo.YES)
+                    .build())
+                .build())
+            .build();
+
+        when(mapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData);
+        when(mapper.convertValue(caseDetails2.getData(), CaseData.class)).thenReturn(CaseData.builder().build());
+
+        when(ccdSearchService.searchForAllCasesWithQuery(
+            query, user, SERVICE_AUTHORIZATION, ConditionalOrderPending))
+            .thenReturn(caseDetailsList);
+
+        notifyJointApplicantCanSwitchToSoleTask.run();
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
     void shouldNotSubmitEventIfSearchFails() {
         when(ccdSearchService.searchForAllCasesWithQuery(
             query, user, SERVICE_AUTHORIZATION, ConditionalOrderPending))
