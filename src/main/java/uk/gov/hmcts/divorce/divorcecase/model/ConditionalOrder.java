@@ -444,6 +444,24 @@ public class ConditionalOrder {
     }
 
     @JsonIgnore
+    public boolean shouldEnableSwitchToSoleCoForApplicant1() {
+        return
+            YES.equals(getConditionalOrderApplicant1Questions().getIsSubmitted())
+                && !YES.equals(getConditionalOrderApplicant2Questions().getIsSubmitted())
+                && isNotEmpty(getConditionalOrderApplicant1Questions().getSubmittedDate())
+                && getConditionalOrderApplicant1Questions().getSubmittedDate().plusDays(14).isBefore(LocalDateTime.now());
+    }
+
+    @JsonIgnore
+    public boolean shouldEnableSwitchToSoleCoForApplicant2() {
+        return
+            YES.equals(getConditionalOrderApplicant2Questions().getIsSubmitted())
+                && !YES.equals(getConditionalOrderApplicant1Questions().getIsSubmitted())
+                && isNotEmpty(getConditionalOrderApplicant2Questions().getSubmittedDate())
+                && getConditionalOrderApplicant2Questions().getSubmittedDate().plusDays(14).isBefore(LocalDateTime.now());
+    }
+
+    @JsonIgnore
     public boolean isLastApprovedServiceApplicationBailiffApplication() {
         return YES.equals(lastApprovedServiceApplicationIsBailiffApplication);
     }
