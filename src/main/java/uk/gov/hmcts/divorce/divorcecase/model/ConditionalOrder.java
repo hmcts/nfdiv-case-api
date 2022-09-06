@@ -304,6 +304,7 @@ public class ConditionalOrder {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate rescindedDate;
+
     @CCD(
         label = "Service Confirmed"
     )
@@ -339,7 +340,7 @@ public class ConditionalOrder {
 
     @JsonIgnore
     public boolean hasConditionalOrderBeenGranted() {
-        return YesOrNo.YES.equals(granted);
+        return YES.equals(granted);
     }
 
     @JsonIgnore
@@ -361,12 +362,12 @@ public class ConditionalOrder {
 
     @JsonIgnore
     public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant1() {
-        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant1);
+        return YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant1);
     }
 
     @JsonIgnore
     public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant2() {
-        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant2);
+        return YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant2);
     }
 
     @JsonIgnore
@@ -458,5 +459,15 @@ public class ConditionalOrder {
                 && !YES.equals(getConditionalOrderApplicant1Questions().getIsSubmitted())
                 && isNotEmpty(getConditionalOrderApplicant2Questions().getSubmittedDate())
                 && getConditionalOrderApplicant2Questions().getSubmittedDate().plusDays(14).isBefore(LocalDateTime.now());
+    }
+
+    @JsonIgnore
+    public boolean isLastApprovedServiceApplicationBailiffApplication() {
+        return YES.equals(lastApprovedServiceApplicationIsBailiffApplication);
+    }
+
+    @JsonIgnore
+    public boolean hasServiceBeenConfirmed() {
+        return YES.equals(serviceConfirmed);
     }
 }

@@ -102,7 +102,7 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
         }
     }
 
-    public boolean isJointConditionalOrderOverdue(final CaseDetails caseDetails) {
+    private boolean isJointConditionalOrderOverdue(final CaseDetails caseDetails) {
 
         final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
