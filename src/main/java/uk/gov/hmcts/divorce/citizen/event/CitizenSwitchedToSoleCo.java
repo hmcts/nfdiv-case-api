@@ -86,9 +86,7 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
-        final boolean isApplicant1 = ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId);
-
-        if (isApplicant1) {
+        if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant1SwitchToSoleCoNotification, data, caseId);
         } else if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant2SwitchToSoleCoNotification, data, caseId);
@@ -103,7 +101,7 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
 
         generateConditionalOrderAnswersDocument.apply(
             details,
-            isApplicant1 ? data.getApplicant1().getLanguagePreference() : data.getApplicant2().getLanguagePreference()
+            data.getApplicant1().getLanguagePreference()
         );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

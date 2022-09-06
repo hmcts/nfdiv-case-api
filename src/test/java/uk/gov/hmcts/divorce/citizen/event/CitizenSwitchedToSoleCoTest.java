@@ -28,7 +28,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -103,7 +102,6 @@ class CitizenSwitchedToSoleCoTest {
     void shouldSetApplicationTypeToSoleAndSendNotificationToApplicant2() {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
             .data(caseData)
@@ -116,7 +114,6 @@ class CitizenSwitchedToSoleCoTest {
 
         verify(notificationDispatcher).send(applicant2Notification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
         assertThat(response.getData().getLabelContent().getApplicant2()).isEqualTo("respondent");
@@ -137,6 +134,7 @@ class CitizenSwitchedToSoleCoTest {
 
         verify(switchToSoleService).switchCitizenUserRoles(caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
     }
 
     @Test
