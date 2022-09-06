@@ -37,10 +37,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
-import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
@@ -53,9 +51,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_ANSWERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
 @Component
@@ -101,7 +100,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .submittedCallback(this::submitted)
             .showEventNotes()
             .showSummary()
-            .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER))
+            .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER)
+            .grantHistoryOnly(LEGAL_ADVISOR))
             .page("documentTypeReceived")
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
             .complex(CaseData::getDocuments)
@@ -111,7 +111,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .mandatory(AcknowledgementOfService::getHowToRespondApplication, "typeOfDocumentAttached=\"D10\"")
             .done()
             .complex(CaseData::getDocuments)
-                .mandatory(CaseDocuments::getScannedDocumentNames, "typeOfDocumentAttached=\"D10\"")
+                .mandatory(CaseDocuments::getScannedDocumentNames,
+                    "typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\"")
             .done()
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getD84ApplicationType,
@@ -160,54 +161,43 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
         var caseData = details.getData();
 
         if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
 
-            reclassifyAosScannedDocumentToRespondentAnswers(caseData);
+            reclassifyScannedDocumentToChosenDocumentType(caseData, RESPONDENT_ANSWERS);
             // setting the status as drafted as AOS answers has been received and is being classified by caseworker
             details.setState(AosDrafted);
 
             final CaseDetails<CaseData, State> response = submitAosService.submitOfflineAos(details);
             response.getData().getApplicant2().setOffline(YES);
+            response.getData().getAcknowledgementOfService().setStatementOfTruth(YES);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(response.getData())
                 .state(response.getState())
                 .build();
+
         } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
 
-            final Optional<ListValue<ScannedDocument>> d84ScannedForm =
-                emptyIfNull(caseData.getDocuments().getScannedDocuments())
-                    .stream()
-                    .filter(scannedDoc -> scannedDoc.getValue().getType().equals(FORM))
-                    .findFirst();
+            reclassifyScannedDocumentToChosenDocumentType(caseData, CONDITIONAL_ORDER_ANSWERS);
 
-            if (d84ScannedForm.isPresent()) {
-                final DivorceDocument d84Doc = mapScannedDocumentToDivorceDocument(d84ScannedForm.get().getValue(), D84);
-                caseData.getDocuments().setDocumentsGenerated(addDocumentToTop(caseData.getDocuments().getDocumentsGenerated(), d84Doc));
-                caseData.getConditionalOrder().setScannedD84Form(d84Doc.getDocumentLink());
-                caseData.getConditionalOrder().setDateD84FormScanned(d84ScannedForm.get().getValue().getScannedDate());
-
-                if (caseData.getApplicationType().isSole()) {
-                    caseData.getApplicant1().setOffline(YES);
-                } else {
-                    caseData.getApplicant1().setOffline(YES);
-                    caseData.getApplicant2().setOffline(YES);
-                }
-
-                notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
-
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .data(caseData)
-                    .state(AwaitingLegalAdvisorReferral)
-                    .build();
+            if (caseData.getApplicationType().isSole()) {
+                caseData.getApplicant1().setOffline(YES);
             } else {
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .errors(singletonList("Could not find D84 form in Scanned Documents List"))
-                    .build();
+                caseData.getApplicant1().setOffline(YES);
+                caseData.getApplicant2().setOffline(YES);
             }
+
+            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(AwaitingLegalAdvisorReferral)
+                .build();
+
         } else {
             final State state = caseData.getApplication().getStateToTransitionApplicationTo();
 
@@ -225,24 +215,33 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         }
     }
 
-    private void reclassifyAosScannedDocumentToRespondentAnswers(CaseData caseData) {
-        String aosFileName = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
+    private void reclassifyScannedDocumentToChosenDocumentType(CaseData caseData, DocumentType documentType) {
+        String filename = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
 
-        log.info("Reclassifying scanned doc {} to respondent answers doc type", aosFileName);
+        log.info("Reclassifying scanned doc {} to {} doc type", filename, documentType);
 
-        Optional<ListValue<ScannedDocument>> aosScannedDocumentOptional =
+        Optional<ListValue<ScannedDocument>> scannedDocumentOptional =
             emptyIfNull(caseData.getDocuments().getScannedDocuments())
                 .stream()
-                .filter(scannedDoc -> scannedDoc.getValue().getFileName().equals(aosFileName))
+                .filter(scannedDoc -> scannedDoc.getValue().getFileName().equals(filename))
                 .findFirst();
 
-        if (aosScannedDocumentOptional.isPresent()) {
+        if (scannedDocumentOptional.isPresent()) {
+            DivorceDocument divorceDocument = mapScannedDocumentToDivorceDocument(scannedDocumentOptional.get().getValue(), documentType);
             List<ListValue<DivorceDocument>> updatedDocumentsUploaded = addDocumentToTop(
                 caseData.getDocuments().getDocumentsUploaded(),
-                mapScannedDocumentToDivorceDocument(aosScannedDocumentOptional.get().getValue(), RESPONDENT_ANSWERS)
+                divorceDocument
             );
 
             caseData.getDocuments().setDocumentsUploaded(updatedDocumentsUploaded);
+
+            if (CONDITIONAL_ORDER_ANSWERS.equals(documentType)) {
+                caseData.getDocuments().setDocumentsGenerated(
+                    addDocumentToTop(caseData.getDocuments().getDocumentsGenerated(), divorceDocument)
+                );
+                caseData.getConditionalOrder().setScannedD84Form(divorceDocument.getDocumentLink());
+                caseData.getConditionalOrder().setDateD84FormScanned(scannedDocumentOptional.get().getValue().getScannedDate());
+            }
         }
     }
 

@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
@@ -27,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 import static java.util.List.of;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -68,6 +71,9 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     @Autowired
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
+    @Autowired
+    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
+
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -76,7 +82,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
             .endButtonLabel("Save Conditional Order")
-            .showCondition("coApplicant1IsSubmitted=\"No\"")
+            .showCondition("coApplicant1IsDrafted=\"Yes\" AND coApplicant1IsSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
@@ -116,17 +122,28 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
+        if (AwaitingLegalAdvisorReferral.equals(state)
+            && isSole
+            && isEmpty(data.getAcknowledgementOfService().getDateAosSubmitted())
+            && isNotEmpty(data.getCaseInvite())
+            && isNotEmpty(data.getCaseInvite().accessCode())
+            && shouldSetApplicant2ToOffline(data)
+        ) {
+            data.getApplicant2().setOffline(YES);
+        }
+
         if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
             notificationDispatcher.send(app1AppliedForConditionalOrderNotification, data, details.getId());
         } else {
             notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
         }
 
-        if (state == AwaitingLegalAdvisorReferral) {
+        if (AwaitingLegalAdvisorReferral.equals(state)) {
+            notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, details.getId());
             generateConditionalOrderAnswersDocument.apply(details);
         }
 
-        if (state == AwaitingLegalAdvisorReferral && data.isWelshApplication()) {
+        if (AwaitingLegalAdvisorReferral.equals(state) && data.isWelshApplication()) {
             data.getApplication().setWelshPreviousState(state);
             state = WelshTranslationReview;
             log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
@@ -140,10 +157,10 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     }
 
     private List<String> validate(CaseData data) {
-        return data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth() == null
-            || data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth().toBoolean()
-                ? emptyList()
-                : of("The applicant must agree that the facts stated in the application are true");
+        var statementOfTruth = data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth();
+
+        return statementOfTruth == null || statementOfTruth.toBoolean()
+            ? emptyList() : of("The applicant must agree that the facts stated in the application are true");
     }
 
     private void setSubmittedDate(ConditionalOrder conditionalOrder) {
@@ -157,5 +174,11 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             && Objects.isNull(app2Questions.getSubmittedDate())) {
             app2Questions.setSubmittedDate(LocalDateTime.now(clock));
         }
+    }
+
+    private boolean shouldSetApplicant2ToOffline(CaseData caseData) {
+        return caseData.getConditionalOrder().hasServiceBeenConfirmed()
+            || caseData.getConditionalOrder().isLastApprovedServiceApplicationBailiffApplication()
+            || caseData.getAlternativeService().isApplicationGrantedDeemedOrDispensed();
     }
 }

@@ -60,7 +60,7 @@ public class AwaitingAmendedApplicationPrinterTest {
     ArgumentCaptor<Print> printCaptor;
 
     @Test
-    void shouldPrintAwaitingClarificationPack() {
+    void shouldPrintAwaitingAmendedApplicationPack() {
 
         final ListValue<DivorceDocument> coversheetDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -134,7 +134,7 @@ public class AwaitingAmendedApplicationPrinterTest {
     }
 
     @Test
-    void shouldNotPrintIfAwaitingClarificationLettersNotFound() {
+    void shouldNotPrintIfAwaitingAmendedApplicationLettersNotFound() {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
@@ -157,7 +157,7 @@ public class AwaitingAmendedApplicationPrinterTest {
     }
 
     @Test
-    void shouldNotPrintIfNumberOfAwaitingClarificationLettersDoesNotMatchExpectedDocumentsSize() {
+    void shouldNotPrintIfNumberOfAwaitingAmendedApplicationLettersDoesNotMatchExpectedDocumentsSize() {
 
         final ListValue<DivorceDocument> coversheetDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()

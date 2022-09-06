@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -219,29 +218,12 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getDocumentsUploaded())
             .extracting("value")
             .containsExactly(divorceDocument);
+        assertThat(response.getData().getAcknowledgementOfService().getStatementOfTruth()).isEqualTo(YES);
     }
 
     @Test
     void shouldSetStateToHoldingAndSkipReclassifyIfSelectedD10DocumentIsNotFoundInScannedDocNames() {
-        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
-            .value(
-                ScannedDocument
-                    .builder()
-                    .url(
-                        Document
-                            .builder()
-                            .filename("doc1.pdf")
-                            .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
-                            .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
-                            .build()
-                    )
-                    .fileName("doc1.pdf")
-                    .type(ScannedDocumentType.OTHER)
-                    .subtype("aos")
-                    .build()
-            )
-            .build();
-
+        final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf");
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
 
         CaseData caseData = CaseData.builder()
@@ -307,6 +289,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState().name()).isEqualTo(AwaitingAmendedApplication.name());
+        assertThat(response.getData().getAcknowledgementOfService().getStatementOfTruth()).isNull();
     }
 
     @Test
@@ -347,7 +330,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .value(
                 ScannedDocument.builder()
                     .scannedDate(now(clock))
-                    .fileName("D84")
+                    .fileName("D84.pdf")
                     .type(FORM)
                     .url(document)
                     .build()
@@ -362,6 +345,17 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                 CaseDocuments.builder()
                     .typeOfDocumentAttached(CO_D84)
                     .scannedDocuments(List.of(scannedD84Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D84.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
                     .build()
             )
             .build();
@@ -396,7 +390,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .value(
                 ScannedDocument.builder()
                     .scannedDate(now(clock))
-                    .fileName("D84")
+                    .fileName("D84.pdf")
                     .type(FORM)
                     .url(document)
                     .build()
@@ -412,6 +406,17 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                 CaseDocuments.builder()
                     .typeOfDocumentAttached(CO_D84)
                     .scannedDocuments(List.of(scannedD84Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D84.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
                     .build()
             )
             .build();
@@ -433,47 +438,9 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
-    void shouldReturnErrorIfD84SelectedButNotFoundInScannedDocuments() {
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        CaseData caseData = CaseData.builder()
-            .documents(
-                CaseDocuments.builder()
-                    .typeOfDocumentAttached(CO_D84)
-                    .scannedDocuments(emptyList())
-                    .build()
-            )
-            .build();
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
-
-        assertThat(response.getErrors()).isNotEmpty();
-        assertThat(response.getErrors()).contains("Could not find D84 form in Scanned Documents List");
-    }
-
-    @Test
     void shouldSetDynamicListWithScannedDocumentNamesForAllTheScannedDocuments() {
-        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
-            .value(
-                ScannedDocument
-                    .builder()
-                    .fileName("doc1.pdf")
-                    .type(ScannedDocumentType.OTHER)
-                    .subtype("aos")
-                    .build()
-            )
-            .build();
-
-        final ListValue<ScannedDocument> doc2 = ListValue.<ScannedDocument>builder()
-            .value(
-                ScannedDocument
-                    .builder()
-                    .fileName("doc2.pdf")
-                    .type(ScannedDocumentType.OTHER)
-                    .build()
-            )
-            .build();
+        final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf");
+        final ListValue<ScannedDocument> doc2 = scannedDocument("doc2.pdf");
 
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder()
@@ -525,5 +492,21 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verifyNoInteractions(ccdUpdateService);
+    }
+
+    private ListValue<ScannedDocument> scannedDocument(String filename) {
+        return ListValue.<ScannedDocument>builder()
+            .value(ScannedDocument.builder()
+                .url(Document.builder()
+                        .filename(filename)
+                        .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                        .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                        .build()
+                )
+                .fileName(filename)
+                .type(ScannedDocumentType.OTHER)
+                .subtype("aos")
+                .build()
+            ).build();
     }
 }

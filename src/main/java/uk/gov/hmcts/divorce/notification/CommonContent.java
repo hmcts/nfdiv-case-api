@@ -106,6 +106,9 @@ public class CommonContent {
     public static final String APPLICANT1_LABEL = "applicant1Label";
     public static final String APPLICANT2_LABEL = "applicant2Label";
 
+    public static final String SPOUSE = "spouse";
+    public static final String SPOUSE_WELSH = "priod";
+
     @Autowired
     private EmailTemplatesConfig config;
 
@@ -193,7 +196,7 @@ public class CommonContent {
     public String getPartner(CaseData caseData, Applicant partner) {
         if (caseData.isDivorce()) {
             if (isNull(partner.getGender())) {
-                return "spouse";
+                return SPOUSE;
             } else {
                 return partner.getGender() == MALE ? "husband" : "wife";
             }
@@ -205,7 +208,7 @@ public class CommonContent {
     public String getPartnerWelshContent(CaseData caseData, Applicant partner) {
         if (caseData.isDivorce()) {
             if (isNull(partner.getGender())) {
-                return "priod";
+                return SPOUSE_WELSH;
             } else {
                 return partner.getGender() == MALE ? "gŵr" : "gwraig";
             }
