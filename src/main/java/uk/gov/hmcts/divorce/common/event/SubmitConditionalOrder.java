@@ -104,7 +104,11 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         log.info("Submit conditional order about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseData data = details.getData();
-        final List<String> validationErrors = validate(data);
+        final boolean isSole = data.getApplicationType().isSole();
+        ConditionalOrderQuestions app1Questions = data.getConditionalOrder().getConditionalOrderApplicant1Questions();
+        ConditionalOrderQuestions app2Questions = data.getConditionalOrder().getConditionalOrderApplicant2Questions();
+
+        final List<String> validationErrors = validate(app1Questions, app2Questions, isSole);
 
         if (!validationErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -113,14 +117,14 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
                 .build();
         }
 
-        final boolean isSole = data.getApplicationType().isSole();
+        setSubmittedDate(app1Questions, app2Questions);
+        setIsSubmitted(app1Questions, app2Questions);
 
-        setSubmittedDate(data.getConditionalOrder());
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(YES);
+        boolean haveBothApplicantsSubmitted =
+            data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth() == YES
+            && data.getConditionalOrder().getConditionalOrderApplicant2Questions().getStatementOfTruth() == YES;
 
-        var state = isSole
-            ? AwaitingLegalAdvisorReferral
-            : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
+        var state = isSole || haveBothApplicantsSubmitted ? AwaitingLegalAdvisorReferral : ConditionalOrderPending;
 
         if (AwaitingLegalAdvisorReferral.equals(state)
             && isSole
@@ -156,16 +160,16 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .build();
     }
 
-    private List<String> validate(CaseData data) {
-        var statementOfTruth = data.getConditionalOrder().getConditionalOrderApplicant1Questions().getStatementOfTruth();
-
-        return statementOfTruth == null || statementOfTruth.toBoolean()
-            ? emptyList() : of("The applicant must agree that the facts stated in the application are true");
+    private List<String> validate(ConditionalOrderQuestions app1Questions, ConditionalOrderQuestions app2Questions, boolean isSole) {
+        if (app1Questions.getStatementOfTruth() == null || !app1Questions.getStatementOfTruth().toBoolean()) {
+            if (isSole || (app2Questions.getStatementOfTruth() == null || !app2Questions.getStatementOfTruth().toBoolean())) {
+                return of("The applicant must agree that the facts stated in the application are true");
+            }
+        }
+        return emptyList();
     }
 
-    private void setSubmittedDate(ConditionalOrder conditionalOrder) {
-        ConditionalOrderQuestions app1Questions = conditionalOrder.getConditionalOrderApplicant1Questions();
-        ConditionalOrderQuestions app2Questions = conditionalOrder.getConditionalOrderApplicant2Questions();
+    private void setSubmittedDate(ConditionalOrderQuestions app1Questions, ConditionalOrderQuestions app2Questions) {
         if (Objects.nonNull(app1Questions.getStatementOfTruth()) && app1Questions.getStatementOfTruth().toBoolean()
             && Objects.isNull(app1Questions.getSubmittedDate())) {
             app1Questions.setSubmittedDate(LocalDateTime.now(clock));
@@ -173,6 +177,15 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         if (Objects.nonNull(app2Questions.getStatementOfTruth()) && app2Questions.getStatementOfTruth().toBoolean()
             && Objects.isNull(app2Questions.getSubmittedDate())) {
             app2Questions.setSubmittedDate(LocalDateTime.now(clock));
+        }
+    }
+
+    private void setIsSubmitted(ConditionalOrderQuestions app1Questions, ConditionalOrderQuestions app2Questions) {
+        if (Objects.nonNull(app1Questions.getStatementOfTruth()) && app1Questions.getStatementOfTruth().toBoolean()) {
+            app1Questions.setIsSubmitted(YES);
+        }
+        if (Objects.nonNull(app2Questions.getStatementOfTruth()) && app2Questions.getStatementOfTruth().toBoolean()) {
+            app2Questions.setIsSubmitted(YES);
         }
     }
 

@@ -149,6 +149,8 @@ class SubmitConditionalOrderTest {
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
                 .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(ConditionalOrderPending).id(1L).build();
@@ -280,7 +282,6 @@ class SubmitConditionalOrderTest {
                 .build())
             .build());
 
-        caseData.setApplicationType(JOINT_APPLICATION);
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(1L)
@@ -289,7 +290,6 @@ class SubmitConditionalOrderTest {
             .build();
 
         CaseData caseDataBefore = caseData();
-        caseDataBefore.setApplicationType(JOINT_APPLICATION);
 
         final CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
             .id(1L)
@@ -323,6 +323,30 @@ class SubmitConditionalOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted())
+            .isEqualTo(YES);
+    }
+
+    @Test
+    void shouldSetIsSubmittedForApplicant2OnAboutToSubmit() {
+        setupMocks(clock);
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .application(Application.builder()
+                .serviceMethod(SOLICITOR_SERVICE)
+                .solSignStatementOfTruth(YES)
+                .build())
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YES)
+                    .build())
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(ConditionalOrderDrafted).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted())
             .isEqualTo(YES);
     }
 
