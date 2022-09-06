@@ -81,6 +81,8 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
         data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
+        generateConditionalOrderAnswersDocument.apply(details, data.getApplicant2().getLanguagePreference());
+
         if (data.getApplicant1().isRepresented()) {
             switchToSoleService.switchSolicitorUserRoles(caseId);
         } else {
@@ -88,8 +90,6 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
         }
 
         switchToSoleService.switchApplicantData(data);
-
-        generateConditionalOrderAnswersDocument.apply(details, data.getApplicant2().getLanguagePreference());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
