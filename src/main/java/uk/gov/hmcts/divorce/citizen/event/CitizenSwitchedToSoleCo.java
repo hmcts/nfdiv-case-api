@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
@@ -56,6 +57,9 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
     @Autowired
     private SwitchToSoleService switchToSoleService;
 
+    @Autowired
+    private SwitchToSoleCoPrinter switchToSoleCoPrinter;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -88,10 +92,13 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         }
 
         if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
+            switchToSoleCoPrinter.sendLetter(data, caseId, data.getApplicant2(), data.getApplicant1());
             if (!data.getApplication().isPaperCase()) {
                 switchToSoleService.switchUserRoles(caseId);
             }
             switchToSoleService.switchApplicantData(data);
+        } else if (ConditionalOrder.D84WhoApplying.APPLICANT_1.equals(data.getConditionalOrder().getD84WhoApplying())) {
+            switchToSoleCoPrinter.sendLetter(data, caseId, data.getApplicant1(), data.getApplicant2());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

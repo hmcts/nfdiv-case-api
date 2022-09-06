@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
@@ -56,6 +57,9 @@ class CitizenSwitchedToSoleCoTest {
 
     @Mock
     private SwitchToSoleService switchToSoleService;
+
+    @Mock
+    private SwitchToSoleCoPrinter switchToSoleCoPrinter;
 
     @InjectMocks
     private CitizenSwitchedToSoleCo citizenSwitchedToSoleCo;
@@ -124,6 +128,7 @@ class CitizenSwitchedToSoleCoTest {
 
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
+        verify(switchToSoleCoPrinter).sendLetter(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
         verify(switchToSoleService).switchUserRoles(caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
     }
@@ -141,6 +146,7 @@ class CitizenSwitchedToSoleCoTest {
 
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
+        verify(switchToSoleCoPrinter).sendLetter(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
         verify(switchToSoleService).switchApplicantData(caseData);
         verifyNoMoreInteractions(switchToSoleService);
     }
@@ -157,6 +163,7 @@ class CitizenSwitchedToSoleCoTest {
 
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
+        verify(switchToSoleCoPrinter).sendLetter(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
         verifyNoInteractions(switchToSoleService);
     }
 }
