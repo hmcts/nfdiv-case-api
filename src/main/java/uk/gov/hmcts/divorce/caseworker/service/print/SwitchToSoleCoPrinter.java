@@ -47,12 +47,13 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Slf4j
 public class SwitchToSoleCoPrinter {
 
-    private static final String LETTER_TYPE_SWITCH_TO_SOLE_CO = "switch-to-sole-co-letter";
     public static final String GET_A_DIVORCE = "get a divorce";
     public static final String END_YOUR_CIVIL_PARTNERSHIP = "end your civil partnership";
     public static final String YOU_ARE_DIVORCED = "you are divorced";
     public static final String CIVIL_PARTNERSHIP_LEGALLY_ENDED = "your civil partnership is legally ended";
     public static final String DIVORCED_OR_CP_LEGALLY_ENDED = "divorcedOrCivilPartnershipLegallyEnded";
+
+    private static final String LETTER_TYPE_SWITCH_TO_SOLE_CO = "switch-to-sole-co-letter";
 
     @Autowired
     private BulkPrintService bulkPrintService;
@@ -66,12 +67,12 @@ public class SwitchToSoleCoPrinter {
     @Autowired
     private Clock clock;
 
-    public void sendLetter(final CaseData caseData,
-                           final Long caseId,
-                           final Applicant applicant,
-                           final Applicant partner) {
+    public void print(final CaseData caseData,
+                      final Long caseId,
+                      final Applicant applicant,
+                      final Applicant respondent) {
 
-        generateSwitchToSoleCoLetter(caseData, caseId, applicant, partner);
+        generateSwitchToSoleCoLetter(caseData, caseId, applicant, respondent);
 
         final List<Letter> switchToSoleCoLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
@@ -99,16 +100,16 @@ public class SwitchToSoleCoPrinter {
     private void generateSwitchToSoleCoLetter(final CaseData caseData,
                                               final Long caseId,
                                               final Applicant applicant,
-                                              final Applicant partner) {
+                                              final Applicant respondent) {
 
         log.info("Generating coversheet for sole case id {} ", caseId);
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             SWITCH_TO_SOLE_CO_LETTER,
-            templateContent(caseData, caseId, applicant, partner),
+            templateContent(caseData, caseId, applicant, respondent),
             caseId,
             SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID,
-            partner.getLanguagePreference(),
+            respondent.getLanguagePreference(),
             formatDocumentName(caseId, SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME, now(clock))
         );
     }
@@ -116,15 +117,15 @@ public class SwitchToSoleCoPrinter {
     private Map<String, Object> templateContent(final CaseData caseData,
                                                 final Long caseId,
                                                 final Applicant applicant,
-                                                final Applicant partner) {
+                                                final Applicant respondent) {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
         templateContent.put(CASE_REFERENCE, formatId(caseId));
-        templateContent.put(NAME, join(" ", partner.getFirstName(), partner.getLastName()));
-        templateContent.put(ADDRESS, partner.getPostalAddress());
+        templateContent.put(NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
+        templateContent.put(ADDRESS, respondent.getPostalAddress());
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
-        templateContent.put(PARTNER, commonContent.getPartner(caseData, applicant, partner.getLanguagePreference()));
+        templateContent.put(PARTNER, commonContent.getPartner(caseData, applicant, respondent.getLanguagePreference()));
 
         templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, caseData.isDivorce() ? GET_A_DIVORCE :  END_YOUR_CIVIL_PARTNERSHIP);
         templateContent.put(DIVORCED_OR_CP_LEGALLY_ENDED, caseData.isDivorce() ? YOU_ARE_DIVORCED : CIVIL_PARTNERSHIP_LEGALLY_ENDED);

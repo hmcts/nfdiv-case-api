@@ -11,9 +11,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -30,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -45,6 +49,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSoleCo.SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84ApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_1;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -92,6 +98,9 @@ public class CitizenSwitchedToSoleCoIT {
 
     @MockBean
     private CaseAssignmentApi caseAssignmentApi;
+
+    @MockBean
+    private SwitchToSoleCoPrinter switchToSoleCoPrinter;
 
     @BeforeAll
     static void setUp() {
@@ -171,7 +180,9 @@ public class CitizenSwitchedToSoleCoIT {
         throws Exception {
 
         CaseData data = validJointApplicant1CaseData();
+        data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
         data.setConditionalOrder(ConditionalOrder.builder()
+            .d84ApplicationType(SWITCH_TO_SOLE)
             .d84WhoApplying(APPLICANT_2)
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
@@ -196,6 +207,9 @@ public class CitizenSwitchedToSoleCoIT {
             .andExpect(status().isOk())
             .andDo(print())
             .andExpect(content().json(expectedResponse(SWITCH_TO_SOLE_CO_APPLICANT_2_RESPONSE)));
+
+        verify(switchToSoleCoPrinter)
+            .print(any(CaseData.class), eq(TEST_CASE_ID), any(Applicant.class), any(Applicant.class));
     }
 
     @Test
@@ -203,7 +217,9 @@ public class CitizenSwitchedToSoleCoIT {
         throws Exception {
 
         CaseData data = validJointApplicant1CaseData();
+        data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
         data.setConditionalOrder(ConditionalOrder.builder()
+            .d84ApplicationType(SWITCH_TO_SOLE)
             .d84WhoApplying(APPLICANT_1)
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
@@ -218,6 +234,9 @@ public class CitizenSwitchedToSoleCoIT {
             .andExpect(status().isOk())
             .andDo(print())
             .andExpect(content().json(expectedResponse(SWITCH_TO_SOLE_CO_APPLICANT_1_RESPONSE)));
+
+        verify(switchToSoleCoPrinter)
+            .print(any(CaseData.class), eq(TEST_CASE_ID), any(Applicant.class), any(Applicant.class));
     }
 
     private void setupMocks(boolean isApplicant1, boolean isApplicant2) {

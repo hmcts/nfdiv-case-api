@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84ApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -91,14 +93,17 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
             notificationDispatcher.send(applicant2SwitchToSoleCoNotification, data, caseId);
         }
 
-        if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
-            switchToSoleCoPrinter.sendLetter(data, caseId, data.getApplicant2(), data.getApplicant1());
-            if (!data.getApplication().isPaperCase()) {
-                switchToSoleService.switchUserRoles(caseId);
+        if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
+            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
+
+            if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
+                if (!data.getApplication().isPaperCase()) {
+                    switchToSoleService.switchUserRoles(caseId);
+                }
+                switchToSoleService.switchApplicantData(data);
             }
-            switchToSoleService.switchApplicantData(data);
-        } else if (ConditionalOrder.D84WhoApplying.APPLICANT_1.equals(data.getConditionalOrder().getD84WhoApplying())) {
-            switchToSoleCoPrinter.sendLetter(data, caseId, data.getApplicant1(), data.getApplicant2());
+
+            switchToSoleCoPrinter.print(data, caseId, data.getApplicant1(), data.getApplicant2());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
