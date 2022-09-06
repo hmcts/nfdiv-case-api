@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -85,10 +86,22 @@ public class FinalOrder {
     private YesOrNo doesApplicant1WantToApplyForFinalOrder;
 
     @CCD(
+        label = "Has applicant1 applied for a final order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1AppliedForFinalOrderFirst;
+
+    @CCD(
         label = "Does ${labelContentTheApplicant2} want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
         access = {Applicant2Access.class}
     )
     private YesOrNo doesApplicant2WantToApplyForFinalOrder;
+
+    @CCD(
+        label = "Has ${labelContentApplicant2} applied for a final order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2AppliedForFinalOrderFirst;
 
     @CCD(
         label = "${labelContentTheApplicant2UC} final order explanation",
@@ -118,7 +131,8 @@ public class FinalOrder {
     @CCD(
         label = "Translated To?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "TranslatedToLanguage"
+        typeParameterOverride = "TranslatedToLanguage",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private TranslatedToLanguage applicant1FinalOrderLateExplanationTranslatedTo;
 

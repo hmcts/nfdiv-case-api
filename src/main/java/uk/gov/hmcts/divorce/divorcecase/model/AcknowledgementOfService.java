@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.AosAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 
 import java.time.LocalDateTime;
 
@@ -69,7 +70,8 @@ public class AcknowledgementOfService {
     private String noticeOfProceedingsEmail;
 
     @CCD(
-        label = "Notice of Proceedings solicitor's firm"
+        label = "Notice of Proceedings solicitor's firm",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private String noticeOfProceedingsSolicitorFirm;
 
@@ -90,7 +92,8 @@ public class AcknowledgementOfService {
     @CCD(
         label = "Translated To?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "TranslatedToLanguage"
+        typeParameterOverride = "TranslatedToLanguage",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private TranslatedToLanguage reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslatedTo;
 
@@ -114,12 +117,14 @@ public class AcknowledgementOfService {
     private HowToRespondApplication howToRespondApplication;
 
     @CCD(
-        label = "Solicitor’s name"
+        label = "Solicitor’s name",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private String solicitorName;
 
     @CCD(
-        label = "Solicitor’s firm"
+        label = "Solicitor’s firm",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private String solicitorFirm;
 
@@ -135,6 +140,12 @@ public class AcknowledgementOfService {
     @Builder.Default
     @CCD(access = {CaseworkerAccessOnlyAccess.class})
     private FeeDetails disputingFee = new FeeDetails();
+
+    @CCD(
+        label = "AoS is drafted",
+        access = {AosAccess.class}
+    )
+    private YesOrNo aosIsDrafted;
 
     @JsonIgnore
     public void setNoticeOfProceedings(final Applicant applicant) {

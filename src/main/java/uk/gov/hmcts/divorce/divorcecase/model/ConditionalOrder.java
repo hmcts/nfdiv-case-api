@@ -38,6 +38,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
@@ -303,6 +304,7 @@ public class ConditionalOrder {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate rescindedDate;
+
     @CCD(
         label = "Service Confirmed"
     )
@@ -338,7 +340,7 @@ public class ConditionalOrder {
 
     @JsonIgnore
     public boolean hasConditionalOrderBeenGranted() {
-        return YesOrNo.YES.equals(granted);
+        return YES.equals(granted);
     }
 
     @JsonIgnore
@@ -360,12 +362,12 @@ public class ConditionalOrder {
 
     @JsonIgnore
     public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant1() {
-        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant1);
+        return YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant1);
     }
 
     @JsonIgnore
     public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant2() {
-        return YesOrNo.YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant2);
+        return YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant2);
     }
 
     @JsonIgnore
@@ -439,5 +441,15 @@ public class ConditionalOrder {
                 .build();
 
         }
+    }
+
+    @JsonIgnore
+    public boolean isLastApprovedServiceApplicationBailiffApplication() {
+        return YES.equals(lastApprovedServiceApplicationIsBailiffApplication);
+    }
+
+    @JsonIgnore
+    public boolean hasServiceBeenConfirmed() {
+        return YES.equals(serviceConfirmed);
     }
 }

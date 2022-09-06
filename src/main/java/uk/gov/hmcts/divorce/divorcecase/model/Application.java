@@ -16,6 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
@@ -48,7 +49,7 @@ import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 @Builder
 public class Application {
     @CCD(ignore = true)
-    private static final int SUBMISSION_RESPONSE_DAYS = 14;
+    private static final int SUBMISSION_RESPONSE_DAYS = 28;
 
     @CCD(
         label = "Has the applicant's ${labelContentMarriageOrCivilPartnership} broken down irretrievably?",
@@ -77,10 +78,12 @@ public class Application {
 
     @JsonUnwrapped(prefix = "jurisdiction")
     @Builder.Default
+    @CCD(access = {SystemUpdateAndSuperUserAccess.class})
     private Jurisdiction jurisdiction = new Jurisdiction();
 
     @JsonUnwrapped(prefix = "solService")
     @Builder.Default
+    @CCD(access = {DefaultAccess.class})
     private SolicitorService solicitorService = new SolicitorService();
 
     @JsonUnwrapped(prefix = "applicant1HWF")
@@ -373,7 +376,8 @@ public class Application {
     @CCD(
         label = "Bulk Scan state to transition to",
         typeOverride = FixedList,
-        typeParameterOverride = "State"
+        typeParameterOverride = "State",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private State stateToTransitionApplicationTo;
 
@@ -424,7 +428,8 @@ public class Application {
     @CCD(
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "ReissueOption"
+        typeParameterOverride = "ReissueOption",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private ReissueOption reissueOption;
 
@@ -460,7 +465,8 @@ public class Application {
     @CCD(
         label = "Progress paper case",
         typeOverride = FixedList,
-        typeParameterOverride = "ProgressPaperCase"
+        typeParameterOverride = "ProgressPaperCase",
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private ProgressPaperCase progressPaperCase;
 
@@ -628,4 +634,5 @@ public class Application {
         return Optional.ofNullable(pbaNumbers)
             .map(dynamicList -> dynamicList.getValue().getLabel());
     }
+
 }

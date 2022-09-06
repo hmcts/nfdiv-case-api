@@ -213,6 +213,17 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             CaseDocuments.builder()
                 .typeOfDocumentAttached(CO_D84)
                 .scannedDocuments(singletonList(doc1))
+                .scannedDocumentNames(
+                    DynamicList
+                        .builder()
+                        .value(
+                            DynamicListElement
+                                .builder()
+                                .label("doc1.pdf")
+                                .build()
+                        )
+                        .build()
+                )
                 .build()
         );
 

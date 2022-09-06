@@ -33,7 +33,6 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
 
         final Response response = triggerCallback(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, ABOUT_TO_SUBMIT_URL);
 
-        System.out.println(response.asString());
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
