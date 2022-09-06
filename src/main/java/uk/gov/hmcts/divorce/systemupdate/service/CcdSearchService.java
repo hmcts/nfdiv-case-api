@@ -34,6 +34,7 @@ import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
+import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
@@ -321,12 +322,12 @@ public class CcdSearchService {
 
     public List<CaseDetails> searchJointApplicationsWithAccessCodePostIssueApplication(User user, String serviceAuth) {
 
-        final QueryBuilder accessCodeExist = existsQuery("data.accessCode");
         final QueryBuilder issueDateExist = existsQuery("data.issueDate");
         final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
+        final QueryBuilder accessCodeNotEmpty = wildcardQuery("data.accessCode", "?*");
 
         final QueryBuilder query = boolQuery()
-            .must(boolQuery().must(accessCodeExist))
+            .must(boolQuery().must(accessCodeNotEmpty))
             .must(boolQuery().must(issueDateExist))
             .must(boolQuery().must(jointApplication));
 
@@ -346,6 +347,7 @@ public class CcdSearchService {
         ).getCases();
 
         log.info("Cases retrieved joint app with access code and issue date present {}", caseDetails.size());
+
         return caseDetails;
     }
 }
