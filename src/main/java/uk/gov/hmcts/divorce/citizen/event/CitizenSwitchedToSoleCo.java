@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
+import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -57,6 +58,9 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
     @Autowired
     private SwitchToSoleService switchToSoleService;
 
+    @Autowired
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -82,18 +86,27 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
+        // triggered by citizen users
         if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant1SwitchToSoleCoNotification, data, caseId);
         } else if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant2SwitchToSoleCoNotification, data, caseId);
+            switchToSoleService.switchUserRoles(data, caseId);
+            switchToSoleService.switchApplicantData(data);
         }
 
+        // triggered by system update user coming from Offline Document Verified
         if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
             if (!data.getApplication().isPaperCase()) {
-                switchToSoleService.switchCitizenUserRoles(caseId);
+                switchToSoleService.switchUserRoles(data, caseId);
             }
             switchToSoleService.switchApplicantData(data);
         }
+
+        generateConditionalOrderAnswersDocument.apply(
+            details,
+            data.getApplicant1().getLanguagePreference()
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
