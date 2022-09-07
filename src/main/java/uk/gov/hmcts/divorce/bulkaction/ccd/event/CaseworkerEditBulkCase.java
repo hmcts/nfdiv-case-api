@@ -19,6 +19,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -41,7 +42,8 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
+            .grantHistoryOnly(LEGAL_ADVISOR))
             .page("editBulkCase")
             .pageLabel("Edit bulk case")
             .mandatory(BulkActionCaseData::getCourt)

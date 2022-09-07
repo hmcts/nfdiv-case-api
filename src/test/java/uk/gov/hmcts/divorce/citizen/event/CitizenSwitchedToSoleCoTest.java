@@ -124,7 +124,7 @@ class CitizenSwitchedToSoleCoTest {
 
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(switchToSoleService).switchUserRoles(caseId);
+        verify(switchToSoleService).switchCitizenUserRoles(caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
     }
 
