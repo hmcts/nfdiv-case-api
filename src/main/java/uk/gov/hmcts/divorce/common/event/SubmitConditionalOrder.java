@@ -137,8 +137,6 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             data.getApplicant2().setOffline(YES);
         }
 
-        final boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId());
-
         if (isApplicant1) {
             notificationDispatcher.send(app1AppliedForConditionalOrderNotification, data, details.getId());
         } else {
