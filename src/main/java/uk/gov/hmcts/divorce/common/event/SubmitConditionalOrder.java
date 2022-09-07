@@ -105,10 +105,13 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
         final CaseData data = details.getData();
         final boolean isSole = data.getApplicationType().isSole();
+        final boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId());
+
         ConditionalOrderQuestions app1Questions = data.getConditionalOrder().getConditionalOrderApplicant1Questions();
         ConditionalOrderQuestions app2Questions = data.getConditionalOrder().getConditionalOrderApplicant2Questions();
+        ConditionalOrderQuestions appQuestions = isApplicant1 ? app1Questions : app2Questions;
 
-        final List<String> validationErrors = validate(app1Questions, app2Questions, isSole);
+        final List<String> validationErrors = validate(appQuestions);
 
         if (!validationErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -117,8 +120,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
                 .build();
         }
 
-        setSubmittedDate(app1Questions, app2Questions);
-        setIsSubmitted(app1Questions, app2Questions);
+        setSubmittedDate(appQuestions);
+        setIsSubmitted(appQuestions);
 
         boolean haveBothApplicantsSubmitted = app1Questions.getStatementOfTruth() == YES && app2Questions.getStatementOfTruth() == YES;
 
@@ -161,32 +164,23 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .build();
     }
 
-    private List<String> validate(ConditionalOrderQuestions app1Questions, ConditionalOrderQuestions app2Questions, boolean isSole) {
-        if (app1Questions.getStatementOfTruth() == null || !app1Questions.getStatementOfTruth().toBoolean()) {
-            if (isSole || (app2Questions.getStatementOfTruth() == null || !app2Questions.getStatementOfTruth().toBoolean())) {
-                return of("The applicant must agree that the facts stated in the application are true");
-            }
+    private List<String> validate(ConditionalOrderQuestions appQuestions) {
+        if (appQuestions.getStatementOfTruth() == null || !appQuestions.getStatementOfTruth().toBoolean()) {
+            return of("The applicant must agree that the facts stated in the application are true");
         }
         return emptyList();
     }
 
-    private void setSubmittedDate(ConditionalOrderQuestions app1Questions, ConditionalOrderQuestions app2Questions) {
-        if (Objects.nonNull(app1Questions.getStatementOfTruth()) && app1Questions.getStatementOfTruth().toBoolean()
-            && Objects.isNull(app1Questions.getSubmittedDate())) {
-            app1Questions.setSubmittedDate(LocalDateTime.now(clock));
-        }
-        if (Objects.nonNull(app2Questions.getStatementOfTruth()) && app2Questions.getStatementOfTruth().toBoolean()
-            && Objects.isNull(app2Questions.getSubmittedDate())) {
-            app2Questions.setSubmittedDate(LocalDateTime.now(clock));
+    private void setSubmittedDate(ConditionalOrderQuestions appQuestions) {
+        if (Objects.nonNull(appQuestions.getStatementOfTruth()) && appQuestions.getStatementOfTruth().toBoolean()
+            && Objects.isNull(appQuestions.getSubmittedDate())) {
+            appQuestions.setSubmittedDate(LocalDateTime.now(clock));
         }
     }
 
-    private void setIsSubmitted(ConditionalOrderQuestions app1Questions, ConditionalOrderQuestions app2Questions) {
-        if (Objects.nonNull(app1Questions.getStatementOfTruth()) && app1Questions.getStatementOfTruth().toBoolean()) {
-            app1Questions.setIsSubmitted(YES);
-        }
-        if (Objects.nonNull(app2Questions.getStatementOfTruth()) && app2Questions.getStatementOfTruth().toBoolean()) {
-            app2Questions.setIsSubmitted(YES);
+    private void setIsSubmitted(ConditionalOrderQuestions appQuestions) {
+        if (Objects.nonNull(appQuestions.getStatementOfTruth()) && appQuestions.getStatementOfTruth().toBoolean()) {
+            appQuestions.setIsSubmitted(YES);
         }
     }
 

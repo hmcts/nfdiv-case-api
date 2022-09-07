@@ -102,14 +102,11 @@ class SubmitConditionalOrderTest {
     }
 
     @Test
-    void shouldSetDateSubmittedOnAboutToSubmit() {
+    void shouldSetDateSubmittedForApplicant1OnAboutToSubmit() {
         setupMocks(clock);
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YES)
-                    .build())
-                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YES)
                     .build())
                 .build())
@@ -121,6 +118,24 @@ class SubmitConditionalOrderTest {
 
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate())
             .isEqualTo(getExpectedLocalDateTime());
+    }
+
+    @Test
+    void shouldSetDateSubmittedForApplicant2OnAboutToSubmit() {
+        setupMocks(clock);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(false);
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YES)
+                    .build())
+                .build())
+            .applicationType(JOINT_APPLICATION)
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
+
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getSubmittedDate())
             .isEqualTo(getExpectedLocalDateTime());
     }
@@ -258,6 +273,7 @@ class SubmitConditionalOrderTest {
         setupMocks(clock);
         when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(false);
         CaseData caseData = caseData();
+        caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setStatementOfTruth(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
 
         submitConditionalOrder.aboutToSubmit(caseDetails, null);
@@ -333,6 +349,7 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSetIsSubmittedForApplicant2OnAboutToSubmit() {
         setupMocks(clock);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(false);
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
             .application(Application.builder()
