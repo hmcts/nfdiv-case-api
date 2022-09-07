@@ -104,7 +104,6 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         log.info("Submit conditional order about to submit callback invoked for Case Id: {}", details.getId());
 
         final CaseData data = details.getData();
-        final boolean isSole = data.getApplicationType().isSole();
         final boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId());
 
         ConditionalOrderQuestions app1Questions = data.getConditionalOrder().getConditionalOrderApplicant1Questions();
@@ -123,6 +122,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         setSubmittedDate(appQuestions);
         setIsSubmitted(appQuestions);
 
+        final boolean isSole = data.getApplicationType().isSole();
         boolean haveBothApplicantsSubmitted = app1Questions.getStatementOfTruth() == YES && app2Questions.getStatementOfTruth() == YES;
 
         var state = isSole || haveBothApplicantsSubmitted ? AwaitingLegalAdvisorReferral : ConditionalOrderPending;
