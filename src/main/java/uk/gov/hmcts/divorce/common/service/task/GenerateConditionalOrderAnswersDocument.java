@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderAnswersTemplateContent;
 
@@ -16,7 +16,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 
 @Component
 @Slf4j
-public class GenerateConditionalOrderAnswersDocument implements CaseTask {
+public class GenerateConditionalOrderAnswersDocument {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -24,8 +24,8 @@ public class GenerateConditionalOrderAnswersDocument implements CaseTask {
     @Autowired
     private ConditionalOrderAnswersTemplateContent conditionalOrderAnswersTemplateContent;
 
-    @Override
-    public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
+    public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails,
+                                              LanguagePreference languagePreference) {
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
@@ -38,7 +38,7 @@ public class GenerateConditionalOrderAnswersDocument implements CaseTask {
             conditionalOrderAnswersTemplateContent.apply(caseData, caseId),
             caseId,
             CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID,
-            caseData.getApplicant1().getLanguagePreference(),
+            languagePreference,
             CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME
         );
 
