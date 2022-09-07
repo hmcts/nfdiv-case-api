@@ -86,6 +86,7 @@ public class CommonContent {
     public static final String TIME_OF_HEARING = "time of hearing";
     public static final String DATE_OF_HEARING_MINUS_SEVEN_DAYS = "date of hearing minus seven days";
     public static final String CO_PRONOUNCEMENT_DATE_PLUS_43 = "CO pronouncement date plus 43 days";
+    public static final String PLUS_21_DUE_DATE = "date email received plus 21 days";
 
     public static final String DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS = "date final order eligible from plus 3 months";
 
@@ -103,6 +104,10 @@ public class CommonContent {
     public static final String RESPONDENT = "Respondent";
     public static final String APPLICANT1_LABEL = "applicant1Label";
     public static final String APPLICANT2_LABEL = "applicant2Label";
+
+    public static final String PRONOUNCE_BY_DATE = "pronounceByDate";
+    public static final int CO_SUBMISSION_DATE_PLUS_DAYS = 28;
+
 
     public static final String SPOUSE = "spouse";
     public static final String SPOUSE_WELSH = "priod";

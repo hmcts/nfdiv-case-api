@@ -30,6 +30,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
@@ -345,6 +346,27 @@ public class CcdAccessServiceTest {
         );
 
         boolean expected = ccdAccessService.isApplicant1(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID);
+
+        assertThat(expected).isTrue();
+    }
+
+    @Test
+    public void shouldReturnTrueWhenUserHasApplicant2Role() {
+        User user = new User(TEST_SERVICE_AUTH_TOKEN, UserDetails.builder().id("user-id").build());
+        when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN)).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            List.of(TEST_CASE_ID.toString()),
+            List.of("user-id")
+        )).thenReturn(CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().caseRole(APPLICANT_2.getRole()).build()
+            )).build()
+        );
+
+        boolean expected = ccdAccessService.isApplicant2(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID);
 
         assertThat(expected).isTrue();
     }
