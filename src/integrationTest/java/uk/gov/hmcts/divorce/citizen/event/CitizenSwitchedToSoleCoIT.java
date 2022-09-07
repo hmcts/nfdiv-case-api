@@ -175,6 +175,19 @@ public class CitizenSwitchedToSoleCoIT {
             .build());
         setupMocks(false, true);
 
+        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("[APPLICANTTWO]").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("[CREATOR]").build()
+            ))
+            .build();
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(
+            BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            List.of(String.valueOf(TEST_CASE_ID)))
+        ).thenReturn(caseRolesResponse);
+
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)

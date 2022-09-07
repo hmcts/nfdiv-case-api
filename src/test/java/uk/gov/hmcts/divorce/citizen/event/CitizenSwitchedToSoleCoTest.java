@@ -118,6 +118,10 @@ class CitizenSwitchedToSoleCoTest {
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
         assertThat(response.getData().getLabelContent().getApplicant2()).isEqualTo("respondent");
         assertThat(response.getData().getConditionalOrder().getSwitchedToSole()).isEqualTo(YES);
+
+        verify(switchToSoleService).switchUserRoles(caseData, caseId);
+        verify(switchToSoleService).switchApplicantData(caseData);
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
     }
 
     @Test
@@ -132,7 +136,7 @@ class CitizenSwitchedToSoleCoTest {
 
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(switchToSoleService).switchCitizenUserRoles(caseId);
+        verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
     }

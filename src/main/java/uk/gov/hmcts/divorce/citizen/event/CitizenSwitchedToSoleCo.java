@@ -86,15 +86,19 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
+        // triggered by citizen users
         if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant1SwitchToSoleCoNotification, data, caseId);
         } else if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant2SwitchToSoleCoNotification, data, caseId);
+            switchToSoleService.switchUserRoles(data, caseId);
+            switchToSoleService.switchApplicantData(data);
         }
 
+        // triggered by system update user coming from Offline Document Verified
         if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
             if (!data.getApplication().isPaperCase()) {
-                switchToSoleService.switchCitizenUserRoles(caseId);
+                switchToSoleService.switchUserRoles(data, caseId);
             }
             switchToSoleService.switchApplicantData(data);
         }
