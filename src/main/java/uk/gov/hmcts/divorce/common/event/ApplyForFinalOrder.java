@@ -92,7 +92,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             data.getFinalOrder().setApplicant1AppliedForFinalOrderFirst(YES);
         }
 
-        if (state == AwaitingFinalOrder) {
+        if (AwaitingFinalOrder.equals(state)) {
             notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, data, details.getId());
         }
 
