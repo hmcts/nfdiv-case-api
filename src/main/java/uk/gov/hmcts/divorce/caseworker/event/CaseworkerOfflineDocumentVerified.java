@@ -54,7 +54,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_S
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_ANSWERS;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
 @Component
@@ -182,7 +182,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
 
-            reclassifyScannedDocumentToChosenDocumentType(caseData, CONDITIONAL_ORDER_ANSWERS);
+            reclassifyScannedDocumentToChosenDocumentType(caseData, CONDITIONAL_ORDER_APPLICATION);
 
             if (caseData.getApplicationType().isSole()) {
                 caseData.getApplicant1().setOffline(YES);
@@ -235,7 +235,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             caseData.getDocuments().setDocumentsUploaded(updatedDocumentsUploaded);
 
-            if (CONDITIONAL_ORDER_ANSWERS.equals(documentType)) {
+            if (CONDITIONAL_ORDER_APPLICATION.equals(documentType)) {
                 caseData.getDocuments().setDocumentsGenerated(
                     addDocumentToTop(caseData.getDocuments().getDocumentsGenerated(), divorceDocument)
                 );
