@@ -132,7 +132,9 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             data.getApplicant2().setOffline(YES);
         }
 
-        if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
+        final boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId());
+
+        if (isApplicant1) {
             notificationDispatcher.send(app1AppliedForConditionalOrderNotification, data, details.getId());
         } else {
             notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
@@ -140,7 +142,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
         if (AwaitingLegalAdvisorReferral.equals(state)) {
             notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, details.getId());
-            generateConditionalOrderAnswersDocument.apply(details);
+            generateConditionalOrderAnswersDocument.apply(details,
+                isApplicant1 ? data.getApplicant1().getLanguagePreference() : data.getApplicant2().getLanguagePreference());
         }
 
         if (AwaitingLegalAdvisorReferral.equals(state) && data.isWelshApplication()) {

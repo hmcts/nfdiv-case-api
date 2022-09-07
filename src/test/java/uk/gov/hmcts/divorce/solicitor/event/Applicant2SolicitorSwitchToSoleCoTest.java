@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -20,6 +19,8 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSwitchToSoleCoNotification;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -75,32 +76,8 @@ public class Applicant2SolicitorSwitchToSoleCoTest {
         assertThat(response.getData().getLabelContent().getApplicant2()).isEqualTo("respondent");
         assertThat(response.getData().getConditionalOrder().getSwitchedToSole()).isEqualTo(YES);
 
-        verify(switchToSoleService).switchSolicitorAndCitizenUserRoles(TEST_CASE_ID);
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
-        verify(notificationDispatcher).send(solicitorSwitchToSoleCoNotification, caseData, TEST_CASE_ID);
-    }
-
-    @Test
-    void shouldSetApplicationTypeToSoleAndSwitchSolicitorRoles() {
-        CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder().solicitorRepresented(YES).build())
-            .conditionalOrder(ConditionalOrder.builder().build())
-            .build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response =
-            applicant2SolicitorSwitchToSoleCo.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
-        assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
-        assertThat(response.getData().getLabelContent().getApplicant2()).isEqualTo("respondent");
-        assertThat(response.getData().getConditionalOrder().getSwitchedToSole()).isEqualTo(YES);
-
-        verify(switchToSoleService).switchSolicitorUserRoles(TEST_CASE_ID);
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
+        verify(switchToSoleService).switchUserRoles(caseData, TEST_CASE_ID);
+        verify(generateConditionalOrderAnswersDocument).apply(eq(caseDetails), any());
         verify(notificationDispatcher).send(solicitorSwitchToSoleCoNotification, caseData, TEST_CASE_ID);
     }
 }

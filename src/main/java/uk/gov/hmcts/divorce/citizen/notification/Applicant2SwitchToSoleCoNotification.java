@@ -8,10 +8,10 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.notification.CommonContent.PLUS_21_DUE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_SUBMISSION_DATE_PLUS_DAYS;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCHED_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -43,7 +43,13 @@ public class Applicant2SwitchToSoleCoNotification implements ApplicantNotificati
         log.info("Notifying applicant 1 of CO application for case : {}", id);
 
         Map<String, String> templateVars = commonContent.mainTemplateVars(data, id, data.getApplicant2(), data.getApplicant1());
-        templateVars.put(PLUS_21_DUE_DATE, LocalDateTime.now().plusDays(21).format(DATE_TIME_FORMATTER));
+        templateVars.put(PRONOUNCE_BY_DATE,
+            data.getConditionalOrder()
+                .getConditionalOrderApplicant2Questions()
+                .getSubmittedDate()
+                .plusDays(CO_SUBMISSION_DATE_PLUS_DAYS)
+                .format(DATE_TIME_FORMATTER)
+        );
 
         notificationService.sendEmail(
             data.getApplicant2EmailAddress(),
