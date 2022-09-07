@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
+import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -25,7 +26,9 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -57,6 +60,9 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
     @Autowired
     private SwitchToSoleService switchToSoleService;
 
+    @Autowired
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -66,7 +72,7 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
             .name("SwitchedToSoleCO")
             .description("Application type switched to sole post CO submission")
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
-            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
+            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
@@ -82,18 +88,27 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
+        // triggered by citizen users
         if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant1SwitchToSoleCoNotification, data, caseId);
         } else if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant2SwitchToSoleCoNotification, data, caseId);
+            switchToSoleService.switchUserRoles(data, caseId);
+            switchToSoleService.switchApplicantData(data);
         }
 
+        // triggered by system update user coming from Offline Document Verified
         if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
             if (!data.getApplication().isPaperCase()) {
-                switchToSoleService.switchCitizenUserRoles(caseId);
+                switchToSoleService.switchUserRoles(data, caseId);
             }
             switchToSoleService.switchApplicantData(data);
         }
+
+        generateConditionalOrderAnswersDocument.apply(
+            details,
+            data.getApplicant1().getLanguagePreference()
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

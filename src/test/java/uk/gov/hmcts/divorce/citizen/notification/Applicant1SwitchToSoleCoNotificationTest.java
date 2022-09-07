@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PLUS_21_DUE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCHED_TO_SOLE_CO;
@@ -67,7 +67,7 @@ class Applicant1SwitchToSoleCoNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
-                hasEntry(PLUS_21_DUE_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -93,7 +93,7 @@ class Applicant1SwitchToSoleCoNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(PLUS_21_DUE_DATE, getExpectedLocalDateTime().plusDays(21).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );

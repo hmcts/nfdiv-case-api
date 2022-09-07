@@ -52,7 +52,19 @@ public class SwitchToSoleService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    public void switchCitizenUserRoles(final Long caseId) {
+    public void switchUserRoles(final CaseData caseData, final Long caseId) {
+        if (caseData.getApplicant1().isRepresented() && caseData.getApplicant2().isRepresented()) {
+            switchSolicitorUserRoles(caseId);
+        } else if (caseData.getApplicant1().isRepresented() && !caseData.getApplicant2().isRepresented()) {
+            switchSolicitorAndCitizenUserRoles(caseId);
+        } else if (!caseData.getApplicant1().isRepresented() && caseData.getApplicant2().isRepresented()) {
+            switchCitizenAndSolicitorUserRoles(caseId);
+        } else {
+            switchCitizenUserRoles(caseId);
+        }
+    }
+
+    private void switchCitizenUserRoles(final Long caseId) {
         final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         final String s2sToken = authTokenGenerator.generate();
         final CaseAssignmentUserRolesResource response =
@@ -78,7 +90,7 @@ public class SwitchToSoleService {
         addCaseUserRoles(caseId, auth, s2sToken, currentCreatorUserId, APPLICANT_2);
     }
 
-    public void switchSolicitorUserRoles(final Long caseId) {
+    private void switchSolicitorUserRoles(final Long caseId) {
         final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         final String s2sToken = authTokenGenerator.generate();
         final CaseAssignmentUserRolesResource response =
@@ -110,7 +122,7 @@ public class SwitchToSoleService {
         addCaseUserRoles(caseId, auth, s2sToken, currentApplicant1SolicitorUserId, APPLICANT_2_SOLICITOR);
     }
 
-    public void switchSolicitorAndCitizenUserRoles(final Long caseId) {
+    private void switchCitizenAndSolicitorUserRoles(final Long caseId) {
         final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         final String s2sToken = authTokenGenerator.generate();
         final CaseAssignmentUserRolesResource response =
@@ -137,6 +149,35 @@ public class SwitchToSoleService {
 
         addCaseUserRoles(caseId, auth, s2sToken, currentApplicant2SolicitorUserId, APPLICANT_1_SOLICITOR);
         addCaseUserRoles(caseId, auth, s2sToken, currentCreatorUserId, APPLICANT_2);
+    }
+
+    private void switchSolicitorAndCitizenUserRoles(final Long caseId) {
+        final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
+        final String s2sToken = authTokenGenerator.generate();
+        final CaseAssignmentUserRolesResource response =
+            caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));
+
+        final List<CaseAssignmentUserRole> applicant1SolicitorUser = response.getCaseAssignmentUserRoles().stream()
+            .filter(caseAssignmentUserRole -> APPLICANT_1_SOLICITOR.getRole().equals(caseAssignmentUserRole.getCaseRole()))
+            .limit(1)
+            .toList();
+
+        final List<CaseAssignmentUserRole> applicant2User = response.getCaseAssignmentUserRoles().stream()
+            .filter(caseAssignmentUserRole -> APPLICANT_2.getRole().equals(caseAssignmentUserRole.getCaseRole()))
+            .limit(1)
+            .toList();
+
+        final String currentApplicant1SolicitorUserId =
+            !applicant1SolicitorUser.isEmpty()
+                ? applicant1SolicitorUser.get(0).getUserId()
+                : "";
+        final String currentApplicant2UserId = !applicant2User.isEmpty() ? applicant2User.get(0).getUserId() : "";
+
+        removeCaseUserRoles(caseId, auth, s2sToken, currentApplicant1SolicitorUserId, APPLICANT_1_SOLICITOR);
+        removeCaseUserRoles(caseId, auth, s2sToken, currentApplicant2UserId, APPLICANT_2);
+
+        addCaseUserRoles(caseId, auth, s2sToken, currentApplicant2UserId, CREATOR);
+        addCaseUserRoles(caseId, auth, s2sToken, currentApplicant1SolicitorUserId, APPLICANT_2_SOLICITOR);
     }
 
     private void removeCaseUserRoles(final Long caseId,

@@ -6,8 +6,6 @@
     "labelContentTheApplicant2": "the respondent",
     "labelContentTheApplicant2UC": "The respondent",
     "labelContentApplicant2UC": "Respondent",
-    "labelContentApplicantOrApplicant1": "the applicant’s",
-    "labelContentApplicantsOrApplicant1s": "Applicant’s",
     "labelContentTheApplicantOrApplicant1": "the applicant",
     "labelContentTheApplicantOrApplicant1UC": "The applicant",
     "labelContentApplicantOrApplicant1UC": "Applicant",
@@ -21,9 +19,9 @@
     "applicant1ContactDetailsType": "private",
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "No",
-    "applicant2FirstName": "test_first_name",
-    "applicant2MiddleName": "test_middle_name",
-    "applicant2LastName": "test_last_name",
+    "applicant2FirstName": "test_app2_first_name",
+    "applicant2MiddleName": "test_app2_middle_name",
+    "applicant2LastName": "test_app2_last_name",
     "applicant2Gender": "male",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
@@ -38,6 +36,18 @@
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "coD84WhoApplying": "applicant1",
     "coSwitchedToSole": "Yes",
+    "documentsGenerated": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "conditionalOrderAnswers.pdf",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "conditionalOrderAnswers.pdf",
+        "documentType": "conditionalOrderAnswers"
+      }
+    }],
     "dataVersion": 5,
     "warnings": []
   }

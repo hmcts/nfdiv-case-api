@@ -14,12 +14,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSwitchToSoleCoNotification;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -34,6 +37,12 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
     @Autowired
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private SolicitorSwitchToSoleCoNotification applicant1SolicitorSwitchToSoleCoNotification;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -44,7 +53,7 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
             .name("Switch To Sole CO")
             .description("Changing to a sole conditional order application")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
-            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
+            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_2_SOLICITOR)
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit))
             .page("app1SolSwitchToSoleCo")
@@ -77,7 +86,8 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
         data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
-        generateConditionalOrderAnswersDocument.apply(details);
+        generateConditionalOrderAnswersDocument.apply(details, data.getApplicant1().getLanguagePreference());
+        notificationDispatcher.send(applicant1SolicitorSwitchToSoleCoNotification, data, caseId);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
