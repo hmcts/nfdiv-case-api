@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
+import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -36,6 +37,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84ApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_1;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -64,6 +67,9 @@ class CitizenSwitchedToSoleCoTest {
     @Mock
     private SwitchToSoleCoPrinter switchToSoleCoPrinter;
 
+    @Mock
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
     @InjectMocks
     private CitizenSwitchedToSoleCo citizenSwitchedToSoleCo;
 
@@ -82,6 +88,7 @@ class CitizenSwitchedToSoleCoTest {
     void shouldSetApplicationTypeToSoleAndSendNotificationToApplicant1() {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
             .data(caseData)
@@ -93,6 +100,7 @@ class CitizenSwitchedToSoleCoTest {
 
         verify(notificationDispatcher).send(applicant1Notification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, WELSH);
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
     }
@@ -117,6 +125,10 @@ class CitizenSwitchedToSoleCoTest {
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
         assertThat(response.getData().getLabelContent().getApplicant2()).isEqualTo("respondent");
         assertThat(response.getData().getConditionalOrder().getSwitchedToSole()).isEqualTo(YES);
+
+        verify(switchToSoleService).switchUserRoles(caseData, caseId);
+        verify(switchToSoleService).switchApplicantData(caseData);
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
     }
 
     @Test
@@ -137,8 +149,9 @@ class CitizenSwitchedToSoleCoTest {
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         verify(switchToSoleCoPrinter).print(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
-        verify(switchToSoleService).switchCitizenUserRoles(caseId);
+        verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
     }
 
     @Test

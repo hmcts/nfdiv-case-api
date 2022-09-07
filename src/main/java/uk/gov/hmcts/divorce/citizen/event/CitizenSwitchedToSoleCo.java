@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
+import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -61,6 +62,9 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
     private SwitchToSoleService switchToSoleService;
 
     @Autowired
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
+    @Autowired
     private SwitchToSoleCoPrinter switchToSoleCoPrinter;
 
     @Override
@@ -88,24 +92,33 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
+        // triggered by citizen users
         if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant1SwitchToSoleCoNotification, data, caseId);
         } else if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             notificationDispatcher.send(applicant2SwitchToSoleCoNotification, data, caseId);
+            switchToSoleService.switchUserRoles(data, caseId);
+            switchToSoleService.switchApplicantData(data);
         }
 
+        // triggered by system update user coming from Offline Document Verified
         if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
             && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
 
             if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
                 if (!data.getApplication().isPaperCase()) {
-                    switchToSoleService.switchCitizenUserRoles(caseId);
+                    switchToSoleService.switchUserRoles(data, caseId);
                 }
                 switchToSoleService.switchApplicantData(data);
             }
 
             switchToSoleCoPrinter.print(data, caseId, data.getApplicant1(), data.getApplicant2());
         }
+
+        generateConditionalOrderAnswersDocument.apply(
+            details,
+            data.getApplicant1().getLanguagePreference()
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

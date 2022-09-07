@@ -37,12 +37,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitConditionalOrder.SUBMIT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -146,6 +148,7 @@ class SubmitConditionalOrderTest {
     void shouldSetStateToAwaitingLegalAdvisorReferralIfJointApplicationOnAboutToSubmit() {
         setupMocks(null);
         final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
                 .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
@@ -157,13 +160,14 @@ class SubmitConditionalOrderTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
 
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
     }
 
     @Test
     void shouldSetStateToAwaitingLegalAdvisorReferralIfSoleApplicationAndOnAboutToSubmit() {
         setupMocks(null);
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
                 .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
@@ -175,7 +179,7 @@ class SubmitConditionalOrderTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
 
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
     }
 
     @Test
