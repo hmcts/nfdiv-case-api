@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSwitchToSoleCoNotification;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -37,6 +39,12 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
 
     @Autowired
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private SolicitorSwitchToSoleCoNotification solicitorSwitchToSoleCoNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -86,6 +94,7 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
 
         // NOTE: Applicant 2 is now Applicant 1
         generateConditionalOrderAnswersDocument.apply(details, data.getApplicant1().getLanguagePreference());
+        notificationDispatcher.send(solicitorSwitchToSoleCoNotification, data, caseId);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
