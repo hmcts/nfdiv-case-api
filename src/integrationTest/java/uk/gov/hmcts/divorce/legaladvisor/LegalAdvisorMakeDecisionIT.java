@@ -104,6 +104,8 @@ public class LegalAdvisorMakeDecisionIT {
     private static final String REJECTED_REFUSAL_ORDER_TEMPLATE_FILE_NAME = "FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order.docx";
     private static final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME =
         "FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx";
+    private static final String CLARIFICATION_REFUSAL_ORDER_WELSH_TEMPLATE_FILE_NAME =
+        "FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order.docx";
     private static final String UUID = "49fa338b-1955-41c2-8e05-1df710a8ffaa";
 
     @Autowired
@@ -283,7 +285,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
+        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_WELSH_TEMPLATE_FILE_NAME);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
