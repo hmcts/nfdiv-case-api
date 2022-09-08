@@ -84,7 +84,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         final var caseData = details.getData();
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
-        if (null != acknowledgementOfService && acknowledgementOfService.getConfirmReadPetition() == YES) {
+        if (null != acknowledgementOfService && acknowledgementOfService.getAosIsDrafted() == YES) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("The Acknowledgement Of Service has already been drafted."))
