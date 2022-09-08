@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.Applicant1CanSwitchToSoleNotification;
 import uk.gov.hmcts.divorce.common.notification.Applicant2CanSwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -27,6 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -68,7 +68,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
         caseData.setConditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
                     .submittedDate(LocalDate.now().minusDays(15).atStartOfDay())
-                    .isSubmitted(YesOrNo.YES)
+                    .isSubmitted(YES)
                     .build())
                 .build());
 
@@ -81,7 +81,13 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemNotifyJointApplicantCanSwitchToSole.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getApplication().getJointApplicantNotifiedCanSwitchToSole()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getApplication().getJointApplicantNotifiedCanSwitchToSole()).isEqualTo(YES);
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getEnableSolicitorSwitchToSoleCo())
+            .isNotNull();
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getEnableSolicitorSwitchToSoleCo())
+            .isEqualTo(YES);
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getEnableSolicitorSwitchToSoleCo())
+            .isNull();
         verify(notificationDispatcher).send(applicant1CanSwitchToSoleNotification, caseData, details.getId());
         verifyNoMoreInteractions(notificationDispatcher);
     }
@@ -93,7 +99,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
                 .submittedDate(LocalDate.now().minusDays(15).atStartOfDay())
-                .isSubmitted(YesOrNo.YES)
+                .isSubmitted(YES)
                 .build())
             .build());
 
@@ -106,7 +112,13 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemNotifyJointApplicantCanSwitchToSole.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getApplication().getJointApplicantNotifiedCanSwitchToSole()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getApplication().getJointApplicantNotifiedCanSwitchToSole()).isEqualTo(YES);
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getEnableSolicitorSwitchToSoleCo())
+            .isNotNull();
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getEnableSolicitorSwitchToSoleCo())
+            .isEqualTo(YES);
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getEnableSolicitorSwitchToSoleCo())
+            .isNull();
         verify(notificationDispatcher).send(applicant2CanSwitchToSoleNotification, caseData, details.getId());
         verifyNoMoreInteractions(notificationDispatcher);
     }

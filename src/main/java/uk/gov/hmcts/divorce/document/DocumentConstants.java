@@ -92,6 +92,9 @@ public final class DocumentConstants {
     public static final String APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID = "APPLIED_FOR_CONDITIONAL_ORDER_LETTER";
     public static final String APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME = "appliedForConditionalOrder";
 
+    public static final String SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID = "SWITCH_TO_SOLE_CO_LETTER";
+    public static final String SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME = "switchToSoleCo";
+
     public static final String AOS_RESPONSE_LETTER_DOCUMENT_NAME = "aosResponseLetter";
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";
     public static final String AOS_OVERDUE_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED";
