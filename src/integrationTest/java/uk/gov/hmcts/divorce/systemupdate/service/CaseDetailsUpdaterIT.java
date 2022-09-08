@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.systemupdate.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class CaseDetailsUpdaterIT {
     private CaseDetailsUpdater caseDetailsUpdater;
 
     @Test
+    @Disabled
     void shouldConvertReformCaseDetailsAndApplyUpdateTask() {
 
         final Document certificateOfEntitlementDocumentLink = Document.builder()
