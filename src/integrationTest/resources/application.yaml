@@ -111,7 +111,7 @@ docmosis:
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order.docx
-      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx
+      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order.docx
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter.docx
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter.docx
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order.docx
@@ -176,6 +176,7 @@ submit_co:
 
 final_order:
   eligible_from_offset_days: ${FINAL_ORDER_ELIGIBLE_FROM_OFFSET_DAYS:43}
+  respondent_eligible_from_offset_months: ${FINAL_ORDER_RESPONDENT_ELIGIBLE_FROM_OFFSET_MONTHS:3}
 
 apply_for_final_order:
   reminder_offset_days: ${APPLY_FOR_FINAL_ORDER_REMINDER_OFFSET_DAYS:14}

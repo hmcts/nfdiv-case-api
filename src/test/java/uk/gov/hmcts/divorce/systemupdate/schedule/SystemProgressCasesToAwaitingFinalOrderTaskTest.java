@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,9 +50,6 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
-
-    @Mock
-    private ObjectMapper objectMapper;
 
     @Mock
     private IdamService idamService;

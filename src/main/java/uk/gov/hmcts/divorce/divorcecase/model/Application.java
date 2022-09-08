@@ -95,6 +95,13 @@ public class Application {
     private HelpWithFees applicant2HelpWithFees;
 
     @CCD(
+        access = {DefaultAccess.class}
+    )
+    @JsonUnwrapped(prefix = "sts")
+    @Builder.Default
+    private SwitchedToSole switchedToSole = new SwitchedToSole();
+
+    @CCD(
         label = "Who is the applicant divorcing?",
         hint = "Husband or Wife?",
         typeOverride = FixedList,
@@ -476,6 +483,12 @@ public class Application {
         access = {DefaultAccess.class}
     )
     private YesOrNo newPaperCase;
+
+    @CCD(
+        label = "Has the application been switched from JOINT to SOLE?",
+        access = {DefaultAccess.class, Applicant2Access.class}
+    )
+    private YesOrNo switchedToSoleCo;
 
     @JsonIgnore
     public boolean hasBeenPaidFor() {
