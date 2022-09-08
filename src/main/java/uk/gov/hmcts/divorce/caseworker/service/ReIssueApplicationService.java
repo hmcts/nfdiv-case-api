@@ -72,6 +72,8 @@ public class ReIssueApplicationService {
         updatedCaseDetails.getData().getApplication().setPreviousReissueOption(reissueOption);
         updatedCaseDetails.getData().getApplication().setReissueOption(null);
 
+        updatedCaseDetails.getData().getAcknowledgementOfService().setAosIsDrafted(null);
+
         return updatedCaseDetails;
     }
 
