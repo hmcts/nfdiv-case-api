@@ -107,6 +107,7 @@ public final class DocmosisTemplateConstants {
     public static final String DATE = "date";
     public static final String DATE_OF_HEARING = "dateOfHearing";
     public static final String TIME_OF_HEARING = "timeOfHearing";
+    public static final String BEFORE_DATE_OF_HEARING = "beforeDateOfHearing";
     public static final String BULK_LIST = "bulkList";
     public static final String APPLICANT_HEADING = "applicant";
     public static final String RESPONDENT_HEADING = "respondent";
