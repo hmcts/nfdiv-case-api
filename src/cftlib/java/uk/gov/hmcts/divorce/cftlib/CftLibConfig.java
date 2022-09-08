@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.cftlib;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -12,20 +11,11 @@ import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
 @Component
 public class CftLibConfig implements CFTLibConfigurer {
-
-    @Value("ccd-NFD-${CCD_DEF_NAME:dev}.xlsx")
-    String defName;
-
-    @Value("ccd-NO_FAULT_DIVORCE_BulkAction-${CCD_DEF_NAME:dev}.xlsx")
-    String bulkCaseDefName;
-
 
     @Autowired
     CCDDefinitionGenerator configWriter;
@@ -70,31 +60,12 @@ public class CftLibConfig implements CFTLibConfigurer {
             .getInputStream(), Charset.defaultCharset());
         lib.configureRoleAssignments(json);
 
-        // Generate and import CCD definitions
-        generateCCDDefinition();
-
-        var nfdDefinition = Files.readAllBytes(Path.of("build/ccd-config/" + defName));
-        lib.importDefinition(nfdDefinition);
-
-        var bulkCasesDefinition = Files.readAllBytes(Path.of("build/ccd-config/" + bulkCaseDefName));
-        lib.importDefinition(bulkCasesDefinition);
-    }
-
-    /**
-     * Generate our JSON ccd definition and convert it to xlsx.
-     * Doing this at runtime in the CftlibConfig allows use of spring boot devtool's
-     * live reload functionality to rapidly edit and test code & definition changes.
-     */
-    private void generateCCDDefinition() throws Exception {
-        // Export the JSON config.
+        // Generate CCD definitions
         configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
-        // Run the gradle task to convert to xlsx.
-        var code = new ProcessBuilder("./gradlew", "buildCCDXlsx")
-            .inheritIO()
-            .start()
-            .waitFor();
-        if (code != 0) {
-            throw new RuntimeException("Error converting ccd json to xlsx");
-        }
+
+        // Import CCD definitions
+        lib.importJsonDefinition(new File("build/definitions/NFD"));
+        lib.importJsonDefinition(new File("build/definitions/NO_FAULT_DIVORCE_BulkAction"));
     }
+
 }
