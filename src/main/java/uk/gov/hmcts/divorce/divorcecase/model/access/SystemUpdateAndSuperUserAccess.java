@@ -15,7 +15,7 @@ public class SystemUpdateAndSuperUserAccess implements HasAccessControl {
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
         grants.putAll(SUPER_USER, Permissions.CREATE_READ_UPDATE_DELETE);
-        grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE);
+        grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE_DELETE);
         return grants;
     }
 }

@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 import static java.util.List.of;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -120,18 +122,31 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
-        if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
+        if (AwaitingLegalAdvisorReferral.equals(state)
+            && isSole
+            && isEmpty(data.getAcknowledgementOfService().getDateAosSubmitted())
+            && isNotEmpty(data.getCaseInvite())
+            && isNotEmpty(data.getCaseInvite().accessCode())
+            && shouldSetApplicant2ToOffline(data)
+        ) {
+            data.getApplicant2().setOffline(YES);
+        }
+
+        final boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId());
+
+        if (isApplicant1) {
             notificationDispatcher.send(app1AppliedForConditionalOrderNotification, data, details.getId());
         } else {
             notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
         }
 
-        if (state == AwaitingLegalAdvisorReferral) {
+        if (AwaitingLegalAdvisorReferral.equals(state)) {
             notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, details.getId());
-            generateConditionalOrderAnswersDocument.apply(details);
+            generateConditionalOrderAnswersDocument.apply(details,
+                isApplicant1 ? data.getApplicant1().getLanguagePreference() : data.getApplicant2().getLanguagePreference());
         }
 
-        if (state == AwaitingLegalAdvisorReferral && data.isWelshApplication()) {
+        if (AwaitingLegalAdvisorReferral.equals(state) && data.isWelshApplication()) {
             data.getApplication().setWelshPreviousState(state);
             state = WelshTranslationReview;
             log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
@@ -162,5 +177,11 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             && Objects.isNull(app2Questions.getSubmittedDate())) {
             app2Questions.setSubmittedDate(LocalDateTime.now(clock));
         }
+    }
+
+    private boolean shouldSetApplicant2ToOffline(CaseData caseData) {
+        return caseData.getConditionalOrder().hasServiceBeenConfirmed()
+            || caseData.getConditionalOrder().isLastApprovedServiceApplicationBailiffApplication()
+            || caseData.getAlternativeService().isApplicationGrantedDeemedOrDispensed();
     }
 }

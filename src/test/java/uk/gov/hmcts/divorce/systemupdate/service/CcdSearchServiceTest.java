@@ -36,6 +36,7 @@ import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
+import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -513,6 +514,40 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult = ccdSearchService.searchForCases(caseReferences, user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(4);
+    }
+
+    @Test
+    void shouldReturnJointApplicationCasesContainingAccessCodePostIssueApplication() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+
+        final QueryBuilder issueDateExist = existsQuery("data.issueDate");
+        final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
+        final QueryBuilder accessCodeNotEmpty = wildcardQuery("data.accessCode", "?*");
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(accessCodeNotEmpty))
+            .must(boolQuery().must(issueDateExist))
+            .must(boolQuery().must(jointApplication));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            sourceBuilder.toString()))
+            .thenReturn(expected);
+
+        final List<CaseDetails> searchResult =
+            ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(100);
     }
 
     private List<CaseDetails> createCaseDetailsList(final int size) {

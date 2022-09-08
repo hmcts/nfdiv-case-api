@@ -99,6 +99,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
@@ -131,6 +132,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -205,9 +209,9 @@ public class TestDataHelper {
     public static Applicant getJointApplicant2(Gender gender) {
         return Applicant.builder()
             .gender(gender)
-            .firstName(TEST_FIRST_NAME)
-            .middleName(TEST_MIDDLE_NAME)
-            .lastName(TEST_LAST_NAME)
+            .firstName(TEST_APP2_FIRST_NAME)
+            .middleName(TEST_APP2_MIDDLE_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
             .build();
     }
 
@@ -1048,6 +1052,31 @@ public class TestDataHelper {
         caseData.setGeneralLetter(generalLetter);
         caseData.setApplicant1(getApplicantWithAddress());
         caseData.setApplicant2(getApplicantWithAddress());
+        return caseData;
+    }
+
+    public static CaseData getConfirmServiceCaseData() {
+        LocalDate issueDate = LocalDate.of(2022, 8, 10);
+        LocalDate serviceDate = LocalDate.of(2022, 8, 12);
+        final var caseData = caseData();
+        caseData.getApplication().setIssueDate(issueDate);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().setSolicitorService(SolicitorService.builder()
+            .serviceDetails("service details")
+            .dateOfService(serviceDate)
+            .addressServed("address served")
+            .documentsServed("docs served")
+            .build());
+
+        final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentLink(new Document("url", "filename.pdf", "url/binary"))
+                .build())
+            .build();
+
+        caseData.getDocuments().setDocumentsUploadedOnConfirmService(Lists.newArrayList(confirmServiceAttachments));
+
         return caseData;
     }
 }

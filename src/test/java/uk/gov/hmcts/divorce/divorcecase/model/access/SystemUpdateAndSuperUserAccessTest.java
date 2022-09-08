@@ -22,7 +22,7 @@ class SystemUpdateAndSuperUserAccessTest {
         final SetMultimap<HasRole, Permission> grants = new SystemUpdateAndSuperUserAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(7)
+            .hasSize(8)
             .contains(
                 entry(SUPER_USER, C),
                 entry(SUPER_USER, R),
@@ -30,7 +30,8 @@ class SystemUpdateAndSuperUserAccessTest {
                 entry(SUPER_USER, D),
                 entry(SYSTEMUPDATE, C),
                 entry(SYSTEMUPDATE, R),
-                entry(SYSTEMUPDATE, U)
+                entry(SYSTEMUPDATE, U),
+                entry(SYSTEMUPDATE, D)
             );
     }
 }

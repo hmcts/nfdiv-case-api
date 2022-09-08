@@ -49,7 +49,7 @@ import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 @Builder
 public class Application {
     @CCD(ignore = true)
-    private static final int SUBMISSION_RESPONSE_DAYS = 14;
+    private static final int SUBMISSION_RESPONSE_DAYS = 28;
 
     @CCD(
         label = "Has the applicant's ${labelContentMarriageOrCivilPartnership} broken down irretrievably?",
@@ -78,6 +78,7 @@ public class Application {
 
     @JsonUnwrapped(prefix = "jurisdiction")
     @Builder.Default
+    @CCD(access = {SystemUpdateAndSuperUserAccess.class})
     private Jurisdiction jurisdiction = new Jurisdiction();
 
     @JsonUnwrapped(prefix = "solService")
@@ -92,6 +93,13 @@ public class Application {
     @JsonUnwrapped(prefix = "applicant2HWF")
     @CCD(access = {Applicant2Access.class})
     private HelpWithFees applicant2HelpWithFees;
+
+    @CCD(
+        access = {DefaultAccess.class}
+    )
+    @JsonUnwrapped(prefix = "sts")
+    @Builder.Default
+    private SwitchedToSole switchedToSole = new SwitchedToSole();
 
     @CCD(
         label = "Who is the applicant divorcing?",
@@ -476,6 +484,12 @@ public class Application {
     )
     private YesOrNo newPaperCase;
 
+    @CCD(
+        label = "Has the application been switched from JOINT to SOLE?",
+        access = {DefaultAccess.class, Applicant2Access.class}
+    )
+    private YesOrNo switchedToSoleCo;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary
@@ -620,4 +634,5 @@ public class Application {
         return Optional.ofNullable(pbaNumbers)
             .map(dynamicList -> dynamicList.getValue().getLabel());
     }
+
 }

@@ -21,19 +21,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static uk.gov.hmcts.divorce.common.notification.FinalOrderNotification.NOW_PLUS_14_DAYS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_SUBMISSION_DATE_PLUS_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CLARIFICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_PARTNER_CLARIFICATION_SUBMITTED;
@@ -94,7 +95,7 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "partner"),
                 hasEntry(COURT_EMAIL, "courtEmail"),
-                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -120,7 +121,7 @@ public class ClarificationSubmittedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -154,7 +155,7 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "partner"),
                 hasEntry(COURT_EMAIL, "courtEmail"),
-                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -182,7 +183,7 @@ public class ClarificationSubmittedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -216,7 +217,7 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "partner"),
                 hasEntry(COURT_EMAIL, "courtEmail"),
-                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -244,7 +245,7 @@ public class ClarificationSubmittedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -281,7 +282,7 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "partner"),
                 hasEntry(COURT_EMAIL, "courtEmail"),
-                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -310,7 +311,7 @@ public class ClarificationSubmittedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -345,7 +346,7 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "partner"),
                 hasEntry(COURT_EMAIL, "courtEmail"),
-                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -374,7 +375,7 @@ public class ClarificationSubmittedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
