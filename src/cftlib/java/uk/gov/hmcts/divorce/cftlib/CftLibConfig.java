@@ -67,5 +67,4 @@ public class CftLibConfig implements CFTLibConfigurer {
         lib.importJsonDefinition(new File("build/definitions/NFD"));
         lib.importJsonDefinition(new File("build/definitions/NO_FAULT_DIVORCE_BulkAction"));
     }
-
 }
