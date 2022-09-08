@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_LABEL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_REGISTERED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -37,6 +38,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME_WITH_DEFAULT_VALUE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HAS_CASE_BEEN_REISSUED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.REISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -154,6 +156,7 @@ public class NoticeOfProceedingSolicitorContentTest {
             entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
             entry(APPLICANT_SOLICITOR_REGISTERED, true),
             entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
+            entry(APPLICANT_1_SOLICITOR_NAME, "The Solicitor"),
             entry(IS_JOINT, false),
             entry(IS_DIVORCE, true),
             entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
@@ -201,6 +204,8 @@ public class NoticeOfProceedingSolicitorContentTest {
                 entry(SOLICITOR_ADDRESS, ADDRESS),
                 entry(SOLICITOR_REFERENCE, "Not provided"),
                 entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
+                entry(APPLICANT_1_SOLICITOR_NAME, "The Solicitor"),
+                entry(APPLICANT_2_SOLICITOR_NAME, "The Solicitor"),
                 entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT));
 
         verifyNoInteractions(holdingPeriodService);
