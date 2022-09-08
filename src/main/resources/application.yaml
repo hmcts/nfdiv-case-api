@@ -81,7 +81,7 @@ uk:
             OVERSEAS_RESPONDENT_APPLICATION_ISSUED: 'b3be698a-d4b4-4fa8-8ed7-c1fd39827d21'
             SOLE_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
             SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED: 'd87e0405-15bb-405b-b277-27cec5444106'
-            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: '979e15bb-5033-4038-9560-5468e3d45f81'
+            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: 'b2025543-0258-48f2-ae2c-30fcf92c5332'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '71337384-3fdb-4eb8-8adb-be5e4e59857a'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE: '9d456d7f-2173-4d55-93bb-dbaa4f1cd7be'
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '8eb89fa9-815a-4414-9d9c-f57e5a288d77'
@@ -180,7 +180,7 @@ uk:
             OVERSEAS_RESPONDENT_APPLICATION_ISSUED: '822a4429-a57d-42a7-ac30-ffe7e6bc8d9e'
             SOLE_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
             SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED: 'd87e0405-15bb-405b-b277-27cec5444106'
-            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: '979e15bb-5033-4038-9560-5468e3d45f81'
+            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: 'b2025543-0258-48f2-ae2c-30fcf92c5332'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS: 'abd903c6-7897-4257-a970-0d10b17c5edd'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE: '9d456d7f-2173-4d55-93bb-dbaa4f1cd7be'
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '8eb89fa9-815a-4414-9d9c-f57e5a288d77'
@@ -299,6 +299,7 @@ docmosis:
       CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Conditional_Order_Answers.docx
       CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder.docx
       APPLIED_FOR_CONDITIONAL_ORDER_LETTER: FL-NFD-GOR-ENG-Applied-For-Conditional-Order-Letter.docx
+      SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed_V2.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
@@ -339,6 +340,7 @@ docmosis:
       CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Conditional_Order_Answers.docx
       CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder.docx
       APPLIED_FOR_CONDITIONAL_ORDER_LETTER: FL-NFD-GOR-ENG-Applied-For-Conditional-Order-Letter.docx #TODO: add translated content
+      SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx #TODO: add translated content
       NFD_RESP_RESPONDED_DISPUTED: NFD_Respondent_Responded_Disputed_V2.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
@@ -348,7 +350,7 @@ docmosis:
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order.docx
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter.docx #TODO: update welsh content
-      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx #TODO: update welsh content
+      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order.docx
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter.docx #TODO: update welsh content
       NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2_CY.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3_Cy.docx
@@ -393,6 +395,7 @@ submit_co:
 
 final_order:
   eligible_from_offset_days: ${FINAL_ORDER_ELIGIBLE_FROM_OFFSET_DAYS:43}
+  respondent_eligible_from_offset_months: ${FINAL_ORDER_RESPONDENT_ELIGIBLE_FROM_OFFSET_MONTHS:3}
 
 apply_for_final_order:
   reminder_offset_days: ${APPLY_FOR_FINAL_ORDER_REMINDER_OFFSET_DAYS:14}

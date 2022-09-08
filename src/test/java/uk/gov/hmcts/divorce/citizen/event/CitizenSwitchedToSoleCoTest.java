@@ -9,11 +9,13 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -31,6 +33,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84ApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_1;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -59,6 +63,9 @@ class CitizenSwitchedToSoleCoTest {
 
     @Mock
     private SwitchToSoleService switchToSoleService;
+
+    @Mock
+    private SwitchToSoleCoPrinter switchToSoleCoPrinter;
 
     @Mock
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
@@ -128,7 +135,12 @@ class CitizenSwitchedToSoleCoTest {
     void shouldSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSole() {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
+        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .d84ApplicationType(SWITCH_TO_SOLE)
+            .d84WhoApplying(APPLICANT_2)
+            .build()
+        );
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
             .data(caseData)
@@ -136,6 +148,7 @@ class CitizenSwitchedToSoleCoTest {
 
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
+        verify(switchToSoleCoPrinter).print(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
@@ -146,7 +159,12 @@ class CitizenSwitchedToSoleCoTest {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplication().setNewPaperCase(YES);
-        caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
+        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .d84ApplicationType(SWITCH_TO_SOLE)
+            .d84WhoApplying(APPLICANT_2)
+            .build()
+        );
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
             .data(caseData)
@@ -154,6 +172,7 @@ class CitizenSwitchedToSoleCoTest {
 
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
+        verify(switchToSoleCoPrinter).print(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
         verify(switchToSoleService).switchApplicantData(caseData);
         verifyNoMoreInteractions(switchToSoleService);
     }
@@ -162,7 +181,12 @@ class CitizenSwitchedToSoleCoTest {
     void shouldNotSwitchUserDataOrRolesIfApplicant1TriggeredD84SwitchToSole() {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_1).build());
+        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .d84ApplicationType(SWITCH_TO_SOLE)
+            .d84WhoApplying(APPLICANT_1)
+            .build()
+        );
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
             .data(caseData)
@@ -170,6 +194,7 @@ class CitizenSwitchedToSoleCoTest {
 
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
+        verify(switchToSoleCoPrinter).print(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
         verifyNoInteractions(switchToSoleService);
     }
 }

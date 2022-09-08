@@ -32,6 +32,7 @@ public class CommonContent {
     public static final String PARTNER = "partner";
     public static final String FIRST_NAME = "first name";
     public static final String LAST_NAME = "last name";
+    public static final String NAME = "name";
     public static final String ADDRESS = "address";
 
     public static final String IS_DIVORCE = "isDivorce";
@@ -86,6 +87,7 @@ public class CommonContent {
     public static final String TIME_OF_HEARING = "time of hearing";
     public static final String DATE_OF_HEARING_MINUS_SEVEN_DAYS = "date of hearing minus seven days";
     public static final String CO_PRONOUNCEMENT_DATE_PLUS_43 = "CO pronouncement date plus 43 days";
+    public static final String CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS = "CO pronouncement date plus 43 days plus 3 months";
     public static final String PLUS_21_DUE_DATE = "date email received plus 21 days";
 
     public static final String DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS = "date final order eligible from plus 3 months";
