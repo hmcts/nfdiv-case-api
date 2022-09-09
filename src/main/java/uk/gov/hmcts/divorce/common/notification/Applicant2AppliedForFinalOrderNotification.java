@@ -94,8 +94,8 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
 
-        templateVars.put(WILL_BE_CHECKED_WITHIN_2_DAYS, CommonContent.NO);
-        templateVars.put(WILL_BE_CHECKED_WITHIN_14_DAYS, CommonContent.YES);
+        templateVars.put(WILL_BE_CHECKED_WITHIN_2_DAYS, NO);
+        templateVars.put(WILL_BE_CHECKED_WITHIN_14_DAYS, YES);
         templateVars.put(NOW_PLUS_14_DAYS, getNowPlus14Days());
 
         return templateVars;
