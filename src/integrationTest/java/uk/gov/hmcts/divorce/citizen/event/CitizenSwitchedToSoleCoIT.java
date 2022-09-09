@@ -14,10 +14,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -236,14 +234,13 @@ public class CitizenSwitchedToSoleCoIT {
     }
 
     @Test
-    public void shouldSwitchApplicationTypeToSoleAndSendApplicant2SolicitorNotifications() throws Exception {
+    public void shouldSwitchApplicationTypeToSoleAndSendApplicant1SolicitorNotifications() throws Exception {
         CaseData data = validJointApplicant1CaseData();
 
         final LocalDate issueDate = getExpectedLocalDate();
         data.getApplication().setIssueDate(issueDate);
-
-        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
-        data.getApplicant2().setSolicitor(Solicitor
+        data.getApplicant1().setSolicitorRepresented(YES);
+        data.getApplicant1().setSolicitor(Solicitor
             .builder()
             .email(TEST_SOLICITOR_EMAIL)
             .build());
@@ -290,7 +287,7 @@ public class CitizenSwitchedToSoleCoIT {
             .hasSize(1);
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(PARTNER_SWITCHED_TO_SOLE_CO), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),

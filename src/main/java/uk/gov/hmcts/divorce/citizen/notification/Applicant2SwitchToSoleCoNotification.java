@@ -42,6 +42,24 @@ public class Applicant2SwitchToSoleCoNotification implements ApplicantNotificati
     }
 
     @Override
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
+
+        log.info("Notifying applicant 1 solicitor that the other party made a sole application for a conditional order: {}", id);
+
+        final Applicant applicant = caseData.getApplicant1();
+
+        final Map<String, String> templateVars = commonContent.solicitorTemplateVars(caseData, id, applicant);
+        templateVars.put(APPLICANT_NAME, applicant.getFullName());
+
+        notificationService.sendEmail(
+            applicant.getSolicitor().getEmail(),
+            SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER,
+            templateVars,
+            applicant.getLanguagePreference()
+        );
+    }
+
+    @Override
     public void sendToApplicant2(CaseData data, Long id) {
         log.info("Notifying applicant 1 of CO application for case : {}", id);
 
@@ -62,21 +80,4 @@ public class Applicant2SwitchToSoleCoNotification implements ApplicantNotificati
         );
     }
 
-    @Override
-    public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
-
-        log.info("Notifying applicant 2 solicitor that the other party made a sole application for a conditional order: {}", id);
-
-        final Applicant applicant = caseData.getApplicant2();
-
-        final Map<String, String> templateVars = commonContent.solicitorTemplateVars(caseData, id, applicant);
-        templateVars.put(APPLICANT_NAME, applicant.getFullName());
-
-        notificationService.sendEmail(
-            applicant.getSolicitor().getEmail(),
-            SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER,
-            templateVars,
-            applicant.getLanguagePreference()
-        );
-    }
 }

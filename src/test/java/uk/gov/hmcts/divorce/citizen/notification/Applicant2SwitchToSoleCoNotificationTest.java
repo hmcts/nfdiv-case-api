@@ -156,10 +156,10 @@ class Applicant2SwitchToSoleCoNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToApplicant2Solicitor() {
+    void shouldSendNotificationToApplicant1Solicitor() {
         final CaseData caseData = validJointApplicant1CaseData();
-        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
-        caseData.getApplicant2().setSolicitor(Solicitor
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitor(Solicitor
             .builder()
             .email(TEST_SOLICITOR_EMAIL)
             .build());
@@ -168,17 +168,17 @@ class Applicant2SwitchToSoleCoNotificationTest {
         when(commonContent.solicitorTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+        notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
             eq(SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(APPLICANT_NAME, caseData.getApplicant2().getFullName())
+                hasEntry(APPLICANT_NAME, caseData.getApplicant1().getFullName())
             )),
             eq(ENGLISH)
         );
 
-        verify(commonContent).solicitorTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        verify(commonContent).solicitorTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1());
     }
 }
