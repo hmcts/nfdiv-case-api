@@ -36,6 +36,7 @@ import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
+import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -521,12 +522,12 @@ class CcdSearchServiceTest {
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
 
-        final QueryBuilder accessCodeExist = existsQuery("data.accessCode");
         final QueryBuilder issueDateExist = existsQuery("data.issueDate");
         final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
+        final QueryBuilder accessCodeNotEmpty = wildcardQuery("data.accessCode", "?*");
 
         final QueryBuilder query = boolQuery()
-            .must(boolQuery().must(accessCodeExist))
+            .must(boolQuery().must(accessCodeNotEmpty))
             .must(boolQuery().must(issueDateExist))
             .must(boolQuery().must(jointApplication));
 

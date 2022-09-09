@@ -133,6 +133,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -207,9 +210,9 @@ public class TestDataHelper {
     public static Applicant getJointApplicant2(Gender gender) {
         return Applicant.builder()
             .gender(gender)
-            .firstName(TEST_FIRST_NAME)
-            .middleName(TEST_MIDDLE_NAME)
-            .lastName(TEST_LAST_NAME)
+            .firstName(TEST_APP2_FIRST_NAME)
+            .middleName(TEST_APP2_MIDDLE_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
             .build();
     }
 
