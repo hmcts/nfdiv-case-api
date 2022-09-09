@@ -325,7 +325,7 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.24.0'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.25.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:1.7.1'
 }
 
@@ -429,6 +429,7 @@ bootWithCCD {
 }
 
 cftlibTest {
+  dependsOn = ['installChromium']
   // IDAM simulator will be started on port 5000,
   // S2S simulator on port 8489
   authMode = uk.gov.hmcts.rse.AuthMode.Local
@@ -441,6 +442,7 @@ cftlibTest {
     'junit.jupiter.execution.parallel.mode.classes.default': 'concurrent',
   ])
 
+  environment 'PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD', 'true'
   environment 'RD_PROFESSIONAL_API_URL', 'http://host.docker.internal:8765'
   environment 'PRD_API_BASEURL', 'http://localhost:8765'
   environment 'DOC_ASSEMBLY_URL', 'http://localhost:8765'
@@ -462,4 +464,12 @@ tasks.withType(Test).configureEach {
 // exclude the logback binding is coming in via cftlib
 configurations.cftlibTestImplementation {
   exclude group: 'ch.qos.logback', module: 'logback-classic'
+}
+
+task installChromium(type: JavaExec) {
+  // group = "Execution"
+  // description = "Run the main class with JavaExecTask"
+  classpath = sourceSets.cftlibTest.runtimeClasspath
+  main = 'com.microsoft.playwright.CLI'
+  args = ['install', 'chromium']
 }
