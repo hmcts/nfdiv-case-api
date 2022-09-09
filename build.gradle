@@ -455,9 +455,9 @@ cftlibTest {
   environment 'DATA_STORE_S2S_AUTHORISED_SERVICES', 'ccd_gw,fpl_case_service,ccd_data,ccd_ps,divorce_frontend,payment-api,xui_webapp,nfdiv_case_api,ccd_case_document_am_api,am_role_assignment_service'
 }
 
-tasks.withType(Test).configureEach {
-  maxParallelForks = Math.min(Runtime.runtime.availableProcessors().intdiv(2), 4) ?: 1
-}
+//tasks.withType(Test).configureEach {
+//  maxParallelForks = Math.min(Runtime.runtime.availableProcessors().intdiv(2), 4) ?: 1
+//}
 
 // exclude the logback binding is coming in via cftlib
 configurations.cftlibTestImplementation {
