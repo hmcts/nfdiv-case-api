@@ -429,7 +429,6 @@ bootWithCCD {
 }
 
 cftlibTest {
-  dependsOn = ['installChromium']
   // IDAM simulator will be started on port 5000,
   // S2S simulator on port 8489
   authMode = uk.gov.hmcts.rse.AuthMode.Local
@@ -442,7 +441,7 @@ cftlibTest {
     'junit.jupiter.execution.parallel.mode.classes.default': 'concurrent',
   ])
 
-  environment 'PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD', 'true'
+  environment 'PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD', '1'
   environment 'RD_PROFESSIONAL_API_URL', 'http://host.docker.internal:8765'
   environment 'PRD_API_BASEURL', 'http://localhost:8765'
   environment 'DOC_ASSEMBLY_URL', 'http://localhost:8765'
@@ -473,3 +472,5 @@ task installChromium(type: JavaExec) {
   main = 'com.microsoft.playwright.CLI'
   args = ['install', 'chromium']
 }
+
+tasks.cftlibTest.dependsOn(installChromium)
