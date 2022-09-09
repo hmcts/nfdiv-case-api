@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -22,7 +23,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification.NOW_PLUS_14_DAYS;
 import static uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification.WILL_BE_CHECKED_WITHIN_14_DAYS;
 import static uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification.WILL_BE_CHECKED_WITHIN_2_DAYS;
@@ -30,7 +30,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -96,8 +98,8 @@ class Applicant1AppliedForFinalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(SOLE_APPLIED_FOR_FINAL_ORDER),
             argThat(allOf(
-                hasEntry(WILL_BE_CHECKED_WITHIN_2_DAYS, CommonContent.YES),
-                hasEntry(WILL_BE_CHECKED_WITHIN_14_DAYS, CommonContent.NO),
+                hasEntry(WILL_BE_CHECKED_WITHIN_2_DAYS, YES),
+                hasEntry(WILL_BE_CHECKED_WITHIN_14_DAYS, NO),
                 hasEntry(NOW_PLUS_14_DAYS, "")
             )),
             eq(ENGLISH)
@@ -120,8 +122,8 @@ class Applicant1AppliedForFinalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(SOLE_APPLIED_FOR_FINAL_ORDER),
             argThat(allOf(
-                hasEntry(WILL_BE_CHECKED_WITHIN_2_DAYS, CommonContent.NO),
-                hasEntry(WILL_BE_CHECKED_WITHIN_14_DAYS, CommonContent.YES),
+                hasEntry(WILL_BE_CHECKED_WITHIN_2_DAYS, NO),
+                hasEntry(WILL_BE_CHECKED_WITHIN_14_DAYS, YES),
                 hasEntry(NOW_PLUS_14_DAYS, getExpectedLocalDate().plusDays(14).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
@@ -133,7 +135,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
     void shouldSendApplicant2SolicitorNotificationIfJointApplicationAndIsRepresented() {
         CaseData data = validApplicant2CaseData();
         data.setApplicationType(JOINT_APPLICATION);
-        data.getApplicant1().setSolicitorRepresented(YES);
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
         );
@@ -159,7 +161,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplication().setIssueDate(LOCAL_DATE);
-        data.getApplicant1().setSolicitorRepresented(YES);
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
         );
         data.getApplicant1().setSolicitor(Solicitor.builder()
@@ -175,7 +177,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
                 argThat(allOf(
-                        hasEntry(IS_FINAL_ORDER, CommonContent.YES),
+                        hasEntry(IS_FINAL_ORDER, YES),
                         hasEntry(SOLICITOR_NAME, data.getApplicant1().getSolicitor().getName())
                 )),
                 eq(ENGLISH)
