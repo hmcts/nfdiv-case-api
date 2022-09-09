@@ -17,14 +17,17 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddLastAlternativeServiceDocumentLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddOfflineRespondentAnswersLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressDraftConditionalOrderState;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonList;
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -44,6 +47,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentLis
 @ExtendWith(MockitoExtension.class)
 class DraftConditionalOrderTest {
 
+    private static final String USER_TOKEN = "user";
+
     @Mock
     private AddMiniApplicationLink addMiniApplicationLink;
 
@@ -58,6 +63,12 @@ class DraftConditionalOrderTest {
 
     @Mock
     private AddOfflineRespondentAnswersLink addOfflineRespondentAnswersLink;
+
+    @Mock
+    private CcdAccessService ccdAccessService;
+
+    @Mock
+    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
     private DraftConditionalOrder draftConditionalOrder;
@@ -85,18 +96,48 @@ class DraftConditionalOrderTest {
                 .build())
             .build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).id(1L).build();
+            .data(caseData).id(TEST_CASE_ID).build();
 
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(USER_TOKEN);
+        when(ccdAccessService.isApplicant2(USER_TOKEN, TEST_CASE_ID)).thenReturn(false);
         when(progressDraftConditionalOrderState.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = draftConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted())
             .isEqualTo(YES);
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted())
+            .isNull();
     }
 
     @Test
-    void shouldSetApplyForConditionalOrderOnJointIfNoSelected() {
+    void shouldSetIsDraftedForApplicant2OnAboutToSubmit() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YES)
+                    .build())
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).id(TEST_CASE_ID).build();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(USER_TOKEN);
+        when(ccdAccessService.isApplicant2(USER_TOKEN, TEST_CASE_ID)).thenReturn(true);
+        when(progressDraftConditionalOrderState.apply(caseDetails)).thenReturn(caseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted())
+            .isNull();
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted())
+            .isEqualTo(YES);
+    }
+
+    @Test
+    void shouldSetApplyForConditionalOrderOnJointIfNoSelectedByApplicant1() {
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
             .conditionalOrder(ConditionalOrder.builder()
@@ -108,8 +149,10 @@ class DraftConditionalOrderTest {
                 .build())
             .build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).id(1L).build();
+            .data(caseData).id(TEST_CASE_ID).build();
 
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(USER_TOKEN);
+        when(ccdAccessService.isApplicant2(USER_TOKEN, TEST_CASE_ID)).thenReturn(false);
         when(progressDraftConditionalOrderState.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = draftConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
@@ -117,6 +160,33 @@ class DraftConditionalOrderTest {
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getApplyForConditionalOrder())
             .isEqualTo(YES);
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getApplyForConditionalOrderIfNo())
+            .isNull();
+    }
+
+    @Test
+    void shouldSetApplyForConditionalOrderOnJointIfNoSelectedByApplicant2() {
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YES)
+                    .applyForConditionalOrder(NO)
+                    .applyForConditionalOrderIfNo(YES)
+                    .build())
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).id(TEST_CASE_ID).build();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(USER_TOKEN);
+        when(ccdAccessService.isApplicant2(USER_TOKEN, TEST_CASE_ID)).thenReturn(true);
+        when(progressDraftConditionalOrderState.apply(caseDetails)).thenReturn(caseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getApplyForConditionalOrder())
+            .isEqualTo(YES);
+        assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getApplyForConditionalOrderIfNo())
             .isNull();
     }
 
@@ -133,8 +203,11 @@ class DraftConditionalOrderTest {
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(USER_TOKEN);
+        when(ccdAccessService.isApplicant2(USER_TOKEN, TEST_CASE_ID)).thenReturn(false);
         when(progressDraftConditionalOrderState.apply(caseDetails)).thenReturn(caseDetails);
 
         draftConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
