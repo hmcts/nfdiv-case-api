@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
+import uk.gov.hmcts.divorce.testutil.TestResourceUtil;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
@@ -80,6 +83,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
     IdamWireMock.PropertiesInitializer.class
 })
 public class CaseworkerGrantFinalOrderIT {
+    public static final String GRANT_FINAL_ORDER_RESPONSE_JSON = "classpath:caseworker-grant-final-order-response.json";
     @Autowired
     private MockMvc mockMvc;
 
@@ -146,7 +150,44 @@ public class CaseworkerGrantFinalOrderIT {
             .getResponse().getContentAsString();
 
         assertThatJson(response)
-            .isEqualTo(json(expectedResponse("classpath:caseworker-grant-final-order-response.json")));
+            .isEqualTo(json(expectedResponse(GRANT_FINAL_ORDER_RESPONSE_JSON)));
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldGenerateGrantFinalOrderDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
+        final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-WEL-Final-Order-Granted.docx");
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_GRANT_FINAL_ORDER)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse().getContentAsString();
+
+        DocumentContext jsonDocument = JsonPath.parse(TestResourceUtil.expectedResponse(GRANT_FINAL_ORDER_RESPONSE_JSON));
+        jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
+
+        assertThatJson(response)
+            .isEqualTo(jsonDocument.json());
 
         verifyNoInteractions(notificationService);
     }

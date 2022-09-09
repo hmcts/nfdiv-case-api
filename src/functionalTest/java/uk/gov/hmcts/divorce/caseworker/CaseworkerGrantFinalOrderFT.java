@@ -64,6 +64,17 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
     }
 
     @Test
+    public void shouldGenerateGrantFinalOrderDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvokedForDivorce()
+        throws Exception {
+        final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
+        caseData.put("applicant1LanguagePreferenceWelsh", "Yes");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
     public void shouldGenerateGrantFinalOrderDocumentAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvokedForCP() throws Exception {
         final Map<String, Object> caseData = caseData(
             REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
@@ -80,5 +91,17 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(jsonDocument.json());
+    }
+
+    @Test
+    public void shouldGenerateGrantFinalOrderDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvokedForCP() throws Exception {
+        final Map<String, Object> caseData = caseData(
+            REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
+        caseData.put("divorceOrDissolution", "dissolution");
+        caseData.put("applicant1LanguagePreferenceWelsh", "Yes");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 }
