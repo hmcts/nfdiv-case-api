@@ -33,6 +33,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APPLICANT2_FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -50,6 +52,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -165,6 +168,43 @@ public class Applicant2ApplyForFinalOrderIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2AndApplicant1WhenJointApplication() throws Exception {
+
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        final CaseData data = validJointApplicant1CaseData();
+        data.getApplicant1().setEmail(TEST_USER_EMAIL);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        data.setFinalOrder(FinalOrder.builder()
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(
+                    data, APPLICANT2_FINAL_ORDER_REQUESTED, "AwaitingFinalOrder")))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
