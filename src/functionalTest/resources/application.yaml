@@ -82,6 +82,7 @@ submit_co:
 
 final_order:
   eligible_from_offset_days: ${FINAL_ORDER_ELIGIBLE_FROM_OFFSET_DAYS:43}
+  respondent_eligible_from_offset_months: ${FINAL_ORDER_RESPONDENT_ELIGIBLE_FROM_OFFSET_MONTHS:3}
 
 apply_for_final_order:
   reminder_offset_days: ${APPLY_FOR_FINAL_ORDER_REMINDER_OFFSET_DAYS:14}
