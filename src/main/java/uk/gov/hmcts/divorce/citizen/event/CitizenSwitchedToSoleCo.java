@@ -104,26 +104,33 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         }
 
         // triggered by system update user coming from Offline Document Verified
-        if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
-            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
-
-            if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
-                if (!data.getApplication().isPaperCase()) {
-                    switchToSoleService.switchUserRoles(data, caseId);
-                }
-                switchToSoleService.switchApplicantData(data);
+        if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
+            if (!data.getApplication().isPaperCase()) {
+                switchToSoleService.switchUserRoles(data, caseId);
             }
-            generateSwitchToSoleCoLetter.apply(data, caseId, data.getApplicant1(), data.getApplicant2());
+            switchToSoleService.switchApplicantData(data);
         }
 
-        generateConditionalOrderAnswersDocument.apply(
-            details,
-            data.getApplicant1().getLanguagePreference()
-        );
+        generateSwitchToSoleDocuments(details, data, caseId);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
+    }
+
+    private void generateSwitchToSoleDocuments(CaseDetails<CaseData, State> details,
+                                               CaseData caseData,
+                                               Long caseId) {
+        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
+
+            generateSwitchToSoleCoLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+        }
+
+        generateConditionalOrderAnswersDocument.apply(
+            details,
+            caseData.getApplicant1().getLanguagePreference()
+        );
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
