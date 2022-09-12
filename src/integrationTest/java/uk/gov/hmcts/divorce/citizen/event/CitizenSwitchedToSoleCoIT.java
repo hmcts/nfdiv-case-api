@@ -16,7 +16,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -67,6 +66,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCHED_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
@@ -320,6 +320,14 @@ public class CitizenSwitchedToSoleCoIT {
     @Test
     public void shouldSendSwitchToSoleNotificationsToSolicitorAndCitizenInSubmittedCallback() throws Exception {
         CaseData data = validJointApplicant1CaseData();
+        final LocalDate issueDate = getExpectedLocalDate();
+        data.getApplication().setIssueDate(issueDate);
+        data.getApplicant2().setSolicitorRepresented(YES);
+        data.getApplicant2().setSolicitor(Solicitor
+            .builder()
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+
         data.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
@@ -332,7 +340,7 @@ public class CitizenSwitchedToSoleCoIT {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
@@ -362,7 +370,7 @@ public class CitizenSwitchedToSoleCoIT {
             .andExpect(status().isOk());
 
         verify(switchToSoleCoPrinter)
-            .print(any(CaseData.class), eq(TEST_CASE_ID), any(Applicant.class), any(Applicant.class));
+            .print(any(CaseData.class), eq(TEST_CASE_ID));
     }
 
     private void setupMocks(boolean isApplicant1, boolean isApplicant2) throws IOException {
@@ -380,5 +388,6 @@ public class CitizenSwitchedToSoleCoIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Conditional_Order_Answers.docx");
+        stubForDocAssemblyWith("2014c722-122c-4732-b583-75bad8dcedfc", "FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx");
     }
 }

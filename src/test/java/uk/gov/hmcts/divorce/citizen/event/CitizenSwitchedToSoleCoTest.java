@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
+import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -66,6 +67,9 @@ class CitizenSwitchedToSoleCoTest {
     @Mock
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
+    @Mock
+    private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
+
     @InjectMocks
     private CitizenSwitchedToSoleCo citizenSwitchedToSoleCo;
 
@@ -90,12 +94,9 @@ class CitizenSwitchedToSoleCoTest {
             .data(caseData)
             .build();
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
-        when(ccdAccessService.isApplicant1("app1-token", caseId)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseDetails.getId());
-        verifyNoMoreInteractions(notificationDispatcher);
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails, WELSH);
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
@@ -110,13 +111,10 @@ class CitizenSwitchedToSoleCoTest {
             .data(caseData)
             .build();
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app2-token");
-        when(ccdAccessService.isApplicant1("app2-token", caseId)).thenReturn(false);
         when(ccdAccessService.isApplicant2("app2-token", caseId)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseDetails.getId());
-        verifyNoMoreInteractions(notificationDispatcher);
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
         assertThat(response.getData().getLabelContent().getApplicant2()).isEqualTo("respondent");
@@ -144,9 +142,9 @@ class CitizenSwitchedToSoleCoTest {
 
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(switchToSoleCoPrinter).print(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
+        verify(generateSwitchToSoleCoLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
     }
 
@@ -168,7 +166,7 @@ class CitizenSwitchedToSoleCoTest {
 
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(switchToSoleCoPrinter).print(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+        verify(generateSwitchToSoleCoLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
         verify(switchToSoleService).switchApplicantData(caseData);
         verifyNoMoreInteractions(switchToSoleService);
     }
@@ -190,7 +188,42 @@ class CitizenSwitchedToSoleCoTest {
 
         citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(switchToSoleCoPrinter).print(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+        verify(generateSwitchToSoleCoLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
         verifyNoInteractions(switchToSoleService);
+    }
+
+    @Test
+    void shouldTriggerSwitchToSoleEmailNotificationsInSubmittedCallback() {
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+
+        citizenSwitchedToSoleCo.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseDetails.getId());
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldPrintSwitchToSoleCoLetterD84SwitchToSoleInSubmittedCallback() {
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .d84ApplicationType(SWITCH_TO_SOLE)
+            .build()
+        );
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+
+        citizenSwitchedToSoleCo.submitted(caseDetails, caseDetails);
+
+        verify(switchToSoleCoPrinter).print(caseData, caseId);
+        verifyNoMoreInteractions(switchToSoleCoPrinter);
     }
 }

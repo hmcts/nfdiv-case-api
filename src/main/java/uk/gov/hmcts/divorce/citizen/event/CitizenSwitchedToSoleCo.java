@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
+import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -64,6 +65,9 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @Autowired
+    private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
+
+    @Autowired
     private SwitchToSoleCoPrinter switchToSoleCoPrinter;
 
     @Override
@@ -83,6 +87,7 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+
         Long caseId = details.getId();
         log.info("SwitchedToSoleCO aboutToSubmit callback invoked for Case Id: {}", caseId);
         CaseData data = details.getData();
@@ -100,13 +105,15 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
 
         // triggered by system update user coming from Offline Document Verified
         if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
-            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())
-            && ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())
-        ) {
-            if (!data.getApplication().isPaperCase()) {
-                switchToSoleService.switchUserRoles(data, caseId);
+            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
+
+            if (ConditionalOrder.D84WhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
+                if (!data.getApplication().isPaperCase()) {
+                    switchToSoleService.switchUserRoles(data, caseId);
+                }
+                switchToSoleService.switchApplicantData(data);
             }
-            switchToSoleService.switchApplicantData(data);
+            generateSwitchToSoleCoLetter.apply(data, caseId, data.getApplicant1(), data.getApplicant2());
         }
 
         generateConditionalOrderAnswersDocument.apply(
@@ -121,6 +128,7 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
+
         log.info("SwitchedToSoleCO submitted callback invoked for case id: {}", details.getId());
 
         final CaseData data = details.getData();
@@ -129,7 +137,7 @@ public class CitizenSwitchedToSoleCo implements CCDConfig<CaseData, State, UserR
         if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
             && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
 
-            switchToSoleCoPrinter.print(data, details.getId(), data.getApplicant1(), data.getApplicant2());
+            switchToSoleCoPrinter.print(data, details.getId());
         }
 
         return SubmittedCallbackResponse.builder().build();
