@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -84,8 +83,7 @@ class SystemMigrateCasesTaskTest {
         when(ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION))
             .thenReturn(singletonList(caseDetails));
 
-        withEnvironmentVariable("MIGRATE_JOINT_APP_ENABLED", "true")
-            .execute(() -> systemMigrateCasesTask.run());
+        systemMigrateCasesTask.run();
 
         verify(ccdUpdateService, times(2)).submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
     }
@@ -110,8 +108,7 @@ class SystemMigrateCasesTaskTest {
         when(ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        withEnvironmentVariable("MIGRATE_JOINT_APP_ENABLED", "true")
-            .execute(() -> systemMigrateCasesTask.run());
+        systemMigrateCasesTask.run();
 
         verify(ccdUpdateService, times(1)).submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
     }
@@ -152,8 +149,7 @@ class SystemMigrateCasesTaskTest {
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
-        withEnvironmentVariable("MIGRATE_JOINT_APP_ENABLED", "true")
-            .execute(() -> systemMigrateCasesTask.run());
+        systemMigrateCasesTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
@@ -199,8 +195,7 @@ class SystemMigrateCasesTaskTest {
             .doNothing()
             .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
-        withEnvironmentVariable("MIGRATE_JOINT_APP_ENABLED", "true")
-            .execute(() -> systemMigrateCasesTask.run());
+        systemMigrateCasesTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails3, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
