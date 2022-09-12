@@ -22,12 +22,8 @@ public class ResetAosFields implements CaseTask {
 
         log.info("Resetting AOS fields. Case ID: {}", caseDetails.getId());
 
-        caseDetails.getData().getApplicant2().setLegalProceedings(null);
-        caseDetails.getData().getApplicant2().setLegalProceedingsDetails(null);
-        caseDetails.getData().getApplicant2().setLegalProceedingsDetailsTranslated(null);
-        caseDetails.getData().getApplicant2().setLegalProceedingsDetailsTranslatedTo(null);
-
-        caseDetails.getData().setAcknowledgementOfService(null);
+        caseDetails.getData().getAcknowledgementOfService().setConfirmReadPetition(null);
+        caseDetails.getData().getAcknowledgementOfService().setAosIsDrafted(null);
 
         return caseDetails;
     }
