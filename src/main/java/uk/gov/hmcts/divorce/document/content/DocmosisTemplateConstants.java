@@ -18,6 +18,8 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_LAST_NAME = "applicant2LastName";
     public static final String APPLICANT_1_FULL_NAME = "applicant1FullName";
     public static final String APPLICANT_2_FULL_NAME = "applicant2FullName";
+    public static final String FIRST_NAME = "firstName";
+    public static final String LAST_NAME = "lastName";
     public static final String APPLICANT_1_MARRIAGE_NAME = "applicant1MarriageName";
     public static final String APPLICANT_2_MARRIAGE_NAME = "applicant2MarriageName";
     public static final String MARRIAGE_DATE = "marriageDate";
@@ -61,6 +63,7 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_FINANCIAL_ORDER = "applicant2FinancialOrder";
     public static final String GENERAL_ORDER_DATE = "generalOrderDate";
     public static final String GENERAL_ORDER_DETAILS = "generalOrderDetails";
+    public static final String GENERAL_ORDER_RECITALS = "generalOrderRecitals";
     public static final String GENERAL_ORDER_MADE_BY = "generalOrderMadeBy";
     public static final String PETITIONER_FULL_NAME = "petitionerFullName";
     public static final String RESPONDENT_FULL_NAME = "respondentFullName";
@@ -129,6 +132,7 @@ public final class DocmosisTemplateConstants {
     public static final String DISPENSED_SERVICE_COST = "dispensedServiceCost";
     public static final String ARRANGE_SERVICE_BY_DATE = "arrangeServiceBeforeDate";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER = "divorceOrCivilPartnershipServiceHeader";
+    public static final String DIVORCE_OR_CIVIL_PARTNERSHIP = "divorceOrCivilPartnership";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL = "divorceOrCivilPartnershipEmail";
     public static final String DIVORCE_SERVICE = "The Divorce Service";
     public static final String END_CP_SERVICE = "End A Civil Partnership Service";

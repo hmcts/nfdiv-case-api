@@ -2,14 +2,17 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -21,17 +24,22 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.UUID.randomUUID;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 
@@ -61,6 +69,61 @@ public class ConditionalOrder {
         label = "Link to online petition"
     )
     private Document onlinePetitionLink;
+
+    @CCD(
+        label = "Link to scanned D84 form"
+    )
+    private Document scannedD84Form;
+
+    @CCD(
+        label = "Date D84 form was scanned"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime dateD84FormScanned;
+
+    @CCD(
+        label = "What application type is the D84?"
+    )
+    private D84ApplicationType d84ApplicationType;
+
+    @Getter
+    @AllArgsConstructor
+    public enum D84ApplicationType implements HasLabel {
+
+        @JsonProperty("sole")
+        SOLE("Sole"),
+
+        @JsonProperty("joint")
+        JOINT("Joint"),
+
+        @JsonProperty("switchToSole")
+        SWITCH_TO_SOLE("Switch to sole");
+
+        private final String label;
+    }
+
+    @CCD(
+        label = "Who is submitting the D84?"
+    )
+    private D84WhoApplying d84WhoApplying;
+
+    @Getter
+    @AllArgsConstructor
+    public enum D84WhoApplying implements HasLabel {
+
+        @JsonProperty("applicant1")
+        APPLICANT_1("Applicant 1"),
+
+        @JsonProperty("applicant2")
+        APPLICANT_2("Applicant 2");
+
+        private final String label;
+    }
+
+    @CCD(
+        label = "Switched to sole"
+    )
+    private YesOrNo switchedToSole;
 
     @CCD(
         label = "Link to alternative service document"
@@ -174,7 +237,7 @@ public class ConditionalOrder {
     @CCD(
         label = "Date and time of hearing"
     )
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateAndTimeOfHearing;
 
     @CCD(
@@ -200,6 +263,16 @@ public class ConditionalOrder {
         access = {CaseworkerAccess.class}
     )
     private DivorceDocument certificateOfEntitlementDocument;
+
+    @CCD(
+        label = "Has offline certificate of entitlement been sent to Applicant 1"
+    )
+    private YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant1;
+
+    @CCD(
+        label = "Has offline certificate of entitlement been sent to Applicant 2"
+    )
+    private YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant2;
 
     @CCD(
         label = "Refusal Rejection reasons",
@@ -232,6 +305,34 @@ public class ConditionalOrder {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate rescindedDate;
 
+    @CCD(
+        label = "Service Confirmed"
+    )
+    private YesOrNo serviceConfirmed;
+
+    @CCD(
+        label = "Documents uploaded for Proof of Service",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument"
+    )
+    private List<ListValue<DivorceDocument>> proofOfServiceUploadDocuments;
+
+    @CCD(
+        label = "Is latest approved service application a bailiff application?"
+    )
+    private YesOrNo lastApprovedServiceApplicationIsBailiffApplication;
+
+    @CCD(
+        label = "Certificate of service date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate certificateOfServiceDate;
+
+    @CCD(
+        label = "Did bailiff serve successfully?"
+    )
+    private YesOrNo successfulServedByBailiff;
+
     @JsonIgnore
     public boolean areClaimsGranted() {
         return nonNull(claimsGranted) && claimsGranted.toBoolean();
@@ -239,7 +340,7 @@ public class ConditionalOrder {
 
     @JsonIgnore
     public boolean hasConditionalOrderBeenGranted() {
-        return YesOrNo.YES.equals(granted);
+        return YES.equals(granted);
     }
 
     @JsonIgnore
@@ -257,6 +358,16 @@ public class ConditionalOrder {
         this.setClarificationResponses(new ArrayList<>());
         this.setCannotUploadClarificationDocuments(null);
         this.setClarificationUploadDocuments(new ArrayList<>());
+    }
+
+    @JsonIgnore
+    public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant1() {
+        return YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant1);
+    }
+
+    @JsonIgnore
+    public boolean hasOfflineCertificateOfEntitlementBeenSentToApplicant2() {
+        return YES.equals(offlineCertificateOfEntitlementDocumentSentToApplicant2);
     }
 
     @JsonIgnore
@@ -296,11 +407,18 @@ public class ConditionalOrder {
 
         } else if (MORE_INFO.equals(getRefusalDecision())) {
 
+            Set<ClarificationReason> reasonsSet =  new HashSet<>();
+            if (isNotEmpty(getRefusalClarificationReason())) {
+                reasonsSet.addAll(getRefusalClarificationReason().stream()
+                    .filter(reason -> !OTHER.equals(reason))
+                    .collect(Collectors.toSet()));
+            }
+
             return LegalAdvisorDecision.builder()
                 .granted(getGranted())
                 .decisionDate(decisionDate)
                 .refusalDecision(getRefusalDecision())
-                .refusalClarificationReason(getRefusalClarificationReason())
+                .refusalClarificationReason(reasonsSet)
                 .refusalClarificationAdditionalInfo(getRefusalClarificationAdditionalInfo())
                 .build();
 
@@ -323,5 +441,33 @@ public class ConditionalOrder {
                 .build();
 
         }
+    }
+
+    @JsonIgnore
+    public boolean shouldEnableSwitchToSoleCoForApplicant1() {
+        return
+            YES.equals(getConditionalOrderApplicant1Questions().getIsSubmitted())
+                && !YES.equals(getConditionalOrderApplicant2Questions().getIsSubmitted())
+                && isNotEmpty(getConditionalOrderApplicant1Questions().getSubmittedDate())
+                && getConditionalOrderApplicant1Questions().getSubmittedDate().plusDays(14).isBefore(LocalDateTime.now());
+    }
+
+    @JsonIgnore
+    public boolean shouldEnableSwitchToSoleCoForApplicant2() {
+        return
+            YES.equals(getConditionalOrderApplicant2Questions().getIsSubmitted())
+                && !YES.equals(getConditionalOrderApplicant1Questions().getIsSubmitted())
+                && isNotEmpty(getConditionalOrderApplicant2Questions().getSubmittedDate())
+                && getConditionalOrderApplicant2Questions().getSubmittedDate().plusDays(14).isBefore(LocalDateTime.now());
+    }
+
+    @JsonIgnore
+    public boolean isLastApprovedServiceApplicationBailiffApplication() {
+        return YES.equals(lastApprovedServiceApplicationIsBailiffApplication);
+    }
+
+    @JsonIgnore
+    public boolean hasServiceBeenConfirmed() {
+        return YES.equals(serviceConfirmed);
     }
 }

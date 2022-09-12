@@ -8,24 +8,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.notification.SoleAppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -33,10 +31,13 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 class ApplyForFinalOrderTest {
 
     @Mock
-    private SoleAppliedForFinalOrderNotification soleAppliedForFinalOrderNotification;
+    private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private ProgressFinalOrderState progressFinalOrderState;
 
     @InjectMocks
     private ApplyForFinalOrder applyForFinalOrder;
@@ -53,36 +54,15 @@ class ApplyForFinalOrderTest {
     }
 
     @Test
-    void shouldChangeStateToFinalOrderRequestedOnAboutToSubmit() {
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(State.AwaitingFinalOrder).id(1L).build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getState()).isEqualTo(FinalOrderRequested);
-    }
-
-    @Test
-    void shouldNotChangeStateIfStateIsFinalOrderOverdueOnAboutToSubmit() {
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(FinalOrderOverdue).id(1L).build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getState()).isEqualTo(FinalOrderOverdue);
-    }
-
-    @Test
     void shouldSendSoleAppliedForFinalOrderNotificationIfSoleApplicationTypeAndAwaitingFinalOrderState() {
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.SOLE_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(AwaitingFinalOrder);
 
+        when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
         applyForFinalOrder.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher).send(soleAppliedForFinalOrderNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicant1AppliedForFinalOrderNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -92,57 +72,9 @@ class ApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(FinalOrderOverdue);
 
+        when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
         applyForFinalOrder.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher, never()).send(soleAppliedForFinalOrderNotification, caseData, caseDetails.getId());
-    }
-
-    @Test
-    void shouldNotSendSoleAppliedForFinalOrderNotificationIfJointApplicationType() {
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
-
-        applyForFinalOrder.aboutToSubmit(caseDetails, null);
-
-        verify(notificationDispatcher, never()).send(soleAppliedForFinalOrderNotification, caseData, caseDetails.getId());
-    }
-
-    @Test
-    void shouldSetStateToWelshTranslationReviewIfSoleAndApp1LanguagePreferenceWelshYes() {
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.SOLE_APPLICATION).build();
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(State.AwaitingFinalOrder).id(1L).build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applyForFinalOrder.aboutToSubmit(caseDetails, null);
-
-        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
-        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(FinalOrderRequested);
-    }
-
-    @Test
-    void shouldSetStateToWelshTranslationReviewIfJointAndApp1LanguagePreferenceWelshYes() {
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(State.AwaitingFinalOrder).id(1L).build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applyForFinalOrder.aboutToSubmit(caseDetails, null);
-
-        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
-        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(FinalOrderRequested);
-    }
-
-    @Test
-    void shouldSetStateToWelshTranslationReviewIfJointAndApp2LanguagePreferenceWelshYes() {
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
-        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(State.AwaitingFinalOrder).id(1L).build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applyForFinalOrder.aboutToSubmit(caseDetails, null);
-
-        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
-        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(FinalOrderRequested);
+        verify(notificationDispatcher, never()).send(applicant1AppliedForFinalOrderNotification, caseData, caseDetails.getId());
     }
 }

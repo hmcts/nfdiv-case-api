@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/template-renditions"
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "renditionOutputLocation": "http://localhost:8765/documents/18fe3e5e-bd24-41f9-9267-f91d7551d03a"
+    }
+  }
+}

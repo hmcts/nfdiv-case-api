@@ -1,0 +1,75 @@
+{
+  "data": {
+    "applicationType": "jointApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Gender": "female",
+    "applicant1ContactDetailsType": "public",
+    "applicant1FinancialOrder": "No",
+    "applicant1Offline": "Yes",
+    "applicant2Offline": "Yes",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "coScannedD84Form": {
+      "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
+      "document_filename": "doc1.pdf",
+      "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
+    },
+    "coDateD84FormScanned": "2022-01-01T12:12",
+    "documentsGenerated": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "${json-unit.any-string}",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "${json-unit.any-string}",
+        "documentType": "appliedForCoLetter"
+      }
+    }, {
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "${json-unit.any-string}",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "${json-unit.any-string}",
+        "documentType": "appliedForCoLetter"
+      }
+    }, {
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
+          "document_filename": "doc1.pdf",
+          "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
+        },
+        "documentDateAdded": "${json-unit.any-string}",
+        "documentComment": "Reclassified scanned document",
+        "documentFileName": "doc1.pdf",
+        "documentType": "conditionalOrderApplication"
+      }
+    }],
+    "scannedDocuments": [{
+      "value": {
+        "type": "form",
+        "url": {
+          "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
+          "document_filename": "doc1.pdf",
+          "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
+        },
+        "fileName": "doc1.pdf",
+        "scannedDate": "2022-01-01T12:12:00.000"
+      }
+    }],
+    "typeOfDocumentAttached": "D84",
+    "dataVersion": 5,
+    "warnings": []
+  },
+  "state": "AwaitingLegalAdvisorReferral"
+}

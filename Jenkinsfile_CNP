@@ -64,7 +64,6 @@ withPipeline(type, product, component) {
     }
 
     after('test') {
-      builder.gradle('cftlibTest integration')
       builder.gradle('jacocoTestReport')
 
       publishHTML target: [
@@ -153,7 +152,7 @@ withPipeline(type, product, component) {
 
     onPR {
       env.ENVIRONMENT="preview"
-      env.CASE_API_URL = "https://nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+      env.CASE_API_URL = "http://nfdiv-case-api-pr-${CHANGE_ID}-java"
       env.CCD_DEF_NAME = "preview"
       env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
       env.CASE_DATA_STORE_BASEURL = "https://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"

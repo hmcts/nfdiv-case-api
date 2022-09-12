@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -18,9 +19,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.LegalAdvisorDecision;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
-import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorAmendApplicationDecisionNotification;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorRejectedDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -36,6 +39,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.JURISDICTION_DETAILS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.ADMIN_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
@@ -44,8 +49,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarific
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -59,10 +65,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 class LegalAdvisorMakeDecisionTest {
 
     @Mock
-    private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
+    private LegalAdvisorRejectedDecisionNotification rejectedNotification;
 
     @Mock
-    private LegalAdvisorAmendApplicationDecisionNotification amendApplicationDecisionNotification;
+    private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -71,7 +77,10 @@ class LegalAdvisorMakeDecisionTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
+    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
+
+    @Mock
+    private ConditionalOrderRefusedForClarificationContent conditionalOrderRefusedForClarificationContent;
 
     @Mock
     private Clock clock;
@@ -123,7 +132,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setData(caseData);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -136,7 +145,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -183,7 +192,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setData(caseData);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -196,7 +205,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                REJECTED_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -208,7 +217,7 @@ class LegalAdvisorMakeDecisionTest {
         assertThat(response.getData().getConditionalOrder().getDecisionDate()).isNull();
         assertThat(response.getState()).isEqualTo(AwaitingAmendedApplication);
 
-        verify(notificationDispatcher).send(amendApplicationDecisionNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(rejectedNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -227,7 +236,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -240,7 +249,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -267,7 +276,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setData(caseData);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -280,7 +289,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                REJECTED_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -324,7 +333,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -377,7 +386,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -387,6 +396,59 @@ class LegalAdvisorMakeDecisionTest {
             legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getConditionalOrder().getLegalAdvisorDecisions()).hasSize(2);
+    }
+
+    @Test
+    void shouldFilterFreeTextRefusalClarificationReasonFromAudit() {
+
+        setMockClock(clock);
+
+        final List<ListValue<LegalAdvisorDecision>> legalAdvisorDecisions = new ArrayList<>();
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .granted(NO)
+                    .refusalDecision(MORE_INFO)
+                    .refusalClarificationReason(Set.of(OTHER, JURISDICTION_DETAILS))
+                    .refusalClarificationAdditionalInfo("some info")
+                    .legalAdvisorDecisions(legalAdvisorDecisions)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        String documentUrl = "http://localhost:8080/4567";
+        var refusalConditionalOrderDoc = new Document(
+            documentUrl,
+            REFUSAL_ORDER_DOCUMENT_NAME,
+            documentUrl + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
+                ENGLISH,
+                REFUSAL_ORDER_DOCUMENT_NAME
+            ))
+            .thenReturn(refusalConditionalOrderDoc);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        final List<ListValue<LegalAdvisorDecision>> decisions =
+            response.getData().getConditionalOrder().getLegalAdvisorDecisions();
+
+        assertThat(decisions).hasSize(1);
+        assertThat(decisions.get(0).getValue().getRefusalClarificationReason()).hasSize(1);
+        assertThat(decisions.get(0).getValue().getRefusalClarificationReason()).doesNotContain(OTHER);
     }
 
     @Test
@@ -434,7 +496,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setData(caseData);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(conditionalOrderRefusalContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var refusalConditionalOrderDoc = new Document(
@@ -447,7 +509,7 @@ class LegalAdvisorMakeDecisionTest {
             caseDataDocumentService.renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                REFUSAL_ORDER_TEMPLATE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
                 ENGLISH,
                 REFUSAL_ORDER_DOCUMENT_NAME
             ))
@@ -457,5 +519,85 @@ class LegalAdvisorMakeDecisionTest {
             legalAdvisorMakeDecision.midEvent(caseDetails, null);
 
         assertThat(response.getData().getConditionalOrder().getRefusalOrderDocument()).isEqualTo(refusalConditionalOrderDoc);
+    }
+
+    @Test
+    void shouldGenerateRefusalDocumentAndSendLettersIfConditionalOrderIsRejectedForAmendmentAndIsOfflineApplication() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(REJECT).build())
+            .applicant1(Applicant.builder().offline(YES).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        String documentUrl = "http://localhost:8080/4567";
+        var refusalConditionalOrderDoc = new Document(
+            documentUrl,
+            REFUSAL_ORDER_DOCUMENT_NAME,
+            documentUrl + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                REJECTED_REFUSAL_ORDER_TEMPLATE_ID,
+                ENGLISH,
+                REFUSAL_ORDER_DOCUMENT_NAME
+            ))
+            .thenReturn(refusalConditionalOrderDoc);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(rejectedNotification, caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldGenerateRefusalDocumentAndSendLettersIfConditionalOrderIsRejectedForMoreInfoAndIsOfflineApplication() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(MORE_INFO).build())
+            .applicant1(Applicant.builder().offline(YES).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        String documentUrl = "http://localhost:8080/4567";
+        var refusalConditionalOrderDoc = new Document(
+            documentUrl,
+            REFUSAL_ORDER_DOCUMENT_NAME,
+            documentUrl + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
+                ENGLISH,
+                REFUSAL_ORDER_DOCUMENT_NAME
+            ))
+            .thenReturn(refusalConditionalOrderDoc);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(moreInfoDecisionNotification, caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 }

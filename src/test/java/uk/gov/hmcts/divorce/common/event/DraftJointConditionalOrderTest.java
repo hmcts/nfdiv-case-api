@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.common.service.task.SetLatestBailiffApplicationStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -35,6 +36,9 @@ class DraftJointConditionalOrderTest {
 
     @Mock
     private ProgressDraftConditionalOrderState progressDraftConditionalOrderState;
+
+    @Mock
+    private SetLatestBailiffApplicationStatus setLatestBailiffApplicationStatus;
 
     @InjectMocks
     private DraftJointConditionalOrder draftJointConditionalOrder;
@@ -127,12 +131,14 @@ class DraftJointConditionalOrderTest {
         final CaseDetails<CaseData, State> updateCaseDetails = new CaseDetails<>();
         updateCaseDetails.setData(expectedCaseData);
 
-        when(addMiniApplicationLink.apply(caseDetails)).thenReturn(updateCaseDetails);
+        when(addMiniApplicationLink.apply(caseDetails)).thenReturn(caseDetails);
+        when(setLatestBailiffApplicationStatus.apply(caseDetails)).thenReturn(updateCaseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = draftJointConditionalOrder.aboutToStart(caseDetails);
 
         assertThat(response.getData()).isSameAs(expectedCaseData);
 
         verify(addMiniApplicationLink).apply(caseDetails);
+        verify(setLatestBailiffApplicationStatus).apply(caseDetails);
     }
 }
