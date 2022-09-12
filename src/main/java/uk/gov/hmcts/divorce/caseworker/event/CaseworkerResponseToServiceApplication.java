@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Objects.isNull;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
@@ -66,7 +67,7 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
 
         // We get the alternative service outcome from index 0 as the latest alternative service outcome is always added to index 0 on the
         // alternative outcomes list.
-        if (isEmpty(altServiceTypeList) || altServiceTypeList.get(0).getValue().getAlternativeServiceType() == null) {
+        if (isEmpty(altServiceTypeList) || isNull(altServiceTypeList.get(0).getValue().getAlternativeServiceType())) {
             validationErrors.add(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
         }
 
