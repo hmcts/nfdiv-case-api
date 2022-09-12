@@ -147,7 +147,24 @@ class CaseworkerResponseToServiceApplicationTest {
     }
 
     @Test
-    void shouldReturnValidationErrorWhenAlternativeServiceTypeIsNull() {
+    void shouldReturnValidationErrorWhenAlternativeServiceTypeListIsNull() {
+
+        CaseData caseData = CaseData.builder().build();
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        updatedCaseDetails.setData(caseData);
+        updatedCaseDetails.setId(TEST_CASE_ID);
+        updatedCaseDetails.setCreatedDate(LOCAL_DATE_TIME);
+        updatedCaseDetails.setState(AosOverdue);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToStart(updatedCaseDetails);
+
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors().get(0)).isEqualTo(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenAlternativeServiceTypeListIsEmpty() {
 
         List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes = Collections.emptyList();
         CaseData caseData = CaseData.builder()
