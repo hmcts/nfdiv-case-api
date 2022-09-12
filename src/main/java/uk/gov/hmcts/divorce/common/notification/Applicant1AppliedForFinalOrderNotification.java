@@ -12,6 +12,9 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
@@ -42,6 +45,20 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
                 SOLE_APPLIED_FOR_FINAL_ORDER,
                 applicant1TemplateVars(caseData, id),
                 caseData.getApplicant1().getLanguagePreference()
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
+        if (!caseData.getApplicationType().isSole()
+                && YES.equals(caseData.getFinalOrder().getApplicant1AppliedForFinalOrderFirst())) {
+            log.info("Sending Applicant 2 notification informing them that other party have applied for final order: {}", caseId);
+            notificationService.sendEmail(
+                caseData.getApplicant2().getSolicitor().getEmail(),
+                JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
+                commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
+                ENGLISH
             );
         }
     }

@@ -1,0 +1,26 @@
+{
+  "data": {
+    "applicationType": "jointApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "issueDate": "2022-06-17",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorName": "Applicant 1 Solicitor",
+    "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+    "applicant2SolicitorRepresented": "Yes",
+    "applicant2SolicitorName": "Applicant 2 Solicitor",
+    "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
+    "applicant2FirstName": "Olive",
+    "applicant2LastName": "Oil",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "solSignStatementOfTruth": "Yes",
+    "coGranted": "Yes",
+    "applicant1AppliedForFinalOrderFirst": "No",
+    "applicant2AppliedForFinalOrderFirst": "Yes",
+    "dateFinalOrderNoLongerEligible": "${json-unit.ignore}"
+  },
+  "state": "AwaitingJointFinalOrder"
+}
