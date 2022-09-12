@@ -10,8 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleCoNotification;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleCoNotification;
+import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -47,10 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 class CitizenSwitchedToSoleCoTest {
 
     @Mock
-    private Applicant1SwitchToSoleCoNotification applicant1Notification;
-
-    @Mock
-    private Applicant2SwitchToSoleCoNotification applicant2Notification;
+    private SwitchToSoleCoNotification switchToSoleCoNotification;
 
     @Mock
     private CcdAccessService ccdAccessService;
@@ -98,7 +94,7 @@ class CitizenSwitchedToSoleCoTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(notificationDispatcher).send(applicant1Notification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails, WELSH);
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
@@ -119,7 +115,7 @@ class CitizenSwitchedToSoleCoTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(notificationDispatcher).send(applicant2Notification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
