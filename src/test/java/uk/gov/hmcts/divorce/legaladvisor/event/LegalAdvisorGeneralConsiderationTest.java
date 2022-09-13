@@ -87,7 +87,8 @@ class LegalAdvisorGeneralConsiderationTest {
         assertThat(responseGeneralReferral.getGeneralReferralDecisionDate()).isEqualTo(getExpectedLocalDate());
         assertThat(responseGeneralReferral.getGeneralReferralDecision()).isEqualTo(APPROVE);
         assertThat(responseGeneralReferral.getGeneralReferralDecisionReason()).isEqualTo("approved");
-        assertThat(responseData.getGeneralReferral()).isNull();
+        assertThat(responseData.getGeneralReferral()).hasAllNullFieldsOrPropertiesExcept("generalReferralFee");
+        assertThat(responseData.getGeneralReferral().getGeneralReferralFee()).hasAllNullFieldsOrProperties();
 
         verify(notificationDispatcher).send(notification, caseData, 12345L);
     }
@@ -119,7 +120,8 @@ class LegalAdvisorGeneralConsiderationTest {
         assertThat(responseGeneralReferral.getGeneralReferralDecisionDate()).isEqualTo(getExpectedLocalDate());
         assertThat(responseGeneralReferral.getGeneralReferralDecision()).isEqualTo(REFUSE);
         assertThat(responseGeneralReferral.getGeneralReferralDecisionReason()).isEqualTo("rejected");
-        assertThat(responseData.getGeneralReferral()).isNull();
+        assertThat(responseData.getGeneralReferral()).hasAllNullFieldsOrPropertiesExcept("generalReferralFee");
+        assertThat(responseData.getGeneralReferral().getGeneralReferralFee()).hasAllNullFieldsOrProperties();
 
         verifyNoInteractions(notificationDispatcher);
     }
