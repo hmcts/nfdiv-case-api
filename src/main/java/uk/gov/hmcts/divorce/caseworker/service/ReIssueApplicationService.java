@@ -142,7 +142,7 @@ public class ReIssueApplicationService {
             ).run(caseDetails);
 
             if (!caseDetails.getData().getApplication().getServiceMethod().equals(PERSONAL_SERVICE)) {
-                caseTasks(sendApplicationIssueNotifications).run(caseDetails);
+                sendApplicationIssueNotifications.apply(caseDetails);
             }
 
         } else {
