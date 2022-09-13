@@ -13,6 +13,8 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
@@ -61,15 +63,25 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
     }
 
     @Override
-    public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
-        if (!caseData.getApplicationType().isSole()) {
-            var templateVars = solicitorTemplateVars(caseData, caseId, caseData.getApplicant1());
+    public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
+        if (!caseData.getApplicationType().isSole()
+                && YES.equals(caseData.getFinalOrder().getApplicant1AppliedForFinalOrderFirst())) {
+            log.info("Sending Applicant 2 notification informing them that other party have applied for final order: {}", caseId);
+            notificationService.sendEmail(
+                caseData.getApplicant2().getSolicitor().getEmail(),
+                JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
+                commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
+                ENGLISH
+            );
+        }
+        else {
+            var templateVars = solicitorTemplateVars(caseData, caseId, caseData.getApplicant2());
 
             notificationService.sendEmail(
-                    caseData.getApplicant1().getSolicitor().getEmail(),
+                    caseData.getApplicant2().getSolicitor().getEmail(),
                     JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
                     templateVars,
-                    caseData.getApplicant1().getLanguagePreference()
+                    caseData.getApplicant2().getLanguagePreference()
             );
         }
     }

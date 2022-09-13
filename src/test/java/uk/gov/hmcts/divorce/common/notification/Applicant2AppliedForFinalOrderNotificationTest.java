@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.allOf;
@@ -20,6 +21,7 @@ import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
@@ -34,6 +36,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -42,8 +45,12 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 class Applicant2AppliedForFinalOrderNotificationTest {
@@ -65,7 +72,9 @@ class Applicant2AppliedForFinalOrderNotificationTest {
         setupMocks(clock);
         CaseData data = validApplicant2CaseData();
         data.setApplicationType(SOLE_APPLICATION);
-        data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
+        data.setFinalOrder(FinalOrder.builder()
+            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
         );
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
@@ -88,7 +97,9 @@ class Applicant2AppliedForFinalOrderNotificationTest {
         setupMocks(clock);
         CaseData data = validApplicant2CaseData();
         data.setApplicationType(SOLE_APPLICATION);
-        data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
+        data.setFinalOrder(FinalOrder.builder()
+            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
         );
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
@@ -161,6 +172,70 @@ class Applicant2AppliedForFinalOrderNotificationTest {
                 eq(ENGLISH)
         );
         verify(commonContent).basicTemplateVars(data, 1L);
+    }
+
+    @Test
+    void shouldSendApplicant1SolicitorNotificationIfJointApplicationAndApplicant1HasNotAppliedForFinalOrderYet() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .name("App1 Sol")
+            .reference("12344")
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        data.setFinalOrder(FinalOrder.builder()
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
+            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+            .build());
+
+        when(commonContent.solicitorTemplateVars(data, 1L, data.getApplicant1()))
+            .thenReturn(solicitorTemplateVars(data, data.getApplicant1()));
+
+        notification.sendToApplicant1Solicitor(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
+            any(),
+            eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+
+        verify(commonContent).solicitorTemplateVars(data, 1L, data.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendApplicant1SolicitorNotificationIfJointApplicationAndApplicant1HasAlreadyAppliedForFinalOrder() {
+        CaseData data = caseData();
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+                .name("App1 Sol")
+                .reference("12344")
+                .email(TEST_SOLICITOR_EMAIL)
+                .build());
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setFinalOrder(FinalOrder.builder()
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+            .build());
+
+        notification.sendToApplicant1Solicitor(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
+    @Test
+    void shouldNotSendApplicant1SolicitorNotificationIfSoleApplication() {
+        CaseData data = caseData();
+        data.setApplicationType(SOLE_APPLICATION);
+
+        notification.sendToApplicant1Solicitor(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
     }
 
     private void setupMocks(Clock mockClock) {
