@@ -42,30 +42,28 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
 
-        if (caseData.getApplicationType().isSole()) {
-            log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "applicant", caseId);
-            notificationService.sendEmail(
-                caseData.getApplicant1().getEmail(),
-                APPLICANTS_FINAL_ORDER_GRANTED,
-                citizenTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
-            );
-        }
+        log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "applicant", caseId);
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            APPLICANTS_FINAL_ORDER_GRANTED,
+            citizenTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+            caseData.getApplicant1().getLanguagePreference()
+        );
     }
 
     @Override
     public void sendToApplicant2(CaseData caseData, Long caseId) {
 
-        if (caseData.getApplicationType().isSole()) {
-            log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "respondent", caseId);
+        log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID,
+            caseData.getApplicationType().isSole() ? "respondent" : "applicant 2", caseId);
 
-            notificationService.sendEmail(
-                caseData.getApplicant2().getEmail(),
-                APPLICANTS_FINAL_ORDER_GRANTED,
-                citizenTemplateContent(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
-            );
-        }
+        notificationService.sendEmail(
+            caseData.getApplicant2().getEmail(),
+            APPLICANTS_FINAL_ORDER_GRANTED,
+            citizenTemplateContent(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
+            caseData.getApplicant2().getLanguagePreference()
+        );
     }
 
     @Override
@@ -122,7 +120,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
             commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
 
         //TODO: temporarily set to false, need to update when Final Order switch to sole journey is being developed
-        templateVars.put("isSwitchedToSolePartner", "false");
+        templateVars.put("isSwitchedToSolePartner", NO);
 
         return templateVars;
     }
