@@ -22,7 +22,7 @@ class ResetAosFieldsTest {
     private ResetAosFields resetAosFields;
 
     @Test
-    void shouldResetAosFields() {
+    void shouldResetAosFieldsIfAwaitingAos() {
         final var caseData = caseData();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -32,10 +32,30 @@ class ResetAosFieldsTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+        caseDetails.setState(State.AwaitingAos);
 
         final CaseDetails<CaseData, State> result = resetAosFields.apply(caseDetails);
 
         assertThat(result.getData().getAcknowledgementOfService().getConfirmReadPetition()).isNull();
         assertThat(result.getData().getAcknowledgementOfService().getAosIsDrafted()).isNull();
+    }
+
+    @Test
+    void shouldNotResetAosFieldsIfNotAwaitingAos() {
+        final var caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder()
+            .confirmReadPetition(YesOrNo.YES)
+            .aosIsDrafted(YesOrNo.YES).build());
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+        caseDetails.setState(State.Holding);
+
+        final CaseDetails<CaseData, State> result = resetAosFields.apply(caseDetails);
+
+        assertThat(result.getData().getAcknowledgementOfService().getConfirmReadPetition()).isEqualTo(YesOrNo.YES);
+        assertThat(result.getData().getAcknowledgementOfService().getAosIsDrafted()).isEqualTo(YesOrNo.YES);
     }
 }
