@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -60,7 +61,7 @@ class LegalAdvisorGeneralConsiderationTest {
     }
 
     @Test
-    void shouldSetGeneralReferralDecisionDateAndCreateGeneralReferralsListAndBlankGenralReferralFieldsWhenAboutToSubmitIsInvoked() {
+    void shouldSetGeneralReferralDecisionDateAndCreateGeneralReferralsListAndBlankGeneralReferralFieldsWhenAboutToSubmitIsInvoked() {
 
         setMockClock(clock);
 
@@ -124,7 +125,7 @@ class LegalAdvisorGeneralConsiderationTest {
     }
 
     @Test
-    void shouldSetGeneralReferralDecisionDateAndCopyIntoGeneralReferralsListAndBlankGenralReferralFieldsWhenAboutToSubmitIsInvoked() {
+    void shouldSetDecisionDateAndPreserveOldReferralsAndResetExistingGeneralReferralExcludingUrgentCaseFlagWhenAboutToSubmitIsInvoked() {
 
         setMockClock(clock);
 
@@ -142,6 +143,7 @@ class LegalAdvisorGeneralConsiderationTest {
             .generalReferral(
                 GeneralReferral.builder()
                     .generalReferralDecision(APPROVE)
+                    .generalReferralUrgentCase(YesOrNo.YES)
                     .generalReferralDecisionReason("approved")
                     .build())
             .generalReferrals(generalReferrals)
@@ -162,6 +164,9 @@ class LegalAdvisorGeneralConsiderationTest {
         assertThat(responseData.getGeneralReferrals().get(1).getValue().getGeneralReferralDecision()).isEqualTo(OTHER);
         assertThat(responseData.getGeneralReferrals().get(1).getValue().getGeneralReferralDecisionReason()).isEqualTo("reason");
 
-        assertThat(responseData.getGeneralReferral()).isNull();
+        assertThat(responseData.getGeneralReferral().getGeneralReferralUrgentCase()).isEqualTo(YesOrNo.YES);
+        assertThat(responseData.getGeneralReferral())
+            .hasAllNullFieldsOrPropertiesExcept("generalReferralUrgentCase", "generalReferralFee");
+        assertThat(responseData.getGeneralReferral().getGeneralReferralFee()).hasAllNullFieldsOrProperties();
     }
 }
