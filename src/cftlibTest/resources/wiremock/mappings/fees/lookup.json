@@ -1,0 +1,22 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/fees-register/fees/lookup"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "code": "FEECODE1",
+          "fee_amount": "10.00",
+          "version": 1,
+          "description": "Issue Fee"
+        }
+      }
+    }
+  ]
+}

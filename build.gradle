@@ -27,7 +27,7 @@ plugins {
   id 'org.springframework.boot' version '2.7.3'
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'hmcts.ccd.sdk' version '4.0.4'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.344'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.350'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -118,6 +118,7 @@ task integration(type: Test) {
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
   classpath = sourceSets.integrationTest.runtimeClasspath
   failFast = true
+  jvmArgs += "-Xmx3g"
 }
 
 // Invoked from CftLibConfig when booting with CCD.
@@ -325,6 +326,8 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.25.0'
+  cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:1.7.1'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
@@ -426,6 +429,34 @@ bootWithCCD {
     }
 }
 
+cftlibTest {
+  // IDAM simulator will be started on port 5000,
+  // S2S simulator on port 8489
+  authMode = uk.gov.hmcts.rse.AuthMode.Local
+  group = 'verification'
+
+  systemProperties([
+    // Configuration parameters to execute top-level classes in parallel but methods in same thread
+    'junit.jupiter.execution.parallel.enabled': 'true',
+    'junit.jupiter.execution.parallel.mode.default': 'same_thread',
+    'junit.jupiter.execution.parallel.mode.classes.default': 'concurrent',
+  ])
+
+  environment 'PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD', '1'
+  environment 'RD_PROFESSIONAL_API_URL', 'http://host.docker.internal:8765'
+  environment 'PRD_API_BASEURL', 'http://localhost:8765'
+  environment 'DOC_ASSEMBLY_URL', 'http://localhost:8765'
+  environment 'FEE_API_URL', 'http://localhost:8765'
+  environment 'PAYMENT_API_BASEURL', 'http://localhost:8765'
+  environment 'CCD_DOCUMENT_URL_PATTERN', '.*'
+  environment 'DM_STORE_BASE_URL', 'http://localhost:8765'
+  environment 'CASE_DOCUMENT_AM_API_ATTACH_DOCUMENT_ENABLED', 'false'
+  environment 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
+  environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
+  environment 'CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES', 'nfdiv_case_api'
+  environment 'DATA_STORE_S2S_AUTHORISED_SERVICES', 'ccd_gw,fpl_case_service,ccd_data,ccd_ps,divorce_frontend,payment-api,xui_webapp,nfdiv_case_api,ccd_case_document_am_api,am_role_assignment_service'
+}
+
 tasks.withType(Test).configureEach {
   maxParallelForks = Math.min(Runtime.runtime.availableProcessors().intdiv(2), 4) ?: 1
 }
@@ -434,3 +465,13 @@ tasks.withType(Test).configureEach {
 configurations.cftlibTestImplementation {
   exclude group: 'ch.qos.logback', module: 'logback-classic'
 }
+
+task installChromium(type: JavaExec) {
+  // group = "Execution"
+  // description = "Run the main class with JavaExecTask"
+  classpath = sourceSets.cftlibTest.runtimeClasspath
+  main = 'com.microsoft.playwright.CLI'
+  args = ['install', 'chromium']
+}
+
+tasks.cftlibTest.dependsOn(installChromium)

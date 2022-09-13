@@ -7,13 +7,14 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendFinalOrderGrantedNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -28,7 +29,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
-
 @Slf4j
 @Component
 public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, UserRole> {
@@ -36,13 +36,13 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
     public static final String CASEWORKER_GRANT_FINAL_ORDER = "caseworker-grant-final-order";
 
     @Autowired
-    private FinalOrderGrantedNotification finalOrderGrantedNotification;
-
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
-
-    @Autowired
     private Clock clock;
+
+    @Autowired
+    private GenerateFinalOrder generateFinalOrder;
+
+    @Autowired
+    private SendFinalOrderGrantedNotifications sendFinalOrderGrantedNotifications;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -55,6 +55,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .showEventNotes()
             .endButtonLabel("Submit")
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
             .page("grantFinalOrder")
@@ -70,22 +71,34 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
 
         CaseData caseData = details.getData();
+
         LocalDate dateFinalOrderEligibleFrom = caseData.getFinalOrder().getDateFinalOrderEligibleFrom();
 
+        LocalDateTime currentDateTime = LocalDateTime.now(clock);
+
         if (dateFinalOrderEligibleFrom != null
-            && dateFinalOrderEligibleFrom.isAfter(LocalDate.now())) {
+            && dateFinalOrderEligibleFrom.isAfter(currentDateTime.toLocalDate())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("Case is not yet eligible for Final Order"))
                 .build();
         }
 
-        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
+        caseData.getFinalOrder().setGrantedDate(currentDateTime);
 
-        notificationDispatcher.send(finalOrderGrantedNotification, caseData, details.getId());
+        generateFinalOrder.apply(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(details.getData())
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+        log.info("CitizenSaveAndClose submitted callback invoked for case id: {}", details.getId());
+
+        sendFinalOrderGrantedNotifications.apply(details);
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }

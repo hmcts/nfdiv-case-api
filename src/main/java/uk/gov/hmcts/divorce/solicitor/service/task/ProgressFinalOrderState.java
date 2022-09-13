@@ -23,7 +23,7 @@ public class ProgressFinalOrderState implements CaseTask {
         CaseData data = details.getData();
         State state = details.getState();
 
-        if (state != FinalOrderOverdue) {
+        if (!FinalOrderOverdue.equals(state)) {
 
             if (data.isWelshApplication()) {
                 data.getApplication().setWelshPreviousState(state);
@@ -36,7 +36,7 @@ public class ProgressFinalOrderState implements CaseTask {
             }
 
             var isSole = data.getApplicationType().isSole();
-            state = isSole ? FinalOrderRequested : state == AwaitingFinalOrder
+            state = isSole ? FinalOrderRequested : AwaitingFinalOrder.equals(state)
                 ? AwaitingJointFinalOrder
                 : FinalOrderRequested;
         }
