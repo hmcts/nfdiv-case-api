@@ -54,7 +54,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 public class FinalOrderGrantedNotificationTest {
 
     private static final long TEST_CASE_ID = 1234567890123456L;
-    private static final String IS_SWITCH_TO_SOLE_PARTNER = "isSwitchedToSolePartner";
+    private static final String IS_SWITCHED_TO_SOLE_PARTNER = "isSwitchedToSolePartner";
 
     @Mock
     private CommonContent commonContent;
@@ -82,7 +82,7 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
-        templateContent.put(IS_SWITCH_TO_SOLE_PARTNER, NO);
+        templateContent.put(IS_SWITCHED_TO_SOLE_PARTNER, NO);
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
@@ -160,7 +160,7 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(LAST_NAME, caseData.getApplicant2().getLastName());
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
-        templateContent.put(IS_SWITCH_TO_SOLE_PARTNER, NO);
+        templateContent.put(IS_SWITCHED_TO_SOLE_PARTNER, NO);
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
