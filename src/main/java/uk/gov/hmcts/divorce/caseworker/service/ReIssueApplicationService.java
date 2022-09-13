@@ -25,6 +25,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
@@ -137,9 +138,13 @@ public class ReIssueApplicationService {
             log.info("For case id {} sending reissue notifications for reissue case", caseDetails.getId());
             caseTasks(
                 sendAosPackToRespondent,
-                sendAosPackToApplicant,
-                sendApplicationIssueNotifications
+                sendAosPackToApplicant
             ).run(caseDetails);
+
+            if (!caseDetails.getData().getApplication().getServiceMethod().equals(PERSONAL_SERVICE)) {
+                caseTasks(sendApplicationIssueNotifications).run(caseDetails);
+            }
+
         } else {
             log.info("For case id {} invalid reissue option hence not sending reissue notifications ", caseDetails.getId());
             throw new InvalidReissueOptionException(
