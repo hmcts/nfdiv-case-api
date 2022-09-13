@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 
 @Component
@@ -30,15 +31,15 @@ public class SendApplicationIssueNotifications implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final Long caseId = caseDetails.getId();
 
-        notificationDispatcher.send(applicationIssuedNotification, caseData, caseId);
+        if (!caseData.getApplication().getServiceMethod().equals(PERSONAL_SERVICE)) {
+            notificationDispatcher.send(applicationIssuedNotification, caseData, caseId);
 
-        if (caseDetails.getState() == AwaitingService
-            && caseData.getApplicationType().isSole()
-            && (caseData.getApplicant2().isBasedOverseas()
-            || caseData.getApplication().isPersonalServiceMethod())) {
-            notificationDispatcher.send(applicationIssuedOverseasNotification, caseData, caseId);
+            if (caseDetails.getState() == AwaitingService
+                && caseData.getApplicationType().isSole()
+                && caseData.getApplicant2().isBasedOverseas()) {
+                notificationDispatcher.send(applicationIssuedOverseasNotification, caseData, caseId);
+            }
         }
-
         return caseDetails;
     }
 }

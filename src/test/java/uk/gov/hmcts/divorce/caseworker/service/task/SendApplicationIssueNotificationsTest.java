@@ -15,9 +15,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
@@ -42,6 +44,7 @@ class SendApplicationIssueNotificationsTest {
     void shouldSendAllNotifications() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("Spain").build());
         caseData.setCaseInvite(new CaseInvite("applicant2Invite@email.com", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
@@ -57,6 +60,7 @@ class SendApplicationIssueNotificationsTest {
     void shouldNotSendOverseasNotificationIfNotAwaitingServiceState() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("Spain").build());
         caseData.setCaseInvite(new CaseInvite("", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
@@ -72,6 +76,7 @@ class SendApplicationIssueNotificationsTest {
     void shouldNotSendOverseasNotificationIfNotOverseas() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
         caseData.setCaseInvite(new CaseInvite("", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
@@ -87,6 +92,7 @@ class SendApplicationIssueNotificationsTest {
     void shouldNotSendOverseasNotificationIfJointApplication() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("Spain").build());
         caseData.setCaseInvite(new CaseInvite("", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
@@ -99,7 +105,7 @@ class SendApplicationIssueNotificationsTest {
     }
 
     @Test
-    void shouldSendOverseasNotificationIfPersonalService() {
+    void shouldNotSendNotificationsIfPersonalService() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
@@ -110,7 +116,7 @@ class SendApplicationIssueNotificationsTest {
 
         underTest.apply(caseDetails);
 
-        verify(notificationDispatcher).send(applicationIssuedNotification, caseData, caseDetails.getId());
-        verify(notificationDispatcher).send(applicationIssuedOverseasNotification, caseData, caseDetails.getId());
+        verifyNoInteractions(notificationDispatcher);
+        verifyNoInteractions(notificationDispatcher);
     }
 }

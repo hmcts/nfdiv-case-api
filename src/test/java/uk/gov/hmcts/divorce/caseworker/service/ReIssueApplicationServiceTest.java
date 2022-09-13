@@ -31,6 +31,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -355,9 +357,11 @@ class ReIssueApplicationServiceTest {
     }
 
     @Test
-    public void shouldSendEmailAndBulkPrintNotificationsWhenReissueOptionIsReissueCase() {
+    public void shouldSendEmailAndBulkPrintNotificationsWhenReissueOptionIsReissueCaseAndNotPersonalService() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData());
+        CaseData caseData = caseData();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseDetails.setData(caseData);
         caseDetails.setId(1L);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
