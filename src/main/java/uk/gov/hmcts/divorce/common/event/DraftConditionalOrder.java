@@ -16,16 +16,20 @@ import uk.gov.hmcts.divorce.common.event.page.WithdrawingJointApplicationApplica
 import uk.gov.hmcts.divorce.common.service.task.SetLatestBailiffApplicationStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddLastAlternativeServiceDocumentLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddOfflineRespondentAnswersLink;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressDraftConditionalOrderState;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
@@ -69,6 +73,12 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
     @Autowired
     private AddOfflineRespondentAnswersLink addOfflineRespondentAnswersLink;
 
+    @Autowired
+    private CcdAccessService ccdAccessService;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
@@ -101,15 +111,33 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
         final CaseData data = details.getData();
         final ConditionalOrder conditionalOrder = data.getConditionalOrder();
 
-        if (!data.getApplicationType().isSole()
-            && NO.equals(conditionalOrder.getConditionalOrderApplicant1Questions().getApplyForConditionalOrder())
-            && YES.equals(conditionalOrder.getConditionalOrderApplicant1Questions().getApplyForConditionalOrderIfNo())) {
+        if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), details.getId())) {
 
-            conditionalOrder.getConditionalOrderApplicant1Questions().setApplyForConditionalOrder(YES);
-            conditionalOrder.getConditionalOrderApplicant1Questions().setApplyForConditionalOrderIfNo(null);
+            final ConditionalOrderQuestions applicant2Questions = conditionalOrder.getConditionalOrderApplicant2Questions();
+
+            if (!data.getApplicationType().isSole()
+                && NO.equals(applicant2Questions.getApplyForConditionalOrder())
+                && YES.equals(applicant2Questions.getApplyForConditionalOrderIfNo())) {
+
+                applicant2Questions.setApplyForConditionalOrder(YES);
+                applicant2Questions.setApplyForConditionalOrderIfNo(null);
+            }
+
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(YES);
+        } else {
+
+            final ConditionalOrderQuestions applicant1Questions = conditionalOrder.getConditionalOrderApplicant1Questions();
+
+            if (!data.getApplicationType().isSole()
+                && NO.equals(applicant1Questions.getApplyForConditionalOrder())
+                && YES.equals(applicant1Questions.getApplyForConditionalOrderIfNo())) {
+
+                applicant1Questions.setApplyForConditionalOrder(YES);
+                applicant1Questions.setApplyForConditionalOrderIfNo(null);
+            }
+
+            data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(YES);
         }
-
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(YES);
 
         data.getConditionalOrder().setProofOfServiceUploadDocuments(sortByNewest(
             beforeDetails.getData().getConditionalOrder().getProofOfServiceUploadDocuments(),

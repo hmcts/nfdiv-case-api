@@ -17,6 +17,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_ANSWERS;
@@ -49,7 +50,7 @@ class GenerateConditionalOrderAnswersDocumentTest {
         when(conditionalOrderAnswersTemplateContent.apply(caseData, TEST_CASE_ID))
             .thenReturn(templateContent);
 
-        final CaseDetails<CaseData, State> result = generateConditionalOrderAnswersDocument.apply(caseDetails);
+        final CaseDetails<CaseData, State> result = generateConditionalOrderAnswersDocument.apply(caseDetails, ENGLISH);
 
         assertThat(result.getData()).isEqualTo(caseData);
 
@@ -60,7 +61,7 @@ class GenerateConditionalOrderAnswersDocumentTest {
                 templateContent,
                 TEST_CASE_ID,
                 CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID,
-                caseData.getApplicant1().getLanguagePreference(),
+                ENGLISH,
                 CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME
             );
     }

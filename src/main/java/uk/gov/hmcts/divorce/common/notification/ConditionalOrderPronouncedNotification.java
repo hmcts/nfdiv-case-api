@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.common.notification;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -26,6 +27,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_1;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.UNION_TYPE;
@@ -39,6 +41,12 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 public class ConditionalOrderPronouncedNotification implements ApplicantNotification {
 
     public static final String MISSING_FIELD_MESSAGE = "Notification failed with missing field '%s' for Case Id: %s";
+
+    @Value("${final_order.eligible_from_offset_days}")
+    private long finalOrderOffsetDays;
+
+    @Value("${final_order.respondent_eligible_from_offset_months}")
+    private long finalOrderRespondentOffsetMonth;
 
     @Autowired
     private NotificationService notificationService;
@@ -133,7 +141,10 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
         templateVars.put(COURT_NAME, conditionalOrder.getCourt().getLabel());
         templateVars.put(DATE_OF_HEARING, conditionalOrder.getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER));
         templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43,
-            conditionalOrder.getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER));
+            conditionalOrder.getGrantedDate().plusDays(finalOrderOffsetDays).format(DATE_TIME_FORMATTER));
+        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS,
+            conditionalOrder.getGrantedDate().plusDays(finalOrderOffsetDays)
+                .plusMonths(finalOrderRespondentOffsetMonth).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
@@ -146,7 +157,7 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
         templateVars.put(APPLICANT2_LABEL, caseData.getApplicationType().isSole() ? RESPONDENT : APPLICANT_2);
         templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));
         templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43,
-            caseData.getConditionalOrder().getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER));
+            caseData.getConditionalOrder().getGrantedDate().plusDays(finalOrderOffsetDays).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 }
