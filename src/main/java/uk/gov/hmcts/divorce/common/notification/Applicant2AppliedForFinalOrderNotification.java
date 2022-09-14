@@ -88,22 +88,6 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
         }
     }
 
-    private Map<String, String> solicitorTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
-        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
-
-        templateVars.put(IS_CONDITIONAL_ORDER, NO);
-        templateVars.put(IS_FINAL_ORDER, YES);
-        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
-        templateVars.put(SOLICITOR_REFERENCE,
-                isNotEmpty(applicant.getSolicitor().getReference()) ? applicant.getSolicitor().getReference() : NOT_PROVIDED);
-        templateVars.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
-        templateVars.put(IS_DISSOLUTION, !caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
-        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
-
-        return templateVars;
-    }
-
     private Map<String, String> applicant2TemplateVars(CaseData caseData, Long id) {
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
