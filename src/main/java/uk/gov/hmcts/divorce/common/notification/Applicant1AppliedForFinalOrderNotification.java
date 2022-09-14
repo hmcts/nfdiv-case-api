@@ -12,10 +12,10 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Objects;
 
+import static com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
@@ -54,36 +55,47 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
         if (caseData.getApplicationType().isSole()) {
             log.info("Sending Applicant 1 notification informing them that they have applied for final order: {}", id);
             notificationService.sendEmail(
-                caseData.getApplicant1().getEmail(),
-                SOLE_APPLIED_FOR_FINAL_ORDER,
-                applicant1TemplateVars(caseData, id),
-                caseData.getApplicant1().getLanguagePreference()
+                    caseData.getApplicant1().getEmail(),
+                    SOLE_APPLIED_FOR_FINAL_ORDER,
+                    applicant1TemplateVars(caseData, id),
+                    caseData.getApplicant1().getLanguagePreference()
             );
         }
     }
 
     @Override
     public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
-        if (!caseData.getApplicationType().isSole()
-                && YES.equals(caseData.getFinalOrder().getApplicant1AppliedForFinalOrderFirst())) {
-            log.info("Sending Applicant 2 notification informing them that other party have applied for final order: {}", caseId);
-            notificationService.sendEmail(
-                caseData.getApplicant2().getSolicitor().getEmail(),
-                JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
-                commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
-                ENGLISH
-            );
+        if (!caseData.getApplicationType().isSole()) {
+            if (Objects.isNull(caseData.getFinalOrder().getApplicant2AppliedForFinalOrder())) {
+                log.info("Sending Applicant 2 notification informing them that other party have applied for final order: {}", caseId);
+                notificationService.sendEmail(
+                        caseData.getApplicant2().getSolicitor().getEmail(),
+                        JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
+                        commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
+                        ENGLISH
+                );
+            } else {
+                sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant2());
+            }
         }
-        else {
-            var templateVars = solicitorTemplateVars(caseData, caseId, caseData.getApplicant2());
+    }
 
-            notificationService.sendEmail(
-                    caseData.getApplicant2().getSolicitor().getEmail(),
-                    JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
-                    templateVars,
-                    caseData.getApplicant2().getLanguagePreference()
-            );
+    @Override
+    public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
+        if (!caseData.getApplicationType().isSole() && Objects.nonNull(caseData.getFinalOrder().getApplicant2AppliedForFinalOrder())) {
+            sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant1());
         }
+    }
+
+    private void sendBothSolicitorsAppliedForFinalOrderNotification(CaseData caseData, Long caseId, Applicant applicant) {
+        log.info("Sending Applicants notification informing them that both parties have applied for final order: {}", caseId);
+        var templateVars = solicitorTemplateVars(caseData, caseId, applicant);
+        notificationService.sendEmail(
+                applicant.getSolicitor().getEmail(),
+                JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
+                templateVars,
+                applicant.getLanguagePreference()
+        );
     }
 
     private Map<String, String> solicitorTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
@@ -104,7 +116,7 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
 
     private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id) {
         Map<String, String> templateVars =
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+                commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
 
         boolean isFinalOrderEligible = caseData.getFinalOrder().getDateFinalOrderNoLongerEligible().isAfter(LocalDate.now(clock));
 
