@@ -35,9 +35,6 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
     private ScheduleCaseService scheduleCaseService;
 
     @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
     private PronouncementListDocService pronouncementListDocService;
 
     @Override
