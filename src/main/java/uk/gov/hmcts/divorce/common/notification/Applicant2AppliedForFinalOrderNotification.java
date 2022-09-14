@@ -27,7 +27,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -75,7 +74,8 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
                         ENGLISH
                 );
             } else {
-                sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant1());
+                ApplicantNotification.sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant1(),
+                        commonContent, notificationService);
             }
         }
     }
@@ -83,19 +83,9 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
     @Override
     public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
         if (!caseData.getApplicationType().isSole() && Objects.nonNull(caseData.getFinalOrder().getApplicant1AppliedForFinalOrder())) {
-            sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant2());
+            ApplicantNotification.sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant2(),
+                    commonContent, notificationService);
         }
-    }
-
-    private void sendBothSolicitorsAppliedForFinalOrderNotification(CaseData caseData, Long caseId, Applicant applicant) {
-        log.info("Sending applicants solicitors notification informing them that both parties have applied for final order: {}", caseId);
-        var templateVars = solicitorTemplateVars(caseData, caseId, applicant);
-        notificationService.sendEmail(
-                applicant.getSolicitor().getEmail(),
-                JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
-                templateVars,
-                applicant.getLanguagePreference()
-        );
     }
 
     private Map<String, String> solicitorTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
