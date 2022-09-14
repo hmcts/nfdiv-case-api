@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -87,7 +86,6 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
         if (applicant2AppliedForFinalOrder == null) {
             data.getFinalOrder().setApplicant2AppliedForFinalOrder(YES);
-            data.getFinalOrder().setDateFinalOrderSubmitted(LocalDateTime.now());
         }
 
         notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, data, details.getId());
