@@ -18,8 +18,7 @@
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "solSignStatementOfTruth": "Yes",
     "coGranted": "Yes",
-    "applicant1AppliedForFinalOrderFirst": "Yes",
-    "applicant2AppliedForFinalOrderFirst": "No",
+    "applicant1AppliedForFinalOrder": "Yes",
     "dateFinalOrderNoLongerEligible": "${json-unit.ignore}"
   },
   "state": "AwaitingJointFinalOrder"
