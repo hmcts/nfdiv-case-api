@@ -57,8 +57,8 @@ public interface ApplicantNotification {
         );
     }
 
-    private static Map<String, String> solicitorTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant,
-                                                        CommonContent commonContent) {
+    static Map<String, String> solicitorTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant,
+                                                     CommonContent commonContent) {
         Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
 
         templateVars.put(IS_CONDITIONAL_ORDER, NO);
