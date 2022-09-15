@@ -278,7 +278,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
 
         verifyNoMoreInteractions(notificationService);
 
-        verify(commonContent).basicTemplateVars(data, 1L);
+        verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant1());
     }
 
     @Test
