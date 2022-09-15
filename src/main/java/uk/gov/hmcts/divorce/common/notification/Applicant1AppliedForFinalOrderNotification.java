@@ -64,8 +64,7 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
                         caseData.getApplicant2().getLanguagePreference()
                 );
             } else {
-                sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant2(),
-                        commonContent, notificationService);
+                sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant2());
             }
         }
     }
@@ -74,13 +73,11 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
     public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
         if (!caseData.getApplicationType().isSole() && Objects.nonNull(caseData.getFinalOrder().getApplicant2AppliedForFinalOrder())) {
             log.info("Sending Applicants notification informing them that both parties have applied for final order: {}", caseId);
-            sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant1(),
-                    commonContent, notificationService);
+            sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant1());
         }
     }
 
-    private void sendBothSolicitorsAppliedForFinalOrderNotification(CaseData caseData, Long caseId, Applicant applicant,
-                                                                    CommonContent commonContent, NotificationService notificationService) {
+    private void sendBothSolicitorsAppliedForFinalOrderNotification(CaseData caseData, Long caseId, Applicant applicant) {
         var templateVars = commonContent.solicitorsFinalOrderTemplateVars(caseData, caseId, applicant);
         notificationService.sendEmail(
                 applicant.getSolicitor().getEmail(),

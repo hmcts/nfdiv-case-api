@@ -45,7 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFinalOrderSolicitorsVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
@@ -136,8 +136,6 @@ class Applicant2AppliedForFinalOrderNotificationTest {
                         .applicant1AppliedForFinalOrder(YesOrNo.YES)
                         .applicant2AppliedForFinalOrder(YesOrNo.YES).build());
 
-        when(commonContent.basicTemplateVars(data, 1L)).thenReturn(getBasicTemplateVars());
-
         notification.sendToApplicant2Solicitor(data, 1L);
 
         verify(notificationService).sendEmail(
@@ -147,7 +145,7 @@ class Applicant2AppliedForFinalOrderNotificationTest {
                 eq(ENGLISH)
         );
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).basicTemplateVars(data, 1L);
+        verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant2());
     }
 
     @Test
@@ -159,12 +157,8 @@ class Applicant2AppliedForFinalOrderNotificationTest {
         data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
         data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
         );
-        data.getApplicant2().setSolicitor(Solicitor.builder()
-                .name(SOLICITOR_NAME)
-                .email(TEST_SOLICITOR_EMAIL)
-                .build());
 
-        data.getApplicant1().setSolicitor(Solicitor.builder()
+        data.getApplicant2().setSolicitor(Solicitor.builder()
                 .name(SOLICITOR_NAME)
                 .email(TEST_SOLICITOR_EMAIL)
                 .build());
@@ -173,7 +167,8 @@ class Applicant2AppliedForFinalOrderNotificationTest {
                 .applicant1AppliedForFinalOrder(YesOrNo.YES)
                 .applicant2AppliedForFinalOrder(YesOrNo.YES).build());
 
-        when(commonContent.basicTemplateVars(data, 1L)).thenReturn(getBasicTemplateVars());
+        when(commonContent.solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant2())).thenReturn(getFinalOrderSolicitorsVars(data,
+                data.getApplicant2()));
 
         notification.sendToApplicant2Solicitor(data, 1L);
 
@@ -184,9 +179,9 @@ class Applicant2AppliedForFinalOrderNotificationTest {
                         hasEntry(IS_FINAL_ORDER, YES),
                         hasEntry(SOLICITOR_NAME, data.getApplicant2().getSolicitor().getName())
                 )),
-                eq(ENGLISH)
+                eq(data.getApplicant2().getLanguagePreference())
         );
-        verify(commonContent).basicTemplateVars(data, 1L);
+        verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant2());
     }
 
     @Test
@@ -251,7 +246,7 @@ class Applicant2AppliedForFinalOrderNotificationTest {
                 eq(ENGLISH)
         );
 
-        verify(commonContent).basicTemplateVars(data, 1L);
+        verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant1());
     }
 
     @Test

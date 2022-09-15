@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
@@ -62,11 +61,10 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
                         caseData.getApplicant1().getSolicitor().getEmail(),
                         JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
                         commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant1()),
-                        ENGLISH
+                        caseData.getApplicant1().getLanguagePreference()
                 );
             } else {
-                sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant1(),
-                        commonContent, notificationService);
+                sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant1());
             }
         }
     }
@@ -74,13 +72,11 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
     @Override
     public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
         if (!caseData.getApplicationType().isSole() && Objects.nonNull(caseData.getFinalOrder().getApplicant1AppliedForFinalOrder())) {
-            sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant2(),
-                    commonContent, notificationService);
+            sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant2());
         }
     }
 
-    private void sendBothSolicitorsAppliedForFinalOrderNotification(CaseData caseData, Long caseId, Applicant applicant,
-                                                                    CommonContent commonContent, NotificationService notificationService) {
+    private void sendBothSolicitorsAppliedForFinalOrderNotification(CaseData caseData, Long caseId, Applicant applicant) {
         var templateVars = commonContent.solicitorsFinalOrderTemplateVars(caseData, caseId, applicant);
         notificationService.sendEmail(
                 applicant.getSolicitor().getEmail(),

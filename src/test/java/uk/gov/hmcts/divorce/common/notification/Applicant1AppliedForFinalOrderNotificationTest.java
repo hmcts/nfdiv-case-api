@@ -47,8 +47,10 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFinalOrderSolicitorsVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
@@ -179,7 +181,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
 
     @Test
     public void verifyApplicant1SolicitorTemplateVars() {
-        CaseData data = validApplicant2CaseData();
+        CaseData data = validApplicant1CaseData();
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
@@ -194,7 +196,8 @@ class Applicant1AppliedForFinalOrderNotificationTest {
                 .email(TEST_SOLICITOR_EMAIL)
                 .build());
 
-        when(commonContent.basicTemplateVars(data, 1L)).thenReturn(getBasicTemplateVars());
+        when(commonContent.solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant1())).thenReturn(getFinalOrderSolicitorsVars(data,
+                data.getApplicant1()));
 
         notification.sendToApplicant1Solicitor(data, 1L);
 
@@ -207,7 +210,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
                 )),
                 eq(ENGLISH)
         );
-        verify(commonContent).basicTemplateVars(data, 1L);
+        verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant1());
     }
 
     @Test
