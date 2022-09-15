@@ -170,19 +170,19 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         data.getApplicant2().setSolicitor(Solicitor.builder()
                 .email(TEST_SOLICITOR_EMAIL).build());
 
-        when(commonContent.basicTemplateVars(data, 1L)).thenReturn(getBasicTemplateVars());
+        when(commonContent.solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant2())).thenReturn(getFinalOrderSolicitorsVars(data,
+                data.getApplicant1()));
 
-        notification.sendToApplicant1Solicitor(data, 1L);
         notification.sendToApplicant2Solicitor(data, 1L);
 
-        verify(notificationService, times(2)).sendEmail(
+        verify(notificationService).sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
                 any(),
                 eq(ENGLISH)
         );
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent, times(2)).basicTemplateVars(data, 1L);
+        verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant2());
     }
 
     @Test
@@ -284,7 +284,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
 
         verifyNoMoreInteractions(notificationService);
 
-        verify(commonContent).basicTemplateVars(data, 1L);
+        verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant1());
     }
 
     @Test
