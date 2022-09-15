@@ -50,7 +50,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_APPLY_FOR_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLY_FOR_FINAL_ORDER_SOLICITOR;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAwaitingFinalOrder.SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDownloadBinaryFromDocumentManagement;
@@ -220,10 +220,10 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq("app1sol@email.com"), eq(JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app1sol@email.com"), eq(APPLY_FOR_FINAL_ORDER_SOLICITOR), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
-            .sendEmail(eq("app2sol@email.com"), eq(JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app2sol@email.com"), eq(APPLY_FOR_FINAL_ORDER_SOLICITOR), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
 
