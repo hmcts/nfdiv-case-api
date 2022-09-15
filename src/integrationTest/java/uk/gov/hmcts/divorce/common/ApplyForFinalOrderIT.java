@@ -193,7 +193,7 @@ public class ApplyForFinalOrderIT {
             .build());
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
-            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+            .applicant1AppliedForFinalOrder(YesOrNo.YES)
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
@@ -232,7 +232,7 @@ public class ApplyForFinalOrderIT {
             .build());
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
-            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+            .applicant1AppliedForFinalOrder(YesOrNo.YES)
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)

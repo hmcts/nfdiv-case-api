@@ -72,7 +72,6 @@ class ApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(FinalOrderOverdue);
 
-        when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
         applyForFinalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher, never()).send(applicant1AppliedForFinalOrderNotification, caseData, caseDetails.getId());

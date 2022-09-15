@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APPLICANT2_FINAL_ORDER_REQUESTED;
-import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
@@ -152,7 +151,7 @@ public class Applicant2ApplyForFinalOrderIT {
             .build());
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
-            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+            .applicant2AppliedForFinalOrder(YesOrNo.YES)
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
@@ -192,7 +191,7 @@ public class Applicant2ApplyForFinalOrderIT {
             .build());
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
-            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+            .applicant2AppliedForFinalOrder(YesOrNo.YES)
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)

@@ -252,4 +252,16 @@ public class CommonContent {
     public String getProfessionalUsersSignInUrl(Long caseId) {
         return config.getTemplateVars().get(SIGN_IN_PROFESSIONAL_USERS_URL) + caseId;
     }
+
+    public Map<String, String> solicitorsFinalOrderTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
+        Map<String, String> templateVars = solicitorTemplateVars(caseData, caseId, applicant);
+
+        templateVars.put(IS_CONDITIONAL_ORDER, NO);
+        templateVars.put(IS_FINAL_ORDER, YES);
+        templateVars.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
+        templateVars.put(IS_DISSOLUTION, !caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+
+        return templateVars;
+    }
 }

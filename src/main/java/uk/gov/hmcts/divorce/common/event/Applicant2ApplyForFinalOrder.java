@@ -18,8 +18,8 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
 
 import java.util.List;
+import java.util.Objects;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
@@ -50,7 +50,7 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
     private ProgressFinalOrderState progressFinalOrderState;
 
     private static final List<CcdPageConfiguration> pages = List.of(
-        new Applicant2ApplyForFinalOrderDetails()
+            new Applicant2ApplyForFinalOrderDetails()
     );
 
     @Override
@@ -61,19 +61,19 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(APPLICANT2_FINAL_ORDER_REQUESTED)
-            .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder, FinalOrderOverdue)
-            .name(APPLICANT2_APPLY_FOR_FINAL_ORDER)
-            .description(APPLICANT2_APPLY_FOR_FINAL_ORDER)
-            .showSummary()
-            .showEventNotes()
-            .grant(CREATE_READ_UPDATE, APPLICANT_2, APPLICANT_2_SOLICITOR)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .grantHistoryOnly(
-                CASE_WORKER,
-                SUPER_USER,
-                LEGAL_ADVISOR,
-                APPLICANT_1_SOLICITOR));
+                .event(APPLICANT2_FINAL_ORDER_REQUESTED)
+                .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder, FinalOrderOverdue)
+                .name(APPLICANT2_APPLY_FOR_FINAL_ORDER)
+                .description(APPLICANT2_APPLY_FOR_FINAL_ORDER)
+                .showSummary()
+                .showEventNotes()
+                .grant(CREATE_READ_UPDATE, APPLICANT_2, APPLICANT_2_SOLICITOR)
+                .aboutToSubmitCallback(this::aboutToSubmit)
+                .grantHistoryOnly(
+                        CASE_WORKER,
+                        SUPER_USER,
+                        LEGAL_ADVISOR,
+                        APPLICANT_1_SOLICITOR));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -82,26 +82,20 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
         log.info("Applicant2 Apply For Final Order event about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
-        State state = details.getState();
 
-        var applicant1AppliedForFinalOrderFirst = data.getFinalOrder().getApplicant1AppliedForFinalOrderFirst();
-        var applicant2AppliedForFinalOrderFirst = data.getFinalOrder().getApplicant2AppliedForFinalOrderFirst();
-
-        if (applicant2AppliedForFinalOrderFirst == null && applicant1AppliedForFinalOrderFirst == null) {
-            data.getFinalOrder().setApplicant2AppliedForFinalOrderFirst(YES);
-            data.getFinalOrder().setApplicant1AppliedForFinalOrderFirst(NO);
+        if (Objects.isNull(data.getFinalOrder().getApplicant2AppliedForFinalOrder())) {
+            data.getFinalOrder().setApplicant2AppliedForFinalOrder(YES);
         }
 
-        if (AwaitingFinalOrder.equals(state)) {
+        if (!FinalOrderOverdue.equals(details.getState())) {
             notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, data, details.getId());
+            details.setData(data);
+            progressFinalOrderState.apply(details);
         }
-
-        details.setData(data);
-        var updatedDetails = progressFinalOrderState.apply(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(updatedDetails.getData())
-            .state(updatedDetails.getState())
-            .build();
+                .data(details.getData())
+                .state(details.getState())
+                .build();
     }
 }
