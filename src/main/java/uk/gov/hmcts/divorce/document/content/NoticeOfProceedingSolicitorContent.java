@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_LABEL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_REGISTERED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -32,8 +34,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME_WITH_DEFAULT_VALUE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HAS_CASE_BEEN_REISSUED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.REISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -52,6 +56,9 @@ public class NoticeOfProceedingSolicitorContent {
     @Autowired
     private HoldingPeriodService holdingPeriodService;
 
+    @Autowired
+    private CommonContent commonContent;
+
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, boolean isApplicantSolicitor) {
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -66,6 +73,14 @@ public class NoticeOfProceedingSolicitorContent {
         boolean isJoint = !caseData.getApplicationType().isSole();
         boolean oneSolicitorApplyingForBothParties = applicant1.isRepresented() && applicant2.isRepresented()
             && applicant1Solicitor.equals(applicant2Solicitor);
+
+        templateContent.put(RELATION,
+            commonContent.getPartner(
+                caseData,
+                isApplicantSolicitor ? caseData.getApplicant2() : caseData.getApplicant1(),
+                isApplicantSolicitor ? caseData.getApplicant1().getLanguagePreference() : caseData.getApplicant2().getLanguagePreference()
+            )
+        );
 
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
@@ -91,6 +106,9 @@ public class NoticeOfProceedingSolicitorContent {
             SOLICITOR_NAME_WITH_DEFAULT_VALUE,
             isApplicantSolicitor ? solicitorName(applicant1, applicant1Solicitor) : solicitorName(applicant2, applicant2Solicitor)
         );
+
+        templateContent.put(APPLICANT_1_SOLICITOR_NAME, solicitorName(applicant1, applicant1Solicitor));
+        templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName(applicant2, applicant2Solicitor));
 
         if (!isJoint) {
             templateContent.put(
