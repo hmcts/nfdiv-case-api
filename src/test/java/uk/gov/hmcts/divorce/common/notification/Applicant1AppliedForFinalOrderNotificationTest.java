@@ -309,7 +309,6 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         verifyNoInteractions(commonContent);
     }
 
-
     private void setupMocks(Clock mockClock) {
         if (Objects.nonNull(mockClock)) {
             setMockClock(mockClock);
