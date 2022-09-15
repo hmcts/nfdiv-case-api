@@ -91,6 +91,20 @@ class Applicant1AppliedForFinalOrderNotificationTest {
     }
 
     @Test
+    void shouldNotSendApplicant1NotificationIfJointApplication() {
+        CaseData data = caseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setFinalOrder(FinalOrder.builder()
+                .applicant1AppliedForFinalOrder(YesOrNo.YES)
+                .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
+
+        notification.sendToApplicant1(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
+    @Test
     public void verifyApplicant1TemplateVarsWhenFinalOrderEligible() {
         setupMocks(clock);
         CaseData data = caseData();
@@ -283,6 +297,18 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
     }
+
+    @Test
+    void shouldNotSendApplicant1SolicitorNotificationIfJointApplicationAndApplicant1SolicitorHasNotAppliedForFinalOrder() {
+        CaseData data = caseData();
+        data.setApplicationType(JOINT_APPLICATION);
+
+        notification.sendToApplicant1Solicitor(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
 
     private void setupMocks(Clock mockClock) {
         if (Objects.nonNull(mockClock)) {
