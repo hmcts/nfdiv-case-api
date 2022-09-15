@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.allOf;
@@ -31,6 +32,9 @@ import static uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinal
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONSE_DUE_DATE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -168,6 +172,41 @@ class Applicant2AppliedForFinalOrderNotificationTest {
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
+    }
+
+    @Test
+    void shouldSendApplicant2SolicitorNotificationWhenJointApplicationAndApplicant2SolicitorHasAppliedForFinalOrder() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant2().setSolicitor(Solicitor.builder()
+            .name("App2 Sol")
+            .reference("12344")
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        data.setFinalOrder(FinalOrder.builder()
+            .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
+            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+            .build());
+
+        when(commonContent.solicitorTemplateVars(data, 1L, data.getApplicant2()))
+            .thenReturn(solicitorTemplateVars(data, data.getApplicant2()));
+
+        notification.sendToApplicant2Solicitor(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(data.getApplicant2().getSolicitor().getEmail()),
+            eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER),
+            argThat(allOf(
+                hasEntry(RESPONSE_DUE_DATE, "24 September 2022"),
+                hasEntry(CO_OR_FO, "final")
+            )),
+            eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+
+        verify(commonContent).solicitorTemplateVars(data, 1L, data.getApplicant2());
     }
 
     private void setupMocks(Clock mockClock) {

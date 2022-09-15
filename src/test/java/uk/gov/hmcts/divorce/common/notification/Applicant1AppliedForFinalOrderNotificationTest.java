@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.allOf;
@@ -31,10 +32,15 @@ import static uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinal
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONSE_DUE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -190,6 +196,41 @@ class Applicant1AppliedForFinalOrderNotificationTest {
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
+    }
+
+    @Test
+    void shouldSendApplicant1SolicitorNotificationWhenJointApplicationAndApplicant1SolicitorHasAppliedForFinalOrder() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .name("App1 Sol")
+            .reference("12344")
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        data.setFinalOrder(FinalOrder.builder()
+            .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+            .build());
+
+        when(commonContent.solicitorTemplateVars(data, 1L, data.getApplicant1()))
+            .thenReturn(solicitorTemplateVars(data, data.getApplicant1()));
+
+        notification.sendToApplicant1Solicitor(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(data.getApplicant1().getSolicitor().getEmail()),
+            eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER),
+            argThat(allOf(
+                hasEntry(RESPONSE_DUE_DATE, "24 September 2022"),
+                hasEntry(CO_OR_FO, "final")
+            )),
+            eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+
+        verify(commonContent).solicitorTemplateVars(data, 1L, data.getApplicant1());
     }
 
     private void setupMocks(Clock mockClock) {

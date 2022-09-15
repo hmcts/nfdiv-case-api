@@ -14,6 +14,9 @@ import java.util.Map;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONSE_DUE_DATE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -45,6 +48,26 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
                 SOLE_APPLIED_FOR_FINAL_ORDER,
                 applicant1TemplateVars(caseData, id),
                 caseData.getApplicant1().getLanguagePreference()
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
+        if (!caseData.getApplicationType().isSole()
+            && YES.equals(caseData.getFinalOrder().getApplicant1AppliedForFinalOrderFirst())) {
+            log.info("Notifying applicant 1 solicitor that their final order application has been submitted: {}", caseId);
+
+            Map<String, String> templateVars = commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant1());
+            templateVars.put(RESPONSE_DUE_DATE,
+                caseData.getFinalOrder().getDateFinalOrderSubmitted().plusDays(14).format(DATE_TIME_FORMATTER));
+            templateVars.put(CO_OR_FO, "final");
+
+            notificationService.sendEmail(
+                caseData.getApplicant1().getSolicitor().getEmail(),
+                JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER,
+                templateVars,
+                ENGLISH
             );
         }
     }
