@@ -33,11 +33,11 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERE
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
@@ -46,7 +46,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENC
 import static uk.gov.hmcts.divorce.notification.CommonContent.UNION_TYPE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_APPLY_FOR_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLY_FOR_FINAL_ORDER_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
@@ -210,7 +210,7 @@ class AwaitingFinalOrderNotificationTest {
         applicant.setSolicitorRepresented(YesOrNo.YES);
         final var data = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .applicationType(JOINT_APPLICATION)
+            .applicationType(SOLE_APPLICATION)
             .applicant1(applicant)
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
@@ -222,7 +222,7 @@ class AwaitingFinalOrderNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
-            eq(JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR),
+            eq(APPLY_FOR_FINAL_ORDER_SOLICITOR),
             argThat(allOf(
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(APPLICANT_NAME, String.join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
@@ -231,8 +231,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(UNION_TYPE, DIVORCE),
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "not provided"),
-                hasEntry(IS_CONDITIONAL_ORDER, NO),
-                hasEntry(IS_FINAL_ORDER, YES)
+                hasEntry(IS_SOLE, YES),
+                hasEntry(IS_JOINT, NO)
             )),
             eq(ENGLISH)
         );
@@ -257,7 +257,7 @@ class AwaitingFinalOrderNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
-            eq(JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR),
+            eq(APPLY_FOR_FINAL_ORDER_SOLICITOR),
             argThat(allOf(
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(APPLICANT_NAME, String.join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
@@ -266,8 +266,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(UNION_TYPE, DIVORCE),
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "ref"),
-                hasEntry(IS_CONDITIONAL_ORDER, NO),
-                hasEntry(IS_FINAL_ORDER, YES)
+                hasEntry(IS_SOLE, NO),
+                hasEntry(IS_JOINT, YES)
             )),
             eq(ENGLISH)
         );
