@@ -89,17 +89,4 @@ class ProgressFinalOrderStateTest {
 
         assertEquals(result.getState(), FinalOrderRequested);
     }
-
-    @Test
-    void shouldNotSetStateIfStateIsFinalOrderOverdue() {
-
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
-
-        var details = CaseDetails.<CaseData, State>builder().data(caseData).state(FinalOrderOverdue).build();
-        var result = task.apply(details);
-
-        assertEquals(result.getState(), FinalOrderOverdue);
-    }
 }
