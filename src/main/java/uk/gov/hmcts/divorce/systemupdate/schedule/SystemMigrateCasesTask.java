@@ -10,6 +10,8 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
+import static java.util.Comparator.comparing;
+
 @Component
 @Slf4j
 public class SystemMigrateCasesTask implements Runnable {
@@ -30,6 +32,8 @@ public class SystemMigrateCasesTask implements Runnable {
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();
 
-        migrations.forEach(migration -> migration.apply(user, serviceAuthorization));
+        migrations.stream()
+            .sorted(comparing(Migration::getPriority))
+            .forEach(migration -> migration.apply(user, serviceAuthorization));
     }
 }

@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_M
 @Slf4j
 public class BaseMigration implements Migration {
 
+    public static final int HIGHEST_PRIORITY = 0;
     @Autowired
     private CcdSearchService ccdSearchService;
 
@@ -31,6 +32,11 @@ public class BaseMigration implements Migration {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Override
+    public Integer getPriority() {
+        return HIGHEST_PRIORITY;
+    }
 
     @Override
     public void apply(final User user, final String serviceAuthorization) {
@@ -72,7 +78,7 @@ public class BaseMigration implements Migration {
         if (ccdManagementException.getStatus() != NOT_FOUND.value()) {
             log.info("Setting dataVersion to 0 for case id: {} after failed migration", caseDetails.getId());
 
-            caseDetails.setData(Map.of("dataVersion", 0));
+            caseDetails.setData(Map.of("dataVersion", HIGHEST_PRIORITY));
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
 
             log.info("dataVersion set for case id: {}", caseDetails.getId());
@@ -88,7 +94,7 @@ public class BaseMigration implements Migration {
             log.info("Migration failed for case id {} due to deserialization error", id);
             log.info("Deserialization error caused by {}", e.getMessage());
 
-            data.put("dataVersion", 0);
+            data.put("dataVersion", HIGHEST_PRIORITY);
         }
     }
 }
