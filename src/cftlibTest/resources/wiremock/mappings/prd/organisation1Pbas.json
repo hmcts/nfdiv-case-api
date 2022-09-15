@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/refdata/external/v1/organisations/pbas",
+    "headers": {
+      "Authorization": {
+        "matches": ".*"
+      },
+      "ServiceAuthorization": {
+        "matches": ".*"
+      },
+      "UserEmail": {
+        "matches": ".*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "prd/organisation1PbasResponse.json"
+  }
+}
