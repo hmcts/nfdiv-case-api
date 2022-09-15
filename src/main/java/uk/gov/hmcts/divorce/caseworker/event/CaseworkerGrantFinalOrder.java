@@ -78,7 +78,6 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
 
         CaseData caseData = details.getData();
-        Long caseId = details.getId();
 
         LocalDate dateFinalOrderEligibleFrom = caseData.getFinalOrder().getDateFinalOrderEligibleFrom();
 
@@ -93,6 +92,8 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         }
 
         caseData.getFinalOrder().setGrantedDate(currentDateTime);
+
+        Long caseId = details.getId();
 
         if (caseData.getApplicant1().isOffline()) {
             log.info("Generating final order cover letter for Applicant 1 for case id: {} ", caseId);

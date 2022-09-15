@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -31,9 +30,6 @@ public class FinalOrderGrantedPrinterTest {
 
     @Mock
     private BulkPrintService bulkPrintService;
-
-    @Mock
-    private CaseDataDocumentService caseDataDocumentService;
 
     @InjectMocks
     private FinalOrderGrantedPrinter printer;
