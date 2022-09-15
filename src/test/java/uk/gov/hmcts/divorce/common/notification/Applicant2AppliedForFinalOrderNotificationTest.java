@@ -217,14 +217,9 @@ class Applicant2AppliedForFinalOrderNotificationTest {
     }
 
     @Test
-    void shouldSendToBothApplicantsSolicitorNotificationIfJointApplicationAndApplicant1HasAppliedForFinalOrder() {
+    void shouldSendToApplicant2SolicitorNotificationIfJointApplicationAndApplicant2SolicitorHasAppliedForFinalOrder() {
         CaseData data = caseData();
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
-        data.getApplicant1().setSolicitor(Solicitor.builder()
-                .name("App1 Sol")
-                .reference("12344")
-                .email(TEST_SOLICITOR_EMAIL)
-                .build());
         data.getApplicant1().setSolicitor(Solicitor.builder()
                 .name("App1 Sol")
                 .reference("12344")
