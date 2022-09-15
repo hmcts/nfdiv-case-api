@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.notification;
 
+import com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
@@ -251,5 +252,21 @@ public class CommonContent {
 
     public String getProfessionalUsersSignInUrl(Long caseId) {
         return config.getTemplateVars().get(SIGN_IN_PROFESSIONAL_USERS_URL) + caseId;
+    }
+
+    public Map<String, String> solicitorsFinalOrderTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
+        Map<String, String> templateVars = basicTemplateVars(caseData, caseId);
+
+        templateVars.put(IS_CONDITIONAL_ORDER, NO);
+        templateVars.put(IS_FINAL_ORDER, YES);
+        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+        templateVars.put(SOLICITOR_REFERENCE,
+                StringUtils.isNotEmpty(applicant.getSolicitor().getReference()) ? applicant.getSolicitor().getReference() : NOT_PROVIDED);
+        templateVars.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
+        templateVars.put(IS_DISSOLUTION, !caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
+        templateVars.put(SIGN_IN_URL, getProfessionalUsersSignInUrl(caseId));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+
+        return templateVars;
     }
 }

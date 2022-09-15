@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.common.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -13,9 +14,9 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -60,10 +61,10 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
                         caseData.getApplicant2().getSolicitor().getEmail(),
                         JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
                         commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
-                        ENGLISH
+                        caseData.getApplicant2().getLanguagePreference()
                 );
             } else {
-                ApplicantNotification.sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant2(),
+                sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant2(),
                         commonContent, notificationService);
             }
         }
@@ -73,9 +74,20 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
     public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
         if (!caseData.getApplicationType().isSole() && Objects.nonNull(caseData.getFinalOrder().getApplicant2AppliedForFinalOrder())) {
             log.info("Sending Applicants notification informing them that both parties have applied for final order: {}", caseId);
-            ApplicantNotification.sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant1(),
+            sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant1(),
                     commonContent, notificationService);
         }
+    }
+
+    private void sendBothSolicitorsAppliedForFinalOrderNotification(CaseData caseData, Long caseId, Applicant applicant,
+                                                                    CommonContent commonContent, NotificationService notificationService) {
+        var templateVars = commonContent.solicitorsFinalOrderTemplateVars(caseData, caseId, applicant);
+        notificationService.sendEmail(
+                applicant.getSolicitor().getEmail(),
+                JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
+                templateVars,
+                applicant.getLanguagePreference()
+        );
     }
 
     private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id) {

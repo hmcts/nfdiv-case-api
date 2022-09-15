@@ -50,7 +50,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     private ProgressFinalOrderState progressFinalOrderState;
 
     private static final List<CcdPageConfiguration> pages = List.of(
-        new ApplyForFinalOrderDetails()
+            new ApplyForFinalOrderDetails()
     );
 
     @Override
@@ -61,19 +61,19 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(FINAL_ORDER_REQUESTED)
-            .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder, FinalOrderOverdue)
-            .name(APPLY_FOR_FINAL_ORDER)
-            .description(APPLY_FOR_FINAL_ORDER)
-            .showSummary()
-            .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_1_SOLICITOR)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .grantHistoryOnly(
-                CASE_WORKER,
-                SUPER_USER,
-                LEGAL_ADVISOR,
-                APPLICANT_2_SOLICITOR));
+                .event(FINAL_ORDER_REQUESTED)
+                .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder, FinalOrderOverdue)
+                .name(APPLY_FOR_FINAL_ORDER)
+                .description(APPLY_FOR_FINAL_ORDER)
+                .showSummary()
+                .showEventNotes()
+                .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_1_SOLICITOR)
+                .aboutToSubmitCallback(this::aboutToSubmit)
+                .grantHistoryOnly(
+                        CASE_WORKER,
+                        SUPER_USER,
+                        LEGAL_ADVISOR,
+                        APPLICANT_2_SOLICITOR));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -83,20 +83,19 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
         CaseData data = details.getData();
 
-        var applicant1AppliedForFinalOrder = data.getFinalOrder().getApplicant1AppliedForFinalOrder();
-
-        if (Objects.isNull(applicant1AppliedForFinalOrder)) {
+        if (Objects.isNull(data.getFinalOrder().getApplicant1AppliedForFinalOrder())) {
             data.getFinalOrder().setApplicant1AppliedForFinalOrder(YES);
         }
 
-        notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, data, details.getId());
-
-        details.setData(data);
-        var updatedDetails = progressFinalOrderState.apply(details);
+        if (!FinalOrderOverdue.equals(details.getState())) {
+            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, data, details.getId());
+            details.setData(data);
+            progressFinalOrderState.apply(details);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(updatedDetails.getData())
-                .state(updatedDetails.getState())
+                .data(details.getData())
+                .state(details.getState())
                 .build();
     }
 }

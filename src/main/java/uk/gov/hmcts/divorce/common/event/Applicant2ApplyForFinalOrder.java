@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
 
 import java.util.List;
+import java.util.Objects;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
@@ -82,20 +83,19 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
         CaseData data = details.getData();
 
-        var applicant2AppliedForFinalOrder = data.getFinalOrder().getApplicant2AppliedForFinalOrder();
-
-        if (applicant2AppliedForFinalOrder == null) {
+        if (Objects.isNull(data.getFinalOrder().getApplicant2AppliedForFinalOrder())) {
             data.getFinalOrder().setApplicant2AppliedForFinalOrder(YES);
         }
 
-        notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, data, details.getId());
-
-        details.setData(data);
-        var updatedDetails = progressFinalOrderState.apply(details);
+        if (!FinalOrderOverdue.equals(details.getState())) {
+            notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, data, details.getId());
+            details.setData(data);
+            progressFinalOrderState.apply(details);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(updatedDetails.getData())
-                .state(updatedDetails.getState())
+                .data(details.getData())
+                .state(details.getState())
                 .build();
     }
 }
