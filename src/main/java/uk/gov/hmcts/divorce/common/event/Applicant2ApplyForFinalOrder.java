@@ -94,8 +94,8 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(details.getData())
-                .state(details.getState())
-                .build();
+            .data(details.getData())
+            .state(details.getState())
+            .build();
     }
 }
