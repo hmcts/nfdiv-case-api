@@ -263,27 +263,26 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
         data.setFinalOrder(FinalOrder.builder()
-                .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
-                .applicant1AppliedForFinalOrder(YesOrNo.YES)
-                .build());
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
+            .applicant1AppliedForFinalOrder(YesOrNo.YES)
+            .build());
 
         data.getApplicant1().setSolicitor(Solicitor.builder()
-                .name("App1 Sol")
-                .reference("12344")
-                .email(TEST_SOLICITOR_EMAIL)
-                .build());
+            .name("App1 Sol")
+            .reference("12344")
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
 
         notification.sendToApplicant1Solicitor(data, 1L);
 
         verify(notificationService).sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
-                any(),
-                eq(ENGLISH)
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
+            any(),
+            eq(ENGLISH)
         );
 
         verifyNoMoreInteractions(notificationService);
-
         verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant1());
     }
 
