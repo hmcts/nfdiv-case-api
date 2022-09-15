@@ -33,7 +33,7 @@ public class SystemMigrateCasesTask implements Runnable {
         final String serviceAuthorization = authTokenGenerator.generate();
 
         migrations.stream()
-            .sorted(comparing(Migration::getPriority))
+            .sorted(comparing(Migration::getPriority)) //Ascending priority, 0 (zero) is highest
             .forEach(migration -> migration.apply(user, serviceAuthorization));
     }
 }
