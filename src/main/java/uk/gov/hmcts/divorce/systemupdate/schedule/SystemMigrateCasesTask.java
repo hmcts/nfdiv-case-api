@@ -47,6 +47,26 @@ public class SystemMigrateCasesTask implements Runnable {
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();
 
+        baseMigration(user, serviceAuthorization);
+
+        migrateJointApplications(user, serviceAuthorization);
+    }
+
+    private void migrateJointApplications(User user, String serviceAuthorization) {
+        log.info("Started migrating cases joint application");
+        try {
+            ccdSearchService
+                .searchJointApplicationsWithAccessCodePostIssueApplication(user, serviceAuthorization)
+                .parallelStream()
+                .forEach(details -> removeAccessCode(details, user, serviceAuthorization));
+
+        } catch (final CcdSearchCaseException e) {
+            log.error("Case schedule task(migration joint application) stopped after search error", e);
+        }
+    }
+
+
+    private void baseMigration(User user, String serviceAuthorization) {
         try {
             ccdSearchService
                 .searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, serviceAuthorization)
@@ -73,6 +93,20 @@ public class SystemMigrateCasesTask implements Runnable {
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseId);
             failedMigrationSetVersionToZero(caseDetails, user, serviceAuthorization, caseId, e);
+        }
+    }
+
+    private void removeAccessCode(final CaseDetails caseDetails, final User user, final String serviceAuthorization) {
+        final Long caseId = caseDetails.getId();
+
+        try {
+            caseDetails.getData().put("accessCode", "");
+            ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
+            log.info("Removed access code successfully for case id: {}", caseId);
+        } catch (final CcdConflictException e) {
+            log.error("Could not get lock for case id: {}, continuing to next case", caseId);
+        } catch (final CcdManagementException e) {
+            log.error("Submit event(after removing access code) failed for case id: {}, continuing to next case", caseId);
         }
     }
 

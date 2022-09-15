@@ -23,6 +23,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
@@ -34,8 +35,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -174,5 +177,65 @@ public class ConditionalOrderRefusedForClarificationContentIT {
         Map<String, Object> templateContent = conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyContentInWelshForClarificationConditionalOrderDocumentSoleDivorce() {
+
+        CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.setIsJudicialSeparation(NO);
+
+        ConditionalOrder conditionalOrder = ConditionalOrder.builder()
+            .granted(NO)
+            .refusalDecision(MORE_INFO)
+            .refusalClarificationReason(new HashSet<>())
+            .build();
+        caseData.setConditionalOrder(conditionalOrder);
+
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setOffline(NO);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant2().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+
+        Map<String, Object> templateContent = conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(templateContent).contains(Map.entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE_CY));
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyContentInWelshForClarificationConditionalOrderDocumentSoleDissolution() {
+
+        CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.setIsJudicialSeparation(NO);
+
+        ConditionalOrder conditionalOrder = ConditionalOrder.builder()
+            .granted(NO)
+            .refusalDecision(MORE_INFO)
+            .refusalClarificationReason(new HashSet<>())
+            .build();
+        caseData.setConditionalOrder(conditionalOrder);
+
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setOffline(NO);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant2().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+
+        Map<String, Object> templateContent = conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(templateContent).contains(Map.entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP_CY));
     }
 }
