@@ -1,12 +1,5 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-
 public final class DocmosisTemplateConstants {
 
     public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
@@ -191,23 +184,5 @@ public final class DocmosisTemplateConstants {
     public static final String PHONE_AND_OPENING_TIMES_TEXT_CY = "Phone: 0300 303 0642 (Dydd Llun i Ddydd Gwener, 8am to 6pm)";
 
     private DocmosisTemplateConstants() {
-    }
-
-    public Map<String, Object> getBasicDocmosisTemplateContent(LanguagePreference languagePreference) {
-        Map<String, Object> templateContent = new HashMap<>();
-
-        if (ENGLISH.equals(languagePreference)) {
-            templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
-            templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-            templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
-            templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-        } else {
-            templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
-            templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
-            templateContent.put(CONTACT_EMAIL, CONTACT_JUSTICE_GOV_UK_CY);
-            templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
-        }
-
-        return templateContent;
     }
 }
