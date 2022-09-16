@@ -274,17 +274,6 @@ class Applicant2AppliedForFinalOrderNotificationTest {
     }
 
     @Test
-    void shouldNotSendApplicant2SolicitorNotificationIfJointApplicationAndApplicant2SolicitorHasNotAppliedForFinalOrder() {
-        CaseData data = caseData();
-        data.setApplicationType(JOINT_APPLICATION);
-
-        notification.sendToApplicant2Solicitor(data, 1L);
-
-        verifyNoInteractions(notificationService);
-        verifyNoInteractions(commonContent);
-    }
-
-    @Test
     void shouldSendApplicant2SolicitorNotificationWhenJointApplicationAndApplicant2SolicitorHasAppliedForFinalOrder() {
         CaseData data = validJointApplicant1CaseData();
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));

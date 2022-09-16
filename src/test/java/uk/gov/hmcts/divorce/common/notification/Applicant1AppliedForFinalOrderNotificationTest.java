@@ -269,6 +269,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
             .applicant1AppliedForFinalOrder(YesOrNo.YES)
+            .applicant2AppliedForFinalOrder(YesOrNo.YES)
             .build());
 
         data.getApplicant1().setSolicitor(Solicitor.builder()
@@ -296,17 +297,6 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
 
         notification.sendToApplicant2Solicitor(data, 1L);
-
-        verifyNoInteractions(notificationService);
-        verifyNoInteractions(commonContent);
-    }
-
-    @Test
-    void shouldNotSendApplicant1SolicitorNotificationIfJointApplicationAndApplicant1SolicitorHasNotAppliedForFinalOrder() {
-        CaseData data = caseData();
-        data.setApplicationType(JOINT_APPLICATION);
-
-        notification.sendToApplicant1Solicitor(data, 1L);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
