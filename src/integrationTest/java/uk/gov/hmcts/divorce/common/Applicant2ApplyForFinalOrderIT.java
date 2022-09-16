@@ -143,6 +143,7 @@ public class Applicant2ApplyForFinalOrderIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         final CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.getApplicant1().setSolicitor(Solicitor.builder()
@@ -165,6 +166,9 @@ public class Applicant2ApplyForFinalOrderIT {
             .andExpect(
                 status().isOk()
             );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
             .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));

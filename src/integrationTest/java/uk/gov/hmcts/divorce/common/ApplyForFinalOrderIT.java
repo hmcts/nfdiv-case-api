@@ -187,6 +187,7 @@ public class ApplyForFinalOrderIT {
 
         final CaseData data = validJointApplicant1CaseData();
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant1().setEmail(TEST_USER_EMAIL);
         data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
         data.getApplicant2().setSolicitor(Solicitor.builder()
             .name("App2 Sol")
@@ -207,6 +208,9 @@ public class ApplyForFinalOrderIT {
             .andExpect(
                 status().isOk()
             );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
             .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
