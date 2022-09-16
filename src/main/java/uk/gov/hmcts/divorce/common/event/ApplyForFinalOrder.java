@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.BothApplicantSolicitorsAppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -24,6 +25,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -42,6 +44,9 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
     @Autowired
     private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
+
+    @Autowired
+    private BothApplicantSolicitorsAppliedForFinalOrderNotification bothApplicantSolicitorsAppliedForFinalOrderNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -98,6 +103,10 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
         details.setData(data);
         var updatedDetails = progressFinalOrderState.apply(details);
+
+        if (FinalOrderRequested.equals(state)) {
+            notificationDispatcher.send(bothApplicantSolicitorsAppliedForFinalOrderNotification, data, details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedDetails.getData())
