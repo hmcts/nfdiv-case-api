@@ -55,9 +55,9 @@ public class FinalOrder {
     private LocalDate dateFinalOrderEligibleFrom;
 
     @CCD(
-        label = "Final Order granted?",
-        hint = "The Final Order made on ${finalOrderDateFinalOrderSubmitted} will be made absolute and the ${divorceOrDissolution} "
-            + "between ${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName} will be ended.",
+        label = "Grant final order?",
+        hint = "The final order will be made between " +
+            "${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName}.",
         access = {DefaultAccess.class}
     )
     private Set<Granted> granted;
