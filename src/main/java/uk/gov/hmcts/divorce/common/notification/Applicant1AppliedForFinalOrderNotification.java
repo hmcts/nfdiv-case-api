@@ -48,10 +48,10 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
         if (caseData.getApplicationType().isSole()) {
             log.info("Sending Applicant 1 notification informing them that they have applied for final order: {}", id);
             notificationService.sendEmail(
-                    caseData.getApplicant1().getEmail(),
-                    SOLE_APPLIED_FOR_FINAL_ORDER,
-                    applicant1TemplateVars(caseData, id),
-                    caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getEmail(),
+                SOLE_APPLIED_FOR_FINAL_ORDER,
+                applicant1TemplateVars(caseData, id),
+                caseData.getApplicant1().getLanguagePreference()
             );
         }
     }
@@ -109,7 +109,7 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
 
     private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id) {
         Map<String, String> templateVars =
-                commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
 
         boolean isFinalOrderEligible = caseData.getFinalOrder().getDateFinalOrderNoLongerEligible().isAfter(LocalDate.now(clock));
 

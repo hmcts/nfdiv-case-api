@@ -95,6 +95,20 @@ class Applicant1AppliedForFinalOrderNotificationTest {
     }
 
     @Test
+    void shouldNotSendApplicant1NotificationIfJointApplication() {
+        CaseData data = caseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setFinalOrder(FinalOrder.builder()
+                .applicant1AppliedForFinalOrder(YesOrNo.YES)
+                .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
+
+        notification.sendToApplicant1(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
+    @Test
     public void verifyApplicant1TemplateVarsWhenFinalOrderEligible() {
         setupMocks(clock);
         CaseData data = caseData();
@@ -248,38 +262,31 @@ class Applicant1AppliedForFinalOrderNotificationTest {
     }
 
     @Test
-    void shouldSendToBothApplicantsSolicitorsNotificationIfJointApplicationAndBothSolicitorsHaveAppliedForFinalOrder() {
+    void shouldSendToApplicant1SolicitorsNotificationIfJointApplicationAndApplicant1SolicitorsHaveAppliedForFinalOrder() {
         CaseData data = caseData();
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
         data.setFinalOrder(FinalOrder.builder()
-                .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
-                .applicant1AppliedForFinalOrder(YesOrNo.YES)
-                .applicant2AppliedForFinalOrder(YesOrNo.YES)
-                .build());
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
+            .applicant1AppliedForFinalOrder(YesOrNo.YES)
+            .build());
 
         data.getApplicant1().setSolicitor(Solicitor.builder()
-                .name("App1 Sol")
-                .reference("12344")
-                .email(TEST_SOLICITOR_EMAIL)
-                .build());
-        data.getApplicant2().setSolicitor(Solicitor.builder()
-                .name("App2 Sol")
-                .reference("12344")
-                .email(TEST_SOLICITOR_EMAIL)
-                .build());
+            .name("App1 Sol")
+            .reference("12344")
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
 
         notification.sendToApplicant1Solicitor(data, 1L);
 
         verify(notificationService).sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
-                any(),
-                eq(ENGLISH)
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
+            any(),
+            eq(ENGLISH)
         );
 
         verifyNoMoreInteractions(notificationService);
-
         verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant1());
     }
 
@@ -289,6 +296,17 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
 
         notification.sendToApplicant2Solicitor(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
+    @Test
+    void shouldNotSendApplicant1SolicitorNotificationIfJointApplicationAndApplicant1SolicitorHasNotAppliedForFinalOrder() {
+        CaseData data = caseData();
+        data.setApplicationType(JOINT_APPLICATION);
+
+        notification.sendToApplicant1Solicitor(data, 1L);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
