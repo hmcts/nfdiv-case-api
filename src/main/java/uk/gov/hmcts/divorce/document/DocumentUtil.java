@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.document.print.model.Letter;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
