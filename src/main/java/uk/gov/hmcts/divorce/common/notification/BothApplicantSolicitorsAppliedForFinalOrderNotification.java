@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.common.notification;
 
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,7 +8,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import static com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils.isNotEmpty;
+
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
@@ -23,6 +25,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENC
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+
 
 @Component
 @Slf4j
