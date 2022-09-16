@@ -169,6 +169,20 @@ public final class DocmosisTemplateConstants {
     public static final String CO_PRONOUNCED_DATE = "coPronouncedDate";
     public static final String DATE_FO_ELIGIBLE_FROM = "dateFinalOrderEligibleFrom";
 
+    public static final String DIVORCE_AND_DISSOLUTION_HEADER = "divorceAndDissolutionHeader";
+    public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT = "Divorce and Dissolution";
+    public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY = "Gwasanaeth Ysgariadau a Diddymiadau";
+
+    public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER = "courtsAndTribunalsServiceHeader";
+    public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT = "HM Courts & Tribunals Service";
+    public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY = "Gwasanaeth Llysoedd a Thribiwnlysoedd EM";
+
+    public static final String CONTACT_EMAIL = "contactEmail";
+
+    public static final String PHONE_AND_OPENING_TIMES = "phoneAndOpeningTimes";
+    public static final String PHONE_AND_OPENING_TIMES_TEXT = "Phone: 0300 303 0642 (Monday to Friday, 8am to 6pm)";
+    public static final String PHONE_AND_OPENING_TIMES_TEXT_CY = "Phone: 0300 303 0642 (Dydd Llun i Ddydd Gwener, 8am to 6pm)";
+
     private DocmosisTemplateConstants() {
     }
 }
