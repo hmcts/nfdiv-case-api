@@ -71,7 +71,7 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
 
     @Override
     public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
-        if (!caseData.getApplicationType().isSole() && Objects.nonNull(caseData.getFinalOrder().getApplicant1AppliedForFinalOrder())) {
+        if (!caseData.getApplicationType().isSole() && Objects.nonNull(caseData.getFinalOrder().getApplicant2AppliedForFinalOrder())) {
             log.info("Sending Applicants notification informing them that both parties have applied for final order: {}", caseId);
             sendBothSolicitorsAppliedForFinalOrderNotification(caseData, caseId, caseData.getApplicant1());
         }
