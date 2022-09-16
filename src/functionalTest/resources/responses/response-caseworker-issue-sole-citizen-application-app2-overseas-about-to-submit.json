@@ -24,11 +24,10 @@
     "applicant2Email": "applicant2@example.com",
     "applicant2LanguagePreferenceWelsh": "No",
     "applicant2Address": {
-      "addressLine1": "221a Baker Street",
-      "postTown": "London",
-      "county": "Greater London",
-      "postCode": "NW1 6XE",
-      "country": "United Kingdom"
+      "AddressLine1": "Parc de la Ciutadella",
+      "Country": "Spain",
+      "County": "Catalunya",
+      "PostTown": "Barcelona"
     },
     "applicant1SolicitorRepresented": "No",
     "applicant2SolicitorRepresented": "No",
@@ -139,6 +138,5 @@
     "serviceMethod": "personalService",
     "warnings": []
   },
-  "state": "AwaitingService",
-  "accessCode": ""
+  "state": "AwaitingService"
 }
