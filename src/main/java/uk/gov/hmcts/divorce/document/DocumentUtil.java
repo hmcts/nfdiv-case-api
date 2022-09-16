@@ -106,7 +106,6 @@ public final class DocumentUtil {
         return ofNullable(documents)
             .flatMap(Collection::stream)
             .map(ListValue::getValue)
-            .filter(Objects::nonNull)
             .map(document -> new Letter(DivorceDocument.builder()
                 .documentType(documentType)
                 .documentFileName(document.getFilename())
