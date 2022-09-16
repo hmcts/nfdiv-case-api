@@ -39,6 +39,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DISSOLUTION_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
@@ -433,6 +435,33 @@ class CommonContentTest {
                 entry(ISSUE_DATE, "22 June 2022"),
                 entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
                 entry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name")
+            );
+    }
+
+    @Test
+    public void shouldAddSolicitorFinalOrderContentForJointApplication() {
+
+        CaseData caseData = CaseData.builder()
+                .divorceOrDissolution(DIVORCE)
+                .application(Application.builder()
+                        .issueDate(LocalDate.of(2022, 6, 22))
+                        .build())
+                .applicant1(applicantRepresentedBySolicitor())
+                .applicant2(respondent())
+                .build();
+
+        final Map<String, String> result = commonContent.solicitorsFinalOrderTemplateVars(caseData, 1L, caseData.getApplicant1());
+
+        assertThat(result)
+                .isNotEmpty()
+                .contains(
+                    entry(IS_CONDITIONAL_ORDER, CommonContent.NO),
+                    entry(IS_FINAL_ORDER, CommonContent.YES),
+                    entry(SOLICITOR_NAME, "The Solicitor"),
+                    entry(SOLICITOR_REFERENCE, "Not provided"),
+                    entry(ISSUE_DATE, "22 June 2022"),
+                    entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
+                    entry(APPLICANT_2_FULL_NAME, "applicant_2_first_name test_last_name")
             );
     }
 }
