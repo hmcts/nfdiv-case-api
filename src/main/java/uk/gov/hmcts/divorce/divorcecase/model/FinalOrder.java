@@ -56,8 +56,8 @@ public class FinalOrder {
 
     @CCD(
         label = "Grant final order?",
-        hint = "The final order will be made between " +
-            "${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName}.",
+        hint = "The final order will be made between "
+            + "${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName}.",
         access = {DefaultAccess.class}
     )
     private Set<Granted> granted;
