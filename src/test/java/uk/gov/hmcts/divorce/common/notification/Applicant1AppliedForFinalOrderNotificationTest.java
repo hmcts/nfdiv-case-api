@@ -138,6 +138,21 @@ class Applicant1AppliedForFinalOrderNotificationTest {
     }
 
     @Test
+    void shouldNotSendApplicant2SolicitorNotificationIfJointApplicationAndApplicant2HasAlreadyAppliedForFinalOrder() {
+        CaseData data = caseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setFinalOrder(FinalOrder.builder()
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
+                .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+            .build());
+
+        notification.sendToApplicant2Solicitor(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
+    @Test
     void shouldSendApplicant2SolicitorNotificationIfJointApplicationAndApplicant2HasNotAppliedForFinalOrderYet() {
         CaseData data = validJointApplicant1CaseData();
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
@@ -167,21 +182,6 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         verifyNoMoreInteractions(notificationService);
 
         verify(commonContent).solicitorTemplateVars(data, 1L, data.getApplicant2());
-    }
-
-    @Test
-    void shouldNotSendApplicant2SolicitorNotificationIfJointApplicationAndApplicant2HasAlreadyAppliedForFinalOrder() {
-        CaseData data = caseData();
-        data.setApplicationType(JOINT_APPLICATION);
-        data.setFinalOrder(FinalOrder.builder()
-            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
-                .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
-            .build());
-
-        notification.sendToApplicant2Solicitor(data, 1L);
-
-        verifyNoInteractions(notificationService);
-        verifyNoInteractions(commonContent);
     }
 
     @Test

@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
@@ -84,7 +83,7 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
                 commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant1()),
-                ENGLISH
+                caseData.getApplicant1().getLanguagePreference()
             );
         }
     }
