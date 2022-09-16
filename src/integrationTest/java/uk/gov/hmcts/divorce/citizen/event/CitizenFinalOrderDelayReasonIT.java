@@ -25,7 +25,6 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -136,24 +135,5 @@ public class CitizenFinalOrderDelayReasonIT {
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
         verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
-    void shouldNotSendEmailsToEitherApplicantForJointApplications() throws Exception {
-        final CaseData data = caseData();
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().minusDays(30)).build());
-
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_FINAL_ORDER_DELAY_REASON, "finalOrderOverdue")))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk()
-            );
-
-        verifyNoInteractions(notificationService);
     }
 }
