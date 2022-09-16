@@ -262,7 +262,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
     }
 
     @Test
-    void shouldSendToApplicant1SolicitorsNotificationIfJointApplicationAndApplicant1SolicitorsHaveAppliedForFinalOrder() {
+    void shouldSendToApplicant1SolicitorsNotificationIfJointApplicationAndApplicant2SolicitorsHaveAppliedForFinalOrder() {
         CaseData data = caseData();
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
