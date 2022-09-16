@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.document.print.model.Letter;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
@@ -105,6 +106,7 @@ public final class DocumentUtil {
         return ofNullable(documents)
             .flatMap(Collection::stream)
             .map(ListValue::getValue)
+            .filter(Objects::nonNull)
             .map(document -> new Letter(DivorceDocument.builder()
                 .documentType(documentType)
                 .documentFileName(document.getFilename())
