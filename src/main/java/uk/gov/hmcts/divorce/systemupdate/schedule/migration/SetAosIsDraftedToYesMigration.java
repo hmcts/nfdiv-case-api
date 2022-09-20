@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.migration;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -39,6 +40,9 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Slf4j
 public class SetAosIsDraftedToYesMigration implements Migration {
 
+    @Value("${MIGRATE_AOS_IS_DRAFTED:false}")
+    private boolean migrateAosIsDrafted;
+
     @Autowired
     private CcdSearchService ccdSearchService;
 
@@ -51,20 +55,24 @@ public class SetAosIsDraftedToYesMigration implements Migration {
     @Override
     public void apply(final User user, final String serviceAuthorization) {
 
-        log.info("Started SetAosIsDraftedToYesMigration");
-        try {
+        if (migrateAosIsDrafted) {
+            log.info("Started SetAosIsDraftedToYesMigration");
+            try {
 
-            final List<CaseDetails> caseDetails = searchForAosDraftedCases(user, serviceAuthorization);
+                final List<CaseDetails> caseDetails = searchForAosDraftedCases(user, serviceAuthorization);
 
-            log.info("SetAosIsDraftedToYesMigration Number of cases {}", caseDetails.size());
+                log.info("SetAosIsDraftedToYesMigration Number of cases {}", caseDetails.size());
 
-            caseDetails
-                .forEach(caseDetail -> setAosIsDrafted(caseDetail, user, serviceAuthorization));
+                caseDetails
+                    .forEach(caseDetail -> setAosIsDrafted(caseDetail, user, serviceAuthorization));
 
-        } catch (final CcdSearchCaseException e) {
-            log.error("Case schedule task(SetAosIsDraftedToYesMigration) stopped after search error", e);
+            } catch (final CcdSearchCaseException e) {
+                log.error("Case schedule task(SetAosIsDraftedToYesMigration) stopped after search error", e);
+            }
+            log.info("Completed SetAosIsDraftedToYesMigration");
+        } else {
+            log.info("Skipping SetAosIsDraftedToYesMigration, MIGRATE_AOS_IS_DRAFTED=false");
         }
-        log.info("Completed SetAosIsDraftedToYesMigration");
     }
 
     private List<CaseDetails> searchForAosDraftedCases(final User user, final String serviceAuthorization) {
