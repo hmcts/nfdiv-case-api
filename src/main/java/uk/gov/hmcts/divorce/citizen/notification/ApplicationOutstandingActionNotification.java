@@ -111,12 +111,11 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, soleServingAnotherWay && caseData.isDivorce() ? YES : NO);
         templateVars.put(SERVE_WIFE_ANOTHER_WAY, soleServingAnotherWay
             && caseData.isDivorce()
-            && nonNull(caseData.getApplicant2().getGender())
-            && caseData.getApplicant2().getGender().equals(Gender.FEMALE) ? YES : NO);
+            && Gender.FEMALE.equals(caseData.getApplicant2().getGender()) ? YES : NO);
         templateVars.put(SERVE_HUSBAND_ANOTHER_WAY, soleServingAnotherWay
             && caseData.isDivorce()
             && nonNull(caseData.getApplicant2().getGender())
-            && caseData.getApplicant2().getGender().equals(Gender.MALE) ? YES : NO);
+            && Gender.MALE.equals(caseData.getApplicant2().getGender()) ? YES : NO);
         templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, soleServingAnotherWay && !caseData.isDivorce() ? YES : NO);
         return templateVars;
     }
