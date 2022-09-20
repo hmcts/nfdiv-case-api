@@ -60,7 +60,7 @@ class GenerateConditionalOrderPronouncedDocumentTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
-        when(conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, ENGLISH))
             .thenReturn(templateContent);
 
         generateConditionalOrderPronouncedDocument.apply(caseDetails);
@@ -156,7 +156,7 @@ class GenerateConditionalOrderPronouncedDocumentTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
-        when(conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID))
+        when(conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, ENGLISH))
             .thenReturn(templateContent);
 
         generateConditionalOrderPronouncedDocument
