@@ -104,7 +104,7 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
         details.setData(data);
         var updatedDetails = progressFinalOrderState.apply(details);
 
-        if (FinalOrderRequested.equals(state)) {
+        if (FinalOrderRequested.equals(updatedDetails.getState())) {
             notificationDispatcher.send(bothApplicantSolicitorsAppliedForFinalOrderNotification, data, details.getId());
         }
 
