@@ -45,7 +45,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_PROFESSIONAL_USERS_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
@@ -188,7 +187,6 @@ class CommonContentTest {
                 entry(JOINT_CONDITIONAL_ORDER, "no"),
                 entry(HUSBAND_JOINT, "no"),
                 entry(WIFE_JOINT, "no"),
-                entry(SPOUSE_JOINT, "no"),
                 entry(CIVIL_PARTNER_JOINT, "no")
             );
     }
@@ -209,7 +207,6 @@ class CommonContentTest {
                 entry(JOINT_CONDITIONAL_ORDER, "yes"),
                 entry(HUSBAND_JOINT, "yes"),
                 entry(WIFE_JOINT, "no"),
-                entry(SPOUSE_JOINT, "no"),
                 entry(CIVIL_PARTNER_JOINT, "no")
             );
     }
@@ -230,33 +227,6 @@ class CommonContentTest {
                 entry(JOINT_CONDITIONAL_ORDER, "yes"),
                 entry(HUSBAND_JOINT, "no"),
                 entry(WIFE_JOINT, "yes"),
-                entry(SPOUSE_JOINT, "no"),
-                entry(CIVIL_PARTNER_JOINT, "no")
-            );
-    }
-
-    @Test
-    void shouldSetTemplateVarsForJointDivorcePaperApplicationWithNoGenders() {
-        final CaseData caseData = CaseData.builder()
-            .applicationType(JOINT_APPLICATION)
-            .divorceOrDissolution(DIVORCE)
-            .build();
-
-        var paperApplicant1 = getApplicant(MALE);
-        paperApplicant1.setGender(null);
-        var paperApplicant2 = getApplicant(FEMALE);
-        paperApplicant2.setGender(null);
-
-        final Map<String, String> templateVars = commonContent
-            .conditionalOrderTemplateVars(caseData, 1L, paperApplicant1, paperApplicant2);
-
-        assertThat(templateVars)
-            .isNotEmpty()
-            .contains(
-                entry(JOINT_CONDITIONAL_ORDER, "yes"),
-                entry(HUSBAND_JOINT, "no"),
-                entry(WIFE_JOINT, "no"),
-                entry(SPOUSE_JOINT, "yes"),
                 entry(CIVIL_PARTNER_JOINT, "no")
             );
     }
@@ -277,7 +247,6 @@ class CommonContentTest {
                 entry(JOINT_CONDITIONAL_ORDER, "yes"),
                 entry(HUSBAND_JOINT, "no"),
                 entry(WIFE_JOINT, "no"),
-                entry(SPOUSE_JOINT, "no"),
                 entry(CIVIL_PARTNER_JOINT, "yes")
             );
     }
