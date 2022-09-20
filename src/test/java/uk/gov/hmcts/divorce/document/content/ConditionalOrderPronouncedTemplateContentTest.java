@@ -40,7 +40,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_PRONOUNCED_DATE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_FO_ELIGIBLE_FROM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
@@ -85,9 +84,6 @@ class ConditionalOrderPronouncedTemplateContentTest {
     @Test
     void shouldApplyEnglishDivorceContentFromCaseDataForConditionalOrderPronouncedTemplate() {
 
-        LocalDate coPronouncedDate = LocalDate.of(2022, 6, 10);
-        LocalDate marriageDate = LocalDate.of(2000, 1, 2);
-
         Map<String, Object> basicDocmosisTemplateContent = new HashMap<>();
         basicDocmosisTemplateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         basicDocmosisTemplateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
@@ -105,6 +101,9 @@ class ConditionalOrderPronouncedTemplateContentTest {
             .firstName(APPLICANT_2_FIRST_NAME)
             .lastName(APPLICANT_2_LAST_NAME)
             .build();
+
+        LocalDate coPronouncedDate = LocalDate.of(2022, 6, 10);
+        LocalDate marriageDate = LocalDate.of(2000, 1, 2);
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
@@ -154,9 +153,6 @@ class ConditionalOrderPronouncedTemplateContentTest {
     @Test
     void shouldApplyWelshDivorceContentFromCaseDataForConditionalOrderPronouncedTemplate() {
 
-        LocalDate coPronouncedDate = LocalDate.of(2022, 6, 10);
-        LocalDate marriageDate = LocalDate.of(2000, 1, 2);
-
         Map<String, Object> basicDocmosisTemplateContent = new HashMap<>();
         basicDocmosisTemplateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
         basicDocmosisTemplateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
@@ -174,6 +170,9 @@ class ConditionalOrderPronouncedTemplateContentTest {
             .firstName(APPLICANT_2_FIRST_NAME)
             .lastName(APPLICANT_2_LAST_NAME)
             .build();
+
+        LocalDate coPronouncedDate = LocalDate.of(2022, 6, 10);
+        LocalDate marriageDate = LocalDate.of(2000, 1, 2);
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
