@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class BothApplicantSolicitorsAppliedForFinalOrderNotification implements ApplicantNotification {
+public class FinalOrderSolicitorNotification implements ApplicantNotification {
 
     @Autowired
     private CommonContent commonContent;

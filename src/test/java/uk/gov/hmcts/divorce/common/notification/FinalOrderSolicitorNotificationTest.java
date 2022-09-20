@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFinalOrderSolicitorsVars;
 
 @ExtendWith(MockitoExtension.class)
-class BothApplicantSolicitorsAppliedForFinalOrderNotificationTest {
+class FinalOrderSolicitorNotificationTest {
 
     @Mock
     private CommonContent commonContent;
@@ -43,7 +43,7 @@ class BothApplicantSolicitorsAppliedForFinalOrderNotificationTest {
     private NotificationService notificationService;
 
     @InjectMocks
-    private BothApplicantSolicitorsAppliedForFinalOrderNotification notification;
+    private FinalOrderSolicitorNotification notification;
 
     @Test
     void shouldSendApplicant1SolicitorNotificationIfJointApplicationAndRepresented() {

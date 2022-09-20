@@ -9,7 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
-import uk.gov.hmcts.divorce.common.notification.BothApplicantSolicitorsAppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.FinalOrderSolicitorNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -36,7 +36,7 @@ class ApplyForFinalOrderTest {
     private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
 
     @Mock
-    private BothApplicantSolicitorsAppliedForFinalOrderNotification bothApplicantSolicitorsAppliedForFinalOrderNotification;
+    private FinalOrderSolicitorNotification finalOrderSolicitorNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -80,7 +80,7 @@ class ApplyForFinalOrderTest {
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
         applyForFinalOrder.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher).send(bothApplicantSolicitorsAppliedForFinalOrderNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(finalOrderSolicitorNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
