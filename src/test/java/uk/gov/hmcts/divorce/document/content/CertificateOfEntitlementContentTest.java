@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
@@ -71,6 +72,7 @@ public class CertificateOfEntitlementContentTest {
             entry("isJoint", false),
             entry(DATE_OF_HEARING, "8 November 2021"),
             entry(TIME_OF_HEARING, "14:56 pm"),
+            entry(BEFORE_DATE_OF_HEARING, "1 November 2021"),
             entry(HAS_FINANCIAL_ORDERS, true)
         );
     }
@@ -95,6 +97,7 @@ public class CertificateOfEntitlementContentTest {
             entry("isJoint", true),
             entry(DATE_OF_HEARING, "8 November 2021"),
             entry(TIME_OF_HEARING, "14:56 pm"),
+            entry(BEFORE_DATE_OF_HEARING, "1 November 2021"),
             entry(HAS_FINANCIAL_ORDERS, true)
         );
     }
@@ -162,6 +165,7 @@ public class CertificateOfEntitlementContentTest {
             entry("isJoint", false),
             entry(DATE_OF_HEARING, "8 November 2021"),
             entry(TIME_OF_HEARING, "14:56 pm"),
+            entry(BEFORE_DATE_OF_HEARING, "1 November 2021"),
             entry(HAS_FINANCIAL_ORDERS, false)
         );
     }
@@ -190,6 +194,7 @@ public class CertificateOfEntitlementContentTest {
             entry("isJoint", false),
             entry(DATE_OF_HEARING, null),
             entry(TIME_OF_HEARING, null),
+            entry(BEFORE_DATE_OF_HEARING, null),
             entry(HAS_FINANCIAL_ORDERS, false)
         );
     }
