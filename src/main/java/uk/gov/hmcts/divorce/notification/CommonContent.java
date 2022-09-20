@@ -74,7 +74,6 @@ public class CommonContent {
     public static final String JOINT_CONDITIONAL_ORDER = "joint conditional order";
     public static final String HUSBAND_JOINT = "husbandJoint";
     public static final String WIFE_JOINT = "wifeJoint";
-    public static final String SPOUSE_JOINT = "spouseJoint";
     public static final String CIVIL_PARTNER_JOINT = "civilPartnerJoint";
 
     public static final String DUE_DATE = " due date";
