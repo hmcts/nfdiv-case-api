@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +9,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -60,7 +60,7 @@ class DocmosisCommonContentTest {
 
         var templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
-        Assertions.assertThat(templateContent).isNotEmpty().hasSize(EXPECTED_ENTRY_SIZE)
+        assertThat(templateContent).isNotEmpty().hasSize(EXPECTED_ENTRY_SIZE)
             .contains(
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
                 entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
@@ -76,7 +76,7 @@ class DocmosisCommonContentTest {
 
         var templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
-        Assertions.assertThat(templateContent).isNotEmpty().hasSize(EXPECTED_ENTRY_SIZE)
+        assertThat(templateContent).isNotEmpty().hasSize(EXPECTED_ENTRY_SIZE)
             .contains(
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY),
                 entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY),
