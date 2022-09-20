@@ -34,12 +34,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONSE_DUE_DATE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -47,13 +44,9 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFinalOrderSolicitorsVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,7 +70,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
         data.setFinalOrder(FinalOrder.builder()
-            .applicant1AppliedForFinalOrder(YesOrNo.YES)
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
 
         when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2())).thenReturn(getMainTemplateVars());
@@ -99,7 +92,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         CaseData data = caseData();
         data.setApplicationType(JOINT_APPLICATION);
         data.setFinalOrder(FinalOrder.builder()
-                .applicant1AppliedForFinalOrder(YesOrNo.YES)
+                .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
                 .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
 
         notification.sendToApplicant1(data, 1L);
@@ -114,7 +107,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
         data.setFinalOrder(FinalOrder.builder()
-            .applicant1AppliedForFinalOrder(YesOrNo.YES)
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
         );
 
@@ -141,7 +134,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
         data.setFinalOrder(FinalOrder.builder()
-            .applicant1AppliedForFinalOrder(YesOrNo.YES)
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().minusDays(30)).build());
 
         when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2())).thenReturn(getMainTemplateVars());
@@ -162,74 +155,6 @@ class Applicant1AppliedForFinalOrderNotificationTest {
     }
 
     @Test
-    void shouldSendApplicant2SolicitorNotificationIfJointApplicationAndIsRepresented() {
-        CaseData data = validApplicant2CaseData();
-        data.setApplicationType(JOINT_APPLICATION);
-        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
-        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
-        data.getApplication().setIssueDate(LOCAL_DATE);
-        data.setFinalOrder(FinalOrder.builder()
-                .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
-                .applicant1AppliedForFinalOrder(YesOrNo.YES)
-                .applicant2AppliedForFinalOrder(YesOrNo.YES)
-                .build()
-        );
-        data.getApplicant1().setSolicitor(Solicitor.builder()
-                .email(TEST_SOLICITOR_EMAIL).build());
-
-        data.getApplicant2().setSolicitor(Solicitor.builder()
-                .email(TEST_SOLICITOR_EMAIL).build());
-
-        when(commonContent.solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant2())).thenReturn(getFinalOrderSolicitorsVars(data,
-                data.getApplicant1()));
-
-        notification.sendToApplicant2Solicitor(data, 1L);
-
-        verify(notificationService).sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
-                any(),
-                eq(ENGLISH)
-        );
-        verifyNoMoreInteractions(notificationService);
-        verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant2());
-    }
-
-    @Test
-    public void verifyApplicant1SolicitorTemplateVars() {
-        CaseData data = validApplicant1CaseData();
-        data.setApplicationType(JOINT_APPLICATION);
-        data.getApplication().setIssueDate(LOCAL_DATE);
-        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
-        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
-        data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
-                .applicant1AppliedForFinalOrder(YesOrNo.YES)
-                .applicant2AppliedForFinalOrder(YesOrNo.YES)
-                .build()
-        );
-        data.getApplicant1().setSolicitor(Solicitor.builder()
-                .name(SOLICITOR_NAME)
-                .email(TEST_SOLICITOR_EMAIL)
-                .build());
-
-        when(commonContent.solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant1())).thenReturn(getFinalOrderSolicitorsVars(data,
-                data.getApplicant1()));
-
-        notification.sendToApplicant1Solicitor(data, 1L);
-
-        verify(notificationService).sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
-                argThat(allOf(
-                        hasEntry(IS_FINAL_ORDER, YES),
-                        hasEntry(SOLICITOR_NAME, data.getApplicant1().getSolicitor().getName())
-                )),
-                eq(ENGLISH)
-        );
-        verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant1());
-    }
-
-    @Test
     void shouldSendApplicant2SolicitorNotificationIfJointApplicationAndApplicant2HasNotAppliedForFinalOrderYet() {
         CaseData data = validJointApplicant1CaseData();
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
@@ -241,7 +166,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
             .build());
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
-            .applicant1AppliedForFinalOrder(YesOrNo.YES)
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
             .build());
 
         when(commonContent.solicitorTemplateVars(data, 1L, data.getApplicant2()))
@@ -259,36 +184,6 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         verifyNoMoreInteractions(notificationService);
 
         verify(commonContent).solicitorTemplateVars(data, 1L, data.getApplicant2());
-    }
-
-    @Test
-    void shouldSendToApplicant1SolicitorsNotificationIfJointApplicationAndApplicant2SolicitorsHaveAppliedForFinalOrder() {
-        CaseData data = caseData();
-        data.setApplicationType(JOINT_APPLICATION);
-        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
-        data.setFinalOrder(FinalOrder.builder()
-            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
-            .applicant1AppliedForFinalOrder(YesOrNo.YES)
-            .applicant2AppliedForFinalOrder(YesOrNo.YES)
-            .build());
-
-        data.getApplicant1().setSolicitor(Solicitor.builder()
-            .name("App1 Sol")
-            .reference("12344")
-            .email(TEST_SOLICITOR_EMAIL)
-            .build());
-
-        notification.sendToApplicant1Solicitor(data, 1L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_SOLICITOR_EMAIL),
-            eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
-            any(),
-            eq(ENGLISH)
-        );
-
-        verifyNoMoreInteractions(notificationService);
-        verify(commonContent).solicitorsFinalOrderTemplateVars(data, 1L, data.getApplicant1());
     }
 
     @Test
@@ -314,7 +209,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
             .build());
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
-            .applicant1AppliedForFinalOrder(YesOrNo.YES)
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
             .build());
 
         when(commonContent.solicitorTemplateVars(data, 1L, data.getApplicant1()))

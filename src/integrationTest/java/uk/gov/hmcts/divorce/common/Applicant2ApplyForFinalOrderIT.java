@@ -114,6 +114,8 @@ public class Applicant2ApplyForFinalOrderIT {
 
     @Test
     void shouldNotSendEmailsToApplicant2InFinalOrderOverdueState() throws Exception {
+        setMockClock(clock);
+
         final CaseData data = validApplicant2CaseData();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().minusDays(30)).build());
@@ -151,7 +153,7 @@ public class Applicant2ApplyForFinalOrderIT {
             .build());
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
-            .applicant2AppliedForFinalOrder(YesOrNo.YES)
+            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
@@ -191,7 +193,7 @@ public class Applicant2ApplyForFinalOrderIT {
             .build());
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
-            .applicant2AppliedForFinalOrder(YesOrNo.YES)
+            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)

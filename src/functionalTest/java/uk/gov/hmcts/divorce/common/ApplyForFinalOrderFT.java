@@ -71,14 +71,16 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForJointSolicitorCaseSecondInTime() throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST_JOINT_SOLICITOR);
-        caseData.put("applicant2AppliedForFinalOrder", "Yes");
+        caseData.put("applicant1AppliedForFinalOrderFirst", "No");
+        caseData.put("applicant2AppliedForFinalOrderFirst", "Yes");
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(1).toString());
 
         final Response response = triggerCallback(caseData, FINAL_ORDER_REQUESTED, ABOUT_TO_SUBMIT_URL, AwaitingJointFinalOrder);
 
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE_JOINT_SOLICITOR));
         jsonDocument.set("state", "FinalOrderRequested");
-        jsonDocument.set("data.applicant1AppliedForFinalOrder", "Yes");
+        jsonDocument.set("data.applicant1AppliedForFinalOrderFirst", "No");
+        jsonDocument.set("data.applicant2AppliedForFinalOrderFirst", "Yes");
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 

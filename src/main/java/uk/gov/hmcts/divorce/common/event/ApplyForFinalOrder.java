@@ -12,14 +12,18 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
+import static java.util.Objects.isNull;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
@@ -49,8 +53,11 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     @Autowired
     private ProgressFinalOrderState progressFinalOrderState;
 
+    @Autowired
+    private Clock clock;
+
     private static final List<CcdPageConfiguration> pages = List.of(
-            new ApplyForFinalOrderDetails()
+        new ApplyForFinalOrderDetails()
     );
 
     @Override
@@ -70,10 +77,10 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_1_SOLICITOR)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grantHistoryOnly(
-                    CASE_WORKER,
-                    SUPER_USER,
-                    LEGAL_ADVISOR,
-                    APPLICANT_2_SOLICITOR));
+                CASE_WORKER,
+                SUPER_USER,
+                LEGAL_ADVISOR,
+                APPLICANT_2_SOLICITOR));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -81,21 +88,24 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
         log.info("Apply for Final Order about to submit callback invoked for Case Id: {}", details.getId());
 
-        CaseData data = details.getData();
+        if (AwaitingFinalOrder.equals(details.getState())) {
+            FinalOrder finalOrder = details.getData().getFinalOrder();
 
-        if (Objects.isNull(data.getFinalOrder().getApplicant1AppliedForFinalOrder())) {
-            data.getFinalOrder().setApplicant1AppliedForFinalOrder(YES);
+            if (isNull(finalOrder.getApplicant1AppliedForFinalOrderFirst())
+                && isNull(finalOrder.getApplicant2AppliedForFinalOrderFirst())) {
+                finalOrder.setApplicant2AppliedForFinalOrderFirst(NO);
+                finalOrder.setApplicant1AppliedForFinalOrderFirst(YES);
+                finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
+            }
+
+            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, details.getData(), details.getId());
         }
 
-        if (!FinalOrderOverdue.equals(details.getState())) {
-            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, data, details.getId());
-            details.setData(data);
-            progressFinalOrderState.apply(details);
-        }
+        var updatedDetails = progressFinalOrderState.apply(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(details.getState())
+            .data(updatedDetails.getData())
+            .state(updatedDetails.getState())
             .build();
     }
 }
