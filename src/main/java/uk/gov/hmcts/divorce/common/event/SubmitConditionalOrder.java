@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -20,11 +21,11 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 import static java.util.List.of;
@@ -166,6 +167,19 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         if (appQuestions.getStatementOfTruth() == null || !appQuestions.getStatementOfTruth().toBoolean()) {
             return of("The applicant must agree that the facts stated in the application are true");
         }
+
+        if (isEmpty(appQuestions.getApplyForConditionalOrder())) {
+            return of("The applicant must declare whether they want to continue with the conditional order");
+        }
+
+        if (isEmpty(appQuestions.getConfirmInformationStillCorrect())) {
+            return of("The applicant must declare whether the information is still correct");
+        }
+
+        if (appQuestions.getConfirmInformationStillCorrect() == YesOrNo.NO && isEmpty(appQuestions.getReasonInformationNotCorrect())) {
+            return of("The applicant must provide a reason that the information is not correct");
+        }
+
         return emptyList();
     }
 
