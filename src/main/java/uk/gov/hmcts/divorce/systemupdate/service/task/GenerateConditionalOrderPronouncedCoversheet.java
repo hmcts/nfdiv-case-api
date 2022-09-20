@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_PRONOUNCED_COVERSHEET_OFFLINE_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -69,7 +70,9 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
                 caseData,
                 caseId,
                 caseData.getApplicant2(),
-                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2
+                caseData.getApplicationType().isSole()
+                    ? CONDITIONAL_ORDER_PRONOUNCED_COVERSHEET_OFFLINE_RESPONDENT
+                    : CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2
             );
         }
 

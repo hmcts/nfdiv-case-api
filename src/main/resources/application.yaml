@@ -323,6 +323,7 @@ docmosis:
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS2-V4.docx
       CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx
+      CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx
       CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order.docx
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted.docx
     welsh:
@@ -370,6 +371,7 @@ docmosis:
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS2-V4.docx #TODO: update welsh content
       CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx #TODO: update welsh content
+      CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx #TODO: update welsh content
       CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order.docx #TODO: update welsh content
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx
   templateVars:
