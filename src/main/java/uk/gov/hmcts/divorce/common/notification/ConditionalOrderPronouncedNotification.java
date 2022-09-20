@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.common.notification;
 
-import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronouncedPrinter;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static java.lang.String.format;
@@ -140,7 +140,8 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
             throw new NotificationTemplateException(format(MISSING_FIELD_MESSAGE, "coGrantedDate", caseId));
         }
 
-        DateTimeFormatter dateTimeFormatter = ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
+        DateTimeFormatter dateTimeFormatter = ENGLISH.equals(applicant.getLanguagePreference())
+                ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
 
         final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
         templateVars.put(COURT_NAME, conditionalOrder.getCourt().getLabel());

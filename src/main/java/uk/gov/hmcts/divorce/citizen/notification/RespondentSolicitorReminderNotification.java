@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
-import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,6 +9,7 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -54,7 +54,8 @@ public class RespondentSolicitorReminderNotification implements ApplicantNotific
         var templateVars = commonContent.basicTemplateVars(caseData, id);
 
         Applicant respondent = caseData.getApplicant2();
-        DateTimeFormatter dateTimeFormatter = ENGLISH.equals(respondent.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
+        DateTimeFormatter dateTimeFormatter = ENGLISH.equals(respondent.getLanguagePreference())
+                ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
 
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate()
                 .format(dateTimeFormatter));

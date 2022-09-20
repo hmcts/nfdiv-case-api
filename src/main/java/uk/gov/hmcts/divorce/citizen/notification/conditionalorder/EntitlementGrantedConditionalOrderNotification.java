@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
-import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.systemupdate.service.print.CertificateOfEntitlementPrinter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
 
@@ -128,7 +128,8 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
 
-        DateTimeFormatter dateTimeFormatter = ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
+        DateTimeFormatter dateTimeFormatter = ENGLISH.equals(applicant.getLanguagePreference())
+                ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
 
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
         final LocalDateTime dateAndTimeOfHearing = conditionalOrder.getDateAndTimeOfHearing();

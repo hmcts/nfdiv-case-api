@@ -46,7 +46,8 @@ public class ApplicationIssuedOverseasNotification implements ApplicantNotificat
             caseData.getApplicant1(),
             caseData.getApplicant2());
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(28)
-                .format(ENGLISH.equals(caseData.getApplicant1().getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+                .format(ENGLISH.equals(caseData.getApplicant1().getLanguagePreference())
+                        ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
         return templateVars;
     }
 }

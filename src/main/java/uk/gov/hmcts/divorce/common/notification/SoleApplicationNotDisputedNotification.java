@@ -126,7 +126,8 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
 
         templateVars.put(ISSUE_DATE_PLUS_141_DAYS,
             caseData.getApplication().getIssueDate().plusDays(holdingOffsetDays)
-                    .format(ENGLISH.equals(caseData.getApplicant2().getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+                    .format(ENGLISH.equals(caseData.getApplicant2().getLanguagePreference())
+                            ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
 
         templateVars.put(
             SOLICITOR_REFERENCE,

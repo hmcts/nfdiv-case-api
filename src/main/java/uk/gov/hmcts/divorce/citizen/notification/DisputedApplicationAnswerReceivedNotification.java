@@ -43,7 +43,8 @@ public class DisputedApplicationAnswerReceivedNotification implements ApplicantN
             templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
             templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
             templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate()
-                    .format(ENGLISH.equals(caseData.getApplicant1().getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+                    .format(ENGLISH.equals(caseData.getApplicant1().getLanguagePreference())
+                            ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
             templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
             var solicitor = caseData.getApplicant1().getSolicitor();

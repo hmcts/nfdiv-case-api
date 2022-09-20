@@ -207,7 +207,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(
             REVIEW_DEADLINE_DATE,
             holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate())
-                    .format(ENGLISH.equals(caseData.getApplicant2().getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER)
+                    .format(ENGLISH.equals(caseData.getApplicant2().getLanguagePreference())
+                            ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER)
         );
         templateVars.put(
             CREATE_ACCOUNT_LINK,
@@ -288,7 +289,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         return templateVars;
     }
 
-    private Map<String, String> commonSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
+    private Map<String, String> commonSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData,
+                                                                               final Long caseId, Applicant applicant) {
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
 
         templateVars.put(CASE_ID, caseId.toString());

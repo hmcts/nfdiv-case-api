@@ -83,7 +83,8 @@ public class AosReminderNotifications implements ApplicantNotification {
     private Map<String, String> reminderToSoleRespondentTemplateVars(final CaseData caseData, Long id) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(16)
-                .format(ENGLISH.equals(caseData.getApplicant2().getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+                .format(ENGLISH.equals(caseData.getApplicant2().getLanguagePreference())
+                        ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
         templateVars.put(
             CREATE_ACCOUNT_LINK,
             config.getTemplateVars()
