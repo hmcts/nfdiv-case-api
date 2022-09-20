@@ -86,10 +86,8 @@ public class ConditionalOrderPronouncedTemplateContent {
 
         if (WELSH.equals(languagePreference)) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, isDivorce ? MARRIAGE_CY : CIVIL_PARTNERSHIP_CY);
-
         } else {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, isDivorce ? MARRIAGE : CIVIL_PARTNERSHIP);
-
         }
 
         templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference));
