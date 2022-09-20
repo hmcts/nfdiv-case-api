@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMI
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
@@ -100,12 +101,13 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     private Map<String, String> disputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(SUBMISSION_RESPONSE_DATE,
-            caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays).format(DATE_TIME_FORMATTER));
+            caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays)
+                    .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
         return templateVars;
     }
 
     private Map<String, String> applicant1SolicitorTemplateVars(CaseData caseData, Long id) {
-        Map<String, String> templateVars = solicitorTemplateVars(caseData, id);
+        Map<String, String> templateVars = solicitorTemplateVars(caseData, id, caseData.getApplicant1());
 
         Solicitor applicant1Solicitor = caseData.getApplicant1().getSolicitor();
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
@@ -119,7 +121,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     }
 
     private Map<String, String> applicant2SolicitorTemplateVars(CaseData caseData, Long id) {
-        Map<String, String> templateVars = solicitorTemplateVars(caseData, id);
+        Map<String, String> templateVars = solicitorTemplateVars(caseData, id, caseData.getApplicant2());
 
         Solicitor applicant2Solicitor = caseData.getApplicant2().getSolicitor();
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
@@ -132,7 +134,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
         return templateVars;
     }
 
-    private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id) {
+    private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
         var templateVars = commonContent.basicTemplateVars(caseData, id);
 
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
@@ -140,8 +142,10 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
         templateVars.put(ISSUE_DATE_PLUS_37_DAYS,
-            caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays).format(DATE_TIME_FORMATTER));
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+            caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays)
+                    .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate()
+                .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
 
         templateVars.put(IS_UNDISPUTED, NO);
         templateVars.put(IS_DISPUTED, YES);

@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Objects;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
@@ -19,6 +20,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENC
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPLICANT1_DISPUTE_ANSWER_RECEIVED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
@@ -40,7 +42,8 @@ public class DisputedApplicationAnswerReceivedNotification implements ApplicantN
             var templateVars = commonContent.basicTemplateVars(caseData, id);
             templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
             templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
-            templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+            templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate()
+                    .format(ENGLISH.equals(caseData.getApplicant1().getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
             templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
             var solicitor = caseData.getApplicant1().getSolicitor();

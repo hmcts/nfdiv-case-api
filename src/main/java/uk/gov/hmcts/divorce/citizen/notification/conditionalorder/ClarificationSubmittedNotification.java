@@ -17,11 +17,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_SUBMISSION_DATE_PLUS_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CLARIFICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_PARTNER_CLARIFICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
@@ -105,7 +107,8 @@ public class ClarificationSubmittedNotification implements ApplicantNotification
                                                    final Applicant partner) {
 
         Map<String, String> templateContent = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
-        templateContent.put(PRONOUNCE_BY_DATE, LocalDate.now(clock).plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER));
+        templateContent.put(PRONOUNCE_BY_DATE, LocalDate.now(clock).plusDays(CO_SUBMISSION_DATE_PLUS_DAYS)
+                .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
         return templateContent;
     }
 }

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
@@ -31,6 +32,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
@@ -123,7 +125,8 @@ public class FinalOrderNotification implements ApplicantNotification {
         templateVars.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate()
+                .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
 
         return templateVars;
     }
@@ -136,7 +139,7 @@ public class FinalOrderNotification implements ApplicantNotification {
 
         templateVars.put(WILL_BE_CHECKED_WITHIN_2_DAYS, isFinalOrderEligible ? YES : NO);
         templateVars.put(WILL_BE_CHECKED_WITHIN_14_DAYS, !isFinalOrderEligible ? YES : NO);
-        templateVars.put(NOW_PLUS_14_DAYS, !isFinalOrderEligible ? getNowPlus14Days() : "");
+        templateVars.put(NOW_PLUS_14_DAYS, !isFinalOrderEligible ? getNowPlus14Days(caseData.getApplicant1()) : "");
 
         return templateVars;
     }
@@ -147,12 +150,13 @@ public class FinalOrderNotification implements ApplicantNotification {
 
         templateVars.put(WILL_BE_CHECKED_WITHIN_2_DAYS, NO);
         templateVars.put(WILL_BE_CHECKED_WITHIN_14_DAYS, YES);
-        templateVars.put(NOW_PLUS_14_DAYS, getNowPlus14Days());
+        templateVars.put(NOW_PLUS_14_DAYS, getNowPlus14Days(caseData.getApplicant2()));
 
         return templateVars;
     }
 
-    private String getNowPlus14Days() {
-        return LocalDate.now(clock).plusDays(14).format(DATE_TIME_FORMATTER);
+    private String getNowPlus14Days(Applicant applicant) {
+        return LocalDate.now(clock).plusDays(14)
+                .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER);
     }
 }
