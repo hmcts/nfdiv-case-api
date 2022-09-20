@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1Appl
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -205,7 +206,11 @@ class SubmitConditionalOrderTest {
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES)
+                .submittedDate(getExpectedLocalDateTime())
+                .applyForConditionalOrder(YES)
+                .confirmInformationStillCorrect(YES)
+                .build())
             .build());
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -284,7 +289,15 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSendApp1SolicitorAndApp2SolicitorNotificationsOnAboutToSubmit() {
         setupMocks(clock);
-        CaseData caseData = caseData();
+        CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().build())
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().statementOfTruth(YES).build())
+                .build())
+            .applicationType(SOLE_APPLICATION)
+            .build();
+
+
         caseData.setApplicant1(Applicant
             .builder()
             .solicitorRepresented(YES)
@@ -334,6 +347,8 @@ class SubmitConditionalOrderTest {
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YES)
+                    .applyForConditionalOrder(YES)
+                    .confirmInformationStillCorrect(YES)
                     .build())
                 .build())
             .build();
@@ -359,6 +374,8 @@ class SubmitConditionalOrderTest {
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YES)
+                    .applyForConditionalOrder(YES)
+                    .confirmInformationStillCorrect(YES)
                     .build())
                 .build())
             .build();
@@ -374,11 +391,19 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSetIsApplicant2ToOfflineIfTheyAreNotLinkedAndNotSubmittedAosAndSuccessfulBailiffApplication() {
         setupMocks(clock);
-        final CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
-        caseData.getConditionalOrder().setLastApprovedServiceApplicationIsBailiffApplication(YES);
-        caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .caseInvite(CaseInvite.builder().accessCode("ACCESS12").build())
+            .acknowledgementOfService(AcknowledgementOfService.builder().build())
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YES)
+                    .applyForConditionalOrder(YES)
+                    .confirmInformationStillCorrect(YES)
+                    .build())
+                .lastApprovedServiceApplicationIsBailiffApplication(YES)
+                .build())
+            .build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).id(1L).build();
 
@@ -390,11 +415,19 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSetIsApplicant2ToOfflineIfTheyAreNotLinkedAndNotSubmittedAosAndServiceConfirmed() {
         setupMocks(clock);
-        final CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
-        caseData.getConditionalOrder().setServiceConfirmed(YES);
-        caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .caseInvite(CaseInvite.builder().accessCode("ACCESS12").build())
+            .acknowledgementOfService(AcknowledgementOfService.builder().build())
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YES)
+                    .applyForConditionalOrder(YES)
+                    .confirmInformationStillCorrect(YES)
+                    .build())
+                .serviceConfirmed(YES)
+                .build())
+            .build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).id(1L).build();
 
@@ -406,12 +439,23 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSetIsApplicant2ToOfflineIfTheyAreNotLinkedAndNotSubmittedAosAndDeemedApplicationSuccessful() {
         setupMocks(clock);
-        final CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
-        caseData.getAlternativeService().setServiceApplicationGranted(YES);
-        caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
-        caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .caseInvite(CaseInvite.builder().accessCode("ACCESS12").build())
+            .acknowledgementOfService(AcknowledgementOfService.builder().build())
+            .alternativeService(AlternativeService.builder()
+                .serviceApplicationGranted(YES)
+                .alternativeServiceType(DEEMED)
+                .build())
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YES)
+                    .applyForConditionalOrder(YES)
+                    .confirmInformationStillCorrect(YES)
+                    .build())
+                .lastApprovedServiceApplicationIsBailiffApplication(YES)
+                .build())
+            .build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).id(1L).build();
 
@@ -423,12 +467,23 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSetIsApplicant2ToOfflineIfTheyAreNotLinkedAndNotSubmittedAosAndDispensedApplicationSuccessful() {
         setupMocks(clock);
-        final CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
-        caseData.getAlternativeService().setServiceApplicationGranted(YES);
-        caseData.getAlternativeService().setAlternativeServiceType(DISPENSED);
-        caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .caseInvite(CaseInvite.builder().accessCode("ACCESS12").build())
+            .acknowledgementOfService(AcknowledgementOfService.builder().build())
+            .alternativeService(AlternativeService.builder()
+                .serviceApplicationGranted(YES)
+                .alternativeServiceType(DISPENSED)
+                .build())
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YES)
+                    .applyForConditionalOrder(YES)
+                    .confirmInformationStillCorrect(YES)
+                    .build())
+                .lastApprovedServiceApplicationIsBailiffApplication(YES)
+                .build())
+            .build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).id(1L).build();
 
