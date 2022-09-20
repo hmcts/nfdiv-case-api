@@ -1,19 +1,16 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
-import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -53,13 +50,6 @@ public class AosResponseLetterTemplateContentTest {
 
     @InjectMocks
     private AosResponseLetterTemplateContent templateContent;
-
-    @BeforeEach
-    public void setUp() {
-        ReflectionTestUtils.setField(docmosisCommonContent, "poBox", "PO Box 13226");
-        ReflectionTestUtils.setField(docmosisCommonContent, "town", "Harlow");
-        ReflectionTestUtils.setField(docmosisCommonContent, "postcode", "CM20 9UG");
-    }
 
     @Test
     public void shouldSuccessfullyApplyDivorceContent() {
