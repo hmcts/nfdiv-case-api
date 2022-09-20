@@ -9,11 +9,9 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
@@ -26,7 +24,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONS
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 
 @Slf4j
 @Component
@@ -54,13 +51,11 @@ public class RespondentSolicitorReminderNotification implements ApplicantNotific
         var templateVars = commonContent.basicTemplateVars(caseData, id);
 
         Applicant respondent = caseData.getApplicant2();
-        DateTimeFormatter dateTimeFormatter = ENGLISH.equals(respondent.getLanguagePreference())
-                ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
 
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate()
-                .format(dateTimeFormatter));
+                .format(DATE_TIME_FORMATTER));
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate()
-                .format(dateTimeFormatter));
+                .format(DATE_TIME_FORMATTER));
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SOLICITOR_NAME, respondent.getSolicitor().getName());

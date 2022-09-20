@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -789,16 +788,13 @@ public class ApplicationIssuedNotificationTest {
     private Map<String, String> nopSolicitorTemplateVars(Applicant applicant) {
         final Map<String, String> templateVars = solicitorTemplateVars();
 
-        DateTimeFormatter dateTimeFormatter = ENGLISH.equals(applicant.getLanguagePreference())
-                ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
-
         templateVars.put(SOLICITOR_REFERENCE, NOT_PROVIDED);
-        templateVars.put(DUE_DATE, LOCAL_DATE.plusDays(7).format(dateTimeFormatter));
-        templateVars.put(ISSUE_DATE, LOCAL_DATE.format(dateTimeFormatter));
+        templateVars.put(DUE_DATE, LOCAL_DATE.plusDays(7).format(DATE_TIME_FORMATTER));
+        templateVars.put(ISSUE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER));
         templateVars.put(SIGN_IN_URL, null);
         templateVars.put(IS_DISSOLUTION, NO);
         templateVars.put(IS_DIVORCE, YES);
-        templateVars.put(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.plusDays(141).format(dateTimeFormatter));
+        templateVars.put(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.plusDays(141).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 

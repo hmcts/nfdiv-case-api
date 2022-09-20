@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMI
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -101,7 +101,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     private Map<String, String> notDisputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate()
-                .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }
 
@@ -125,9 +125,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
         templateVars.put(ISSUE_DATE_PLUS_141_DAYS,
-            caseData.getApplication().getIssueDate().plusDays(holdingOffsetDays)
-                    .format(ENGLISH.equals(caseData.getApplicant2().getLanguagePreference())
-                            ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+            caseData.getApplication().getIssueDate().plusDays(holdingOffsetDays).format(DATE_TIME_FORMATTER));
 
         templateVars.put(
             SOLICITOR_REFERENCE,
@@ -146,8 +144,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
         templateVars.put(ISSUE_DATE_PLUS_37_DAYS, "");
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate()
-                .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
 
         templateVars.put(IS_UNDISPUTED, YES);
         templateVars.put(IS_DISPUTED, NO);

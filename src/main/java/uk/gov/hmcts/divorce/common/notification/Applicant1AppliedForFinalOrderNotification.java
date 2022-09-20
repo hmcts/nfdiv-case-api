@@ -17,8 +17,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -80,6 +79,6 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
 
     private String getNowPlus14Days(Applicant applicant) {
         return LocalDate.now(clock).plusDays(14)
-                .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER);
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()));
     }
 }

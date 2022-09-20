@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
@@ -26,7 +25,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENC
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
@@ -81,8 +79,7 @@ public class SolicitorAppliedForConditionalOrderNotification implements Applican
         templateVars.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate()
-                .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }

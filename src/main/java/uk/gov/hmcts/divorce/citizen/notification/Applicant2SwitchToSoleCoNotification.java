@@ -11,15 +11,13 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_SUBMISSION_DATE_PLUS_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCHED_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -71,7 +69,7 @@ public class Applicant2SwitchToSoleCoNotification implements ApplicantNotificati
                 .getConditionalOrderApplicant2Questions()
                 .getSubmittedDate()
                 .plusDays(CO_SUBMISSION_DATE_PLUS_DAYS)
-                .format(ENGLISH.equals(data.getApplicant2().getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER)
+                .format(getDateTimeFormatterForPreferredLanguage(data.getApplicant2().getLanguagePreference()))
         );
 
         notificationService.sendEmail(

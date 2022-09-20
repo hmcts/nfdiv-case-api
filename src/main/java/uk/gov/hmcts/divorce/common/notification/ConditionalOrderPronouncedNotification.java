@@ -19,7 +19,6 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT;
@@ -37,7 +36,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDIT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -140,8 +139,7 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
             throw new NotificationTemplateException(format(MISSING_FIELD_MESSAGE, "coGrantedDate", caseId));
         }
 
-        DateTimeFormatter dateTimeFormatter = ENGLISH.equals(applicant.getLanguagePreference())
-                ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
+        DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
 
         final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
         templateVars.put(COURT_NAME, conditionalOrder.getCourt().getLabel());
@@ -163,8 +161,7 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
         templateVars.put(APPLICANT2_LABEL, caseData.getApplicationType().isSole() ? RESPONDENT : APPLICANT_2);
         templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));
         templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43,
-            caseData.getConditionalOrder().getGrantedDate().plusDays(finalOrderOffsetDays)
-                    .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+            caseData.getConditionalOrder().getGrantedDate().plusDays(finalOrderOffsetDays).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 }

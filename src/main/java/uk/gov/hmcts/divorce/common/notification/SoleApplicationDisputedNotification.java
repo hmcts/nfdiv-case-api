@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMI
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -102,7 +102,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays)
-                    .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+                    .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }
 
@@ -142,10 +142,8 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
         templateVars.put(ISSUE_DATE_PLUS_37_DAYS,
-            caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays)
-                    .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate()
-                .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+            caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays).format(DATE_TIME_FORMATTER));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
 
         templateVars.put(IS_UNDISPUTED, NO);
         templateVars.put(IS_DISPUTED, YES);

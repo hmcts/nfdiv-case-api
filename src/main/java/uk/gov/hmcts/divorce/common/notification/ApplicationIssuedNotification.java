@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -195,7 +195,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(
             REVIEW_DEADLINE_DATE,
             holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate())
-                    .format(ENGLISH.equals(languagePreference) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER)
+                    .format(getDateTimeFormatterForPreferredLanguage(languagePreference))
         );
 
         return templateVars;
@@ -207,9 +207,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(
             REVIEW_DEADLINE_DATE,
             holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate())
-                    .format(ENGLISH.equals(caseData.getApplicant2().getLanguagePreference())
-                            ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER)
-        );
+                    .format(getDateTimeFormatterForPreferredLanguage(caseData.getApplicant2().getLanguagePreference())));
         templateVars.put(
             CREATE_ACCOUNT_LINK,
             config.getTemplateVars()
@@ -224,8 +222,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(
             SUBMISSION_RESPONSE_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
-                    .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER)
-        );
+                    .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }
 
@@ -244,7 +241,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
-                    .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+                    .format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }
@@ -264,7 +261,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             caseData.getApplication().getIssueDate().plusDays(16)
-                    .format(ENGLISH.equals(applicant2.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+                    .format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }
@@ -284,7 +281,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
-                    .format(ENGLISH.equals(applicant2.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+                    .format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }
@@ -298,9 +295,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate()
-                .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+                .format(DATE_TIME_FORMATTER));
         templateVars.put(DUE_DATE, caseData.getDueDate()
-                .format(ENGLISH.equals(applicant.getLanguagePreference()) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER));
+                .format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }

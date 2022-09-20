@@ -20,7 +20,6 @@ import java.util.Objects;
 
 import static java.lang.String.join;
 import static java.time.temporal.ChronoUnit.DAYS;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
@@ -39,9 +38,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -128,8 +126,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
 
-        DateTimeFormatter dateTimeFormatter = ENGLISH.equals(applicant.getLanguagePreference())
-                ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
+        DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
 
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
         final LocalDateTime dateAndTimeOfHearing = conditionalOrder.getDateAndTimeOfHearing();
