@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -417,7 +419,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            nopSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(caseData.getApplicant1()),
             ENGLISH
         );
 
@@ -437,9 +439,7 @@ public class ApplicationIssuedNotificationTest {
             .build();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(holdingPeriodService.getDueDateFor(LOCAL_DATE))
-                .thenReturn(LocalDate.parse(caseData.getApplication().getIssueDate().plusDays(141).format(WELSH_DATE_TIME_FORMATTER),
-                        WELSH_DATE_TIME_FORMATTER));
+        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
@@ -448,7 +448,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            nopSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(caseData.getApplicant1()),
             WELSH
         );
 
@@ -476,7 +476,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE,
-            nopSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(caseData.getApplicant1()),
             ENGLISH
         );
 
@@ -560,7 +560,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            nopSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(caseData.getApplicant2()),
             ENGLISH
         );
 
@@ -787,16 +787,19 @@ public class ApplicationIssuedNotificationTest {
         return templateVars;
     }
 
-    private Map<String, String> nopSolicitorTemplateVars() {
+    private Map<String, String> nopSolicitorTemplateVars(Applicant applicant) {
         final Map<String, String> templateVars = solicitorTemplateVars();
 
+        DateTimeFormatter dateTimeFormatter = ENGLISH.equals(applicant.getLanguagePreference())
+                ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
+
         templateVars.put(SOLICITOR_REFERENCE, NOT_PROVIDED);
-        templateVars.put(DUE_DATE, LOCAL_DATE.plusDays(7).format(DATE_TIME_FORMATTER));
-        templateVars.put(ISSUE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER));
+        templateVars.put(DUE_DATE, LOCAL_DATE.plusDays(7).format(dateTimeFormatter));
+        templateVars.put(ISSUE_DATE, LOCAL_DATE.format(dateTimeFormatter));
         templateVars.put(SIGN_IN_URL, null);
         templateVars.put(IS_DISSOLUTION, NO);
         templateVars.put(IS_DIVORCE, YES);
-        templateVars.put(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.plusDays(141).format(DATE_TIME_FORMATTER));
+        templateVars.put(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.plusDays(141).format(dateTimeFormatter));
         return templateVars;
     }
 
