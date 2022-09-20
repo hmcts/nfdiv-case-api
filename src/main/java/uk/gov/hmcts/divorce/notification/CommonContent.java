@@ -239,10 +239,6 @@ public class CommonContent {
             && caseData.isDivorce()
             && FEMALE.equals(partner.getGender())
             ? YES : NO);
-        templateVars.put(SPOUSE_JOINT, jointApplication
-            && caseData.isDivorce()
-            && isNull(partner.getGender())
-            ? YES : NO);
         templateVars.put(CIVIL_PARTNER_JOINT, jointApplication
             && !caseData.isDivorce()
             ? YES : NO);
