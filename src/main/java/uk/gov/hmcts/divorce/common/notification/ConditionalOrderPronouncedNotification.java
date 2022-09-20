@@ -20,6 +20,7 @@ import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_PRONOUNCED_COVERSHEET_OFFLINE_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
@@ -117,7 +118,9 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
         log.info("Sending conditional order letter to applicant 2 for case: {}", caseId);
-        conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
+        conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId, caseData.getApplicationType().isSole()
+            ? CONDITIONAL_ORDER_PRONOUNCED_COVERSHEET_OFFLINE_RESPONDENT
+            : CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
     }
 
     private Map<String, String> templateVars(final CaseData caseData,
