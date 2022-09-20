@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.solicitor.client.pba.PbaRefDataClient;
 import uk.gov.hmcts.divorce.systemupdate.service.ScheduledTaskRunner;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
+import uk.gov.hmcts.reform.ccd.client.CaseEventsApi;
 import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
@@ -41,7 +42,8 @@ import javax.annotation.PostConstruct;
         DocumentManagementClient.class,
         OrganisationClient.class,
         PbaRefDataClient.class,
-        PaymentPbaClient.class
+        PaymentPbaClient.class,
+        CaseEventsApi.class
     }
 )
 @EnableScheduling
