@@ -35,6 +35,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -82,6 +83,8 @@ class SetAosIsDraftedToYesMigrationTest {
 
     @Test
     void shouldSetAosIsDraftedToYesToSelectedCases() {
+
+        setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", true);
 
         final AtomicInteger predicateIndex = new AtomicInteger(0);
         final List<Boolean> predicateValues = List.of(TRUE, FALSE, TRUE);
@@ -141,6 +144,8 @@ class SetAosIsDraftedToYesMigrationTest {
     @Test
     void shouldDoNothingAndLogErrorIfSearchFails() {
 
+        setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", true);
+
         final CcdSearchCaseException exception =
             new CcdSearchCaseException("Failed to search cases", mock(FeignException.class));
         when(ccdSearchService
@@ -173,6 +178,8 @@ class SetAosIsDraftedToYesMigrationTest {
 
     @Test
     void shouldContinueProcessingIfThereIsConflictDuringSubmission() {
+
+        setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", true);
 
         final AtomicInteger predicateIndex = new AtomicInteger(0);
         final List<Boolean> predicateValues = List.of(TRUE, TRUE);
@@ -228,6 +235,8 @@ class SetAosIsDraftedToYesMigrationTest {
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
 
+        setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", true);
+
         final AtomicInteger predicateIndex = new AtomicInteger(0);
         final List<Boolean> predicateValues = List.of(TRUE, TRUE);
 
@@ -277,6 +286,17 @@ class SetAosIsDraftedToYesMigrationTest {
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdSearchService);
+    }
+
+    @Test
+    void shouldSkipProcessingIfEnvironmentVariableIsSetToFalse() {
+
+        setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", false);
+
+        setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
+
+        verify(logger).info("Skipping SetAosIsDraftedToYesMigration, MIGRATE_AOS_IS_DRAFTED=false");
+        verifyNoInteractions(ccdSearchService, ccdUpdateService, hasAosDraftedEventPredicate);
     }
 
     private BoolQueryBuilder getQuery() {
