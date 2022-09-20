@@ -108,7 +108,7 @@ public class ApplicationWithdrawnNotificationTest {
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
-        when(commonContent.getPartner(data, data.getApplicant2())).thenReturn("husband");
+        when(commonContent.getPartner(data, data.getApplicant1())).thenReturn("husband");
 
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
@@ -125,7 +125,7 @@ public class ApplicationWithdrawnNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-        verify(commonContent).getPartner(data, data.getApplicant2());
+        verify(commonContent).getPartner(data, data.getApplicant1());
     }
 
     @Test
@@ -138,7 +138,7 @@ public class ApplicationWithdrawnNotificationTest {
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
-        when(commonContent.getPartner(data, data.getApplicant2())).thenReturn("husband");
+        when(commonContent.getPartner(data, data.getApplicant1())).thenReturn("husband");
 
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
@@ -155,7 +155,7 @@ public class ApplicationWithdrawnNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-        verify(commonContent).getPartner(data, data.getApplicant2());
+        verify(commonContent).getPartner(data, data.getApplicant1());
     }
 
     @Test
