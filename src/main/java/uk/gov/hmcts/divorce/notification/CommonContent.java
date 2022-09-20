@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -74,6 +75,7 @@ public class CommonContent {
     public static final String JOINT_CONDITIONAL_ORDER = "joint conditional order";
     public static final String HUSBAND_JOINT = "husbandJoint";
     public static final String WIFE_JOINT = "wifeJoint";
+    public static final String SPOUSE_JOINT = "spouseJoint";
     public static final String CIVIL_PARTNER_JOINT = "civilPartnerJoint";
 
     public static final String DUE_DATE = " due date";
@@ -232,11 +234,17 @@ public class CommonContent {
         templateVars.put(JOINT_CONDITIONAL_ORDER, jointApplication ? YES : NO);
         templateVars.put(HUSBAND_JOINT, jointApplication
             && caseData.isDivorce()
+            && nonNull(partner.getGender())
             && partner.getGender().equals(MALE)
             ? YES : NO);
         templateVars.put(WIFE_JOINT, jointApplication
             && caseData.isDivorce()
+            && nonNull(partner.getGender())
             && partner.getGender().equals(FEMALE)
+            ? YES : NO);
+        templateVars.put(SPOUSE_JOINT, jointApplication
+            && caseData.isDivorce()
+            && isNull(partner.getGender())
             ? YES : NO);
         templateVars.put(CIVIL_PARTNER_JOINT, jointApplication
             && !caseData.isDivorce()

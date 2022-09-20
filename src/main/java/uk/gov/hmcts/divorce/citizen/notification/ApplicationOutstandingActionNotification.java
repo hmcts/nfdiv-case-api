@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
@@ -108,10 +109,14 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY, soleServingAnotherWay ? YES : NO);
         templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, soleServingAnotherWay && caseData.isDivorce() ? YES : NO);
-        templateVars.put(SERVE_WIFE_ANOTHER_WAY,
-            soleServingAnotherWay && caseData.isDivorce() && caseData.getApplicant2().getGender().equals(Gender.FEMALE) ? YES : NO);
-        templateVars.put(SERVE_HUSBAND_ANOTHER_WAY,
-            soleServingAnotherWay && caseData.isDivorce() && caseData.getApplicant2().getGender().equals(Gender.MALE) ? YES : NO);
+        templateVars.put(SERVE_WIFE_ANOTHER_WAY, soleServingAnotherWay
+            && caseData.isDivorce()
+            && nonNull(caseData.getApplicant2().getGender())
+            && caseData.getApplicant2().getGender().equals(Gender.FEMALE) ? YES : NO);
+        templateVars.put(SERVE_HUSBAND_ANOTHER_WAY, soleServingAnotherWay
+            && caseData.isDivorce()
+            && nonNull(caseData.getApplicant2().getGender())
+            && caseData.getApplicant2().getGender().equals(Gender.MALE) ? YES : NO);
         templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, soleServingAnotherWay && !caseData.isDivorce() ? YES : NO);
         return templateVars;
     }
