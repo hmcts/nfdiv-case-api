@@ -26,7 +26,6 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -299,7 +298,6 @@ class SetAosIsDraftedToYesMigrationTest {
                         .should(matchQuery(STATE, IssuedToBailiff))
                         .should(matchQuery(STATE, AwaitingService))
                         .should(matchQuery(STATE, AwaitingGeneralConsideration)))
-                .mustNot(existsQuery("data.dateAosSubmitted"))
                 .mustNot(matchQuery("data.aosIsDrafted", YES));
         return query;
     }

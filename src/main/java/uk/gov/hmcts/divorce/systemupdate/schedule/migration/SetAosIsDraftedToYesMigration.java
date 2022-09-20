@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -54,12 +53,18 @@ public class SetAosIsDraftedToYesMigration implements Migration {
 
         log.info("Started SetAosIsDraftedToYesMigration");
         try {
-            searchForAosDraftedCases(user, serviceAuthorization)
-                .forEach(caseDetails -> setAosIsDrafted(caseDetails, user, serviceAuthorization));
+
+            final List<CaseDetails> caseDetails = searchForAosDraftedCases(user, serviceAuthorization);
+
+            log.info("SetAosIsDraftedToYesMigration Number of cases {}", caseDetails.size());
+
+            caseDetails
+                .forEach(caseDetail -> setAosIsDrafted(caseDetail, user, serviceAuthorization));
 
         } catch (final CcdSearchCaseException e) {
             log.error("Case schedule task(SetAosIsDraftedToYesMigration) stopped after search error", e);
         }
+        log.info("Completed SetAosIsDraftedToYesMigration");
     }
 
     private List<CaseDetails> searchForAosDraftedCases(final User user, final String serviceAuthorization) {
@@ -83,7 +88,6 @@ public class SetAosIsDraftedToYesMigration implements Migration {
                         .should(matchQuery(STATE, IssuedToBailiff))
                         .should(matchQuery(STATE, AwaitingService))
                         .should(matchQuery(STATE, AwaitingGeneralConsideration)))
-                .mustNot(existsQuery("data.dateAosSubmitted"))
                 .mustNot(matchQuery("data.aosIsDrafted", YES));
 
         return ccdSearchService
