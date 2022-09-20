@@ -20,9 +20,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_A
 @Slf4j
 public class GenerateApplyForFinalOrderDocument {
 
-    public static final String FIRST_NAME = "firstName";
-    public static final String LAST_NAME = "lastName";
-
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
 
