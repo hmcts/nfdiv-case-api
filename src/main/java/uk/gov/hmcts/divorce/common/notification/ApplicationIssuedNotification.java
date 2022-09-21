@@ -167,7 +167,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         final Applicant applicant2 = caseData.getApplicant2();
 
-        if (isNotEmpty(applicant2.getSolicitor().getOrganisationPolicy())) {
+        if (applicant2.getSolicitor().hasOrgId()) {
             final String email = applicant2.getSolicitor().getEmail();
 
             if (caseData.getApplicationType().isSole()

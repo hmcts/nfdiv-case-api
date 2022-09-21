@@ -6,6 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
@@ -13,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -79,6 +82,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
@@ -547,6 +551,7 @@ public class ApplicationIssuedNotificationTest {
             .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
         caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().getSolicitor().setOrganisationPolicy(organisationPolicy());
 
         when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
@@ -568,7 +573,8 @@ public class ApplicationIssuedNotificationTest {
     void shouldNotSendNotificationToRespondentSolicitorIfSolicitorEmailIsNotSet() {
 
         final Applicant applicant2 = getApplicant2(FEMALE);
-        applicant2.setSolicitor(Solicitor.builder().build());
+        applicant2.setSolicitor(Solicitor.builder()
+            .organisationPolicy(organisationPolicy()).build());
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
             .applicant1(getApplicant())
@@ -585,6 +591,26 @@ public class ApplicationIssuedNotificationTest {
 
     @Test
     void shouldNotSendNotificationToRespondentSolicitorIfSolicitorService() {
+
+        final Applicant applicant2 = getApplicant2(FEMALE);
+        applicant2.setSolicitor(Solicitor.builder()
+            .organisationPolicy(organisationPolicy()).build());
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(getApplicant())
+            .applicant2(respondentWithDigitalSolicitor())
+            .application(Application.builder()
+                .serviceMethod(SOLICITOR_SERVICE)
+                .build())
+            .build();
+
+        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendNotificationToRespondentSolicitorIfSolicitorIsNotDigital() {
 
         final Applicant applicant2 = getApplicant2(FEMALE);
         applicant2.setSolicitor(Solicitor.builder().build());
