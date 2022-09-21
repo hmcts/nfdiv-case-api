@@ -9,6 +9,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -39,6 +40,7 @@ import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
@@ -347,6 +349,35 @@ public class CcdSearchService {
         ).getCases();
 
         log.info("Cases retrieved joint app with access code and issue date present {}", caseDetails.size());
+
+        return caseDetails;
+    }
+
+    public List<CaseDetails> searchCasesInAwaitingAosWhereConfirmReadPetitionIsYes(User user, String serviceAuth) {
+
+        final QueryBuilder confirmReadPetitionYes = matchQuery("data.confirmReadPetition", YesOrNo.YES);
+        final QueryBuilder awaitingAosState = matchQuery(STATE, AwaitingAos);
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(confirmReadPetitionYes))
+            .must(boolQuery().must(awaitingAosState));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        log.info("Query to search AwaitingAOS cases with confirmReadPetition equals Yes {} ", sourceBuilder.toString());
+
+        List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
+
+        log.info("Cases retrieved AwaitingAOS cases with confirmReadPetition equals Yes {}", caseDetails.size());
 
         return caseDetails;
     }
