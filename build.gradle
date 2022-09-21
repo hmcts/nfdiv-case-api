@@ -233,7 +233,7 @@ repositories {
 def versions = [
   jackson           : '2.13.3',
   junit             : '5.9.0',
-  junitPlatform     : '1.9.0',
+  junitPlatform     : '1.9.1',
   lombok            : '1.18.22',
   springBoot        : springBoot.class.package.implementationVersion
 ]
@@ -326,7 +326,7 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.25.0'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.26.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:1.7.1'
 }
 
