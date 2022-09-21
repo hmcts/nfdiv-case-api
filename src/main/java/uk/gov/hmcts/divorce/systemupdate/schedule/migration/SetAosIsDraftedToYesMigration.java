@@ -64,6 +64,7 @@ public class SetAosIsDraftedToYesMigration implements Migration {
                 log.info("SetAosIsDraftedToYesMigration Number of cases {}", caseDetails.size());
 
                 caseDetails
+                    .parallelStream()
                     .forEach(caseDetail -> setAosIsDrafted(caseDetail, user, serviceAuthorization));
 
             } catch (final CcdSearchCaseException e) {
