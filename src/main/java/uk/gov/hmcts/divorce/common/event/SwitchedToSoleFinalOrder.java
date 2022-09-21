@@ -72,13 +72,12 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
         CaseData caseData = details.getData();
 
         caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplication().setSwitchedToSoleCo(YES);
         caseData.getLabelContent().setApplicationType(SOLE_APPLICATION);
         caseData.getFinalOrder().setFinalOrderSwitchedToSole(YES);
 
         // triggered by citizen users
         if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
-            switchToSoleService.switchUserRoles(caseData, caseId);
+//            switchToSoleService.switchUserRoles(caseData, caseId);
             switchToSoleService.switchApplicantData(caseData);
         }
 
@@ -88,7 +87,7 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
 
             if (OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying())) {
                 if (!caseData.getApplication().isPaperCase()) {
-                    switchToSoleService.switchUserRoles(caseData, caseId);
+//                    switchToSoleService.switchUserRoles(caseData, caseId);
                 }
                 switchToSoleService.switchApplicantData(caseData);
             }

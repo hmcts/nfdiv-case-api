@@ -79,12 +79,16 @@ public class ConditionalOrder {
     private LocalDateTime dateD84FormScanned;
 
     @CCD(
-        label = "What application type is the D84?"
+        label = "What application type is the D84?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "OfflineApplicationType"
     )
     private OfflineApplicationType d84ApplicationType;
 
     @CCD(
-        label = "Who is submitting the D84?"
+        label = "Who is submitting the D84?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "OfflineWhoApplying"
     )
     private OfflineWhoApplying d84WhoApplying;
 

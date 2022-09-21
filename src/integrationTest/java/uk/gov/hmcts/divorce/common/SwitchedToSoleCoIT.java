@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.event;
+package uk.gov.hmcts.divorce.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

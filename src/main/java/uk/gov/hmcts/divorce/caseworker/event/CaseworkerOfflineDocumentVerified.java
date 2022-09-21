@@ -215,7 +215,12 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
 
-            //TODO: find out if any of the applicants should be set to OFFLINE?
+            if (caseData.getApplicationType().isSole()) {
+                caseData.getApplicant1().setOffline(YES);
+            } else {
+                caseData.getApplicant1().setOffline(YES);
+                caseData.getApplicant2().setOffline(YES);
+            }
 
             final State state = caseData.getApplicationType().isSole() ? AwaitingFinalOrder : AwaitingJointFinalOrder;
 

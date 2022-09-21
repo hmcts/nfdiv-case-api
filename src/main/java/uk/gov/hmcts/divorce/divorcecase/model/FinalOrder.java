@@ -163,17 +163,24 @@ public class FinalOrder {
     private YesOrNo finalOrderReminderSentApplicant2;
 
     @CCD(
-        label = "What application type is the D36?"
+        label = "What application type is the D36?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "OfflineApplicationType",
+        access = {DefaultAccess.class}
     )
     private OfflineApplicationType d36ApplicationType;
 
     @CCD(
-        label = "Who is submitting the D36?"
+        label = "Who is submitting the D36?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "OfflineWhoApplying",
+        access = {DefaultAccess.class}
     )
     private OfflineWhoApplying d36WhoApplying;
 
     @CCD(
-        label = "Switched to sole"
+        label = "Switched to sole",
+        access = {DefaultAccess.class}
     )
     private YesOrNo finalOrderSwitchedToSole;
 

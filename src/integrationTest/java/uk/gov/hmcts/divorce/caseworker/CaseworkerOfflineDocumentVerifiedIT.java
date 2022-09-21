@@ -45,14 +45,21 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
@@ -245,6 +252,120 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
         verify(appliedForCoPrinter, times(2)).print(any(CaseData.class), anyLong(), any(Applicant.class));
         verifyNoMoreInteractions(appliedForCoPrinter);
+    }
+
+    @Test
+    void shouldTriggerCoSubmissionAndMoveCaseStateToAwaitingFinalOrderIfSoleCaseAndD36Verified() throws Exception {
+
+        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
+            .value(
+                ScannedDocument
+                    .builder()
+                    .url(
+                        Document
+                            .builder()
+                            .filename("doc1.pdf")
+                            .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                            .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                            .build()
+                    )
+                    .fileName("doc1.pdf")
+                    .type(ScannedDocumentType.FORM)
+                    .build()
+            )
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setApplicant2(getApplicant(FEMALE));
+        caseData.setDocuments(
+            CaseDocuments.builder()
+                .typeOfDocumentAttached(FO_D36)
+                .scannedDocuments(singletonList(doc1))
+                .scannedDocumentNames(
+                    DynamicList
+                        .builder()
+                        .value(
+                            DynamicListElement
+                                .builder()
+                                .label("doc1.pdf")
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        );
+
+        final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+            .content(
+                objectMapper.writeValueAsString(
+                    callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
+            .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                jsonPath("$.state").value(AwaitingFinalOrder.name()));
+    }
+
+    @Test
+    void shouldTriggerCoSubmissionAndMoveCaseStateToAwaitingJointFinalOrderIfJointCaseAndD36Verified() throws Exception {
+
+        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
+            .value(
+                ScannedDocument
+                    .builder()
+                    .url(
+                        Document
+                            .builder()
+                            .filename("doc1.pdf")
+                            .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                            .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                            .build()
+                    )
+                    .fileName("doc1.pdf")
+                    .type(ScannedDocumentType.FORM)
+                    .build()
+            )
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicant2(getApplicant(FEMALE));
+        caseData.setDocuments(
+            CaseDocuments.builder()
+                .typeOfDocumentAttached(FO_D36)
+                .scannedDocuments(singletonList(doc1))
+                .scannedDocumentNames(
+                    DynamicList
+                        .builder()
+                        .value(
+                            DynamicListElement
+                                .builder()
+                                .label("doc1.pdf")
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        );
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+            .content(
+                objectMapper.writeValueAsString(
+                    callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
+            .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                jsonPath("$.state").value(AwaitingJointFinalOrder.name()));
     }
 
     @Test
