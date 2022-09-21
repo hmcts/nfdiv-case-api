@@ -32,7 +32,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_PRONOUNCED_COVERSHEET_OFFLINE_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -506,9 +505,8 @@ class ConditionalOrderPronouncedNotificationTest {
     }
 
     @Test
-    void shouldSendLetterToApplicant2IfOfflineInJointApplication() {
+    void shouldSendLetterToApplicant2IfOffline() {
         CaseData data = CaseData.builder()
-            .applicationType(JOINT_APPLICATION)
             .build();
 
         notification.sendToApplicant2Offline(data, 1234567890123456L);
@@ -517,21 +515,6 @@ class ConditionalOrderPronouncedNotificationTest {
             eq(data),
             eq(1234567890123456L),
             eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)
-        );
-    }
-
-    @Test
-    void shouldSendLetterToRespondentIfOfflineInSoleApplication() {
-        CaseData data = CaseData.builder()
-            .applicationType(SOLE_APPLICATION)
-            .build();
-
-        notification.sendToApplicant2Offline(data, 1234567890123456L);
-
-        verify(printer).sendLetter(
-            eq(data),
-            eq(1234567890123456L),
-            eq(CONDITIONAL_ORDER_PRONOUNCED_COVERSHEET_OFFLINE_RESPONDENT)
         );
     }
 

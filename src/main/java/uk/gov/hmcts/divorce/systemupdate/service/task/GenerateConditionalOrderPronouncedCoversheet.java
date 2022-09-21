@@ -36,7 +36,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_PRONOUNCED_COVERSHEET_OFFLINE_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -122,7 +121,7 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_PRONOUNCED_COVERSHEET_OFFLINE_RESPONDENT,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
             templateVarsForOfflineRespondent(caseData, caseId, applicant, partner),
             caseId,
             CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,

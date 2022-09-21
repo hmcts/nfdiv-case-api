@@ -116,8 +116,11 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()) {
             log.info("Sending certificate of entitlement letter to applicant 2 for case: {}", caseId);
-
-            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant2());
+            if (caseData.getApplicationType().isSole() && caseData.getApplicant2().isOffline()) {
+                certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
+            } else {
+                certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant2());
+            }
             caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(YesOrNo.YES);
         }
     }
