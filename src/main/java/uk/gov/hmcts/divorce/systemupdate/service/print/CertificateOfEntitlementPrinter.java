@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
@@ -158,6 +159,8 @@ public class CertificateOfEntitlementPrinter {
         final LocalDateTime dateAndTimeOfHearing = conditionalOrder.getDateAndTimeOfHearing();
         final String dateOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(DATE_TIME_FORMATTER) : null;
         final String timeOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(TIME_FORMATTER) : null;
+        final String beforeDateOfHearing = nonNull(dateAndTimeOfHearing)
+            ? dateAndTimeOfHearing.minusDays(7).format(DATE_TIME_FORMATTER) : null;
 
         templateContent.put(COURT_NAME, conditionalOrder.getCourt() != null ? conditionalOrder.getCourt().getLabel() : null);
         templateContent.put(DATE_OF_HEARING, dateOfHearing);
@@ -167,7 +170,9 @@ public class CertificateOfEntitlementPrinter {
         } else {
             templateContent.put(DATE_FO_ELIGIBLE_FROM, null);
         }
-        
+
+        templateContent.put(BEFORE_DATE_OF_HEARING, beforeDateOfHearing);
+
         final var ctscContactDetails = CtscContactDetails
             .builder()
             .emailAddress(email)

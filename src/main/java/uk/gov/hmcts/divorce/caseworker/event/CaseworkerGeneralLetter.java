@@ -14,6 +14,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.Collection;
+
+import static java.util.Collections.singletonList;
+import static java.util.stream.Stream.ofNullable;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -44,7 +49,7 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
-            .page("createGeneralLetter")
+            .page("createGeneralLetter", this::midEvent)
             .pageLabel(CREATE_GENERAL_LETTER_TITLE)
             .complex(CaseData::getGeneralLetter)
                 .mandatory(GeneralLetter::getGeneralLetterParties)
@@ -53,6 +58,25 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
                 .mandatory(GeneralLetter::getGeneralLetterDetails)
                 .optional(GeneralLetter::getGeneralLetterAttachments)
                 .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
+                                                                  final CaseDetails<CaseData, State> detailsBefore) {
+
+        final CaseData caseData = details.getData();
+        final boolean invalidGeneralLetterAttachments = ofNullable(caseData.getGeneralLetter().getGeneralLetterAttachments())
+            .flatMap(Collection::stream)
+            .anyMatch(divorceDocument -> isEmpty(divorceDocument.getValue().getDocumentLink()));
+
+        if (invalidGeneralLetterAttachments) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList("Please ensure all General Letter attachments have been uploaded before continuing"))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
