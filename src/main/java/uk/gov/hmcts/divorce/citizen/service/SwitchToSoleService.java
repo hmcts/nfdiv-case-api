@@ -300,6 +300,16 @@ public class SwitchToSoleService {
         ConditionalOrderQuestions conditionalOrderApplicant2Questions = conditionalOrder.getConditionalOrderApplicant2Questions();
         conditionalOrder.setConditionalOrderApplicant1Questions(conditionalOrderApplicant2Questions);
         conditionalOrder.setConditionalOrderApplicant2Questions(conditionalOrderApplicant1Questions);
+
+        YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant1 =
+            conditionalOrder.getOfflineCertificateOfEntitlementDocumentSentToApplicant1();
+        YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant2 =
+            conditionalOrder.getOfflineCertificateOfEntitlementDocumentSentToApplicant2();
+
+        conditionalOrder.setOfflineCertificateOfEntitlementDocumentSentToApplicant1(
+            offlineCertificateOfEntitlementDocumentSentToApplicant2);
+        conditionalOrder.setOfflineCertificateOfEntitlementDocumentSentToApplicant2(
+            offlineCertificateOfEntitlementDocumentSentToApplicant1);
     }
 
     private void populateSwitchedToSoleData(final Application application) {

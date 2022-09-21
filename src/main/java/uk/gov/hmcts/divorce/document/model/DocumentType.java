@@ -122,7 +122,7 @@ public enum DocumentType implements HasLabel {
     EMAIL("Email"),
 
     @JsonProperty("finalOrderApplication")
-    FINAL_ORDER_APPLICATION("Final Order application"),
+    FINAL_ORDER_APPLICATION("Final Order application (D36)"),
 
     @JsonProperty("finalOrderGranted")
     FINAL_ORDER_GRANTED("Final order granted"),

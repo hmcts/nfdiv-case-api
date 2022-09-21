@@ -320,6 +320,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("labelConditionalOrderDetails-Applicant1",
                 "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
                 "### Applicant 1")
+            .label("labelApplicant1-SwitchToSole",
+                "finalOrderSwitchedToSole=\"Yes\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
+                "### Applicant 1")
             .field("labelContentUnionType", "applicationType=\"NEVER_SHOW\"")
             .field("coApplicant1ApplyForConditionalOrder")
             .field("coApplicant1ConfirmInformationStillCorrect")
@@ -332,6 +335,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplicant1SolicitorAdditionalComments")
             .label("labelConditionalOrderDetails-Applicant2",
                 "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
+                "### Applicant 2")
+            .label("labelApplicant2-SwitchToSole",
+                "finalOrderSwitchedToSole=\"Yes\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
                 "### Applicant 2")
             .field("coApplicant2ApplyForConditionalOrder")
             .field("coApplicant2ConfirmInformationStillCorrect")
@@ -409,6 +415,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("grantedDate")
             .field("dateFinalOrderNoLongerEligible")
             .field("dateFinalOrderEligibleToRespondent")
+            .field("finalOrderSwitchedToSole")
             .label("labelFinalOrderDetails-SoleRespondent",
                 "applicationType=\"soleApplication\" AND doesApplicant2WantToApplyForFinalOrder=\"*\"",
                 "### Respondent")

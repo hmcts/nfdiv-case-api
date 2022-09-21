@@ -162,6 +162,21 @@ public class FinalOrder {
     )
     private YesOrNo finalOrderReminderSentApplicant2;
 
+    @CCD(
+        label = "What application type is the D36?"
+    )
+    private OfflineApplicationType d36ApplicationType;
+
+    @CCD(
+        label = "Who is submitting the D36?"
+    )
+    private OfflineWhoApplying d36WhoApplying;
+
+    @CCD(
+        label = "Switched to sole"
+    )
+    private YesOrNo finalOrderSwitchedToSole;
+
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
