@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -164,28 +165,32 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
 
-        final String email = caseData.getApplicant2().getSolicitor().getEmail();
+        final Applicant applicant2 = caseData.getApplicant2();
 
-        if (caseData.getApplicationType().isSole()
-            && !caseData.getApplication().isSolicitorServiceMethod()
-            && isNotBlank(email)) {
+        if (isNotEmpty(applicant2.getSolicitor().getOrganisationPolicy())) {
+            final String email = applicant2.getSolicitor().getEmail();
 
-            log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
-            notificationService.sendEmail(
-                email,
-                RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-                soleRespondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH
-            );
+            if (caseData.getApplicationType().isSole()
+                && !caseData.getApplication().isSolicitorServiceMethod()
+                && isNotBlank(email)) {
 
-        } else if (!caseData.getApplicationType().isSole() && !caseData.getApplication().isSolicitorServiceMethod()) {
-            log.info("Sending Notice Of Proceedings email to applicant 2 solicitor for joint case.  Case ID: {}", caseId);
+                log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
+                notificationService.sendEmail(
+                    email,
+                    RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+                    soleRespondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+                    ENGLISH
+                );
 
-            notificationService.sendEmail(
-                email,
-                JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-                applicant2SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH);
+            } else if (!caseData.getApplicationType().isSole() && !caseData.getApplication().isSolicitorServiceMethod()) {
+                log.info("Sending Notice Of Proceedings email to applicant 2 solicitor for joint case.  Case ID: {}", caseId);
+
+                notificationService.sendEmail(
+                    email,
+                    JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+                    applicant2SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+                    ENGLISH);
+            }
         }
     }
 
