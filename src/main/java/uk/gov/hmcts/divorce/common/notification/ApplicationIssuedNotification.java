@@ -205,8 +205,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(IS_REMINDER, NO);
         templateVars.put(
-            REVIEW_DEADLINE_DATE,
-            holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate())
+            REVIEW_DEADLINE_DATE, holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate())
                     .format(getDateTimeFormatterForPreferredLanguage(caseData.getApplicant2().getLanguagePreference())));
         templateVars.put(
             CREATE_ACCOUNT_LINK,
@@ -220,8 +219,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private Map<String, String> commonTemplateVars(final CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(
-            SUBMISSION_RESPONSE_DATE,
-            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
+            SUBMISSION_RESPONSE_DATE, holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
                     .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }

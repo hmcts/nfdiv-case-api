@@ -106,8 +106,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate()
-                .format(DATE_TIME_FORMATTER));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant.getSolicitor().getReference())
             ? applicant.getSolicitor().getReference()
             : "not provided");

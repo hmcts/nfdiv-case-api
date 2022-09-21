@@ -52,10 +52,8 @@ public class RespondentSolicitorReminderNotification implements ApplicantNotific
 
         Applicant respondent = caseData.getApplicant2();
 
-        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate()
-                .format(DATE_TIME_FORMATTER));
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate()
-                .format(DATE_TIME_FORMATTER));
+        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SOLICITOR_NAME, respondent.getSolicitor().getName());

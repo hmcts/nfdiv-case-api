@@ -40,8 +40,7 @@ public class DisputedApplicationAnswerReceivedNotification implements ApplicantN
             var templateVars = commonContent.basicTemplateVars(caseData, id);
             templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
             templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
-            templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate()
-                    .format(DATE_TIME_FORMATTER));
+            templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
             templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
             var solicitor = caseData.getApplicant1().getSolicitor();
