@@ -83,14 +83,13 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
 
         // triggered by system update user coming from Offline Document Verified
         if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
+            && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())
+            && OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying())) {
 
-            if (OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying())) {
-                if (!caseData.getApplication().isPaperCase()) {
-                    switchToSoleService.switchUserRoles(caseData, caseId);
-                }
-                switchToSoleService.switchApplicantData(caseData);
+            if (!caseData.getApplication().isPaperCase()) {
+                switchToSoleService.switchUserRoles(caseData, caseId);
             }
+            switchToSoleService.switchApplicantData(caseData);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
