@@ -105,7 +105,6 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
 
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
         jsonDocument.set("data.applicationType", "jointApplication");
-        jsonDocument.set("data.applicant2Email", "app2@email.com");
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
