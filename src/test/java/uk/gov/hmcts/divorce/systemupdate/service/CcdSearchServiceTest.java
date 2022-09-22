@@ -561,9 +561,9 @@ class CcdSearchServiceTest {
         final QueryBuilder newPaperCase = matchQuery("data.newPaperCase", YesOrNo.YES);
 
         final QueryBuilder query = boolQuery()
-            .must(newPaperCase)
-            .mustNot(applicant2OfflineExist)
-            .must(jointApplication);
+            .must(boolQuery().must(newPaperCase))
+            .must(boolQuery().must(jointApplication))
+            .must(boolQuery().mustNot(applicant2OfflineExist));
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
@@ -596,10 +596,10 @@ class CcdSearchServiceTest {
         final QueryBuilder applicant2EmailExist = existsQuery("data.applicant2Email");
 
         final QueryBuilder query = boolQuery()
-            .must(newPaperCase)
-            .mustNot(applicant2OfflineExist)
-            .must(soleApplication)
-            .mustNot(applicant2EmailExist);
+            .must(boolQuery().must(newPaperCase))
+            .must(boolQuery().must(soleApplication))
+            .must(boolQuery().mustNot(applicant2OfflineExist))
+            .must(boolQuery().mustNot(applicant2EmailExist));
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
