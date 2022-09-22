@@ -26,26 +26,29 @@ public class PaperApplicationMigration implements Migration {
 
     @Override
     public void apply(final User user, final String serviceAuthorization) {
-        try {
-            log.info("Started migrating cases joint paper application");
-            ccdSearchService
-                .searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, serviceAuthorization)
-                .parallelStream()
-                .forEach(details -> setApplicant2Offline(details, user, serviceAuthorization));
+        var isAAT = Boolean.parseBoolean(System.getenv().get("CITIZEN_UPDATE_CASE_STATE_ENABLED"));
+        if (isAAT) {
+            try {
+                log.info("Started migrating cases joint paper application");
+                ccdSearchService
+                    .searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, serviceAuthorization)
+                    .parallelStream()
+                    .forEach(details -> setApplicant2Offline(details, user, serviceAuthorization));
 
-        } catch (final CcdSearchCaseException e) {
-            log.error("Case schedule task (migration joint paper application) stopped after search error", e);
-        }
+            } catch (final CcdSearchCaseException e) {
+                log.error("Case schedule task (migration joint paper application) stopped after search error", e);
+            }
 
-        try {
-            log.info("Started migrating cases sole paper application");
-            ccdSearchService
-                .searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, serviceAuthorization)
-                .parallelStream()
-                .forEach(details -> setApplicant2Offline(details, user, serviceAuthorization));
+            try {
+                log.info("Started migrating cases sole paper application");
+                ccdSearchService
+                    .searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, serviceAuthorization)
+                    .parallelStream()
+                    .forEach(details -> setApplicant2Offline(details, user, serviceAuthorization));
 
-        } catch (final CcdSearchCaseException e) {
-            log.error("Case schedule task (migration sole paper application) stopped after search error", e);
+            } catch (final CcdSearchCaseException e) {
+                log.error("Case schedule task (migration sole paper application) stopped after search error", e);
+            }
         }
     }
 
