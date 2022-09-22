@@ -18,6 +18,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.List;
 
+import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -49,18 +50,30 @@ class PaperApplicationMigrationTest {
     }
 
     @Test
-    void shouldNotSetApplicant2OfflineFieldWhenSearchFailsForPaperAppMigration() {
-
+    void shouldNotSetApplicant2OfflineFieldWhenSearchFailsForJointPaperAppMigration() throws Exception {
         when(ccdSearchService.searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION);
+        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+            .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
-    void shouldContinueProcessingIfThereIsConflictDuringSubmissionForJointAppMigration() {
+    void shouldNotSetApplicant2OfflineFieldWhenSearchFailsForSolePaperAppMigration() throws Exception {
+
+        when(ccdSearchService.searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION))
+            .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
+
+        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+            .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldContinueProcessingIfThereIsConflictDuringSubmissionForJointPaperAppMigration() throws Exception {
 
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
@@ -75,14 +88,38 @@ class PaperApplicationMigrationTest {
         doNothing()
             .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
-        paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION);
+        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+            .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
-    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForJointAppMigration() {
+    void shouldContinueProcessingIfThereIsConflictDuringSubmissionForSolePaperAppMigration() throws Exception {
+
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+
+        when(ccdSearchService.searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+
+        doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        doNothing()
+            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+
+        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+            .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
+
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForJointPaperAppMigration() throws Exception {
 
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
@@ -97,8 +134,39 @@ class PaperApplicationMigrationTest {
         doNothing()
             .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
-        paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION);
+        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+            .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForSolePaperAppMigration() throws Exception {
+
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+
+        when(ccdSearchService.searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+
+        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        doNothing()
+            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+
+        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+            .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
+
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldNotTriggerCcdUpdateServiceWhenEnvVarIsFalse() throws Exception {
+        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "false")
+            .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
+
+        verifyNoInteractions(ccdUpdateService);
     }
 }
