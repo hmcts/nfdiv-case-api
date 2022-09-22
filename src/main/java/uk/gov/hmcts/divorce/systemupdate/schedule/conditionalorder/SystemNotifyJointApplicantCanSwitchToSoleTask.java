@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -18,8 +18,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-import java.time.Clock;
-import java.time.LocalDate;
 import java.util.Collection;
 
 import static java.util.stream.Stream.ofNullable;
@@ -57,9 +55,6 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private Clock clock;
 
     @Value("${submit_co.reminder_offset_days}")
     private int submitCOrderReminderOffsetDays;
@@ -107,26 +102,13 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
         }
     }
 
-    public boolean isJointConditionalOrderOverdue(final CaseDetails caseDetails) {
+    private boolean isJointConditionalOrderOverdue(final CaseDetails caseDetails) {
 
         final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
+        final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
 
-        ConditionalOrderQuestions app1Questions = caseData.getConditionalOrder().getConditionalOrderApplicant1Questions();
-        ConditionalOrderQuestions app2Questions = caseData.getConditionalOrder().getConditionalOrderApplicant2Questions();
+        return conditionalOrder.shouldEnableSwitchToSoleCoForApplicant1()
+            || conditionalOrder.shouldEnableSwitchToSoleCoForApplicant2();
 
-        boolean app1Submitted = app1Questions != null && YES.equals(app1Questions.getIsSubmitted());
-        boolean app2Submitted = app2Questions != null && YES.equals(app2Questions.getIsSubmitted());
-
-        if (app1Submitted && !app2Submitted) {
-            return LocalDate.now(clock).minusDays(submitCOrderReminderOffsetDays)
-                .isAfter(app1Questions.getSubmittedDate().toLocalDate());
-        }
-
-        if (app2Submitted && !app1Submitted) {
-            return LocalDate.now(clock).minusDays(submitCOrderReminderOffsetDays)
-                .isAfter(app2Questions.getSubmittedDate().toLocalDate());
-        }
-
-        return false;
     }
 }

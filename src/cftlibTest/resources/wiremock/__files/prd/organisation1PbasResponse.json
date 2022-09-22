@@ -1,0 +1,18 @@
+{
+  "organisationEntityResponse": {
+    "sraId": "sraId",
+    "companyNumber": "123456",
+    "sraRegulated": true,
+    "companyUrl": "somecompany@org.com",
+    "paymentAccount": [
+      "PBA0077597"
+    ],
+    "organisationIdentifier": "someemailaddress@organisation.com",
+    "status": "ACTIVE",
+    "superUser": {
+      "firstName": "firstName",
+      "lastName": "lastName",
+      "email": "emailAddress"
+    }
+  }
+}

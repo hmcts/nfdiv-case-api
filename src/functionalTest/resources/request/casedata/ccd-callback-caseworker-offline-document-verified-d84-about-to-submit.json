@@ -25,5 +25,11 @@
       "fileName": "doc1.pdf"
     }
   }],
+  "scannedDocumentNames": {
+    "value": {
+      "label": "doc1.pdf"
+    },
+    "valueLabel": "doc1.pdf"
+  },
   "typeOfDocumentAttached": "D84"
 }

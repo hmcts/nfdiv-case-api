@@ -44,9 +44,12 @@ public final class DocumentConstants {
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
     public static final String SERVICE_ORDER_TEMPLATE_ID = "SERVICE_ORDER";
 
-    public static final String REFUSAL_ORDER_TEMPLATE_ID = "REFUSAL_ORDER";
-    public static final String REFUSAL_ORDER_OFFLINE_TEMPLATE_ID = "REFUSAL_ORDER_OFFLINE";
+    public static final String REJECTED_REFUSAL_ORDER_TEMPLATE_ID = "REJECTED_REFUSAL_ORDER";
     public static final String REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID = "REJECTED_REFUSAL_ORDER_COVER_LETTER";
+
+    public static final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID = "CLARIFICATION_REFUSAL_ORDER";
+    public static final String CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID = "CLARIFICATION_REFUSAL_ORDER_COVER_LETTER";
+
     public static final String REFUSAL_ORDER_DOCUMENT_NAME = "NoticeOfRefusalDocument";
     public static final String REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME = "NoticeOfRefusalCoverLetter";
 
@@ -89,6 +92,9 @@ public final class DocumentConstants {
     public static final String APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID = "APPLIED_FOR_CONDITIONAL_ORDER_LETTER";
     public static final String APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME = "appliedForConditionalOrder";
 
+    public static final String SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID = "SWITCH_TO_SOLE_CO_LETTER";
+    public static final String SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME = "switchToSoleCo";
+
     public static final String AOS_RESPONSE_LETTER_DOCUMENT_NAME = "aosResponseLetter";
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";
     public static final String AOS_OVERDUE_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED";
@@ -103,6 +109,9 @@ public final class DocumentConstants {
     public static final String CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID = "CONDITIONAL_ORDER_PRONOUNCED";
 
     public static final String CO_GRANTED_COVER_LETTER_TEMPLATE_ID = "CO_GRANTED_COVER_LETTER";
+
+    public static final String FINAL_ORDER_DOCUMENT_NAME = "FinalOrderGranted";
+    public static final String FINAL_ORDER_TEMPLATE_ID = "FINAL_ORDER_GRANTED";
 
     private DocumentConstants() {
     }
