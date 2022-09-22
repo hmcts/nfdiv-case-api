@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -93,9 +94,13 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(SOLICITOR_NAME, "App1 Sol");
         templateContent.put(DATE_OF_ISSUE, LocalDate.of(2021, 4, 28).format(DATE_TIME_FORMATTER));
         templateContent.put(SOLICITOR_REFERENCE, "App1 Sol Ref");
+        templateContent.put(SIGN_IN_URL, "signin_url");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
+
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
+            .thenReturn("signin_url");
 
         finalOrderGrantedNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -137,9 +142,13 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(SOLICITOR_NAME, "App2 Sol");
         templateContent.put(DATE_OF_ISSUE, LocalDate.of(2021, 4, 28).format(DATE_TIME_FORMATTER));
         templateContent.put(SOLICITOR_REFERENCE, "not provided");
+        templateContent.put(SIGN_IN_URL, "signin_url");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
+
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
+            .thenReturn("signin_url");
 
         finalOrderGrantedNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
