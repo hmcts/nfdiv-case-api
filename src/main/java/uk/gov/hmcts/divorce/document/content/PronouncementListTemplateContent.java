@@ -107,8 +107,7 @@ public class PronouncementListTemplateContent {
             ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, AwaitingPronouncement);
 
         for (final CaseDetails caseDetails : bulkListCases) {
-            final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-            log.info("Found case in Bulk List {} Name {}", caseDetails.getId(), caseData.getApplicant1().getLastName());
+            log.info("Found case in Bulk List {}", caseDetails.getId());
         }
         return bulkListCases;
     }
