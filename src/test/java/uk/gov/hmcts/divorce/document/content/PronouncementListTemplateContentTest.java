@@ -140,9 +140,9 @@ public class PronouncementListTemplateContentTest {
                 .build();
 
         final List<CaseDetails> bulkListCases = Lists.newArrayList(
-            mockCaseDetails(1L, false),
-            mockCaseDetails(2L, false),
-            mockCaseDetails(3L, true)
+            mockCaseDetails(1L),
+            mockCaseDetails(2L),
+            mockCaseDetails(3L)
         );
 
         when(ccdSearchService.searchForAllCasesWithQuery(
@@ -178,9 +178,9 @@ public class PronouncementListTemplateContentTest {
                 .build();
 
         final List<CaseDetails> bulkListCases = Lists.newArrayList(
-            mockCaseDetails(1L, false),
-            mockCaseDetails(2L, false),
-            mockCaseDetails(3L, false)
+            mockCaseDetails(1L),
+            mockCaseDetails(2L),
+            mockCaseDetails(3L)
         );
 
         when(ccdSearchService.searchForAllCasesWithQuery(
@@ -217,7 +217,7 @@ public class PronouncementListTemplateContentTest {
         return List.of(mainCaseDetails);
     }
 
-    private CaseDetails mockCaseDetails(Long id, boolean toBeRemoved) {
+    private CaseDetails mockCaseDetails(Long id) {
 
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
@@ -230,18 +230,11 @@ public class PronouncementListTemplateContentTest {
                     .build())
             .build();
 
-        final CaseDetails mainCaseDetails =
-            CaseDetails
-                .builder()
-                .id(id)
-                .caseTypeId(NoFaultDivorce.CASE_TYPE)
-                .data(Map.of("", caseData))
-                .build();
-
-        if (!toBeRemoved) {
-            when(objectMapper.convertValue(mainCaseDetails.getData(), CaseData.class)).thenReturn(caseData);
-        }
-
-        return mainCaseDetails;
+        return CaseDetails
+            .builder()
+            .id(id)
+            .caseTypeId(NoFaultDivorce.CASE_TYPE)
+            .data(Map.of("", caseData))
+            .build();
     }
 }
