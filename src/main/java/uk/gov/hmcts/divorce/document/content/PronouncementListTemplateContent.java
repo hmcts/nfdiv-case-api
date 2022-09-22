@@ -115,7 +115,7 @@ public class PronouncementListTemplateContent {
             .filter(caseDetails -> !isCaseToBeRemoved(bulkCaseData, caseDetails))
             .peek(caseDetails -> {
                 final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-                log.info("Found case in Bulk List {} Name {}", caseDetails.getId(), caseData.getApplicant1().getLastName());
+                log.info("Found case in Bulk List {}", caseDetails.getId());
             })
             .collect(Collectors.toList());
     }

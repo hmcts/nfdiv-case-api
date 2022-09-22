@@ -33,6 +33,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedHow;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedWhere;
@@ -132,6 +133,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -206,9 +210,9 @@ public class TestDataHelper {
     public static Applicant getJointApplicant2(Gender gender) {
         return Applicant.builder()
             .gender(gender)
-            .firstName(TEST_FIRST_NAME)
-            .middleName(TEST_MIDDLE_NAME)
-            .lastName(TEST_LAST_NAME)
+            .firstName(TEST_APP2_FIRST_NAME)
+            .middleName(TEST_APP2_MIDDLE_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
             .build();
     }
 
@@ -1052,6 +1056,17 @@ public class TestDataHelper {
         return caseData;
     }
 
+
+    public static CaseData buildCaseDataForGrantFinalOrder(ApplicationType applicationType, DivorceOrDissolution divorceOrDissolution) {
+        var caseData = validCaseDataForAwaitingFinalOrder();
+        caseData.setApplicationType(applicationType);
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
+        caseData.getApplication().getMarriageDetails().setCountryOfMarriage("United Kingdom");
+        caseData.getConditionalOrder().setGrantedDate(LocalDate.of(2022, 3, 10));
+        caseData.setDivorceOrDissolution(divorceOrDissolution);
+        return caseData;
+    }
+    
     public static CaseData getConfirmServiceCaseData() {
         LocalDate issueDate = LocalDate.of(2022, 8, 10);
         LocalDate serviceDate = LocalDate.of(2022, 8, 12);
