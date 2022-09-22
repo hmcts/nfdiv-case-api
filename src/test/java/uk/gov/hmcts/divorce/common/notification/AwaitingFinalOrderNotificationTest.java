@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS;
@@ -129,6 +130,63 @@ class AwaitingFinalOrderNotificationTest {
     }
 
     @Test
+    void shouldSendAwaitingFinalOrderEmailToApplicant1IfNotRepresentedAndJointInWelsh() {
+
+        final var data = validCaseDataForAwaitingFinalOrder();
+        final var applicant2 = getApplicant2(MALE);
+        data.setApplicant2(applicant2);
+        data.setApplicationType(JOINT_APPLICATION);
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
+
+        awaitingFinalOrderNotification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(APPLICANT_APPLY_FOR_FINAL_ORDER),
+            argThat(allOf(
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(IS_DISSOLUTION, CommonContent.NO),
+                hasEntry(IS_REMINDER, CommonContent.NO),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
+            )),
+            eq(WELSH)
+        );
+        verifyNoMoreInteractions(notificationService);
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendAwaitingFinalOrderEmailToApplicant1IfNotRepresentedAndSoleInWelsh() {
+
+        final var data = validCaseDataForAwaitingFinalOrder();
+        final var applicant2 = getApplicant2(MALE);
+        data.setApplicant2(applicant2);
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
+
+        awaitingFinalOrderNotification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(APPLICANT_APPLY_FOR_FINAL_ORDER),
+            argThat(allOf(
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(IS_DISSOLUTION, CommonContent.NO),
+                hasEntry(IS_REMINDER, CommonContent.NO)
+            )),
+            eq(WELSH)
+        );
+        verifyNoMoreInteractions(notificationService);
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
     void shouldNotSendAwaitingFinalOrderEmailToApplicant2IfNotRepresentedAndSole() {
 
         final var data = validCaseDataForAwaitingFinalOrder();
@@ -164,6 +222,35 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH)
+        );
+        verifyNoMoreInteractions(notificationService);
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendAwaitingFinalOrderEmailToApplicant2IfNotRepresentedAndJointInWelsh() {
+
+        final var data = validCaseDataForAwaitingFinalOrder();
+        final var applicant2 = getApplicant2(MALE);
+        data.setApplicant2(applicant2);
+        data.setApplicationType(JOINT_APPLICATION);
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
+
+        awaitingFinalOrderNotification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(APPLICANT_APPLY_FOR_FINAL_ORDER),
+            argThat(allOf(
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(IS_DISSOLUTION, CommonContent.NO),
+                hasEntry(IS_REMINDER, CommonContent.NO),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
+            )),
+            eq(WELSH)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
