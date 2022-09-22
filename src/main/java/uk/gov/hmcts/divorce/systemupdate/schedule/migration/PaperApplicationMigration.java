@@ -26,8 +26,8 @@ public class PaperApplicationMigration implements Migration {
 
     @Override
     public void apply(final User user, final String serviceAuthorization) {
-        var isAAT = Boolean.parseBoolean(System.getenv().get("CITIZEN_UPDATE_CASE_STATE_ENABLED"));
-        if (isAAT) {
+        var paperMigrationEnabled = Boolean.parseBoolean(System.getenv().get("ENABLE_PAPER_APPLICATION_MIGRATION"));
+        if (paperMigrationEnabled) {
             try {
                 log.info("Started migrating cases joint paper application");
                 ccdSearchService
