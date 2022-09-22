@@ -150,7 +150,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     }
 
     @Test
-    void shouldGenerateCoverletterWhenSoleWithAppRepresentedAndOnlineAndSolicitorService() {
+    void shouldGenerateCoverLetterWhenSoleWithAppRepresentedAndOnlineAndSolicitorService() {
         setMockClock(clock);
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
