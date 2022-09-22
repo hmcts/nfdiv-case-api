@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -43,10 +44,13 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
 
     @Autowired
-    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
+    private NotificationDispatcher notificationDispatcher;
 
     @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
+
+    @Autowired
+    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -86,7 +90,8 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             : AwaitingLegalAdvisorReferral;
 
         if (state == AwaitingLegalAdvisorReferral) {
-            generateConditionalOrderAnswersDocument.apply(details);
+            notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, details.getId());
+            generateConditionalOrderAnswersDocument.apply(details, data.getApplicant2().getLanguagePreference());
         } else {
             notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
         }

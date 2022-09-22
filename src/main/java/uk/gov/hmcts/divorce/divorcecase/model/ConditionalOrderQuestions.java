@@ -1,16 +1,20 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -55,7 +59,7 @@ public class ConditionalOrderQuestions {
     private LocalDateTime submittedDate;
 
     @CCD(
-        label = "Does the applicant want to continue with the ${labelContentUnionType} and apply for a conditional order?"
+        label = "Does the applicant want to continue with their ${labelContentDivorceOrCivilPartnershipApplication}?"
     )
     private YesOrNo applyForConditionalOrder;
 
@@ -109,4 +113,24 @@ public class ConditionalOrderQuestions {
         label = "The applicant believes that the facts stated in the application for a conditional order are true."
     )
     private YesOrNo statementOfTruth;
+
+    @CCD(
+        label = "Has SolicitorSwitchToSoleCO been enabled for Applicant Solicitor?"
+    )
+    private YesOrNo enableSolicitorSwitchToSoleCo;
+
+    @CCD(
+        label = " "
+    )
+    private Set<ConfirmSwitchToSole> confirmSwitchToSole;
+
+    @Getter
+    @AllArgsConstructor
+    public enum ConfirmSwitchToSole implements HasLabel {
+
+        @JsonProperty("confirmSwitchToSole")
+        CONFIRM_SWITCH_TO_SOLE("I confirm I want to change to a sole application");
+
+        private final String label;
+    }
 }

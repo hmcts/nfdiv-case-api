@@ -34,6 +34,7 @@ import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
+import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
@@ -249,7 +250,6 @@ public class CcdSearchService {
 
     public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
         searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(final User user, final String serviceAuth) {
-
         final List<CaseDetails> allCaseDetails = new ArrayList<>();
         int from = 0;
         int totalResults = pageSize;
@@ -318,5 +318,36 @@ public class CcdSearchService {
             CASE_TYPE,
             sourceBuilder.toString()
         ).getCases();
+    }
+
+    public List<CaseDetails> searchJointApplicationsWithAccessCodePostIssueApplication(User user, String serviceAuth) {
+
+        final QueryBuilder issueDateExist = existsQuery("data.issueDate");
+        final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
+        final QueryBuilder accessCodeNotEmpty = wildcardQuery("data.accessCode", "?*");
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(accessCodeNotEmpty))
+            .must(boolQuery().must(issueDateExist))
+            .must(boolQuery().must(jointApplication));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        log.info("Query to search joint app with access code and issue date present {} ", sourceBuilder.toString());
+
+        List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
+
+        log.info("Cases retrieved joint app with access code and issue date present {}", caseDetails.size());
+
+        return caseDetails;
     }
 }

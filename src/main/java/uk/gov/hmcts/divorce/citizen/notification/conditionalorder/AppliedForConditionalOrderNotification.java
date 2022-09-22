@@ -19,8 +19,10 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_SUBMISSION_DATE_PLUS_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
@@ -31,7 +33,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Slf4j
 public class AppliedForConditionalOrderNotification {
 
-    static final String PLUS_21_DUE_DATE = "date email received plus 21 days";
     static final String PLUS_14_DUE_DATE = "application for CO date plus 14 days";
     static final String WIFE_APPLIED = "wifeApplied";
     static final String HUSBAND_APPLIED = "husbandApplied";
@@ -53,8 +54,8 @@ public class AppliedForConditionalOrderNotification {
 
     protected Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, String whichApplicant) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(PLUS_21_DUE_DATE,
-            coQuestions(caseData, whichApplicant).getSubmittedDate().plusDays(21).format(DATE_TIME_FORMATTER));
+        templateVars.put(PRONOUNCE_BY_DATE,
+            coQuestions(caseData, whichApplicant).getSubmittedDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER));
         if (!caseData.getApplicationType().isSole()) {
             templateVars.putAll(jointTemplateVars(caseData, partner, whichApplicant));
         }

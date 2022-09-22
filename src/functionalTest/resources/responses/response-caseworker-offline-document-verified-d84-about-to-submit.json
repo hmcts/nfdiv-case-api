@@ -52,7 +52,7 @@
         "documentDateAdded": "${json-unit.any-string}",
         "documentComment": "Reclassified scanned document",
         "documentFileName": "doc1.pdf",
-        "documentType": "d84"
+        "documentType": "conditionalOrderApplication"
       }
     }],
     "scannedDocuments": [{
