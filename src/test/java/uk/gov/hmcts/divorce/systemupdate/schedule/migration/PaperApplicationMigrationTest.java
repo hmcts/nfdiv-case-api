@@ -54,7 +54,7 @@ class PaperApplicationMigrationTest {
         when(ccdSearchService.searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+        withEnvironmentVariable("ENABLE_PAPER_APPLICATION_MIGRATION", "true")
             .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verifyNoInteractions(ccdUpdateService);
@@ -66,7 +66,7 @@ class PaperApplicationMigrationTest {
         when(ccdSearchService.searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+        withEnvironmentVariable("ENABLE_PAPER_APPLICATION_MIGRATION", "true")
             .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verifyNoInteractions(ccdUpdateService);
@@ -88,7 +88,7 @@ class PaperApplicationMigrationTest {
         doNothing()
             .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
-        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+        withEnvironmentVariable("ENABLE_PAPER_APPLICATION_MIGRATION", "true")
             .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
@@ -111,7 +111,7 @@ class PaperApplicationMigrationTest {
         doNothing()
             .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
-        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+        withEnvironmentVariable("ENABLE_PAPER_APPLICATION_MIGRATION", "true")
             .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
@@ -134,7 +134,7 @@ class PaperApplicationMigrationTest {
         doNothing()
             .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
-        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+        withEnvironmentVariable("ENABLE_PAPER_APPLICATION_MIGRATION", "true")
             .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
@@ -156,7 +156,7 @@ class PaperApplicationMigrationTest {
         doNothing()
             .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
-        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
+        withEnvironmentVariable("ENABLE_PAPER_APPLICATION_MIGRATION", "true")
             .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
@@ -164,7 +164,7 @@ class PaperApplicationMigrationTest {
 
     @Test
     void shouldNotTriggerCcdUpdateServiceWhenEnvVarIsFalse() throws Exception {
-        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "false")
+        withEnvironmentVariable("ENABLE_PAPER_APPLICATION_MIGRATION", "false")
             .execute(() -> paperApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verifyNoInteractions(ccdUpdateService);
