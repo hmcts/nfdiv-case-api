@@ -49,7 +49,7 @@ class PaperApplicationMigrationTest {
     }
 
     @Test
-    void shouldNotResetApplicant2OfflineFieldWhenSearchFailsForPaperAppMigration() {
+    void shouldNotSetApplicant2OfflineFieldWhenSearchFailsForPaperAppMigration() {
 
         when(ccdSearchService.searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
