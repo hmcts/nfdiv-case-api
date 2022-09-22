@@ -22,9 +22,21 @@ public class SystemProgressCaseToAwaitingFinalOrderFT extends FunctionalTestSuit
     private static final String JOINT_REPRESENTED_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-progress-case-to-awaiting-final-order-joint-represented.json";
 
+    private static final String WELSH_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-system-progress-case-to-awaiting-final-order-welsh.json";
+
     @Test
     public void shouldPassValidationAndSendEmailsToApplicantAndRespondent() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
+
+        Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldPassValidationAndSendEmailsToApplicantAndRespondentWithLanguagePreferenceWelsh() throws IOException {
+        Map<String, Object> request = caseData(WELSH_REQUEST);
 
         Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
