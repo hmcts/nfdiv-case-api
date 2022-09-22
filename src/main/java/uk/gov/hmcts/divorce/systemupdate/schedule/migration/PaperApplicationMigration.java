@@ -26,15 +26,26 @@ public class PaperApplicationMigration implements Migration {
 
     @Override
     public void apply(final User user, final String serviceAuthorization) {
-        log.info("Started migrating cases paper application");
         try {
+            log.info("Started migrating cases joint paper application");
             ccdSearchService
-                .searchPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, serviceAuthorization)
+                .searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, serviceAuthorization)
                 .parallelStream()
                 .forEach(details -> setApplicant2Offline(details, user, serviceAuthorization));
 
         } catch (final CcdSearchCaseException e) {
-            log.error("Case schedule task (migration paper application) stopped after search error", e);
+            log.error("Case schedule task (migration joint paper application) stopped after search error", e);
+        }
+
+        try {
+            log.info("Started migrating cases sole paper application");
+            ccdSearchService
+                .searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, serviceAuthorization)
+                .parallelStream()
+                .forEach(details -> setApplicant2Offline(details, user, serviceAuthorization));
+
+        } catch (final CcdSearchCaseException e) {
+            log.error("Case schedule task (migration sole paper application) stopped after search error", e);
         }
     }
 
