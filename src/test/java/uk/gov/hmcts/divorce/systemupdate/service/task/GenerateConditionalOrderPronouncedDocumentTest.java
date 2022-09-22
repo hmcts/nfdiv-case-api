@@ -174,5 +174,4 @@ class GenerateConditionalOrderPronouncedDocumentTest {
         assertEquals(1, caseData.getDocuments().getDocumentsGenerated().size());
         assertEquals(APPLICATION, caseData.getDocuments().getDocumentsGenerated().get(0).getValue().getDocumentType());
     }
-
 }
