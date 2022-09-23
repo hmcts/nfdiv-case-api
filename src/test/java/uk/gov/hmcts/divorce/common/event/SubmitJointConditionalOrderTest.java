@@ -29,7 +29,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.common.event.SubmitJointConditionalOrder.SUBMIT_JOINT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
@@ -101,8 +103,7 @@ public class SubmitJointConditionalOrderTest {
     }
 
     @Test
-    void shouldSendApp1SolicitorAndApp2SolicitorNotificationsOnAboutToSubmit() {
-        setMockClock(clock);
+    void shouldSendApp1SolicitorAndApp2SolicitorNotificationsOnSubmittedCallback() {
         CaseData caseData = caseData();
         caseData.setApplicant1(Applicant
             .builder()
@@ -129,7 +130,7 @@ public class SubmitJointConditionalOrderTest {
 
         final CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder().id(1L).build();
 
-        submitJointConditionalOrder.aboutToSubmit(caseDetails, beforeDetails);
+        submitJointConditionalOrder.submitted(caseDetails, beforeDetails);
 
         verify(notificationDispatcher).send(solicitorAppliedForConditionalOrderNotification, caseData, 1L);
     }
@@ -147,6 +148,16 @@ public class SubmitJointConditionalOrderTest {
         assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
 
         verifyNoInteractions(generateConditionalOrderAnswersDocument);
+    }
+
+    @Test
+    void shouldSendApplicant2NotificationWhenConditionalOrderPendingOnSubmittedCallback() {
+
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(State.ConditionalOrderPending).id(1L).build();
+
+        submitJointConditionalOrder.submitted(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, 1L);
     }
@@ -156,6 +167,7 @@ public class SubmitJointConditionalOrderTest {
         setMockClock(clock);
 
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.ConditionalOrderPending).id(1L).build();
 
@@ -163,7 +175,7 @@ public class SubmitJointConditionalOrderTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
 
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails);
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
 
         verify(notificationDispatcher, times(0))
             .send(app2AppliedForConditionalOrderNotification, caseData, 1L);

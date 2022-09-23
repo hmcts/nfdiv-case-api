@@ -85,14 +85,14 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
         State state = details.getState();
 
         var applicant1AppliedForFinalOrderFirst = data.getFinalOrder().getApplicant1AppliedForFinalOrderFirst();
-        var applicant2AppliedForFinalOrderFirst = data.getFinalOrder().getApplicant1AppliedForFinalOrderFirst();
+        var applicant2AppliedForFinalOrderFirst = data.getFinalOrder().getApplicant2AppliedForFinalOrderFirst();
 
         if (applicant2AppliedForFinalOrderFirst == null && applicant1AppliedForFinalOrderFirst == null) {
             data.getFinalOrder().setApplicant2AppliedForFinalOrderFirst(YES);
             data.getFinalOrder().setApplicant1AppliedForFinalOrderFirst(NO);
         }
 
-        if (state == AwaitingFinalOrder) {
+        if (AwaitingFinalOrder.equals(state)) {
             notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, data, details.getId());
         }
 

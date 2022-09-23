@@ -1,0 +1,19 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "jointApplication",
+  "issueDate": "2022-06-17",
+  "coGranted": "Yes",
+  "solSignStatementOfTruth": "Yes",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant2FirstName": "Olive",
+  "applicant2LastName": "Oil",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1SolicitorRepresented": "Yes",
+  "applicant1SolicitorName": "Applicant 1 Solicitor",
+  "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+  "applicant2SolicitorRepresented": "Yes",
+  "applicant2SolicitorName": "Applicant 2 Solicitor",
+  "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
+  "applicant1LanguagePreferenceWelsh": "No"
+}

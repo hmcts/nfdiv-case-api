@@ -1,0 +1,37 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/documents/18fe3e5e-bd24-41f9-9267-f91d7551d03a"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "_embedded": {
+        "documents": [
+          {
+            "size": 72552,
+            "mimeType": "application/pdf",
+            "originalDocumentName": "TEST_DOCUMENT_1.pdf",
+            "createdBy": "15",
+            "lastModifiedBy": "15",
+            "modifiedOn": "2017-11-01T10:23:55.120+0000",
+            "createdOn": "2017-11-01T10:23:55.271+0000",
+            "classification": "PRIVATE",
+            "roles": null,
+            "_links": {
+              "self": {
+                "href": "http://localhost:8765/documents/18fe3e5e-bd24-41f9-9267-f91d7551d03a"
+              },
+              "binary": {
+                "href": "http://localhost:8765/documents/18fe3e5e-bd24-41f9-9267-f91d7551d03a/binary"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

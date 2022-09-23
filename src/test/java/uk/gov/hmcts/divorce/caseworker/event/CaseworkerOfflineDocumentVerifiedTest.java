@@ -27,7 +27,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -38,15 +43,18 @@ import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84ApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -57,7 +65,10 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerOfflineDocumentVerifiedTest {
@@ -73,6 +84,15 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
     @Mock
     private Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
+
+    @Mock
+    private CcdUpdateService ccdUpdateService;
+
+    @Mock
+    private IdamService idamService;
+
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
 
     @Mock
     private Clock clock;
@@ -436,6 +456,42 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getScannedDocumentNames().getListItems())
             .extracting("label")
             .contains("doc1.pdf", "doc2.pdf");
+    }
+
+    @Test
+    void shouldTriggerSwitchToSoleEventIfD84AndSwitchToSoleSelected() {
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder()
+                .typeOfDocumentAttached(CO_D84)
+                .build())
+            .conditionalOrder(ConditionalOrder.builder().d84ApplicationType(SWITCH_TO_SOLE).build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+
+        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verify(ccdUpdateService).submitEvent(details, SWITCH_TO_SOLE_CO, user, TEST_SERVICE_AUTH_TOKEN);
+    }
+
+    @Test
+    void shouldNotTriggerSwitchToSoleEventIfD84AndSwitchToSoleNotSelected() {
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().build())
+            .build();
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verifyNoInteractions(ccdUpdateService);
     }
 
     private ListValue<ScannedDocument> scannedDocument(String filename) {

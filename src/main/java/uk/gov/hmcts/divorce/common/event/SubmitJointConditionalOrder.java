@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -62,6 +63,7 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             .endButtonLabel("Save Conditional Order")
             .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted=\"Yes\" AND coApplicant2IsSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
             .page("JointConditionalOrderSoT")
@@ -85,20 +87,35 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setSubmittedDate(LocalDateTime.now(clock));
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(YES);
 
-        var state = beforeDetails.getState() == ConditionalOrderDrafted
+        var state = ConditionalOrderDrafted.equals(beforeDetails.getState())
             ? ConditionalOrderPending
             : AwaitingLegalAdvisorReferral;
 
-        if (state == AwaitingLegalAdvisorReferral) {
-            notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, details.getId());
-            generateConditionalOrderAnswersDocument.apply(details);
-        } else {
-            notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, details.getId());
+        if (AwaitingLegalAdvisorReferral.equals(state)) {
+            generateConditionalOrderAnswersDocument.apply(details, data.getApplicant2().getLanguagePreference());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(state)
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails) {
+
+        var data = details.getData();
+        var caseId = details.getId();
+
+        log.info("Submit Joint Conditional Order Submitted callback invoked for case id {} ", caseId);
+
+        if (AwaitingLegalAdvisorReferral.equals(details.getState())) {
+            notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, caseId);
+        } else {
+            notificationDispatcher.send(app2AppliedForConditionalOrderNotification, data, caseId);
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }

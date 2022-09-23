@@ -127,6 +127,12 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("finalOrderGranted")
     FINAL_ORDER_GRANTED("Final order granted"),
 
+    @JsonProperty("finalOrderGrantedCoverLetterApp1")
+    FINAL_ORDER_GRANTED_COVER_LETTER_APP_1("Applicant 1 Final order granted cover letter"),
+
+    @JsonProperty("finalOrderGrantedCoverLetterApp2")
+    FINAL_ORDER_GRANTED_COVER_LETTER_APP_2("Applicant 2 Final order granted cover letter"),
+
     @JsonProperty("generalOrder")
     GENERAL_ORDER("General order"),
 
@@ -186,7 +192,10 @@ public enum DocumentType implements HasLabel {
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1("Applicant 1 Conditional Order Granted Coversheet"),
 
     @JsonProperty("coGrantedCoversheetApp2")
-    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2("Applicant 2 Conditional Order Granted Coversheet");
+    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2("Applicant 2 Conditional Order Granted Coversheet"),
+
+    @JsonProperty("switchToSoleCoLetter")
+    SWITCH_TO_SOLE_CO_LETTER("Switch to Sole Conditional Order Letter");
 
     private final String label;
 }
