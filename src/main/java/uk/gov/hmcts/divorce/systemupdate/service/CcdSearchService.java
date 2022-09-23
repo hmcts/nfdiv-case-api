@@ -353,6 +353,70 @@ public class CcdSearchService {
         return caseDetails;
     }
 
+    public List<CaseDetails> searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(User user, String serviceAuth) {
+
+        final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
+        final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
+        final QueryBuilder newPaperCase = matchQuery("data.newPaperCase", YesOrNo.YES);
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(newPaperCase))
+            .must(boolQuery().must(jointApplication))
+            .must(boolQuery().mustNot(applicant2OfflineExist));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        log.info("Query to search joint paper applications where applicant 2 offline flag should be set {} ", sourceBuilder.toString());
+
+        List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
+
+        log.info("Cases retrieved joint paper applications where applicant 2 offline flag should be set {}", caseDetails.size());
+
+        return caseDetails;
+    }
+
+    public List<CaseDetails> searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(User user, String serviceAuth) {
+
+        final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
+        final QueryBuilder soleApplication = matchQuery("data.applicationType", "soleApplication");
+        final QueryBuilder newPaperCase = matchQuery("data.newPaperCase", YesOrNo.YES);
+        final QueryBuilder applicant2EmailExist = existsQuery("data.applicant2Email");
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(newPaperCase))
+            .must(boolQuery().must(soleApplication))
+            .must(boolQuery().mustNot(applicant2OfflineExist))
+            .must(boolQuery().mustNot(applicant2EmailExist));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        log.info("Query to search sole paper applications where applicant 2 offline flag should be set {} ", sourceBuilder.toString());
+
+        List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
+
+        log.info("Cases retrieved sole paper applications where applicant 2 offline flag should be set {}", caseDetails.size());
+
+        return caseDetails;
+    }
+
     public List<CaseDetails> searchCasesInAwaitingAosWhereConfirmReadPetitionIsYes(User user, String serviceAuth) {
 
         final QueryBuilder confirmReadPetitionYes = matchQuery("data.confirmReadPetition", YesOrNo.YES);
