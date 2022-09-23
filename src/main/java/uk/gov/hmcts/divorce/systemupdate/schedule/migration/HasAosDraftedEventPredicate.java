@@ -29,8 +29,8 @@ public class HasAosDraftedEventPredicate {
 
     /**
      * isAosDrafted is set to Yes when the DRAFT_AOS event occurs, but it is reset on CASEWORKER_REISSUE_APPLICATION event.
-     * <p>
-     * This predicate checks for the DRAFT_AOS event in the Case event history, but It will only return true if a
+     *
+     * <p>This predicate checks for the DRAFT_AOS event in the Case event history, but It will only return true if a
      * CASEWORKER_REISSUE_APPLICATION event does not occur after the DRAFT_AOS event.
      *
      * @param user                 - for authentication to CCD
