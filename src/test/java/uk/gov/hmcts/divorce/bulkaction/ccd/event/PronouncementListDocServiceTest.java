@@ -52,8 +52,8 @@ public class PronouncementListDocServiceTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
         when(templateContentService.apply(bulkListCaseDetails.getData(),
-            bulkListCaseDetails.getId(),
-            bulkListCaseDetails.getCreatedDate().toLocalDate()))
+            bulkListCaseDetails.getId()
+        ))
             .thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
@@ -72,7 +72,7 @@ public class PronouncementListDocServiceTest {
                 PRONOUNCEMENT_LIST_DOCUMENT_NAME))
             .thenReturn(pronouncementListDoc);
 
-        pronouncementListDocService.generateDocument(bulkListCaseDetails, bulkListCaseDetails.getData().getBulkListCaseDetails());
+        pronouncementListDocService.generateDocument(bulkListCaseDetails);
 
         assertThat(bulkListCaseDetails.getData().getPronouncementListDocument().getDocumentFileName()).isEqualTo("pronouncementList");
 
