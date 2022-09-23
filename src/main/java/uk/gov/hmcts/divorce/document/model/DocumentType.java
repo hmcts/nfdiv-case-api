@@ -43,6 +43,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("certificateOfEntitlementCoverLetter")
     CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER("Certificate of entitlement cover letter"),
 
+    @JsonProperty("certificateOfEntitlementCoverLetterApp2")
+    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2("Applicant 2 Certificate of entitlement cover letter"),
+
     @JsonProperty("certificateOfEntitlement")
     CERTIFICATE_OF_ENTITLEMENT("Certificate of entitlement"),
 

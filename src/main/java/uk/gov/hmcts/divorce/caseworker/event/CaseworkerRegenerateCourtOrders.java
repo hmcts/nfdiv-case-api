@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.RegenerateCourtOrdersNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -42,7 +43,10 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
     private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
 
     @Autowired
-    private GenerateConditionalOrderPronouncedCoversheet generateCoversheetDocument;
+    private GenerateConditionalOrderPronouncedCoversheet generateConditionalOrderPronouncedCoversheetDocument;
+
+    @Autowired
+    private GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
 
     @Autowired
     private GenerateFinalOrder generateFinalOrder;
@@ -92,18 +96,20 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
 
         if (caseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
             log.info("Regenerating CO Pronounced document for Case Id: {}", details.getId());
-            generateCoversheetDocument.apply(details);
+            generateConditionalOrderPronouncedCoversheetDocument.removeExistingAndGenerateConditionalOrderPronouncedCoversheet(details);
             generateConditionalOrderPronouncedDocument.removeExistingAndGenerateNewConditionalOrderGrantedDoc(details);
         }
 
         if (caseData.getDocuments().getDocumentGeneratedWithType(FINAL_ORDER_GRANTED).isPresent()) {
             log.info("Regenerating Final Order Granted document for Case Id: {}", details.getId());
+            generateFinalOrderCoverLetter.removeExistingAndGenerateNewFinalOrderGrantedCoverLetters(details);
             generateFinalOrder.removeExistingAndGenerateNewFinalOrderGrantedDoc(details);
         }
 
         CaseDetails<CaseData, State> updatedDetails = null;
         if (isNotEmpty(caseData.getConditionalOrder().getCertificateOfEntitlementDocument())) {
             log.info("Regenerating certificate of entitlement document for Case Id: {}", details.getId());
+            generateCertificateOfEntitlement.removeExistingAndGenerateNewCertificateOfEntitlementCoverLetters(details);
             updatedDetails = caseTasks(generateCertificateOfEntitlement).run(details);
         }
 
@@ -112,7 +118,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
                 .data(updatedDetails.getData())
                 .build();
         } else {
-            log.info("Certificate of entitlement and CO Pronounced doesn't exists for Case Id: {}", details.getId());
+            log.info("Certificate of entitlement doesn't exist for Case Id: {}", details.getId());
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .build();

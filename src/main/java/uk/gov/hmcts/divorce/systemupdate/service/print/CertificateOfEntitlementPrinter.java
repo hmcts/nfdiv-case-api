@@ -3,9 +3,9 @@ package uk.gov.hmcts.divorce.systemupdate.service.print;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -19,7 +19,6 @@ import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER;
 
 
 @Component
@@ -39,11 +38,9 @@ public class CertificateOfEntitlementPrinter {
     @Autowired
     private GenerateCertificateOfEntitlement generateCertificateOfEntitlement;
 
-    public void sendLetter(final CaseData caseData, final Long caseId, final Applicant applicant) {
+    public void sendLetter(final CaseData caseData, final Long caseId, final DocumentType coverLetterDocumentType) {
 
-        generateCertificateOfEntitlement.generateCertificateOfEntitlementCoverLetter(caseData, caseId, applicant);
-
-        final List<Letter> certificateOfEntitlementLetters = certificateOfEntitlementLetters(caseData);
+        final List<Letter> certificateOfEntitlementLetters = certificateOfEntitlementLetters(caseData, coverLetterDocumentType);
 
         if (!isEmpty(certificateOfEntitlementLetters) && certificateOfEntitlementLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
             final String caseIdString = caseId.toString();
@@ -55,15 +52,15 @@ public class CertificateOfEntitlementPrinter {
         } else {
             log.warn(
                 "Certificate of Entitlement print has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER, CERTIFICATE_OF_ENTITLEMENT),
+                List.of(coverLetterDocumentType, CERTIFICATE_OF_ENTITLEMENT),
                 caseId);
         }
     }
 
-    private List<Letter> certificateOfEntitlementLetters(CaseData caseData) {
+    private List<Letter> certificateOfEntitlementLetters(CaseData caseData, DocumentType coverLetterDocumentType) {
         final List<Letter> coverLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER);
+            coverLetterDocumentType);
 
         final Letter coverLetter = firstElement(coverLetters);
         final Letter certificateOfEntitlement =

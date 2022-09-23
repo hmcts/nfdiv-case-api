@@ -3,8 +3,10 @@ package uk.gov.hmcts.divorce.caseworker.service.task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -15,11 +17,15 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
@@ -36,10 +42,36 @@ public class GenerateFinalOrderCoverLetter {
     @Autowired
     private Clock clock;
 
-    public void apply(final CaseData caseData,
-                      final Long caseId,
-                      final Applicant applicant,
-                      final DocumentType coverLetterDocumentType) {
+    public void apply(final CaseDetails<CaseData, State> caseDetails) {
+
+        final Long caseId = caseDetails.getId();
+        final CaseData caseData = caseDetails.getData();
+
+        if (caseData.getApplicant1().isOffline()) {
+            log.info("Generating final order cover letter for Applicant 1 for case id: {} ", caseId);
+            generateFinalOrderCoverLetter(
+                caseData,
+                caseId,
+                caseData.getApplicant1(),
+                FINAL_ORDER_GRANTED_COVER_LETTER_APP_1
+            );
+        }
+
+        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
+            log.info("Generating final order cover letter for Applicant 2 for case id: {} ", caseId);
+            generateFinalOrderCoverLetter(
+                caseData,
+                caseId,
+                caseData.getApplicant2(),
+                FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
+            );
+        }
+    }
+
+    public void generateFinalOrderCoverLetter(final CaseData caseData,
+                                              final Long caseId,
+                                              final Applicant applicant,
+                                              final DocumentType coverLetterDocumentType) {
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
@@ -65,5 +97,19 @@ public class GenerateFinalOrderCoverLetter {
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
 
         return templateContent;
+    }
+
+    public void removeExistingAndGenerateNewFinalOrderGrantedCoverLetters(CaseDetails<CaseData, State> caseDetails) {
+        final CaseData caseData = caseDetails.getData();
+
+        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
+            caseData.getDocuments().getDocumentsGenerated()
+                .removeIf(document -> FINAL_ORDER_GRANTED_COVER_LETTER_APP_1.equals(document.getValue().getDocumentType()));
+
+            caseData.getDocuments().getDocumentsGenerated()
+                .removeIf(document -> FINAL_ORDER_GRANTED_COVER_LETTER_APP_2.equals(document.getValue().getDocumentType()));
+        }
+
+        apply(caseDetails);
     }
 }

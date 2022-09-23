@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
@@ -117,5 +118,19 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
         );
 
         return templateContent;
+    }
+
+    public void removeExistingAndGenerateConditionalOrderPronouncedCoversheet(CaseDetails<CaseData, State> caseDetails) {
+        final CaseData caseData = caseDetails.getData();
+
+        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
+            caseData.getDocuments().getDocumentsGenerated()
+                .removeIf(document -> CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1.equals(document.getValue().getDocumentType()));
+
+            caseData.getDocuments().getDocumentsGenerated()
+                .removeIf(document -> CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2.equals(document.getValue().getDocumentType()));
+        }
+
+        apply(caseDetails);
     }
 }

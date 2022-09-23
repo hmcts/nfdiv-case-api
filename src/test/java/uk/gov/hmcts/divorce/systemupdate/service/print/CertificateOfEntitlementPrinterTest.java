@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.service.print;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -8,7 +7,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -68,13 +66,6 @@ public class CertificateOfEntitlementPrinterTest {
             .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER)
             .build();
 
-    @BeforeEach
-    public void setUp() {
-        ReflectionTestUtils.setField(certificateOfEntitlementPrinter, "email", "divorcecase@justice.gov.uk");
-        ReflectionTestUtils.setField(certificateOfEntitlementPrinter, "phoneNumber", "0300 303 0642");
-        ReflectionTestUtils.setField(certificateOfEntitlementPrinter, "finalOrderOffsetDays", 43);
-    }
-
     @Test
     void shouldPrintCertificateOfEntitlementLetterIfRequiredDocumentsArePresent() {
 
@@ -82,7 +73,7 @@ public class CertificateOfEntitlementPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER);
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -99,7 +90,7 @@ public class CertificateOfEntitlementPrinterTest {
         final CaseData caseData = caseData();
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER);
 
         verifyNoInteractions(bulkPrintService);
     }

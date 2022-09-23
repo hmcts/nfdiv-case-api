@@ -26,8 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -112,18 +110,7 @@ class CaseworkerGrantFinalOrderTest {
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
 
-        verify(generateFinalOrderCoverLetter).apply(
-            caseData,
-            TEST_CASE_ID,
-            caseData.getApplicant1(),
-            FINAL_ORDER_GRANTED_COVER_LETTER_APP_1
-        );
-        verify(generateFinalOrderCoverLetter).apply(
-            caseData,
-            TEST_CASE_ID,
-            caseData.getApplicant2(),
-            FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
-        );
+        verify(generateFinalOrderCoverLetter).apply(details);
         verify(generateFinalOrder).apply(details);
     }
 

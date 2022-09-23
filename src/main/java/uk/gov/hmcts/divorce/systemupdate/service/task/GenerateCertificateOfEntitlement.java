@@ -25,6 +25,8 @@ import java.util.Map;
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
@@ -44,6 +46,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -105,21 +108,36 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
         return caseDetails;
     }
 
-    public void generateCertificateOfEntitlementCoverLetter(final CaseData caseData,
-                                                             final Long caseId,
-                                                             final Applicant applicant) {
+    public void generateCertificateOfEntitlementCoverLetters(final CaseDetails<CaseData, State> caseDetails) {
 
-        log.info("Generating certificate of entitlement cover letter for case id {} ", caseId);
+        final Long caseId = caseDetails.getId();
+        final CaseData caseData = caseDetails.getData();
 
-        caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER,
-            templateVars(caseData, caseId, applicant),
-            caseId,
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
-            applicant.getLanguagePreference(),
-            formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
-        );
+        if (caseData.getApplicant1().isOffline()) {
+            log.info("Generating certificate of entitlement cover letter for Applicant 1 for case id {} ", caseId);
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER,
+                templateVars(caseData, caseId, caseData.getApplicant1()),
+                caseId,
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
+                caseData.getApplicant1().getLanguagePreference(),
+                formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+            );
+        }
+
+        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
+            log.info("Generating certificate of entitlement cover letter for Applicant 2 for case id {} ", caseId);
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2,
+                templateVars(caseData, caseId, caseData.getApplicant2()),
+                caseId,
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
+                caseData.getApplicant2().getLanguagePreference(),
+                formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+            );
+        }
     }
 
     private Map<String, Object> templateVars(final CaseData caseData,
@@ -166,5 +184,20 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;
+    }
+
+    public void removeExistingAndGenerateNewCertificateOfEntitlementCoverLetters(CaseDetails<CaseData, State> caseDetails) {
+
+        final CaseData caseData = caseDetails.getData();
+
+        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
+            caseData.getDocuments().getDocumentsGenerated()
+                .removeIf(document -> CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER.equals(document.getValue().getDocumentType()));
+
+            caseData.getDocuments().getDocumentsGenerated()
+                .removeIf(document -> CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2.equals(document.getValue().getDocumentType()));
+        }
+
+        generateCertificateOfEntitlementCoverLetters(caseDetails);
     }
 }
