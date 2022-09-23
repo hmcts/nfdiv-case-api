@@ -4,12 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +29,6 @@ public class CertificateOfEntitlementPrinter {
 
     @Autowired
     private BulkPrintService bulkPrintService;
-
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
-
-    @Autowired
-    private GenerateCertificateOfEntitlement generateCertificateOfEntitlement;
 
     public void sendLetter(final CaseData caseData, final Long caseId, final DocumentType coverLetterDocumentType) {
 

@@ -91,7 +91,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
             caseId,
             CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
-            formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_NAME, LocalDateTime.now(clock))
+            formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_NAME, now(clock))
         );
 
         final DivorceDocument coeDivorceDocument = DivorceDocument
