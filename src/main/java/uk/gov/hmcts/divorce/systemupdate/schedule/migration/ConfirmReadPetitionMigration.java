@@ -25,15 +25,20 @@ public class ConfirmReadPetitionMigration implements Migration {
 
     @Override
     public void apply(final User user, final String serviceAuthorization) {
-        log.info("Started migrating cases confirm read petition");
-        try {
-            ccdSearchService
-                .searchCasesInAwaitingAosWhereConfirmReadPetitionIsYes(user, serviceAuthorization)
-                .parallelStream()
-                .forEach(details -> resetAosFields(details, user, serviceAuthorization));
+        var confirmReadPetitionMigrationEnabled =
+            Boolean.parseBoolean(System.getenv().get("ENABLE_CONFIRM_READ_PETITION_MIGRATION"));
 
-        } catch (final CcdSearchCaseException e) {
-            log.error("Case schedule task (migration confirm read petition) stopped after search error", e);
+        if (confirmReadPetitionMigrationEnabled) {
+            log.info("Started migrating cases confirm read petition");
+            try {
+                ccdSearchService
+                    .searchCasesInAwaitingAosWhereConfirmReadPetitionIsYes(user, serviceAuthorization)
+                    .parallelStream()
+                    .forEach(details -> resetAosFields(details, user, serviceAuthorization));
+
+            } catch (final CcdSearchCaseException e) {
+                log.error("Case schedule task (migration confirm read petition) stopped after search error", e);
+            }
         }
     }
 
