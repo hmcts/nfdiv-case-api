@@ -80,7 +80,7 @@ public class FinalOrder {
     private LocalDateTime grantedDate;
 
     @CCD(
-        label = "Does the applicant want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
+        label = "Does the applicant want to apply for a Final Order?",
         access = {DefaultAccess.class}
     )
     private YesOrNo doesApplicant1WantToApplyForFinalOrder;
@@ -92,7 +92,7 @@ public class FinalOrder {
     private YesOrNo applicant1AppliedForFinalOrderFirst;
 
     @CCD(
-        label = "Does ${labelContentTheApplicant2} want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
+        label = "Does ${labelContentTheApplicant2} want to apply for a Final Order?",
         access = {Applicant2Access.class}
     )
     private YesOrNo doesApplicant2WantToApplyForFinalOrder;
