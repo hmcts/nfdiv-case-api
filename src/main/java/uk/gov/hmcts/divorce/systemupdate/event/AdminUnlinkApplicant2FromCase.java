@@ -33,7 +33,7 @@ public class AdminUnlinkApplicant2FromCase implements CCDConfig<CaseData, State,
         configBuilder
             .event(ADMIN_UNLINK_APPLICANT_2)
             .forStates(STATES_NOT_WITHDRAWN_OR_REJECTED)
-            .name("Unlink Applicant2/Respondent from case")
+            .name("Unlink Applicant2 from case")
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
