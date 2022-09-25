@@ -75,7 +75,7 @@ public class AdminUnlinkApplicant2FromCaseIT {
     }
 
     @Test
-    public void shouldUnlinkCreatorFromDraftCase() throws Exception {
+    public void shouldUnlinkApplicant2FromCase() throws Exception {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, SUPER_USER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
 
