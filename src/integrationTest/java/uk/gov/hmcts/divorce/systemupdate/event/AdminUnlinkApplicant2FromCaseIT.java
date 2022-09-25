@@ -13,7 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -31,10 +30,10 @@ import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SUPER_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUPER_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -52,9 +51,6 @@ public class AdminUnlinkApplicant2FromCaseIT {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @MockBean
-    private RequestInterceptor requestInterceptor;
 
     @MockBean
     private WebMvcConfig webMvcConfig;
@@ -76,7 +72,7 @@ public class AdminUnlinkApplicant2FromCaseIT {
 
     @Test
     public void shouldUnlinkApplicant2FromCase() throws Exception {
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, SUPER_USER_ROLE);
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SUPER_USER_USER_ID, SUPER_USER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
 
         CallbackRequest callbackRequest = callbackRequest(caseData(), ADMIN_UNLINK_APPLICANT_2);
