@@ -261,9 +261,6 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(expectedResponse(CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_D84_RESPONSE));
-
-        verify(appliedForCoPrinter, times(2)).print(any(CaseData.class), anyLong(), any(Applicant.class));
-        verifyNoMoreInteractions(appliedForCoPrinter);
     }
 
     @Test
@@ -384,6 +381,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
         CaseData data = CaseData.builder()
                 .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+                .applicationType(JOINT_APPLICATION)
                 .application(Application.builder()
                         .issueDate(LOCAL_DATE)
                         .applicant1HelpWithFees(HelpWithFees.builder()
@@ -427,6 +425,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
         data.setDocuments(CaseDocuments.builder()
                         .scannedDocuments(singletonList(doc1))
+                        .typeOfDocumentAttached(CO_D84)
                         .build());
 
         mockMvc.perform(post(SUBMITTED_URL)
@@ -441,7 +440,8 @@ public class CaseworkerOfflineDocumentVerifiedIT {
                 .getContentAsString();
 
         verify(aosPackPrinter).sendAosResponseLetterToApplicant(data, TEST_CASE_ID);
-
+        verify(appliedForCoPrinter, times(2)).print(any(CaseData.class), anyLong(), any(Applicant.class));
+        verifyNoMoreInteractions(appliedForCoPrinter);
         verifyNoMoreInteractions(aosPackPrinter);
     }
 }

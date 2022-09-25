@@ -372,9 +372,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
-
-        verify(notificationDispatcher)
-            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -434,9 +431,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
-
-        verify(notificationDispatcher)
-            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -475,7 +469,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                 caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verify(submitAosService).submitAosNotifications(details);
-
         verifyNoMoreInteractions(submitAosService);
     }
 
@@ -490,6 +483,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
         details.setData(caseData);
+        details.setId(TEST_CASE_ID);
 
         final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
         final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
@@ -498,6 +492,8 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         caseworkerOfflineDocumentVerified.submitted(details, details);
 
+        verify(notificationDispatcher)
+                .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
         verify(ccdUpdateService).submitEvent(details, SWITCH_TO_SOLE_CO, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
