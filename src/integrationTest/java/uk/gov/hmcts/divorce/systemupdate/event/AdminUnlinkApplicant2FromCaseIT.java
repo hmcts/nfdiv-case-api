@@ -74,7 +74,6 @@ public class AdminUnlinkApplicant2FromCaseIT {
     public void shouldUnlinkApplicant2FromCase() throws Exception {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SUPER_USER_USER_ID, SUPER_USER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
-
         CallbackRequest callbackRequest = callbackRequest(caseData(), ADMIN_UNLINK_APPLICANT_2);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
