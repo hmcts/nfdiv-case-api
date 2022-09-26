@@ -15,11 +15,13 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CertificateOfEntitlementContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.join;
@@ -189,13 +191,12 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
     public void removeExistingAndGenerateNewCertificateOfEntitlementCoverLetters(CaseDetails<CaseData, State> caseDetails) {
 
         final CaseData caseData = caseDetails.getData();
+        final List<DocumentType> documentTypesToRemove =
+            List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2);
 
         if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
             caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER.equals(document.getValue().getDocumentType()));
-
-            caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2.equals(document.getValue().getDocumentType()));
+                .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
         }
 
         generateCertificateOfEntitlementCoverLetters(caseDetails);

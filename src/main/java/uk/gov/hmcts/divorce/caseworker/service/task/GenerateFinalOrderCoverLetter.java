@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.join;
@@ -101,13 +102,12 @@ public class GenerateFinalOrderCoverLetter {
 
     public void removeExistingAndGenerateNewFinalOrderGrantedCoverLetters(CaseDetails<CaseData, State> caseDetails) {
         final CaseData caseData = caseDetails.getData();
+        final List<DocumentType> documentTypesToRemove =
+            List.of(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
 
         if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
             caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> FINAL_ORDER_GRANTED_COVER_LETTER_APP_1.equals(document.getValue().getDocumentType()));
-
-            caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> FINAL_ORDER_GRANTED_COVER_LETTER_APP_2.equals(document.getValue().getDocumentType()));
+                .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
         }
 
         apply(caseDetails);

@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.join;
@@ -122,13 +123,12 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
 
     public void removeExistingAndGenerateConditionalOrderPronouncedCoversheet(CaseDetails<CaseData, State> caseDetails) {
         final CaseData caseData = caseDetails.getData();
+        final List<DocumentType> documentTypesToRemove =
+            List.of(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
 
         if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
             caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1.equals(document.getValue().getDocumentType()));
-
-            caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2.equals(document.getValue().getDocumentType()));
+                .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
         }
 
         apply(caseDetails);
