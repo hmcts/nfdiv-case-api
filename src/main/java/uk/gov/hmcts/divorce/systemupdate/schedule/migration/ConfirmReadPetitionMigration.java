@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.migration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -46,8 +47,8 @@ public class ConfirmReadPetitionMigration implements Migration {
         final Long caseId = caseDetails.getId();
 
         try {
-            caseDetails.getData().put("confirmReadPetition", null);
-            caseDetails.getData().put("aosIsDrafted", null);
+            caseDetails.getData().put("confirmReadPetition", YesOrNo.NO);
+            caseDetails.getData().put("aosIsDrafted", YesOrNo.NO);
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
             log.info("Reset AOS fields successfully for case id: {}", caseId);
         } catch (final CcdConflictException e) {
