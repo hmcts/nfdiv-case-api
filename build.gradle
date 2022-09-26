@@ -119,6 +119,7 @@ task integration(type: Test) {
   classpath = sourceSets.integrationTest.runtimeClasspath
   failFast = true
   jvmArgs += "-Xmx3g"
+  environment 'ADMIN_UNLINK_APPLICANT_2_ENABLED', 'true'
 }
 
 // Invoked from CftLibConfig when booting with CCD.
