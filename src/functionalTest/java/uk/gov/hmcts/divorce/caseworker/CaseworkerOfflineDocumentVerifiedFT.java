@@ -29,7 +29,7 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
         "classpath:responses/response-caseworker-offline-document-verified-d84-about-to-submit.json";
 
     @Test
-    public void shouldGenerateReclassifiedScannedDocumentsIfD84Selected() throws IOException {
+    public void shouldReclassifyScannedDocumentsIfD84Selected() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D84_REQUEST);
 
         final Response response = triggerCallback(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, ABOUT_TO_SUBMIT_URL);
