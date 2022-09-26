@@ -70,7 +70,7 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
 
         if (bulkCaseDetails.getData().getPronouncementListDocument() != null) {
             log.info("Regenerating Pronouncement List document for bulk case {}", bulkCaseDetails.getId());
-            pronouncementListDocService.generateDocument(bulkCaseDetails, bulkCaseDetails.getData().getBulkListCaseDetails());
+            pronouncementListDocService.generateDocument(bulkCaseDetails);
         }
 
         return AboutToStartOrSubmitResponse

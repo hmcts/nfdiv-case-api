@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.service.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.caseworker.service.print.FinalOrderGrantedPrinter;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
@@ -13,6 +14,8 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -39,6 +42,27 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Autowired
     private CommonContent commonContent;
 
+    @Autowired
+    private FinalOrderGrantedPrinter printer;
+
+    @Override
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
+        log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID,
+            caseData.getApplicationType().isSole() ? "applicant solicitor" : "applicant 1 solicitor", caseId);
+        notificationService.sendEmail(
+            caseData.getApplicant1().getSolicitor().getEmail(),
+            SOLICITOR_FINAL_ORDER_GRANTED,
+            solicitorTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    @Override
+    public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
+        log.info("Sending Final Order Granted letter to Applicant 1: {}", caseId);
+        printer.print(caseData, caseId, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1);
+    }
+
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
 
@@ -54,6 +78,12 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     }
 
     @Override
+    public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
+        log.info("Sending Final Order Granted letter to Applicant 2: {}", caseId);
+        printer.print(caseData, caseId, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
+    }
+
+    @Override
     public void sendToApplicant2(CaseData caseData, Long caseId) {
 
         if (caseData.getApplicationType().isSole()) {
@@ -66,18 +96,6 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
-    }
-
-    @Override
-    public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
-        log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID,
-            caseData.getApplicationType().isSole() ? "applicant solicitor" : "applicant 1 solicitor", caseId);
-        notificationService.sendEmail(
-            caseData.getApplicant1().getSolicitor().getEmail(),
-            SOLICITOR_FINAL_ORDER_GRANTED,
-            solicitorTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
-        );
     }
 
     @Override
