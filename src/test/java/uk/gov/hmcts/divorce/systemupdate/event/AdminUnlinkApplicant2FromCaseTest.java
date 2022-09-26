@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
 
+import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -35,10 +36,11 @@ public class AdminUnlinkApplicant2FromCaseTest {
     private AdminUnlinkApplicant2FromCase adminUnlinkApplicant2FromCase;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() {
+    void shouldAddConfigurationToConfigBuilder() throws Exception {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        adminUnlinkApplicant2FromCase.configure(configBuilder);
+        withEnvironmentVariable("ADMIN_UNLINK_APPLICANT_2_ENABLED", "true")
+            .execute(() -> adminUnlinkApplicant2FromCase.configure(configBuilder));
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)

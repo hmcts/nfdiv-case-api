@@ -30,13 +30,15 @@ public class AdminUnlinkApplicant2FromCase implements CCDConfig<CaseData, State,
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder
-            .event(ADMIN_UNLINK_APPLICANT_2)
-            .forStates(STATES_NOT_WITHDRAWN_OR_REJECTED)
-            .name("Unlink Applicant2 from case")
-            .grant(CREATE_READ_UPDATE, SUPER_USER)
-            .retries(120, 120)
-            .aboutToSubmitCallback(this::aboutToSubmit);
+        if (Boolean.parseBoolean(System.getenv().get("ADMIN_UNLINK_APPLICANT_2_ENABLED"))) {
+            configBuilder
+                .event(ADMIN_UNLINK_APPLICANT_2)
+                .forStates(STATES_NOT_WITHDRAWN_OR_REJECTED)
+                .name("Unlink Applicant2 from case")
+                .grant(CREATE_READ_UPDATE, SUPER_USER)
+                .retries(120, 120)
+                .aboutToSubmitCallback(this::aboutToSubmit);
+        }
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
