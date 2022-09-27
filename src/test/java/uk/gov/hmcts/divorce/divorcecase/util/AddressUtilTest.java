@@ -228,6 +228,17 @@ public class AddressUtilTest {
     }
 
     @Test
+    public void shouldReturnFalseIfCountryIsNorthernIrelandAndPostcodeIsNull() {
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country("Northern Ireland")
+            .postCode(null)
+            .build();
+
+        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(false));
+    }
+
+    @Test
     public void shouldThrowIllegalArgumentExceptionIfAddressIsNull() {
         assertThatThrownBy(() -> AddressUtil.isEnglandOrWales(null))
             .isExactlyInstanceOf(IllegalArgumentException.class)
