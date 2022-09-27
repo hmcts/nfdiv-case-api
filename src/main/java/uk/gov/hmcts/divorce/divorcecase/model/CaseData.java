@@ -252,7 +252,7 @@ public class CaseData {
 
     @JsonUnwrapped()
     @Builder.Default
-    private NotificationSentTracker notificationTracker = new NotificationSentTracker();
+    private NotificationSentTracker notificationSentTracker = new NotificationSentTracker();
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {
