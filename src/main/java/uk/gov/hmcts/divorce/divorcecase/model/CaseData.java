@@ -25,6 +25,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.notificationTrackers.AwaitingConditionalOrderNotificationSentTracker;
+import uk.gov.hmcts.divorce.divorcecase.model.notificationTrackers.NotificationSentTracker;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
@@ -248,6 +250,10 @@ public class CaseData {
         access = {SystemUpdateAndSuperUserAccess.class}
     )
     private List<ListValue<GeneralLetterDetails>> generalLetters;
+
+    @JsonUnwrapped()
+    @Builder.Default
+    private NotificationSentTracker notificationSentTracker = new NotificationSentTracker();
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {
