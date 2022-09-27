@@ -23,6 +23,7 @@ public final class AddressUtil {
     private static final List<String> UK_TERMS = Arrays.asList("unitedkingdom", "uk", "england", "wales", "greatbritain");
     private static final List<String> SCOTTISH_POSTCODE_PREFIXES =
         Arrays.asList("ab", "dd", "dg", "eh", "fk", "g", "hs", "iv", "ka", "kw", "ky", "ml", "pa", "ph", "td", "ze");
+    private static final String NI_POSTCODE_PREFIX = "bt";
     private static final String OVERSEAS_EXCEPTION_MESSAGE =
         "Cannot assert whether address is overseas or not due to null address or blank/null country";
 
@@ -76,12 +77,13 @@ public final class AddressUtil {
         final String sanitisedCountry = address.getCountry().replaceAll("[^a-zA-Z0-9]+", "").toLowerCase(Locale.ROOT);
         final String postcode = Optional.ofNullable(address.getPostCode()).orElse("");
 
-        var isScottishPostcode = false;
+        var isScottishOrNorthernIrishPostcode = false;
         if (postcode.matches(".*[a-zA-Z]+.*")) {
             final String sanitisedPostcodePrefix = postcode.split("[0-9]")[0].toLowerCase(Locale.ROOT);
-            isScottishPostcode = SCOTTISH_POSTCODE_PREFIXES.contains(sanitisedPostcodePrefix);
+            isScottishOrNorthernIrishPostcode =
+                SCOTTISH_POSTCODE_PREFIXES.contains(sanitisedPostcodePrefix) || NI_POSTCODE_PREFIX.equals(sanitisedPostcodePrefix);
         }
 
-        return UK_TERMS.contains(sanitisedCountry) && !isScottishPostcode;
+        return UK_TERMS.contains(sanitisedCountry) && !isScottishOrNorthernIrishPostcode;
     }
 }
