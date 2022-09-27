@@ -25,7 +25,7 @@ public class NotificationDispatcher {
 
         if (caseData.getApplicant2().isRepresented() && !caseData.getApplicant2().isOffline() && !applicantNotification.alreadySentToApplicant2Solicitor) {
             applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
-            applicantNotification.alreadySentToApplicant1Solicitor = true;
+            applicantNotification.alreadySentToApplicant2Solicitor = true;
 
         } else if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline() && !applicantNotification.alreadySentToApplicant2Offline) {
             applicantNotification.sendToApplicant2Offline(caseData, caseId);
