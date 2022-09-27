@@ -48,23 +48,18 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosUnDisputed.S
 public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_AOS = "submit-aos";
-
-    @Autowired
-    private SubmitAosService submitAosService;
-
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
-
-    @Autowired
-    private IdamService idamService;
-
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
-
     private final List<CcdPageConfiguration> pages = List.of(
         new Applicant2SolStatementOfTruth(),
         new SolicitorDetailsWithStatementOfTruth()
     );
+    @Autowired
+    private SubmitAosService submitAosService;
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
+    @Autowired
+    private IdamService idamService;
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

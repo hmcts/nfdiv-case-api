@@ -48,6 +48,7 @@ public final class TestConstants {
     public static final String CASEWORKER_USER_ID = "2";
     public static final String APP_2_CITIZEN_USER_ID = "3";
     public static final String SYSTEM_USER_USER_ID = "4";
+    public static final String SUPER_USER_USER_ID = "5";
 
     public static final String TEST_SOL_USER_EMAIL = "testsol@test.com";
     public static final String TEST_APPLICANT_2_EMAIL = "testsol@test.com";
