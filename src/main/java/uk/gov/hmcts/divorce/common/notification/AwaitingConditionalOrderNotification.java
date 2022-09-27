@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class AwaitingConditionalOrderNotification implements ApplicantNotification {
+public class AwaitingConditionalOrderNotification extends ApplicantNotification {
 
     @Autowired
     private CommonContent commonContent;

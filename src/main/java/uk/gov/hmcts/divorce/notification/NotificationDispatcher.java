@@ -10,20 +10,30 @@ public class NotificationDispatcher {
 
     public void send(final ApplicantNotification applicantNotification, final CaseData caseData, final Long caseId) {
 
-        if (caseData.getApplicant1().isRepresented() && !caseData.getApplicant1().isOffline()) {
+        if (caseData.getApplicant1().isRepresented() && !caseData.getApplicant1().isOffline() && !applicantNotification.alreadySentToApplicant1Solicitor) {
             applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
-        } else if (caseData.getApplicant1().isOffline()) {
+            applicantNotification.alreadySentToApplicant1Solicitor = true;
+
+        } else if (caseData.getApplicant1().isOffline() && !applicantNotification.alreadySentToApplicant1Offline) {
             applicantNotification.sendToApplicant1Offline(caseData, caseId);
-        } else {
+            applicantNotification.alreadySentToApplicant1Offline = true;
+
+        } else if (!applicantNotification.alreadySentToApplicant1) {
             applicantNotification.sendToApplicant1(caseData, caseId);
+            applicantNotification.alreadySentToApplicant1 = true;
         }
 
-        if (caseData.getApplicant2().isRepresented() && !caseData.getApplicant2().isOffline()) {
+        if (caseData.getApplicant2().isRepresented() && !caseData.getApplicant2().isOffline() && !applicantNotification.alreadySentToApplicant2Solicitor) {
             applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
-        } else if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
+            applicantNotification.alreadySentToApplicant1Solicitor = true;
+
+        } else if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline() && !applicantNotification.alreadySentToApplicant2Offline) {
             applicantNotification.sendToApplicant2Offline(caseData, caseId);
-        } else {
+            applicantNotification.alreadySentToApplicant2Offline = true;
+
+        } else if (!applicantNotification.alreadySentToApplicant2) {
             applicantNotification.sendToApplicant2(caseData, caseId);
+            applicantNotification.alreadySentToApplicant2 = true;
         }
     }
 }
