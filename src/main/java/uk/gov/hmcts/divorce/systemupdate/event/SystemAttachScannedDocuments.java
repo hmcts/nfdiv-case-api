@@ -17,7 +17,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceiv
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
@@ -32,7 +31,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .forStateTransition(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED, OfflineDocumentReceived)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE_DELETE, SYSTEMUPDATE, CASE_WORKER)
-            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR))
+            .grantHistoryOnly(LEGAL_ADVISOR))
             .page("attachScannedDocs")
             .pageLabel("Correspondence")
             .complex(CaseData::getDocuments)
