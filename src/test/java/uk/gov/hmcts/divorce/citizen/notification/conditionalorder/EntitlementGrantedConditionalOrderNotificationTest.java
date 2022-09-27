@@ -269,7 +269,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, 1234567890123456L);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant1());
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant1(), true);
         assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()).isTrue();
     }
 
@@ -289,7 +289,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant2());
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant2(), false);
         assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()).isTrue();
     }
 

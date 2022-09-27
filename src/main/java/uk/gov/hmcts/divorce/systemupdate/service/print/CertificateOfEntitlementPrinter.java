@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -30,6 +32,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithConfidentialDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -44,7 +48,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -80,11 +85,11 @@ public class CertificateOfEntitlementPrinter {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
-    public void sendLetter(final CaseData caseData, final Long caseId, final Applicant applicant) {
+    public void sendLetter(final CaseData caseData, final Long caseId, final Applicant applicant, boolean isApplicant1) {
 
-        generateCoversheet(caseData, caseId, applicant);
+        generateCoversheet(caseData, caseId, applicant, isApplicant1);
 
-        final List<Letter> certificateOfEntitlementLetters = certificateOfEntitlementLetters(caseData);
+        final List<Letter> certificateOfEntitlementLetters = certificateOfEntitlementLetters(caseData, isApplicant1);
 
         if (!isEmpty(certificateOfEntitlementLetters) && certificateOfEntitlementLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
             final String caseIdString = caseId.toString();
@@ -96,15 +101,32 @@ public class CertificateOfEntitlementPrinter {
         } else {
             log.warn(
                 "Certificate of Entitlement print has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER, CERTIFICATE_OF_ENTITLEMENT),
+                List.of(isApplicant1 ? CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+                    CERTIFICATE_OF_ENTITLEMENT),
                 caseId);
         }
     }
 
-    private List<Letter> certificateOfEntitlementLetters(CaseData caseData) {
-        final List<Letter> coverLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER);
+    private List<Letter> certificateOfEntitlementLetters(CaseData caseData, boolean isApplicant1) {
+
+        DocumentType documentType;
+        boolean isContactPrivate;
+
+        if (isApplicant1) {
+            documentType = CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+            isContactPrivate = caseData.getApplicant1().isConfidentialContactDetails();
+        } else {
+            documentType = CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
+            isContactPrivate = caseData.getApplicant2().isConfidentialContactDetails();
+        }
+
+        CaseDocuments caseDocuments = caseData.getDocuments();
+
+        final List<Letter> coverLetters = isContactPrivate
+                ? lettersWithConfidentialDocumentType(
+                    caseDocuments.getConfidentialDocumentsGenerated(),
+                    getConfidentialDocumentType(documentType))
+                : lettersWithDocumentType(caseDocuments.getDocumentsGenerated(), documentType);
 
         final Letter coverLetter = firstElement(coverLetters);
         final Letter certificateOfEntitlement =
@@ -123,13 +145,13 @@ public class CertificateOfEntitlementPrinter {
 
     private void generateCoversheet(final CaseData caseData,
                                     final Long caseId,
-                                    final Applicant applicant) {
+                                    final Applicant applicant, boolean isApplicant1) {
 
         log.info("Generating certificate of entitlement coversheet for case id {} ", caseId);
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER,
+            isApplicant1 ? CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
             templateVars(caseData, caseId, applicant),
             caseId,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
@@ -148,7 +170,7 @@ public class CertificateOfEntitlementPrinter {
             ? applicant.getSolicitor().getName()
             : join(" ", applicant.getFirstName(), applicant.getLastName())
         );
-        templateContent.put(ADDRESS, applicant.getCorrespondenceAddress());
+        templateContent.put(ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, formatId(caseId));
 
@@ -180,6 +202,8 @@ public class CertificateOfEntitlementPrinter {
             .build();
 
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+
+        log.info("$$address for applicant - {} is {}", templateContent.get(NAME), templateContent.get(ADDRESS));
 
         return templateContent;
     }

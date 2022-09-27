@@ -113,6 +113,9 @@ public final class DocumentConstants {
     public static final String FINAL_ORDER_DOCUMENT_NAME = "FinalOrderGranted";
     public static final String FINAL_ORDER_TEMPLATE_ID = "FINAL_ORDER_GRANTED";
 
+    public static final String APPLICANT1 = "applicant1";
+    public static final String APPLICANT2 = "applicant2";
+
     private DocumentConstants() {
     }
 }

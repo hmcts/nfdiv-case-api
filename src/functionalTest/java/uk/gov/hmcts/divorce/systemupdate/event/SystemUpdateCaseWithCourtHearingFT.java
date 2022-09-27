@@ -93,4 +93,24 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(RESPONSE_OFFLINE)));
     }
+
+    @Test
+    public void shouldSendLettersToApplicantsAndCreateCertificateOfEntitlementDocumentAndCoverLetterWhenBothContactsArePrivate()
+        throws IOException {
+
+        Map<String, Object> request = caseData(JOINT_REQUEST);
+        request.put("applicant1Offline", YES);
+        request.put("applicant2Offline", YES);
+        request.put("applicant1ContactDetailsType", "private");
+        request.put("applicant2ContactDetailsType", "private");
+
+        Response response = triggerCallback(request, SYSTEM_UPDATE_CASE_COURT_HEARING, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE_OFFLINE)));
+    }
 }
