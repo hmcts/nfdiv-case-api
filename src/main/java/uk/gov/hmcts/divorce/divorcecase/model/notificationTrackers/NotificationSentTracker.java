@@ -17,5 +17,5 @@ public class NotificationSentTracker {
     @JsonUnwrapped(prefix = "awaitingConditionalOrderNotification")
     @Builder.Default
     private AwaitingConditionalOrderNotificationSentTracker awaitingConditionalOrderNotificationSentTracker
-        = new AwaitingConditionalOrderNotificationSentTracker();
+            = new AwaitingConditionalOrderNotificationSentTracker();
 }

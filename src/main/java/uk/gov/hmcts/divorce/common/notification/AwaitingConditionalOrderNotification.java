@@ -47,7 +47,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     public void sendToApplicant1(final CaseData caseData, final Long id) {
 
         var notificationTracker =
-            caseData.getNotificationSentTracker().getAwaitingConditionalOrderNotificationSentTracker();
+            caseData.getNotificationTracker().getAwaitingConditionalOrderNotificationSentTracker();
 
         if (!notificationTracker.alreadySentToApplicant1) {
             log.info("Notifying applicant 1 that they can apply for a conditional order: {}", id);
@@ -71,7 +71,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
 
         var notificationTracker =
-            caseData.getNotificationSentTracker().getAwaitingConditionalOrderNotificationSentTracker();
+            caseData.getNotificationTracker().getAwaitingConditionalOrderNotificationSentTracker();
 
         if (!notificationTracker.alreadySentToApplicant1Solicitor) {
 
@@ -106,7 +106,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     public void sendToApplicant1Offline(final CaseData caseData, final Long id) {
 
         var notificationTracker =
-            caseData.getNotificationSentTracker().getAwaitingConditionalOrderNotificationSentTracker();
+            caseData.getNotificationTracker().getAwaitingConditionalOrderNotificationSentTracker();
 
         if (!notificationTracker.alreadySentToApplicant1Offline) {
             log.info("Notifying applicant 1 offline that they can apply for a conditional order: {}", id);
@@ -119,7 +119,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     public void sendToApplicant2(final CaseData caseData, final Long id) {
 
         var notificationTracker =
-            caseData.getNotificationSentTracker().getAwaitingConditionalOrderNotificationSentTracker();
+            caseData.getNotificationTracker().getAwaitingConditionalOrderNotificationSentTracker();
 
         if (!notificationTracker.alreadySentToApplicant2) {
             if (!caseData.getApplicationType().isSole() && nonNull(caseData.getApplicant2().getEmail())) {
@@ -144,7 +144,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
 
         var notificationTracker =
-            caseData.getNotificationSentTracker().getAwaitingConditionalOrderNotificationSentTracker();
+            caseData.getNotificationTracker().getAwaitingConditionalOrderNotificationSentTracker();
 
         if (!notificationTracker.alreadySentToApplicant2Solicitor) {
 
@@ -171,7 +171,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     public void sendToApplicant2Offline(final CaseData caseData, final Long id) {
 
         var notificationTracker =
-            caseData.getNotificationSentTracker().getAwaitingConditionalOrderNotificationSentTracker();
+            caseData.getNotificationTracker().getAwaitingConditionalOrderNotificationSentTracker();
 
         if (!notificationTracker.alreadySentToApplicant2Offline) {
             if (!caseData.getApplicationType().isSole()) {
