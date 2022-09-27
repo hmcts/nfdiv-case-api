@@ -148,6 +148,6 @@ public class CaseworkerEditBulkCaseTest {
 
         assertThat(response.getErrors()).isNull();
 
-        verify(pronouncementListDocService).generateDocument(bulkCaseDetails, bulkCaseList);
+        verify(pronouncementListDocService).generateDocument(bulkCaseDetails);
     }
 }

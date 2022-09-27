@@ -19,6 +19,7 @@ import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
@@ -83,9 +84,12 @@ public class CertificateOfEntitlementContent {
         final LocalDateTime dateAndTimeOfHearing = conditionalOrder.getDateAndTimeOfHearing();
         final String dateOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(DATE_TIME_FORMATTER) : null;
         final String timeOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(TIME_FORMATTER) : null;
+        final String beforeDateOfHearing = nonNull(dateAndTimeOfHearing)
+            ? dateAndTimeOfHearing.minusDays(7).format(DATE_TIME_FORMATTER) : null;
 
         templateContent.put(DATE_OF_HEARING, dateOfHearing);
         templateContent.put(TIME_OF_HEARING, timeOfHearing);
+        templateContent.put(BEFORE_DATE_OF_HEARING, beforeDateOfHearing);
 
         templateContent.put(HAS_FINANCIAL_ORDERS, applicant1.appliedForFinancialOrder());
 
