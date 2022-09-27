@@ -40,6 +40,7 @@ import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
@@ -412,6 +413,35 @@ public class CcdSearchService {
         ).getCases();
 
         log.info("Cases retrieved sole paper applications where applicant 2 offline flag should be set {}", caseDetails.size());
+
+        return caseDetails;
+    }
+
+    public List<CaseDetails> searchCasesInAwaitingAosWhereConfirmReadPetitionIsYes(User user, String serviceAuth) {
+
+        final QueryBuilder confirmReadPetitionYes = matchQuery("data.confirmReadPetition", YesOrNo.YES);
+        final QueryBuilder awaitingAosState = matchQuery(STATE, AwaitingAos);
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(confirmReadPetitionYes))
+            .must(boolQuery().must(awaitingAosState));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        log.info("Query to search AwaitingAOS cases with confirmReadPetition equals Yes {} ", sourceBuilder.toString());
+
+        List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
+
+        log.info("Cases retrieved AwaitingAOS cases with confirmReadPetition equals Yes {}", caseDetails.size());
 
         return caseDetails;
     }
