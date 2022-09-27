@@ -9,7 +9,9 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendFinalOrderGrantedNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -24,6 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -39,6 +43,9 @@ class CaseworkerGrantFinalOrderTest {
 
     @Mock
     private GenerateFinalOrder generateFinalOrder;
+
+    @Mock
+    private GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
 
     @Mock
     private SendFinalOrderGrantedNotifications sendFinalOrderGrantedNotifications;
@@ -78,6 +85,45 @@ class CaseworkerGrantFinalOrderTest {
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
 
+        verify(generateFinalOrder).apply(details);
+    }
+
+    @Test
+    void shouldGenerateFinalOrderGrantedCoverLetterIfApplicantOrRespondentIsOffline() {
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setOffline(YesOrNo.YES);
+        caseData.getApplicant2().setOffline(YesOrNo.YES);
+        caseData.getApplicant2().setEmail("");
+        caseData.setFinalOrder(
+            FinalOrder.builder()
+                .granted(Set.of(FinalOrder.Granted.YES))
+                .dateFinalOrderEligibleFrom(LocalDate.now())
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        setMockClock(clock);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
+        assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
+
+        verify(generateFinalOrderCoverLetter).apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            FINAL_ORDER_GRANTED_COVER_LETTER_APP_1
+        );
+        verify(generateFinalOrderCoverLetter).apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
+        );
         verify(generateFinalOrder).apply(details);
     }
 

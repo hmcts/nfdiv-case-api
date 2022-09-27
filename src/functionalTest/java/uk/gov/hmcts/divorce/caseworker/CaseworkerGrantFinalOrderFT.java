@@ -30,6 +30,11 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
     public static final String REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON =
         "classpath:request/casedata/ccd-callback-caseworker-grant-final-order.json";
 
+    public static final String RESPONSE_CASEWORKER_GRANT_FINAL_ORDER_OFFLINE_JSON =
+        "classpath:responses/response-caseworker-grant-final-order-offline.json";
+    public static final String REQUEST_CASEWORKER_GRANT_FINAL_ORDER_OFFLINE_JSON =
+        "classpath:request/casedata/ccd-callback-caseworker-grant-final-order-offline.json";
+
     private static final String REQUEST_CASEWORKER_GRANT_FINAL_ORDER_SOLICITOR_JSON =
         "classpath:request/casedata/ccd-callback-caseworker-grant-final-order-solicitor.json";
 
@@ -91,6 +96,20 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(jsonDocument.json());
+    }
+
+    @Test
+    public void shouldGenerateGrantFinalOrderDocumentAndCoverLetterWhenAboutToSubmitCallbackIsInvokedForOfflineCase() throws Exception {
+        final Map<String, Object> caseData = caseData(
+            REQUEST_CASEWORKER_GRANT_FINAL_ORDER_OFFLINE_JSON);
+
+        final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE_CASEWORKER_GRANT_FINAL_ORDER_OFFLINE_JSON)));
     }
 
     @Test
