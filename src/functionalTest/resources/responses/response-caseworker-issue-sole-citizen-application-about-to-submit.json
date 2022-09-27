@@ -139,6 +139,5 @@
     "serviceMethod": "personalService",
     "warnings": []
   },
-  "state": "AwaitingService",
-  "accessCode": ""
+  "state": "AwaitingService"
 }
