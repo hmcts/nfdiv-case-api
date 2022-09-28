@@ -19,6 +19,8 @@ import java.util.Objects;
 
 import static java.lang.String.join;
 import static java.time.temporal.ChronoUnit.DAYS;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
@@ -80,7 +82,8 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()) {
             log.info("Sending certificate of entitlement letter to applicant 1 for case: {}", caseId);
 
-            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant1(), true);
+            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant1(),
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
             caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant1(YesOrNo.YES);
         }
     }
@@ -117,7 +120,8 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()) {
             log.info("Sending certificate of entitlement letter to applicant 2 for case: {}", caseId);
 
-            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant2(), false);
+            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant2(),
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
             caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(YesOrNo.YES);
         }
     }

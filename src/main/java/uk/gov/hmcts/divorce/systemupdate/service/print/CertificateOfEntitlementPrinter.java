@@ -49,7 +49,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -85,11 +84,12 @@ public class CertificateOfEntitlementPrinter {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
-    public void sendLetter(final CaseData caseData, final Long caseId, final Applicant applicant, boolean isApplicant1) {
+    public void sendLetter(final CaseData caseData, final Long caseId, final Applicant applicant,
+                           final DocumentType coversheetDocumentType) {
 
-        generateCoversheet(caseData, caseId, applicant, isApplicant1);
+        generateCoversheet(caseData, caseId, applicant, coversheetDocumentType);
 
-        final List<Letter> certificateOfEntitlementLetters = certificateOfEntitlementLetters(caseData, isApplicant1);
+        final List<Letter> certificateOfEntitlementLetters = certificateOfEntitlementLetters(caseData, coversheetDocumentType);
 
         if (!isEmpty(certificateOfEntitlementLetters) && certificateOfEntitlementLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
             final String caseIdString = caseId.toString();
@@ -101,22 +101,18 @@ public class CertificateOfEntitlementPrinter {
         } else {
             log.warn(
                 "Certificate of Entitlement print has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(isApplicant1 ? CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-                    CERTIFICATE_OF_ENTITLEMENT),
+                List.of(coversheetDocumentType, CERTIFICATE_OF_ENTITLEMENT),
                 caseId);
         }
     }
 
-    private List<Letter> certificateOfEntitlementLetters(CaseData caseData, boolean isApplicant1) {
+    private List<Letter> certificateOfEntitlementLetters(CaseData caseData, final DocumentType coversheetDocumentType) {
 
-        DocumentType documentType;
         boolean isContactPrivate;
 
-        if (isApplicant1) {
-            documentType = CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+        if (CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1.equals(coversheetDocumentType)) {
             isContactPrivate = caseData.getApplicant1().isConfidentialContactDetails();
         } else {
-            documentType = CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
             isContactPrivate = caseData.getApplicant2().isConfidentialContactDetails();
         }
 
@@ -125,8 +121,8 @@ public class CertificateOfEntitlementPrinter {
         final List<Letter> coverLetters = isContactPrivate
                 ? lettersWithConfidentialDocumentType(
                     caseDocuments.getConfidentialDocumentsGenerated(),
-                    getConfidentialDocumentType(documentType))
-                : lettersWithDocumentType(caseDocuments.getDocumentsGenerated(), documentType);
+                    getConfidentialDocumentType(coversheetDocumentType))
+                : lettersWithDocumentType(caseDocuments.getDocumentsGenerated(), coversheetDocumentType);
 
         final Letter coverLetter = firstElement(coverLetters);
         final Letter certificateOfEntitlement =
@@ -145,13 +141,13 @@ public class CertificateOfEntitlementPrinter {
 
     private void generateCoversheet(final CaseData caseData,
                                     final Long caseId,
-                                    final Applicant applicant, boolean isApplicant1) {
+                                    final Applicant applicant, final DocumentType coversheetDocumentType) {
 
         log.info("Generating certificate of entitlement coversheet for case id {} ", caseId);
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            isApplicant1 ? CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+            coversheetDocumentType,
             templateVars(caseData, caseId, applicant),
             caseId,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
