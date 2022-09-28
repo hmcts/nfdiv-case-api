@@ -31,6 +31,8 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-casedata-system-update-case-with-court-hearing-represented.json";
     private static final String RESPONSE = "classpath:responses/response-system-update-case-with-court-hearing.json";
     private static final String RESPONSE_OFFLINE = "classpath:responses/response-system-update-case-with-court-hearing-offline.json";
+    private static final String RESPONSE_OFFLINE_WITH_PRIVATE_CONTACT =
+        "classpath:responses/response-system-update-case-with-court-hearing-offline-with-private-contact.json";
 
     @Test
     public void shouldSendEmailsToApplicantAndRespondentAndCreateCertificateOfEntitlementDocument() throws IOException {
@@ -111,6 +113,6 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
-            .isEqualTo(json(expectedResponse(RESPONSE_OFFLINE)));
+            .isEqualTo(json(expectedResponse(RESPONSE_OFFLINE_WITH_PRIVATE_CONTACT)));
     }
 }

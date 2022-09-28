@@ -117,7 +117,8 @@ public class CertificateOfEntitlementPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(), true);
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(),
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -136,7 +137,8 @@ public class CertificateOfEntitlementPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant2(), false);
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant2(),
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -176,7 +178,8 @@ public class CertificateOfEntitlementPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(), true);
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(),
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
@@ -225,7 +228,8 @@ public class CertificateOfEntitlementPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(), true);
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(),
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
@@ -246,15 +250,13 @@ public class CertificateOfEntitlementPrinterTest {
         final CaseData caseData = caseData(true);
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(), true);
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(),
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
 
         verifyNoInteractions(bulkPrintService);
     }
 
     private CaseData caseData(boolean isApplicant1) {
-        final ListValue<DivorceDocument> certificateOfEntitlementDoc = ListValue.<DivorceDocument>builder()
-            .value(certificateOfEntitlementDocValue)
-            .build();
 
         final ListValue<DivorceDocument> certificateOfEntitlementCoverLetter = ListValue.<DivorceDocument>builder()
             .value(isApplicant1 ? certificateOfEntitlementCoverLetterValue : certificateOfEntitlementCoverLetterValueApp2)
