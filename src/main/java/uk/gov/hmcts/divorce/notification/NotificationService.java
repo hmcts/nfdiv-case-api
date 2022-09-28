@@ -29,34 +29,24 @@ public class NotificationService {
         EmailTemplateName template,
         Map<String, String> templateVars,
         LanguagePreference languagePreference
-    ) {
+    ) throws NotificationClientException {
         String referenceId = UUID.randomUUID().toString();
 
-        try {
-            String templateId = emailTemplatesConfig.getTemplates().get(languagePreference).get(template.name());
+        String templateId = emailTemplatesConfig.getTemplates().get(languagePreference).get(template.name());
 
-            log.info("Sending email for reference id : {} using template : {}", referenceId, templateId);
+        log.info("Sending email for reference id : {} using template : {}", referenceId, templateId);
 
-            SendEmailResponse sendEmailResponse =
-                notificationClient.sendEmail(
-                    templateId,
-                    destinationAddress,
-                    templateVars,
-                    referenceId
-                );
-
-            log.info("Successfully sent email with notification id {} and reference {}",
-                sendEmailResponse.getNotificationId(),
-                sendEmailResponse.getReference().orElse(referenceId)
+        SendEmailResponse sendEmailResponse =
+            notificationClient.sendEmail(
+                templateId,
+                destinationAddress,
+                templateVars,
+                referenceId
             );
 
-        } catch (NotificationClientException notificationClientException) {
-            log.error("Failed to send email. Reference ID: {}. Reason: {}",
-                referenceId,
-                notificationClientException.getMessage(),
-                notificationClientException
-            );
-            throw new NotificationException(notificationClientException);
-        }
+        log.info("Successfully sent email with notification id {} and reference {}",
+            sendEmailResponse.getNotificationId(),
+            sendEmailResponse.getReference().orElse(referenceId)
+        );
     }
 }

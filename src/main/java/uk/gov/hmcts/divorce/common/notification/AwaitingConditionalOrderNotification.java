@@ -8,7 +8,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForConditionalOrderPrinter;
+import uk.gov.service.notify.NotificationClientException;
 
 import java.util.Map;
 
@@ -56,14 +58,19 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
                 .conditionalOrderTemplateVars(caseData, id, applicant1, caseData.getApplicant2());
             templateVars.put(IS_REMINDER, NO);
 
-            notificationService.sendEmail(
-                applicant1.getEmail(),
-                CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
-                templateVars,
-                applicant1.getLanguagePreference()
-            );
+            try {
+                notificationService.sendEmail(
+                    applicant1.getEmail(),
+                    CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
+                    templateVars,
+                    applicant1.getLanguagePreference()
+                );
+                notificationTracker.setAlreadySentToApplicant1(true);
 
-            notificationTracker.setAlreadySentToApplicant1(true);
+            } catch (NotificationClientException notificationClientException) {
+                log.error("Failed to send email for case {}. Reason: {}", id, notificationClientException.getMessage());
+                notificationTracker.setAlreadySentToApplicant1(false);
+            }
         }
     }
 
@@ -80,25 +87,31 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
             Applicant applicant1 = caseData.getApplicant1();
             final Map<String, String> templateVars = commonSolicitorTemplateVars(caseData, id, applicant1);
 
-            if (caseData.getApplicationType().isSole()) {
-                notificationService.sendEmail(
-                    applicant1.getSolicitor().getEmail(),
-                    APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER,
-                    templateVars,
-                    applicant1.getLanguagePreference()
-                );
-            } else {
-                templateVars.put(IS_CONDITIONAL_ORDER, YES);
-                templateVars.put(IS_FINAL_ORDER, NO);
+            try {
+                if (caseData.getApplicationType().isSole()) {
+                    notificationService.sendEmail(
+                        applicant1.getSolicitor().getEmail(),
+                        APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER,
+                        templateVars,
+                        applicant1.getLanguagePreference()
+                    );
+                } else {
+                    templateVars.put(IS_CONDITIONAL_ORDER, YES);
+                    templateVars.put(IS_FINAL_ORDER, NO);
 
-                notificationService.sendEmail(
-                    applicant1.getSolicitor().getEmail(),
-                    JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR,
-                    templateVars,
-                    applicant1.getLanguagePreference()
-                );
+                    notificationService.sendEmail(
+                        applicant1.getSolicitor().getEmail(),
+                        JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR,
+                        templateVars,
+                        applicant1.getLanguagePreference()
+                    );
+                }
+                notificationTracker.setAlreadySentToApplicant1Solicitor(true);
+
+            } catch (NotificationClientException notificationClientException) {
+                log.error("Failed to send email for case {}. Reason: {}", id, notificationClientException.getMessage());
+                notificationTracker.setAlreadySentToApplicant1Solicitor(false);
             }
-            notificationTracker.setAlreadySentToApplicant1Solicitor(true);
         }
     }
 
@@ -129,12 +142,18 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
                     .conditionalOrderTemplateVars(caseData, id, applicant2, caseData.getApplicant1());
                 templateVars.put(IS_REMINDER, NO);
 
-                notificationService.sendEmail(
-                    applicant2.getEmail(),
-                    CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
-                    templateVars,
-                    applicant2.getLanguagePreference()
-                );
+
+                try {
+                    notificationService.sendEmail(
+                        applicant2.getEmail(),
+                        CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
+                        templateVars,
+                        applicant2.getLanguagePreference()
+                    );
+                } catch (NotificationClientException notificationClientException) {
+                    log.error("Failed to send email for case {}. Reason: {}", id, notificationClientException.getMessage());
+                    notificationTracker.setAlreadySentToApplicant2(false);
+                }
             }
             notificationTracker.setAlreadySentToApplicant2(true);
         }
@@ -156,12 +175,17 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
                 templateVars.put(IS_CONDITIONAL_ORDER, YES);
                 templateVars.put(IS_FINAL_ORDER, NO);
 
-                notificationService.sendEmail(
-                    applicant2.getSolicitor().getEmail(),
-                    JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR,
-                    templateVars,
-                    applicant2.getLanguagePreference()
-                );
+                try {
+                    notificationService.sendEmail(
+                        applicant2.getSolicitor().getEmail(),
+                        JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR,
+                        templateVars,
+                        applicant2.getLanguagePreference()
+                    );
+                } catch (NotificationClientException notificationClientException) {
+                    log.error("Failed to send email for case {}. Reason: {}", id, notificationClientException.getMessage());
+                    notificationTracker.setAlreadySentToApplicant2Solicitor(false);
+                }
             }
             notificationTracker.setAlreadySentToApplicant2Solicitor(true);
         }
