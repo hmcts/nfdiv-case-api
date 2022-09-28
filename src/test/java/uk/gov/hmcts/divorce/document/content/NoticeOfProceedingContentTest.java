@@ -97,7 +97,6 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SU
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.THE_DIVORCE_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_THEIR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_YOUR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.URL_TO_LINK_CASE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -228,7 +227,7 @@ public class NoticeOfProceedingContentTest {
                 entry(IS_DIVORCE, true),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS),
                 entry(IS_OFFLINE, false)
-        );
+            );
     }
 
     @Test
