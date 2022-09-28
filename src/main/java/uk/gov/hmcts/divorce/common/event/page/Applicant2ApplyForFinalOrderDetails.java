@@ -35,11 +35,6 @@ public class Applicant2ApplyForFinalOrderDetails implements CcdPageConfiguration
             .readonlyNoSummary(MarriageDetails::getApplicant2Name, ALWAYS_HIDE)
             .done()
             .done()
-            .label("label-ApplyForFinalOrder",
-                "Once the court has checked that there are no outstanding applications "
-                    + "or other matters which need to be resolved first, the final order will be made absolute"
-                    + " and the ${labelContentDivorceOrCivilPartnership} between ${marriageApplicant1Name} and "
-                    + " ${marriageApplicant2Name} will be ended.")
             .complex(CaseData::getFinalOrder)
             .mandatory(FinalOrder::getDoesApplicant2WantToApplyForFinalOrder)
             .done();

@@ -15,7 +15,10 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.CaseRemovalService;
+import uk.gov.hmcts.divorce.bulkaction.service.PronouncementListDocService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
@@ -42,6 +45,9 @@ public class CaseworkerRemoveCasesFromBulkListTest {
 
     @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private PronouncementListDocService pronouncementListDocService;
 
     @InjectMocks
     private CaseworkerRemoveCasesFromBulkList caseworkerRemoveCasesFromBulkList;
@@ -219,7 +225,7 @@ public class CaseworkerRemoveCasesFromBulkListTest {
     }
 
     @Test
-    void shouldUpdateBulkCaseAfterBulkTriggerForAboutToSubmitCallback() {
+    void shouldUpdateBulkCaseAndRegeneratePronouncementListDocumentAfterBulkTriggerForAboutToSubmitCallback() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         final CaseLink caseLink1 = CaseLink.builder()
             .caseReference("12345")
@@ -244,9 +250,13 @@ public class CaseworkerRemoveCasesFromBulkListTest {
                 .value(caseLink1)
                 .build();
 
-        details.setData(BulkActionCaseData.builder().build());
-        details.getData().setBulkListCaseDetails(List.of(bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue2));
-        details.getData().setCasesAcceptedToListForHearing(singletonList(caseLinkListValue1));
+        details.setData(BulkActionCaseData.builder()
+                .bulkListCaseDetails(List.of(bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue2))
+                .casesAcceptedToListForHearing(singletonList(caseLinkListValue1))
+                .pronouncementListDocument(DivorceDocument.builder()
+                    .documentType(DocumentType.PRONOUNCEMENT_LIST)
+                    .build())
+            .build());
         details.setId(1L);
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response =
@@ -258,6 +268,8 @@ public class CaseworkerRemoveCasesFromBulkListTest {
 
         assertThat(response.getData().getBulkListCaseDetails()).hasSize(1);
         assertThat(response.getData().getBulkListCaseDetails()).contains(bulkListCaseDetailsListValue1);
+
+        verify(pronouncementListDocService).generateDocument(details);
     }
 
     @Test

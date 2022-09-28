@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.CaseRemovalService;
+import uk.gov.hmcts.divorce.bulkaction.service.PronouncementListDocService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -38,6 +39,9 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
 
     @Autowired
     private HttpServletRequest request;
+
+    @Autowired
+    private PronouncementListDocService pronouncementListDocService;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -97,8 +101,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
         List<String> casesAcceptedToListForHearing =
             bulkActionCaseData.fromListValueToList(bulkActionCaseData.getCasesAcceptedToListForHearing())
                 .stream()
-                .map(CaseLink::getCaseReference)
-                .collect(toList());
+                .map(CaseLink::getCaseReference).toList();
 
         List<ListValue<BulkListCaseDetails>> casesToRemove =
             bulkActionCaseData.getBulkListCaseDetails().stream()
@@ -110,6 +113,10 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
                 .filter(lv -> !casesToRemove.contains(lv))
                 .collect(toList()));
         bulkActionCaseData.setCasesToBeRemoved(casesToRemove);
+
+        if (bulkActionCaseData.getPronouncementListDocument() != null) {
+            pronouncementListDocService.generateDocument(details);
+        }
 
         return AboutToStartOrSubmitResponse
             .<BulkActionCaseData, BulkActionState>builder()
