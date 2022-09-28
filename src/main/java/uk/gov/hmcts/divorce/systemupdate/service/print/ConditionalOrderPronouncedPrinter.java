@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -15,7 +16,11 @@ import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithConfidentialDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 
@@ -41,17 +46,31 @@ public class ConditionalOrderPronouncedPrinter {
         } else {
             log.warn(
                 "Conditional Order Pronounced print has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, CONDITIONAL_ORDER_GRANTED),
+                List.of(coversheetDocumentType, CONDITIONAL_ORDER_GRANTED),
                 caseId);
         }
     }
 
     private List<Letter> conditionalOrderPronouncedLetters(CaseData caseData, DocumentType coversheetDocumentType) {
-        final List<Letter> coversheetLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(), coversheetDocumentType);
+
+        boolean isContactPrivate;
+
+        if (CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1.equals(coversheetDocumentType)) {
+            isContactPrivate = caseData.getApplicant1().isConfidentialContactDetails();
+        } else {
+            isContactPrivate = caseData.getApplicant2().isConfidentialContactDetails();
+        }
+
+        CaseDocuments caseDocuments = caseData.getDocuments();
+
+        final List<Letter> coversheetLetters = isContactPrivate
+            ? lettersWithConfidentialDocumentType(
+                caseDocuments.getConfidentialDocumentsGenerated(),
+                getConfidentialDocumentType(coversheetDocumentType))
+            : lettersWithDocumentType(caseDocuments.getDocumentsGenerated(), coversheetDocumentType);
 
         final List<Letter> conditionalOrderGrantedLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
+            caseDocuments.getDocumentsGenerated(),
             CONDITIONAL_ORDER_GRANTED);
 
         final Letter coversheetLetter = firstElement(coversheetLetters);
