@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2ApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.FinalOrderSolicitorNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -28,6 +29,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -46,6 +48,9 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
     @Autowired
     private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
+
+    @Autowired
+    private FinalOrderSolicitorNotification finalOrderSolicitorNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -102,6 +107,10 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
         }
 
         var updatedDetails = progressFinalOrderState.apply(details);
+
+        if (FinalOrderRequested.equals(updatedDetails.getState())) {
+            notificationDispatcher.send(finalOrderSolicitorNotification, updatedDetails.getData(), details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedDetails.getData())
