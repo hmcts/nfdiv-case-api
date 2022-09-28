@@ -265,8 +265,8 @@ public class CommonContent {
 
         templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
 
-        templateContent.put(FIRST_NAME, applicant.getFirstName());
-        templateContent.put(LAST_NAME, applicant.getLastName());
+        templateContent.put("firstName", applicant.getFirstName());
+        templateContent.put("lastName", applicant.getLastName());
         templateContent.put(ADDRESS, applicant.getPostalAddress());
         templateContent.put(PARTNER, getPartner(caseData, partner, applicant.getLanguagePreference()));
         templateContent.put(DATE, date);
