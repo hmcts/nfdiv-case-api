@@ -148,7 +148,7 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
-            log.info("Sending reminder applicant 2 offline that they can apply for a conditional order: {}", caseId);
+            log.info("Sending reminder applicant 2 offline that they can apply for a conditional order for joint case: {}", caseId);
 
             generateCoversheet.generateCoversheet(
                 caseData,
