@@ -104,7 +104,7 @@ public class PronouncementListDocServiceIT {
         final Map<String, Object> mockedTemplateContent = getMockedTemplateContent();
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(templateContentService.apply(any(), any(), any())).thenReturn(mockedTemplateContent);
+        when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
@@ -151,7 +151,7 @@ public class PronouncementListDocServiceIT {
         final Map<String, Object> mockedTemplateContent = getMockedTemplateContent();
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(templateContentService.apply(any(), any(), any())).thenReturn(mockedTemplateContent);
+        when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
