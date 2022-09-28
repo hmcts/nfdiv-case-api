@@ -113,8 +113,10 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOIN
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
@@ -1066,7 +1068,7 @@ public class TestDataHelper {
         caseData.setDivorceOrDissolution(divorceOrDissolution);
         return caseData;
     }
-    
+
     public static CaseData getConfirmServiceCaseData() {
         LocalDate issueDate = LocalDate.of(2022, 8, 10);
         LocalDate serviceDate = LocalDate.of(2022, 8, 12);
@@ -1090,5 +1092,12 @@ public class TestDataHelper {
         caseData.getDocuments().setDocumentsUploadedOnConfirmService(Lists.newArrayList(confirmServiceAttachments));
 
         return caseData;
+    }
+
+    public static Map<String, String> getFinalOrderSolicitorsVars(CaseData caseData, Applicant applicant) {
+        Map<String, String> templateVars = solicitorTemplateVars(caseData, applicant);
+        templateVars.put(IS_CONDITIONAL_ORDER, CommonContent.NO);
+        templateVars.put(IS_FINAL_ORDER, CommonContent.YES);
+        return templateVars;
     }
 }
