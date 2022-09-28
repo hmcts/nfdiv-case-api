@@ -89,9 +89,9 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             log.info("Generating notice of proceedings for respondent solicitor for case id {} ", caseId);
 
             var hasSolicitor = applicant2.getSolicitor() != null;
-            var hasOrgPolicy = hasSolicitor && applicant2.getSolicitor().hasOrgId();
+            var hasOrgId = hasSolicitor && applicant2.getSolicitor().hasOrgId();
 
-            if (hasOrgPolicy) {
+            if (hasOrgId) {
                 if (!caseData.getApplication().isCourtServiceMethod()) {
                     generateNoticeOfProceedingsWithoutAddress(caseData, caseId, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
                     generateCoversheet.generateCoversheet(
