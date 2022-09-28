@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.ResetAosFields;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
@@ -25,6 +26,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
@@ -59,6 +61,9 @@ public class ReIssueApplicationService {
     private SendAosPackToApplicant sendAosPackToApplicant;
 
     @Autowired
+    private ResetAosFields resetAosFields;
+
+    @Autowired
     private GenerateD10Form generateD10Form;
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
@@ -86,7 +91,8 @@ public class ReIssueApplicationService {
                 setReIssueAndDueDate,
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
-                generateD10Form
+                generateD10Form,
+                resetAosFields
             ).run(caseDetails);
         } else if (OFFLINE_AOS.equals(reissueOption)) {
             log.info("For case id {} processing reissue for offline aos ", caseDetails.getId());
@@ -100,7 +106,8 @@ public class ReIssueApplicationService {
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
-                generateD10Form
+                generateD10Form,
+                resetAosFields
             ).run(caseDetails);
         } else if (REISSUE_CASE.equals(reissueOption)) {
             log.info("For case id {} processing complete reissue ", caseDetails.getId());
@@ -111,7 +118,8 @@ public class ReIssueApplicationService {
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
-                generateD10Form
+                generateD10Form,
+                resetAosFields
             ).run(caseDetails);
         } else {
             log.info("For case id {} invalid reissue option hence not processing reissue application ", caseDetails.getId());
@@ -137,9 +145,13 @@ public class ReIssueApplicationService {
             log.info("For case id {} sending reissue notifications for reissue case", caseDetails.getId());
             caseTasks(
                 sendAosPackToRespondent,
-                sendAosPackToApplicant,
-                sendApplicationIssueNotifications
+                sendAosPackToApplicant
             ).run(caseDetails);
+
+            if (!caseDetails.getData().getApplication().getServiceMethod().equals(PERSONAL_SERVICE)) {
+                sendApplicationIssueNotifications.apply(caseDetails);
+            }
+
         } else {
             log.info("For case id {} invalid reissue option hence not sending reissue notifications ", caseDetails.getId());
             throw new InvalidReissueOptionException(
