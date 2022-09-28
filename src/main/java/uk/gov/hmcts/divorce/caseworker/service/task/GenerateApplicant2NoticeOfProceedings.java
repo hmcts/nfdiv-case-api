@@ -21,7 +21,6 @@ import java.time.Clock;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
@@ -90,10 +89,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             log.info("Generating notice of proceedings for respondent solicitor for case id {} ", caseId);
 
             var hasSolicitor = applicant2.getSolicitor() != null;
-            var hasOrgPolicy = hasSolicitor
-                && isNotEmpty(applicant2.getSolicitor().getOrganisationPolicy())
-                && isNotEmpty(applicant2.getSolicitor().getOrganisationPolicy().getOrganisation())
-                && isNotEmpty(applicant2.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId());
+            var hasOrgPolicy = hasSolicitor && applicant2.getSolicitor().hasOrgId();
 
             if (hasOrgPolicy) {
                 if (!caseData.getApplication().isCourtServiceMethod()) {
