@@ -25,8 +25,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
@@ -271,8 +269,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, 1234567890123456L);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant1(),
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant1());
         assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()).isTrue();
     }
 
@@ -292,8 +289,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant2(),
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant2());
         assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()).isTrue();
     }
 

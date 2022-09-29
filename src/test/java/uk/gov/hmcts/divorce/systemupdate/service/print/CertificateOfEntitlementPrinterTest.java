@@ -56,8 +56,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -93,12 +92,7 @@ public class CertificateOfEntitlementPrinterTest {
 
     private static final DivorceDocument certificateOfEntitlementCoverLetterValue =
         DivorceDocument.builder()
-            .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1)
-            .build();
-
-    private static final DivorceDocument certificateOfEntitlementCoverLetterValueApp2 =
-        DivorceDocument.builder()
-            .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2)
+            .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER)
             .build();
 
     @BeforeEach
@@ -113,12 +107,11 @@ public class CertificateOfEntitlementPrinterTest {
 
         setMockClock(clock);
 
-        final CaseData caseData = caseData(true);
+        final CaseData caseData = caseData();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(),
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -130,31 +123,11 @@ public class CertificateOfEntitlementPrinterTest {
     }
 
     @Test
-    void shouldPrintCertificateOfEntitlementLetterIfRequiredDocumentsArePresentForApplicant2() {
-
-        setMockClock(clock);
-        final CaseData caseData = caseData(false);
-
-        when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
-
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant2(),
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
-
-        final Print print = printCaptor.getValue();
-        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("certificate-of-entitlement");
-        assertThat(print.getLetters().size()).isEqualTo(2);
-        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(certificateOfEntitlementCoverLetterValueApp2);
-        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(certificateOfEntitlementDocValue);
-    }
-
-    @Test
     void shouldRenderCoverLetterAddressedToApplicantIfNotRepresented() {
 
         setMockClock(clock);
 
-        final CaseData caseData = caseData(true);
+        final CaseData caseData = caseData();
 
         Map<String, Object> templateVars = new HashMap<>();
         templateVars.put(NAME, "Bob Smith");
@@ -178,12 +151,11 @@ public class CertificateOfEntitlementPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(),
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER,
             templateVars,
             TEST_CASE_ID,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
@@ -197,7 +169,7 @@ public class CertificateOfEntitlementPrinterTest {
 
         setMockClock(clock);
 
-        final CaseData caseData = caseData(true);
+        final CaseData caseData = caseData();
         caseData.getApplicant1().setSolicitor(
             Solicitor.builder()
                 .name("App1 Sol")
@@ -228,12 +200,11 @@ public class CertificateOfEntitlementPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(),
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER,
             templateVars,
             TEST_CASE_ID,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
@@ -247,19 +218,21 @@ public class CertificateOfEntitlementPrinterTest {
 
         setMockClock(clock);
 
-        final CaseData caseData = caseData(true);
+        final CaseData caseData = caseData();
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1(),
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verifyNoInteractions(bulkPrintService);
     }
 
-    private CaseData caseData(boolean isApplicant1) {
+    private CaseData caseData() {
+        final ListValue<DivorceDocument> certificateOfEntitlementDoc = ListValue.<DivorceDocument>builder()
+            .value(certificateOfEntitlementDocValue)
+            .build();
 
         final ListValue<DivorceDocument> certificateOfEntitlementCoverLetter = ListValue.<DivorceDocument>builder()
-            .value(isApplicant1 ? certificateOfEntitlementCoverLetterValue : certificateOfEntitlementCoverLetterValueApp2)
+            .value(certificateOfEntitlementCoverLetterValue)
             .build();
 
         return CaseData.builder()
