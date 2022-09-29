@@ -95,6 +95,7 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     @Test
     public void shouldSendNotificationsWhenSubmittedCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
+        caseData.put("accessCode", "123456");
 
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, SUBMITTED_URL);
 
@@ -129,6 +130,7 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
         caseData.put("applicant1LanguagePreferenceWelsh", YES);
         caseData.put("applicant1ServiceMethod", COURT_SERVICE);
+        caseData.put("accessCode", "123456");
 
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, SUBMITTED_URL);
 
