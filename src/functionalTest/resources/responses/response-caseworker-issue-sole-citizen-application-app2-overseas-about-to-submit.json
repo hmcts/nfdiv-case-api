@@ -22,14 +22,12 @@
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
     "applicant2Email": "applicant2@example.com",
-    "noticeOfProceedingsEmail":"applicant2@example.com",
     "applicant2LanguagePreferenceWelsh": "No",
     "applicant2Address": {
-      "AddressLine1": "221a Baker Street",
-      "PostTown": "London",
-      "County": "Greater London",
-      "PostCode": "NW1 6XE",
-      "Country": "United Kingdom"
+      "AddressLine1": "Parc de la Ciutadella",
+      "Country": "Spain",
+      "County": "Catalunya",
+      "PostTown": "Barcelona"
     },
     "applicant1SolicitorRepresented": "No",
     "applicant2SolicitorRepresented": "No",
@@ -90,7 +88,31 @@
         "id": "${json-unit.any-string}",
         "value": {
           "documentFileName": "${json-unit.any-string}",
+          "documentType": "d10",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "application",
+          "documentLink": {
+            "document_binary_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "coversheet",
           "documentLink": {
             "document_binary_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",
@@ -113,8 +135,8 @@
     ],
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
-    "serviceMethod": "courtService",
+    "serviceMethod": "personalService",
     "warnings": []
   },
-  "state": "AwaitingAos"
+  "state": "AwaitingService"
 }
