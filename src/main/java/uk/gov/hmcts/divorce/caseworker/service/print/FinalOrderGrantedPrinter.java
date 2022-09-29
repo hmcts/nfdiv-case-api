@@ -53,7 +53,7 @@ public class FinalOrderGrantedPrinter {
     }
 
     private List<Letter> finalOrderGrantedLetters(CaseData caseData, final DocumentType coverLetterDocumentType) {
-        final List<Letter> finalOrderGrantedCoverLetters = getLettersBasedOnContactPrivacy(caseData, coverLetterDocumentType);;
+        final List<Letter> finalOrderGrantedCoverLetters = getLettersBasedOnContactPrivacy(caseData, coverLetterDocumentType);
 
         final List<Letter> finalOrderGrantedCertificates = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
