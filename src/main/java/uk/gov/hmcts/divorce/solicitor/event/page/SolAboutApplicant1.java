@@ -15,7 +15,7 @@ import java.util.List;
 
 public class SolAboutApplicant1 implements CcdPageConfiguration {
 
-    private final String INVALID_EMAIL_ERROR = "You have entered an invalid email address. "
+    private static final String INVALID_EMAIL_ERROR = "You have entered an invalid email address. "
         + "Please check the email and enter it again, before submitting the application.";
 
     private static final String DARK_HORIZONTAL_RULE =

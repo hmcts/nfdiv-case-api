@@ -19,10 +19,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICI
 
 public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
-    private final String INVALID_APPLICANT_EMAIL_ERROR = "You have entered an invalid applicant email address. "
+    private static final String INVALID_APPLICANT_EMAIL_ERROR = "You have entered an invalid applicant email address. "
         + "Please check the email and enter it again, before submitting the application.";
 
-    private final String INVALID_SOLICITOR_EMAIL_ERROR = "You have entered an invalid solicitor email address. "
+    private static final String INVALID_SOLICITOR_EMAIL_ERROR = "You have entered an invalid solicitor email address. "
         + "Please check the email and enter it again, before submitting the application.";
 
     @Override
