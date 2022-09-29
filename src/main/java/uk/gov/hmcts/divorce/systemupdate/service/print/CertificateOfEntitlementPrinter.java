@@ -181,8 +181,6 @@ public class CertificateOfEntitlementPrinter {
 
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
-        log.info("$$address for applicant - {} is {}", templateContent.get(NAME), templateContent.get(ADDRESS));
-
         return templateContent;
     }
 }
