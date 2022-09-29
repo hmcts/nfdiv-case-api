@@ -108,9 +108,14 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                                                                   CaseDetails<CaseData, State> detailsBefore) {
         CaseData caseData = details.getData();
         Applicant applicant2 = caseData.getApplicant2();
+        boolean validApplicantEmail = true;
 
-        boolean validEmail = EmailValidator.getInstance().isValid(applicant2.getSolicitor().getEmail());
-        if (!validEmail) {
+        if (applicant2.getEmail() != null) {
+            validApplicantEmail = EmailValidator.getInstance().isValid(applicant2.getEmail());
+        }
+
+        boolean validSolicitorEmail = EmailValidator.getInstance().isValid(applicant2.getSolicitor().getEmail());
+        if (!validApplicantEmail || !validSolicitorEmail) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(List.of(INVALID_EMAIL_ERROR))
                 .build();
