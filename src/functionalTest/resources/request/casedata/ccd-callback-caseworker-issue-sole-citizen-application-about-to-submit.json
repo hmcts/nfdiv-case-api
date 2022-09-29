@@ -71,5 +71,6 @@
       }
     }
   ],
-  "documentUploadComplete": "Yes"
+  "documentUploadComplete": "Yes",
+  "accessCode": ""
 }
