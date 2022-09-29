@@ -22,8 +22,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT1;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT2;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
@@ -152,8 +150,6 @@ public final class DocumentUtil {
             case NOTICE_OF_PROCEEDINGS_APP_1 -> ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1;
             case NOTICE_OF_PROCEEDINGS_APP_2 -> ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2;
             case GENERAL_LETTER -> ConfidentialDocumentsReceived.GENERAL_LETTER;
-            case CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1 -> ConfidentialDocumentsReceived.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
-            case CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2 -> ConfidentialDocumentsReceived.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
             case CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1 -> ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
             case CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2 -> ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
             default -> ConfidentialDocumentsReceived.OTHER;
@@ -165,13 +161,11 @@ public final class DocumentUtil {
             APPLICANT1, Lists.newArrayList(
                 NOTICE_OF_PROCEEDINGS_APP_1,
                 GENERAL_LETTER,
-                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
                 CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1
             ),
             APPLICANT2, Lists.newArrayList(
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 GENERAL_LETTER,
-                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
                 CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2
             )
         );
