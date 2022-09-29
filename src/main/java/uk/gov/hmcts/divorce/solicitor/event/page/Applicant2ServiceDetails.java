@@ -1,5 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import org.apache.commons.validator.routines.EmailValidator;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
@@ -7,10 +10,16 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 
 public class Applicant2ServiceDetails implements CcdPageConfiguration {
+
+    private final String INVALID_EMAIL_ERROR = "You have entered an invalid email address. "
+        + "Please check the email and enter it again, before submitting the application.";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -93,5 +102,23 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                     "${labelContentApplicant2UC} postal address",
                     "This address will be used to notify them about the application")
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                  CaseDetails<CaseData, State> detailsBefore) {
+        CaseData caseData = details.getData();
+        Applicant applicant2 = caseData.getApplicant2();
+
+        boolean validEmail = EmailValidator.getInstance().isValid(applicant2.getSolicitor().getEmail());
+        if (!validEmail) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(INVALID_EMAIL_ERROR))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .errors(null)
+            .build();
     }
 }
