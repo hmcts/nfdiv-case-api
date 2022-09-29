@@ -102,7 +102,6 @@ public class CertificateOfEntitlementPrinter {
     }
 
     private List<Letter> certificateOfEntitlementLetters(CaseData caseData) {
-
         final List<Letter> coverLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER);
