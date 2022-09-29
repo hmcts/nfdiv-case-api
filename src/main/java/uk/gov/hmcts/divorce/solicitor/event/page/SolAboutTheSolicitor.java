@@ -19,6 +19,9 @@ import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 
@@ -66,6 +69,7 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
 
         CaseData caseData = details.getData();
         Applicant applicant1 = caseData.getApplicant1();
+        List<String> validationErrors = new ArrayList<>();
 
         final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisation(
             caseData,
@@ -73,13 +77,17 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             request.getHeader(AUTHORIZATION)
         );
 
+        if (caseInfo.getErrors() != null) {
+            validationErrors.addAll(caseInfo.getErrors());
+        }
+
         boolean validEmail = EmailValidator.getInstance().isValid(applicant1.getSolicitor().getEmail());
         if (!validEmail) {
-            caseInfo.getErrors().add(INVALID_EMAIL_ERROR);
+            validationErrors.add(INVALID_EMAIL_ERROR);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .errors(caseInfo.getErrors())
+            .errors(validationErrors)
             .build();
     }
 }

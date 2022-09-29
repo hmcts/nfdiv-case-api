@@ -29,7 +29,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("Applicant2ServiceDetails")
+            .page("Applicant2ServiceDetails", this::midEvent)
             .pageLabel("Service details")
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is ${labelContentTheApplicant2} represented by a solicitor?")
@@ -115,7 +115,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
         List<String> validationErrors = new ArrayList<>();
 
         boolean validApplicantEmail;
-        if (applicant2.getEmail() != null) {
+        if (applicant2.getEmail() != null && !applicant2.getEmail().isEmpty()) {
             validApplicantEmail = EmailValidator.getInstance().isValid(applicant2.getEmail());
             if (!validApplicantEmail) {
                 validationErrors.add(INVALID_APPLICANT_EMAIL_ERROR);

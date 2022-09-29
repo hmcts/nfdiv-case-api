@@ -25,7 +25,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("SolAboutApplicant1")
+            .page("SolAboutApplicant1", this::midEvent)
             .pageLabel("About the applicant")
             .complex(CaseData::getApplicant1)
                 .mandatoryWithLabel(Applicant::getFirstName,
