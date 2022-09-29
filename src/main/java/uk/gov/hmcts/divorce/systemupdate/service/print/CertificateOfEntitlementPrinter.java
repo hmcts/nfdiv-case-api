@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -32,9 +31,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithConfidentialDocumentType;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
@@ -48,7 +45,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -108,21 +104,7 @@ public class CertificateOfEntitlementPrinter {
 
     private List<Letter> certificateOfEntitlementLetters(CaseData caseData, final DocumentType coversheetDocumentType) {
 
-        boolean isContactPrivate;
-
-        if (CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1.equals(coversheetDocumentType)) {
-            isContactPrivate = caseData.getApplicant1().isConfidentialContactDetails();
-        } else {
-            isContactPrivate = caseData.getApplicant2().isConfidentialContactDetails();
-        }
-
-        CaseDocuments caseDocuments = caseData.getDocuments();
-
-        final List<Letter> coverLetters = isContactPrivate
-                ? lettersWithConfidentialDocumentType(
-                    caseDocuments.getConfidentialDocumentsGenerated(),
-                    getConfidentialDocumentType(coversheetDocumentType))
-                : lettersWithDocumentType(caseDocuments.getDocumentsGenerated(), coversheetDocumentType);
+        final List<Letter> coverLetters = getLettersBasedOnContactPrivacy(caseData, coversheetDocumentType);
 
         final Letter coverLetter = firstElement(coverLetters);
         final Letter certificateOfEntitlement =
