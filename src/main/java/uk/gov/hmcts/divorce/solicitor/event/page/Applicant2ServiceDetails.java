@@ -12,13 +12,17 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 
 public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
-    private final String INVALID_EMAIL_ERROR = "You have entered an invalid email address. "
+    private final String INVALID_APPLICANT_EMAIL_ERROR = "You have entered an invalid applicant email address. "
+        + "Please check the email and enter it again, before submitting the application.";
+
+    private final String INVALID_SOLICITOR_EMAIL_ERROR = "You have entered an invalid solicitor email address. "
         + "Please check the email and enter it again, before submitting the application.";
 
     @Override
@@ -108,22 +112,25 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                                                                   CaseDetails<CaseData, State> detailsBefore) {
         CaseData caseData = details.getData();
         Applicant applicant2 = caseData.getApplicant2();
-        boolean validApplicantEmail = true;
+        List<String> validationErrors = new ArrayList<>();
 
+        boolean validApplicantEmail;
         if (applicant2.getEmail() != null) {
             validApplicantEmail = EmailValidator.getInstance().isValid(applicant2.getEmail());
+            if (!validApplicantEmail) {
+                validationErrors.add(INVALID_APPLICANT_EMAIL_ERROR);
+            }
         }
 
-        boolean validSolicitorEmail = EmailValidator.getInstance().isValid(applicant2.getSolicitor().getEmail());
-        if (!validApplicantEmail || !validSolicitorEmail) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(List.of(INVALID_EMAIL_ERROR))
-                .build();
+        if (applicant2.isRepresented()) {
+            boolean validSolicitorEmail = EmailValidator.getInstance().isValid(applicant2.getSolicitor().getEmail());
+            if (!validSolicitorEmail) {
+                validationErrors.add(INVALID_SOLICITOR_EMAIL_ERROR);
+            }
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .errors(null)
+            .errors(validationErrors)
             .build();
     }
 }

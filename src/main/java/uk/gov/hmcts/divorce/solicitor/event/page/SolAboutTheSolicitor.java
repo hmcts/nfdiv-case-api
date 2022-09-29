@@ -60,10 +60,8 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .done();
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> midEvent(
-        CaseDetails<CaseData, State> details,
-        CaseDetails<CaseData, State> detailsBefore
-    ) {
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                   CaseDetails<CaseData, State> detailsBefore) {
         log.info("Mid-event callback triggered for SolAboutTheSolicitor");
 
         CaseData caseData = details.getData();
