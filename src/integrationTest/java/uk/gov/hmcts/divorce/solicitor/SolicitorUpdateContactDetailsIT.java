@@ -169,7 +169,10 @@ public class SolicitorUpdateContactDetailsIT {
 
     private CaseData caseDataWithApplicant1Org() {
         CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).organisationPolicy(organisationPolicy()).build());
+        caseData.getApplicant1().setSolicitor(Solicitor.builder()
+            .email(TEST_SOLICITOR_EMAIL)
+            .organisationPolicy(organisationPolicy())
+            .build());
         return caseData;
     }
 
