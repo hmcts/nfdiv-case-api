@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -16,11 +15,9 @@ import java.util.UUID;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.springframework.util.CollectionUtils.firstElement;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithConfidentialDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 
 @Component
 @Slf4j
@@ -56,24 +53,10 @@ public class FinalOrderGrantedPrinter {
     }
 
     private List<Letter> finalOrderGrantedLetters(CaseData caseData, final DocumentType coverLetterDocumentType) {
-
-        boolean isContactPrivate;
-
-        if (FINAL_ORDER_GRANTED_COVER_LETTER_APP_1.equals(coverLetterDocumentType)) {
-            isContactPrivate = caseData.getApplicant1().isConfidentialContactDetails();
-        } else {
-            isContactPrivate = caseData.getApplicant2().isConfidentialContactDetails();
-        }
-
-        CaseDocuments caseDocuments = caseData.getDocuments();
-
-        final List<Letter> finalOrderGrantedCoverLetters = isContactPrivate
-            ? lettersWithConfidentialDocumentType(
-                caseDocuments.getConfidentialDocumentsGenerated(), getConfidentialDocumentType(coverLetterDocumentType))
-            : lettersWithDocumentType(caseDocuments.getDocumentsGenerated(), coverLetterDocumentType);
+        final List<Letter> finalOrderGrantedCoverLetters = getLettersBasedOnContactPrivacy(caseData, coverLetterDocumentType);;
 
         final List<Letter> finalOrderGrantedCertificates = lettersWithDocumentType(
-            caseDocuments.getDocumentsGenerated(),
+            caseData.getDocuments().getDocumentsGenerated(),
             FINAL_ORDER_GRANTED);
 
         final Letter finalOrderGrantedCoverLetter = firstElement(finalOrderGrantedCoverLetters);
