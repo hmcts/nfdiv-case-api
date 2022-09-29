@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -16,11 +15,9 @@ import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithConfidentialDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 
 @Component
 @Slf4j
@@ -50,25 +47,10 @@ public class ConditionalOrderPronouncedPrinter {
     }
 
     private List<Letter> conditionalOrderPronouncedLetters(CaseData caseData, DocumentType coversheetDocumentType) {
-
-        boolean isContactPrivate;
-
-        if (CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1.equals(coversheetDocumentType)) {
-            isContactPrivate = caseData.getApplicant1().isConfidentialContactDetails();
-        } else {
-            isContactPrivate = caseData.getApplicant2().isConfidentialContactDetails();
-        }
-
-        CaseDocuments caseDocuments = caseData.getDocuments();
-
-        final List<Letter> coversheetLetters = isContactPrivate
-            ? lettersWithConfidentialDocumentType(
-                caseDocuments.getConfidentialDocumentsGenerated(),
-                getConfidentialDocumentType(coversheetDocumentType))
-            : lettersWithDocumentType(caseDocuments.getDocumentsGenerated(), coversheetDocumentType);
+        final List<Letter> coversheetLetters = getLettersBasedOnContactPrivacy(caseData, coversheetDocumentType);
 
         final List<Letter> conditionalOrderGrantedLetters = lettersWithDocumentType(
-            caseDocuments.getDocumentsGenerated(),
+            caseData.getDocuments().getDocumentsGenerated(),
             CONDITIONAL_ORDER_GRANTED);
 
         final Letter coversheetLetter = firstElement(coversheetLetters);
