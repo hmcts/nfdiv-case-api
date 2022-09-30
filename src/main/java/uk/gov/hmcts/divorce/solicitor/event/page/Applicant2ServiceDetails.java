@@ -116,7 +116,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
         List<String> validationErrors = new ArrayList<>();
 
         boolean validApplicantEmail;
-        if (isNotEmpty(applicant2.getEmail()) ) {
+        if (isNotEmpty(applicant2.getEmail())) {
             validApplicantEmail = EmailValidator.getInstance().isValid(applicant2.getEmail());
             if (!validApplicantEmail) {
                 validationErrors.add(INVALID_APPLICANT_EMAIL_ERROR);
