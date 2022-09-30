@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -34,6 +35,8 @@ public class SolAboutApplicant1Test {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(response.getErrors().size(), 1);
+        assertThat(response.getErrors()).containsExactly("You have entered an invalid email address. "
+            + "Please check the email and enter it again, before submitting the application.");
     }
 
     @Test

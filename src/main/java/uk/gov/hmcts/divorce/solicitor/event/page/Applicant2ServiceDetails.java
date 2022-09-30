@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 
 public class Applicant2ServiceDetails implements CcdPageConfiguration {
@@ -115,7 +116,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
         List<String> validationErrors = new ArrayList<>();
 
         boolean validApplicantEmail;
-        if (applicant2.getEmail() != null && !applicant2.getEmail().isEmpty()) {
+        if (isNotEmpty(applicant2.getEmail()) ) {
             validApplicantEmail = EmailValidator.getInstance().isValid(applicant2.getEmail());
             if (!validApplicantEmail) {
                 validationErrors.add(INVALID_APPLICANT_EMAIL_ERROR);
