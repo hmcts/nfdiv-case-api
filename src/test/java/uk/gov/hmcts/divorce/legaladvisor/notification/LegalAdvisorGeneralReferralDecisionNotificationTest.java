@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -29,6 +30,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +46,7 @@ public class LegalAdvisorGeneralReferralDecisionNotificationTest {
     private LegalAdvisorGeneralReferralDecisionNotification notification;
 
     @Test
-    void shouldSendNotificationToApplicant1() {
+    void shouldSendNotificationToApplicant1ForJointApplication() {
 
         final var data = validJointApplicant1CaseData();
 
@@ -73,8 +75,35 @@ public class LegalAdvisorGeneralReferralDecisionNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToApplicant2() {
+    void shouldSendNotificationToApplicant1ForSoleApplication() {
+        final var data = validApplicant1CaseData();
 
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(GENERAL_APPLICATION_SUCCESSFUL),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(IS_DISSOLUTION, CommonContent.NO),
+                hasEntry(FIRST_NAME, TEST_FIRST_NAME),
+                hasEntry(LAST_NAME, TEST_LAST_NAME),
+                hasEntry(PARTNER, "partner"),
+                hasEntry(COURT_EMAIL, "courtEmail")
+            )),
+            eq(ENGLISH)
+        );
+
+        verify(commonContent)
+            .mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendNotificationToApplicant2ForJointApplication() {
         CaseData data = validJointApplicant1CaseData();
         data.getApplicant2().setFirstName("Bob");
         data.getApplicant2().setLastName("Jones");
@@ -101,5 +130,16 @@ public class LegalAdvisorGeneralReferralDecisionNotificationTest {
 
         verify(commonContent)
             .mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldNotSendNotificationToApplicant2ForSoleApplication() {
+        CaseData data = validApplicant1CaseData();
+        data.getApplicant2().setFirstName("Bob");
+        data.getApplicant2().setLastName("Jones");
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService,commonContent);
     }
 }

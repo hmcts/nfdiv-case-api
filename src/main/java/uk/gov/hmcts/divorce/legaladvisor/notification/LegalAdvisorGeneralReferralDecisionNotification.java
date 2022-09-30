@@ -42,19 +42,21 @@ public class LegalAdvisorGeneralReferralDecisionNotification implements Applican
 
     @Override
     public void sendToApplicant2(CaseData caseData, Long caseId) {
-        final Applicant applicant1 = caseData.getApplicant1();
-        final Applicant applicant2 = caseData.getApplicant2();
+        if (!caseData.getApplicationType().isSole()) {
+            final Applicant applicant1 = caseData.getApplicant1();
+            final Applicant applicant2 = caseData.getApplicant2();
 
-        final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant1, applicant2);
+            final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant1, applicant2);
 
-        templateVars.put(FIRST_NAME, applicant2.getFirstName());
-        templateVars.put(LAST_NAME, applicant2.getLastName());
+            templateVars.put(FIRST_NAME, applicant2.getFirstName());
+            templateVars.put(LAST_NAME, applicant2.getLastName());
 
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            GENERAL_APPLICATION_SUCCESSFUL,
-            templateVars,
-            caseData.getApplicant2().getLanguagePreference()
-        );
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                GENERAL_APPLICATION_SUCCESSFUL,
+                templateVars,
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        }
     }
 }
