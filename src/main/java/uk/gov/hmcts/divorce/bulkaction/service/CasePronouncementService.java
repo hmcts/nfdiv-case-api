@@ -49,11 +49,11 @@ public class CasePronouncementService {
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Async
-    public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
-                               final String authorization) {
+    public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details
+    ) {
         final BulkActionCaseData bulkActionCaseData = details.getData();
 
-        final User user = idamService.retrieveUser(authorization);
+        final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
         filterCasesNotInCorrectState(bulkActionCaseData, user, serviceAuth);
