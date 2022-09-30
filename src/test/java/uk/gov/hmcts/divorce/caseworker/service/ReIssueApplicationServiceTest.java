@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.ResetAosFields;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
@@ -31,6 +32,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -68,6 +71,9 @@ class ReIssueApplicationServiceTest {
     @Mock
     private GenerateD10Form generateD10Form;
 
+    @Mock
+    private ResetAosFields resetAosFields;
+
     @InjectMocks
     private ReIssueApplicationService reIssueApplicationService;
 
@@ -88,6 +94,7 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -120,6 +127,7 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -152,6 +160,7 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -191,6 +200,7 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -235,6 +245,7 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -280,6 +291,7 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -355,9 +367,11 @@ class ReIssueApplicationServiceTest {
     }
 
     @Test
-    public void shouldSendEmailAndBulkPrintNotificationsWhenReissueOptionIsReissueCase() {
+    public void shouldSendEmailAndBulkPrintNotificationsWhenReissueOptionIsReissueCaseAndNotPersonalService() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData());
+        CaseData caseData = caseData();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseDetails.setData(caseData);
         caseDetails.setId(1L);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
@@ -368,6 +382,25 @@ class ReIssueApplicationServiceTest {
         reIssueApplicationService.sendNotifications(caseDetails, REISSUE_CASE);
 
         verify(sendApplicationIssueNotifications).apply(caseDetails);
+        verify(sendAosPackToApplicant).apply(caseDetails);
+        verify(sendAosPackToRespondent).apply(caseDetails);
+    }
+
+    @Test
+    public void shouldNotSendEmailAndBulkPrintNotificationsWhenReissueOptionIsReissueCaseAndPersonalService() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = caseData();
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseDetails.setData(caseData);
+        caseDetails.setId(1L);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPackToRespondent.apply(caseDetails)).thenReturn(caseDetails);
+
+        reIssueApplicationService.sendNotifications(caseDetails, REISSUE_CASE);
+
+        verifyNoInteractions(sendApplicationIssueNotifications);
         verify(sendAosPackToApplicant).apply(caseDetails);
         verify(sendAosPackToRespondent).apply(caseDetails);
     }
