@@ -150,8 +150,7 @@ public class BulkActionCaseData {
 
         List<String> unprocessedCaseIds = unprocessedBulkCases
             .stream()
-            .map(lv -> lv.getValue().getCaseReference().getCaseReference())
-            .collect(toList());
+            .map(lv -> lv.getValue().getCaseReference().getCaseReference()).toList();
 
         return bulkListCaseDetails
             .stream()
