@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT1;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
@@ -148,6 +149,7 @@ public final class DocumentUtil {
             case NOTICE_OF_PROCEEDINGS_APP_1 -> ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1;
             case NOTICE_OF_PROCEEDINGS_APP_2 -> ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2;
             case GENERAL_LETTER -> ConfidentialDocumentsReceived.GENERAL_LETTER;
+            case AOS_RESPONSE_LETTER -> ConfidentialDocumentsReceived.AOS_RESPONSE_LETTER;
             default -> ConfidentialDocumentsReceived.OTHER;
         };
     }
@@ -156,7 +158,8 @@ public final class DocumentUtil {
         return Map.of(
             APPLICANT1, Lists.newArrayList(
                 NOTICE_OF_PROCEEDINGS_APP_1,
-                GENERAL_LETTER
+                GENERAL_LETTER,
+                AOS_RESPONSE_LETTER
             ),
             APPLICANT2, Lists.newArrayList(
                 NOTICE_OF_PROCEEDINGS_APP_2,

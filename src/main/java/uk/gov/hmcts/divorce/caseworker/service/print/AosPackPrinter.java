@@ -102,9 +102,7 @@ public class AosPackPrinter {
 
     public void sendAosResponseLetterToApplicant(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> aosResponseLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            AOS_RESPONSE_LETTER);
+        final List<Letter> aosResponseLetters = getLettersBasedOnContactPrivacy(caseData, AOS_RESPONSE_LETTER);
 
         final List<Letter> aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsUploaded(), RESPONDENT_ANSWERS);
 
