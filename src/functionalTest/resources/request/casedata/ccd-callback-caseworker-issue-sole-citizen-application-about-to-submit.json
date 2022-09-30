@@ -13,10 +13,11 @@
     "Country": "United Kingdom"
   },
   "applicant2Address": {
-    "AddressLine1": "Parc de la Ciutadella",
-    "PostTown": "Barcelona",
-    "County": "Catalunya",
-    "Country": "Spain"
+    "AddressLine1": "221a Baker Street",
+    "PostTown": "London",
+    "County": "Greater London",
+    "PostCode": "NW1 6XE",
+    "Country": "United Kingdom"
   },
   "applicant1SolicitorRepresented": "No",
   "applicant1LanguagePreferenceWelsh": "No",
