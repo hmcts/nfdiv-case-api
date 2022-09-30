@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.caseworker.service.print.FinalOrderGrantedPrinter;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -23,6 +24,8 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
@@ -36,6 +39,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -61,6 +65,9 @@ public class FinalOrderGrantedNotificationTest {
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private FinalOrderGrantedPrinter printer;
 
     @InjectMocks
     private FinalOrderGrantedNotification finalOrderGrantedNotification;
@@ -128,9 +135,13 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(SOLICITOR_NAME, "App1 Sol");
         templateContent.put(DATE_OF_ISSUE, LocalDate.of(2021, 4, 28).format(DATE_TIME_FORMATTER));
         templateContent.put(SOLICITOR_REFERENCE, "App1 Sol Ref");
+        templateContent.put(SIGN_IN_URL, "signin_url");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
+
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
+            .thenReturn("signin_url");
 
         finalOrderGrantedNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -205,9 +216,13 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(SOLICITOR_NAME, "App2 Sol");
         templateContent.put(DATE_OF_ISSUE, LocalDate.of(2021, 4, 28).format(DATE_TIME_FORMATTER));
         templateContent.put(SOLICITOR_REFERENCE, "not provided");
+        templateContent.put(SIGN_IN_URL, "signin_url");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
+
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
+            .thenReturn("signin_url");
 
         finalOrderGrantedNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
@@ -217,5 +232,23 @@ public class FinalOrderGrantedNotificationTest {
             eq(templateContent),
             eq(ENGLISH)
         );
+    }
+
+    @Test
+    void shouldPrintLettersForOfflineApplicant1() {
+        final CaseData caseData = caseData();
+
+        finalOrderGrantedNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+
+        verify(printer).print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1);
+    }
+
+    @Test
+    void shouldPrintLettersForOfflineApplicant2() {
+        final CaseData caseData = caseData();
+
+        finalOrderGrantedNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verify(printer).print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
     }
 }
