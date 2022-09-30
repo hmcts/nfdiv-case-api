@@ -27,7 +27,7 @@ plugins {
   id 'org.springframework.boot' version '2.7.4'
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'hmcts.ccd.sdk' version '4.0.4'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.380'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.391'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -312,7 +312,7 @@ dependencies {
   testImplementation group: 'io.github.openfeign', name: 'feign-jackson', version: '11.10'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
   testImplementation group: 'org.simplify4u', name: 'slf4j-mock', version: '2.2.0'
-  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.26'
+  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.27'
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
