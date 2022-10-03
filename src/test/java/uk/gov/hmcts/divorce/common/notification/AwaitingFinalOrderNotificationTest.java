@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForFinalOrderPrinter;
 
 import java.time.LocalDate;
 
@@ -51,16 +52,19 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 class AwaitingFinalOrderNotificationTest {
@@ -70,6 +74,9 @@ class AwaitingFinalOrderNotificationTest {
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private ApplyForFinalOrderPrinter applyForFinalOrderPrinter;
 
     @InjectMocks
     private AwaitingFinalOrderNotification awaitingFinalOrderNotification;
@@ -352,4 +359,44 @@ class AwaitingFinalOrderNotificationTest {
             eq(ENGLISH)
         );
     }
+
+    @Test
+    void shouldSendCanApplyForFinalOrderLettersToOfflineApplicant1() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+        awaitingFinalOrderNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+
+        verify(applyForFinalOrderPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            caseData.getApplicant2()
+        );
+    }
+
+    @Test
+    void shouldSendCanApplyForFinalOrderLettersToOfflineApplicant2InJointApplication() {
+        CaseData caseData = validJointApplicant1CaseData();
+
+        awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verify(applyForFinalOrderPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1()
+        );
+    }
+
+    @Test
+    void shouldNotSendCanApplyForFinalOrderLettersToOfflineApplicant2InSoleApplication() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+        awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(applyForFinalOrderPrinter);
+    }
+
 }

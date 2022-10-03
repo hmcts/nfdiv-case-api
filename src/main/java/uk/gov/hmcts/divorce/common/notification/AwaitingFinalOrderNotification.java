@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForFinalOrderPrinter;
 
 import java.util.Map;
 
@@ -38,6 +39,9 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private ApplyForFinalOrderPrinter applyForFinalOrderPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -99,6 +103,21 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
                 templateVars,
                 applicant2.getLanguagePreference()
             );
+        }
+    }
+
+    @Override
+    public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
+        log.info("Notifying offline {} that they can apply for a final order: {}",
+            caseData.getApplicationType().isSole() ? "applicant" : "applicant 1", caseId);
+        applyForFinalOrderPrinter.sendLetters(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+    }
+
+    @Override
+    public void sendToApplicant2Offline(CaseData caseData, Long caseId) {
+        if (!caseData.getApplicationType().isSole()) {
+            log.info("Notifying offline applicant 2 that they can apply for a final order: {}", caseId);
+            applyForFinalOrderPrinter.sendLetters(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
         }
     }
 
