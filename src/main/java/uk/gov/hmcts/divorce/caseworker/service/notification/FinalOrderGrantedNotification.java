@@ -133,9 +133,9 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     }
 
     private Map<String, String> citizenTemplateContent(final CaseData caseData,
-                                                         final Long caseId,
-                                                         final Applicant applicant,
-                                                         final Applicant partner) {
+                                                       final Long caseId,
+                                                       final Applicant applicant,
+                                                       final Applicant partner) {
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
 
