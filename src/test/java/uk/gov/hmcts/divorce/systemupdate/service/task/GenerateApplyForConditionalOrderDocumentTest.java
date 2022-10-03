@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
@@ -53,6 +54,9 @@ public class GenerateApplyForConditionalOrderDocumentTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @Mock
     private Clock clock;
