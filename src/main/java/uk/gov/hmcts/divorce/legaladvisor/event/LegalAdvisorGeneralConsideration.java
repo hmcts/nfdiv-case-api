@@ -92,7 +92,13 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
             notificationDispatcher.send(notification, caseData, details.getId());
         }
 
-        caseData.setGeneralReferral(null);
+        // Reset all fields apart from urgent case flag as it is still required by agents to filter cases.
+        caseData.setGeneralReferral(
+            GeneralReferral
+                .builder()
+                .generalReferralUrgentCase(caseData.getGeneralReferral().getGeneralReferralUrgentCase())
+                .build()
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
