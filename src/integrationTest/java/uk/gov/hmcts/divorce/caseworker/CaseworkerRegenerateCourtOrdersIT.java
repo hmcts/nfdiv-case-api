@@ -180,8 +180,6 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .getResponse()
             .getContentAsString();
 
-        System.out.println(actualResponse);
-
         assertThatJson(actualResponse)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineSuccess()));
