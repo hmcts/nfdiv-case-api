@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -251,5 +254,26 @@ public class CommonContent {
 
     public String getProfessionalUsersSignInUrl(Long caseId) {
         return config.getTemplateVars().get(SIGN_IN_PROFESSIONAL_USERS_URL) + caseId;
+    }
+
+    public Map<String, Object> templateContentCanApplyForCoOrFo(final CaseData caseData,
+                                                final Long caseId,
+                                                final Applicant applicant,
+                                                final Applicant partner, final LocalDate date) {
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
+
+        templateContent.put("firstName", applicant.getFirstName());
+        templateContent.put("lastName", applicant.getLastName());
+        templateContent.put(ADDRESS, applicant.getPostalAddress());
+        templateContent.put(PARTNER, getPartner(caseData, partner, applicant.getLanguagePreference()));
+        templateContent.put(DATE, date);
+
+        templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
+        templateContent.put(IS_DIVORCE, caseData.isDivorce());
+
+        return templateContent;
     }
 }
