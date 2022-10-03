@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -348,6 +349,60 @@ public class CcdAccessServiceTest {
         boolean expected = ccdAccessService.isApplicant1(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID);
 
         assertThat(expected).isTrue();
+    }
+
+    @Test
+    public void shouldReturnTrueWhenApplicant2RoleExistsOnCase() {
+        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("[APPLICANTTWO]").build()
+            ))
+            .build();
+
+        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(CASEWORKER_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, List.of(String.valueOf(TEST_CASE_ID))))
+            .thenReturn(caseRolesResponse);
+
+        boolean expected = ccdAccessService.hasCaseGotApplicant2Role(TEST_CASE_ID);
+
+        verify(caseAssignmentApi)
+            .getUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                List.of(String.valueOf(TEST_CASE_ID))
+            );
+
+        assertThat(expected).isTrue();
+    }
+
+    @Test
+    public void shouldReturnFalseWhenApplicant2RoleExistsOnCase() {
+        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("[CREATOR]").build()
+            ))
+            .build();
+
+        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(CASEWORKER_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, List.of(String.valueOf(TEST_CASE_ID))))
+            .thenReturn(caseRolesResponse);
+
+        boolean expected = ccdAccessService.hasCaseGotApplicant2Role(TEST_CASE_ID);
+
+        verify(caseAssignmentApi)
+            .getUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                List.of(String.valueOf(TEST_CASE_ID))
+            );
+
+        assertThat(expected).isFalse();
     }
 
     @Test

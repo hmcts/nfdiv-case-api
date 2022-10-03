@@ -1,13 +1,13 @@
 package uk.gov.hmcts.divorce.common.notification;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.Map;
 
@@ -23,6 +23,9 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
     @Autowired
     private CommonContent commonContent;
+
+    @Autowired
+    private CcdAccessService ccdAccessService;
 
     @Autowired
     private NotificationService notificationService;
@@ -45,7 +48,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        if (ObjectUtils.isNotEmpty(caseData.getApplicant2().getEmail())) {
+        if (ccdAccessService.hasCaseGotApplicant2Role(id)) {
             log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
             final Map<String, String> templateVars =
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
