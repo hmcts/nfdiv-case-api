@@ -13,13 +13,17 @@ import uk.gov.hmcts.divorce.common.event.page.ApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.notification.FinalOrderSolicitorNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.util.Objects.isNull;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
@@ -54,6 +58,9 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     @Autowired
     private ProgressFinalOrderState progressFinalOrderState;
 
+    @Autowired
+    private Clock clock;
+
     private static final List<CcdPageConfiguration> pages = List.of(
         new ApplyForFinalOrderDetails()
     );
@@ -86,26 +93,23 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
         log.info("Apply for Final Order about to submit callback invoked for Case Id: {}", details.getId());
 
-        CaseData data = details.getData();
-        State state = details.getState();
+        if (AwaitingFinalOrder.equals(details.getState())) {
+            FinalOrder finalOrder = details.getData().getFinalOrder();
 
-        var applicant1AppliedForFinalOrderFirst = data.getFinalOrder().getApplicant1AppliedForFinalOrderFirst();
-        var applicant2AppliedForFinalOrderFirst = data.getFinalOrder().getApplicant2AppliedForFinalOrderFirst();
+            if (isNull(finalOrder.getApplicant1AppliedForFinalOrderFirst())
+                && isNull(finalOrder.getApplicant2AppliedForFinalOrderFirst())) {
+                finalOrder.setApplicant2AppliedForFinalOrderFirst(NO);
+                finalOrder.setApplicant1AppliedForFinalOrderFirst(YES);
+                finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
+            }
 
-        if (applicant2AppliedForFinalOrderFirst == null && applicant1AppliedForFinalOrderFirst == null) {
-            data.getFinalOrder().setApplicant2AppliedForFinalOrderFirst(NO);
-            data.getFinalOrder().setApplicant1AppliedForFinalOrderFirst(YES);
+            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, details.getData(), details.getId());
         }
 
-        if (AwaitingFinalOrder.equals(state)) {
-            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, data, details.getId());
-        }
-
-        details.setData(data);
         var updatedDetails = progressFinalOrderState.apply(details);
 
         if (FinalOrderRequested.equals(updatedDetails.getState())) {
-            notificationDispatcher.send(finalOrderSolicitorNotification, data, details.getId());
+            notificationDispatcher.send(finalOrderSolicitorNotification, updatedDetails.getData(), details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
