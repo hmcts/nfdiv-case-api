@@ -1,17 +1,14 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 
-import java.time.Clock;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,27 +43,20 @@ import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateCon
 import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SPOUSE_OR_CP;
 import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.THE_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.THE_MARRIAGE_OR_CP;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataForGrantFinalOrder;
 
 @ExtendWith(MockitoExtension.class)
 public class FinalOrderGrantedTemplateContentTest {
-    @Mock
-    private Clock clock;
 
     @InjectMocks
     private FinalOrderGrantedTemplateContent finalOrderGrantedTemplateContent;
 
-    @BeforeEach
-    public void setUp() {
-        setMockClock(clock, LocalDate.of(2022, 3, 16));
-    }
-
     @Test
     public void shouldMapTemplateContentWhenDivorceCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.SOLE_APPLICATION, DivorceOrDissolution.DIVORCE);
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
         final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -91,6 +81,7 @@ public class FinalOrderGrantedTemplateContentTest {
     @Test
     public void shouldMapTemplateContentWhenDissolutionCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.JOINT_APPLICATION, DivorceOrDissolution.DISSOLUTION);
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
         final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -116,6 +107,7 @@ public class FinalOrderGrantedTemplateContentTest {
     public void shouldMapTemplateContentInWelshWhenDivorceCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.SOLE_APPLICATION, DivorceOrDissolution.DIVORCE);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
         final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -141,6 +133,7 @@ public class FinalOrderGrantedTemplateContentTest {
     public void shouldMapTemplateContentInWelshWhenDissolutionCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.JOINT_APPLICATION, DivorceOrDissolution.DISSOLUTION);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
         final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
 
