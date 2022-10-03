@@ -351,5 +351,4 @@ class SolicitorCreateApplicationIT {
                 result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
             );
     }
-
 }
