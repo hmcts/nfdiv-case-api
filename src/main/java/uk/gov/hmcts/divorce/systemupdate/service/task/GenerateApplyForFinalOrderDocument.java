@@ -12,16 +12,13 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_CAN_APPLY;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_CAN_APPLY_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY;
 
 @Component
 @Slf4j
-public class GenerateApplyForConditionalOrderDocument {
-
-    public static final String FIRST_NAME = "firstName";
-    public static final String LAST_NAME = "lastName";
+public class GenerateApplyForFinalOrderDocument {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -32,25 +29,25 @@ public class GenerateApplyForConditionalOrderDocument {
     @Autowired
     private Clock clock;
 
-    public void generateApplyForConditionalOrder(final CaseData caseData,
+    public void generateApplyForFinalOrder(final CaseData caseData,
                                                  final Long caseId,
                                                  final Applicant applicant,
                                                  final Applicant partner) {
 
-        log.info("Generating apply for conditional order pdf for CaseID: {}", caseId);
+        log.info("Generating apply for final order pdf for CaseID: {}", caseId);
 
         LocalDateTime now = LocalDateTime.now(clock);
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_CAN_APPLY,
+            FINAL_ORDER_CAN_APPLY,
             commonContent.templateContentCanApplyForCoOrFo(caseData, caseId, applicant, partner, now.toLocalDate()),
             caseId,
-            CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID,
+            FINAL_ORDER_CAN_APPLY_TEMPLATE_ID,
             applicant.getLanguagePreference(),
-            formatDocumentName(caseId, CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME, now)
+            formatDocumentName(caseId, FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
         );
 
-        log.info("Completed generating apply for conditional order pdf for CaseID: {}", caseId);
+        log.info("Completed generating apply for final order pdf for CaseID: {}", caseId);
     }
 }
