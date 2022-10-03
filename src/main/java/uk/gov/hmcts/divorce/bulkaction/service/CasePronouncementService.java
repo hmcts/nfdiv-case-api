@@ -66,11 +66,11 @@ public class CasePronouncementService {
                 user,
                 serviceAuth);
 
-        log.info("Error bulk case details list size {}", unprocessedBulkCases.size());
+        log.info("Error bulk case details list size {} and bulk case id {}", unprocessedBulkCases.size(), details.getId());
 
         List<ListValue<BulkListCaseDetails>> processedBulkCases = bulkActionCaseData.calculateProcessedCases(unprocessedBulkCases);
 
-        log.info("Successfully processed bulk case details list size {}", processedBulkCases.size());
+        log.info("Successfully processed bulk case details list size {} and bulk case id {}", processedBulkCases.size(), details.getId());
 
         bulkActionCaseData.getErroredCaseDetails().addAll(unprocessedBulkCases);
         bulkActionCaseData.getProcessedCaseDetails().addAll(processedBulkCases);
