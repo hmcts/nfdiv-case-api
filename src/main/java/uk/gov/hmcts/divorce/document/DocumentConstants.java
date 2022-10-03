@@ -24,6 +24,8 @@ public final class DocumentConstants {
 
     public static final String NFD_NOP_R1_SOLE_APP2_CIT_ONLINE = "NFD_NOP_R1_SOLE_APP2_CIT_ONLINE";
     public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE = "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE";
+
+    public static final String NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES = "NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES";
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
     public static final String CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "conditionalOrderGrantedCoversheet";
 
@@ -109,6 +111,9 @@ public final class DocumentConstants {
     public static final String CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID = "CONDITIONAL_ORDER_PRONOUNCED";
 
     public static final String CO_GRANTED_COVER_LETTER_TEMPLATE_ID = "CO_GRANTED_COVER_LETTER";
+
+    public static final String FINAL_ORDER_CAN_APPLY_TEMPLATE_ID = "FINAL_ORDER_CAN_APPLY";
+    public static final String FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME = "finalOrderCanApply";
 
     public static final String FINAL_ORDER_DOCUMENT_NAME = "FinalOrderGranted";
     public static final String FINAL_ORDER_TEMPLATE_ID = "FINAL_ORDER_GRANTED";

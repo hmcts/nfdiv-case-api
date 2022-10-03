@@ -48,6 +48,7 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -546,6 +547,108 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult =
             ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(100);
+    }
+
+    @Test
+    void shouldReturnCasesInAwaitingAosWhereConfirmReadPetitionIsYes() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+
+        final QueryBuilder confirmReadPetitionYes = matchQuery("data.confirmReadPetition", YesOrNo.YES);
+        final QueryBuilder awaitingAosState = matchQuery(STATE, AwaitingAos);
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(confirmReadPetitionYes))
+            .must(boolQuery().must(awaitingAosState));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            sourceBuilder.toString()))
+            .thenReturn(expected);
+
+        final List<CaseDetails> searchResult =
+            ccdSearchService.searchCasesInAwaitingAosWhereConfirmReadPetitionIsYes(user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(100);
+    }
+
+    @Test
+    void shouldReturnJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+
+        final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
+        final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
+        final QueryBuilder newPaperCase = matchQuery("data.newPaperCase", YesOrNo.YES);
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(newPaperCase))
+            .must(boolQuery().must(jointApplication))
+            .must(boolQuery().mustNot(applicant2OfflineExist));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            sourceBuilder.toString()))
+            .thenReturn(expected);
+
+        final List<CaseDetails> searchResult =
+            ccdSearchService.searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(100);
+    }
+
+    @Test
+    void shouldReturnSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+
+        final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
+        final QueryBuilder soleApplication = matchQuery("data.applicationType", "soleApplication");
+        final QueryBuilder newPaperCase = matchQuery("data.newPaperCase", YesOrNo.YES);
+        final QueryBuilder applicant2EmailExist = existsQuery("data.applicant2Email");
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(newPaperCase))
+            .must(boolQuery().must(soleApplication))
+            .must(boolQuery().mustNot(applicant2OfflineExist))
+            .must(boolQuery().mustNot(applicant2EmailExist));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            sourceBuilder.toString()))
+            .thenReturn(expected);
+
+        final List<CaseDetails> searchResult =
+            ccdSearchService.searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(100);
     }

@@ -37,6 +37,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForConditionalOrderDocument.FIRST_NAME;
 import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForConditionalOrderDocument.LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -79,9 +80,9 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(IS_JOINT, false);
         templateContent.put(IS_DIVORCE, true);
 
-        when(commonContent.getPartner(
-            caseData, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference())
-        ).thenReturn("husband");
+        when(commonContent.templateContentCanApplyForCoOrFo(
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
+        ).thenReturn(templateContent);
 
         generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
             caseData,
@@ -122,9 +123,9 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(IS_JOINT, true);
         templateContent.put(IS_DIVORCE, true);
 
-        when(commonContent.getPartner(
-            caseData, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference())
-        ).thenReturn("husband");
+        when(commonContent.templateContentCanApplyForCoOrFo(
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
+        ).thenReturn(templateContent);
 
         generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
             caseData,
@@ -165,9 +166,9 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(IS_JOINT, false);
         templateContent.put(IS_DIVORCE, false);
 
-        when(commonContent.getPartner(
-            caseData, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference())
-        ).thenReturn("civil partner");
+        when(commonContent.templateContentCanApplyForCoOrFo(
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
+        ).thenReturn(templateContent);
 
         generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
             caseData,
