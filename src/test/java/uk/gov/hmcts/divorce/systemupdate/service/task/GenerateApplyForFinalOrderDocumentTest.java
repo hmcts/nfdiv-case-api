@@ -24,11 +24,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_CAN_APPLY_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_CAN_APPLY;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -46,7 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateApplyForConditionalOrderDocumentTest {
+public class GenerateApplyForFinalOrderDocumentTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -58,7 +58,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
     private Clock clock;
 
     @InjectMocks
-    private GenerateApplyForConditionalOrderDocument generateApplyForConditionalOrderDocument;
+    private GenerateApplyForFinalOrderDocument generateApplyForFinalOrderDocument;
 
     @Test
     void shouldGenerateWithSoleDivorceContent() {
@@ -84,7 +84,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
             caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
         ).thenReturn(templateContent);
 
-        generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
+        generateApplyForFinalOrderDocument.generateApplyForFinalOrder(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
@@ -94,12 +94,12 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                CONDITIONAL_ORDER_CAN_APPLY,
+                FINAL_ORDER_CAN_APPLY,
                 templateContent,
                 TEST_CASE_ID,
-                CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID,
+                FINAL_ORDER_CAN_APPLY_TEMPLATE_ID,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
     }
 
@@ -127,7 +127,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
             caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
         ).thenReturn(templateContent);
 
-        generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
+        generateApplyForFinalOrderDocument.generateApplyForFinalOrder(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
@@ -137,12 +137,12 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                CONDITIONAL_ORDER_CAN_APPLY,
+                FINAL_ORDER_CAN_APPLY,
                 templateContent,
                 TEST_CASE_ID,
-                CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID,
+                FINAL_ORDER_CAN_APPLY_TEMPLATE_ID,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
     }
 
@@ -170,7 +170,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
             caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
         ).thenReturn(templateContent);
 
-        generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
+        generateApplyForFinalOrderDocument.generateApplyForFinalOrder(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
@@ -180,12 +180,12 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                CONDITIONAL_ORDER_CAN_APPLY,
+                FINAL_ORDER_CAN_APPLY,
                 templateContent,
                 TEST_CASE_ID,
-                CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID,
+                FINAL_ORDER_CAN_APPLY_TEMPLATE_ID,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
+                formatDocumentName(TEST_CASE_ID, FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
     }
 }

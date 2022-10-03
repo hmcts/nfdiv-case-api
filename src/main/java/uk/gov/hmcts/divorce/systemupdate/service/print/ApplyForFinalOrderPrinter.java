@@ -10,8 +10,8 @@ import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForConditionalOrderDocument;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForFinalOrderDocument;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD36Form;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,19 +21,19 @@ import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_CAN_APPLY;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.D36;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY;
 
 @Component
 @Slf4j
-public class ApplyForConditionalOrderPrinter {
+public class ApplyForFinalOrderPrinter {
 
     @Autowired
     private BulkPrintService bulkPrintService;
 
     @Autowired
-    private GenerateD84Form generateD84Form;
+    private GenerateD36Form generateD36Form;
 
     @Autowired
     private GenerateCoversheet generateCoversheet;
@@ -42,10 +42,9 @@ public class ApplyForConditionalOrderPrinter {
     private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
 
     @Autowired
-    private GenerateApplyForConditionalOrderDocument generateApplyForConditionalOrderDocument;
+    private GenerateApplyForFinalOrderDocument generateApplyForFinalOrderDocument;
 
-    private static final String LETTER_TYPE_APPLY_FOR_CONDITIONAL_ORDER_PACK = "apply-for-conditional-order-pack";
-
+    public static final String LETTER_TYPE_APPLY_FOR_FINAL_ORDER_PACK = "apply-for-final-order-pack";
     private static final int EXPECTED_DOCUMENTS_SIZE = 3;
 
     public void sendLetters(final CaseData caseData,
@@ -54,56 +53,57 @@ public class ApplyForConditionalOrderPrinter {
                             final Applicant partner) {
 
         generateLetters(caseData, caseId, applicant, partner);
-        final List<Letter> conditionalOrderLettersToSend = conditionalOrderLetters(caseData);
 
-        if (!isEmpty(conditionalOrderLettersToSend) && conditionalOrderLettersToSend.size() == EXPECTED_DOCUMENTS_SIZE) {
+        final List<Letter> finalOrderLettersToSend = finalOrderLetters(caseData);
+
+        if (!isEmpty(finalOrderLettersToSend) && finalOrderLettersToSend.size() == EXPECTED_DOCUMENTS_SIZE) {
             final String caseIdString = caseId.toString();
             final Print print = new Print(
-                conditionalOrderLettersToSend,
+                finalOrderLettersToSend,
                 caseIdString,
                 caseIdString,
-                LETTER_TYPE_APPLY_FOR_CONDITIONAL_ORDER_PACK);
+                LETTER_TYPE_APPLY_FOR_FINAL_ORDER_PACK);
 
             final UUID letterId = bulkPrintService.print(print);
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
-            log.warn("Apply for Conditional order letters missing. Failed to send to bulk print for Case ID: {}", caseId);
+            log.warn("Apply for Final order letters missing. Failed to send to bulk print for Case ID: {}", caseId);
         }
 
     }
 
-    private List<Letter> conditionalOrderLetters(final CaseData caseData) {
+    private List<Letter> finalOrderLetters(final CaseData caseData) {
 
         final List<Letter> coversheetLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
             COVERSHEET);
 
-        final List<Letter> canApplyConditionalOrderLetters = lettersWithDocumentType(
+        final List<Letter> canApplyFinalOrderLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
-            CONDITIONAL_ORDER_CAN_APPLY);
+            FINAL_ORDER_CAN_APPLY);
 
-        final List<Letter> d84Letters = lettersWithDocumentType(
+        final List<Letter> d36Letters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
-            D84
+            D36
         );
 
         final Letter coversheetLetter = firstElement(coversheetLetters);
-        final Letter canApplyConditionalOrderLetter = firstElement(canApplyConditionalOrderLetters);
-        final Letter d84Letter = firstElement(d84Letters);
+        final Letter canApplyFinalOrderLetter = firstElement(canApplyFinalOrderLetters);
+        final Letter d36Letter = firstElement(d36Letters);
 
-        final List<Letter> conditionalOrderLetters = new ArrayList<>();
+        final List<Letter> finalOrderLetters = new ArrayList<>();
 
         if (coversheetLetter != null) {
-            conditionalOrderLetters.add(coversheetLetter);
+            finalOrderLetters.add(coversheetLetter);
         }
-        if (canApplyConditionalOrderLetter != null) {
-            conditionalOrderLetters.add(canApplyConditionalOrderLetter);
+        if (canApplyFinalOrderLetter != null) {
+            finalOrderLetters.add(canApplyFinalOrderLetter);
         }
-        if (d84Letter != null) {
-            conditionalOrderLetters.add(d84Letter);
+        if (d36Letter != null) {
+            finalOrderLetters.add(d36Letter);
         }
 
-        return conditionalOrderLetters;
+        return finalOrderLetters;
     }
 
     private void generateLetters(final CaseData caseData,
@@ -118,7 +118,7 @@ public class ApplyForConditionalOrderPrinter {
             coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
             applicant.getLanguagePreference()
         );
-        generateD84Form.generateD84Document(caseData, caseId);
-        generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(caseData, caseId, applicant, partner);
+        generateD36Form.generateD36Document(caseData, caseId);
+        generateApplyForFinalOrderDocument.generateApplyForFinalOrder(caseData, caseId, applicant, partner);
     }
 }
