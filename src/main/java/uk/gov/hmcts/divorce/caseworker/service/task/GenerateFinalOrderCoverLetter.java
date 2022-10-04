@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
 import java.time.LocalDate;
