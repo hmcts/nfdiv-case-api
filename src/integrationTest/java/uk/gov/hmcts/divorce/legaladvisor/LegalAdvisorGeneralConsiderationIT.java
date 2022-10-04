@@ -12,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -32,6 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralDecision.APPROVE;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralDecision.REFUSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -121,12 +124,13 @@ public class LegalAdvisorGeneralConsiderationIT {
     }
 
     @Test
-    public void shouldSendEmailNotificationsToApplicantAndRespondentIfEmailSet()
+    public void shouldSendEmailNotificationsToApplicantAndRespondentIfEmailSetForJointApplication()
         throws Exception {
 
         setMockClock(clock);
 
         final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getGeneralReferral().setGeneralReferralDecision(APPROVE);
         caseData.getGeneralReferral().setGeneralReferralDecisionReason("approved");
         caseData.setApplicant2(
