@@ -49,11 +49,11 @@ public class CasePronouncementService {
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Async
-    public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
-                               final String authorization) {
+    public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details
+    ) {
         final BulkActionCaseData bulkActionCaseData = details.getData();
 
-        final User user = idamService.retrieveUser(authorization);
+        final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
         filterCasesNotInCorrectState(bulkActionCaseData, user, serviceAuth);
@@ -66,11 +66,11 @@ public class CasePronouncementService {
                 user,
                 serviceAuth);
 
-        log.info("Error bulk case details list size {}", unprocessedBulkCases.size());
+        log.info("Error bulk case details list size {} and bulk case id {}", unprocessedBulkCases.size(), details.getId());
 
         List<ListValue<BulkListCaseDetails>> processedBulkCases = bulkActionCaseData.calculateProcessedCases(unprocessedBulkCases);
 
-        log.info("Successfully processed bulk case details list size {}", processedBulkCases.size());
+        log.info("Successfully processed bulk case details list size {} and bulk case id {}", processedBulkCases.size(), details.getId());
 
         bulkActionCaseData.getErroredCaseDetails().addAll(unprocessedBulkCases);
         bulkActionCaseData.getProcessedCaseDetails().addAll(processedBulkCases);
