@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -81,6 +82,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_1_SOLICITOR)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
@@ -102,19 +104,27 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
                 finalOrder.setApplicant1AppliedForFinalOrderFirst(YES);
                 finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
             }
-
-            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, details.getData(), details.getId());
         }
 
         var updatedDetails = progressFinalOrderState.apply(details);
-
-        if (FinalOrderRequested.equals(updatedDetails.getState())) {
-            notificationDispatcher.send(finalOrderSolicitorNotification, updatedDetails.getData(), details.getId());
-        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedDetails.getData())
             .state(updatedDetails.getState())
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Apply for Final Order submitted callback invoked for Case Id: {}", details.getId());
+
+        if (AwaitingFinalOrder.equals(details.getState())) {
+            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, details.getData(), details.getId());
+        } else if (FinalOrderRequested.equals(details.getState())) {
+            notificationDispatcher.send(finalOrderSolicitorNotification, details.getData(), details.getId());
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }

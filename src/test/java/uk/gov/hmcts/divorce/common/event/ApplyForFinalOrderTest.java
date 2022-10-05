@@ -23,12 +23,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -66,13 +64,11 @@ class ApplyForFinalOrderTest {
 
     @Test
     void shouldSendSoleAppliedForFinalOrderNotificationIfSoleApplicationTypeAndAwaitingFinalOrderState() {
-        setMockClock(clock);
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.SOLE_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(AwaitingFinalOrder);
 
-        when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applyForFinalOrder.submitted(caseDetails, null);
 
         verify(notificationDispatcher).send(applicant1AppliedForFinalOrderNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
@@ -84,8 +80,7 @@ class ApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(FinalOrderRequested);
 
-        when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applyForFinalOrder.submitted(caseDetails, null);
 
         verify(notificationDispatcher).send(finalOrderSolicitorNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
@@ -97,9 +92,7 @@ class ApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(FinalOrderOverdue);
 
-        when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-
-        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applyForFinalOrder.submitted(caseDetails, null);
 
         verifyNoInteractions(notificationDispatcher);
     }
