@@ -89,11 +89,15 @@ public class SystemProgressCaseToAwaitingFinalOrder implements CCDConfig<CaseDat
         final Applicant applicant2 = caseData.getApplicant2();
 
         if (caseData.getApplicant1().isOffline()) {
+            log.info("Generating applicant 1 offline final order documents for CaseID: {}", caseId);
+
             generateD36Form.generateD36Document(caseData, caseId);
             generateApplyForFinalOrderDocument.generateApplyForFinalOrder(caseData, caseId, applicant1, applicant2);
         }
 
         if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
+            log.info("Generating applicant 2 offline final order documents for CaseID: {}", caseId);
+
             generateD36Form.generateD36Document(caseData, caseId);
             generateApplyForFinalOrderDocument.generateApplyForFinalOrder(caseData, caseId, applicant2, applicant1);
         }

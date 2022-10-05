@@ -14,6 +14,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAwaitingFinalOrder.SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -25,8 +26,6 @@ public class SystemProgressCaseToAwaitingFinalOrderFT extends FunctionalTestSuit
 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-progress-case-to-awaiting-final-order.json";
-    private static final String OFFLINE_REQUEST =
-        "classpath:request/casedata/ccd-callback-casedata-system-progress-case-to-awaiting-final-order-offline.json";
     private static final String JOINT_REPRESENTED_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-progress-case-to-awaiting-final-order-joint-represented.json";
     private static final String WELSH_REQUEST =
@@ -62,12 +61,11 @@ public class SystemProgressCaseToAwaitingFinalOrderFT extends FunctionalTestSuit
     }
 
     @Test
-    public void shouldPassValidationAndSendLettersToOfflineApplicants() throws IOException {
-        Map<String, Object> request = caseData(OFFLINE_REQUEST);
-        request.remove("applicant1Email");
-        request.remove("applicant2Email");
-        request.put("applicant1Offline", "Yes");
-        request.put("applicant2Offline", "Yes");
+    public void shouldGenerateLettersForOfflineApplicants() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("applicant1Offline", YES);
+        request.put("applicant2Offline", YES);
+        request.put("applicant2Email", "");
 
         Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
@@ -76,18 +74,5 @@ public class SystemProgressCaseToAwaitingFinalOrderFT extends FunctionalTestSuit
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(RESPONSE)));
-    }
-
-    @Test
-    public void shouldGenerateLettersForOfflineApplicants() throws IOException {
-        Map<String, Object> request = caseData(REQUEST);
-        request.remove("applicant1Email");
-        request.remove("applicant2Email");
-        request.put("applicant1Offline", "Yes");
-        request.put("applicant2Offline", "Yes");
-
-        Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, SUBMITTED_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 }

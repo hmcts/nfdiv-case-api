@@ -55,28 +55,6 @@
       "value": {
         "documentLink": {
           "document_url": "${json-unit.any-string}",
-          "document_filename": "${json-unit.any-string}",
-          "document_binary_url": "${json-unit.any-string}"
-        },
-        "documentFileName": "${json-unit.any-string}",
-        "documentType": "coversheet"
-      }
-    }, {
-      "id": "${json-unit.any-string}",
-      "value": {
-        "documentLink": {
-          "document_url": "${json-unit.any-string}",
-          "document_filename": "${json-unit.any-string}",
-          "document_binary_url": "${json-unit.any-string}"
-        },
-        "documentFileName": "${json-unit.any-string}",
-        "documentType": "finalOrderCanApply"
-      }
-    }, {
-      "id": "${json-unit.any-string}",
-      "value": {
-        "documentLink": {
-          "document_url": "${json-unit.any-string}",
           "document_filename": "D36.pdf",
           "document_binary_url": "${json-unit.any-string}"
         },
@@ -92,7 +70,7 @@
           "document_binary_url": "${json-unit.any-string}"
         },
         "documentFileName": "${json-unit.any-string}",
-        "documentType": "coversheet"
+        "documentType": "finalOrderCanApply"
       }
     }],
     "dueDate": "${json-unit.any-string}",
