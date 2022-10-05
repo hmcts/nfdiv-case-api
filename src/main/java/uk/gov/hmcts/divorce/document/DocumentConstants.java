@@ -113,6 +113,9 @@ public final class DocumentConstants {
 
     public static final String CO_GRANTED_COVER_LETTER_TEMPLATE_ID = "CO_GRANTED_COVER_LETTER";
 
+    public static final String FINAL_ORDER_CAN_APPLY_TEMPLATE_ID = "FINAL_ORDER_CAN_APPLY";
+    public static final String FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME = "finalOrderCanApply";
+
     public static final String FINAL_ORDER_DOCUMENT_NAME = "FinalOrderGranted";
     public static final String FINAL_ORDER_TEMPLATE_ID = "FINAL_ORDER_GRANTED";
 
