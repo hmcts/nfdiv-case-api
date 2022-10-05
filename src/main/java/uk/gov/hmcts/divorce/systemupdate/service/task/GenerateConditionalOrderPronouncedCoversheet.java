@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.service.task;
 
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,11 +40,6 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
     public static final String NAME = "name";
     public static final String ADDRESS = "address";
     public static final String PRONOUNCEMENT_DATE_PLUS_43 = "pronouncementDatePlus43";
-    public static final String GRANTED_DOCUMENT_TYPE = "grantedDocumentType";
-    public static final String ENTITLEMENT_CONDITIONAL_ORDER = "entitlement to a conditional order";
-    public static final String CONDITIONAL_ORDER = "a conditional order";
-    public static final String FINAL_ORDER = "a final order";
-    public static final String IS_CERTIFICATE = "isCertificate";
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -103,15 +97,6 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
                                              final Applicant applicant) {
 
         final Map<String, Object> templateContent = new HashMap<>();
-
-        if (Objects.nonNull(caseData.getConditionalOrder().getConditionalOrderGrantedDocument())) {
-            templateContent.put(GRANTED_DOCUMENT_TYPE, ENTITLEMENT_CONDITIONAL_ORDER);
-            templateContent.put(IS_CERTIFICATE, true);
-        } else if (Objects.nonNull(caseData.getConditionalOrder().getGrantedDate())) {
-            templateContent.put(GRANTED_DOCUMENT_TYPE, CONDITIONAL_ORDER);
-        } else {
-            templateContent.put(GRANTED_DOCUMENT_TYPE, FINAL_ORDER);
-        }
 
         if (applicant.isRepresented()) {
             templateContent.put(NAME, applicant.getSolicitor().getName());
