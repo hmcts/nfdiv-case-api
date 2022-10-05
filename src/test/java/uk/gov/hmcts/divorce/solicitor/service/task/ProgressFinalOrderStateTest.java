@@ -14,7 +14,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -88,18 +87,5 @@ class ProgressFinalOrderStateTest {
         var result = task.apply(details);
 
         assertEquals(result.getState(), FinalOrderRequested);
-    }
-
-    @Test
-    void shouldNotSetStateIfStateIsFinalOrderOverdue() {
-
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
-
-        var details = CaseDetails.<CaseData, State>builder().data(caseData).state(FinalOrderOverdue).build();
-        var result = task.apply(details);
-
-        assertEquals(result.getState(), FinalOrderOverdue);
     }
 }
