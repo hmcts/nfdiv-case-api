@@ -45,7 +45,7 @@ public class GenerateApplyForConditionalOrderDocument {
         log.info("Generating apply for conditional order pdf for CaseID: {}", caseId);
 
         Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
-                caseData.getApplicant1().getLanguagePreference());
+                applicant.getLanguagePreference());
 
         LocalDateTime now = LocalDateTime.now(clock);
 
