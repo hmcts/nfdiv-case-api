@@ -87,7 +87,6 @@ public class SystemProgressCaseToAwaitingFinalOrderFT extends FunctionalTestSuit
         request.put("applicant2Offline", "Yes");
 
         Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, SUBMITTED_URL);
-        System.out.println(response.asString());
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
