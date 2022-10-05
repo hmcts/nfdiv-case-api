@@ -83,6 +83,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, false);
         templateContent.put(IS_DIVORCE, true);
+        templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
         when(commonContent.templateContentCanApplyForCoOrFo(
             caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
@@ -126,6 +127,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, true);
         templateContent.put(IS_DIVORCE, true);
+        templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
         when(commonContent.templateContentCanApplyForCoOrFo(
             caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
@@ -169,6 +171,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, false);
         templateContent.put(IS_DIVORCE, false);
+        templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
         when(commonContent.templateContentCanApplyForCoOrFo(
             caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
