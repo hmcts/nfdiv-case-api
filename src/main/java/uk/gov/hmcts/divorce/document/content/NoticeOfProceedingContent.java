@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -339,7 +340,7 @@ public class NoticeOfProceedingContent {
 
         templateContent.put(WHO_APPLIED, applicant1.isRepresented() ? "applicant's solicitor" : "applicant");
 
-        templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, !isNull(applicant2Solicitor.getOrganisationPolicy()) ? "Yes" : "No");
+        templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, applicant2Solicitor.hasOrgId() ? "Yes" : "No");
 
         if (personalServiceMethod) {
             if (WELSH.equals(languagePreference)) {
