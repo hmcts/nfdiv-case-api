@@ -120,8 +120,10 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
         log.info("Apply for Final Order submitted callback invoked for Case Id: {}", details.getId());
 
         if (AwaitingFinalOrder.equals(details.getState())) {
+            log.info("Sending Apply for Final Order notifications as case in AwaitingFinalOrder state for Case Id: {}", details.getId());
             notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, details.getData(), details.getId());
         } else if (FinalOrderRequested.equals(details.getState())) {
+            log.info("Sending Apply for Final Order notifications as case in FinalOrderRequested state for Case Id: {}", details.getId());
             notificationDispatcher.send(finalOrderSolicitorNotification, details.getData(), details.getId());
         }
 
