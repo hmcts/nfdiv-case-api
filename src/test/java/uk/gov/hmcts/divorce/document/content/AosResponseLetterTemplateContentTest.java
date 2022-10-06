@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
@@ -83,7 +85,7 @@ public class AosResponseLetterTemplateContentTest {
         when(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))
             .thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent());
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -140,7 +142,7 @@ public class AosResponseLetterTemplateContentTest {
         when(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))
             .thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent());
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
 
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
