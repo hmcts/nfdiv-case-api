@@ -76,7 +76,7 @@ uk:
             JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER: '59ab58b7-b102-4b17-b023-226ce399668b'
             SOLE_APPLICANT_APPLICATION_ACCEPTED: '5f9d4cbe-623e-4066-ae87-76f9afeae884'
             SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED: 'fe1a2a4c-68ac-4887-8557-7be338399a34'
-            SOLE_RESPONDENT_APPLICATION_ACCEPTED: '1726bcfb-95c7-4afd-b789-8072551febd1'
+            SOLE_RESPONDENT_APPLICATION_ACCEPTED: '68e04e81-0dd3-4837-9459-050eaf362abe'
             OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED: '248d19a5-b00b-4c57-a283-10054558003c'
             OVERSEAS_RESPONDENT_APPLICATION_ISSUED: '1e70a276-237a-44f1-bbb5-8e9eb1a0ac3a'
             SOLE_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
@@ -105,7 +105,7 @@ uk:
             CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER: '1845c608-0642-48e9-b91d-839b53ac9b9e'
             APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER: 'ee403b64-1df6-4630-a233-881e85be0395'
             JOINT_APPLIED_FOR_CONDITIONAL_ORDER: '0d8c59f1-aea3-4245-8bca-eb0d5558f0fd'
-            JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER: 'aba8cda5-779e-4943-8fe6-13b7f6a03cf3'
+            JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER: 'aba8cda5-779e-4943-8fe6-13b7f6a03cf3'
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER: '32778ad1-0315-41cc-927b-2c008be35435'
             SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED: '4789bd02-0d9b-40cc-ab08-4790b0480323'
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER: '6caef42a-91d7-40e5-b440-cbb48daf1415'
@@ -211,6 +211,7 @@ uk:
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER: '444fbd4b-5c40-4e42-99a0-761cd07933a6'
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER: 'aa6114e5-f652-49ab-82f9-66d1b2deefed'    #TODO: Welsh translation needed
             JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER: 'aba8cda5-779e-4943-8fe6-13b7f6a03cf3'
+            JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER: 'aba8cda5-779e-4943-8fe6-13b7f6a03cf3'
             CITIZEN_CONDITIONAL_ORDER_PRONOUNCED: 'e7704d69-cf1d-4015-88ba-b998bab99008'
             CITIZEN_CONDITIONAL_ORDER_REFUSED: '44724f77-1ab4-44c7-9b0d-229d25059f05'
             CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT: '0babadb5-acba-4735-ba87-b7a666949efb'
@@ -314,6 +315,7 @@ docmosis:
       GENERAL_LETTER: NFD_General_Letter.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A1-V3.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A2-V4.docx
+      NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2.docx
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V6.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V7.docx
       NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V1.docx
@@ -325,6 +327,7 @@ docmosis:
       CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx
       CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order.docx
+      FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order.docx
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
     welsh:
@@ -346,7 +349,7 @@ docmosis:
       SERVICE_REFUSAL: NFD_Refusal_Order_Deemed_Dispensed_Service_V2_Cy.docx
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved_Cy.docx
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved_Cy.docx
-      CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Conditional_Order_Answers.docx
+      CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Conditional_Order_Answers.docx
       CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder.docx
       APPLIED_FOR_CONDITIONAL_ORDER_LETTER: FL-NFD-GOR-ENG-Applied-For-Conditional-Order-Letter.docx #TODO: add translated content
       SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx #TODO: add translated content
@@ -363,6 +366,7 @@ docmosis:
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter.docx #TODO: update welsh content
       NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2_CY.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3_Cy.docx
+      NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2.docx #TODO: add Welsh translation
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5_Cy.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Paper_Respondent_V6.docx
       NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V1.docx  #TODO: add translated content
@@ -374,6 +378,7 @@ docmosis:
       CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced.docx
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx #TODO: update welsh content
       CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order.docx #TODO: update welsh content
+      FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order.docx #TODO: update welsh content
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
   templateVars:

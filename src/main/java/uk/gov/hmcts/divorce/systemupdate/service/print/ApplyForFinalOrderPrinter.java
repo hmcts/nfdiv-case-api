@@ -1,0 +1,124 @@
+package uk.gov.hmcts.divorce.systemupdate.service.print;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
+import uk.gov.hmcts.divorce.document.print.model.Letter;
+import uk.gov.hmcts.divorce.document.print.model.Print;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForFinalOrderDocument;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD36Form;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static org.springframework.util.CollectionUtils.firstElement;
+import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.D36;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY;
+
+@Component
+@Slf4j
+public class ApplyForFinalOrderPrinter {
+
+    @Autowired
+    private BulkPrintService bulkPrintService;
+
+    @Autowired
+    private GenerateD36Form generateD36Form;
+
+    @Autowired
+    private GenerateCoversheet generateCoversheet;
+
+    @Autowired
+    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
+
+    @Autowired
+    private GenerateApplyForFinalOrderDocument generateApplyForFinalOrderDocument;
+
+    public static final String LETTER_TYPE_APPLY_FOR_FINAL_ORDER_PACK = "apply-for-final-order-pack";
+    private static final int EXPECTED_DOCUMENTS_SIZE = 3;
+
+    public void sendLetters(final CaseData caseData,
+                            final Long caseId,
+                            final Applicant applicant,
+                            final Applicant partner) {
+
+        generateLetters(caseData, caseId, applicant, partner);
+
+        final List<Letter> finalOrderLettersToSend = finalOrderLetters(caseData);
+
+        if (!isEmpty(finalOrderLettersToSend) && finalOrderLettersToSend.size() == EXPECTED_DOCUMENTS_SIZE) {
+            final String caseIdString = caseId.toString();
+            final Print print = new Print(
+                finalOrderLettersToSend,
+                caseIdString,
+                caseIdString,
+                LETTER_TYPE_APPLY_FOR_FINAL_ORDER_PACK);
+
+            final UUID letterId = bulkPrintService.print(print);
+            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+        } else {
+            log.warn("Apply for Final order letters missing. Failed to send to bulk print for Case ID: {}", caseId);
+        }
+
+    }
+
+    private List<Letter> finalOrderLetters(final CaseData caseData) {
+
+        final List<Letter> coversheetLetters = lettersWithDocumentType(
+            caseData.getDocuments().getDocumentsGenerated(),
+            COVERSHEET);
+
+        final List<Letter> canApplyFinalOrderLetters = lettersWithDocumentType(
+            caseData.getDocuments().getDocumentsGenerated(),
+            FINAL_ORDER_CAN_APPLY);
+
+        final List<Letter> d36Letters = lettersWithDocumentType(
+            caseData.getDocuments().getDocumentsGenerated(),
+            D36
+        );
+
+        final Letter coversheetLetter = firstElement(coversheetLetters);
+        final Letter canApplyFinalOrderLetter = firstElement(canApplyFinalOrderLetters);
+        final Letter d36Letter = firstElement(d36Letters);
+
+        final List<Letter> finalOrderLetters = new ArrayList<>();
+
+        if (coversheetLetter != null) {
+            finalOrderLetters.add(coversheetLetter);
+        }
+        if (canApplyFinalOrderLetter != null) {
+            finalOrderLetters.add(canApplyFinalOrderLetter);
+        }
+        if (d36Letter != null) {
+            finalOrderLetters.add(d36Letter);
+        }
+
+        return finalOrderLetters;
+    }
+
+    private void generateLetters(final CaseData caseData,
+                                 final Long caseId,
+                                 final Applicant applicant,
+                                 final Applicant partner) {
+
+        generateCoversheet.generateCoversheet(
+            caseData,
+            caseId,
+            COVERSHEET_APPLICANT,
+            coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
+            applicant.getLanguagePreference()
+        );
+        generateD36Form.generateD36Document(caseData, caseId);
+        generateApplyForFinalOrderDocument.generateApplyForFinalOrder(caseData, caseId, applicant, partner);
+    }
+}
