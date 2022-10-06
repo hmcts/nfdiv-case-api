@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -193,7 +194,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(
             REVIEW_DEADLINE_DATE,
-            holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
+            holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate())
+                    .format(getDateTimeFormatterForPreferredLanguage(languagePreference))
         );
 
         return templateVars;
@@ -203,9 +205,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(IS_REMINDER, NO);
         templateVars.put(
-            REVIEW_DEADLINE_DATE,
-            holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
-        );
+            REVIEW_DEADLINE_DATE, holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate())
+                    .format(getDateTimeFormatterForPreferredLanguage(caseData.getApplicant2().getLanguagePreference())));
         templateVars.put(
             CREATE_ACCOUNT_LINK,
             config.getTemplateVars()
@@ -218,71 +219,83 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private Map<String, String> commonTemplateVars(final CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(
-            SUBMISSION_RESPONSE_DATE,
-            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
-        );
+            SUBMISSION_RESPONSE_DATE, holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
+                    .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }
 
     private Map<String, String> applicant1SolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
 
-        final Map<String, String> templateVars = commonSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId);
+        Applicant applicant = caseData.getApplicant1();
 
-        templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
+        final Map<String, String> templateVars = commonSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId, applicant);
+
+        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(
             SOLICITOR_REFERENCE,
-            isNotEmpty(caseData.getApplicant1().getSolicitor().getReference())
-                ? caseData.getApplicant1().getSolicitor().getReference()
+            isNotEmpty(applicant.getSolicitor().getReference())
+                ? applicant.getSolicitor().getReference()
                 : NOT_PROVIDED);
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
-            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER));
+            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
+                    .format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }
 
     private Map<String, String> soleRespondentSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
-        final Map<String, String> templateVars = commonSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId);
 
-        templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+        Applicant applicant2 = caseData.getApplicant2();
+
+        final Map<String, String> templateVars = commonSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId, applicant2);
+
+        templateVars.put(SOLICITOR_NAME, applicant2.getSolicitor().getName());
         templateVars.put(
             SOLICITOR_REFERENCE,
-            isNotEmpty(caseData.getApplicant2().getSolicitor().getReference())
-                ? caseData.getApplicant2().getSolicitor().getReference()
+            isNotEmpty(applicant2.getSolicitor().getReference())
+                ? applicant2.getSolicitor().getReference()
                 : NOT_PROVIDED);
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
-            caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
+            caseData.getApplication().getIssueDate().plusDays(16)
+                    .format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }
 
     private Map<String, String> applicant2SolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
 
-        final Map<String, String> templateVars = commonSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId);
+        Applicant applicant2 = caseData.getApplicant2();
 
-        templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+        final Map<String, String> templateVars = commonSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId, applicant2);
+
+        templateVars.put(SOLICITOR_NAME, applicant2.getSolicitor().getName());
         templateVars.put(
             SOLICITOR_REFERENCE,
-            isNotEmpty(caseData.getApplicant2().getSolicitor().getReference())
-                ? caseData.getApplicant2().getSolicitor().getReference()
+            isNotEmpty(applicant2.getSolicitor().getReference())
+                ? applicant2.getSolicitor().getReference()
                 : NOT_PROVIDED);
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
-            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER));
+            holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
+                    .format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }
 
-    private Map<String, String> commonSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
+    private Map<String, String> commonSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData,
+                                                                               final Long caseId, Applicant applicant) {
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
 
         templateVars.put(CASE_ID, caseId.toString());
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
-        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
-        templateVars.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate()
+                .format(DATE_TIME_FORMATTER));
+        templateVars.put(DUE_DATE, caseData.getDueDate()
+                .format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }
