@@ -155,7 +155,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1LegalProceedingsDetailsTranslated")
             .field("coApplicant1ReasonInformationNotCorrectTranslated")
             .field("applicant1FinalOrderLateExplanationTranslated")
-
             .label("LabelLanguageDetails-Respondent-Sole", "applicationType=\"soleApplication\"", "### The respondent")
             .label("LabelLanguageDetails-Respondent-Joint", "applicationType=\"jointApplication\"", "### Applicant 2")
             .field("applicant2LanguagePreferenceWelsh")
@@ -399,22 +398,15 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 FinalOrderPending,
                 FinalOrderOverdue,
                 FinalOrderComplete))
-            .label("labelFinalOrderDetails-SoleApplicant",
-                "applicationType=\"soleApplication\" AND doesApplicant1WantToApplyForFinalOrder=\"*\"",
-                "### Applicant")
             .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
-            .field("applicant1FinalOrderStatementOfTruth")
+            .field("doesApplicant2WantToApplyForFinalOrder")
+            .field("applicant2FinalOrderExplanation")
             .field("granted")
             .field("grantedDate")
             .field("dateFinalOrderNoLongerEligible")
-            .field("dateFinalOrderEligibleToRespondent")
-            .label("labelFinalOrderDetails-SoleRespondent",
-                "applicationType=\"soleApplication\" AND doesApplicant2WantToApplyForFinalOrder=\"*\"",
-                "### Respondent")
-            .field("doesApplicant2WantToApplyForFinalOrder")
-            .field("applicant2FinalOrderExplanation");
+            .field("dateFinalOrderEligibleToRespondent", "applicationType=\"soleApplication\"");
     }
 
     private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
