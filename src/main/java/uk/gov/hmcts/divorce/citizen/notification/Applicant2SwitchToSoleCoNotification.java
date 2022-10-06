@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCHED_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -69,7 +69,7 @@ public class Applicant2SwitchToSoleCoNotification implements ApplicantNotificati
                 .getConditionalOrderApplicant2Questions()
                 .getSubmittedDate()
                 .plusDays(CO_SUBMISSION_DATE_PLUS_DAYS)
-                .format(DATE_TIME_FORMATTER)
+                .format(getDateTimeFormatterForPreferredLanguage(data.getApplicant2().getLanguagePreference()))
         );
 
         notificationService.sendEmail(
