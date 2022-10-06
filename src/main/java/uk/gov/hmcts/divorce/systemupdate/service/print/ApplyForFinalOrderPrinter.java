@@ -41,7 +41,7 @@ public class ApplyForFinalOrderPrinter {
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
 
-        generateCoversheet(caseData, caseId, applicant);
+        generateFinalOrderCoversheet(caseData, caseId, applicant);
 
         final List<Letter> finalOrderLettersToSend = finalOrderLetters(caseData);
 
@@ -95,9 +95,9 @@ public class ApplyForFinalOrderPrinter {
         return finalOrderLetters;
     }
 
-    private void generateCoversheet(final CaseData caseData,
-                                 final Long caseId,
-                                 final Applicant applicant) {
+    private void generateFinalOrderCoversheet(final CaseData caseData,
+                                              final Long caseId,
+                                              final Applicant applicant) {
 
         generateCoversheet.generateCoversheet(
             caseData,
