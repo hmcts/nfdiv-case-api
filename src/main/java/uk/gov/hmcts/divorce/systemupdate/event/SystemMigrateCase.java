@@ -25,5 +25,4 @@ public class SystemMigrateCase implements CCDConfig<CaseData, State, UserRole> {
             .description("Migrate case data to the latest version")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE);
     }
-
 }
