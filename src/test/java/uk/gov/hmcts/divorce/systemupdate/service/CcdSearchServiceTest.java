@@ -530,7 +530,9 @@ class CcdSearchServiceTest {
         final QueryBuilder query = boolQuery()
             .must(boolQuery().must(accessCodeNotEmpty))
             .must(boolQuery().must(issueDateExist))
-            .must(boolQuery().must(jointApplication));
+            .must(boolQuery().must(jointApplication))
+            .mustNot(matchQuery(STATE, Withdrawn))
+            .mustNot(matchQuery(STATE, Rejected));
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
@@ -596,7 +598,9 @@ class CcdSearchServiceTest {
         final QueryBuilder query = boolQuery()
             .must(boolQuery().must(newPaperCase))
             .must(boolQuery().must(jointApplication))
-            .must(boolQuery().mustNot(applicant2OfflineExist));
+            .must(boolQuery().mustNot(applicant2OfflineExist))
+            .mustNot(matchQuery(STATE, Withdrawn))
+            .mustNot(matchQuery(STATE, Rejected));
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()

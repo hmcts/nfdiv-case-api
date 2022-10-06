@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A2_SOLE_APP1_CIT_PS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
@@ -141,7 +141,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
     }
 
     @Test
-    void shouldGenerateA2WhenSoleWithAppNotRepresentedAndPersonalService() {
+    void shouldGenerateAL2WhenSoleWithAppNotRepresentedAndPersonalService() {
 
         setMockClock(clock);
 
@@ -155,7 +155,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NFD_NOP_A2_SOLE_APP1_CIT_PS);
+        verifyInteractions(caseData, templateContent, NFD_NOP_AL2_SOLE_APP1_CIT_PS);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
