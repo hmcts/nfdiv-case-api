@@ -1,5 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import org.apache.commons.validator.routines.EmailValidator;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
@@ -7,16 +10,27 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 
 public class Applicant2ServiceDetails implements CcdPageConfiguration {
+
+    private static final String INVALID_APPLICANT_EMAIL_ERROR = "You have entered an invalid applicant email address. "
+        + "Please check the email and enter it again, before submitting the application.";
+
+    private static final String INVALID_SOLICITOR_EMAIL_ERROR = "You have entered an invalid solicitor email address. "
+        + "Please check the email and enter it again, before submitting the application.";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("Applicant2ServiceDetails")
+            .page("Applicant2ServiceDetails", this::midEvent)
             .pageLabel("Service details")
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is ${labelContentTheApplicant2} represented by a solicitor?")
@@ -93,5 +107,31 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                     "${labelContentApplicant2UC} postal address",
                     "This address will be used to notify them about the application")
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                  CaseDetails<CaseData, State> detailsBefore) {
+        CaseData caseData = details.getData();
+        Applicant applicant2 = caseData.getApplicant2();
+        List<String> validationErrors = new ArrayList<>();
+
+        boolean validApplicantEmail;
+        if (isNotEmpty(applicant2.getEmail())) {
+            validApplicantEmail = EmailValidator.getInstance().isValid(applicant2.getEmail());
+            if (!validApplicantEmail) {
+                validationErrors.add(INVALID_APPLICANT_EMAIL_ERROR);
+            }
+        }
+
+        if (applicant2.isRepresented()) {
+            boolean validSolicitorEmail = EmailValidator.getInstance().isValid(applicant2.getSolicitor().getEmail());
+            if (!validSolicitorEmail) {
+                validationErrors.add(INVALID_SOLICITOR_EMAIL_ERROR);
+            }
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .errors(validationErrors)
+            .build();
     }
 }
