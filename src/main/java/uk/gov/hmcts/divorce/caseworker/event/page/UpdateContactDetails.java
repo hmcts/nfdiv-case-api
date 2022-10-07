@@ -225,7 +225,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         final MarriageFormation formationType = caseData.getApplication().getMarriageDetails().getFormationType();
 
         if (FEMALE.equals(gender) && HUSBAND.equals(divorceWho) && OPPOSITE_SEX_COUPLE.equals(formationType)) {
-         return true;
+            return true;
         } else if (MALE.equals(gender) && WIFE.equals(divorceWho) && OPPOSITE_SEX_COUPLE.equals(formationType)) {
             return true;
         } else if (FEMALE.equals(gender) && WIFE.equals(divorceWho) && SAME_SEX_COUPLE.equals(formationType)) {
