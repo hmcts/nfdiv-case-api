@@ -439,6 +439,7 @@ public class SubmitAosIT {
         caseData.getDocuments().setScannedDocuments(singletonList(aosScannedDocument()));
         caseData.getApplicant2().setLegalProceedings(YES);
         caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(YES);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
