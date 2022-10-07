@@ -64,6 +64,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
@@ -416,7 +417,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            nopSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(caseData.getApplicant1()),
             ENGLISH
         );
 
@@ -445,7 +446,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            nopSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(caseData.getApplicant1()),
             WELSH
         );
 
@@ -473,7 +474,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE,
-            nopSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(caseData.getApplicant1()),
             ENGLISH
         );
 
@@ -557,7 +558,7 @@ public class ApplicationIssuedNotificationTest {
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            nopSolicitorTemplateVars(),
+            nopSolicitorTemplateVars(caseData.getApplicant2()),
             ENGLISH
         );
 
@@ -748,7 +749,7 @@ public class ApplicationIssuedNotificationTest {
             eq(JOINT_APPLICATION_ACCEPTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(WELSH_DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
@@ -784,7 +785,7 @@ public class ApplicationIssuedNotificationTest {
         return templateVars;
     }
 
-    private Map<String, String> nopSolicitorTemplateVars() {
+    private Map<String, String> nopSolicitorTemplateVars(Applicant applicant) {
         final Map<String, String> templateVars = solicitorTemplateVars();
 
         templateVars.put(SOLICITOR_REFERENCE, NOT_PROVIDED);

@@ -232,7 +232,7 @@ repositories {
 }
 
 def versions = [
-  jackson           : '2.13.3',
+  jackson           : '2.13.4',
   junit             : '5.9.1',
   junitPlatform     : '1.9.1',
   lombok            : '1.18.22',
@@ -288,6 +288,7 @@ dependencies {
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.1.4'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.17.3-RELEASE'
   implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+  implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
@@ -311,7 +312,7 @@ dependencies {
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.8.0'
   testImplementation group: 'io.github.openfeign', name: 'feign-jackson', version: '11.10'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
-  testImplementation group: 'org.simplify4u', name: 'slf4j-mock', version: '2.2.0'
+  testImplementation group: 'org.simplify4u', name: 'slf4j-mock', version: '2.3.0'
   testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.27'
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
