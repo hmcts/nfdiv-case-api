@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -131,7 +132,11 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder()
-                .organisationPolicy(OrganisationPolicy.<UserRole>builder().build())
+                .organisationPolicy(
+                    OrganisationPolicy.<UserRole>builder()
+                        .organisation(Organisation.builder().organisationId("orgID").build())
+                        .build()
+                )
                 .build()
         );
 
@@ -162,7 +167,11 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder()
-                .organisationPolicy(OrganisationPolicy.<UserRole>builder().build())
+                .organisationPolicy(
+                    OrganisationPolicy.<UserRole>builder()
+                        .organisation(Organisation.builder().organisationId("orgID").build())
+                        .build()
+                )
                 .build()
         );
 
