@@ -105,6 +105,22 @@ public class UpdateContactDetailsTest {
     }
 
     @Test
+    void shouldNotReturnErrorsIfOneOfGenderDivorceWhoOrRelationshipFormationTypeIsNull() {
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplication().getMarriageDetails().setFormationType(null);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
     void shouldReturnErrorsIfFemaleWifeOppositeSexCouple() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(FEMALE);
