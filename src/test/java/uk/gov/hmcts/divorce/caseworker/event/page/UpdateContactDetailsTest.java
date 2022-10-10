@@ -121,6 +121,22 @@ public class UpdateContactDetailsTest {
     }
 
     @Test
+    void shouldNotReturnErrorsIfTwoOfGenderDivorceWhoOrRelationshipFormationTypeIsNull() {
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplication().setDivorceWho(null);
+        caseData.getApplication().getMarriageDetails().setFormationType(null);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
     void shouldReturnErrorsIfFemaleWifeOppositeSexCouple() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(FEMALE);
@@ -136,6 +152,63 @@ public class UpdateContactDetailsTest {
         assertThat(response.getErrors()).isNotNull();
         assertThat(response.getErrors()).contains("""
                 You have selected the applicant gender as Female and they are divorcing their Wife and they are an Opposite-sex couple.
+                Please ensure this is correct before submitting.""");
+    }
+
+    @Test
+    void shouldReturnErrorsIfMaleHusbandOppositeSexCouple() {
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplication().setDivorceWho(HUSBAND);
+        caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors()).contains("""
+                You have selected the applicant gender as Male and they are divorcing their Husband and they are an Opposite-sex couple.
+                Please ensure this is correct before submitting.""");
+    }
+
+    @Test
+    void shouldReturnErrorsIfMaleWifeSameSexCouple() {
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplication().getMarriageDetails().setFormationType(SAME_SEX_COUPLE);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors()).contains("""
+                You have selected the applicant gender as Male and they are divorcing their Wife and they are an Same-sex couple.
+                Please ensure this is correct before submitting.""");
+    }
+
+    @Test
+    void shouldReturnErrorsIfFemaleHusbandSameSexCouple() {
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplicant1().setGender(FEMALE);
+        caseData.getApplication().setDivorceWho(HUSBAND);
+        caseData.getApplication().getMarriageDetails().setFormationType(SAME_SEX_COUPLE);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors()).contains("""
+                You have selected the applicant gender as Female and they are divorcing their Husband and they are an Same-sex couple.
                 Please ensure this is correct before submitting.""");
     }
 }
