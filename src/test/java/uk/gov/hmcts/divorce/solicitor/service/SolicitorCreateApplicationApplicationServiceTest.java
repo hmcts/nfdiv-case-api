@@ -39,13 +39,14 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorCreateApplicationApplicationServiceTest {
 
-    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
+    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 4, 28, 1, 0);
 
     @Mock
     private InitialiseSolicitorCreatedApplication initialiseSolicitorCreatedApplication;
@@ -99,7 +100,10 @@ class SolicitorCreateApplicationApplicationServiceTest {
     public void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setSolicitor(
-            Solicitor.builder().organisationPolicy(organisationPolicy()).build()
+            Solicitor.builder()
+                .organisationPolicy(organisationPolicy())
+                .email(TEST_SOLICITOR_EMAIL)
+                .build()
         );
 
         OrganisationsResponse organisationsResponse = OrganisationsResponse
@@ -112,7 +116,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
         when(organisationClient.getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(organisationsResponse);
 
-        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisation(
+        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
             caseData,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN
@@ -131,7 +135,10 @@ class SolicitorCreateApplicationApplicationServiceTest {
     public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setSolicitor(
-            Solicitor.builder().organisationPolicy(organisationPolicy()).build()
+            Solicitor.builder()
+                .organisationPolicy(organisationPolicy())
+                .email(TEST_SOLICITOR_EMAIL)
+                .build()
         );
 
         OrganisationsResponse organisationsResponse = OrganisationsResponse
@@ -144,7 +151,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
         when(organisationClient.getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(organisationsResponse);
 
-        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisation(
+        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
             caseData,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN
@@ -162,8 +169,9 @@ class SolicitorCreateApplicationApplicationServiceTest {
     @Test
     public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorOrgIsNotPopulated() {
         CaseData caseData = caseData();
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
 
-        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisation(
+        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
             caseData,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN
@@ -201,12 +209,48 @@ class SolicitorCreateApplicationApplicationServiceTest {
             Solicitor.builder().organisationPolicy(organisationPolicy()).build()
         );
 
-        assertThatThrownBy(() -> solicitorCreateApplicationService.validateSolicitorOrganisation(
+        assertThatThrownBy(() -> solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
             caseData,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN
         ))
             .hasMessageContaining("403 Service not whitelisted")
             .isExactlyInstanceOf(FeignException.Forbidden.class);
+    }
+
+    @Test
+    public void shouldValidateApplicant1SolicitorEmailAndReturnErrorsWhenInValid() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setSolicitor(
+            Solicitor.builder()
+                .organisationPolicy(organisationPolicy())
+                .email("invalidEmail")
+                .build()
+        );
+
+        OrganisationsResponse organisationsResponse = OrganisationsResponse
+            .builder()
+            .organisationIdentifier(TEST_ORG_ID)
+            .build();
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        when(organisationClient.getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN))
+            .thenReturn(organisationsResponse);
+
+        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
+            caseData,
+            TEST_CASE_ID,
+            TEST_AUTHORIZATION_TOKEN
+        );
+
+        assertThat(caseInfo.getCaseData()).isNull();
+        assertThat(caseInfo.getErrors()).containsExactly("You have entered an invalid email address. "
+            + "Please check the email and enter it again, before submitting the application.");
+
+        verify(authTokenGenerator).generate();
+        verify(organisationClient).getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN);
+
+        verifyNoMoreInteractions(authTokenGenerator, organisationClient);
     }
 }
