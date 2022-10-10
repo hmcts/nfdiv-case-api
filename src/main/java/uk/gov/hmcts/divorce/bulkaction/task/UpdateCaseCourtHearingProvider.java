@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 
 @Component
@@ -32,6 +33,8 @@ public class UpdateCaseCourtHearingProvider implements BulkActionCaseTaskProvide
             conditionalOrder.setCourt(
                 bulkActionCaseData.getCourt()
             );
+            conditionalOrder.setOfflineCertificateOfEntitlementDocumentSentToApplicant1(NO);
+            conditionalOrder.setOfflineCertificateOfEntitlementDocumentSentToApplicant2(NO);
             return mainCaseDetails;
         };
     }
