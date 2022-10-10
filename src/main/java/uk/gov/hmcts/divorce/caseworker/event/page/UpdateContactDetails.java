@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing;
 
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import static uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
@@ -224,7 +225,9 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         final WhoDivorcing divorceWho = caseData.getApplication().getDivorceWho();
         final MarriageFormation formationType = caseData.getApplication().getMarriageDetails().getFormationType();
 
-        if (FEMALE.equals(gender) && HUSBAND.equals(divorceWho) && OPPOSITE_SEX_COUPLE.equals(formationType)) {
+        if (isEmpty(gender) || isEmpty(divorceWho) || isEmpty(formationType)) {
+            return true;
+        } else if (FEMALE.equals(gender) && HUSBAND.equals(divorceWho) && OPPOSITE_SEX_COUPLE.equals(formationType)) {
             return true;
         } else if (MALE.equals(gender) && WIFE.equals(divorceWho) && OPPOSITE_SEX_COUPLE.equals(formationType)) {
             return true;
