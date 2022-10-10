@@ -31,6 +31,7 @@ public class AosPackPrinter {
     private static final String LETTER_TYPE_RESPONDENT_PACK = "respondent-aos-pack";
     private static final String LETTER_TYPE_APPLICANT_PACK = "applicant-aos-pack";
     private static final String LETTER_TYPE_AOS_RESPONSE_PACK = "aos-response-pack";
+    private static final int AOS_RESPONSE_LETTERS_COUNT = 2;
 
     @Autowired
     private BulkPrintService bulkPrintService;
@@ -106,7 +107,15 @@ public class AosPackPrinter {
             caseData.getDocuments().getDocumentsGenerated(),
             AOS_RESPONSE_LETTER);
 
-        final List<Letter> aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsUploaded(), RESPONDENT_ANSWERS);
+        List<Letter> aosLetters;
+        if (caseData.getApplicant2().isOffline()) {
+            // When respondent is offline respondent answers doc is reclassified and added to docs uploaded list
+            aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsUploaded(), RESPONDENT_ANSWERS);
+
+        } else {
+            // When respondent is online respondent answers doc is generated and added to docs generated list
+            aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), RESPONDENT_ANSWERS);
+        }
 
         final Letter aosResponseLetter = firstElement(aosResponseLetters);
 
@@ -121,7 +130,7 @@ public class AosPackPrinter {
             aosResponseLetterWithAos.add(aosLetter);
         }
 
-        if (!isEmpty(aosResponseLetterWithAos)) {
+        if (!isEmpty(aosResponseLetterWithAos) && aosResponseLetterWithAos.size() == AOS_RESPONSE_LETTERS_COUNT) {
 
             final String caseIdString = caseId.toString();
             final Print print = new Print(aosResponseLetterWithAos, caseIdString, caseIdString, LETTER_TYPE_AOS_RESPONSE_PACK);

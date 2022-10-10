@@ -51,7 +51,7 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
         final Long caseId = details.getId();
-        log.info("20wk holding period elapsed for Case({}), notifying Joint Applicants they can apply for conditional order", caseId);
+        log.info("20wk holding period elapsed for case({}), sending notifications declaring conditional order can be applied for", caseId);
 
         notificationDispatcher.send(awaitingConditionalOrderNotification, caseData, caseId);
 
