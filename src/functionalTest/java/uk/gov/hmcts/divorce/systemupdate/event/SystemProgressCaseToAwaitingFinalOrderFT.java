@@ -51,4 +51,17 @@ public class SystemProgressCaseToAwaitingFinalOrderFT extends FunctionalTestSuit
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
+
+    @Test
+    public void shouldPassValidationAndSendLettersToOfflineApplicants() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.remove("applicant1Email");
+        request.remove("applicant2Email");
+        request.put("applicant1Offline", "Yes");
+        request.put("applicant2Offline", "Yes");
+
+        Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
 }

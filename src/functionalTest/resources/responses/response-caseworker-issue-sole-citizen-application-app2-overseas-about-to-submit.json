@@ -1,0 +1,142 @@
+{
+  "data": {
+    "applicationType": "soleApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Address": {
+      "AddressLine1": "221a Baker Street",
+      "Country": "United Kingdom",
+      "County": "Greater London",
+      "PostCode": "NW1 6XE",
+      "PostTown": "London"
+    },
+    "applicant1ContactDetailsType": "private",
+    "applicant1Gender": "male",
+    "applicant1FinancialOrder": "No",
+    "applicant1LegalProceedings": "Yes",
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2Email": "applicant2@example.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2Address": {
+      "AddressLine1": "Parc de la Ciutadella",
+      "Country": "Spain",
+      "County": "Catalunya",
+      "PostTown": "Barcelona"
+    },
+    "applicant1SolicitorRepresented": "No",
+    "applicant2SolicitorRepresented": "No",
+    "applicant2ContactDetailsType": "public",
+    "applicant2Gender": "female",
+    "applicant1IsApplicant2Represented": "notSure",
+    "applicant2FinancialOrder": "No",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
+    ],
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "divorceWho": "wife",
+    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1StatementOfTruth": "Yes",
+    "applicant2StatementOfTruth": "Yes",
+    "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000"
+    },
+    "documentUploadComplete": "Yes",
+    "issueDate": "${json-unit.any-string}",
+    "applicationPayments": [
+      {
+        "value": {
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+    "accessCode": "${json-unit.any-string}",
+    "confidentialDocumentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "confidentialDocumentsReceived": "noticeOfProceedings",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          },
+          "documentFileName": "${json-unit.any-string}"
+        }
+      }
+    ],
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "d10",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "application",
+          "documentLink": {
+            "document_binary_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "coversheet",
+          "documentLink": {
+            "document_binary_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "noticeOfProceedingsApp2",
+          "documentLink": {
+            "document_binary_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_url": "${json-unit.any-string}"
+          }
+        }
+      }
+    ],
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}",
+    "serviceMethod": "personalService",
+    "warnings": []
+  },
+  "state": "AwaitingService"
+}

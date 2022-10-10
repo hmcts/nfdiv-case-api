@@ -128,3 +128,9 @@ bulk-action:
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
 
+
+logging:
+  level:
+    org:
+      springframework:
+        cache: TRACE

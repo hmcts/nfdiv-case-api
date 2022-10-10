@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIE
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER;
 
 @Component
@@ -73,7 +73,7 @@ public class Applicant1AppliedForConditionalOrderNotification
             log.info("Notifying applicant 1 solicitor that their conditional order application has been submitted: {}", id);
             notificationService.sendEmail(
                 caseData.getApplicant1().getSolicitor().getEmail(),
-                JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER,
+                JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER,
                 solicitorTemplateVars(caseData, id, caseData.getApplicant1(), APPLICANT1),
                 ENGLISH
             );

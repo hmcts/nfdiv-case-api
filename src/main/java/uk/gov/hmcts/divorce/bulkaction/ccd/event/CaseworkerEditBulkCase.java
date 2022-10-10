@@ -60,6 +60,9 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
+
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_EDIT_BULK_CASE, bulkCaseDetails.getId());
+
         if (bulkCaseDetails.getData().getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
             return AboutToStartOrSubmitResponse
                 .<BulkActionCaseData, BulkActionState>builder()
@@ -70,7 +73,7 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
 
         if (bulkCaseDetails.getData().getPronouncementListDocument() != null) {
             log.info("Regenerating Pronouncement List document for bulk case {}", bulkCaseDetails.getId());
-            pronouncementListDocService.generateDocument(bulkCaseDetails, bulkCaseDetails.getData().getBulkListCaseDetails());
+            pronouncementListDocService.generateDocument(bulkCaseDetails);
         }
 
         return AboutToStartOrSubmitResponse
@@ -83,6 +86,9 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
         CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
+
+        log.info("{} submitted callback invoked for Case Id: {}", CASEWORKER_EDIT_BULK_CASE, bulkCaseDetails.getId());
+
         scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkCaseDetails);
         return SubmittedCallbackResponse.builder().build();
     }

@@ -19,7 +19,7 @@ import java.util.Map;
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A2_SOLE_APP1_CIT_PS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
@@ -79,7 +79,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             content = templateContent.apply(caseData, caseId, caseData.getApplicant2(), applicant1.getLanguagePreference());
             templateId = caseData.getApplication().isCourtServiceMethod()
                 ? NFD_NOP_A1_SOLE_APP1_CIT_CS
-                : NFD_NOP_A2_SOLE_APP1_CIT_PS;
+                : NFD_NOP_AL2_SOLE_APP1_CIT_PS;
         }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(

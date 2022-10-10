@@ -44,13 +44,13 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(SpringExtension.class)
@@ -111,12 +111,12 @@ public class CasePronouncementServiceIT {
             .size(50);
 
         var userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
-        var user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
-        when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(user);
+        var user = new User(TEST_SYSTEM_AUTHORISATION_TOKEN, userDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         when(coreCaseDataApi.searchCases(
-            CASEWORKER_AUTH_TOKEN,
+            TEST_SYSTEM_AUTHORISATION_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
             CASE_TYPE,
             searchQuery.toString()))
@@ -138,7 +138,7 @@ public class CasePronouncementServiceIT {
 
         when(coreCaseDataApi
             .startEventForCaseWorker(
-                CASEWORKER_AUTH_TOKEN,
+                TEST_SYSTEM_AUTHORISATION_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 CASEWORKER_USER_ID,
                 JURISDICTION,
@@ -168,11 +168,11 @@ public class CasePronouncementServiceIT {
             caseDataContent
         )).thenReturn(getCaseDetails());
 
-        casePronouncementService.pronounceCases(bulkActionCaseDetails, CASEWORKER_AUTH_TOKEN);
+        casePronouncementService.pronounceCases(bulkActionCaseDetails);
 
         verify(coreCaseDataApi)
             .startEventForCaseWorker(
-                CASEWORKER_AUTH_TOKEN,
+                TEST_SYSTEM_AUTHORISATION_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 CASEWORKER_USER_ID,
                 JURISDICTION,
@@ -189,7 +189,7 @@ public class CasePronouncementServiceIT {
                 any(CaseData.class));
 
         verify(coreCaseDataApi).submitEventForCaseWorker(
-            CASEWORKER_AUTH_TOKEN,
+            TEST_SYSTEM_AUTHORISATION_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
             CASEWORKER_USER_ID,
             JURISDICTION,

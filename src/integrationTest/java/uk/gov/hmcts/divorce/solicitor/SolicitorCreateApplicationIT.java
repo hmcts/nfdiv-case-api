@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -60,6 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_EMAIL_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_RESPONSE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
@@ -69,6 +71,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
@@ -78,6 +81,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @ContextConfiguration(initializers = {
     PrdOrganisationWireMock.PropertiesInitializer.class,
     CaseDataWireMock.PropertiesInitializer.class,
@@ -215,6 +219,30 @@ class SolicitorCreateApplicationIT {
             );
     }
 
+    @Test
+    void shouldValidateApplicant1SolicitorEmailAndReturnErrorsWhenInvalid() throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
+
+        final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_THE_SOL_MID_EVENT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1SolicitorInvalidEmail(), SOLICITOR_CREATE)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            )
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(jsonStringResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(expectedResponse(SOLICITOR_MID_EVENT_EMAIL_ERROR));
+    }
+
     private String getOrganisationResponseWith(final String organisationId) throws JsonProcessingException {
         return objectMapper.writeValueAsString(
             OrganisationsResponse.builder()
@@ -230,7 +258,21 @@ class SolicitorCreateApplicationIT {
 
     private CaseData caseDataWithApplicant1Org() {
         CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy()).build());
+        caseData.getApplicant1()
+            .setSolicitor(Solicitor.builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .organisationPolicy(organisationPolicy())
+                .build());
+        return caseData;
+    }
+
+    private CaseData caseDataWithApplicant1SolicitorInvalidEmail() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1()
+            .setSolicitor(Solicitor.builder()
+                .email("invalidEmail")
+                .organisationPolicy(organisationPolicy())
+                .build());
         return caseData;
     }
 
@@ -309,5 +351,4 @@ class SolicitorCreateApplicationIT {
                 result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
             );
     }
-
 }

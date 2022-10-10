@@ -85,6 +85,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("d84")
     D84("D84"),
 
+    @JsonProperty("d36")
+    D36("D36"),
+
     @JsonProperty("d9D")
     D9D("D9D"),
 
@@ -121,11 +124,20 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("email")
     EMAIL("Email"),
 
+    @JsonProperty("finalOrderCanApply")
+    FINAL_ORDER_CAN_APPLY("Final order can apply"),
+
     @JsonProperty("finalOrderApplication")
     FINAL_ORDER_APPLICATION("Final Order application (D36)"),
 
     @JsonProperty("finalOrderGranted")
     FINAL_ORDER_GRANTED("Final order granted"),
+
+    @JsonProperty("finalOrderGrantedCoverLetterApp1")
+    FINAL_ORDER_GRANTED_COVER_LETTER_APP_1("Applicant 1 Final order granted cover letter"),
+
+    @JsonProperty("finalOrderGrantedCoverLetterApp2")
+    FINAL_ORDER_GRANTED_COVER_LETTER_APP_2("Applicant 2 Final order granted cover letter"),
 
     @JsonProperty("generalOrder")
     GENERAL_ORDER("General order"),
