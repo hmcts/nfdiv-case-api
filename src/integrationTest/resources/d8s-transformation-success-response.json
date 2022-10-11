@@ -47,7 +47,7 @@
       "applicant2StatementOfTruth": "Yes",
       "paperFormSoleOrApplicant1PaymentOtherDetail": "",
       "coApplicant1IsDrafted": "No",
-      "applicant1LegalProceedings": "No",
+      "applicant1LegalProceedings": "Yes",
       "paperFormApplicant2PaymentOther": "No",
       "applicant2NameDifferentToMarriageCertificate": "Yes",
       "paperFormRespondentDifferentServiceAddress": "No",

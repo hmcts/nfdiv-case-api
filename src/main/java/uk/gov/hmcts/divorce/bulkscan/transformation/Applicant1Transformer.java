@@ -170,6 +170,7 @@ public class Applicant1Transformer implements Function<TransformationDetails, Tr
             transformationDetails.getTransformationWarnings().add("Please review existing or previous court cases in the scanned form");
         }
 
+        caseData.getApplicant1().setLegalProceedings(YES);
         caseData.getApplicant1().setLegalProceedingsDetails(
             join("Case Number(s):",
                 ocrDataFields.getExistingOrPreviousCourtCaseNumbers(),

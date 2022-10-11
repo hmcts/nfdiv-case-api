@@ -67,7 +67,7 @@
       ],
       "applicant2SolicitorFirmName": "",
       "coApplicant1IsDrafted": "No",
-      "applicant1LegalProceedings": "No",
+      "applicant1LegalProceedings": "Yes",
       "applicant1FirstName": "app1Fname",
       "paperFormApplicant2PaymentOther": "No",
       "applicant2NameDifferentToMarriageCertificate": "Yes",

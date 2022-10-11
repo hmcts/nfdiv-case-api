@@ -38,7 +38,7 @@
     "children",
     "applicant"
   ],
-  "LegalProceedings": "No",
+  "LegalProceedings": "Yes",
   "LegalProceedingsDetails": "Case Number(s):",
   "PcqId": null,
   "ContinueApplication": null
