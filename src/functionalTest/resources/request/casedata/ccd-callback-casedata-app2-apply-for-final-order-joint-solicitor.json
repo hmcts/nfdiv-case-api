@@ -9,6 +9,7 @@
   "applicant2FirstName": "Olive",
   "applicant2LastName": "Oil",
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant1SolicitorRepresented": "Yes",
   "applicant1SolicitorName": "Applicant 1 Solicitor",
   "applicant1SolicitorEmail": "applicant1.solicitor@example.com",

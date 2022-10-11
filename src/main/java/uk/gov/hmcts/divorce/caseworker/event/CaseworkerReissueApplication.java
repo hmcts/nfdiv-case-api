@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -32,6 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
 
@@ -40,6 +42,8 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REISSUE_APPLICATION = "caseworker-reissue-application";
     public static final String BLANK_LABEL = " ";
+    public static final String REISSUE_NOT_POSSIBLE_ERROR_MESSAGE =
+        "Acknowledgement of Service has been submitted therefore this case cannot be reissued";
 
     @Autowired
     private ReIssueApplicationService reIssueApplicationService;
@@ -55,13 +59,15 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .description("Application reissued")
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(
                 SOLICITOR,
                 SUPER_USER,
-                LEGAL_ADVISOR))
+                LEGAL_ADVISOR,
+                SYSTEMUPDATE))
             .page("reissueApplication")
             .pageLabel("Reissue Application")
             .complex(CaseData::getApplication)
@@ -69,6 +75,22 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 .mandatoryWithoutDefaultValue(Application::getServiceMethod, "reissueOption=\"reissueCase\"", BLANK_LABEL, true)
                 .done()
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("Caseworker reissue application about to start callback invoked for case id: {}", details.getId());
+        CaseData caseData = details.getData();
+        List<String> validationErrors = new ArrayList<>();
+
+        if (caseData.getAcknowledgementOfService() != null && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            log.info("Reissue validation failed because AOS has already been submitted. Case ID: {}", details.getId());
+            validationErrors.add(REISSUE_NOT_POSSIBLE_ERROR_MESSAGE);
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(validationErrors)
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,

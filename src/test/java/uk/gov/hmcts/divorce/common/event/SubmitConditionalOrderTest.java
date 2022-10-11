@@ -121,6 +121,22 @@ class SubmitConditionalOrderTest {
     }
 
     @Test
+    void shouldFailValidationWhenApplicant1NotConfirmedStatementOfTruthOnAboutToSubmit() {
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .build())
+                .build())
+            .applicationType(SOLE_APPLICATION)
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getErrors()).contains("The applicant must agree that the facts stated in the application are true");
+    }
+
+    @Test
     void shouldSetDateSubmittedForApplicant2OnAboutToSubmit() {
         setupMocks(clock);
         when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(false);
@@ -258,32 +274,35 @@ class SubmitConditionalOrderTest {
     }
 
     @Test
-    void shouldSendApp1NotificationsOnAboutToSubmit() {
-        setupMocks(clock);
+    void shouldSendApp1NotificationsOnSubmittedCallback() {
+        when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(true);
+
         CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
 
-        submitConditionalOrder.aboutToSubmit(caseDetails, null);
+        submitConditionalOrder.submitted(caseDetails, null);
 
         verify(notificationDispatcher).send(app1AppliedForConditionalOrderNotification, caseData, 1L);
     }
 
     @Test
     void shouldSendApp2NotificationsOnAboutToSubmit() {
-        setupMocks(clock);
+        when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
         when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(false);
+
         CaseData caseData = caseData();
         caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setStatementOfTruth(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
 
-        submitConditionalOrder.aboutToSubmit(caseDetails, null);
+        submitConditionalOrder.submitted(caseDetails, null);
 
         verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, 1L);
     }
 
     @Test
-    void shouldSendApp1SolicitorAndApp2SolicitorNotificationsOnAboutToSubmit() {
-        setupMocks(clock);
+    void shouldSendApp1SolicitorAndApp2SolicitorNotificationsOnSubmittedCallback() {
+        setupMocks(null);
         CaseData caseData = caseData();
         caseData.setApplicant1(Applicant
             .builder()
@@ -317,7 +336,7 @@ class SubmitConditionalOrderTest {
             .state(ConditionalOrderPronounced)
             .build();
 
-        submitConditionalOrder.aboutToSubmit(caseDetails, beforeDetails);
+        submitConditionalOrder.submitted(caseDetails, beforeDetails);
 
         verify(notificationDispatcher).send(solicitorAppliedForConditionalOrderNotification, caseData, 1L);
     }

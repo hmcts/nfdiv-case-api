@@ -16,11 +16,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -33,12 +35,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
+import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -48,10 +53,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANTS_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
@@ -83,7 +93,10 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
     IdamWireMock.PropertiesInitializer.class
 })
 public class CaseworkerGrantFinalOrderIT {
+
     public static final String GRANT_FINAL_ORDER_RESPONSE_JSON = "classpath:caseworker-grant-final-order-response.json";
+    public static final String GRANT_FINAL_ORDER_OFFLINE_RESPONSE_JSON = "classpath:caseworker-grant-final-order-offline-response.json";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -98,6 +111,9 @@ public class CaseworkerGrantFinalOrderIT {
 
     @MockBean
     private NotificationService notificationService;
+
+    @MockBean
+    private BulkPrintService bulkPrintService;
 
     @MockBean
     private Clock clock;
@@ -156,9 +172,48 @@ public class CaseworkerGrantFinalOrderIT {
     }
 
     @Test
+    public void shouldGenerateGrantFinalOrderDocumentAndFinalOrderCoverLetterWhenAboutToSubmitCallbackIsInvokedForOfflineCase()
+        throws Exception {
+
+        final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setEmail(null);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Final-Order-Granted.docx");
+        stubForDocAssemblyWith("a11dc4a5-30b0-4a91-8fbb-1676cd300421", "FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx");
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    CASEWORKER_GRANT_FINAL_ORDER)
+                )
+            )
+            .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse().getContentAsString();
+
+        assertThatJson(response)
+            .isEqualTo(json(expectedResponse(GRANT_FINAL_ORDER_OFFLINE_RESPONSE_JSON)));
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
     public void shouldGenerateGrantFinalOrderDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -252,7 +307,7 @@ public class CaseworkerGrantFinalOrderIT {
     public void shouldGenerateFinalOrderAndSendNotificationToSolicitorsWhenAboutToSubmitCallbackIsInvoked() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
-        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
             Solicitor.builder()
                 .name("App1 Sol")
@@ -262,7 +317,7 @@ public class CaseworkerGrantFinalOrderIT {
         );
 
         final Applicant applicant2 = getApplicant();
-        applicant2.setSolicitorRepresented(YesOrNo.YES);
+        applicant2.setSolicitorRepresented(YES);
         applicant2.setSolicitor(Solicitor.builder()
             .name("App2 Sol")
             .email(TEST_USER_EMAIL)
@@ -304,7 +359,7 @@ public class CaseworkerGrantFinalOrderIT {
     public void shouldSendNotificationToSolicitorsWhenSubmittedCallbackIsInvoked() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
-        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
             Solicitor.builder()
                 .name("App1 Sol")
@@ -314,7 +369,7 @@ public class CaseworkerGrantFinalOrderIT {
         );
 
         final Applicant applicant2 = getApplicant();
-        applicant2.setSolicitorRepresented(YesOrNo.YES);
+        applicant2.setSolicitorRepresented(YES);
         applicant2.setSolicitor(Solicitor.builder()
             .name("App2 Sol")
             .email(TEST_USER_EMAIL)
@@ -404,5 +459,116 @@ public class CaseworkerGrantFinalOrderIT {
                 eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldSendWelshNotificationToApplicantAndRespondentWhenSubmittedCallbackIsInvokedForASoleCase() throws Exception {
+        final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getApplicant1().setEmail("applicant@email.com");
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        final Applicant applicant2 = getApplicant();
+        applicant2.setEmail("respondent@email.com");
+        applicant2.setLanguagePreferenceWelsh(YES);
+        caseData.setApplicant2(applicant2);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        mockMvc.perform(post(SUBMITTED_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    CASEWORKER_GRANT_FINAL_ORDER)
+                )
+            )
+            .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk());
+
+        verify(notificationService)
+            .sendEmail(
+                eq("applicant@email.com"),
+                eq(APPLICANTS_FINAL_ORDER_GRANTED),
+                anyMap(),
+                eq(WELSH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq("respondent@email.com"),
+                eq(APPLICANTS_FINAL_ORDER_GRANTED),
+                anyMap(),
+                eq(WELSH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldSendBulkPrintNotificationToOfflineApplicantAndOfflineRespondentWhenSubmittedCallbackIsInvoked() throws Exception {
+        final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getApplicant1().setOffline(YES);
+
+        final Applicant applicant2 = getApplicant();
+        applicant2.setOffline(YES);
+        applicant2.setEmail(null);
+        caseData.setApplicant2(applicant2);
+
+        final ListValue<DivorceDocument> finalOrderGrantedLetter =
+            ListValue.<DivorceDocument>builder()
+                .value(DivorceDocument.builder()
+                    .documentType(FINAL_ORDER_GRANTED)
+                    .build())
+                .build();
+
+        final ListValue<DivorceDocument> applicant1FinalOrderGrantedCoverLetter =
+            ListValue.<DivorceDocument>builder()
+                .value(DivorceDocument.builder()
+                    .documentType(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1)
+                    .build())
+                .build();
+
+        final ListValue<DivorceDocument> applicant2FinalOrderGrantedCoverLetter =
+            ListValue.<DivorceDocument>builder()
+                .value(DivorceDocument.builder()
+                    .documentType(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2)
+                    .build())
+                .build();
+
+        caseData.getDocuments().setDocumentsGenerated(
+            List.of(finalOrderGrantedLetter, applicant1FinalOrderGrantedCoverLetter, applicant2FinalOrderGrantedCoverLetter)
+        );
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        mockMvc.perform(post(SUBMITTED_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    CASEWORKER_GRANT_FINAL_ORDER)
+                )
+            )
+            .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk());
+
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
+
+        verifyNoInteractions(notificationService);
     }
 }
