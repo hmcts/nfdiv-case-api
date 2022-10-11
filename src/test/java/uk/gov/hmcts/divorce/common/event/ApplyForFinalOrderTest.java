@@ -72,7 +72,7 @@ class ApplyForFinalOrderTest {
         caseDetails.setState(AwaitingFinalOrder);
 
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(applicant1AppliedForFinalOrderNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
@@ -85,7 +85,7 @@ class ApplyForFinalOrderTest {
         caseDetails.setState(FinalOrderRequested);
 
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(finalOrderRequestedNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
@@ -99,7 +99,7 @@ class ApplyForFinalOrderTest {
 
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
 
-        applyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         verifyNoInteractions(notificationDispatcher);
     }
