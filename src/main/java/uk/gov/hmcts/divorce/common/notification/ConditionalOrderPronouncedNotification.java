@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronouncedPrinter;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static java.lang.String.format;
@@ -35,6 +36,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDIT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -137,14 +139,16 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
             throw new NotificationTemplateException(format(MISSING_FIELD_MESSAGE, "coGrantedDate", caseId));
         }
 
+        DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
+
         final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
         templateVars.put(COURT_NAME, conditionalOrder.getCourt().getLabel());
-        templateVars.put(DATE_OF_HEARING, conditionalOrder.getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER));
+        templateVars.put(DATE_OF_HEARING, conditionalOrder.getDateAndTimeOfHearing().format(dateTimeFormatter));
         templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43,
-            conditionalOrder.getGrantedDate().plusDays(finalOrderOffsetDays).format(DATE_TIME_FORMATTER));
+            conditionalOrder.getGrantedDate().plusDays(finalOrderOffsetDays).format(dateTimeFormatter));
         templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS,
             conditionalOrder.getGrantedDate().plusDays(finalOrderOffsetDays)
-                .plusMonths(finalOrderRespondentOffsetMonth).format(DATE_TIME_FORMATTER));
+                .plusMonths(finalOrderRespondentOffsetMonth).format(dateTimeFormatter));
         return templateVars;
     }
 
