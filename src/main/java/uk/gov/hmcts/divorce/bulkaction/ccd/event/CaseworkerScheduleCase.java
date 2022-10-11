@@ -55,6 +55,9 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
+
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
+
         if (bulkCaseDetails.getData().getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
             return AboutToStartOrSubmitResponse
                 .<BulkActionCaseData, BulkActionState>builder()
@@ -73,6 +76,9 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
+
+        log.info("{} submitted callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
+
         scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkCaseDetails);
         return SubmittedCallbackResponse.builder().build();
     }

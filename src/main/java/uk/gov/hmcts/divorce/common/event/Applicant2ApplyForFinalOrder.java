@@ -13,13 +13,17 @@ import uk.gov.hmcts.divorce.common.event.page.Applicant2ApplyForFinalOrderDetail
 import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.util.Objects.isNull;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
@@ -54,6 +58,9 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
     @Autowired
     private ProgressFinalOrderState progressFinalOrderState;
 
+    @Autowired
+    private Clock clock;
+
     private static final List<CcdPageConfiguration> pages = List.of(
         new Applicant2ApplyForFinalOrderDetails()
     );
@@ -75,10 +82,10 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
             .grant(CREATE_READ_UPDATE, APPLICANT_2, APPLICANT_2_SOLICITOR)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grantHistoryOnly(
-                CASE_WORKER,
-                SUPER_USER,
-                LEGAL_ADVISOR,
-                APPLICANT_1_SOLICITOR));
+                    CASE_WORKER,
+                    SUPER_USER,
+                    LEGAL_ADVISOR,
+                    APPLICANT_1_SOLICITOR));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -86,26 +93,23 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
         log.info("Applicant2 Apply For Final Order event about to submit callback invoked for Case Id: {}", details.getId());
 
-        CaseData data = details.getData();
-        State state = details.getState();
+        if (AwaitingFinalOrder.equals(details.getState())) {
+            FinalOrder finalOrder = details.getData().getFinalOrder();
 
-        var applicant1AppliedForFinalOrderFirst = data.getFinalOrder().getApplicant1AppliedForFinalOrderFirst();
-        var applicant2AppliedForFinalOrderFirst = data.getFinalOrder().getApplicant2AppliedForFinalOrderFirst();
+            if (isNull(finalOrder.getApplicant1AppliedForFinalOrderFirst())
+                    && isNull(finalOrder.getApplicant2AppliedForFinalOrderFirst())) {
+                finalOrder.setApplicant2AppliedForFinalOrderFirst(YES);
+                finalOrder.setApplicant1AppliedForFinalOrderFirst(NO);
+                finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
+            }
 
-        if (applicant2AppliedForFinalOrderFirst == null && applicant1AppliedForFinalOrderFirst == null) {
-            data.getFinalOrder().setApplicant2AppliedForFinalOrderFirst(YES);
-            data.getFinalOrder().setApplicant1AppliedForFinalOrderFirst(NO);
+            notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, details.getData(), details.getId());
         }
 
-        if (AwaitingFinalOrder.equals(state)) {
-            notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, data, details.getId());
-        }
-
-        details.setData(data);
         var updatedDetails = progressFinalOrderState.apply(details);
 
         if (FinalOrderRequested.equals(updatedDetails.getState())) {
-            notificationDispatcher.send(finalOrderRequestedNotification, data, details.getId());
+            notificationDispatcher.send(finalOrderRequestedNotification, updatedDetails.getData(), details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

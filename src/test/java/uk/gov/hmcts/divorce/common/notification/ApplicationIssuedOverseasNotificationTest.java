@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DA
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -101,7 +102,7 @@ class ApplicationIssuedOverseasNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
             argThat(allOf(
-                hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().plusDays(28).format(WELSH_DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
