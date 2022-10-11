@@ -23,13 +23,13 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
-
 @Component
 @Slf4j
-public class FinalOrderSolicitorNotification implements ApplicantNotification {
+public class FinalOrderRequestedNotification implements ApplicantNotification {
 
     @Autowired
     private CommonContent commonContent;
@@ -40,6 +40,7 @@ public class FinalOrderSolicitorNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
+            log.info("Notifying Applicant 1 solicitor that both applicants have applied for final order for case {}", caseId);
             var templateVars = solicitorsFinalOrderTemplateVars(caseData, caseId, caseData.getApplicant1());
             notificationService.sendEmail(
                     caseData.getApplicant1().getSolicitor().getEmail(),
@@ -53,12 +54,39 @@ public class FinalOrderSolicitorNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
+            log.info("Notifying Applicant 2 solicitor that both applicants have applied for final order for case {}", caseId);
             var templateVars = solicitorsFinalOrderTemplateVars(caseData, caseId, caseData.getApplicant2());
             notificationService.sendEmail(
                     caseData.getApplicant2().getSolicitor().getEmail(),
                     JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
                     templateVars,
                     caseData.getApplicant2().getLanguagePreference()
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant1(CaseData caseData, Long caseId) {
+        if (!caseData.getApplicationType().isSole()) {
+            log.info("Notifying Applicant 1 that both applicants have applied for final order for case {}", caseId);
+            notificationService.sendEmail(
+                caseData.getApplicant1().getEmail(),
+                JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER,
+                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant2(CaseData caseData, Long caseId) {
+        if (!caseData.getApplicationType().isSole()) {
+            log.info("Notifying Applicant 2 that both applicants have applied for final order for case {}", caseId);
+            notificationService.sendEmail(
+                caseData.getApplicant2().getEmail(),
+                JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER,
+                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
+                caseData.getApplicant2().getLanguagePreference()
             );
         }
     }
