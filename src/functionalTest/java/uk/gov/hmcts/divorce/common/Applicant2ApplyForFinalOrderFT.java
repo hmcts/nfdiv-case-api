@@ -110,4 +110,29 @@ public class Applicant2ApplyForFinalOrderFT extends FunctionalTestSuite {
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(jsonDocument.json());
     }
+
+    @Test
+    public void shouldMoveStateToFinalOrderRequestedWhenBothApplicantsHaveAppliedForFOInJointCitizenCase()
+        throws Exception {
+
+        final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("applicationType", "jointApplication");
+        caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
+        caseData.put("applicant1AppliedForFinalOrderFirst", "No");
+        caseData.put("applicant2AppliedForFinalOrderFirst", "Yes");
+
+        final Response response = triggerCallback(caseData, APPLICANT2_FINAL_ORDER_REQUESTED, ABOUT_TO_SUBMIT_URL, AwaitingJointFinalOrder);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
+        jsonDocument.set("data.applicationType", "jointApplication");
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(jsonDocument.json());
+    }
 }
