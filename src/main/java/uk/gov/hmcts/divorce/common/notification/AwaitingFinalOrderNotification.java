@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForFinalOrderPrinter;
 
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLY_FOR_FINAL_ORDER_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -38,6 +40,9 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private ApplyForFinalOrderPrinter applyForFinalOrderPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -102,11 +107,27 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         }
     }
 
+    @Override
+    public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
+        log.info("Notifying offline {} that they can apply for a final order: {}",
+            caseData.getApplicationType().isSole() ? "applicant" : "applicant 1", caseId);
+        applyForFinalOrderPrinter.sendLetters(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+    }
+
+    @Override
+    public void sendToApplicant2Offline(CaseData caseData, Long caseId) {
+        if (!caseData.getApplicationType().isSole()) {
+            log.info("Notifying offline applicant 2 that they can apply for a final order: {}", caseId);
+            applyForFinalOrderPrinter.sendLetters(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
+        }
+    }
+
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.conditionalOrderTemplateVars(caseData, id, applicant, partner);
         templateVars.put(IS_REMINDER, NO);
         templateVars.put(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS,
-            caseData.getFinalOrder().getDateFinalOrderEligibleToRespondent().format(DATE_TIME_FORMATTER));
+            caseData.getFinalOrder().getDateFinalOrderEligibleToRespondent()
+                    .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }
 

@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
@@ -58,5 +60,36 @@ class CaseworkerReissueApplicationTest {
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo("Invalid reissue option, browser page refresh may have occurred. "
             + "Please use 'Previous' button and select a reissue option");
+    }
+
+    @Test
+    void shouldReturnErrorIfAosHasAlreadyBeenSubmitted() {
+
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReissue.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors().get(0))
+            .isEqualTo("Acknowledgement of Service has been submitted therefore this case cannot be reissued");
+    }
+
+    @Test
+    void shouldNotReturnErrorIfAosIsYetToBeSubmitted() {
+
+        final CaseData caseData = validCaseDataForIssueApplication();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReissue.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).isNull();
     }
 }
