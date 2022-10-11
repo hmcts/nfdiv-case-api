@@ -193,11 +193,17 @@ public class Applicant2ApplyForFinalOrderIT {
 
         final CaseData data = validJointApplicant1CaseData();
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .name("App1 Sol")
+            .reference("12344")
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
         data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
         data.getApplicant2().setSolicitor(Solicitor.builder()
             .name("App2 Sol")
             .reference("12344")
-            .email(TEST_SOLICITOR_EMAIL)
+            .email("app2Sol@email.com")
             .build());
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
@@ -216,9 +222,10 @@ public class Applicant2ApplyForFinalOrderIT {
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app2Sol@email.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH));
 
-        verifyNoMoreInteractions(notificationService);
+        verify(notificationService)
+            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
     }
 
     @Test

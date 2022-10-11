@@ -238,6 +238,12 @@ public class ApplyForFinalOrderIT {
             .reference("12344")
             .email(TEST_SOLICITOR_EMAIL)
             .build());
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant2().setSolicitor(Solicitor.builder()
+            .name("App2 Sol")
+            .reference("12344")
+            .email("app2sol@email.com")
+            .build());
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
             .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
@@ -255,6 +261,9 @@ public class ApplyForFinalOrderIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(eq("app2sol@email.com"), eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
