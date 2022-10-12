@@ -45,7 +45,9 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        boolean applicant2IsLinked = !isNull(caseData.getCaseInvite()) && isNull(caseData.getCaseInvite().accessCode());
+        boolean applicant2IsLinked = !isNull(caseData.getCaseInvite())
+                && isNull(caseData.getCaseInvite().accessCode())
+                && !isNull(caseData.getCaseInvite().applicant2UserId());
         if (applicant2IsLinked) {
             log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
             final Map<String, String> templateVars =
