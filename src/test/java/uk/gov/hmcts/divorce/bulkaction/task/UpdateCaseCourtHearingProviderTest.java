@@ -56,5 +56,7 @@ class UpdateCaseCourtHearingProviderTest {
 
         assertThat(resultConditionalOrder.getDateAndTimeOfHearing()).isEqualTo(localDateTime);
         assertThat(resultConditionalOrder.getCourt()).isEqualTo(BIRMINGHAM);
+        assertThat(resultConditionalOrder.hasOfflineCertificateOfEntitlementBeenSentToApplicant1()).isFalse();
+        assertThat(resultConditionalOrder.hasOfflineCertificateOfEntitlementBeenSentToApplicant2()).isFalse();
     }
 }
