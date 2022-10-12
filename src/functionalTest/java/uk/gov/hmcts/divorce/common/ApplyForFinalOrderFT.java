@@ -138,7 +138,6 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
 
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicationType", "jointApplication");
-        caseData.put("applicant2Email", "app2@email.com");
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
         caseData.put("applicant1AppliedForFinalOrderFirst", "Yes");
         caseData.put("applicant2AppliedForFinalOrderFirst", "No");
@@ -149,6 +148,36 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
 
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
         jsonDocument.set("data.applicationType", "jointApplication");
+        jsonDocument.set("state", "FinalOrderRequested");
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(jsonDocument.json());
+    }
+
+    @Test
+    public void shouldMoveStateToFinalOrderRequestedWhenBothApplicantsHaveAppliedForFOInJointCitizenCaseWithLangPrefWelsh()
+        throws Exception {
+
+        final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("applicationType", "jointApplication");
+        caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
+        caseData.put("applicant1AppliedForFinalOrderFirst", "Yes");
+        caseData.put("applicant2AppliedForFinalOrderFirst", "No");
+        caseData.put("applicant1LanguagePreferenceWelsh", YesOrNo.YES);
+        caseData.put("applicant2LanguagePreferenceWelsh", YesOrNo.YES);
+
+        final Response response = triggerCallback(caseData, FINAL_ORDER_REQUESTED, ABOUT_TO_SUBMIT_URL, AwaitingJointFinalOrder);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
+        jsonDocument.set("data.applicationType", "jointApplication");
+        jsonDocument.set("state", "WelshTranslationReview");
+        jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
