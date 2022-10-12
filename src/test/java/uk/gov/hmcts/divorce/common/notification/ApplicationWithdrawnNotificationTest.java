@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -29,6 +31,9 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
@@ -213,9 +218,34 @@ public class ApplicationWithdrawnNotificationTest {
     }
 
     @Test
-    void shouldNotSendEmailApplicant2IfEmailIsNull() {
+    void shouldSendEmailApplicant2IfAccessCodeHasBeenUsed() {
         CaseData data = validApplicant1CaseData();
-        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.setCaseInvite(CaseInvite.builder()
+            .applicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL)
+            .applicant2UserId(APP_2_CITIZEN_USER_ID)
+            .accessCode(null)
+            .build());
+
+        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(CITIZEN_APPLICATION_WITHDRAWN),
+            any(),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void shouldNotSendEmailApplicant2IfAccessCodeHasNotBeenUsed() {
+        CaseData data = validApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.setCaseInvite(CaseInvite.builder()
+            .applicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL)
+            .applicant2UserId(APP_2_CITIZEN_USER_ID)
+            .accessCode(ACCESS_CODE)
+            .build());
 
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
@@ -223,9 +253,10 @@ public class ApplicationWithdrawnNotificationTest {
     }
 
     @Test
-    void shouldNotSendEmailApplicant2IfEmailIsEmptyString() {
+    void shouldNotSendEmailApplicant2IfCaseInviteIsNull() {
         CaseData data = validApplicant1CaseData();
-        data.getApplicant2().setEmail("");
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.setCaseInvite(null);
 
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
