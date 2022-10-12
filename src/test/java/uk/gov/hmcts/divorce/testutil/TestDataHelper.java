@@ -59,6 +59,7 @@ import uk.gov.hmcts.divorce.endpoint.data.FormType;
 import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
 import uk.gov.hmcts.divorce.endpoint.model.input.InputScannedDoc;
 import uk.gov.hmcts.divorce.endpoint.model.input.InputScannedDocUrl;
+import uk.gov.hmcts.divorce.legaladvisor.service.printer.AwaitingAmendedApplicationPrinter;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -565,11 +566,12 @@ public class TestDataHelper {
 
     public static CallbackRequest callbackRequest(final CaseData caseData, String eventId, String state) {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
+        CaseDetails caseDetailsBefore = caseDetailsBefore(caseData);
+        caseDetailsBefore.setState(state);
         return CallbackRequest
             .builder()
             .eventId(eventId)
-            .caseDetailsBefore(
-                caseDetailsBefore(caseData))
+            .caseDetailsBefore(caseDetailsBefore)
             .caseDetails(
                 CaseDetails
                     .builder()
