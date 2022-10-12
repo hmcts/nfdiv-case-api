@@ -54,6 +54,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
@@ -168,7 +169,10 @@ public class SolicitorUpdateContactDetailsIT {
 
     private CaseData caseDataWithApplicant1Org() {
         CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy()).build());
+        caseData.getApplicant1().setSolicitor(Solicitor.builder()
+            .email(TEST_SOLICITOR_EMAIL)
+            .organisationPolicy(organisationPolicy())
+            .build());
         return caseData;
     }
 

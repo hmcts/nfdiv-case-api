@@ -19,7 +19,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +35,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
@@ -48,9 +46,6 @@ public class CasePronouncementServiceTest {
 
     @Mock
     private IdamService idamService;
-
-    @Mock
-    private HttpServletRequest request;
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -81,7 +76,7 @@ public class CasePronouncementServiceTest {
         var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(ccdSearchService.searchForCases(List.of("1"), user, SERVICE_AUTHORIZATION))
             .thenReturn(List.of(
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
@@ -106,7 +101,7 @@ public class CasePronouncementServiceTest {
             SERVICE_AUTHORIZATION
         )).thenReturn(emptyList());
 
-        casePronouncementService.pronounceCases(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        casePronouncementService.pronounceCases(bulkActionCaseDetails);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
@@ -148,7 +143,7 @@ public class CasePronouncementServiceTest {
         var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(ccdSearchService.searchForCases(List.of("1", "2"), user, SERVICE_AUTHORIZATION))
             .thenReturn(List.of(
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
@@ -181,7 +176,7 @@ public class CasePronouncementServiceTest {
             SERVICE_AUTHORIZATION
         );
 
-        casePronouncementService.pronounceCases(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        casePronouncementService.pronounceCases(bulkActionCaseDetails);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
@@ -223,7 +218,7 @@ public class CasePronouncementServiceTest {
         var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(ccdSearchService.searchForCases(List.of("1", "2"), user, SERVICE_AUTHORIZATION))
             .thenReturn(List.of(
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
@@ -254,7 +249,7 @@ public class CasePronouncementServiceTest {
             SERVICE_AUTHORIZATION
         );
 
-        casePronouncementService.pronounceCases(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        casePronouncementService.pronounceCases(bulkActionCaseDetails);
 
         assertThat(bulkActionCaseDetails.getData().getBulkListCaseDetails()).hasSize(0);
         assertThat(bulkActionCaseDetails.getData().getErroredCaseDetails()).hasSize(2);
@@ -284,7 +279,7 @@ public class CasePronouncementServiceTest {
         var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(ccdSearchService.searchForCases(List.of("1", "2"), user, SERVICE_AUTHORIZATION))
             .thenReturn(List.of(
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
@@ -318,7 +313,7 @@ public class CasePronouncementServiceTest {
                 SERVICE_AUTHORIZATION
             );
 
-        casePronouncementService.pronounceCases(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        casePronouncementService.pronounceCases(bulkActionCaseDetails);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
