@@ -1,9 +1,11 @@
 package uk.gov.hmcts.divorce.common.notification;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -45,9 +47,12 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        boolean applicant2IsLinked = !isNull(caseData.getCaseInvite())
-                && isNull(caseData.getCaseInvite().accessCode())
-                && !isNull(caseData.getCaseInvite().applicant2UserId());
+        CaseInvite caseInvite = caseData.getCaseInvite();
+        boolean applicant2IsLinked = ObjectUtils.isNotEmpty(caseData.getApplicant2().getEmail())
+                && !isNull(caseInvite)
+                && isNull(caseInvite.accessCode())
+                && !isNull(caseInvite.applicant2UserId());
+
         if (applicant2IsLinked) {
             log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
             final Map<String, String> templateVars =
