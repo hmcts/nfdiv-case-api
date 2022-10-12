@@ -109,6 +109,11 @@ public class ApplicationWithdrawnNotificationTest {
     void shouldSendEmailToSoleRespondentWithDivorceContent() {
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.setCaseInvite(CaseInvite.builder()
+            .applicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL)
+            .applicant2UserId(APP_2_CITIZEN_USER_ID)
+            .accessCode(null)
+            .build());
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
@@ -138,6 +143,11 @@ public class ApplicationWithdrawnNotificationTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.setDivorceOrDissolution(DISSOLUTION);
+        data.setCaseInvite(CaseInvite.builder()
+            .applicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL)
+            .applicant2UserId(APP_2_CITIZEN_USER_ID)
+            .accessCode(null)
+            .build());
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
@@ -167,6 +177,11 @@ public class ApplicationWithdrawnNotificationTest {
     void shouldSendEmailToJointApplicant2WithDivorceContent() {
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.setCaseInvite(CaseInvite.builder()
+            .applicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL)
+            .applicant2UserId(APP_2_CITIZEN_USER_ID)
+            .accessCode(null)
+            .build());
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
@@ -194,6 +209,11 @@ public class ApplicationWithdrawnNotificationTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.setDivorceOrDissolution(DISSOLUTION);
+        data.setCaseInvite(CaseInvite.builder()
+            .applicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL)
+            .applicant2UserId(APP_2_CITIZEN_USER_ID)
+            .accessCode(null)
+            .build());
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
