@@ -7,8 +7,10 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
@@ -21,6 +23,7 @@ import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingsWithAddressContent;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,11 +49,11 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISPLAY_HEADER_ADDRESS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
@@ -131,7 +134,11 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder()
-                .organisationPolicy(OrganisationPolicy.<UserRole>builder().build())
+                .organisationPolicy(
+                    OrganisationPolicy.<UserRole>builder()
+                        .organisation(Organisation.builder().organisationId("orgID").build())
+                        .build()
+                )
                 .build()
         );
 
@@ -162,13 +169,15 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder()
-                .organisationPolicy(OrganisationPolicy.<UserRole>builder().build())
+                .organisationPolicy(
+                    OrganisationPolicy.<UserRole>builder()
+                        .organisation(Organisation.builder().organisationId("orgID").build())
+                        .build()
+                )
                 .build()
         );
 
         final Map<String, Object> templateContent = new HashMap<>();
-        final Map<String, Object> expectedTemplateContent = new HashMap<>();
-        expectedTemplateContent.put(DISPLAY_HEADER_ADDRESS, false);
 
         when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
 
@@ -243,6 +252,42 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES);
+        verify(generateCoversheet)
+            .generateCoversheet(
+                caseData,
+                TEST_CASE_ID,
+                COVERSHEET_APPLICANT,
+                templateContent,
+                ENGLISH
+            );
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateR2WhenSoleWithAppNotRepresentedAndReissuedAsOfflineAos() {
+        setMockClock(clock);
+        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        LocalDate issueDate = LocalDate.now().minusDays(5);
+        caseData.getApplication().setIssueDate(issueDate);
+        caseData.getApplication().setReissueDate(issueDate.plusDays(5));
+        caseData.getApplication().setReissueOption(ReissueOption.OFFLINE_AOS);
+
+        caseData.getApplicant2().setEmail("respondent@email.com");
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE);
         verify(generateCoversheet)
             .generateCoversheet(
                 caseData,
