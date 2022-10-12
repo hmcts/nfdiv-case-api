@@ -53,7 +53,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
             if (caseData.getApplicationType().isSole()) {
                 templateVars.put(IS_RESPONDENT, YES);
-                templateVars.put(RESPONDENT_PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
+                templateVars.put(RESPONDENT_PARTNER, commonContent.getPartner(caseData, caseData.getApplicant1()));
             } else {
                 templateVars.put(IS_RESPONDENT, NO);
                 templateVars.put(RESPONDENT_PARTNER, "");
