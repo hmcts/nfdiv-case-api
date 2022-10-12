@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,9 +55,8 @@ public class FinalOrderNotificationCommonContentTest {
     @Test
     public void shouldReturnJointApplicantVarsForReminder() {
         CaseData data = validJointApplicant1CaseData();
+        data.getFinalOrder().setDateFinalOrderSubmitted(LocalDateTime.now());
         when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2())).thenReturn(getMainTemplateVars());
-
-        setMockClock(mockClock);
 
         final Map<String, String> result = finalOrderNotificationCommonContent.jointApplicantTemplateVars(
             data, 1L, data.getApplicant1(), data.getApplicant2(), true);

@@ -35,7 +35,7 @@ public class Applicant1JointFinalOrderOverdueNotificationTest {
     private FinalOrderNotificationCommonContent finalOrderNotificationCommonContent;
 
     @InjectMocks
-    private Applicant1JointFinalOrderOverdueNotification notification;
+    private Applicant1RemindAwaitingJointFinalOrderNotification notification;
 
     @Test
     void shouldSendApplicant1NotificationWhenJointFinalOrderIsOverdueFromApplicant1() {

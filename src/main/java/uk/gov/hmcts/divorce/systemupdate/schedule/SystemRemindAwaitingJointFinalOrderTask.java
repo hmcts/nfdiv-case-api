@@ -23,16 +23,16 @@ import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindJointFinalOrderOverdue.SYSTEM_JOINT_FINAL_ORDER_OVERDUE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindAwaitingJointFinalOrder.SYSTEM_REMIND_AWAITING_JOINT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-public class SystemJointFinalOrderOverdueTask implements Runnable {
+public class SystemRemindAwaitingJointFinalOrderTask implements Runnable {
 
-    public static final String NOTIFICATION_SENT_FLAG = String.format(DATA, "applicantsRemindedJointFinalOrderOverdue");
-    private static final String DATE_FINAL_ORDER_SUBMITTED = String.format(DATA, "dateFinalOrderSubmitted");
+    public static final String NOTIFICATION_SENT_FLAG = String.format(DATA, "applicantsRemindedAwaitingJointFinalOrder");
+    public static final String DATE_FINAL_ORDER_SUBMITTED = String.format(DATA, "dateFinalOrderSubmitted");
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
@@ -46,12 +46,12 @@ public class SystemJointFinalOrderOverdueTask implements Runnable {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    @Value("${final_order.joint_final_order_overdue_offset_days}")
-    private int jointFinalOrderOverdueOffsetDays;
+    @Value("${final_order.awaiting_joint_final_order_reminder_offset_days}")
+    private int awaitingJointFinalOrderReminderOffsetDays;
 
     @Override
     public void run() {
-        log.info("Joint Final Order overdue scheduled task started");
+        log.info("SystemRemindAwaitingJointFinalOrderTask started");
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
@@ -62,17 +62,17 @@ public class SystemJointFinalOrderOverdueTask implements Runnable {
                     .must(matchQuery(STATE, AwaitingJointFinalOrder))
                     .must(existsQuery(DATE_FINAL_ORDER_SUBMITTED))
                     .filter(rangeQuery(DATE_FINAL_ORDER_SUBMITTED)
-                        .lte(LocalDate.now().minusDays(jointFinalOrderOverdueOffsetDays)))
+                        .lte(LocalDate.now().minusDays(awaitingJointFinalOrderReminderOffsetDays)))
                     .mustNot(matchQuery(NOTIFICATION_SENT_FLAG, YesOrNo.YES));
 
             ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingJointFinalOrder)
                 .forEach(caseDetails -> triggerJointFinalOrderReminder(user, serviceAuth, caseDetails));
 
-            log.info("Joint Final Order overdue scheduled task complete.");
+            log.info("SystemRemindAwaitingJointFinalOrderTask complete.");
         } catch (final CcdSearchCaseException e) {
-            log.error("Joint Final Order overdue schedule task stopped after search error", e);
+            log.error("SystemRemindAwaitingJointFinalOrderTask stopped after search error", e);
         } catch (final CcdConflictException e) {
-            log.info("Joint Final Order overdue schedule task stopping "
+            log.error("SystemRemindAwaitingJointFinalOrderTask stopping "
                 + "due to conflict with another running task"
             );
         }
@@ -80,10 +80,11 @@ public class SystemJointFinalOrderOverdueTask implements Runnable {
 
     private void triggerJointFinalOrderReminder(User user, String serviceAuth, CaseDetails caseDetails) {
         try {
-            log.info("Submitting Joint Final Order Overdue Event for Case {}", caseDetails.getId());
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_JOINT_FINAL_ORDER_OVERDUE, user, serviceAuth);
+            log.info("Submitting Remind Awaiting Joint Final Order Event for Case {}", caseDetails.getId());
+            ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_AWAITING_JOINT_FINAL_ORDER, user, serviceAuth);
         } catch (final CcdManagementException e) {
-            log.error("Joint Final Order Overdue Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+            log.error("Submit event Remind Awaiting Joint Final Order failed for case id: {}, continuing to next case",
+                caseDetails.getId());
         } catch (final IllegalArgumentException e) {
             log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
         }

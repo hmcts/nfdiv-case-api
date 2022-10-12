@@ -420,10 +420,10 @@ public class Application {
     private YesOrNo applicantsRemindedCanApplyForConditionalOrder;
 
     @CCD(
-        label = "Reminder sent to Applicants indicating other party has applied for final order and their final order is overdue",
+        label = "Reminder sent to Applicants indicating other party has applied for final order and their final order is awaiting",
         access = {DefaultAccess.class}
     )
-    private YesOrNo applicantsRemindedJointFinalOrderOverdue;
+    private YesOrNo applicantsRemindedAwaitingJointFinalOrder;
 
     @CCD(
         label = "Notification sent to Joint Applicant indicating they can switch to sole",

@@ -12,7 +12,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 
 @Component
 @Slf4j
-public class Applicant2JointFinalOrderOverdueNotification implements ApplicantNotification {
+public class Applicant2RemindAwaitingJointFinalOrderNotification implements ApplicantNotification {
 
     @Autowired
     private NotificationService notificationService;
