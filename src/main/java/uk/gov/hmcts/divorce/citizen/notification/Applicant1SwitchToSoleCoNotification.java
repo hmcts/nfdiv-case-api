@@ -51,7 +51,7 @@ public class Applicant1SwitchToSoleCoNotification implements ApplicantNotificati
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         if (caseData.getApplication().getApplicant2ScreenHasMarriageBroken() != NO) {
-            log.info("Notifying applicant 1 of partner's CO application as Sole for case : {}", id);
+            log.info("Notifying applicant 2 of partner's CO application as Sole for case : {}", id);
 
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),

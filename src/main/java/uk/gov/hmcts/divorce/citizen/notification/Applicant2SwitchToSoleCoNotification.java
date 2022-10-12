@@ -61,7 +61,7 @@ public class Applicant2SwitchToSoleCoNotification implements ApplicantNotificati
 
     @Override
     public void sendToApplicant2(CaseData data, Long id) {
-        log.info("Notifying applicant 1 of CO application for case : {}", id);
+        log.info("Notifying applicant 2 of CO application for case : {}", id);
 
         Map<String, String> templateVars = commonContent.mainTemplateVars(data, id, data.getApplicant2(), data.getApplicant1());
         templateVars.put(PRONOUNCE_BY_DATE,
