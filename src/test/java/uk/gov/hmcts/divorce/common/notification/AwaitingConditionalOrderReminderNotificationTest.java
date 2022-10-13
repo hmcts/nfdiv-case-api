@@ -8,8 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -37,12 +35,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderQuestions;
 
 @ExtendWith(MockitoExtension.class)
 class AwaitingConditionalOrderReminderNotificationTest {
@@ -180,22 +174,6 @@ class AwaitingConditionalOrderReminderNotificationTest {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         awaitingConditionalOrderReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
-    void shouldNotSendNotificationToApplicant2SolicitorIfSoleApplication() {
-        final Applicant applicant = getApplicant();
-        applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
-        applicant.setSolicitorRepresented(YES);
-        final var caseData = CaseData.builder().applicant2(applicant).build();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
-            .build());
-
-        awaitingConditionalOrderReminderNotification.sendToApplicant2Solicitor(caseData, 1234567890123456L);
 
         verifyNoInteractions(notificationService);
     }
