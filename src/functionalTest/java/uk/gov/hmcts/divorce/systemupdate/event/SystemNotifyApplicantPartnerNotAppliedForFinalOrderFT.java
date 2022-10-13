@@ -32,9 +32,31 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrderFT extends Funct
     }
 
     @Test
+    public void shouldWelshSendEmailToApplicant1WhenFirstInTimeAndLanguagePreferenceIsWelsh() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("applicant1AppliedForFinalOrderFirst", YES);
+        request.put("applicant1LanguagePreferenceWelsh", YES);
+
+        Response response = triggerCallback(request, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
     public void shouldSendEmailToApplicant2WhenFirstInTime() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         request.put("applicant2AppliedForFinalOrderFirst", YES);
+
+        Response response = triggerCallback(request, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldSendWelshEmailToApplicant2WhenFirstInTimeAndLanguagePreferenceIsWelsh() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("applicant2AppliedForFinalOrderFirst", YES);
+        request.put("applicant2LanguagePreferenceWelsh", YES);
 
         Response response = triggerCallback(request, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
