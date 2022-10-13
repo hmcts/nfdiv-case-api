@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2ApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
-import uk.gov.hmcts.divorce.common.notification.FinalOrderSolicitorNotification;
+import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -51,7 +51,7 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
     private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
 
     @Autowired
-    private FinalOrderSolicitorNotification finalOrderSolicitorNotification;
+    private FinalOrderRequestedNotification finalOrderRequestedNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -94,6 +94,9 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Applicant2 Apply For Final Order event about to submit callback invoked for Case Id: {}", details.getId());
+        CaseData data = details.getData();
+
+        data.getApplication().setPreviousState(beforeDetails.getState());
 
         if (AwaitingFinalOrder.equals(details.getState())) {
             FinalOrder finalOrder = details.getData().getFinalOrder();
@@ -119,18 +122,23 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
         log.info("Applicant2 Apply For Final Order event submitted callback invoked for Case Id: {}", details.getId());
 
-        if (AwaitingFinalOrder.equals(details.getState())) {
+        final CaseData data = details.getData();
+        final State previousState = data.getApplication().getPreviousState();
+
+        if (AwaitingFinalOrder.equals(previousState)) {
             log.info(
-                "Sending Applicant2 Apply for Final Order notifications as case in AwaitingFinalOrder state for Case Id: {}",
+                "Sending Applicant 2 Applied For Final Order Notification for Case Id: {}",
                 details.getId()
             );
             notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, details.getData(), details.getId());
-        } else if (FinalOrderRequested.equals(details.getState())) {
+        }
+
+        if (FinalOrderRequested.equals(details.getState())) {
             log.info(
                 "Sending Applicant2 Apply for Final Order notifications as case in FinalOrderRequested state for Case Id: {}",
                 details.getId()
             );
-            notificationDispatcher.send(finalOrderSolicitorNotification, details.getData(), details.getId());
+            notificationDispatcher.send(finalOrderRequestedNotification, details.getData(), details.getId());
         }
 
         return SubmittedCallbackResponse.builder().build();
