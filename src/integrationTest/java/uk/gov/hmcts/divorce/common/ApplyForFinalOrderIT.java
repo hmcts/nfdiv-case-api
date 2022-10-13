@@ -294,7 +294,7 @@ public class ApplyForFinalOrderIT {
                 .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
-            );
+            ).andExpect(jsonPath("$.data.previousState").value("AwaitingJointFinalOrder"));
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
