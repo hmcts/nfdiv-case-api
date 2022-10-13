@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -40,7 +41,7 @@ public class UpdateAos implements CCDConfig<CaseData, State, UserRole> {
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(UPDATE_AOS)
-            .forStates(AosDrafted, AosOverdue)
+            .forStates(AosDrafted, AosOverdue, AwaitingService)
             .name("Update AoS")
             .description("Update Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
