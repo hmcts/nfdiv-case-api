@@ -48,7 +48,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("ccdAccessService.hasCaseGotApplicant2Role(id) {}", ccdAccessService.hasCaseGotApplicant2Role(id));
+        log.info("ccdAccessService.hasCase   GotApplicant2Role(id) {}", ccdAccessService.hasCaseGotApplicant2Role(id));
         if (ccdAccessService.hasCaseGotApplicant2Role(id)) {
             log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
             final Map<String, String> templateVars =
