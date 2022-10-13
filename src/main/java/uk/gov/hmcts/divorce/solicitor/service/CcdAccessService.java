@@ -171,18 +171,15 @@ public class CcdAccessService {
     public boolean hasCaseGotApplicant2Role(Long caseId) {
         log.info("Checking if there is an applicant2 user on case {}", caseId);
         final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
-        log.info("Auth {}", auth);
         final String s2sToken = authTokenGenerator.generate();
-        log.info("s2sToken {}", s2sToken);
         final CaseAssignmentUserRolesResource response =
             caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));
-        log.info("response {}", response);
+
         final List<CaseAssignmentUserRole> applicant2User = response.getCaseAssignmentUserRoles().stream()
             .filter(caseAssignmentUserRole -> APPLICANT_2.getRole().equals(caseAssignmentUserRole.getCaseRole()))
             .limit(1)
             .toList();
-        log.info("applicant2User {}", applicant2User);
-        log.info("!applicant2User.isEmpty() {}", !applicant2User.isEmpty());
+
         return !applicant2User.isEmpty();
     }
 
