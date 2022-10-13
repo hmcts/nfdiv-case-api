@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
@@ -41,6 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
@@ -98,6 +100,7 @@ public class CaseworkerWithdrawnIT {
         caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
         caseData.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_USER_EMAIL, null, APP_2_CITIZEN_USER_ID));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

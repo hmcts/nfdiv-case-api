@@ -282,19 +282,4 @@ public class ApplicationWithdrawnNotificationTest {
 
         verifyNoInteractions(notificationService);
     }
-
-    @Test
-    void shouldNotSendEmailToApplicant2IfNoApplicant2UserIdAssociatedWithCase() {
-        CaseData data = validApplicant1CaseData();
-        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
-        data.setCaseInvite(CaseInvite.builder()
-            .applicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL)
-            .applicant2UserId(null)
-            .accessCode(null)
-            .build());
-
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
-    }
 }
