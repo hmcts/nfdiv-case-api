@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OTHER_APPLICANT_NOT_APPLIED_FOR_FINAL_ORDER;
 
 @Component
 @Slf4j
@@ -22,17 +23,29 @@ public class PartnerNotAppliedForFinalOrderNotification implements ApplicantNoti
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
-        if (YES.equals(caseData.getFinalOrder().getApplicant1AppliedForFinalOrderFirst())) {
-            log.info("Notifying Applicant 1 that partner has not applied for final order for case {}", caseId);
+        if (!caseData.getApplicationType().isSole() && YES.equals(caseData.getFinalOrder().getApplicant1AppliedForFinalOrderFirst())) {
 
+            log.info("Notifying Applicant 1 that partner has not applied for final order for case {}", caseId);
+            notificationService.sendEmail(
+                caseData.getApplicant1().getEmail(),
+                OTHER_APPLICANT_NOT_APPLIED_FOR_FINAL_ORDER,
+                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+                caseData.getApplicant1().getLanguagePreference()
+            );
         }
     }
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long caseId) {
-        if (YES.equals(caseData.getFinalOrder().getApplicant2AppliedForFinalOrderFirst())) {
-            log.info("Notifying Applicant 2 that partner has not applied for final order for case {}", caseId);
+        if (!caseData.getApplicationType().isSole() && YES.equals(caseData.getFinalOrder().getApplicant2AppliedForFinalOrderFirst())) {
 
+            log.info("Notifying Applicant 2 that partner has not applied for final order for case {}", caseId);
+            notificationService.sendEmail(
+                caseData.getApplicant2().getEmail(),
+                OTHER_APPLICANT_NOT_APPLIED_FOR_FINAL_ORDER,
+                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
+                caseData.getApplicant2().getLanguagePreference()
+            );
         }
     }
 }

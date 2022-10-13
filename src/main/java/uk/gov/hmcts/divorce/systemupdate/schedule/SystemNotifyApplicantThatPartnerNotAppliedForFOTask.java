@@ -110,7 +110,7 @@ public class SystemNotifyApplicantThatPartnerNotAppliedForFOTask implements Runn
         log.info(
             """
             14 days has passed since first in time applicant submitted final order {} for Case id {}
-            and other applicant has not applied for final order - notifying first in time applicant
+            and the other applicant has not applied for final order - notifying first in time applicant
             """,
             dateFinalOrderSubmitted,
             caseDetails.getId()
