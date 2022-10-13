@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -108,7 +109,9 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
         var updatedDetails = progressFinalOrderState.apply(details);
 
-        if (FinalOrderRequested.equals(updatedDetails.getState())) {
+        if (FinalOrderRequested.equals(updatedDetails.getState())
+            || WelshTranslationReview.equals(updatedDetails.getState()) && FinalOrderRequested.equals(
+            updatedDetails.getData().getApplication().getWelshPreviousState())) {
             notificationDispatcher.send(finalOrderRequestedNotification, updatedDetails.getData(), details.getId());
         }
 
