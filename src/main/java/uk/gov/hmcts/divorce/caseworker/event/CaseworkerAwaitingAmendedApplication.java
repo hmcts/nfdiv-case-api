@@ -27,8 +27,8 @@ public class CaseworkerAwaitingAmendedApplication implements CCDConfig<CaseData,
             .event(CASEWORKER_AWAITING_AMENDED_APPLICATION)
             .forStateTransition(POST_SUBMISSION_STATES, AwaitingAmendedApplication)
             .showEventNotes()
-            .name("Amended application awaited")
-            .description("Amended application awaited")
+            .name("Awaiting Amended Application")
+            .description("Awaiting Amended Application")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(SOLICITOR, LEGAL_ADVISOR));
     }
