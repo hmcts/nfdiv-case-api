@@ -5,7 +5,6 @@ import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.time.LocalDate;
@@ -18,6 +17,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APPLICANT2_FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
@@ -80,8 +80,8 @@ public class Applicant2ApplyForFinalOrderFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicationType", "jointApplication");
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(1).toString());
-        caseData.put("applicant1LanguagePreferenceWelsh", YesOrNo.YES);
-        caseData.put("applicant2LanguagePreferenceWelsh", YesOrNo.YES);
+        caseData.put("applicant1LanguagePreferenceWelsh", YES);
+        caseData.put("applicant2LanguagePreferenceWelsh", YES);
 
         final Response response = triggerCallback(caseData, APPLICANT2_FINAL_ORDER_REQUESTED, ABOUT_TO_SUBMIT_URL, AwaitingFinalOrder);
 
@@ -171,8 +171,8 @@ public class Applicant2ApplyForFinalOrderFT extends FunctionalTestSuite {
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
         caseData.put("applicant1AppliedForFinalOrderFirst", "No");
         caseData.put("applicant2AppliedForFinalOrderFirst", "Yes");
-        caseData.put("applicant1LanguagePreferenceWelsh", YesOrNo.YES);
-        caseData.put("applicant2LanguagePreferenceWelsh", YesOrNo.YES);
+        caseData.put("applicant1LanguagePreferenceWelsh", YES);
+        caseData.put("applicant2LanguagePreferenceWelsh", YES);
 
         final Response response = triggerCallback(caseData, APPLICANT2_FINAL_ORDER_REQUESTED, ABOUT_TO_SUBMIT_URL, AwaitingJointFinalOrder);
 
