@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
-import uk.gov.hmcts.divorce.common.notification.FinalOrderSolicitorNotification;
+import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -50,7 +50,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
 
     @Autowired
-    private FinalOrderSolicitorNotification finalOrderSolicitorNotification;
+    private FinalOrderRequestedNotification finalOrderRequestedNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -92,6 +92,9 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Apply for Final Order about to submit callback invoked for Case Id: {}", details.getId());
+        CaseData data = details.getData();
+
+        data.getApplication().setPreviousState(beforeDetails.getState());
 
         if (AwaitingFinalOrder.equals(details.getState())) {
             FinalOrder finalOrder = details.getData().getFinalOrder();
@@ -109,7 +112,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
         var updatedDetails = progressFinalOrderState.apply(details);
 
         if (FinalOrderRequested.equals(updatedDetails.getState())) {
-            notificationDispatcher.send(finalOrderSolicitorNotification, updatedDetails.getData(), details.getId());
+            notificationDispatcher.send(finalOrderRequestedNotification, updatedDetails.getData(), details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

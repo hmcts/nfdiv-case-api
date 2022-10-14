@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMI
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -99,12 +100,13 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
 
     private Map<String, String> notDisputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate()
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }
 
     private Map<String, String> applicant1SolicitorTemplateVars(CaseData caseData, Long id) {
-        Map<String, String> templateVars = solicitorTemplateVars(caseData, id);
+        Map<String, String> templateVars = solicitorTemplateVars(caseData, id, caseData.getApplicant1());
         Solicitor applicant1Solicitor = caseData.getApplicant1().getSolicitor();
 
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
@@ -117,7 +119,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     }
 
     private Map<String, String> applicant2SolicitorTemplateVars(CaseData caseData, Long id) {
-        Map<String, String> templateVars = solicitorTemplateVars(caseData, id);
+        Map<String, String> templateVars = solicitorTemplateVars(caseData, id, caseData.getApplicant2());
 
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
@@ -134,7 +136,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
         return templateVars;
     }
 
-    private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id) {
+    private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
         var templateVars = commonContent.basicTemplateVars(caseData, id);
 
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
