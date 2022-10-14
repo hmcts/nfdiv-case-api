@@ -636,7 +636,9 @@ class CcdSearchServiceTest {
             .must(boolQuery().must(newPaperCase))
             .must(boolQuery().must(soleApplication))
             .must(boolQuery().mustNot(applicant2OfflineExist))
-            .must(boolQuery().mustNot(applicant2EmailExist));
+            .must(boolQuery().mustNot(applicant2EmailExist))
+            .mustNot(matchQuery(STATE, Withdrawn))
+            .mustNot(matchQuery(STATE, Rejected));
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
