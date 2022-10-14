@@ -41,9 +41,6 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
     private ApplicationWithdrawnNotification applicationWithdrawnNotification;
 
     @Autowired
-    private NotificationDispatcher notificationDispatcher;
-
-    @Autowired
     private CcdAccessService ccdAccessService;
 
     @Override
