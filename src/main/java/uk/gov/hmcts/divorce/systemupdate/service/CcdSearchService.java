@@ -401,7 +401,7 @@ public class CcdSearchService {
             .must(boolQuery().mustNot(applicant2OfflineExist))
             .must(boolQuery().mustNot(applicant2EmailExist))
             .mustNot(matchQuery(STATE, Withdrawn))
-            .mustNot(matchQuery(STATE, Rejected));;
+            .mustNot(matchQuery(STATE, Rejected));
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
