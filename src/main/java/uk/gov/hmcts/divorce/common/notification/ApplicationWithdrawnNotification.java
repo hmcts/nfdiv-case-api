@@ -48,25 +48,23 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        if (ccdAccessService.hasCaseGotApplicant2Role(id)) {
-            log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
-            final Map<String, String> templateVars =
-                commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+        log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
+        final Map<String, String> templateVars =
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
 
-            if (caseData.getApplicationType().isSole()) {
-                templateVars.put(IS_RESPONDENT, YES);
-                templateVars.put(RESPONDENT_PARTNER, commonContent.getPartner(caseData, caseData.getApplicant1()));
-            } else {
-                templateVars.put(IS_RESPONDENT, NO);
-                templateVars.put(RESPONDENT_PARTNER, "");
-            }
-
-            notificationService.sendEmail(
-                caseData.getApplicant2().getEmail(),
-                CITIZEN_APPLICATION_WITHDRAWN,
-                templateVars,
-                caseData.getApplicant2().getLanguagePreference()
-            );
+        if (caseData.getApplicationType().isSole()) {
+            templateVars.put(IS_RESPONDENT, YES);
+            templateVars.put(RESPONDENT_PARTNER, commonContent.getPartner(caseData, caseData.getApplicant1()));
+        } else {
+            templateVars.put(IS_RESPONDENT, NO);
+            templateVars.put(RESPONDENT_PARTNER, "");
         }
+
+        notificationService.sendEmail(
+            caseData.getApplicant2().getEmail(),
+            CITIZEN_APPLICATION_WITHDRAWN,
+            templateVars,
+            caseData.getApplicant2().getLanguagePreference()
+        );
     }
 }

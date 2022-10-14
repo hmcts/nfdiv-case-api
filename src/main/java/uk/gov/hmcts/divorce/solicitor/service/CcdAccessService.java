@@ -12,7 +12,6 @@ import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
-import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
@@ -167,23 +166,7 @@ public class CcdAccessService {
         return userRoles.contains(APPLICANT_2.getRole()) || userRoles.contains(APPLICANT_2_SOLICITOR.getRole());
     }
 
-    @Retryable(value = {FeignException.class, RuntimeException.class})
-    public boolean hasCaseGotApplicant2Role(Long caseId) {
-        log.info("Checking if there is an applicant2 user on case {}", caseId);
-        final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
-        final String s2sToken = authTokenGenerator.generate();
-        final CaseAssignmentUserRolesResource response =
-            caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));
-
-        final List<CaseAssignmentUserRole> applicant2User = response.getCaseAssignmentUserRoles().stream()
-            .filter(caseAssignmentUserRole -> APPLICANT_2.getRole().equals(caseAssignmentUserRole.getCaseRole()))
-            .limit(1)
-            .toList();
-
-        return !applicant2User.isEmpty();
-    }
-
-    public void removeUsersWithRole(Long caseId, List<String> roles) {
+    public List<UserRole> removeUsersWithRole(Long caseId, List<String> roles) {
         final var auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         final var s2sToken = authTokenGenerator.generate();
         final var response = caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));
@@ -201,6 +184,8 @@ public class CcdAccessService {
 
             caseAssignmentApi.removeCaseUserRoles(auth, s2sToken, caseAssignmentUserRolesReq);
         }
+
+        return assignmentUserRoles.stream().map(role -> UserRole.fromString(role.getCaseRole())).collect(Collectors.toList());
     }
 
     public CaseAssignmentUserRolesRequest getCaseAssignmentRequest(Long caseId, String userId, UserRole role) {

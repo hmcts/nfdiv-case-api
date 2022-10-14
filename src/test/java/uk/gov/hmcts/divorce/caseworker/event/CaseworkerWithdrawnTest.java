@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
@@ -22,7 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerWithdrawn.CASEWORKER_WITHDRAWN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -37,9 +38,6 @@ class CaseworkerWithdrawnTest {
 
     @Mock
     private ApplicationWithdrawnNotification applicationWithdrawnNotification;
-
-    @Mock
-    private NotificationDispatcher notificationDispatcher;
 
     @Mock
     private CcdAccessService caseAccessService;
@@ -59,7 +57,7 @@ class CaseworkerWithdrawnTest {
     }
 
     @Test
-    public void shouldUnlinkApplicantsAndSendNotificationsToApplicant() {
+    public void shouldUnlinkApplicants() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant2CaseData();
         caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), "12345", "12"));
@@ -77,8 +75,6 @@ class CaseworkerWithdrawnTest {
                 APPLICANT_2.getRole()
             )
         ));
-        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseData, TEST_CASE_ID);
-        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
@@ -101,7 +97,55 @@ class CaseworkerWithdrawnTest {
                 APPLICANT_2.getRole()
             )
         ));
-        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseData, TEST_CASE_ID);
-        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    public void shouldSendTwoNotificationsIfBothApplicantAndRespondentAreUnlinked() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        when(caseAccessService
+            .removeUsersWithRole(TEST_CASE_ID, List.of(CREATOR.getRole(), APPLICANT_2.getRole())))
+            .thenReturn(List.of(CREATOR, APPLICANT_2));
+
+        caseworkerWithdrawn.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(applicationWithdrawnNotification).sendToApplicant1(caseData, TEST_CASE_ID);
+        verify(applicationWithdrawnNotification).sendToApplicant2(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    public void shouldSendOneNotificationIfOnlyApplicantIsUnlinked() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        when(caseAccessService
+            .removeUsersWithRole(TEST_CASE_ID, List.of(CREATOR.getRole(), APPLICANT_2.getRole())))
+            .thenReturn(List.of(CREATOR));
+
+        caseworkerWithdrawn.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(applicationWithdrawnNotification).sendToApplicant1(caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(applicationWithdrawnNotification);
+    }
+
+    @Test
+    public void shouldSendNoNotificationsIfNoUsersAreUnlinked() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        when(caseAccessService
+            .removeUsersWithRole(TEST_CASE_ID, List.of(CREATOR.getRole(), APPLICANT_2.getRole())))
+            .thenReturn(List.of());
+
+        caseworkerWithdrawn.aboutToSubmit(caseDetails, caseDetails);
+
+        verifyNoInteractions(applicationWithdrawnNotification);
     }
 }

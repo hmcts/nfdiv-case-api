@@ -76,9 +76,14 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
         removeSolicitorOrganisationPolicy(caseData.getApplicant1());
         removeSolicitorOrganisationPolicy(caseData.getApplicant2());
 
-        ccdAccessService.removeUsersWithRole(details.getId(), roles);
+        List<UserRole> removedRoles = ccdAccessService.removeUsersWithRole(details.getId(), roles);
 
-        notificationDispatcher.send(applicationWithdrawnNotification, caseData, details.getId());
+        if (removedRoles.size() == 2 && removedRoles.contains(CREATOR) && removedRoles.contains(APPLICANT_2)) {
+            applicationWithdrawnNotification.sendToApplicant1(caseData, details.getId());
+            applicationWithdrawnNotification.sendToApplicant2(caseData, details.getId());
+        } else if (removedRoles.size() == 1 && removedRoles.contains(CREATOR)) {
+            applicationWithdrawnNotification.sendToApplicant1(caseData, details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

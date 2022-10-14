@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +17,6 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
@@ -32,7 +30,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIC
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,9 +39,6 @@ public class ApplicationWithdrawnNotificationTest {
 
     @Mock
     private NotificationService notificationService;
-
-    @Mock
-    private CcdAccessService ccdAccessService;
 
     @Mock
     private CommonContent commonContent;
@@ -113,7 +107,6 @@ public class ApplicationWithdrawnNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
         when(commonContent.getPartner(data, data.getApplicant1())).thenReturn("husband");
-        when(ccdAccessService.hasCaseGotApplicant2Role(1234567890123456L)).thenReturn(true);
 
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
@@ -144,7 +137,6 @@ public class ApplicationWithdrawnNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
         when(commonContent.getPartner(data, data.getApplicant1())).thenReturn("husband");
-        when(ccdAccessService.hasCaseGotApplicant2Role(1234567890123456L)).thenReturn(true);
 
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
@@ -172,7 +164,6 @@ public class ApplicationWithdrawnNotificationTest {
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
-        when(ccdAccessService.hasCaseGotApplicant2Role(1234567890123456L)).thenReturn(true);
 
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
@@ -201,7 +192,6 @@ public class ApplicationWithdrawnNotificationTest {
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
-        when(ccdAccessService.hasCaseGotApplicant2Role(1234567890123456L)).thenReturn(true);
 
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
@@ -218,15 +208,5 @@ public class ApplicationWithdrawnNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-    }
-
-    @Test
-    void shouldNotSendEmailToApplicant2IfHasCaseGotApplicant2RoleIsFalse() {
-        when(ccdAccessService.hasCaseGotApplicant2Role(1234567890123456L)).thenReturn(false);
-
-        CaseData data = validApplicant1CaseData();
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
     }
 }
