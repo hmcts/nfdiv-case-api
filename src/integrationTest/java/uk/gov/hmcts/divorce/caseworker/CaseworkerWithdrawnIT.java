@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
@@ -91,6 +92,9 @@ public class CaseworkerWithdrawnIT {
     @Test
     void givenRejectEventWhenAboutToSubmitCallbackIsInvokedRemoveApplicants() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(ccdAccessService
+            .removeUsersWithRole(TEST_CASE_ID, List.of(CREATOR.getRole(), APPLICANT_2.getRole())))
+            .thenReturn(List.of(CREATOR, APPLICANT_2));
 
         CaseData caseData = validCaseDataForIssueApplication();
         caseData.setDivorceUnit(Court.SERVICE_CENTRE);

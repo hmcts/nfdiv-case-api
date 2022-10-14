@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.Map;
 
@@ -23,9 +22,6 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
     @Autowired
     private CommonContent commonContent;
-
-    @Autowired
-    private CcdAccessService ccdAccessService;
 
     @Autowired
     private NotificationService notificationService;
