@@ -231,7 +231,7 @@ public class Applicant2ApplyForFinalOrderIT {
     }
 
     @Test
-    void shouldSendEmailNotificationToBothApplicantsIfJointApplicationAndBothApplicantsHaveAppliedForFinalOrder() throws Exception {
+    void shouldSendEmailNotificationToApplicant1IfJointApplicationAndApplicant1HaveAppliedForFinalOrder2ndInTime() throws Exception {
 
         setMockClock(clock);
 
@@ -261,9 +261,6 @@ public class Applicant2ApplyForFinalOrderIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -345,7 +342,7 @@ public class Applicant2ApplyForFinalOrderIT {
     }
 
     @Test
-    void shouldSendEmailNotificationInWelshToBothApplicantsIfJointApplicationAndBothApplicantsHaveAppliedForFinalOrder() throws Exception {
+    void shouldSendEmailNotificationInWelshToApplicant1IfJointApplicationAndApplicant1HaveAppliedForFinalOrder2ndInTime() throws Exception {
 
         setMockClock(clock);
 
@@ -377,9 +374,6 @@ public class Applicant2ApplyForFinalOrderIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(WELSH));
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(WELSH));
 
         verifyNoMoreInteractions(notificationService);
     }
