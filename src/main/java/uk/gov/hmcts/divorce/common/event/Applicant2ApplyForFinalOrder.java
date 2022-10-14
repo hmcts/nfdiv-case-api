@@ -92,6 +92,9 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Applicant2 Apply For Final Order event about to submit callback invoked for Case Id: {}", details.getId());
+        CaseData data = details.getData();
+
+        data.getApplication().setPreviousState(beforeDetails.getState());
 
         if (AwaitingFinalOrder.equals(details.getState())) {
             FinalOrder finalOrder = details.getData().getFinalOrder();
