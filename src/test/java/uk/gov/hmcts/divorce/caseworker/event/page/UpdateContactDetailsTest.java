@@ -28,6 +28,7 @@ public class UpdateContactDetailsTest {
     void shouldNotReturnErrorsIfFemaleHusbandOppositeSexCouple() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(FEMALE);
+        caseData.getApplicant2().setGender(MALE);
         caseData.getApplication().setDivorceWho(HUSBAND);
         caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -44,6 +45,7 @@ public class UpdateContactDetailsTest {
     void shouldNotReturnErrorsIfMaleWifeOppositeSexCouple() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -60,6 +62,7 @@ public class UpdateContactDetailsTest {
     void shouldNotReturnErrorsIfFemaleWifeSameSexCouple() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(FEMALE);
+        caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplication().getMarriageDetails().setFormationType(SAME_SEX_COUPLE);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -76,6 +79,7 @@ public class UpdateContactDetailsTest {
     void shouldNotReturnErrorsIfMaleHusbandSameSexCouple() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(MALE);
         caseData.getApplication().setDivorceWho(HUSBAND);
         caseData.getApplication().getMarriageDetails().setFormationType(SAME_SEX_COUPLE);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -92,6 +96,7 @@ public class UpdateContactDetailsTest {
     void shouldNotReturnErrorsIfGenderDivorceWhoOrRelationshipFormationTypeIsNull() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(null);
+        caseData.getApplicant2().setGender(null);
         caseData.getApplication().setDivorceWho(null);
         caseData.getApplication().getMarriageDetails().setFormationType(null);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -108,6 +113,7 @@ public class UpdateContactDetailsTest {
     void shouldNotReturnErrorsIfOneOfGenderDivorceWhoOrRelationshipFormationTypeIsNull() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplication().getMarriageDetails().setFormationType(null);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -124,6 +130,24 @@ public class UpdateContactDetailsTest {
     void shouldNotReturnErrorsIfTwoOfGenderDivorceWhoOrRelationshipFormationTypeIsNull() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplication().setDivorceWho(null);
+        caseData.getApplication().getMarriageDetails().setFormationType(null);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldNotReturnErrorsIfThreeOfGendersDivorceWhoOrRelationshipFormationTypeIsNull() {
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(null);
         caseData.getApplication().setDivorceWho(null);
         caseData.getApplication().getMarriageDetails().setFormationType(null);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -140,6 +164,7 @@ public class UpdateContactDetailsTest {
     void shouldReturnErrorsIfFemaleWifeOppositeSexCouple() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(FEMALE);
+        caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -159,6 +184,7 @@ public class UpdateContactDetailsTest {
     void shouldReturnErrorsIfMaleHusbandOppositeSexCouple() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(MALE);
         caseData.getApplication().setDivorceWho(HUSBAND);
         caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -178,6 +204,7 @@ public class UpdateContactDetailsTest {
     void shouldReturnErrorsIfMaleWifeSameSexCouple() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplication().getMarriageDetails().setFormationType(SAME_SEX_COUPLE);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -197,6 +224,7 @@ public class UpdateContactDetailsTest {
     void shouldReturnErrorsIfFemaleHusbandSameSexCouple() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplicant1().setGender(FEMALE);
+        caseData.getApplicant2().setGender(MALE);
         caseData.getApplication().setDivorceWho(HUSBAND);
         caseData.getApplication().getMarriageDetails().setFormationType(SAME_SEX_COUPLE);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

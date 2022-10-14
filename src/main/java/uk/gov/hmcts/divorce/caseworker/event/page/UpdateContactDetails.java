@@ -221,20 +221,36 @@ public class UpdateContactDetails implements CcdPageConfiguration {
 
     private boolean isValidCombination(final CaseData caseData) {
 
-        final Gender gender = caseData.getApplicant1().getGender();
+        final Gender applicant1Gender = caseData.getApplicant1().getGender();
+        final Gender applicant2Gender = caseData.getApplicant2().getGender();
         final WhoDivorcing divorceWho = caseData.getApplication().getDivorceWho();
         final MarriageFormation formationType = caseData.getApplication().getMarriageDetails().getFormationType();
 
-        if (isEmpty(gender) || isEmpty(divorceWho) || isEmpty(formationType)) {
+        if (isEmpty(applicant1Gender) || isEmpty(applicant2Gender) || isEmpty(divorceWho) || isEmpty(formationType)) {
             return true;
-        } else if (FEMALE.equals(gender) && HUSBAND.equals(divorceWho) && OPPOSITE_SEX_COUPLE.equals(formationType)) {
+        } else if (FEMALE.equals(applicant1Gender)
+            && MALE.equals(applicant2Gender)
+            && HUSBAND.equals(divorceWho)
+            && OPPOSITE_SEX_COUPLE.equals(formationType)
+        ) {
             return true;
-        } else if (MALE.equals(gender) && WIFE.equals(divorceWho) && OPPOSITE_SEX_COUPLE.equals(formationType)) {
+        } else if (MALE.equals(applicant1Gender)
+            && FEMALE.equals(applicant2Gender)
+            && WIFE.equals(divorceWho)
+            && OPPOSITE_SEX_COUPLE.equals(formationType)
+        ) {
             return true;
-        } else if (FEMALE.equals(gender) && WIFE.equals(divorceWho) && SAME_SEX_COUPLE.equals(formationType)) {
+        } else if (FEMALE.equals(applicant1Gender)
+            && FEMALE.equals(applicant2Gender)
+            && WIFE.equals(divorceWho)
+            && SAME_SEX_COUPLE.equals(formationType)
+        ) {
             return true;
         } else {
-            return MALE.equals(gender) && HUSBAND.equals(divorceWho) && SAME_SEX_COUPLE.equals(formationType);
+            return MALE.equals(applicant1Gender)
+                && MALE.equals(applicant2Gender)
+                && HUSBAND.equals(divorceWho)
+                && SAME_SEX_COUPLE.equals(formationType);
         }
     }
 }
