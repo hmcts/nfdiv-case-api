@@ -34,6 +34,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_WITHDRAWN = "caseworker-withdrawn";
+    public static final int LINKED_CASE_ROLE_COUNT = 2;
+    public static final int UNLINKED_CASE_ROLE_COUNT = 1;
 
     @Autowired
     private ApplicationWithdrawnNotification applicationWithdrawnNotification;
@@ -78,10 +80,10 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
 
         List<UserRole> removedRoles = ccdAccessService.removeUsersWithRole(details.getId(), roles);
 
-        if (removedRoles.size() == 2 && removedRoles.contains(CREATOR) && removedRoles.contains(APPLICANT_2)) {
+        if (removedRoles.size() == LINKED_CASE_ROLE_COUNT && removedRoles.contains(CREATOR) && removedRoles.contains(APPLICANT_2)) {
             applicationWithdrawnNotification.sendToApplicant1(caseData, details.getId());
             applicationWithdrawnNotification.sendToApplicant2(caseData, details.getId());
-        } else if (removedRoles.size() == 1 && removedRoles.contains(CREATOR)) {
+        } else if (removedRoles.size() == UNLINKED_CASE_ROLE_COUNT && removedRoles.contains(CREATOR)) {
             applicationWithdrawnNotification.sendToApplicant1(caseData, details.getId());
         }
 
