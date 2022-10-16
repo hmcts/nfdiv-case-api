@@ -38,7 +38,7 @@ public class IdamService {
     public User retrieveSystemUpdateUserDetails() {
         String clusterName = System.getenv().getOrDefault("CLUSTER_NAME", null);
 
-        if (null != clusterName && !clusterName.contains("prod")) {
+        if (null != clusterName && clusterName.contains("preview")) {
             retrieveUser(getCachedIdamOauth2Token(systemUpdateUserName, systemUpdatePassword));
         }
 
