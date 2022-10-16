@@ -2,17 +2,19 @@ package uk.gov.hmcts.divorce.testutil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @TestPropertySource("classpath:application.yaml")
 @Service
-@EnableCaching
 public class IdamTokenGenerator {
+
+    private final Map<String, String> tokensMap = new ConcurrentHashMap<>();
 
     @Value("${idam.solicitor.username}")
     private String solicitorUsername;
@@ -29,14 +31,24 @@ public class IdamTokenGenerator {
     @Autowired
     private IdamClient idamClient;
 
-    @Cacheable(value = "solicitorToken", key = "#root.methodName")
     public String generateIdamTokenForSolicitor() {
-        return idamClient.getAccessToken(solicitorUsername, solicitorPassword);
+        if (tokensMap.containsKey(solicitorUsername)) {
+            return tokensMap.get(solicitorUsername);
+        } else {
+            String authToken = idamClient.getAccessToken(solicitorUsername, solicitorPassword);
+            tokensMap.put(solicitorUsername, authToken);
+            return authToken;
+        }
     }
 
-    @Cacheable(value = "systemToken", key = "#root.methodName")
     public String generateIdamTokenForSystem() {
-        return idamClient.getAccessToken(systemUpdateUsername, systemUpdatePassword);
+        if (tokensMap.containsKey(systemUpdateUsername)) {
+            return tokensMap.get(systemUpdateUsername);
+        } else {
+            String authToken = idamClient.getAccessToken(systemUpdateUsername, systemUpdatePassword);
+            tokensMap.put(systemUpdateUsername, authToken);
+            return authToken;
+        }
     }
 
     public UserDetails getUserDetailsFor(final String token) {
