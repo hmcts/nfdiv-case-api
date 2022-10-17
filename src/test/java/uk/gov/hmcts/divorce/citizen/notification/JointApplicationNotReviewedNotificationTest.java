@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DA
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -114,7 +115,7 @@ public class JointApplicationNotReviewedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICATION_OVERDUE),
             argThat(allOf(
-                hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(DATE_TIME_FORMATTER)),
+                hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(WELSH_DATE_TIME_FORMATTER)),
                 hasEntry(PARTNER, "gŵr")
             )),
             eq(WELSH)

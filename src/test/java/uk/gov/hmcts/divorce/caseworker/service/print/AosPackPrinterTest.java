@@ -362,19 +362,29 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldPrintAosResponseLetterForApplicantIfRequiredDocumentsArePresent() {
+    void shouldRetrieveRespondentAnswersFromDocsUploadedAndPrintAosResponseLetterForApplicant1WhenApp2IsOffline() {
 
-        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+        final ListValue<DivorceDocument> aosResponseDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(AOS_RESPONSE_LETTER)
                 .build())
             .build();
 
-        final CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder()
-                .documentsGenerated(singletonList(doc1))
+        final ListValue<DivorceDocument> respondentAnswersDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(RESPONDENT_ANSWERS)
                 .build())
             .build();
+
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().offline(YES).build())
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(singletonList(aosResponseDoc))
+                .documentsUploaded(singletonList(respondentAnswersDoc))
+                .build())
+            .build();
+
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
 
@@ -384,8 +394,46 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("aos-response-pack");
-        assertThat(print.getLetters().size()).isEqualTo(1);
-        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
+        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(aosResponseDoc.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(respondentAnswersDoc.getValue());
+    }
+
+    @Test
+    void shouldRetrieveRespondentAnswersFromDocsGeneratedAndPrintAosResponseLetterForApplicant1WhenApp2IsOnline() {
+
+        final ListValue<DivorceDocument> aosResponseDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(AOS_RESPONSE_LETTER)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> respondentAnswersDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(RESPONDENT_ANSWERS)
+                .build())
+            .build();
+
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().offline(NO).build())
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(List.of(aosResponseDoc, respondentAnswersDoc))
+                .build())
+            .build();
+
+
+        when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
+
+        aosPackPrinter.sendAosResponseLetterToApplicant(caseData, TEST_CASE_ID);
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("aos-response-pack");
+        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(aosResponseDoc.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(respondentAnswersDoc.getValue());
     }
 
     @Test
