@@ -565,11 +565,12 @@ public class TestDataHelper {
 
     public static CallbackRequest callbackRequest(final CaseData caseData, String eventId, String state) {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
+        CaseDetails caseDetailsBefore = caseDetailsBefore(caseData);
+        caseDetailsBefore.setState(state);
         return CallbackRequest
             .builder()
             .eventId(eventId)
-            .caseDetailsBefore(
-                caseDetailsBefore(caseData))
+            .caseDetailsBefore(caseDetailsBefore)
             .caseDetails(
                 CaseDetails
                     .builder()
