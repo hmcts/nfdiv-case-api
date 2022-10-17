@@ -31,12 +31,12 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APPLICANT2_FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER;
@@ -48,10 +48,10 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -100,11 +100,12 @@ public class Applicant2ApplyForFinalOrderIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         final CaseData data = validApplicant2CaseData();
+        data.getApplication().setPreviousState(AwaitingFinalOrder);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -127,7 +128,7 @@ public class Applicant2ApplyForFinalOrderIT {
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().minusDays(30)).build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -152,6 +153,7 @@ public class Applicant2ApplyForFinalOrderIT {
 
         final CaseData data = validJointApplicant1CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplication().setPreviousState(AwaitingFinalOrder);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.getApplicant1().setSolicitor(Solicitor.builder()
@@ -164,7 +166,7 @@ public class Applicant2ApplyForFinalOrderIT {
             .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
             .build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -195,6 +197,7 @@ public class Applicant2ApplyForFinalOrderIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         final CaseData data = validJointApplicant1CaseData();
+        data.getApplication().setPreviousState(AwaitingFinalOrder);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.getApplicant1().setSolicitor(Solicitor.builder()
@@ -213,7 +216,7 @@ public class Applicant2ApplyForFinalOrderIT {
             .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
             .build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -249,16 +252,16 @@ public class Applicant2ApplyForFinalOrderIT {
             .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
             .build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(
-                    callbackRequest(data, APPLICANT2_FINAL_ORDER_REQUESTED, "AwaitingJointFinalOrder")))
+                    callbackRequest(data, APPLICANT2_FINAL_ORDER_REQUESTED, "FinalOrderRequested")))
                 .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
-            ).andExpect(jsonPath("$.data.previousState").value("AwaitingJointFinalOrder"));
+            );
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
@@ -280,13 +283,14 @@ public class Applicant2ApplyForFinalOrderIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         final CaseData data = validJointApplicant1CaseData();
+        data.getApplication().setPreviousState(AwaitingFinalOrder);
         data.getApplicant1().setEmail(TEST_USER_EMAIL);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -321,11 +325,12 @@ public class Applicant2ApplyForFinalOrderIT {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplicant1().setLanguagePreferenceWelsh(YES);
         data.getApplicant2().setLanguagePreferenceWelsh(YES);
+        data.getApplication().setPreviousState(AwaitingFinalOrder);
 
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
