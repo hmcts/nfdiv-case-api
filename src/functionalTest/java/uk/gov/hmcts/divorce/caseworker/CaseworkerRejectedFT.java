@@ -41,7 +41,7 @@ public class CaseworkerRejectedFT extends FunctionalTestSuite {
             .build();
 
         final Response response = triggerCallback(request, ABOUT_TO_SUBMIT_URL);
-        
+
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertThatJson(response.asString(),

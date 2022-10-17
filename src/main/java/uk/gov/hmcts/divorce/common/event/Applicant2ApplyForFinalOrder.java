@@ -11,13 +11,14 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2ApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
-import uk.gov.hmcts.divorce.common.notification.FinalOrderSolicitorNotification;
+import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -50,7 +51,7 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
     private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
 
     @Autowired
-    private FinalOrderSolicitorNotification finalOrderSolicitorNotification;
+    private FinalOrderRequestedNotification finalOrderRequestedNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -81,6 +82,7 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_2, APPLICANT_2_SOLICITOR)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grantHistoryOnly(
                     CASE_WORKER,
                     SUPER_USER,
@@ -92,6 +94,9 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Applicant2 Apply For Final Order event about to submit callback invoked for Case Id: {}", details.getId());
+        CaseData data = details.getData();
+
+        data.getApplication().setPreviousState(beforeDetails.getState());
 
         if (AwaitingFinalOrder.equals(details.getState())) {
             FinalOrder finalOrder = details.getData().getFinalOrder();
@@ -102,19 +107,40 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
                 finalOrder.setApplicant1AppliedForFinalOrderFirst(NO);
                 finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
             }
-
-            notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, details.getData(), details.getId());
         }
 
         var updatedDetails = progressFinalOrderState.apply(details);
-
-        if (FinalOrderRequested.equals(updatedDetails.getState())) {
-            notificationDispatcher.send(finalOrderSolicitorNotification, updatedDetails.getData(), details.getId());
-        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedDetails.getData())
             .state(updatedDetails.getState())
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Applicant2 Apply For Final Order event submitted callback invoked for Case Id: {}", details.getId());
+
+        final CaseData data = details.getData();
+        final State previousState = data.getApplication().getPreviousState();
+
+        if (AwaitingFinalOrder.equals(previousState)) {
+            log.info(
+                "Sending Applicant 2 Applied For Final Order Notification for Case Id: {}",
+                details.getId()
+            );
+            notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, details.getData(), details.getId());
+        }
+
+        if (FinalOrderRequested.equals(details.getState())) {
+            log.info(
+                "Sending Applicant2 Apply for Final Order notifications as case in FinalOrderRequested state for Case Id: {}",
+                details.getId()
+            );
+            notificationDispatcher.send(finalOrderRequestedNotification, details.getData(), details.getId());
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
