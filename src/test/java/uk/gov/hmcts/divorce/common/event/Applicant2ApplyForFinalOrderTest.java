@@ -68,12 +68,16 @@ class Applicant2ApplyForFinalOrderTest {
     void shouldSendSoleAppliedForFinalOrderNotificationIfSoleApplicationTypeAndAwaitingFinalOrderState() {
         setMockClock(clock);
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.SOLE_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
+            .state(FinalOrderOverdue).data(caseData).build();
         caseDetails.setState(AwaitingFinalOrder);
 
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-        applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, beforeDetails);
 
+        assertThat(caseData.getApplication().getPreviousState()).isEqualTo(FinalOrderOverdue);
         verify(notificationDispatcher).send(applicant2AppliedForFinalOrderNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
     }
@@ -81,12 +85,15 @@ class Applicant2ApplyForFinalOrderTest {
     @Test
     void shouldSendJointAppliedForFinalOrderNotificationToBothSolicitorsIfJointApplicationTypeAndFinalOrderRequestedState() {
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
-        caseDetails.setState(FinalOrderRequested);
-
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L)
+            .state(FinalOrderRequested).data(caseData).build();
+        final CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
+            .state(FinalOrderOverdue).data(caseData).build();
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-        applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, null);
 
+        applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, beforeDetails);
+
+        assertThat(caseData.getApplication().getPreviousState()).isEqualTo(FinalOrderOverdue);
         verify(notificationDispatcher).send(finalOrderRequestedNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
     }
@@ -94,11 +101,15 @@ class Applicant2ApplyForFinalOrderTest {
     @Test
     void shouldNotSendSoleAppliedForFinalOrderNotificationFinalOrderOverdueState() {
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.SOLE_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L)
+            .data(caseData).build();
+        final CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
+            .state(FinalOrderOverdue).data(caseData).build();
         caseDetails.setState(FinalOrderOverdue);
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(caseDetails);
-        applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, null);
+        applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, beforeDetails);
 
+        assertThat(caseData.getApplication().getPreviousState()).isEqualTo(FinalOrderOverdue);
         verifyNoInteractions(notificationDispatcher);
     }
 }
