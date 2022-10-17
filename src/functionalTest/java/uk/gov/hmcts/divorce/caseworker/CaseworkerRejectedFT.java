@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -23,6 +24,7 @@ public class CaseworkerRejectedFT extends FunctionalTestSuite {
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-caseworker-reject-application-about-to-submit.json";
 
     @Test
+    @Disabled
     public void shouldSetPreviousStateWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
 
         // This caseId will need to be updated if the cases in AAT are cleared
@@ -32,7 +34,7 @@ public class CaseworkerRejectedFT extends FunctionalTestSuite {
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .id(1665991764899534L)
+                    .id(1652969232164603L)
                     .data(caseData(REQUEST))
                     .caseTypeId(CASE_TYPE)
                     .state("Submitted")
