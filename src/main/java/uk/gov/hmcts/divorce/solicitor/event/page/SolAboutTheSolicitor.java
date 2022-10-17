@@ -56,14 +56,14 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .done();
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> midEvent(
-        CaseDetails<CaseData, State> details,
-        CaseDetails<CaseData, State> detailsBefore
-    ) {
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                   CaseDetails<CaseData, State> detailsBefore) {
         log.info("Mid-event callback triggered for SolAboutTheSolicitor");
 
-        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisation(
-            details.getData(),
+        CaseData caseData = details.getData();
+
+        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
+            caseData,
             details.getId(),
             request.getHeader(AUTHORIZATION)
         );
