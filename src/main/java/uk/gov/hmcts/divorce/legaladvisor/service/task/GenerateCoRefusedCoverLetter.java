@@ -7,10 +7,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
@@ -43,6 +43,9 @@ public class GenerateCoRefusedCoverLetter {
     @Autowired
     private Clock clock;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     public void generateAndUpdateCaseData(final CaseData caseData,
                                           final Long caseId,
                                           final String templateId,
@@ -65,7 +68,8 @@ public class GenerateCoRefusedCoverLetter {
                                                 final Long caseId,
                                                 final Applicant applicant) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+            applicant.getLanguagePreference());
 
         templateContent.put(CASE_REFERENCE, formatId(caseId));
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
