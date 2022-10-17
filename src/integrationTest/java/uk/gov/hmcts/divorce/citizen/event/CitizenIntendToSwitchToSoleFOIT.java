@@ -28,8 +28,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenIntendToSwitchToSoleFO.INTEND_SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INTEND_TO_SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO;
@@ -101,6 +103,38 @@ public class CitizenIntendToSwitchToSoleFOIT {
     }
 
     @Test
+    void shouldSendApplicant1IntendToSwitchToSoleFoWelshNotificationsIfEventTriggeredByApplicant1() throws Exception {
+
+        setMockClock(clock);
+
+        final CaseData data = jointCaseDataWithOrderSummary();
+        data.getApplicant1().setSolicitorRepresented(NO);
+        data.getApplicant1().setLanguagePreferenceWelsh(YES);
+        data.getApplicant2().setSolicitorRepresented(NO);
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(data, INTEND_SWITCH_TO_SOLE_FO, String.valueOf(AwaitingApplicant2Response))))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(INTEND_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH));
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH));
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
     void shouldSendApplicant2IntendToSwitchToSoleFoNotificationsIfEventTriggeredByApplicant2() throws Exception {
 
         setMockClock(clock);
@@ -128,6 +162,39 @@ public class CitizenIntendToSwitchToSoleFOIT {
             .sendEmail(eq(TEST_USER_EMAIL), eq(PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(ENGLISH));
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(INTEND_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(ENGLISH));
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendApplicant2IntendToSwitchToSoleFoWelshNotificationsIfEventTriggeredByApplicant2() throws Exception {
+
+        setMockClock(clock);
+
+        final CaseData data = jointCaseDataWithOrderSummary();
+        data.getApplicant1().setSolicitorRepresented(NO);
+        data.getApplicant1().setLanguagePreferenceWelsh(YES);
+        data.getApplicant2().setSolicitorRepresented(NO);
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(false);
+        when(ccdAccessService.isApplicant2(anyString(), anyLong())).thenReturn(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(data, INTEND_SWITCH_TO_SOLE_FO, String.valueOf(AwaitingApplicant2Response))))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH));
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(INTEND_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH));
         verifyNoMoreInteractions(notificationService);
     }
 }
