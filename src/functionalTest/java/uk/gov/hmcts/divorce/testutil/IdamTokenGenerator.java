@@ -32,23 +32,14 @@ public class IdamTokenGenerator {
     private IdamClient idamClient;
 
     public String generateIdamTokenForSolicitor() {
-        if (tokensMap.containsKey(solicitorUsername)) {
-            return tokensMap.get(solicitorUsername);
-        } else {
-            String authToken = idamClient.getAccessToken(solicitorUsername, solicitorPassword);
-            tokensMap.put(solicitorUsername, authToken);
-            return authToken;
-        }
+        return tokensMap.computeIfAbsent(solicitorUsername, token -> idamClient.getAccessToken(solicitorUsername, solicitorPassword));
     }
 
     public String generateIdamTokenForSystem() {
-        if (tokensMap.containsKey(systemUpdateUsername)) {
-            return tokensMap.get(systemUpdateUsername);
-        } else {
-            String authToken = idamClient.getAccessToken(systemUpdateUsername, systemUpdatePassword);
-            tokensMap.put(systemUpdateUsername, authToken);
-            return authToken;
-        }
+        return tokensMap.computeIfAbsent(
+            systemUpdateUsername,
+            token -> idamClient.getAccessToken(systemUpdateUsername, systemUpdatePassword)
+        );
     }
 
     public UserDetails getUserDetailsFor(final String token) {

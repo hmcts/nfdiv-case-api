@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.idam;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.BEARER_PREFIX;
 
 @Service
-@Slf4j
 public class IdamService {
     @Value("${idam.systemupdate.username}")
     private String systemUpdateUserName;
@@ -46,15 +44,7 @@ public class IdamService {
     }
 
     private String getCachedIdamOauth2Token(String username, String password) {
-        if (tokensMap.containsKey(username)) {
-            log.info("Retrieving system user token from cache");
-            return tokensMap.get(username);
-        } else {
-            log.info("Retrieving system user token externally from IDAM");
-            String authToken = idamClient.getAccessToken(username, password);
-            tokensMap.put(username, authToken);
-            return authToken;
-        }
+        return tokensMap.computeIfAbsent(username, token -> idamClient.getAccessToken(username, password));
     }
 
     private String getIdamOauth2Token(String username, String password) {
