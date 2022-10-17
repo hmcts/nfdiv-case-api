@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -20,8 +21,10 @@ import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APPLICANT2_FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -134,5 +137,31 @@ public class Applicant2ApplyForFinalOrderFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(jsonDocument.json());
+    }
+
+    @Test
+    public void shouldSendNotificationsWhenSubmittedCallbackIsTriggeredForSoleCase() throws Exception {
+
+        final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(1).toString());
+        caseData.put("dateFinalOrderSubmitted", LocalDateTime.of(2022, 9, 10, 1, 0));
+        caseData.put("previousState", AwaitingFinalOrder);
+
+        final Response response = triggerCallback(caseData, APPLICANT2_FINAL_ORDER_REQUESTED, SUBMITTED_URL, FinalOrderRequested);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldSendNotificationsWhenSubmittedCallbackIsTriggeredForJointCase() throws Exception {
+
+        final Map<String, Object> caseData = caseData(REQUEST_JOINT_SOLICITOR);
+        caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(1).toString());
+        caseData.put("dateFinalOrderSubmitted", LocalDateTime.of(2022, 9, 10, 1, 0));
+        caseData.put("previousState", AwaitingFinalOrder);
+
+        final Response response = triggerCallback(caseData, APPLICANT2_FINAL_ORDER_REQUESTED, SUBMITTED_URL, FinalOrderRequested);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 }
