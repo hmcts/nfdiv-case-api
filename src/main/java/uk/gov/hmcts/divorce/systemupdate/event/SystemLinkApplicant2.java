@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -40,7 +41,7 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(SYSTEM_LINK_APPLICANT_2)
-            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingApplicant2Response, AwaitingAos, AosOverdue))
+            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingApplicant2Response, AwaitingAos, AosOverdue, AwaitingService))
             .name("Link Applicant 2 to case")
             .description("Link Applicant 2 to case to enable completion of joint application")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)

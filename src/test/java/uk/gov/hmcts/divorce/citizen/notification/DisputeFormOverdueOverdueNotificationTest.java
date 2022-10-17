@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DISPUTE_FORM_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -72,7 +73,7 @@ class DisputeFormOverdueOverdueNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(DISPUTE_FORM_OVERDUE),
             argThat(allOf(
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(WELSH_DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
