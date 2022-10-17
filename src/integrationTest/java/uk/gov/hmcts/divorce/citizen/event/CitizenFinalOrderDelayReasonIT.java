@@ -38,10 +38,10 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -92,7 +92,7 @@ public class CitizenFinalOrderDelayReasonIT {
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -123,7 +123,7 @@ public class CitizenFinalOrderDelayReasonIT {
         data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -144,7 +144,7 @@ public class CitizenFinalOrderDelayReasonIT {
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().minusDays(30)).build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
