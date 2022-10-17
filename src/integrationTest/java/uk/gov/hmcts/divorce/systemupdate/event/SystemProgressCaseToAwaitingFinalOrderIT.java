@@ -63,6 +63,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -122,7 +123,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
     }
 
     @Test
-    void shouldSenLettersToOfflineApplicantsInJointCase() throws Exception {
+    void shouldSendLettersToOfflineApplicantsInJointCase() throws Exception {
 
         final CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().setEmail(null);
@@ -164,7 +165,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
     }
 
     @Test
-    public void shouldSenEmailsToOnlineApplicantsInJointCase() throws Exception {
+    public void shouldSendEmailsToOnlineApplicantsInJointCase() throws Exception {
         final CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -172,7 +173,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
                 .dateFinalOrderEligibleToRespondent(LocalDate.now())
             .build());
 
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(objectMapper.writeValueAsString(
@@ -192,7 +193,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
     }
 
     @Test
-    public void shouldSenEmailsToSolicitorsInJointCaseWhenBothApplicantsAreRepresented() throws Exception {
+    public void shouldSendEmailsToSolicitorsInJointCaseWhenBothApplicantsAreRepresented() throws Exception {
         final CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitorRepresented(YES);
@@ -211,7 +212,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
             .build());
         caseData.getApplication().setIssueDate(LocalDate.now());
 
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(objectMapper.writeValueAsString(
