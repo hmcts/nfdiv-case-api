@@ -117,7 +117,7 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
 
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicationType", "jointApplication");
-        caseData.put("applicant2Email", "app2@email.com");
+        caseData.put("applicant2Email", "app2@example.com");
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
         caseData.put("applicant1AppliedForFinalOrderFirst", "Yes");
         caseData.put("applicant2AppliedForFinalOrderFirst", "No");
