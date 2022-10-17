@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -757,6 +758,7 @@ public class NoticeOfProceedingContentIT {
                 .name("app 2 sol")
                 .address("The avenue")
                 .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                    .organisation(Organisation.builder().organisationId("OrgId").build())
                     .build())
                 .build()
         );
@@ -872,6 +874,7 @@ public class NoticeOfProceedingContentIT {
                 .name("app 2 sol")
                 .address("The avenue")
                 .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                    .organisation(Organisation.builder().organisationId("OrgId").build())
                     .build())
                 .build()
         );
