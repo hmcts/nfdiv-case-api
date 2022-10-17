@@ -370,8 +370,7 @@ class AwaitingFinalOrderNotificationTest {
         verify(applyForFinalOrderPrinter).sendLetters(
             caseData,
             TEST_CASE_ID,
-            caseData.getApplicant1(),
-            caseData.getApplicant2()
+            caseData.getApplicant1()
         );
     }
 
@@ -384,8 +383,7 @@ class AwaitingFinalOrderNotificationTest {
         verify(applyForFinalOrderPrinter).sendLetters(
             caseData,
             TEST_CASE_ID,
-            caseData.getApplicant2(),
-            caseData.getApplicant1()
+            caseData.getApplicant2()
         );
     }
 
