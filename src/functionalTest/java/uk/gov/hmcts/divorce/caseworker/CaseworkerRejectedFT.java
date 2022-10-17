@@ -32,7 +32,7 @@ public class CaseworkerRejectedFT extends FunctionalTestSuite {
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .id(1652969232164603L)
+                    .id(1665991764899534L)
                     .data(caseData(REQUEST))
                     .caseTypeId(CASE_TYPE)
                     .state("Submitted")
@@ -41,7 +41,7 @@ public class CaseworkerRejectedFT extends FunctionalTestSuite {
             .build();
 
         final Response response = triggerCallback(request, ABOUT_TO_SUBMIT_URL);
-        
+
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertThatJson(response.asString(),
