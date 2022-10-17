@@ -1,0 +1,80 @@
+{
+  "data": {
+    "applicationType": "jointApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name_male",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Address": {},
+    "applicant1Gender": "male",
+    "applicant1ContactDetailsType": "private",
+    "applicant1FinancialOrder": "No",
+    "applicant1LegalProceedings": "Yes",
+    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1Offline": "Yes",
+    "applicant2FirstName": "test_first_name_female",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2Address": {},
+    "applicant2Gender": "female",
+    "applicant2ContactDetailsType": "public",
+    "applicant2FinancialOrder": "No",
+    "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant2Offline": "Yes",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": ["A"],
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "applicant1StatementOfTruth": "Yes",
+    "applicant2StatementOfTruth": "Yes",
+    "documentUploadComplete": "Yes",
+    "issueDate": "${json-unit.any-string}",
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+    "accessCode": "",
+    "dateFinalOrderEligibleFrom": "${json-unit.any-string}",
+    "dateFinalOrderEligibleToRespondent": "${json-unit.any-string}",
+    "documentsGenerated": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "${json-unit.any-string}",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "${json-unit.any-string}",
+        "documentType": "finalOrderCanApply"
+      }
+    }, {
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "D36.pdf",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "D36.pdf",
+        "documentType": "d36"
+      }
+    }, {
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "${json-unit.any-string}",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "${json-unit.any-string}",
+        "documentType": "finalOrderCanApply"
+      }
+    }],
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": 5,
+    "warnings": []
+  }
+}
