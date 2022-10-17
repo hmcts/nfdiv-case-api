@@ -10,8 +10,6 @@ import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForFinalOrderDocument;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD36Form;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,26 +31,17 @@ public class ApplyForFinalOrderPrinter {
     private BulkPrintService bulkPrintService;
 
     @Autowired
-    private GenerateD36Form generateD36Form;
-
-    @Autowired
     private GenerateCoversheet generateCoversheet;
 
     @Autowired
     private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
 
-    @Autowired
-    private GenerateApplyForFinalOrderDocument generateApplyForFinalOrderDocument;
-
     public static final String LETTER_TYPE_APPLY_FOR_FINAL_ORDER_PACK = "apply-for-final-order-pack";
     private static final int EXPECTED_DOCUMENTS_SIZE = 3;
 
-    public void sendLetters(final CaseData caseData,
-                            final Long caseId,
-                            final Applicant applicant,
-                            final Applicant partner) {
+    public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
 
-        generateLetters(caseData, caseId, applicant, partner);
+        generateFinalOrderCoversheet(caseData, caseId, applicant);
 
         final List<Letter> finalOrderLettersToSend = finalOrderLetters(caseData);
 
@@ -106,10 +95,9 @@ public class ApplyForFinalOrderPrinter {
         return finalOrderLetters;
     }
 
-    private void generateLetters(final CaseData caseData,
-                                 final Long caseId,
-                                 final Applicant applicant,
-                                 final Applicant partner) {
+    private void generateFinalOrderCoversheet(final CaseData caseData,
+                                              final Long caseId,
+                                              final Applicant applicant) {
 
         generateCoversheet.generateCoversheet(
             caseData,
@@ -118,7 +106,5 @@ public class ApplyForFinalOrderPrinter {
             coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
             applicant.getLanguagePreference()
         );
-        generateD36Form.generateD36Document(caseData, caseId);
-        generateApplyForFinalOrderDocument.generateApplyForFinalOrder(caseData, caseId, applicant, partner);
     }
 }

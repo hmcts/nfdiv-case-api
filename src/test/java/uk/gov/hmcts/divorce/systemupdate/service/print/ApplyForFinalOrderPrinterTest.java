@@ -16,8 +16,6 @@ import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForFinalOrderDocument;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD36Form;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -46,16 +44,10 @@ public class ApplyForFinalOrderPrinterTest {
     private BulkPrintService bulkPrintService;
 
     @Mock
-    private GenerateD36Form generateD36Form;
-
-    @Mock
     private GenerateCoversheet generateCoversheet;
 
     @Mock
     private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
-
-    @Mock
-    private GenerateApplyForFinalOrderDocument generateApplyForFinalOrderDocument;
 
     @InjectMocks
     private ApplyForFinalOrderPrinter applyForFinalOrderPrinter;
@@ -100,8 +92,7 @@ public class ApplyForFinalOrderPrinterTest {
         applyForFinalOrderPrinter.sendLetters(
             caseData,
             TEST_CASE_ID,
-            caseData.getApplicant1(),
-            caseData.getApplicant2()
+            caseData.getApplicant1()
         );
 
         verify(generateCoversheet).generateCoversheet(
@@ -110,15 +101,6 @@ public class ApplyForFinalOrderPrinterTest {
             eq(COVERSHEET_APPLICANT),
             anyMap(),
             eq(ENGLISH)
-        );
-
-        verify(generateD36Form).generateD36Document(caseData, TEST_CASE_ID);
-
-        verify(generateApplyForFinalOrderDocument).generateApplyForFinalOrder(
-            caseData,
-            TEST_CASE_ID,
-            caseData.getApplicant1(),
-            caseData.getApplicant2()
         );
 
         final Print print = printCaptor.getValue();
@@ -147,12 +129,7 @@ public class ApplyForFinalOrderPrinterTest {
             )
             .build();
 
-        applyForFinalOrderPrinter.sendLetters(
-            caseData,
-            TEST_CASE_ID,
-            caseData.getApplicant1(),
-            caseData.getApplicant2()
-        );
+        applyForFinalOrderPrinter.sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verifyNoInteractions(bulkPrintService);
     }
@@ -183,29 +160,7 @@ public class ApplyForFinalOrderPrinterTest {
             )
             .build();
 
-        applyForFinalOrderPrinter.sendLetters(
-            caseData,
-            TEST_CASE_ID,
-            caseData.getApplicant1(),
-            caseData.getApplicant2()
-        );
-
-        verify(generateCoversheet).generateCoversheet(
-            eq(caseData),
-            eq(TEST_CASE_ID),
-            eq(COVERSHEET_APPLICANT),
-            anyMap(),
-            eq(ENGLISH)
-        );
-
-        verify(generateD36Form).generateD36Document(caseData, TEST_CASE_ID);
-
-        verify(generateApplyForFinalOrderDocument).generateApplyForFinalOrder(
-            caseData,
-            TEST_CASE_ID,
-            caseData.getApplicant1(),
-            caseData.getApplicant2()
-        );
+        applyForFinalOrderPrinter.sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verifyNoInteractions(bulkPrintService);
     }
