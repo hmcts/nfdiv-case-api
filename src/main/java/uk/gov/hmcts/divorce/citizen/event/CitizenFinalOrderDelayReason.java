@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,7 +59,8 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
             .description("Citizen final order delay reason")
             .grant(CREATE_READ_UPDATE, CREATOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
-            .aboutToSubmitCallback(this::aboutToSubmit);
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -67,12 +69,6 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
 
         CaseData data = details.getData();
         State endState = FinalOrderRequested;
-
-        if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
-            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, data, details.getId());
-        } else {
-            notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, data, details.getId());
-        }
 
         if (data.isWelshApplication()) {
             data.getApplication().setWelshPreviousState(endState);
@@ -85,6 +81,20 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
             .data(data)
             .state(endState)
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Citizen final order delay reason submitted callback invoked for Case Id: {}", details.getId());
+
+        if (ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
+            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, details.getData(), details.getId());
+        } else {
+            notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, details.getData(), details.getId());
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
 
