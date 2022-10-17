@@ -7,9 +7,14 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @TestPropertySource("classpath:application.yaml")
 @Service
 public class IdamTokenGenerator {
+
+    private final Map<String, String> tokensMap = new ConcurrentHashMap<>();
 
     @Value("${idam.solicitor.username}")
     private String solicitorUsername;
@@ -27,15 +32,14 @@ public class IdamTokenGenerator {
     private IdamClient idamClient;
 
     public String generateIdamTokenForSolicitor() {
-        return idamClient.getAccessToken(solicitorUsername, solicitorPassword);
+        return tokensMap.computeIfAbsent(solicitorUsername, token -> idamClient.getAccessToken(solicitorUsername, solicitorPassword));
     }
 
     public String generateIdamTokenForSystem() {
-        return idamClient.getAccessToken(systemUpdateUsername, systemUpdatePassword);
-    }
-
-    public String generateIdamTokenForUser(String username, String password) {
-        return idamClient.getAccessToken(username, password);
+        return tokensMap.computeIfAbsent(
+            systemUpdateUsername,
+            token -> idamClient.getAccessToken(systemUpdateUsername, systemUpdatePassword)
+        );
     }
 
     public UserDetails getUserDetailsFor(final String token) {

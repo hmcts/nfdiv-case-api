@@ -26,6 +26,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -36,7 +37,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -318,7 +318,8 @@ class SetAosIsDraftedToYesMigrationTest {
                         .should(matchQuery(STATE, IssuedToBailiff))
                         .should(matchQuery(STATE, AwaitingService))
                         .should(matchQuery(STATE, AwaitingGeneralConsideration)))
-                .mustNot(matchQuery("data.aosIsDrafted", YES));
+                .mustNot(existsQuery("data.dateAosSubmitted"))
+                .mustNot(existsQuery("data.aosIsDrafted"));
         return query;
     }
 }

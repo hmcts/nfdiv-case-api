@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -29,6 +30,8 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
@@ -88,9 +91,9 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             log.info("Generating notice of proceedings for respondent solicitor for case id {} ", caseId);
 
             var hasSolicitor = applicant2.getSolicitor() != null;
-            var hasOrgPolicy = hasSolicitor && applicant2.getSolicitor().getOrganisationPolicy() != null;
+            var hasOrgId = hasSolicitor && applicant2.getSolicitor().hasOrgId();
 
-            if (hasOrgPolicy) {
+            if (hasOrgId) {
                 if (!caseData.getApplication().isCourtServiceMethod()) {
                     generateNoticeOfProceedingsWithoutAddress(caseData, caseId, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
                     generateCoversheet.generateCoversheet(
@@ -117,11 +120,29 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             final LanguagePreference applicant2LanguagePreference = applicant2.getLanguagePreference();
             final Applicant applicant1 = caseData.getApplicant1();
 
-            if (isEmpty(applicant2.getEmail()) || applicant2.isOffline()) {
+            boolean reissuedAsOfflineAOS = ReissueOption.OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
+
+            if (applicant2.isBasedOverseas()) {
+                log.info("Generating NOP for overseas respondent for sole case id {} ", caseId);
                 generateNoticeOfProceedings(
                     caseData,
                     caseId,
-                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
+                    NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES,
+                    noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference)
+                );
+                log.info("Generating coversheet for overseas respondent for sole case id {} ", caseId);
+                generateCoversheet.generateCoversheet(
+                    caseData,
+                    caseId,
+                    COVERSHEET_APPLICANT,
+                    coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
+                    caseData.getApplicant2().getLanguagePreference()
+                );
+            } else if (isEmpty(applicant2.getEmail()) || applicant2.isOffline() || reissuedAsOfflineAOS) {
+                generateNoticeOfProceedings(
+                    caseData,
+                    caseId,
+                    reissuedAsOfflineAOS ? NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE : NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
                     noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference));
                 generateCoversheet.generateCoversheet(
                     caseData,
