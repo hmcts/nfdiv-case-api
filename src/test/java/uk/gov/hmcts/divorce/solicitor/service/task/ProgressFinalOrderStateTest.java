@@ -33,7 +33,7 @@ class ProgressFinalOrderStateTest {
         var result = task.apply(details);
 
         assertEquals(result.getState(), WelshTranslationReview);
-        assertEquals(result.getData().getApplication().getWelshPreviousState(), AwaitingFinalOrder);
+        assertEquals(result.getData().getApplication().getWelshPreviousState(), FinalOrderRequested);
     }
 
     @Test
@@ -47,7 +47,7 @@ class ProgressFinalOrderStateTest {
         var result = task.apply(details);
 
         assertEquals(result.getState(), WelshTranslationReview);
-        assertEquals(result.getData().getApplication().getWelshPreviousState(), AwaitingFinalOrder);
+        assertEquals(result.getData().getApplication().getWelshPreviousState(), AwaitingJointFinalOrder);
     }
 
     @Test
