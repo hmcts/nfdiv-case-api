@@ -55,6 +55,27 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
     }
 
     @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForJointCase() throws Exception {
+
+        final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("applicationType", "jointApplication");
+        caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(1).toString());
+
+        final Response response = triggerCallback(caseData, FINAL_ORDER_REQUESTED, ABOUT_TO_SUBMIT_URL, AwaitingFinalOrder);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
+        jsonDocument.set("data.applicationType", "jointApplication");
+        jsonDocument.set("state", "AwaitingJointFinalOrder");
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(jsonDocument.json());
+    }
+
+    @Test
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForJointSolicitorCase() throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST_JOINT_SOLICITOR);
@@ -99,7 +120,7 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
 
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicationType", "jointApplication");
-        caseData.put("applicant2Email", "app2@email.com");
+        caseData.put("applicant2Email", "app2@example.com");
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
         caseData.put("applicant1AppliedForFinalOrderFirst", "Yes");
         caseData.put("applicant2AppliedForFinalOrderFirst", "No");
