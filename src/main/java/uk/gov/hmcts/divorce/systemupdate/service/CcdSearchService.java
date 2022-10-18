@@ -94,10 +94,12 @@ public class CcdSearchService {
                 final SearchResult searchResult =
                     searchForCasesWithQuery(from, pageSize, query, user, serviceAuth);
 
-                allCaseDetails.addAll(searchResult.getCases());
+                final List<CaseDetails> pageResults = searchResult.getCases();
+
+                allCaseDetails.addAll(pageResults);
 
                 from += pageSize;
-                totalResults = searchResult.getTotal();
+                totalResults = pageResults.size();
             }
         } catch (final FeignException e) {
             final String message = String.format("Failed to complete search for Cases with state of %s", Arrays.toString(states));
@@ -234,10 +236,11 @@ public class CcdSearchService {
                     BulkActionCaseTypeConfig.CASE_TYPE,
                     sourceBuilder.toString());
 
-                allCaseDetails.addAll(searchResult.getCases());
+                final List<CaseDetails> pageResults = searchResult.getCases();
+                allCaseDetails.addAll(pageResults);
 
                 from += pageSize;
-                totalResults = searchResult.getTotal();
+                totalResults = pageResults.size();
             }
         } catch (final FeignException e) {
 
@@ -284,10 +287,11 @@ public class CcdSearchService {
                     BulkActionCaseTypeConfig.CASE_TYPE,
                     sourceBuilder.toString());
 
-                allCaseDetails.addAll(searchResult.getCases());
+                final List<CaseDetails> pageResults = searchResult.getCases();
+                allCaseDetails.addAll(pageResults);
 
                 from += pageSize;
-                totalResults = searchResult.getTotal();
+                totalResults = pageResults.size();
             }
         } catch (final FeignException e) {
             final String message = "Failed to complete search for Bulk Cases with state of Created or Listed with cases to be removed";
@@ -400,7 +404,9 @@ public class CcdSearchService {
             .must(boolQuery().must(newPaperCase))
             .must(boolQuery().must(soleApplication))
             .must(boolQuery().mustNot(applicant2OfflineExist))
-            .must(boolQuery().mustNot(applicant2EmailExist));
+            .must(boolQuery().mustNot(applicant2EmailExist))
+            .mustNot(matchQuery(STATE, Withdrawn))
+            .mustNot(matchQuery(STATE, Rejected));
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
