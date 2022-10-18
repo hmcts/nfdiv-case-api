@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -305,7 +306,7 @@ public class CasePronouncementServiceTest {
             SERVICE_AUTHORIZATION
         )).thenReturn(unprocessedBulkCases);
 
-        doThrow(feignException(409, "some error"))
+        doThrow(new CcdManagementException(409, "some error", feignException(409, "some error")))
             .when(ccdUpdateService).submitBulkActionEvent(
                 bulkActionCaseDetails,
                 SYSTEM_UPDATE_BULK_CASE,
