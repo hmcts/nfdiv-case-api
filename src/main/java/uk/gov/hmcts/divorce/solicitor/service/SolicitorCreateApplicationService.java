@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -54,7 +55,7 @@ public class SolicitorCreateApplicationService {
         ).run(caseDetails);
     }
 
-    public CaseInfo validateSolicitorOrganisation(
+    public CaseInfo validateSolicitorOrganisationAndEmail(
         final CaseData caseData,
         final Long caseId,
         final String userAuth
@@ -87,6 +88,14 @@ public class SolicitorCreateApplicationService {
 
             return CaseInfo.builder()
                 .errors(singletonList("Please select an organisation you belong to"))
+                .build();
+        }
+
+        boolean validEmail = EmailValidator.getInstance().isValid(caseData.getApplicant1().getSolicitor().getEmail());
+        if (!validEmail) {
+            return CaseInfo.builder()
+                .errors(singletonList("You have entered an invalid email address. "
+                    + "Please check the email and enter it again, before submitting the application."))
                 .build();
         }
 

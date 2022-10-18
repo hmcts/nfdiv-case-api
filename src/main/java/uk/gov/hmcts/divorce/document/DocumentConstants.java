@@ -24,6 +24,7 @@ public final class DocumentConstants {
 
     public static final String NFD_NOP_R1_SOLE_APP2_CIT_ONLINE = "NFD_NOP_R1_SOLE_APP2_CIT_ONLINE";
     public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE = "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE";
+    public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE = "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE";
 
     public static final String NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES = "NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES";
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
@@ -41,6 +42,7 @@ public final class DocumentConstants {
     public static final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS = "NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS";
     public static final String NFD_NOP_AS2_SOLE_APP1_SOL_SS = "NFD_NOP_AS2_SOLE_APP1_SOL_SS";
     public static final String NFD_NOP_JA1_JOINT_APP1APP2_CIT = "NFD_NOP_JA1_JOINT_APP1APP2_CIT";
+    public static final String NFD_NOP_AL2_SOLE_APP1_CIT_PS = "NFD_NOP_AL2_SOLE_APP1_CIT_PS";
 
     public static final String GENERAL_ORDER = "generalOrder";
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";

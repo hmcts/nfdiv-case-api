@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_APPLICATION_ISSUED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -43,7 +43,8 @@ public class ApplicationIssuedOverseasNotification implements ApplicantNotificat
             id,
             caseData.getApplicant1(),
             caseData.getApplicant2());
-        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(28).format(DATE_TIME_FORMATTER));
+        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(28)
+                .format(getDateTimeFormatterForPreferredLanguage(caseData.getApplicant1().getLanguagePreference())));
         return templateVars;
     }
 }

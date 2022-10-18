@@ -120,6 +120,11 @@ public class NoticeOfProceedingContent {
     public static final String IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE = "isRespondentSolicitorPersonalService";
     public static final String IS_RESPONDENT_BASED_IN_UK = "isRespondentBasedInUk";
     public static final String CAN_SERVE_BY_EMAIL = "canServeByEmail";
+    public static final String IS_OFFLINE = "isOffline";
+    public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS = "divorceOrCivilPartnershipDocuments";
+    public static final String DIVORCE_DOCUMENTS = "divorce documents";
+    public static final String CIVIL_PARTNERSHIP_DOCUMENTS = "documents to end your civil partnership";
+
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
     private static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
 
@@ -171,6 +176,8 @@ public class NoticeOfProceedingContent {
         if (!isNull(caseData.getDueDate())) {
             templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         }
+
+        templateContent.put(IS_OFFLINE, caseData.getApplicant1().isOffline());
 
         templateContent.put(
             SUBMISSION_RESPONSE_DATE,
@@ -276,6 +283,7 @@ public class NoticeOfProceedingContent {
             templateContent.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
             templateContent.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         } else {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL,
                 WELSH.equals(languagePreference) ? CONTACT_JUSTICE_GOV_UK_CY : CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
@@ -310,6 +318,7 @@ public class NoticeOfProceedingContent {
             templateContent.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, CIVIL_PARTNERSHIP_DOCUMENTS);
         }
     }
 
@@ -339,14 +348,15 @@ public class NoticeOfProceedingContent {
 
         templateContent.put(WHO_APPLIED, applicant1.isRepresented() ? "applicant's solicitor" : "applicant");
 
-        templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, !isNull(applicant2Solicitor.getOrganisationPolicy()) ? "Yes" : "No");
+        templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, applicant2Solicitor.hasOrgId() ? "Yes" : "No");
 
         if (personalServiceMethod) {
             if (WELSH.equals(languagePreference)) {
                 templateContent.put(RELATIONS_SOLICITOR,
                     "cyfreithiwr eich " + commonContent.getPartner(caseData, applicant2, languagePreference));
             } else {
-                templateContent.put(RELATIONS_SOLICITOR, commonContent.getPartner(caseData, applicant2) + "'s solicitor");
+                final String relationsSolicitorSuffix = caseData.getDivorceOrDissolution().isDivorce() ? "'s solicitor" : "s' solicitor";
+                templateContent.put(RELATIONS_SOLICITOR, commonContent.getPartner(caseData, applicant2) + relationsSolicitorSuffix);
             }
         }
     }
