@@ -32,10 +32,14 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APPLICANT2_FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
@@ -148,6 +152,7 @@ public class Applicant2ApplyForFinalOrderIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         final CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setPreviousState(AwaitingFinalOrder);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
@@ -173,6 +178,9 @@ public class Applicant2ApplyForFinalOrderIT {
             );
 
         verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
             .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
@@ -191,11 +199,17 @@ public class Applicant2ApplyForFinalOrderIT {
         final CaseData data = validJointApplicant1CaseData();
         data.getApplication().setPreviousState(AwaitingFinalOrder);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .name("App1 Sol")
+            .reference("12344")
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
         data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
         data.getApplicant2().setSolicitor(Solicitor.builder()
             .name("App2 Sol")
             .reference("12344")
-            .email(TEST_SOLICITOR_EMAIL)
+            .email("app2Sol@email.com")
             .build());
         data.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
@@ -214,9 +228,10 @@ public class Applicant2ApplyForFinalOrderIT {
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app2Sol@email.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH));
 
-        verifyNoMoreInteractions(notificationService);
+        verify(notificationService)
+            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
     }
 
     @Test
@@ -253,6 +268,84 @@ public class Applicant2ApplyForFinalOrderIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2AndApplicant1WhenJointApplication() throws Exception {
+
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        final CaseData data = validJointApplicant1CaseData();
+        data.getApplication().setPreviousState(AwaitingFinalOrder);
+        data.getApplicant1().setEmail(TEST_USER_EMAIL);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        data.setFinalOrder(FinalOrder.builder()
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
+
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(
+                    data, APPLICANT2_FINAL_ORDER_REQUESTED, "AwaitingFinalOrder")))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendEmailToApplicant1AndApplicant2InWelshWhenApplicant2AppliedForFOFirstInTimeJointApplication() throws Exception {
+
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        final CaseData data = validJointApplicant1CaseData();
+        data.getApplicant1().setEmail(TEST_USER_EMAIL);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplicant1().setLanguagePreferenceWelsh(YES);
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
+        data.getApplication().setPreviousState(AwaitingFinalOrder);
+
+        data.setFinalOrder(FinalOrder.builder()
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
+
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(
+                    data, APPLICANT2_FINAL_ORDER_REQUESTED, "AwaitingFinalOrder")))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(WELSH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(WELSH));
 
         verifyNoMoreInteractions(notificationService);
     }
