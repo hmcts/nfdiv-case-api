@@ -8,17 +8,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForFinalOrderPrinter;
 
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -26,8 +27,9 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENC
 import static uk.gov.hmcts.divorce.notification.CommonContent.UNION_TYPE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_APPLY_FOR_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLY_FOR_FINAL_ORDER_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -38,6 +40,9 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private ApplyForFinalOrderPrinter applyForFinalOrderPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -72,39 +77,48 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
-        log.info("Notifying applicant 1 solicitor (joint application) that they can apply for a final order: {}", id);
+        log.info("Notifying applicant 1 solicitor that they can apply for a final order: {}", id);
 
+        Applicant applicant1 = caseData.getApplicant1();
+        final Map<String, String> templateVars = commonSolicitorTemplateVars(caseData, id, applicant1);
+
+        notificationService.sendEmail(
+            applicant1.getSolicitor().getEmail(),
+            APPLY_FOR_FINAL_ORDER_SOLICITOR,
+            templateVars,
+            applicant1.getLanguagePreference()
+        );
+    }
+
+    @Override
+    public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
         if (!caseData.getApplicationType().isSole()) {
-            Applicant applicant1 = caseData.getApplicant1();
-            final Map<String, String> templateVars = commonSolicitorTemplateVars(caseData, id, applicant1);
-            templateVars.put(IS_CONDITIONAL_ORDER, NO);
-            templateVars.put(IS_FINAL_ORDER, YES);
+            log.info("Notifying applicant 2 solicitor (joint application) that they can apply for a final order: {}", id);
+
+            Applicant applicant2 = caseData.getApplicant2();
+            final Map<String, String> templateVars = commonSolicitorTemplateVars(caseData, id, applicant2);
 
             notificationService.sendEmail(
-                applicant1.getSolicitor().getEmail(),
-                JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR,
+                applicant2.getSolicitor().getEmail(),
+                APPLY_FOR_FINAL_ORDER_SOLICITOR,
                 templateVars,
-                applicant1.getLanguagePreference()
+                applicant2.getLanguagePreference()
             );
         }
     }
 
     @Override
-    public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
-        log.info("Notifying applicant 2 solicitor (joint application) that they can apply for a final order: {}", id);
+    public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
+        log.info("Notifying offline {} that they can apply for a final order: {}",
+            caseData.getApplicationType().isSole() ? "applicant" : "applicant 1", caseId);
+        applyForFinalOrderPrinter.sendLetters(caseData, caseId, caseData.getApplicant1());
+    }
 
+    @Override
+    public void sendToApplicant2Offline(CaseData caseData, Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
-            Applicant applicant2 = caseData.getApplicant2();
-            final Map<String, String> templateVars = commonSolicitorTemplateVars(caseData, id, applicant2);
-            templateVars.put(IS_CONDITIONAL_ORDER, NO);
-            templateVars.put(IS_FINAL_ORDER, YES);
-
-            notificationService.sendEmail(
-                applicant2.getSolicitor().getEmail(),
-                JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR,
-                templateVars,
-                applicant2.getLanguagePreference()
-            );
+            log.info("Notifying offline applicant 2 that they can apply for a final order: {}", caseId);
+            applyForFinalOrderPrinter.sendLetters(caseData, caseId, caseData.getApplicant2());
         }
     }
 
@@ -112,7 +126,8 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         Map<String, String> templateVars = commonContent.conditionalOrderTemplateVars(caseData, id, applicant, partner);
         templateVars.put(IS_REMINDER, NO);
         templateVars.put(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS,
-            caseData.getFinalOrder().getDateFinalOrderEligibleToRespondent().format(DATE_TIME_FORMATTER));
+            caseData.getFinalOrder().getDateFinalOrderEligibleToRespondent()
+                    .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }
 
@@ -129,6 +144,8 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
+        templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
+        templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
 
         return templateVars;
     }

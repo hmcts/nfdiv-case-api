@@ -107,6 +107,7 @@ public final class DocmosisTemplateConstants {
     public static final String DATE = "date";
     public static final String DATE_OF_HEARING = "dateOfHearing";
     public static final String TIME_OF_HEARING = "timeOfHearing";
+    public static final String BEFORE_DATE_OF_HEARING = "beforeDateOfHearing";
     public static final String BULK_LIST = "bulkList";
     public static final String APPLICANT_HEADING = "applicant";
     public static final String RESPONDENT_HEADING = "respondent";
@@ -168,6 +169,24 @@ public final class DocmosisTemplateConstants {
     public static final String JUDGE_NAME = "judgeName";
     public static final String CO_PRONOUNCED_DATE = "coPronouncedDate";
     public static final String DATE_FO_ELIGIBLE_FROM = "dateFinalOrderEligibleFrom";
+
+    public static final String DIVORCE_AND_DISSOLUTION_HEADER = "divorceAndDissolutionHeader";
+    public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT = "Divorce and Dissolution";
+    public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY = "Gwasanaeth Ysgariadau a Diddymiadau";
+
+    public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER = "courtsAndTribunalsServiceHeader";
+    public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT = "HM Courts & Tribunals Service";
+    public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY = "Gwasanaeth Llysoedd a Thribiwnlysoedd EM";
+
+    public static final String CONTACT_EMAIL = "contactEmail";
+
+    public static final String PHONE_AND_OPENING_TIMES = "phoneAndOpeningTimes";
+    public static final String PHONE_AND_OPENING_TIMES_TEXT = "Phone: 0300 303 0642 (Monday to Friday, 8am to 6pm)";
+    public static final String PHONE_AND_OPENING_TIMES_TEXT_CY =
+        "Ffôn: 0300 303 5171 (Dydd Llun i ddydd Iau 9am i 5pm, Dydd Gwener 9am to 4.30pm)";
+
+    public static final String RESPONSE_DUE_DATE = "responseDueDate";
+    public static final String CO_OR_FO = "coOrFo";
 
     private DocmosisTemplateConstants() {
     }

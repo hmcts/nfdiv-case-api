@@ -64,11 +64,11 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
         CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
         CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetailsBefore) {
 
-        log.info("Solicitor update contact details about to submit callback invoked");
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_PRINT_PRONOUNCEMENT, bulkCaseDetails.getId());
 
         final BulkActionCaseData caseData = bulkCaseDetails.getData();
 
-        pronouncementListDocService.generateDocument(bulkCaseDetails, bulkCaseDetails.getData().getBulkListCaseDetails());
+        pronouncementListDocService.generateDocument(bulkCaseDetails);
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
             .data(caseData)
@@ -79,6 +79,9 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
     public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails
     ) {
+
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_PRINT_PRONOUNCEMENT, bulkCaseDetails.getId());
+
         final BulkActionCaseData caseData = bulkCaseDetails.getData();
 
         if (null == caseData.getPronouncementJudge()) {

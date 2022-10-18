@@ -47,6 +47,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
@@ -108,7 +109,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
     }
 
     @Test
-    public void shouldRegenerateCourtOrdersWhenBothCertificateOfEntitlementAndConditionalOrderGrantedDocExistsForDigitalDivorceCase()
+    public void shouldRegenerateCourtOrdersWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistForDigitalDivorceCase()
         throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -116,8 +117,9 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Certificate_Of_Entitlement_V2.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
         stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa", "NFD_Conditional_Order_Pronounced.docx");
+        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2", "FL-NFD-GOR-ENG-Final-Order-Granted.docx");
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -126,8 +128,16 @@ public class CaseworkerRegenerateCourtOrdersIT {
                 CONDITIONAL_ORDER_GRANTED
             );
 
+        final ListValue<DivorceDocument> foGrantedDoc =
+            getDivorceDocumentListValue(
+                "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+                "fo_granted.pdf",
+                FINAL_ORDER_GRANTED
+            );
+
         List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
         documentsGenerated.add(coGrantedDoc);
+        documentsGenerated.add(foGrantedDoc);
 
         final CaseData caseData = CaseData
             .builder()
@@ -169,7 +179,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
     }
 
     @Test
-    public void shouldRegenerateCourtOrdersWhenBothCertificateOfEntitlementAndCOGrantedDocExistsForDigitalCivilPartnershipCase()
+    public void shouldRegenerateCourtOrdersWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistForDigitalCivilPartnershipCase()
         throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -177,8 +187,9 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Certificate_Of_Entitlement_V2.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
         stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa", "NFD_Conditional_Order_Pronounced.docx");
+        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2", "FL-NFD-GOR-ENG-Final-Order-Granted.docx");
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -187,8 +198,16 @@ public class CaseworkerRegenerateCourtOrdersIT {
                 CONDITIONAL_ORDER_GRANTED
             );
 
+        final ListValue<DivorceDocument> foGrantedDoc =
+            getDivorceDocumentListValue(
+                "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+                "finalOrderGranted.pdf",
+                FINAL_ORDER_GRANTED
+            );
+
         List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
         documentsGenerated.add(coGrantedDoc);
+        documentsGenerated.add(foGrantedDoc);
 
         final CaseData caseData = CaseData
             .builder()

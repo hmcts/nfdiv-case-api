@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -13,6 +14,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.CaseRemovalService;
+import uk.gov.hmcts.divorce.bulkaction.service.PronouncementListDocService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -29,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
 
 @Component
+@Slf4j
 public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String CASEWORKER_REMOVE_CASES_BULK_LIST = "caseworker-remove-cases-bulk-list";
@@ -38,6 +41,9 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
 
     @Autowired
     private HttpServletRequest request;
+
+    @Autowired
+    private PronouncementListDocService pronouncementListDocService;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -61,6 +67,9 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
     public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(
         CaseDetails<BulkActionCaseData, BulkActionState> details
     ) {
+
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_REMOVE_CASES_BULK_LIST, details.getId());
+
         BulkActionCaseData caseData = details.getData();
         caseData.setCasesAcceptedToListForHearing(caseData.transformToCasesAcceptedToListForHearing());
 
@@ -73,6 +82,9 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
         CaseDetails<BulkActionCaseData, BulkActionState> details,
         CaseDetails<BulkActionCaseData, BulkActionState> detailsBefore
     ) {
+
+        log.info("{} mid event callback invoked for Case Id: {}", CASEWORKER_REMOVE_CASES_BULK_LIST, details.getId());
+
         BulkActionCaseData caseData = details.getData();
         List<String> validationErrors = validateCasesAcceptedToListForHearing(caseData);
 
@@ -92,13 +104,15 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
         final CaseDetails<BulkActionCaseData, BulkActionState> details,
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
+
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_REMOVE_CASES_BULK_LIST, details.getId());
+
         BulkActionCaseData bulkActionCaseData = details.getData();
 
         List<String> casesAcceptedToListForHearing =
             bulkActionCaseData.fromListValueToList(bulkActionCaseData.getCasesAcceptedToListForHearing())
                 .stream()
-                .map(CaseLink::getCaseReference)
-                .collect(toList());
+                .map(CaseLink::getCaseReference).toList();
 
         List<ListValue<BulkListCaseDetails>> casesToRemove =
             bulkActionCaseData.getBulkListCaseDetails().stream()
@@ -111,6 +125,10 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
                 .collect(toList()));
         bulkActionCaseData.setCasesToBeRemoved(casesToRemove);
 
+        if (bulkActionCaseData.getPronouncementListDocument() != null) {
+            pronouncementListDocService.generateDocument(details);
+        }
+
         return AboutToStartOrSubmitResponse
             .<BulkActionCaseData, BulkActionState>builder()
             .data(bulkActionCaseData)
@@ -121,6 +139,9 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
         CaseDetails<BulkActionCaseData, BulkActionState> details,
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
+
+        log.info("{} submitted callback invoked for Case Id: {}", CASEWORKER_REMOVE_CASES_BULK_LIST, details.getId());
+
         BulkActionCaseData caseData = details.getData();
 
         caseRemovalService.removeCases(details, caseData.getCasesToBeRemoved(), request.getHeader(AUTHORIZATION));

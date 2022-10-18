@@ -48,6 +48,7 @@ public final class TestConstants {
     public static final String CASEWORKER_USER_ID = "2";
     public static final String APP_2_CITIZEN_USER_ID = "3";
     public static final String SYSTEM_USER_USER_ID = "4";
+    public static final String SUPER_USER_USER_ID = "5";
 
     public static final String TEST_SOL_USER_EMAIL = "testsol@test.com";
     public static final String TEST_APPLICANT_2_EMAIL = "testsol@test.com";
@@ -68,6 +69,7 @@ public final class TestConstants {
 
     public static final String SOLICITOR_MID_EVENT_RESPONSE = "classpath:solicitor-mid-event-response.json";
     public static final String SOLICITOR_MID_EVENT_ERROR = "classpath:solicitor-mid-event-error-response.json";
+    public static final String SOLICITOR_MID_EVENT_EMAIL_ERROR = "classpath:solicitor-mid-event-email-error-response.json";
     public static final String LINE_1_LINE_2_CITY_POSTCODE = "line1\nline2\ncity\npostcode";
     public static final AddressGlobalUK APPLICANT_ADDRESS = AddressGlobalUK.builder()
         .addressLine1("line1")
