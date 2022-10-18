@@ -21,15 +21,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
 public class CaseworkerIssueAmendedApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_ISSUE_AMENDED_APPLICATION = "caseworker-issue-amended-application";
+    private static final long ISSUE_AMENDED_APPLICATION_OFFSET_DAYS = 16;
 
     @Autowired
     private Clock clock;
@@ -39,10 +40,10 @@ public class CaseworkerIssueAmendedApplication implements CCDConfig<CaseData, St
         configBuilder
             .event(CASEWORKER_ISSUE_AMENDED_APPLICATION)
             .forStateTransition(GeneralConsiderationComplete, AwaitingAos)
-            .name("Issue mended application")
-            .description("Issue mended application")
+            .name("Issue amended application")
+            .description("Issue amended application")
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
-            .grant(READ, LEGAL_ADVISOR)
+            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
@@ -59,7 +60,7 @@ public class CaseworkerIssueAmendedApplication implements CCDConfig<CaseData, St
                 .build();
         }
 
-        caseData.setDueDate(LocalDate.now(clock).plusDays(16));
+        caseData.setDueDate(LocalDate.now(clock).plusDays(ISSUE_AMENDED_APPLICATION_OFFSET_DAYS));
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setOffline(YES);
 
