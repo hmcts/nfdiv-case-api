@@ -70,7 +70,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIE
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -402,7 +402,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
 
         verify(notificationService).sendEmail(
             eq("app1sol@gm.com"),
-            eq(JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER),
+            eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
                 hasEntry(SOLICITOR_NAME, "app1sol"),

@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
@@ -45,6 +47,9 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
     @Mock
     private GenerateCertificateOfEntitlement generateCertificateOfEntitlement;
+
+    @Mock
+    private GenerateFinalOrder generateFinalOrder;
 
     @InjectMocks
     private CaseworkerRegenerateCourtOrders caseworkerRegenerateCourtOrders;
@@ -84,7 +89,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
     }
 
     @Test
-    void shouldNotRegenerateCourtOrdersForDigitalCaseWhenThereAreNoExistingCOEAndCOGrantedDocumentsForDigitalCase() {
+    void shouldNotRegenerateCourtOrdersForDigitalCaseWhenThereAreNoExistingCOEAndCOGrantedAndFOGrantedDocumentsForDigitalCase() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
 
         final CaseData caseData = CaseData.builder().build();
@@ -98,7 +103,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
     }
 
     @Test
-    void shouldOnlyRegenerateCOEDocumentWhenCOEExistsAndCOGrantedDoesNotExistsForDigitalCase() {
+    void shouldOnlyRegenerateCOEDocumentWhenCOEExistsAndCOGrantedAndFOGrantedDoesNotExistsForDigitalCase() {
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(
                 ConditionalOrder.builder()
@@ -138,7 +143,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
     }
 
     @Test
-    void shouldOnlyRegenerateCOGrantedDocumentWhenCOGrantedDocExistsAndCOEDoesNotExistsForDigitalCase() {
+    void shouldOnlyRegenerateCOGrantedDocumentWhenCOGrantedDocExistsAndCOEAndFOGrantedDoesNotExistsForDigitalCase() {
         final CaseData caseData = CaseData
             .builder()
             .documents(
@@ -169,7 +174,38 @@ public class CaseworkerRegenerateCourtOrdersTest {
     }
 
     @Test
-    void shouldRegenerateCOGrantedDocumentAndCOEWhenBothDocExistsForDigitalCase() {
+    void shouldOnlyRegenerateFOGrantedDocumentWhenCOGrantedDocExistsAndCOEAndCOGrantedDoesNotExistsForDigitalCase() {
+        final CaseData caseData = CaseData
+            .builder()
+            .documents(
+                CaseDocuments
+                    .builder()
+                    .documentsGenerated(
+                        List.of(getDivorceDocumentListValue(
+                            "http://localhost:4200/assets/8c75732c-d640-43bf-a0e9-f33452243696",
+                            "fo_granted.pdf",
+                            FINAL_ORDER_GRANTED
+                            )
+                        )
+                    ).build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        doNothing().when(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData()).isEqualTo(caseData);
+
+        verify(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
+    }
+
+    @Test
+    void shouldRegenerateCOGrantedDocumentAndFOGrantedAndCOEWhenAllDocsExistForDigitalCase() {
         final CaseData caseData = CaseData
             .builder()
             .documents(
@@ -180,6 +216,11 @@ public class CaseworkerRegenerateCourtOrdersTest {
                                 "http://localhost:4200/assets/8c75732c-d640-43bf-a0e9-f33452243696",
                                 "co_granted.pdf",
                                 CONDITIONAL_ORDER_GRANTED
+                            ),
+                            getDivorceDocumentListValue(
+                                "http://localhost:4200/assets/8c75732c-d640-43bf-a0e9-f33452243696",
+                                "fo_granted.pdf",
+                                FINAL_ORDER_GRANTED
                             )
                         )
                     ).build()
@@ -199,9 +240,12 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         final ListValue<DivorceDocument> regeneratedCODoc =
             getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "co_granted.pdf", CONDITIONAL_ORDER_GRANTED);
+        final ListValue<DivorceDocument> regeneratedFODoc =
+            getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "fo_granted.pdf", FINAL_ORDER_GRANTED);
 
         List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
         documentsGenerated.add(regeneratedCODoc);
+        documentsGenerated.add(regeneratedFODoc);
 
         final CaseData updatedCaseData = CaseData
             .builder()
@@ -226,6 +270,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         when(generateCertificateOfEntitlement.apply(caseDetails)).thenReturn(updatedCaseDetails);
         doNothing().when(generateConditionalOrderPronouncedDocument).removeExistingAndGenerateNewConditionalOrderGrantedDoc(caseDetails);
+        doNothing().when(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
@@ -233,6 +278,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
         assertThat(response.getData()).isEqualTo(updatedCaseData);
 
         verify(generateConditionalOrderPronouncedDocument).removeExistingAndGenerateNewConditionalOrderGrantedDoc(caseDetails);
+        verify(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
         verify(generateCertificateOfEntitlement).apply(caseDetails);
     }
 

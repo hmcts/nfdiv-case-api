@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDIT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -349,7 +350,7 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER))
+                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(WELSH_DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );
@@ -388,7 +389,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
+                hasEntry(DATE_OF_HEARING, now.format(WELSH_DATE_TIME_FORMATTER))
             )),
             eq(WELSH)
         );

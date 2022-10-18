@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.CO_SUBMISSION_DATE
 import static uk.gov.hmcts.divorce.notification.CommonContent.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CLARIFICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_PARTNER_CLARIFICATION_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -105,7 +105,8 @@ public class ClarificationSubmittedNotification implements ApplicantNotification
                                                    final Applicant partner) {
 
         Map<String, String> templateContent = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
-        templateContent.put(PRONOUNCE_BY_DATE, LocalDate.now(clock).plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER));
+        templateContent.put(PRONOUNCE_BY_DATE, LocalDate.now(clock).plusDays(CO_SUBMISSION_DATE_PLUS_DAYS)
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateContent;
     }
 }

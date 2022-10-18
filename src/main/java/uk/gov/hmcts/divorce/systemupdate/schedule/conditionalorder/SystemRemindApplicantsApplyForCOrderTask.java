@@ -34,8 +34,8 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
 
     public static final String NOTIFICATION_FLAG = "applicantsRemindedCanApplyForConditionalOrder";
-    public static final String SUBMIT_EVENT_ERROR = "Submit event failed for case id: {}, continuing to next case";
-    public static final String DESERIALIZATION_ERROR = "Deserialization failed for case id: {}, continuing to next case";
+    public static final String SUBMIT_EVENT_ERROR = "Submit event failed for Case Id: {}, State: {}, continuing to next case";
+    public static final String DESERIALIZATION_ERROR = "Deserialization failed for Case Id: {}, continuing to next case";
     public static final String CCD_SEARCH_ERROR =
         "SystemRemindApplicantsApplyForCOrderTask scheduled task stopped after search error";
     public static final String CCD_CONFLICT_ERROR =
@@ -95,7 +95,7 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, serviceAuth);
 
         } catch (final CcdManagementException e) {
-            log.error(SUBMIT_EVENT_ERROR, caseDetails.getId());
+            log.error(SUBMIT_EVENT_ERROR, caseDetails.getId(), caseDetails.getState());
         } catch (final IllegalArgumentException e) {
             log.error(DESERIALIZATION_ERROR, caseDetails.getId());
         }
