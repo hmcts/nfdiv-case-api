@@ -252,8 +252,8 @@ uk:
             SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER: 'd3d73525-b455-456e-843a-0638554f08ff' #TODO - Welsh translation needed
             JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER: '6dcfc4fa-bacc-455b-be66-0c0b429c4d41' #TODO - Welsh translation needed
             JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER: 'ac1727ae-458d-48eb-be0a-0bdc6a8c3517' #TODO - Welsh translation needed
-            JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER: '6db9a294-1613-4926-867a-4302cb0ad6dc' #TODO - Welsh translation needed
-            JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER: '3a12c67b-da4a-4f56-acff-71bc7f4efa24' #TODO - Welsh translation needed
+            JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER: '7cddc0bf-5b2f-4b4a-b4b6-28cfc22d1cd5'
+            JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER: '83a57815-f1a2-4ac8-92b4-5597b9bd5b38'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}

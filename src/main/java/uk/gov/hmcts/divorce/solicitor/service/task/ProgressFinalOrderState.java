@@ -22,20 +22,20 @@ public class ProgressFinalOrderState implements CaseTask {
         CaseData data = details.getData();
         State state = details.getState();
 
+        var isSole = data.getApplicationType().isSole();
+        state = isSole ? FinalOrderRequested : AwaitingFinalOrder.equals(state)
+                ? AwaitingJointFinalOrder
+                : FinalOrderRequested;
+
         if (data.isWelshApplication()) {
             data.getApplication().setWelshPreviousState(state);
             log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
-                    data.getApplication().getWelshPreviousState(), details.getId());
+                data.getApplication().getWelshPreviousState(), details.getId());
 
             details.setData(data);
             details.setState(WelshTranslationReview);
             return details;
         }
-
-        var isSole = data.getApplicationType().isSole();
-        state = isSole ? FinalOrderRequested : AwaitingFinalOrder.equals(state)
-                ? AwaitingJointFinalOrder
-                : FinalOrderRequested;
 
         details.setData(data);
         details.setState(state);
