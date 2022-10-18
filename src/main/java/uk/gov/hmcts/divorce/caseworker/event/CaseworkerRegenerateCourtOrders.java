@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -22,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 
 @Component
 @Slf4j
@@ -33,6 +35,9 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
 
     @Autowired
     private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
+
+    @Autowired
+    private GenerateFinalOrder generateFinalOrder;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -75,12 +80,16 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             generateConditionalOrderPronouncedDocument.removeExistingAndGenerateNewConditionalOrderGrantedDoc(details);
         }
 
+        if (caseData.getDocuments().getDocumentGeneratedWithType(FINAL_ORDER_GRANTED).isPresent()) {
+            log.info("Regenerating Final Order Granted document for Case Id: {}", details.getId());
+            generateFinalOrder.removeExistingAndGenerateNewFinalOrderGrantedDoc(details);
+        }
+
         CaseDetails<CaseData, State> updatedDetails = null;
         if (null != caseData.getConditionalOrder().getCertificateOfEntitlementDocument()) {
             log.info("Regenerating certificate of entitlement document for Case Id: {}", details.getId());
             updatedDetails = caseTasks(generateCertificateOfEntitlement).run(details);
         }
-
 
         if (null != updatedDetails) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()

@@ -36,6 +36,10 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-caseworker-issue-sole-citizen-application-about-to-submit.json";
     private static final String SOLE_CITIZEN_RESPONSE =
         "classpath:responses/response-caseworker-issue-sole-citizen-application-about-to-submit.json";
+    private static final String SOLE_CITIZEN_REQUEST_APP2_OVERSEAS =
+        "classpath:request/casedata/ccd-callback-caseworker-issue-sole-citizen-application-app2-overseas-about-to-submit.json";
+    private static final String SOLE_CITIZEN_RESPONSE_APP2_OVERSEAS =
+        "classpath:responses/response-caseworker-issue-sole-citizen-application-app2-overseas-about-to-submit.json";
     private static final String JOINT_CITIZEN_REQUEST =
         "classpath:request/casedata/ccd-callback-caseworker-issue-joint-citizen-application-about-to-submit.json";
     private static final String JOINT_CITIZEN_RESPONSE =
@@ -91,6 +95,7 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     @Test
     public void shouldSendNotificationsWhenSubmittedCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
+        caseData.put("accessCode", "123456");
 
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, SUBMITTED_URL);
 
@@ -98,10 +103,34 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
+    public void shouldSendNotificationsWhenSubmittedCallbackIsSuccessfulForSoleCitizenApplicationApp2Overseas() throws Exception {
+        final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST_APP2_OVERSEAS);
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, SUBMITTED_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForSoleCitizenApplicationApp2Overseas() throws Exception {
+        final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST_APP2_OVERSEAS);
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+        assertThatJson(response.asString())
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(json(expectedResponse(
+                SOLE_CITIZEN_RESPONSE_APP2_OVERSEAS
+            )));
+    }
+
+    @Test
     public void shouldSendNotificationsWhenApplicant1LanguageIsWelsh() throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
         caseData.put("applicant1LanguagePreferenceWelsh", YES);
         caseData.put("applicant1ServiceMethod", COURT_SERVICE);
+        caseData.put("accessCode", "123456");
 
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, SUBMITTED_URL);
 

@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -97,9 +97,12 @@ public class SetAosIsDraftedToYesMigration implements Migration {
                         .should(matchQuery(STATE, IssuedToBailiff))
                         .should(matchQuery(STATE, AwaitingService))
                         .should(matchQuery(STATE, AwaitingGeneralConsideration)))
-                .mustNot(matchQuery("data.aosIsDrafted", YES));
+                .mustNot(existsQuery("data.dateAosSubmitted"))
+                .mustNot(existsQuery("data.aosIsDrafted"));
 
-        return ccdSearchService
+        log.info("SetAosIsDraftedToYesMigration searching ES");
+
+        final List<CaseDetails> searchResult = ccdSearchService
             .searchForAllCasesWithQuery(
                 query,
                 user,
@@ -117,9 +120,14 @@ public class SetAosIsDraftedToYesMigration implements Migration {
                 AwaitingServiceConsideration,
                 IssuedToBailiff,
                 AwaitingService,
-                AwaitingGeneralConsideration)
+                AwaitingGeneralConsideration);
+
+        log.info("SetAosIsDraftedToYesMigration Pre Filter Number of cases {}", searchResult.size());
+
+        return searchResult
             .stream()
             .filter(hasAosDraftedEvent)
+            .peek(caseDetails -> log.info("SetAosIsDraftedToYesMigration post filter Case Id: {}", caseDetails.getId()))
             .toList();
     }
 
@@ -130,11 +138,13 @@ public class SetAosIsDraftedToYesMigration implements Migration {
         try {
             caseDetails.getData().put("aosIsDrafted", "Yes");
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
-            log.info("Set aosIsDrafted to Yes successfully for case id: {}", caseId);
+            log.info("SetAosIsDraftedToYesMigration Set aosIsDrafted to Yes successfully for case id: {}", caseId);
         } catch (final CcdConflictException e) {
-            log.error("Could not get lock for case id: {}, continuing to next case", caseId);
+            log.error("SetAosIsDraftedToYesMigration Could not get lock for case id: {}, continuing to next case", caseId);
         } catch (final CcdManagementException e) {
-            log.error("Submit event(after setting aosIsDrafted) failed for case id: {}, continuing to next case", caseId);
+            log.error(
+                "SetAosIsDraftedToYesMigration Submit event(after setting aosIsDrafted) failed for case id: {}, continuing to next case",
+                caseId);
         }
     }
 }
