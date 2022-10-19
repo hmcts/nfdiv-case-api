@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.common.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
@@ -67,7 +68,8 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
-        if (!caseData.getApplicationType().isSole()) {
+        if (!caseData.getApplicationType().isSole()
+                && YesOrNo.YES.equals(caseData.getFinalOrder().getApplicant2AppliedForFinalOrderFirst())) {
             log.info("Notifying Applicant 1 that both applicants have applied for final order for case {}", caseId);
             notificationService.sendEmail(
                 caseData.getApplicant1().getEmail(),
@@ -80,7 +82,8 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(CaseData caseData, Long caseId) {
-        if (!caseData.getApplicationType().isSole()) {
+        if (!caseData.getApplicationType().isSole()
+                && YesOrNo.YES.equals(caseData.getFinalOrder().getApplicant1AppliedForFinalOrderFirst())) {
             log.info("Notifying Applicant 2 that both applicants have applied for final order for case {}", caseId);
             notificationService.sendEmail(
                 caseData.getApplicant2().getEmail(),
