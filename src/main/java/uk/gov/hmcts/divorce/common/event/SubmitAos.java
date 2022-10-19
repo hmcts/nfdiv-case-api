@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DIS
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -49,6 +50,11 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_AOS = "submit-aos";
 
+    private final List<CcdPageConfiguration> pages = List.of(
+        new Applicant2SolStatementOfTruth(),
+        new SolicitorDetailsWithStatementOfTruth()
+    );
+
     @Autowired
     private SubmitAosService submitAosService;
 
@@ -60,11 +66,6 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
-
-    private final List<CcdPageConfiguration> pages = List.of(
-        new Applicant2SolStatementOfTruth(),
-        new SolicitorDetailsWithStatementOfTruth()
-    );
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -180,19 +181,19 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-                .event(SUBMIT_AOS)
-                .forStates(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived))
-                .name("Submit AoS")
-                .description("Submit AoS")
-                .showCondition("applicationType=\"soleApplication\"")
-                .showSummary()
-                .aboutToStartCallback(this::aboutToStart)
-                .aboutToSubmitCallback(this::aboutToSubmit)
-                .submittedCallback(this::submitted)
-                .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
-                .grantHistoryOnly(
-                        CASE_WORKER,
-                        LEGAL_ADVISOR,
-                        SUPER_USER));
+            .event(SUBMIT_AOS)
+            .forStates(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived, AwaitingService))
+            .name("Submit AoS")
+            .description("Submit AoS")
+            .showCondition("applicationType=\"soleApplication\"")
+            .showSummary()
+            .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
+            .grantHistoryOnly(
+                CASE_WORKER,
+                LEGAL_ADVISOR,
+                SUPER_USER));
     }
 }

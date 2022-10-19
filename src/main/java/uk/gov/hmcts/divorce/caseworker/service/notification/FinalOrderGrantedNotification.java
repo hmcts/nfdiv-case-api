@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -66,15 +67,14 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
 
-        if (caseData.getApplicationType().isSole()) {
-            log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "applicant", caseId);
-            notificationService.sendEmail(
-                caseData.getApplicant1().getEmail(),
-                APPLICANTS_FINAL_ORDER_GRANTED,
-                citizenTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
-            );
-        }
+        log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "applicant", caseId);
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            APPLICANTS_FINAL_ORDER_GRANTED,
+            citizenTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+            caseData.getApplicant1().getLanguagePreference()
+        );
     }
 
     @Override
@@ -86,16 +86,15 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2(CaseData caseData, Long caseId) {
 
-        if (caseData.getApplicationType().isSole()) {
-            log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "respondent", caseId);
+        log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID,
+            caseData.getApplicationType().isSole() ? "respondent" : "applicant 2", caseId);
 
-            notificationService.sendEmail(
-                caseData.getApplicant2().getEmail(),
-                APPLICANTS_FINAL_ORDER_GRANTED,
-                citizenTemplateContent(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
-            );
-        }
+        notificationService.sendEmail(
+            caseData.getApplicant2().getEmail(),
+            APPLICANTS_FINAL_ORDER_GRANTED,
+            citizenTemplateContent(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
+            caseData.getApplicant2().getLanguagePreference()
+        );
     }
 
     @Override
@@ -128,19 +127,20 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
         templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant.getSolicitor().getReference())
             ? applicant.getSolicitor().getReference()
             : "not provided");
+        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
 
         return templateVars;
     }
 
     private Map<String, String> citizenTemplateContent(final CaseData caseData,
-                                                         final Long caseId,
-                                                         final Applicant applicant,
-                                                         final Applicant partner) {
+                                                       final Long caseId,
+                                                       final Applicant applicant,
+                                                       final Applicant partner) {
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
 
         //TODO: temporarily set to false, need to update when Final Order switch to sole journey is being developed
-        templateVars.put("isSwitchedToSolePartner", "false");
+        templateVars.put("isSwitchedToSolePartner", NO);
 
         return templateVars;
     }

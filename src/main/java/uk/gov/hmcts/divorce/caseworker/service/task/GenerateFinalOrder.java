@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent;
 import java.time.Clock;
 
 import static java.time.LocalDateTime.now;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
@@ -50,5 +51,16 @@ public class GenerateFinalOrder implements CaseTask {
         );
 
         return caseDetails;
+    }
+
+    public void removeExistingAndGenerateNewFinalOrderGrantedDoc(CaseDetails<CaseData, State> caseDetails) {
+        final CaseData caseData = caseDetails.getData();
+
+        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
+            caseData.getDocuments().getDocumentsGenerated()
+                .removeIf(document -> FINAL_ORDER_GRANTED.equals(document.getValue().getDocumentType()));
+        }
+
+        apply(caseDetails);
     }
 }

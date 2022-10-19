@@ -57,22 +57,22 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildWarningsTab(configBuilder);
         buildStateTab(configBuilder);
         buildAosTab(configBuilder);
-        buildPaymentTab(configBuilder);
-        buildLanguageTab(configBuilder);
-        buildDocumentsTab(configBuilder);
-        buildCorrespondenceTab(configBuilder);
-        buildConfidentialApplicantTab(configBuilder);
-        buildConfidentialRespondentTab(configBuilder);
-        buildConfidentialApplicant2Tab(configBuilder);
-        buildMarriageCertificateTab(configBuilder);
-        buildCivilPartnershipCertificateTab(configBuilder);
-        buildNotesTab(configBuilder);
-        buildGeneralReferralTab(configBuilder);
-        buildConfidentialDocumentsTab(configBuilder);
-        buildServiceApplicationTab(configBuilder);
         buildConditionalOrderTab(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
         buildFinalOrderTab(configBuilder);
+        buildPaymentTab(configBuilder);
+        buildDocumentsTab(configBuilder);
+        buildNotesTab(configBuilder);
+        buildMarriageCertificateTab(configBuilder);
+        buildCivilPartnershipCertificateTab(configBuilder);
+        buildServiceApplicationTab(configBuilder);
+        buildGeneralReferralTab(configBuilder);
+        buildLanguageTab(configBuilder);
+        buildConfidentialApplicantTab(configBuilder);
+        buildConfidentialRespondentTab(configBuilder);
+        buildConfidentialApplicant2Tab(configBuilder);
+        buildConfidentialDocumentsTab(configBuilder);
+        buildCorrespondenceTab(configBuilder);
         buildAmendedApplicationTab(configBuilder);
     }
 
