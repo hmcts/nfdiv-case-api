@@ -162,6 +162,7 @@ class CaseworkerNoticeOfChangeTest {
             )
         ));
     }
+
     @Test
     public void testApp2NowCitizen() {
         var caseDetails = getCaseDetails();
