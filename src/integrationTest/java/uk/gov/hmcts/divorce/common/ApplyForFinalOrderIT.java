@@ -40,6 +40,8 @@ import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.FINAL_ORDER_R
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER;
@@ -305,7 +307,7 @@ public class ApplyForFinalOrderIT {
     }
 
     @Test
-    void shouldSendEmailNotificationToBothApplicantsIfJointApplicationAndBothApplicantsHaveAppliedForFinalOrder() throws Exception {
+    void shouldSendEmailNotificationToApplicant2IfJointApplicationAndApplicant2HaveAppliedForFinalOrder2ndInTime() throws Exception {
 
         setMockClock(clock);
 
@@ -331,9 +333,6 @@ public class ApplyForFinalOrderIT {
             .andExpect(
                 status().isOk()
             );
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
@@ -413,6 +412,44 @@ public class ApplyForFinalOrderIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(WELSH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendEmailNotificationInWelshToApplicant2IfJointApplicationAndApplicant2HaveAppliedForFinalOrder2ndInTime() throws Exception {
+
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        final CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.setFinalOrder(FinalOrder.builder()
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30))
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+            .build());
+        data.getApplicant1().setLanguagePreferenceWelsh(YES);
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
+        data.getApplication().setPreviousState(AwaitingJointFinalOrder);
+        data.getApplication().setWelshPreviousState(FinalOrderRequested);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(data, FINAL_ORDER_REQUESTED, "WelshTranslationReview")))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(WELSH));
 
         verifyNoMoreInteractions(notificationService);
     }

@@ -188,11 +188,22 @@ class AwaitingConditionalOrderReminderNotificationTest {
     }
 
     @Test
-    void shouldSendToApplicant2WhenOffline() {
+    void shouldSendToApplicant2WhenOfflineInJointCase() {
         final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).offline(YES).build());
         awaitingConditionalOrderReminderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
         verify(conditionalOrderReminderPrinter).sendLetters(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldNotSendToApplicant2WhenOfflineInSoleCase() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setApplicant2(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).offline(YES).build());
+        awaitingConditionalOrderReminderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(conditionalOrderReminderPrinter);
     }
 }
