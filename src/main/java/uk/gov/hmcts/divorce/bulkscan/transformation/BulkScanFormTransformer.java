@@ -74,6 +74,8 @@ public abstract class BulkScanFormTransformer {
                     .id(UUID.randomUUID().toString())
                     .build();
 
+                // TODO: create field that can be used to filter cases based on scanned sub type
+
                 scannedDocuments.add(scannedDocListValue);
             }
         );

@@ -222,6 +222,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getApplicant2().setOffline(YES);
             }
 
+            //TODO: Ask Nicola about state as NFDIV-2766 contradicts NFDIV-2537 with regards to post state if D36 used
             final State state = caseData.getApplicationType().isSole() ? AwaitingFinalOrder : AwaitingJointFinalOrder;
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
