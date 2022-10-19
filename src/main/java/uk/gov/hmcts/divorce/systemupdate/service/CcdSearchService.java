@@ -57,6 +57,7 @@ public class CcdSearchService {
     public static final String AOS_RESPONSE = "data.howToRespondApplication";
     public static final String FINAL_ORDER_ELIGIBLE_FROM_DATE = "data.dateFinalOrderEligibleFrom";
     public static final String FINAL_ORDER_ELIGIBLE_TO_RESPONDENT_DATE = "data.dateFinalOrderEligibleToRespondent";
+    public static final String FINAL_ORDER_SUBMITTED_DATE = "data.dateFinalOrderSubmitted";
     public static final String APPLICATION_TYPE = "applicationType";
     public static final String SOLE_APPLICATION = "soleApplication";
     public static final String APPLICANT2_REPRESENTED = "applicant2SolicitorRepresented";
