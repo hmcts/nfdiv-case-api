@@ -449,7 +449,7 @@ public class SubmitAosIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
-        stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", "NFD_Respondent_Responded_Disputed_V2.docx");
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "FL-NFD-GOR-ENG-Respondent-Responded-Defended.docx");
         stubAosPackSendLetter();
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -504,7 +504,7 @@ public class SubmitAosIT {
 
     private void stubAosPackSendLetter() throws IOException {
         final List<String> documentIds = List.of(
-            "51afe8e5-0061-42b6-83a2-4c122046901c", // NOP document id
+            "baf61f9a-38e5-11ed-a261-0242ac120002", // NOP document id
             "4cacfcd1-3588-40c2-94da-c22fb59e1068"  // Scanned document id
         );
 
