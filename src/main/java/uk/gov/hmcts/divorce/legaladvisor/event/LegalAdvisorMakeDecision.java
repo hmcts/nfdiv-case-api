@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -135,6 +136,8 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
 
         final CaseData caseData = details.getData();
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
+
+        caseData.getApplication().setIsAdminClarificationSubmitted(YesOrNo.NO);
 
         State endState;
 
