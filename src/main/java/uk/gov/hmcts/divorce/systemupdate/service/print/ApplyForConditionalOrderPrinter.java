@@ -45,6 +45,7 @@ public class ApplyForConditionalOrderPrinter {
     private GenerateApplyForConditionalOrderDocument generateApplyForConditionalOrderDocument;
 
     private static final String LETTER_TYPE_APPLY_FOR_CONDITIONAL_ORDER_PACK = "apply-for-conditional-order-pack";
+
     private static final int EXPECTED_DOCUMENTS_SIZE = 3;
 
     public void sendLetters(final CaseData caseData,

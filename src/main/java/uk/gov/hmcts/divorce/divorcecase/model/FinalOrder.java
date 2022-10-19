@@ -55,9 +55,9 @@ public class FinalOrder {
     private LocalDate dateFinalOrderEligibleFrom;
 
     @CCD(
-        label = "Final Order granted?",
-        hint = "The Final Order made on ${finalOrderDateFinalOrderSubmitted} will be made absolute and the ${divorceOrDissolution} "
-            + "between ${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName} will be ended.",
+        label = "Grant final order?",
+        hint = "The final order will be made between "
+            + "${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName}.",
         access = {DefaultAccess.class}
     )
     private Set<Granted> granted;
@@ -80,7 +80,7 @@ public class FinalOrder {
     private LocalDateTime grantedDate;
 
     @CCD(
-        label = "Does the applicant want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
+        label = "Does the applicant want to apply for a Final Order?",
         access = {DefaultAccess.class}
     )
     private YesOrNo doesApplicant1WantToApplyForFinalOrder;
@@ -92,7 +92,7 @@ public class FinalOrder {
     private YesOrNo applicant1AppliedForFinalOrderFirst;
 
     @CCD(
-        label = "Does ${labelContentTheApplicant2} want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
+        label = "Does ${labelContentTheApplicant2} want to apply for a Final Order?",
         access = {Applicant2Access.class}
     )
     private YesOrNo doesApplicant2WantToApplyForFinalOrder;
@@ -157,6 +157,12 @@ public class FinalOrder {
     private YesOrNo finalOrderReminderSentApplicant1;
 
     @CCD(
+        label = "Has the first in time applicant been notified that other applicant has not applied for the Final Order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo finalOrderFirstInTimeNotifiedOtherApplicantNotApplied;
+
+    @CCD(
         label = "Has the respondent been sent a reminder to apply for the Final Order?",
         access = {DefaultAccess.class}
     )
@@ -181,4 +187,10 @@ public class FinalOrder {
     public boolean hasFinalOrderReminderSentApplicant1() {
         return YES.equals(finalOrderReminderSentApplicant1);
     }
+
+    @JsonIgnore
+    public boolean hasFirstInTimeApplicantBeenNotifiedOtherApplicantHasNotApplied() {
+        return YES.equals(finalOrderFirstInTimeNotifiedOtherApplicantNotApplied);
+    }
+
 }

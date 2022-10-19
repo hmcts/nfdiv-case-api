@@ -9,6 +9,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -39,6 +40,7 @@ import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
@@ -55,6 +57,7 @@ public class CcdSearchService {
     public static final String AOS_RESPONSE = "data.howToRespondApplication";
     public static final String FINAL_ORDER_ELIGIBLE_FROM_DATE = "data.dateFinalOrderEligibleFrom";
     public static final String FINAL_ORDER_ELIGIBLE_TO_RESPONDENT_DATE = "data.dateFinalOrderEligibleToRespondent";
+    public static final String FINAL_ORDER_SUBMITTED_DATE = "data.dateFinalOrderSubmitted";
     public static final String APPLICATION_TYPE = "applicationType";
     public static final String SOLE_APPLICATION = "soleApplication";
     public static final String APPLICANT2_REPRESENTED = "applicant2SolicitorRepresented";
@@ -91,10 +94,12 @@ public class CcdSearchService {
                 final SearchResult searchResult =
                     searchForCasesWithQuery(from, pageSize, query, user, serviceAuth);
 
-                allCaseDetails.addAll(searchResult.getCases());
+                final List<CaseDetails> pageResults = searchResult.getCases();
+
+                allCaseDetails.addAll(pageResults);
 
                 from += pageSize;
-                totalResults = searchResult.getTotal();
+                totalResults = pageResults.size();
             }
         } catch (final FeignException e) {
             final String message = String.format("Failed to complete search for Cases with state of %s", Arrays.toString(states));
@@ -231,10 +236,11 @@ public class CcdSearchService {
                     BulkActionCaseTypeConfig.CASE_TYPE,
                     sourceBuilder.toString());
 
-                allCaseDetails.addAll(searchResult.getCases());
+                final List<CaseDetails> pageResults = searchResult.getCases();
+                allCaseDetails.addAll(pageResults);
 
                 from += pageSize;
-                totalResults = searchResult.getTotal();
+                totalResults = pageResults.size();
             }
         } catch (final FeignException e) {
 
@@ -281,10 +287,11 @@ public class CcdSearchService {
                     BulkActionCaseTypeConfig.CASE_TYPE,
                     sourceBuilder.toString());
 
-                allCaseDetails.addAll(searchResult.getCases());
+                final List<CaseDetails> pageResults = searchResult.getCases();
+                allCaseDetails.addAll(pageResults);
 
                 from += pageSize;
-                totalResults = searchResult.getTotal();
+                totalResults = pageResults.size();
             }
         } catch (final FeignException e) {
             final String message = "Failed to complete search for Bulk Cases with state of Created or Listed with cases to be removed";
@@ -329,7 +336,9 @@ public class CcdSearchService {
         final QueryBuilder query = boolQuery()
             .must(boolQuery().must(accessCodeNotEmpty))
             .must(boolQuery().must(issueDateExist))
-            .must(boolQuery().must(jointApplication));
+            .must(boolQuery().must(jointApplication))
+            .mustNot(matchQuery(STATE, Withdrawn))
+            .mustNot(matchQuery(STATE, Rejected));
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
@@ -347,6 +356,103 @@ public class CcdSearchService {
         ).getCases();
 
         log.info("Cases retrieved joint app with access code and issue date present {}", caseDetails.size());
+
+        return caseDetails;
+    }
+
+    public List<CaseDetails> searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(User user, String serviceAuth) {
+
+        final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
+        final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
+        final QueryBuilder newPaperCase = matchQuery("data.newPaperCase", YesOrNo.YES);
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(newPaperCase))
+            .must(boolQuery().must(jointApplication))
+            .must(boolQuery().mustNot(applicant2OfflineExist))
+            .mustNot(matchQuery(STATE, Withdrawn))
+            .mustNot(matchQuery(STATE, Rejected));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        log.info("Query to search joint paper applications where applicant 2 offline flag should be set {} ", sourceBuilder.toString());
+
+        List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
+
+        log.info("Cases retrieved joint paper applications where applicant 2 offline flag should be set {}", caseDetails.size());
+
+        return caseDetails;
+    }
+
+    public List<CaseDetails> searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(User user, String serviceAuth) {
+
+        final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
+        final QueryBuilder soleApplication = matchQuery("data.applicationType", "soleApplication");
+        final QueryBuilder newPaperCase = matchQuery("data.newPaperCase", YesOrNo.YES);
+        final QueryBuilder applicant2EmailExist = existsQuery("data.applicant2Email");
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(newPaperCase))
+            .must(boolQuery().must(soleApplication))
+            .must(boolQuery().mustNot(applicant2OfflineExist))
+            .must(boolQuery().mustNot(applicant2EmailExist))
+            .mustNot(matchQuery(STATE, Withdrawn))
+            .mustNot(matchQuery(STATE, Rejected));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        log.info("Query to search sole paper applications where applicant 2 offline flag should be set {} ", sourceBuilder.toString());
+
+        List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
+
+        log.info("Cases retrieved sole paper applications where applicant 2 offline flag should be set {}", caseDetails.size());
+
+        return caseDetails;
+    }
+
+    public List<CaseDetails> searchCasesInAwaitingAosWhereConfirmReadPetitionIsYes(User user, String serviceAuth) {
+
+        final QueryBuilder confirmReadPetitionYes = matchQuery("data.confirmReadPetition", YesOrNo.YES);
+        final QueryBuilder awaitingAosState = matchQuery(STATE, AwaitingAos);
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(confirmReadPetitionYes))
+            .must(boolQuery().must(awaitingAosState));
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(500);
+
+        log.info("Query to search AwaitingAOS cases with confirmReadPetition equals Yes {} ", sourceBuilder.toString());
+
+        List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
+
+        log.info("Cases retrieved AwaitingAOS cases with confirmReadPetition equals Yes {}", caseDetails.size());
 
         return caseDetails;
     }

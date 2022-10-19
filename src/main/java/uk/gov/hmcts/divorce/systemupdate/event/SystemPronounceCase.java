@@ -19,9 +19,12 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPr
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.util.EnumSet;
+
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -53,7 +56,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         new PageBuilder(
             configBuilder
                 .event(SYSTEM_PRONOUNCE_CASE)
-                .forStateTransition(AwaitingPronouncement, ConditionalOrderPronounced)
+                .forStateTransition(EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived), ConditionalOrderPronounced)
                 .showCondition(NEVER_SHOW)
                 .name("System pronounce case")
                 .description("System pronounce case")
