@@ -179,7 +179,7 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
 
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
         jsonDocument.set("data.applicationType", "jointApplication");
-        jsonDocument.set("state", "WelshTranslationReview");
+        jsonDocument.set("state", "FinalOrderRequested");
         jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
