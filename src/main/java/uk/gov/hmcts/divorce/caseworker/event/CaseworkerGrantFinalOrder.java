@@ -105,7 +105,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             );
         }
 
-        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
+        if (caseData.getApplicant2().isOffline()) {
             log.info("Generating final order cover letter for Applicant 2 for case id: {} ", caseId);
             generateFinalOrderCoverLetter.apply(
                 caseData,

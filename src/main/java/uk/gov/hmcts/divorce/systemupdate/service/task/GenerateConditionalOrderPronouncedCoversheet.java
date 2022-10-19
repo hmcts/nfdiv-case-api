@@ -63,7 +63,7 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
             );
         }
 
-        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
+        if (caseData.getApplicant2().isOffline()) {
             log.info("Generating applicant 2 conditional order pronounced coversheet for case id {} ", caseId);
             generateConditionalOrderPronouncedCoversheet(
                 caseData,
