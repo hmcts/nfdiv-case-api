@@ -99,6 +99,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
+            .submittedCallback(this::submitted)
             .showEventNotes()
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER)
@@ -192,8 +193,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getApplicant2().setOffline(YES);
             }
 
-            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
-
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .state(AwaitingLegalAdvisorReferral)
@@ -214,6 +213,32 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .state(state)
                 .build();
         }
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("{} submitted callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
+
+        final CaseData caseData = details.getData();
+
+        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+
+            if (SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
+
+                log.info(
+                        "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
+                        details.getId());
+
+                final User user = idamService.retrieveSystemUpdateUserDetails();
+                final String serviceAuth = authTokenGenerator.generate();
+                ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
+            }
+        }
+        
+        submitAosService.submitAosNotifications(details);
+
+        return SubmittedCallbackResponse.builder().build();
     }
 
     private void reclassifyScannedDocumentToChosenDocumentType(CaseData caseData, DocumentType documentType) {
@@ -256,24 +281,5 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .documentType(documentType)
             .documentComment("Reclassified scanned document")
             .build();
-    }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
-
-        final CaseData caseData = details.getData();
-
-        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
-
-            log.info(
-                "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
-                details.getId());
-
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuth = authTokenGenerator.generate();
-            ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
-        }
-
-        return SubmittedCallbackResponse.builder().build();
     }
 }
