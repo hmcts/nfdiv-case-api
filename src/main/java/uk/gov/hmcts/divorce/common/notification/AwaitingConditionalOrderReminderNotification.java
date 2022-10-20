@@ -111,25 +111,27 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
-        log.info("Sending reminder applicant 2 offline that they can apply for a conditional order: {}", caseId);
+        if (!caseData.getApplicationType().isSole()) {
+            log.info("Sending reminder applicant 2 offline that they can apply for a conditional order for joint case: {}", caseId);
 
-        generateCoversheet.generateCoversheet(
-            caseData,
-            caseId,
-            COVERSHEET_APPLICANT,
-            coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
-            caseData.getApplicant2().getLanguagePreference());
+            generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                COVERSHEET_APPLICANT,
+                coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
+                caseData.getApplicant2().getLanguagePreference());
 
-        generateConditionalOrderReminderDocument.generateConditionalOrderReminder(
-            caseData,
-            caseId,
-            caseData.getApplicant2(),
-            caseData.getApplicant1());
+            generateConditionalOrderReminderDocument.generateConditionalOrderReminder(
+                caseData,
+                caseId,
+                caseData.getApplicant2(),
+                caseData.getApplicant1());
 
-        generateD84Form.generateD84Document(
-            caseData,
-            caseId);
+            generateD84Form.generateD84Document(
+                caseData,
+                caseId);
 
-        conditionalOrderReminderPrinter.sendLetters(caseData, caseId);
+            conditionalOrderReminderPrinter.sendLetters(caseData, caseId);
+        }
     }
 }
