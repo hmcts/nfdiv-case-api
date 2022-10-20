@@ -56,9 +56,7 @@ class SubmitAosServiceTest {
         when(setSubmissionAndDueDate.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(respondentAnswersDoc.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(addRespondentAnswersLink.apply(caseDetails)).thenReturn(expectedCaseDetails);
-        when(sendAosNotifications.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(generateAosResponseLetterDocument.apply(caseDetails)).thenReturn(expectedCaseDetails);
-        when(sendAosResponseLetterPackToApplicant.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submitAosService.submitAos(caseDetails);
 
@@ -68,8 +66,22 @@ class SubmitAosServiceTest {
         verify(setSubmissionAndDueDate).apply(caseDetails);
         verify(respondentAnswersDoc).apply(caseDetails);
         verify(addRespondentAnswersLink).apply(caseDetails);
-        verify(sendAosNotifications).apply(caseDetails);
         verify(generateAosResponseLetterDocument).apply(caseDetails);
+    }
+
+    @Test
+    void shouldProcessSolicitorSubmitAosNotifications() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
+
+        when(sendAosNotifications.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(sendAosResponseLetterPackToApplicant.apply(caseDetails)).thenReturn(expectedCaseDetails);
+
+        final CaseDetails<CaseData, State> result = submitAosService.submitAosNotifications(caseDetails);
+
+        assertThat(result).isSameAs(expectedCaseDetails);
+
+        verify(sendAosNotifications).apply(caseDetails);
         verify(sendAosResponseLetterPackToApplicant).apply(caseDetails);
     }
 
@@ -81,9 +93,7 @@ class SubmitAosServiceTest {
         when(setSubmitAosState.apply(caseDetails)).thenReturn(caseDetails);
         when(setSubmissionAndDueDate.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(addRespondentAnswersLink.apply(caseDetails)).thenReturn(expectedCaseDetails);
-        when(sendAosNotifications.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(generateAosResponseLetterDocument.apply(caseDetails)).thenReturn(expectedCaseDetails);
-        when(sendAosResponseLetterPackToApplicant.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submitAosService.submitOfflineAos(caseDetails);
 
@@ -92,8 +102,6 @@ class SubmitAosServiceTest {
         verify(setSubmitAosState).apply(caseDetails);
         verify(setSubmissionAndDueDate).apply(caseDetails);
         verify(addRespondentAnswersLink).apply(caseDetails);
-        verify(sendAosNotifications).apply(caseDetails);
         verify(generateAosResponseLetterDocument).apply(caseDetails);
-        verify(sendAosResponseLetterPackToApplicant).apply(caseDetails);
     }
 }
