@@ -19,7 +19,7 @@ public class InputScannedDoc {
     private String type;
 
     @JsonProperty("subtype")
-    private String subtype; //TODO: Add filter
+    private String subtype;
 
     @JsonProperty("url")
     private InputScannedDocUrl document;
