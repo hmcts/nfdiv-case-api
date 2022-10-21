@@ -18,7 +18,6 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
@@ -66,7 +65,7 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
             );
         }
 
-        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
+        if (caseData.getApplicant2().isOffline()) {
             log.info("Generating applicant 2 conditional order pronounced coversheet for case id {} ", caseId);
             generateConditionalOrderPronouncedCoversheet(
                 caseData,
