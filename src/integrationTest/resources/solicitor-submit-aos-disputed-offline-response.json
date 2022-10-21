@@ -30,9 +30,9 @@
         "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/51afe8e5-0061-42b6-83a2-4c122046901c",
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/baf61f9a-38e5-11ed-a261-0242ac120002",
             "document_filename": "aosResponseLetter.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/51afe8e5-0061-42b6-83a2-4c122046901c/binary"
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/baf61f9a-38e5-11ed-a261-0242ac120002/binary"
           },
           "documentFileName": "aosResponseLetter.pdf",
           "documentType": "aosResponseLetter"
