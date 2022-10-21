@@ -5,7 +5,6 @@ import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.time.LocalDate;
@@ -19,6 +18,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
@@ -83,8 +83,8 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicationType", "jointApplication");
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(1).toString());
-        caseData.put("applicant1LanguagePreferenceWelsh", YesOrNo.YES);
-        caseData.put("applicant2LanguagePreferenceWelsh", YesOrNo.YES);
+        caseData.put("applicant1LanguagePreferenceWelsh", YES);
+        caseData.put("applicant2LanguagePreferenceWelsh", YES);
 
         final Response response = triggerCallback(caseData, FINAL_ORDER_REQUESTED, ABOUT_TO_SUBMIT_URL, AwaitingFinalOrder);
 
@@ -141,7 +141,6 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
 
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicationType", "jointApplication");
-        caseData.put("applicant2Email", "app2@example.com");
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
         caseData.put("applicant1AppliedForFinalOrderFirst", "Yes");
         caseData.put("applicant2AppliedForFinalOrderFirst", "No");
@@ -152,6 +151,36 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
 
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
         jsonDocument.set("data.applicationType", "jointApplication");
+        jsonDocument.set("state", "FinalOrderRequested");
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(jsonDocument.json());
+    }
+
+    @Test
+    public void shouldMoveStateToFinalOrderRequestedWhenBothApplicantsHaveAppliedForFOInJointCitizenCaseWithLangPrefWelsh()
+        throws Exception {
+
+        final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("applicationType", "jointApplication");
+        caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
+        caseData.put("applicant1AppliedForFinalOrderFirst", "Yes");
+        caseData.put("applicant2AppliedForFinalOrderFirst", "No");
+        caseData.put("applicant1LanguagePreferenceWelsh", YES);
+        caseData.put("applicant2LanguagePreferenceWelsh", YES);
+
+        final Response response = triggerCallback(caseData, FINAL_ORDER_REQUESTED, ABOUT_TO_SUBMIT_URL, AwaitingJointFinalOrder);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
+        jsonDocument.set("data.applicationType", "jointApplication");
+        jsonDocument.set("state", "FinalOrderRequested");
+        jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
