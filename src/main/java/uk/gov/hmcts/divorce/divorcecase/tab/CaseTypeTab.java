@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState
 @Component
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String IS_SOLE = "applicationType=\"soleApplication\"";
     private static final String IS_JOINT = "applicationType=\"jointApplication\"";
     private static final String IS_JOINT_AND_HWF_ENTERED = "applicationType=\"jointApplication\" AND applicant2HWFReferenceNumber=\"*\"";
     private static final String IS_NEW_PAPER_CASE = "newPaperCase=\"Yes\"";
@@ -148,14 +149,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildLanguageTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("languageDetails", "Language")
-            .label("LabelLanguageDetails-Applicant-Sole", "applicationType=\"soleApplication\"", "### The applicant")
+            .label("LabelLanguageDetails-Applicant-Sole", IS_SOLE, "### The applicant")
             .label("LabelLanguageDetails-Applicant-Joint", "applicationType=\"jointApplication\"", "### Applicant 1")
             .field("applicant1LanguagePreferenceWelsh")
             .field("applicant1UsedWelshTranslationOnSubmission")
             .field("applicant1LegalProceedingsDetailsTranslated")
             .field("coApplicant1ReasonInformationNotCorrectTranslated")
             .field("applicant1FinalOrderLateExplanationTranslated")
-            .label("LabelLanguageDetails-Respondent-Sole", "applicationType=\"soleApplication\"", "### The respondent")
+            .label("LabelLanguageDetails-Respondent-Sole", IS_SOLE, "### The respondent")
             .label("LabelLanguageDetails-Respondent-Joint", "applicationType=\"jointApplication\"", "### Applicant 2")
             .field("applicant2LanguagePreferenceWelsh")
             .field("applicant2LegalProceedingsDetailsTranslated")
@@ -406,7 +407,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("granted")
             .field("grantedDate")
             .field("dateFinalOrderNoLongerEligible")
-            .field("dateFinalOrderEligibleToRespondent", "applicationType=\"soleApplication\"");
+            .field("dateFinalOrderEligibleToRespondent", IS_SOLE);
     }
 
     private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
