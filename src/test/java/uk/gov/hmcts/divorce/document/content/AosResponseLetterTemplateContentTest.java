@@ -22,10 +22,20 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
 public class AosResponseLetterTemplateContentTest {
@@ -35,6 +45,9 @@ public class AosResponseLetterTemplateContentTest {
 
     @Mock
     private HoldingPeriodService holdingPeriodService;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
     private AosResponseLetterTemplateContent templateContent;
@@ -70,6 +83,8 @@ public class AosResponseLetterTemplateContentTest {
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("husband");
         when(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))
             .thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -87,6 +102,10 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("divorceOrCivilPartnershipProceedings", "divorce proceedings");
         expectedEntries.put("dueDate", "21 May 2020");
         expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "The Divorce Service");
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -121,6 +140,9 @@ public class AosResponseLetterTemplateContentTest {
 
         when(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))
             .thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
 
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -138,6 +160,10 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("divorceOrCivilPartnershipProceedings", "proceedings to end your civil partnership");
         expectedEntries.put("dueDate", "21 May 2020");
         expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "End A Civil Partnership Service");
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
