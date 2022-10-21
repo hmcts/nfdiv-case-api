@@ -17,11 +17,9 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
@@ -40,9 +38,6 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
 
     @Autowired
     private CasePronouncementService casePronouncementService;
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Autowired
     private Clock clock;
@@ -70,7 +65,7 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
         final CaseDetails<BulkActionCaseData, BulkActionState> details,
         final CaseDetails<BulkActionCaseData, BulkActionState> detailsBefore) {
 
-        log.info("Mid-event callback triggered for scheduleForPronouncement for Case ID: {}", details.getId());
+        log.info("{} mid event callback invoked for Case Id: {}", CASEWORKER_PRONOUNCE_LIST, details.getId());
 
         if (details.getData().getHasJudgePronounced() == NO) {
             return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
@@ -85,6 +80,8 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
         final CaseDetails<BulkActionCaseData, BulkActionState> details,
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
+
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_PRONOUNCE_LIST, details.getId());
 
         final BulkActionCaseData caseData = details.getData();
         final LocalDateTime dateAndTimeOfHearing = caseData.getDateAndTimeOfHearing();
@@ -108,7 +105,9 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
         CaseDetails<BulkActionCaseData, BulkActionState> details,
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
-        casePronouncementService.pronounceCases(details, request.getHeader(AUTHORIZATION));
+
+        log.info("{} submitted callback invoked for Case Id: {}", CASEWORKER_PRONOUNCE_LIST, details.getId());
+        casePronouncementService.pronounceCases(details);
         return SubmittedCallbackResponse.builder().build();
     }
 }
