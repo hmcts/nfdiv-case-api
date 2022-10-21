@@ -16,6 +16,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
@@ -57,22 +58,22 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildWarningsTab(configBuilder);
         buildStateTab(configBuilder);
         buildAosTab(configBuilder);
-        buildPaymentTab(configBuilder);
-        buildLanguageTab(configBuilder);
-        buildDocumentsTab(configBuilder);
-        buildCorrespondenceTab(configBuilder);
-        buildConfidentialApplicantTab(configBuilder);
-        buildConfidentialRespondentTab(configBuilder);
-        buildConfidentialApplicant2Tab(configBuilder);
-        buildMarriageCertificateTab(configBuilder);
-        buildCivilPartnershipCertificateTab(configBuilder);
-        buildNotesTab(configBuilder);
-        buildGeneralReferralTab(configBuilder);
-        buildConfidentialDocumentsTab(configBuilder);
-        buildServiceApplicationTab(configBuilder);
         buildConditionalOrderTab(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
         buildFinalOrderTab(configBuilder);
+        buildPaymentTab(configBuilder);
+        buildDocumentsTab(configBuilder);
+        buildNotesTab(configBuilder);
+        buildMarriageCertificateTab(configBuilder);
+        buildCivilPartnershipCertificateTab(configBuilder);
+        buildServiceApplicationTab(configBuilder);
+        buildGeneralReferralTab(configBuilder);
+        buildLanguageTab(configBuilder);
+        buildConfidentialApplicantTab(configBuilder);
+        buildConfidentialRespondentTab(configBuilder);
+        buildConfidentialApplicant2Tab(configBuilder);
+        buildConfidentialDocumentsTab(configBuilder);
+        buildCorrespondenceTab(configBuilder);
         buildAmendedApplicationTab(configBuilder);
     }
 
@@ -395,6 +396,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, SUPER_USER)
             .showCondition(showForState(
                 AwaitingFinalOrder,
+                AwaitingJointFinalOrder,
                 FinalOrderRequested,
                 FinalOrderPending,
                 FinalOrderOverdue,
