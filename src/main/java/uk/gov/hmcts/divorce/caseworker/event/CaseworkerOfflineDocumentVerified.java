@@ -209,6 +209,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 reclassifyScannedDocumentToChosenDocumentType(caseData, CONDITIONAL_ORDER_APPLICATION);
             }
 
+            if (!SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
+                caseData.getDocuments().setScannedSubtypeReceived(null);
+            }
+
             if (caseData.getApplicationType().isSole()) {
                 caseData.getApplicant1().setOffline(YES);
             } else {
@@ -228,6 +232,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
                 reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
+            }
+
+            if (!SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
+                caseData.getDocuments().setScannedSubtypeReceived(null);
             }
 
             if (caseData.getApplicationType().isSole()) {

@@ -54,6 +54,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
         new PageBuilder(configBuilder
             .attachScannedDocEvent()
             .forStateTransition(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED, OfflineDocumentReceived)
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE_DELETE, SYSTEMUPDATE, CASE_WORKER)
             .grantHistoryOnly(LEGAL_ADVISOR))
@@ -65,6 +66,17 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .complex(CaseData::getBulkScanMetaInfo)
                 .mandatoryWithLabel(BulkScanMetaInfo::getEvidenceHandled, "Supplementary evidence handled")
                 .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        final CaseData caseData = details.getData();
+
+        caseData.getDocuments().setScannedSubtypeReceived(null);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
