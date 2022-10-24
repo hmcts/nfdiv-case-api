@@ -133,7 +133,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
         if (FinalOrderRequested.equals(details.getState())
             || WelshTranslationReview.equals(details.getState()) && FinalOrderRequested.equals(
-                details.getData().getApplication().getWelshPreviousState())) {
+            details.getData().getApplication().getWelshPreviousState())) {
             log.info("Sending Apply for Final Order notifications as case in FinalOrderRequested state for Case Id: {}", details.getId());
             notificationDispatcher.send(finalOrderRequestedNotification, details.getData(), details.getId());
         }
