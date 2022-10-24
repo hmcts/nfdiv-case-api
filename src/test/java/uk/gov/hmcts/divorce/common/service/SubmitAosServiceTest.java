@@ -93,9 +93,7 @@ class SubmitAosServiceTest {
         when(setSubmitAosState.apply(caseDetails)).thenReturn(caseDetails);
         when(setSubmissionAndDueDate.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(addRespondentAnswersLink.apply(caseDetails)).thenReturn(expectedCaseDetails);
-        when(sendAosNotifications.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(generateAosResponseLetterDocument.apply(caseDetails)).thenReturn(expectedCaseDetails);
-        when(sendAosResponseLetterPackToApplicant.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submitAosService.submitOfflineAos(caseDetails);
 
@@ -104,8 +102,6 @@ class SubmitAosServiceTest {
         verify(setSubmitAosState).apply(caseDetails);
         verify(setSubmissionAndDueDate).apply(caseDetails);
         verify(addRespondentAnswersLink).apply(caseDetails);
-        verify(sendAosNotifications).apply(caseDetails);
         verify(generateAosResponseLetterDocument).apply(caseDetails);
-        verify(sendAosResponseLetterPackToApplicant).apply(caseDetails);
     }
 }
