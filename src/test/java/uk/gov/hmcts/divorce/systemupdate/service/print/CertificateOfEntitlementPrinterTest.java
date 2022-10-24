@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -26,7 +27,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -84,6 +84,9 @@ public class CertificateOfEntitlementPrinterTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
     private CertificateOfEntitlementPrinter certificateOfEntitlementPrinter;
@@ -148,7 +151,9 @@ public class CertificateOfEntitlementPrinterTest {
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(certificateOfEntitlementCoverLetterValue);
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(certificateOfEntitlementDocValue);
 
-        Map<String, Object> templateVars = new HashMap<>();
+        Map<String, Object> templateVars = docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference());
+
         templateVars.put(NAME, "Julie Smith");
         templateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
         templateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
@@ -187,7 +192,9 @@ public class CertificateOfEntitlementPrinterTest {
 
         final CaseData caseData = caseData();
 
-        Map<String, Object> templateVars = new HashMap<>();
+        Map<String, Object> templateVars = docmosisCommonContent.getBasicDocmosisTemplateContent(
+                caseData.getApplicant1().getLanguagePreference());
+
         templateVars.put(NAME, "Bob Smith");
         templateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
         templateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
@@ -236,7 +243,9 @@ public class CertificateOfEntitlementPrinterTest {
         );
         caseData.getApplicant1().setSolicitorRepresented(YES);
 
-        Map<String, Object> templateVars = new HashMap<>();
+        Map<String, Object> templateVars = docmosisCommonContent.getBasicDocmosisTemplateContent(
+                caseData.getApplicant1().getLanguagePreference());
+
         templateVars.put(NAME, "App1 Sol");
         templateVars.put(ADDRESS, "5 The Street,\n London,\n W1 1BW");
         templateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));

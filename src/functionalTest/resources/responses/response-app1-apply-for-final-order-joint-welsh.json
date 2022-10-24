@@ -17,5 +17,5 @@
     "applicant2AppliedForFinalOrderFirst": "No",
     "dateFinalOrderNoLongerEligible": "${json-unit.ignore}"
   },
-  "state": "WelshTranslationReview"
+  "state": "AwaitingJointFinalOrder"
 }
