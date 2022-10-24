@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -17,7 +18,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -70,6 +70,9 @@ public class CertificateOfEntitlementPrinter {
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
 
     @Value("${final_order.eligible_from_offset_days}")
     private long finalOrderOffsetDays;
@@ -142,7 +145,8 @@ public class CertificateOfEntitlementPrinter {
                                              final Long caseId,
                                              final Applicant applicant) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+                applicant.getLanguagePreference());
 
         templateContent.put(NAME, applicant.isRepresented()
             ? applicant.getSolicitor().getName()
