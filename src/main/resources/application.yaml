@@ -304,7 +304,7 @@ docmosis:
       SERVICE_ORDER: NFD_Service_Order_V2.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx
-      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V3.docx
+      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers_V3.docx
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers_V3.docx
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers_V3.docx
@@ -333,9 +333,9 @@ docmosis:
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2.docx
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1.docx
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS2-V4.docx
-      CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
-      CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx
-      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order.docx
+      CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-V2.docx
+      CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V2.docx
+      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order-V1.docx
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order.docx
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
@@ -351,7 +351,7 @@ docmosis:
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole_V2.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-WEL-Certificate-Of-Entitlement.docx
-      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V3.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers.docx #TODO: update content
@@ -385,8 +385,8 @@ docmosis:
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2_Cy.docx
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1.docx #TODO: update welsh content
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS2-V4.docx #TODO: update welsh content
-      CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced.docx
-      CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx #TODO: update welsh content
+      CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V2.docx #TODO: update welsh content
+      CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced-V2.docx
       CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order.docx #TODO: update welsh content
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order.docx #TODO: update welsh content
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx
