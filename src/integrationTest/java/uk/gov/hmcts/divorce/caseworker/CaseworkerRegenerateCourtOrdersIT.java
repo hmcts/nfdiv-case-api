@@ -118,7 +118,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
-        stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa", "NFD_Conditional_Order_Pronounced.docx");
+        stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa", "FL-NFD-GOR-ENG-Conditional-Order-Pronounced-V2.docx");
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2", "FL-NFD-GOR-ENG-Final-Order-Granted.docx");
 
         final ListValue<DivorceDocument> coGrantedDoc =
@@ -188,7 +188,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
-        stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa", "NFD_Conditional_Order_Pronounced.docx");
+        stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa", "FL-NFD-GOR-ENG-Conditional-Order-Pronounced-V2.docx");
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2", "FL-NFD-GOR-ENG-Final-Order-Granted.docx");
 
         final ListValue<DivorceDocument> coGrantedDoc =

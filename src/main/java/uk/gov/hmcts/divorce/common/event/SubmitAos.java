@@ -116,6 +116,28 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .build();
     }
 
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Submit AoS submitted callback invoked for Case Id: {}", details.getId());
+
+        submitAosService.submitAosNotifications(details);
+
+        final AcknowledgementOfService acknowledgementOfService = details.getData().getAcknowledgementOfService();
+
+        String eventId = DISPUTE_DIVORCE.equals(acknowledgementOfService.getHowToRespondApplication())
+            ? SYSTEM_ISSUE_AOS_DISPUTED
+            : SYSTEM_ISSUE_AOS_UNDISPUTED;
+
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuthorization = authTokenGenerator.generate();
+
+        log.info("Submitting event id {} for case id {}", eventId, details.getId());
+        ccdUpdateService.submitEvent(details, eventId, user, serviceAuthorization);
+
+        return SubmittedCallbackResponse.builder().build();
+    }
+
     private List<String> validateAos(final CaseData caseData) {
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
@@ -173,25 +195,5 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
                 CASE_WORKER,
                 LEGAL_ADVISOR,
                 SUPER_USER));
-    }
-
-    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
-                                               final CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("Submit AoS submitted callback invoked for Case Id: {}", details.getId());
-
-        final AcknowledgementOfService acknowledgementOfService = details.getData().getAcknowledgementOfService();
-
-        String eventId = DISPUTE_DIVORCE.equals(acknowledgementOfService.getHowToRespondApplication())
-            ? SYSTEM_ISSUE_AOS_DISPUTED
-            : SYSTEM_ISSUE_AOS_UNDISPUTED;
-
-        final User user = idamService.retrieveSystemUpdateUserDetails();
-        final String serviceAuthorization = authTokenGenerator.generate();
-
-        log.info("Submitting event id {} for case id {}", eventId, details.getId());
-        ccdUpdateService.submitEvent(details, eventId, user, serviceAuthorization);
-
-        return SubmittedCallbackResponse.builder().build();
     }
 }

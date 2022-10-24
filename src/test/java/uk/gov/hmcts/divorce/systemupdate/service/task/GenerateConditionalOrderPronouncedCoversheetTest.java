@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ import static java.time.LocalDateTime.now;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
@@ -35,9 +37,17 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -50,6 +60,8 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
 public class GenerateConditionalOrderPronouncedCoversheetTest {
@@ -60,6 +72,9 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
     @Mock
     private Clock clock;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
     @InjectMocks
     GenerateConditionalOrderPronouncedCoversheet generateConditionalOrderPronouncedCoversheet;
 
@@ -69,8 +84,14 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
         setMockClock(clock);
 
         CaseData caseData = caseData();
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
 
         Map<String, Object> applicant1TemplateVars = new HashMap<>();
+        applicant1TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        applicant1TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        applicant1TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicant1TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         applicant1TemplateVars.put(NAME, "Bob Smith");
         applicant1TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
         applicant1TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
@@ -80,18 +101,10 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
         applicant1TemplateVars.put(PRONOUNCEMENT_DATE_PLUS_43,
             caseData.getConditionalOrder().getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER));
 
-        Map<String, Object> applicant2TemplateVars = new HashMap<>();
-        applicant2TemplateVars.put(NAME, "Julie Smith");
-        applicant2TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
-        applicant2TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
-        applicant2TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
-        applicant2TemplateVars.put(IS_DIVORCE, true);
-        applicant2TemplateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
-        applicant2TemplateVars.put(PRONOUNCEMENT_DATE_PLUS_43,
-            caseData.getConditionalOrder().getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER));
-
         CaseDetails<CaseData, State> details =
             CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         generateConditionalOrderPronouncedCoversheet.apply(details);
 
@@ -105,6 +118,39 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
             formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
         );
 
+        verifyNoMoreInteractions(caseDataDocumentService);
+    }
+
+    @Test
+    void shouldGenerateDivorceCoGrantedCoversheetAddressedToApplicant2IfNotRepresentedAndPrintDocs() {
+
+        setMockClock(clock);
+
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setOffline(NO);
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+
+        Map<String, Object> applicant2TemplateVars = new HashMap<>();
+        applicant2TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        applicant2TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        applicant2TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicant2TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        applicant2TemplateVars.put(NAME, "Julie Smith");
+        applicant2TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        applicant2TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
+        applicant2TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+        applicant2TemplateVars.put(IS_DIVORCE, true);
+        applicant2TemplateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
+        applicant2TemplateVars.put(PRONOUNCEMENT_DATE_PLUS_43,
+            caseData.getConditionalOrder().getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER));
+
+        CaseDetails<CaseData, State> details =
+            CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
+        generateConditionalOrderPronouncedCoversheet.apply(details);
+
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
             CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
@@ -114,6 +160,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
             ENGLISH,
             formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
         );
+
         verifyNoMoreInteractions(caseDataDocumentService);
     }
 
@@ -130,15 +177,15 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
                 .build()
         );
         caseData.getApplicant1().setSolicitorRepresented(YES);
-        caseData.getApplicant2().setSolicitor(
-            Solicitor.builder()
-                .name("App2 Sol")
-                .address("221B Baker Street,\n London,\n NW1 6XE\n")
-                .build()
-        );
-        caseData.getApplicant2().setSolicitorRepresented(YES);
+
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
 
         Map<String, Object> applicant1TemplateVars = new HashMap<>();
+        applicant1TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        applicant1TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        applicant1TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicant1TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         applicant1TemplateVars.put(NAME, "App1 Sol");
         applicant1TemplateVars.put(ADDRESS, "5 The Street,\n London,\n W1 1BW");
         applicant1TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
@@ -148,18 +195,10 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
         applicant1TemplateVars.put(PRONOUNCEMENT_DATE_PLUS_43,
             caseData.getConditionalOrder().getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER));
 
-        Map<String, Object> applicant2TemplateVars = new HashMap<>();
-        applicant2TemplateVars.put(NAME, "App2 Sol");
-        applicant2TemplateVars.put(ADDRESS, "221B Baker Street,\n London,\n NW1 6XE\n");
-        applicant2TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
-        applicant2TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
-        applicant2TemplateVars.put(IS_DIVORCE, true);
-        applicant2TemplateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
-        applicant2TemplateVars.put(PRONOUNCEMENT_DATE_PLUS_43,
-            caseData.getConditionalOrder().getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER));
-
         CaseDetails<CaseData, State> details =
             CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         generateConditionalOrderPronouncedCoversheet.apply(details);
 
@@ -172,6 +211,48 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
             ENGLISH,
             formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
         );
+
+        verifyNoMoreInteractions(caseDataDocumentService);
+    }
+
+    @Test
+    void shouldGenerateDivorceCoGrantedCoversheetAddressedToApplicant2SolicitorIfRepresentedAndPrintDocs() {
+
+        setMockClock(clock);
+
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setOffline(NO);
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .name("App2 Sol")
+                .address("221B Baker Street,\n London,\n NW1 6XE\n")
+                .build()
+        );
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+
+        Map<String, Object> applicant2TemplateVars = new HashMap<>();
+        applicant2TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        applicant2TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        applicant2TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicant2TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        applicant2TemplateVars.put(NAME, "App2 Sol");
+        applicant2TemplateVars.put(ADDRESS, "221B Baker Street,\n London,\n NW1 6XE\n");
+        applicant2TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
+        applicant2TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+        applicant2TemplateVars.put(IS_DIVORCE, true);
+        applicant2TemplateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
+        applicant2TemplateVars.put(PRONOUNCEMENT_DATE_PLUS_43,
+            caseData.getConditionalOrder().getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER));
+
+        CaseDetails<CaseData, State> details =
+            CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
+        generateConditionalOrderPronouncedCoversheet.apply(details);
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
