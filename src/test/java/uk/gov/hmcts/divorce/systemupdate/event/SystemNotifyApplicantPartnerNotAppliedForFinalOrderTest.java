@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.notification.AwaitingFinalOrderReminderNotification;
+import uk.gov.hmcts.divorce.common.notification.PartnerNotAppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -18,32 +18,32 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForFinalOrder.SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantPartnerNotAppliedForFinalOrder.SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-class SystemRemindApplicantsApplyForFinalOrderTest {
+public class SystemNotifyApplicantPartnerNotAppliedForFinalOrderTest {
 
     @Mock
-    private AwaitingFinalOrderReminderNotification awaitingFinalOrderReminderNotification;
+    private PartnerNotAppliedForFinalOrderNotification partnerNotAppliedForFinalOrderNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
-    private SystemRemindApplicantsApplyForFinalOrder systemRemindApplicantsApplyForFinalOrder;
+    private SystemNotifyApplicantPartnerNotAppliedForFinalOrder systemNotifyApplicantPartnerNotAppliedForFinalOrder;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        systemRemindApplicantsApplyForFinalOrder.configure(configBuilder);
+        systemNotifyApplicantPartnerNotAppliedForFinalOrder.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER);
+            .contains(SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER);
     }
 
     @Test
@@ -54,9 +54,9 @@ class SystemRemindApplicantsApplyForFinalOrderTest {
         details.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            systemRemindApplicantsApplyForFinalOrder.aboutToSubmit(details, details);
+            systemNotifyApplicantPartnerNotAppliedForFinalOrder.aboutToSubmit(details, details);
 
-        verify(notificationDispatcher).send(awaitingFinalOrderReminderNotification, caseData, details.getId());
-        assertThat(response.getData().getFinalOrder().getFinalOrderReminderSentApplicant1()).isEqualTo(YesOrNo.YES);
+        verify(notificationDispatcher).send(partnerNotAppliedForFinalOrderNotification, caseData, details.getId());
+        assertThat(response.getData().getFinalOrder().getFinalOrderFirstInTimeNotifiedOtherApplicantNotApplied()).isEqualTo(YesOrNo.YES);
     }
 }
