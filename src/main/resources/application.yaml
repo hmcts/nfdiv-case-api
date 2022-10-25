@@ -81,7 +81,7 @@ uk:
             OVERSEAS_RESPONDENT_APPLICATION_ISSUED: '1e70a276-237a-44f1-bbb5-8e9eb1a0ac3a'
             SOLE_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
             SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED: 'd87e0405-15bb-405b-b277-27cec5444106'
-            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: 'b2025543-0258-48f2-ae2c-30fcf92c5332'
+            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: '979e15bb-5033-4038-9560-5468e3d45f81'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '71337384-3fdb-4eb8-8adb-be5e4e59857a'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE: '9d456d7f-2173-4d55-93bb-dbaa4f1cd7be'
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '8eb89fa9-815a-4414-9d9c-f57e5a288d77'
@@ -187,7 +187,7 @@ uk:
             OVERSEAS_RESPONDENT_APPLICATION_ISSUED: '1e70a276-237a-44f1-bbb5-8e9eb1a0ac3a' #TODO: Update Welsh translation
             SOLE_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
             SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED: 'd87e0405-15bb-405b-b277-27cec5444106'
-            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: 'b2025543-0258-48f2-ae2c-30fcf92c5332'
+            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: '979e15bb-5033-4038-9560-5468e3d45f81'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS: 'abd903c6-7897-4257-a970-0d10b17c5edd'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE: '9d456d7f-2173-4d55-93bb-dbaa4f1cd7be'
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '8eb89fa9-815a-4414-9d9c-f57e5a288d77'
@@ -256,6 +256,7 @@ uk:
             JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER: '488c2dd6-d38f-4869-b716-0743be52c6cb'
             JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER: '7cddc0bf-5b2f-4b4a-b4b6-28cfc22d1cd5'
             JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER: '83a57815-f1a2-4ac8-92b4-5597b9bd5b38'
+            SOLE_APPLIED_FOR_FINAL_ORDER: '7e64d645-8973-4bac-95ca-49e54c423655'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
@@ -304,7 +305,8 @@ docmosis:
       SERVICE_ORDER: NFD_Service_Order_V2.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx
-      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V3.docx
+      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx
+      CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers_V3.docx
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers_V3.docx
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers_V3.docx
@@ -333,9 +335,10 @@ docmosis:
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2.docx
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1.docx
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS2-V4.docx
-      CONDITIONAL_ORDER_PRONOUNCED: NFD_Conditional_Order_Pronounced.docx
-      CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx
-      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order.docx
+      CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-V2.docx
+      CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V2.docx
+      CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx
+      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order-V1.docx
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order.docx
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
@@ -351,7 +354,8 @@ docmosis:
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole_V2.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-WEL-Certificate-Of-Entitlement.docx
-      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V3.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers.docx #TODO: update content
@@ -385,8 +389,9 @@ docmosis:
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2_Cy.docx
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1.docx #TODO: update welsh content
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS2-V4.docx #TODO: update welsh content
-      CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced.docx
-      CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx #TODO: update welsh content
+      CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V2.docx #TODO: update welsh content
+      CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced-V2.docx
+      CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx #TODO: update welsh content
       CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order.docx #TODO: update welsh content
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order.docx #TODO: update welsh content
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx
