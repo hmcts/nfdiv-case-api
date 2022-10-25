@@ -26,8 +26,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
@@ -72,6 +70,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
 
         final CaseData caseData = details.getData();
 
+        //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
         caseData.getDocuments().setScannedSubtypeReceived(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -113,14 +112,10 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
                 CaseDocuments.ScannedDocumentSubtypes.valueOf(scannedDocument.getSubtype().toUpperCase(Locale.ROOT));
             final DocumentType documentType = getDocumentType(scannedDocumentSubtype);
 
-            if (isEmpty(documentType)) {
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .errors(singletonList("Scanned Document Subtype is an invalid form type"))
-                    .build();
+            if (isNotEmpty(documentType)) {
+                caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
+                caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
             }
-
-            caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
-            caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

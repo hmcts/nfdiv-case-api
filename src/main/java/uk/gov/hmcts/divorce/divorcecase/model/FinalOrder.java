@@ -73,7 +73,7 @@ public class FinalOrder {
     }
 
     @CCD(
-        label = "Final Order granted date",
+        label = "Final Order granted date and time",
         access = {DefaultAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -157,6 +157,12 @@ public class FinalOrder {
     private YesOrNo finalOrderReminderSentApplicant1;
 
     @CCD(
+        label = "Has the first in time applicant been notified that other applicant has not applied for the Final Order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo finalOrderFirstInTimeNotifiedOtherApplicantNotApplied;
+
+    @CCD(
         label = "Has the respondent been sent a reminder to apply for the Final Order?",
         access = {DefaultAccess.class}
     )
@@ -203,4 +209,10 @@ public class FinalOrder {
     public boolean hasFinalOrderReminderSentApplicant1() {
         return YES.equals(finalOrderReminderSentApplicant1);
     }
+
+    @JsonIgnore
+    public boolean hasFirstInTimeApplicantBeenNotifiedOtherApplicantHasNotApplied() {
+        return YES.equals(finalOrderFirstInTimeNotifiedOtherApplicantNotApplied);
+    }
+
 }

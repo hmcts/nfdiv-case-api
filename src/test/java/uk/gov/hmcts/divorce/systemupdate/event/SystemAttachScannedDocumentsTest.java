@@ -132,7 +132,7 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @Test
-    void shouldReturnErrorIfScannedDocumentSubtypeIsNotSupported() {
+    void shouldNotSetScannedSubtypeReceivedOrReclassifyDocumentIfScannedDocumentSubtypeIsNotSupported() {
         final Document document = Document.builder()
             .url("/filename")
             .binaryUrl("/filename/binary")
@@ -175,9 +175,8 @@ public class SystemAttachScannedDocumentsTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             systemAttachScannedDocuments.aboutToSubmit(details, beforeDetails);
 
-        assertThat(response.getErrors()).isNotEmpty();
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains("Scanned Document Subtype is an invalid form type");
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
     }
 
     @Test

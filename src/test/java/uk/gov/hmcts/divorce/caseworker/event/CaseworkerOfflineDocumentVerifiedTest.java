@@ -32,6 +32,7 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
@@ -45,6 +46,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -460,9 +462,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
-
-        verify(notificationDispatcher)
-            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -522,9 +521,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
-
-        verify(notificationDispatcher)
-            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -588,9 +584,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
         assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNotNull();
         assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isEqualTo(D84);
-
-        verify(notificationDispatcher)
-            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -653,9 +646,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
         assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
-
-        verify(notificationDispatcher)
-            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -915,6 +905,25 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
+    void shouldSendOfflineNotifications() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().typeOfDocumentAttached(AOS_D10).build())
+            .application(Application.builder()
+                    .issueDate(LocalDate.of(2022, 01, 01))
+                    .stateToTransitionApplicationTo(Holding)
+                    .build())
+            .build();
+        details.setData(caseData);
+
+        SubmittedCallbackResponse response =
+                caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verify(submitAosService).submitAosNotifications(details);
+        verifyNoMoreInteractions(submitAosService);
+    }
+
+    @Test
     void shouldNotSetDynamicListWithScannedDocumentNamesIfScannedSubtypeReceivedIsPopulated() {
         final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf");
         final ListValue<ScannedDocument> doc2 = scannedDocument("doc2.pdf");
@@ -945,6 +954,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
         details.setData(caseData);
+        details.setId(TEST_CASE_ID);
 
         final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
         final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
@@ -953,6 +963,8 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         caseworkerOfflineDocumentVerified.submitted(details, details);
 
+        verify(notificationDispatcher)
+                .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
         verify(ccdUpdateService).submitEvent(details, SWITCH_TO_SOLE_CO, user, TEST_SERVICE_AUTH_TOKEN);
     }
 

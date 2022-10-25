@@ -186,15 +186,15 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D10.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
 
-            if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
-                reclassifyScannedDocumentToChosenDocumentType(caseData, RESPONDENT_ANSWERS);
-            }
+            reclassifyScannedDocumentToChosenDocumentType(caseData, RESPONDENT_ANSWERS);
+
             // setting the status as drafted as AOS answers has been received and is being classified by caseworker
             details.setState(AosDrafted);
 
             final CaseDetails<CaseData, State> response = submitAosService.submitOfflineAos(details);
             response.getData().getApplicant2().setOffline(YES);
             response.getData().getAcknowledgementOfService().setStatementOfTruth(YES);
+            //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
             response.getData().getDocuments().setScannedSubtypeReceived(null);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -205,11 +205,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D84.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
 
-            if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
-                reclassifyScannedDocumentToChosenDocumentType(caseData, CONDITIONAL_ORDER_APPLICATION);
-            }
+            reclassifyScannedDocumentToChosenDocumentType(caseData, CONDITIONAL_ORDER_APPLICATION);
 
             if (!SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
+                //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
                 caseData.getDocuments().setScannedSubtypeReceived(null);
             }
 
@@ -220,8 +219,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getApplicant2().setOffline(YES);
             }
 
-            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
-
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .state(AwaitingLegalAdvisorReferral)
@@ -230,11 +227,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D36.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
 
-            if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
-                reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
-            }
+            reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
 
             if (!SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
+                //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
                 caseData.getDocuments().setScannedSubtypeReceived(null);
             }
 
@@ -260,6 +256,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 details.getData().setDueDate(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()));
             }
 
+            //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
             details.getData().getDocuments().setScannedSubtypeReceived(null);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -270,11 +267,13 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     }
 
     private void reclassifyScannedDocumentToChosenDocumentType(CaseData caseData, DocumentType documentType) {
-        String filename = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
+        if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
+            String filename = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
 
-        log.info("Reclassifying scanned doc {} to {} doc type", filename, documentType);
+            log.info("Reclassifying scanned doc {} to {} doc type", filename, documentType);
 
-        caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, filename);
+            caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, filename);
+        }
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
@@ -282,18 +281,24 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         final CaseData caseData = details.getData();
 
         if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            || D84.equals(caseData.getDocuments().getScannedSubtypeReceived())
-            && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
+            || D84.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
 
-            log.info(
-                "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
-                details.getId());
+            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
 
-            caseData.getDocuments().setScannedSubtypeReceived(null);
+            if (SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuth = authTokenGenerator.generate();
-            ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
+                log.info(
+                    "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
+                    details.getId());
+
+                //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
+                caseData.getDocuments().setScannedSubtypeReceived(null);
+
+                final User user = idamService.retrieveSystemUpdateUserDetails();
+                final String serviceAuth = authTokenGenerator.generate();
+                ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
+            }
+
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D36.equals(caseData.getDocuments().getScannedSubtypeReceived())
             && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
@@ -302,11 +307,18 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 "CaseworkerOfflineDocumentVerified submitted callback triggering Switched To Sole FO event for case id: {}",
                 details.getId());
 
+            //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
             caseData.getDocuments().setScannedSubtypeReceived(null);
 
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();
             ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_FO, user, serviceAuth);
+        } else if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            log.info(
+                "CaseworkerOfflineDocumentVerified submitted callback triggering submit aos notifications: {}",
+                details.getId());
+
+            submitAosService.submitAosNotifications(details);
         }
 
         return SubmittedCallbackResponse.builder().build();
