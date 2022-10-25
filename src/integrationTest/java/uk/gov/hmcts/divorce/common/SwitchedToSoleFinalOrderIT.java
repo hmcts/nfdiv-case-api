@@ -173,7 +173,6 @@ public class SwitchedToSoleFinalOrderIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
-        System.out.println(response);
 
         assertThatJson(response)
             .when(TREATING_NULL_AS_ABSENT)
