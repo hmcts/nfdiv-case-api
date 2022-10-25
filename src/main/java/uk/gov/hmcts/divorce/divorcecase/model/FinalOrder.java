@@ -73,7 +73,7 @@ public class FinalOrder {
     }
 
     @CCD(
-        label = "Final Order granted date",
+        label = "Final Order granted date and time",
         access = {DefaultAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
