@@ -50,4 +50,52 @@ class FinalOrderTest {
 
         assertThat(finalOrder.hasFinalOrderReminderSentApplicant1()).isTrue();
     }
+
+    @Test
+    void shouldReturnTrueIfApplicant1HasSubmittedFOButApplicant2HasNotSubmittedPast14Days() {
+
+        var submittedDate = LocalDateTime.now().minusDays(15);
+
+        final FinalOrder finalOrder  = FinalOrder.builder()
+            .applicant1SubmittedFinalOrder(YES)
+            .dateFinalOrderSubmitted(submittedDate).build();
+
+        assertThat(finalOrder.shouldEnableSwitchToSoleFoForApplicant1()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfApplicant1HasSubmittedFOButApplicant2HasNotSubmittedPast14Days() {
+
+        var submittedDate = LocalDateTime.now();
+
+        final FinalOrder finalOrder  = FinalOrder.builder()
+            .applicant1SubmittedFinalOrder(YES)
+            .dateFinalOrderSubmitted(submittedDate).build();
+
+        assertThat(finalOrder.shouldEnableSwitchToSoleFoForApplicant1()).isFalse();
+    }
+
+    @Test
+    void shouldReturnTrueIfApplicant2HasSubmittedFOButApplicant1HasNotSubmittedPast14Days() {
+
+        var submittedDate = LocalDateTime.now().minusDays(15);
+
+        final FinalOrder finalOrder  = FinalOrder.builder()
+            .applicant2SubmittedFinalOrder(YES)
+            .dateFinalOrderSubmitted(submittedDate).build();
+
+        assertThat(finalOrder.shouldEnableSwitchToSoleFoForApplicant2()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfApplicant2HasSubmittedFOButApplicant2HasNotSubmittedPast14Days() {
+
+        var submittedDate = LocalDateTime.now();
+
+        final FinalOrder finalOrder  = FinalOrder.builder()
+            .applicant1SubmittedFinalOrder(YES)
+            .dateFinalOrderSubmitted(submittedDate).build();
+
+        assertThat(finalOrder.shouldEnableSwitchToSoleFoForApplicant2()).isFalse();
+    }
 }
