@@ -496,12 +496,6 @@ public class Application {
     )
     private YesOrNo switchedToSoleCo;
 
-    @CCD(
-        label = "Is a required admin clarification now submitted?",
-        access = {CaseworkerAccess.class}
-    )
-    private YesOrNo isAdminClarificationSubmitted;
-
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary
