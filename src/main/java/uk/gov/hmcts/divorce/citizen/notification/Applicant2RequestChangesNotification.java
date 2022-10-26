@@ -14,6 +14,7 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER_IS_REPRESENTED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -27,7 +28,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPL
 public class Applicant2RequestChangesNotification implements ApplicantNotification {
 
     public static final String APPLICANT_2_COMMENTS = "applicant 2 comments";
-    public static final String PARTNER_IS_REPRESENTED = "partner is represented";
     public static final String REQUESTED_CHANGES = "requested changes explanation";
 
     @Autowired

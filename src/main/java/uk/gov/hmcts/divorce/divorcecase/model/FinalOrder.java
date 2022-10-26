@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
@@ -86,10 +87,16 @@ public class FinalOrder {
     private YesOrNo doesApplicant1WantToApplyForFinalOrder;
 
     @CCD(
-        label = "Has applicant1 applied for a final order?",
+        label = "Has applicant1 applied for a final order first?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1AppliedForFinalOrderFirst;
+
+    @CCD(
+        label = "Has applicant1 submitted a final order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1SubmittedFinalOrder;
 
     @CCD(
         label = "Does ${labelContentTheApplicant2} want to apply for a Final Order?",
@@ -98,10 +105,16 @@ public class FinalOrder {
     private YesOrNo doesApplicant2WantToApplyForFinalOrder;
 
     @CCD(
-        label = "Has ${labelContentApplicant2} applied for a final order?",
+        label = "Has ${labelContentApplicant2} applied for a final order first?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant2AppliedForFinalOrderFirst;
+
+    @CCD(
+        label = "Has applicant2 submitted a final order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2SubmittedFinalOrder;
 
     @CCD(
         label = "${labelContentTheApplicant2UC} final order explanation",
@@ -168,6 +181,16 @@ public class FinalOrder {
     )
     private YesOrNo finalOrderReminderSentApplicant2;
 
+    @CCD(
+        label = "Has SolicitorSwitchToSoleFO been enabled for Applicant1 Solicitor?"
+    )
+    private YesOrNo enableApplicant1SolicitorSwitchToSoleFo;
+
+    @CCD(
+        label = "Has SolicitorSwitchToSoleFO been enabled for Applicant2 Solicitor?"
+    )
+    private YesOrNo enableApplicant2SolicitorSwitchToSoleFo;
+
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
@@ -193,4 +216,21 @@ public class FinalOrder {
         return YES.equals(finalOrderFirstInTimeNotifiedOtherApplicantNotApplied);
     }
 
+    @JsonIgnore
+    public boolean shouldEnableSwitchToSoleFoForApplicant1() {
+        return
+            YES.equals(getApplicant1SubmittedFinalOrder())
+                && !YES.equals(getApplicant2SubmittedFinalOrder())
+                && isNotEmpty(getDateFinalOrderSubmitted())
+                && getDateFinalOrderSubmitted().plusDays(14).isBefore(LocalDateTime.now());
+    }
+
+    @JsonIgnore
+    public boolean shouldEnableSwitchToSoleFoForApplicant2() {
+        return
+            YES.equals(getApplicant2SubmittedFinalOrder())
+                && !YES.equals(getApplicant1SubmittedFinalOrder())
+                && isNotEmpty(getDateFinalOrderSubmitted())
+                && getDateFinalOrderSubmitted().plusDays(14).isBefore(LocalDateTime.now());
+    }
 }

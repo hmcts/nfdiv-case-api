@@ -112,6 +112,8 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
         var updatedDetails = progressFinalOrderState.apply(details);
 
+        data.getFinalOrder().setApplicant1SubmittedFinalOrder(YES);
+        
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedDetails.getData())
             .state(updatedDetails.getState())

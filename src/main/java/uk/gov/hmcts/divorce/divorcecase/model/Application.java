@@ -432,6 +432,12 @@ public class Application {
     private YesOrNo jointApplicantNotifiedCanSwitchToSole;
 
     @CCD(
+        label = "Notification sent to Joint Applicant indicating they can switch to sole at final order stage",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jointApplicantNotifiedCanSwitchToSoleFinalOrder;
+
+    @CCD(
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "ReissueOption",
