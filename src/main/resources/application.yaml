@@ -254,6 +254,7 @@ uk:
             SOLICITOR_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER: '72a3f5f8-598f-420b-8041-3f6541e48779' #TODO - Welsh translation needed
             SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER: 'd3d73525-b455-456e-843a-0638554f08ff' #TODO - Welsh translation needed
             JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER: '6dcfc4fa-bacc-455b-be66-0c0b429c4d41' #TODO - Welsh translation needed
+<<<<<<< HEAD
             OTHER_APPLICANT_NOT_APPLIED_FOR_FINAL_ORDER: '26aaa755-2cb1-422c-be80-08ff15f9be27'
             JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER: '488c2dd6-d38f-4869-b716-0743be52c6cb'
             JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER: '7cddc0bf-5b2f-4b4a-b4b6-28cfc22d1cd5'
@@ -261,6 +262,13 @@ uk:
             SOLE_APPLIED_FOR_FINAL_ORDER: '7e64d645-8973-4bac-95ca-49e54c423655'
             INTEND_TO_SWITCH_TO_SOLE_FO: 'b734941e-37d8-47b8-aef8-6c51412bcbc1' #TODO - Welsh translation needed
             PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO: '360465c3-2da5-403a-8163-5487cc214aa7' #TODO - Welsh translation needed
+=======
+            INTEND_TO_SWITCH_TO_SOLE_FO: 'b734941e-37d8-47b8-aef8-6c51412bcbc1' #TODO - Welsh translation needed
+            PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO: '360465c3-2da5-403a-8163-5487cc214aa7' #TODO - Welsh translation needed
+            JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER: '488c2dd6-d38f-4869-b716-0743be52c6cb'
+            JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER: '7cddc0bf-5b2f-4b4a-b4b6-28cfc22d1cd5'
+            JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER: '83a57815-f1a2-4ac8-92b4-5597b9bd5b38'
+>>>>>>> 4b295c2bfdb24c8810508cc204026bbc75c12d82
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
