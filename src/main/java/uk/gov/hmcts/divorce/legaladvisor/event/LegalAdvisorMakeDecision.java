@@ -137,7 +137,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
         final CaseData caseData = details.getData();
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
 
-        caseData.getApplication().setIsAdminClarificationSubmitted(YesOrNo.NO);
+        caseData.getConditionalOrder().setIsAdminClarificationSubmitted(YesOrNo.NO);
 
         State endState;
 

@@ -49,7 +49,7 @@ public class CaseworkerAddAdminClarification implements CCDConfig<CaseData, Stat
         );
         CaseData caseData = details.getData();
 
-        caseData.getApplication().setIsAdminClarificationSubmitted(YesOrNo.YES);
+        caseData.getConditionalOrder().setIsAdminClarificationSubmitted(YesOrNo.YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
