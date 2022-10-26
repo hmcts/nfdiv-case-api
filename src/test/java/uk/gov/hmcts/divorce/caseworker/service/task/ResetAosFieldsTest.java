@@ -28,7 +28,9 @@ class ResetAosFieldsTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseData.setAcknowledgementOfService(AcknowledgementOfService.builder()
             .confirmReadPetition(YesOrNo.YES)
-            .aosIsDrafted(YesOrNo.YES).build());
+            .dateAosSubmitted(LOCAL_DATE_TIME)
+            .aosIsDrafted(YesOrNo.YES)
+            .build());
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
@@ -38,6 +40,7 @@ class ResetAosFieldsTest {
 
         assertThat(result.getData().getAcknowledgementOfService().getConfirmReadPetition()).isNull();
         assertThat(result.getData().getAcknowledgementOfService().getAosIsDrafted()).isNull();
+        assertThat(result.getData().getAcknowledgementOfService().getDateAosSubmitted()).isNull();
     }
 
     @Test
@@ -47,7 +50,9 @@ class ResetAosFieldsTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseData.setAcknowledgementOfService(AcknowledgementOfService.builder()
             .confirmReadPetition(YesOrNo.YES)
-            .aosIsDrafted(YesOrNo.YES).build());
+            .dateAosSubmitted(LOCAL_DATE_TIME)
+            .aosIsDrafted(YesOrNo.YES)
+            .build());
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
@@ -57,5 +62,6 @@ class ResetAosFieldsTest {
 
         assertThat(result.getData().getAcknowledgementOfService().getConfirmReadPetition()).isEqualTo(YesOrNo.YES);
         assertThat(result.getData().getAcknowledgementOfService().getAosIsDrafted()).isEqualTo(YesOrNo.YES);
+        assertThat(result.getData().getAcknowledgementOfService().getDateAosSubmitted()).isEqualTo(LOCAL_DATE_TIME);
     }
 }
