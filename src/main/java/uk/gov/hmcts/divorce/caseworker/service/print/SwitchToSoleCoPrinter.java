@@ -38,6 +38,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TH
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SWITCH_TO_SOLE_CO_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -127,6 +129,8 @@ public class SwitchToSoleCoPrinter {
 
         templateContent.put(CASE_REFERENCE, formatId(caseId));
         templateContent.put(NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
+        templateContent.put(FIRST_NAME, respondent.getFirstName());
+        templateContent.put(LAST_NAME, respondent.getLastName());
         templateContent.put(ADDRESS, respondent.getPostalAddress());
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(PARTNER, commonContent.getPartner(caseData, applicant, respondent.getLanguagePreference()));
