@@ -8,16 +8,17 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleCoNotification;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleCoNotification;
+import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
+import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.EnumSet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,10 +53,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
     private HttpServletRequest httpServletRequest;
 
     @Autowired
-    private Applicant1SwitchToSoleCoNotification applicant1SwitchToSoleCoNotification;
-
-    @Autowired
-    private Applicant2SwitchToSoleCoNotification applicant2SwitchToSoleCoNotification;
+    private SwitchToSoleCoNotification switchToSoleCoNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -65,6 +63,9 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
+    @Autowired
+    private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
 
     @Autowired
     private SwitchToSoleCoPrinter switchToSoleCoPrinter;
@@ -77,14 +78,16 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
             .forStateTransition(EnumSet.of(ConditionalOrderPending, AwaitingLegalAdvisorReferral), AwaitingLegalAdvisorReferral)
             .name("SwitchedToSoleCO")
             .description("Application type switched to sole post CO submission")
-            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .retries(120, 120)
-            .aboutToSubmitCallback(this::aboutToSubmit);
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+
         Long caseId = details.getId();
         log.info("SwitchedToSoleCO aboutToSubmit callback invoked for Case Id: {}", caseId);
         CaseData data = details.getData();
@@ -95,35 +98,55 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         data.getConditionalOrder().setSwitchedToSole(YES);
 
         // triggered by citizen users
-        if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
-            notificationDispatcher.send(applicant1SwitchToSoleCoNotification, data, caseId);
-        } else if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
-            notificationDispatcher.send(applicant2SwitchToSoleCoNotification, data, caseId);
+        if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             switchToSoleService.switchUserRoles(data, caseId);
             switchToSoleService.switchApplicantData(data);
         }
 
         // triggered by system update user coming from Offline Document Verified
-        if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
-            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
-
-            if (OfflineWhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
-                if (!data.getApplication().isPaperCase()) {
-                    switchToSoleService.switchUserRoles(data, caseId);
-                }
-                switchToSoleService.switchApplicantData(data);
+        if (OfflineWhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
+            if (!data.getApplication().isPaperCase()) {
+                switchToSoleService.switchUserRoles(data, caseId);
             }
-
-            switchToSoleCoPrinter.print(data, caseId, data.getApplicant1(), data.getApplicant2());
+            switchToSoleService.switchApplicantData(data);
         }
 
-        generateConditionalOrderAnswersDocument.apply(
-            details,
-            data.getApplicant1().getLanguagePreference()
-        );
+        generateSwitchToSoleDocuments(details, data, caseId);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
+    }
+
+    private void generateSwitchToSoleDocuments(CaseDetails<CaseData, State> details,
+                                               CaseData caseData,
+                                               Long caseId) {
+        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
+
+            generateSwitchToSoleCoLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+        }
+
+        generateConditionalOrderAnswersDocument.apply(
+            details,
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("SwitchedToSoleCO submitted callback invoked for case id: {}", details.getId());
+
+        final CaseData data = details.getData();
+        notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
+
+        if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
+            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
+
+            switchToSoleCoPrinter.print(data, details.getId());
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
