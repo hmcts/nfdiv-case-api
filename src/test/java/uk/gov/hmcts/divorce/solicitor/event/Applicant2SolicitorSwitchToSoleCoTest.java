@@ -78,6 +78,18 @@ public class Applicant2SolicitorSwitchToSoleCoTest {
 
         verify(switchToSoleService).switchUserRoles(caseData, TEST_CASE_ID);
         verify(generateConditionalOrderAnswersDocument).apply(eq(caseDetails), any());
+    }
+
+    @Test
+    void shouldSendEmailsInSubmittedCallback() {
+        CaseData caseData = CaseData.builder().build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        applicant2SolicitorSwitchToSoleCo.submitted(caseDetails, caseDetails);
+
         verify(notificationDispatcher).send(solicitorSwitchToSoleCoNotification, caseData, TEST_CASE_ID);
     }
 }

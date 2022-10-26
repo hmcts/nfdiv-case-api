@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -81,6 +83,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_1_SOLICITOR)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
@@ -105,19 +108,36 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
                 finalOrder.setApplicant1AppliedForFinalOrderFirst(YES);
                 finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
             }
-
-            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, details.getData(), details.getId());
         }
 
         var updatedDetails = progressFinalOrderState.apply(details);
-
-        if (FinalOrderRequested.equals(updatedDetails.getState())) {
-            notificationDispatcher.send(finalOrderRequestedNotification, updatedDetails.getData(), details.getId());
-        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedDetails.getData())
             .state(updatedDetails.getState())
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Apply for Final Order submitted callback invoked for Case Id: {}", details.getId());
+
+        final CaseData data = details.getData();
+        final State previousState = data.getApplication().getPreviousState();
+
+        if (AwaitingFinalOrder.equals(previousState)) {
+            log.info("Sending Applicant 1 Applied For Final Order Notification for Case Id: {}", details.getId());
+            notificationDispatcher.send(applicant1AppliedForFinalOrderNotification, details.getData(), details.getId());
+        }
+
+        if (FinalOrderRequested.equals(details.getState())
+            || WelshTranslationReview.equals(details.getState()) && FinalOrderRequested.equals(
+            details.getData().getApplication().getWelshPreviousState())) {
+            log.info("Sending Apply for Final Order notifications as case in FinalOrderRequested state for Case Id: {}", details.getId());
+            notificationDispatcher.send(finalOrderRequestedNotification, details.getData(), details.getId());
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
