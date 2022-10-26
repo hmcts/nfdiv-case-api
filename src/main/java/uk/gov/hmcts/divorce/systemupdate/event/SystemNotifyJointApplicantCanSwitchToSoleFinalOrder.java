@@ -40,8 +40,8 @@ public class SystemNotifyJointApplicantCanSwitchToSoleFinalOrder implements CCDC
         configBuilder
             .event(SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE_FINAL_ORDER)
             .forStates(AwaitingJointFinalOrder)
-            .name("Notify Switch To Sole for Final Order")
-            .description("Notify Joint Applicant they can switch to sole at final order stage")
+            .name("Notify Switch To Sole for FO")
+            .description("Notify Joint Applicant they can switch to sole at FO stage")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
