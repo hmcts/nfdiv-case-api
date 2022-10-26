@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.common.notification;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -70,7 +69,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
     }
 
     private boolean shouldSendNotificationToApplicant2(final CaseData caseData) {
-        return isNotEmpty(caseData.getApplicant2EmailAddress()) && (!caseData.getApplicationType().isSole()
+        return isNotEmpty(caseData.getApplicant2().getEmail()) && (!caseData.getApplicationType().isSole()
             || caseData.getApplicationType().isSole() && !isNull(caseData.getApplication().getIssueDate()));
     }
 }
