@@ -100,7 +100,7 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
         return caseDetails;
     }
 
-    private void generateConditionalOrderPronouncedCoversheet(final CaseData caseData,
+    public void generateConditionalOrderPronouncedCoversheet(final CaseData caseData,
                                                               final Long caseId,
                                                               final Applicant applicant,
                                                               final DocumentType documentType) {
@@ -116,7 +116,7 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
         );
     }
 
-    private void generateConditionalOrderPronouncedCoversheetOfflineRespondent(final CaseData caseData,
+    public void generateConditionalOrderPronouncedCoversheetOfflineRespondent(final CaseData caseData,
                                                               final Long caseId,
                                                               final Applicant applicant,
                                                               final Applicant partner) {

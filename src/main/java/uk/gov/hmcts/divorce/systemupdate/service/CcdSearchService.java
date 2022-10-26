@@ -65,6 +65,10 @@ public class CcdSearchService {
     public static final String APPLICANT2_SOL_ORG_POLICY = "applicant2SolicitorOrganisationPolicy";
     public static final String SERVICE_METHOD = "serviceMethod";
     public static final String COURT_SERVICE = "courtService";
+    public static final String APPLICANT1_OFFLINE = "applicant1Offline";
+    public static final String APPLICANT2_OFFLINE = "applicant2Offline";
+    public static final String APPLICANT1_PRIVATE_CONTACT = "applicant1ContactDetailsType";
+    public static final String APPLICANT2_PRIVATE_CONTACT = "applicant2ContactDetailsType";
 
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
