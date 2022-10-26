@@ -11,6 +11,8 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
@@ -45,14 +47,14 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        if (ObjectUtils.isNotEmpty(caseData.getApplicant2().getEmail())) {
+        if (shouldSendNotificationToApplicant2(caseData)) {
             log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
             final Map<String, String> templateVars =
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
 
             if (caseData.getApplicationType().isSole()) {
                 templateVars.put(IS_RESPONDENT, YES);
-                templateVars.put(RESPONDENT_PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
+                templateVars.put(RESPONDENT_PARTNER, commonContent.getPartner(caseData, caseData.getApplicant1()));
             } else {
                 templateVars.put(IS_RESPONDENT, NO);
                 templateVars.put(RESPONDENT_PARTNER, "");
@@ -65,5 +67,10 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
+    }
+
+    private boolean shouldSendNotificationToApplicant2(final CaseData caseData) {
+        return isNotEmpty(caseData.getApplicant2EmailAddress()) && (!caseData.getApplicationType().isSole()
+            || caseData.getApplicationType().isSole() && !isNull(caseData.getApplication().getIssueDate()));
     }
 }
