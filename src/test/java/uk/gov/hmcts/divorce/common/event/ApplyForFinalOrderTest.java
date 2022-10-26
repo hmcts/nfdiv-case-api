@@ -143,4 +143,22 @@ class ApplyForFinalOrderTest {
 
         verifyNoInteractions(notificationDispatcher);
     }
+
+    @Test
+    void shouldSetApplicant1SubmittedToYesWhenAboutToSubmitIsTriggered() {
+        final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
+        caseData.getApplication().setPreviousState(AwaitingFinalOrder);
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        updatedCaseDetails.setData(caseData);
+        updatedCaseDetails.setState(FinalOrderRequested);
+
+        when(progressFinalOrderState.apply(caseDetails)).thenReturn(updatedCaseDetails);
+
+        var response = applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getFinalOrder().getApplicant1SubmittedFinalOrder()).isEqualTo(YesOrNo.YES);
+    }
 }
