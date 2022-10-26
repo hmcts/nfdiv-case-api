@@ -149,11 +149,6 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             }
         }
 
-        final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
-            .id(UUID.randomUUID().toString())
-            .value(generalApplication)
-            .build();
-
         if (isNull(generalApplication.getGeneralApplicationDocument())
             || isNull(generalApplication.getGeneralApplicationDocument().getDocumentLink())) {
 
@@ -167,6 +162,11 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
                 addDocumentToTop(data.getDocuments().getDocumentsUploaded(), generalApplication.getGeneralApplicationDocument())
             );
         }
+
+        final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
+            .id(UUID.randomUUID().toString())
+            .value(generalApplication)
+            .build();
 
         if (isNull(data.getGeneralApplications())) {
             data.setGeneralApplications(singletonList(generalApplicationListValue));
