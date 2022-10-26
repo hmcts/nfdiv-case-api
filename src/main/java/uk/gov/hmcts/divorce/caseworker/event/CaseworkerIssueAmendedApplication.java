@@ -66,8 +66,6 @@ public class CaseworkerIssueAmendedApplication implements CCDConfig<CaseData, St
         log.info("Caseworker Issue Amended Application about to submit callback invoked for case id: {}", details.getId());
 
         CaseData caseData = details.getData();
-        Long caseId = details.getId();
-        Applicant applicant = caseData.getApplicant1();
 
         if (isEmpty(caseData.getDocuments().getAmendedApplications())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -78,6 +76,9 @@ public class CaseworkerIssueAmendedApplication implements CCDConfig<CaseData, St
         caseData.setDueDate(LocalDate.now(clock).plusDays(ISSUE_AMENDED_APPLICATION_OFFSET_DAYS));
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setOffline(YES);
+
+        Long caseId = details.getId();
+        Applicant applicant = caseData.getApplicant1();
 
         generateCoversheet.generateCoversheet(
             caseData,
