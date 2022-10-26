@@ -48,6 +48,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType.DEEMED_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
@@ -93,6 +94,28 @@ public class SolicitorGeneralApplicationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(SOLICITOR_GENERAL_APPLICATION);
+    }
+
+    @Test
+    void shouldResetGeneralApplicationWhenAboutToStartCallbackTriggered() {
+        final CaseData caseData = caseData();
+        caseData.setGeneralApplication(GeneralApplication.builder()
+            .generalApplicationType(DEEMED_SERVICE)
+            .generalApplicationTypeOtherComments("some comments")
+            .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setState(Holding);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorGeneralApplication.aboutToStart(details);
+
+        assertThat(response.getData().getGeneralApplication().getGeneralApplicationType()).isNull();
+        assertThat(response.getData().getGeneralApplication().getGeneralApplicationTypeOtherComments()).isNull();
+        assertThat(response.getData().getGeneralApplication()).isEqualTo(GeneralApplication.builder().build());
     }
 
     @Test
