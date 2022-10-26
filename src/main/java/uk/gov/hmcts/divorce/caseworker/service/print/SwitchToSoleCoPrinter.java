@@ -127,8 +127,8 @@ public class SwitchToSoleCoPrinter {
 
         templateContent.put(CASE_REFERENCE, formatId(caseId));
         templateContent.put(NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
-        templateContent.put("applicantFirstName", respondent.getFirstName());
-        templateContent.put("applicantLastName", respondent.getLastName());
+        templateContent.put("firstName", respondent.getFirstName());
+        templateContent.put("lastName", respondent.getLastName());
         templateContent.put(ADDRESS, respondent.getPostalAddress());
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(PARTNER, commonContent.getPartner(caseData, applicant, respondent.getLanguagePreference()));
