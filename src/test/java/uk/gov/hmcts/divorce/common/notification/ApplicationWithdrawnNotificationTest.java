@@ -261,6 +261,9 @@ public class ApplicationWithdrawnNotificationTest {
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService, times(1)).sendEmail(
-            data.getApplicant2EmailAddress(), CITIZEN_APPLICATION_WITHDRAWN, divorceTemplateVars, data.getApplicant2().getLanguagePreference());
+            data.getApplicant2EmailAddress(),
+            CITIZEN_APPLICATION_WITHDRAWN,
+            divorceTemplateVars,
+            data.getApplicant2().getLanguagePreference());
     }
 }
