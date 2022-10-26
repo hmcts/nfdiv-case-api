@@ -65,7 +65,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleFinalOrderTaskTest {
     private ObjectMapper mapper;
 
     @Value("${final_order.reminder_offset_days}")
-    private int FinalOrderReminderOffsetDays;
+    private int finalOrderReminderOffsetDays;
 
     @InjectMocks
     private SystemNotifyJointApplicantCanSwitchToSoleFinalOrderTask systemNotifyJointApplicantCanSwitchToSoleFinalOrderTask;

@@ -57,7 +57,7 @@ public class SystemNotifyJointApplicantCanSwitchToSoleFinalOrderTask implements 
     private ObjectMapper objectMapper;
 
     @Value("${final_order.reminder_offset_days}")
-    private int FinalOrderReminderOffsetDays;
+    private int finalOrderReminderOffsetDays;
 
     @Override
     public void run() {
@@ -91,7 +91,7 @@ public class SystemNotifyJointApplicantCanSwitchToSoleFinalOrderTask implements 
         try {
             log.info(
                 "Final order application +{}days elapsed for Case({}) - reminding Joint Applicant they can switch to sole",
-                FinalOrderReminderOffsetDays, caseDetails.getId()
+                finalOrderReminderOffsetDays, caseDetails.getId()
             );
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE_FINAL_ORDER, user, serviceAuth);
 
