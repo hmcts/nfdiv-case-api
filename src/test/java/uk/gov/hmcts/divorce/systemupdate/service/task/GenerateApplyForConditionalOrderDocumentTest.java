@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
@@ -55,6 +56,9 @@ public class GenerateApplyForConditionalOrderDocumentTest {
     private CommonContent commonContent;
 
     @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
+    @Mock
     private Clock clock;
 
     @InjectMocks
@@ -79,6 +83,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, false);
         templateContent.put(IS_DIVORCE, true);
+        templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
         when(commonContent.templateContentCanApplyForCoOrFo(
             caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
@@ -122,6 +127,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, true);
         templateContent.put(IS_DIVORCE, true);
+        templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
         when(commonContent.templateContentCanApplyForCoOrFo(
             caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
@@ -165,6 +171,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, false);
         templateContent.put(IS_DIVORCE, false);
+        templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
         when(commonContent.templateContentCanApplyForCoOrFo(
             caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())

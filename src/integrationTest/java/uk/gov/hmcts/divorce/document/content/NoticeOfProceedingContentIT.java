@@ -224,7 +224,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
-        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
@@ -318,7 +318,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
-        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
@@ -412,7 +412,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(IS_PERSONAL_SERVICE, true);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
-        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true);
@@ -515,7 +515,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(IS_PERSONAL_SERVICE, true);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
-        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, false);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, false);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
@@ -611,7 +611,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
-        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
@@ -706,7 +706,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
-        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
@@ -818,7 +818,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
-        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
@@ -934,7 +934,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(IS_PERSONAL_SERVICE, true);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
-        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(RELATIONS_SOLICITOR, "wife's solicitor");
@@ -1041,7 +1041,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_COURT_SERVICE, true);
         expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
-        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2");
+        expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
