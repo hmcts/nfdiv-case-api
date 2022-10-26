@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
@@ -95,8 +96,28 @@ public class SolicitorGeneralApplicationTest {
     }
 
     @Test
+    void shouldReturnErrorIfDocumentNotUploaded() {
+        final CaseData caseData = caseData();
+        caseData.setGeneralApplication(GeneralApplication.builder().build());
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setState(Holding);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorGeneralApplication.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNotEmpty();
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains("Please upload a document in order to continue");
+    }
+
+    @Test
     void shouldAddGeneralApplicationDocumentToListOfCaseDocumentsAndUpdateState() {
-        final DivorceDocument document = mock(DivorceDocument.class);
+        final DivorceDocument document = DivorceDocument.builder()
+                .documentLink(Document.builder().build())
+                .build();
         final CaseData caseData = caseData();
         caseData.getGeneralApplication().setGeneralApplicationDocument(document);
 
@@ -163,6 +184,11 @@ public class SolicitorGeneralApplicationTest {
                                 .build()
                         )
                         .paymentMethod(FEE_PAY_BY_ACCOUNT)
+                        .build()
+                )
+                .generalApplicationDocument(
+                    DivorceDocument.builder()
+                        .documentLink(Document.builder().build())
                         .build()
                 )
                 .build()

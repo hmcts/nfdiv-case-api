@@ -3,7 +3,7 @@
     "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",
-        "OrganisationID": "App1OrgPolicy"
+        "OrganisationID": "HEBFGBR"
       }
     },
     "applicant2SolicitorOrganisationPolicy": {
@@ -12,22 +12,13 @@
       }
     },
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "applicationPayments": [{
-      "id": "${json-unit.any-string}",
-      "value": {
-        "feeCode": "FEE002",
-        "amount": 55000,
-        "status": "success",
-        "channel": "online"
-      }
-    }],
     "generalApplicationDocument": {
       "documentLink": {
         "document_url": "http://localhost:4200/assets/d11",
         "document_filename": "GA.pdf",
         "document_binary_url": "GA.pdf/binary"
       },
-      "documentDateAdded": "${json-unit.any-string}",
+      "documentDateAdded": "2022-05-04",
       "documentType": "generalApplication"
     },
     "generalApplicationFeeOrderSummary": {
@@ -40,13 +31,7 @@
       }],
       "PaymentTotal": "55000"
     },
-    "generalApplicationFeePaymentMethod": "feePayByAccount",
-    "generalApplicationFeePbaNumbers": {
-      "value": {
-        "label": "PBA0012345"
-      },
-      "valueLabel": "PBA0012345"
-    },
+    "generalApplicationFeePaymentMethod": "feePayByTelephone",
     "generalApplications": [{
       "id": "${json-unit.any-string}",
       "value": {
@@ -56,7 +41,7 @@
             "document_filename": "GA.pdf",
             "document_binary_url": "GA.pdf/binary"
           },
-          "documentDateAdded": "2022-10-26",
+          "documentDateAdded": "2022-05-04",
           "documentType": "generalApplication"
         },
         "generalApplicationFeeOrderSummary": {
@@ -69,13 +54,7 @@
           }],
           "PaymentTotal": "55000"
         },
-        "generalApplicationFeePaymentMethod": "feePayByAccount",
-        "generalApplicationFeePbaNumbers": {
-          "value": {
-            "label": "PBA0012345"
-          },
-          "valueLabel": "PBA0012345"
-        }
+        "generalApplicationFeePaymentMethod": "feePayByTelephone"
       }
     }],
     "documentsUploaded": [{
@@ -86,7 +65,7 @@
           "document_filename": "GA.pdf",
           "document_binary_url": "GA.pdf/binary"
         },
-        "documentDateAdded": "${json-unit.any-string}",
+        "documentDateAdded": "2022-05-04",
         "documentType": "generalApplication"
       }
     }],

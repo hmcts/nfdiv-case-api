@@ -130,7 +130,7 @@ public class SolicitorGeneralApplicationIT {
                     .binaryUrl("GA.pdf/binary")
                     .build()
             )
-            .documentType(DocumentType.D11)
+            .documentType(DocumentType.GENERAL_APPLICATION)
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -171,7 +171,7 @@ public class SolicitorGeneralApplicationIT {
                     .binaryUrl("GA.pdf/binary")
                     .build()
             )
-            .documentType(DocumentType.D11)
+            .documentType(DocumentType.GENERAL_APPLICATION)
             .build();
 
         final CaseData caseData = CaseData.builder()

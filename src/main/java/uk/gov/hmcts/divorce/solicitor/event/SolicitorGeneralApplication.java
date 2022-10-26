@@ -13,10 +13,10 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
@@ -41,11 +41,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentTo
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
 @Slf4j
 @Component
@@ -57,6 +58,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         "General Application cannot be submitted as this case is currently linked to an active bulk action case";
     private static final String GENERAL_APPLICATION_ORG_POLICY_ERROR =
         "General Application payment could not be completed as the invokers organisation policy did not match any on the case";
+    private static final String GENERAL_APPLICATION_DOCUMENT_ERROR = "Please upload a document in order to continue";
 
     @Autowired
     private GeneralApplicationSelectFee generalApplicationSelectFee;
@@ -93,7 +95,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_GENERAL_APPLICATION, details.getId());
         final CaseData data = details.getData();
 
-        data.setGeneralApplication(null);
+        data.setGeneralApplication(GeneralApplication.builder().build());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
@@ -152,15 +154,25 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .value(generalApplication)
             .build();
 
+        if (isNull(generalApplication.getGeneralApplicationDocument())
+            || isNull(generalApplication.getGeneralApplicationDocument().getDocumentLink())) {
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList(GENERAL_APPLICATION_DOCUMENT_ERROR))
+                .build();
+
+        } else {
+            generalApplication.getGeneralApplicationDocument().setDocumentType(DocumentType.GENERAL_APPLICATION);
+            data.getDocuments().setDocumentsUploaded(
+                addDocumentToTop(data.getDocuments().getDocumentsUploaded(), generalApplication.getGeneralApplicationDocument())
+            );
+        }
+
         if (isNull(data.getGeneralApplications())) {
             data.setGeneralApplications(singletonList(generalApplicationListValue));
         } else {
             data.getGeneralApplications().add(0, generalApplicationListValue);
         }
-
-        data.getDocuments().setDocumentsUploaded(
-            addDocumentToTop(data.getDocuments().getDocumentsUploaded(), generalApplication.getGeneralApplicationDocument())
-        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
@@ -216,8 +228,9 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .description(GENERAL_APPLICATION)
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, SOLICITOR)
+            .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 }
