@@ -168,6 +168,46 @@ public class FinalOrder {
     )
     private YesOrNo finalOrderReminderSentApplicant2;
 
+
+    @CCD(
+        label = "Applicant 1 Can Intend To Switch To Sole at Final Order stage",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1CanIntendToSwitchToSoleFo;
+
+    @CCD(
+        label = "Applicant 1 Intends To Switch To Sole?",
+        access = {DefaultAccess.class}
+    )
+    private Set<IntendsToSwitchToSole> applicant1IntendsToSwitchToSole;
+
+    @CCD(
+        label = "Applicant 2 Can Intend To Switch To Sole at Final Order stage",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2CanIntendToSwitchToSoleFo;
+
+    @CCD(
+        label = "Applicant 2 Intends To Switch To Sole?",
+        access = {DefaultAccess.class}
+    )
+    private Set<IntendsToSwitchToSole> applicant2IntendsToSwitchToSole;
+
+    @Getter
+    @AllArgsConstructor
+    public enum IntendsToSwitchToSole implements HasLabel {
+
+        @JsonProperty("Yes")
+        I_INTEND_TO_SWITCH_TO_SOLE(
+            """
+                I intend to apply for a final order as sole applicant on behalf of my client,
+                and I want the court to notify the other applicant
+                """
+        );
+
+        private final String label;
+    }
+
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);

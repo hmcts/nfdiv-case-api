@@ -52,7 +52,14 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrder implements CCDC
 
         notificationDispatcher.send(partnerNotAppliedForFinalOrderNotification, data, details.getId());
 
+        if (!data.getApplicationType().isSole() && YES.equals(data.getFinalOrder().getApplicant1AppliedForFinalOrderFirst())) {
+            data.getFinalOrder().setApplicant1CanIntendToSwitchToSoleFo(YES);
+        } else if (!data.getApplicationType().isSole() && YES.equals(data.getFinalOrder().getApplicant2AppliedForFinalOrderFirst())) {
+            data.getFinalOrder().setApplicant2CanIntendToSwitchToSoleFo(YES);
+        }
+
         data.getFinalOrder().setFinalOrderFirstInTimeNotifiedOtherApplicantNotApplied(YES);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
