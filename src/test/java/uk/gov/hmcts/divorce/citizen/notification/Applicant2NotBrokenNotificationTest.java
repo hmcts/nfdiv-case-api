@@ -151,4 +151,27 @@ class Applicant2NotBrokenNotificationTest {
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
+
+    @Test
+    void shouldSendWelshEmailToApplicant2WhenWelshLanguagePreference() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        final Map<String, String> templateVars = Map.of(IS_DIVORCE, YES, IS_DISSOLUTION, NO);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateVars);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(JOINT_APPLICANT2_APPLICANT2_REJECTED),
+            argThat(allOf(
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO)
+            )),
+            eq(WELSH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
 }
