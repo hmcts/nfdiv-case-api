@@ -87,13 +87,6 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
 
         var caseData = details.getData();
 
-        if (caseData.getApplication().isPaperCase()) {
-            log.info("Not regenerating documents(COE CO granted and FO Granted) as it is paper case for Case Id: {}", details.getId());
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .build();
-        }
-
         if (caseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
             log.info("Regenerating CO Pronounced document for Case Id: {}", details.getId());
             generateConditionalOrderPronouncedCoversheetDocument.removeExistingAndGenerateConditionalOrderPronouncedCoversheet(details);

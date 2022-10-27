@@ -11,11 +11,9 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
 import uk.gov.hmcts.divorce.common.notification.RegenerateCourtOrdersNotification;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -80,29 +78,6 @@ public class CaseworkerRegenerateCourtOrdersTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_REGENERATE_COURT_ORDERS);
-    }
-
-    @Test
-    void shouldNotRegenerateCourtOrdersForPaperCase() {
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-
-        final CaseData caseData = CaseData
-            .builder()
-            .application(
-                Application
-                    .builder()
-                    .newPaperCase(YesOrNo.YES)
-                    .build()
-            )
-            .build();
-
-        caseDetails.setId(1L);
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getData()).isEqualTo(caseData);
     }
 
     @Test
