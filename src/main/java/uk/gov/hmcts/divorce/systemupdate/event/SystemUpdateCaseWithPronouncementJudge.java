@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -25,7 +26,7 @@ public class SystemUpdateCaseWithPronouncementJudge implements CCDConfig<CaseDat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE)
-            .forState(AwaitingPronouncement)
+            .forStates(AwaitingPronouncement, OfflineDocumentReceived)
             .name("Update pronouncement judge")
             .description("Update case with pronouncement judge")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
