@@ -43,9 +43,9 @@ public class Applicant2SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
         new PageBuilder(configBuilder
             .event(APPLICANT_2_INTENDS_TO_SWITCH_TO_SOLE_FO)
             .forStates(AwaitingJointFinalOrder)
-            .showCondition("applicationType=\"jointApplication\" AND applicant2CanIntendToSwitchToSoleFo\"Yes\"")
             .name("Intends to switch to sole FO")
             .description("Applicant 2 intends to switch to sole FO")
+            .showCondition("applicationType=\"jointApplication\" AND applicant2CanIntendToSwitchToSoleFo\"Yes\"")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CITIZEN, CASE_WORKER, SUPER_USER)
             .aboutToSubmitCallback(this::aboutToSubmit))
