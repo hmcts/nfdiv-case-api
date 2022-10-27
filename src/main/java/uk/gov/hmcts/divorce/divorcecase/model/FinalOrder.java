@@ -208,6 +208,32 @@ public class FinalOrder {
         private final String label;
     }
 
+    @CCD(
+        label = "Does applicant 1 intend to switch to sole?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo doesApplicant1IntendToSwitchToSole;
+
+    @CCD(
+        label = "Date applicant 1 declared their intention to switch to sole final order to switch to sole final order",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateApplicant1DeclaredIntentionToSwitchToSoleFo;
+
+    @CCD(
+        label = "Does applicant 2 intend to switch to sole?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo doesApplicant2IntendToSwitchToSole;
+
+    @CCD(
+        label = "Date applicant 2 declared their intention to switch to sole final order to switch to sole final order",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateApplicant2DeclaredIntentionToSwitchToSoleFo;
+
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
