@@ -21,14 +21,15 @@ import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditiona
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 import static java.util.List.of;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
@@ -125,7 +126,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         setIsSubmitted(appQuestions);
 
         final boolean isSole = data.getApplicationType().isSole();
-        boolean haveBothApplicantsSubmitted = isNotEmpty(app1Questions.getSubmittedDate()) && isNotEmpty(app2Questions.getSubmittedDate());
+        boolean haveBothApplicantsSubmitted = !isNull(app1Questions.getSubmittedDate()) && !isNull(app2Questions.getSubmittedDate());
 
         var state = isSole || haveBothApplicantsSubmitted ? AwaitingLegalAdvisorReferral : ConditionalOrderPending;
 
