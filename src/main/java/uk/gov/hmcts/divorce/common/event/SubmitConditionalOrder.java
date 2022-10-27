@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 import static java.util.List.of;
-import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
@@ -126,7 +125,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         setIsSubmitted(appQuestions);
 
         final boolean isSole = data.getApplicationType().isSole();
-        boolean haveBothApplicantsSubmitted = !isNull(app1Questions.getSubmittedDate()) && !isNull(app2Questions.getSubmittedDate());
+        boolean haveBothApplicantsSubmitted = !Objects.isNull(app1Questions.getSubmittedDate())
+            && !Objects.isNull(app2Questions.getSubmittedDate());
 
         var state = isSole || haveBothApplicantsSubmitted ? AwaitingLegalAdvisorReferral : ConditionalOrderPending;
 
