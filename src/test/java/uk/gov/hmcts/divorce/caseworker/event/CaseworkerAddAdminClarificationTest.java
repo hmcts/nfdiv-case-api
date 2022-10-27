@@ -49,6 +49,6 @@ class CaseworkerAddAdminClarificationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerAddAdminClarification.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getData().getApplication().getIsAdminClarificationSubmitted()).isEqualTo(YES);
+        assertThat(response.getData().getConditionalOrder().getIsAdminClarificationSubmitted()).isEqualTo(YES);
     }
 }
