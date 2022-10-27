@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Slf4j
 /**
  * Any cases which are in 'ConditionalOrderPronounced' state and where the applicants are offline and have contact details private
- * 'Conditional order pronounced cover letters' should be regenerated and sent to respective applicant.
+ * 'Conditional order pronounced cover letters' should be regenerated with address on the top and sent to respective applicant.
  */
 public class SystemResendCOPronouncedCoverLettersTask implements Runnable {
 
