@@ -1,0 +1,83 @@
+package uk.gov.hmcts.divorce.systemupdate.service.task;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataCOPronounced;
+
+@ExtendWith(MockitoExtension.class)
+public class RegenerateConditionalOrderPronouncedCoversheetTest {
+
+    @Mock
+    private GenerateConditionalOrderPronouncedCoversheet generateCoversheet;
+
+    @InjectMocks
+    private RegenerateConditionalOrderPronouncedCoversheet underTest;
+
+    @Test
+    public void shouldGenerateCoverLettersSoleApplication() {
+        CaseData data = buildCaseDataCOPronounced(YES, PRIVATE, PRIVATE);
+        data.setApplicationType(SOLE_APPLICATION);
+
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(1L)
+            .data(data)
+            .build();
+
+        underTest.apply(caseDetails);
+
+        assertThat(data.getApplicant1().getCoPronouncedCoverLetterRegenerated()).isEqualTo(YES);
+        assertThat(data.getApplicant2().getCoPronouncedCoverLetterRegenerated()).isEqualTo(YES);
+
+        assertThat(data.getDocuments().getDocumentsGenerated()
+            .stream().map(documentListValue -> documentListValue.getValue().getDocumentType()).toList())
+            .containsOnly(CONDITIONAL_ORDER_GRANTED);
+
+        verify(generateCoversheet).generateConditionalOrderPronouncedCoversheet(
+            data, caseDetails.getId(), data.getApplicant1(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
+
+        verify(generateCoversheet).generateConditionalOrderPronouncedCoversheetOfflineRespondent(
+            data, caseDetails.getId(), data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    public void shouldGenerateCoverLettersJointApplication() {
+        CaseData data = buildCaseDataCOPronounced(YES, PRIVATE, PRIVATE);
+        data.setApplicationType(JOINT_APPLICATION);
+
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(1L)
+            .data(data)
+            .build();
+
+        underTest.apply(caseDetails);
+
+        assertThat(data.getApplicant1().getCoPronouncedCoverLetterRegenerated()).isEqualTo(YES);
+        assertThat(data.getApplicant2().getCoPronouncedCoverLetterRegenerated()).isEqualTo(YES);
+
+        assertThat(data.getDocuments().getDocumentsGenerated()
+            .stream().map(documentListValue -> documentListValue.getValue().getDocumentType()).toList())
+            .containsOnly(CONDITIONAL_ORDER_GRANTED);
+
+        verify(generateCoversheet).generateConditionalOrderPronouncedCoversheet(
+            data, caseDetails.getId(), data.getApplicant1(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
+
+        verify(generateCoversheet).generateConditionalOrderPronouncedCoversheet(
+            data, caseDetails.getId(), data.getApplicant2(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
+    }
+}

@@ -58,7 +58,7 @@ public class SystemResendCOPronouncedCoverLettersTask implements Runnable {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final String NOTIFICATION_FLAG = "coPronouncedCoverLetterResent";
+    public static final String NOTIFICATION_FLAG = "coPronouncedCoverLetterResent";
 
     @Override
     public void run() {
@@ -129,13 +129,9 @@ public class SystemResendCOPronouncedCoverLettersTask implements Runnable {
             return true;
         }
 
-        if (caseData.getApplicant2().isOffline()
+        return caseData.getApplicant2().isOffline()
             && caseData.getApplicant2().isConfidentialContactDetails()
-            && coverLettersAreNotUnderConfidentialList(caseDocuments, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)) {
-            return true;
-        }
-
-        return false;
+            && coverLettersAreNotUnderConfidentialList(caseDocuments, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
     }
 
     private boolean coverLettersAreNotUnderConfidentialList(final CaseDocuments caseDocuments, final DocumentType coverLetterType) {
