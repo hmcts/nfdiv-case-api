@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -43,6 +44,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -57,6 +59,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -78,6 +81,9 @@ public class CertificateOfEntitlementPrinterTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private CommonContent commonContent;
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
@@ -123,6 +129,60 @@ public class CertificateOfEntitlementPrinterTest {
         assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(certificateOfEntitlementCoverLetterValue);
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(certificateOfEntitlementDocValue);
+    }
+
+    @Test
+    void shouldPrintCertificateOfEntitlementLetterAndCoverLetterIfRequiredDocumentsArePresentForSoleApplicationWithOfflineRespondent() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+
+        when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
+        when(commonContent.getPartner(caseData, caseData.getApplicant1(), ENGLISH)).thenReturn("husband");
+
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("certificate-of-entitlement");
+        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(certificateOfEntitlementCoverLetterValue);
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(certificateOfEntitlementDocValue);
+
+        Map<String, Object> templateVars = docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference());
+
+        templateVars.put(NAME, "Julie Smith");
+        templateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        templateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
+        templateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+
+        templateVars.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, GET_A_DIVORCE);
+        templateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
+
+        templateVars.put(COURT_NAME, caseData.getConditionalOrder().getCourt().getLabel());
+        templateVars.put(DATE_OF_HEARING,
+            caseData.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER));
+        templateVars.put(TIME_OF_HEARING,
+            caseData.getConditionalOrder().getDateAndTimeOfHearing().format(TIME_FORMATTER));
+        templateVars.put(DATE_FO_ELIGIBLE_FROM,
+            caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
+        templateVars.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        templateVars.put(BEFORE_DATE_OF_HEARING,
+            caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
+        templateVars.put(PARTNER, "husband");
+
+        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER,
+            templateVars,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
+            ENGLISH,
+            formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
     }
 
     @Test
