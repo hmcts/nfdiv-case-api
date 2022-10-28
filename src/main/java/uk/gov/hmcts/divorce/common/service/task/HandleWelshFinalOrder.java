@@ -7,8 +7,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang.StringUtils.isEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 
 @Slf4j
@@ -20,7 +20,7 @@ public class HandleWelshFinalOrder implements CaseTask {
         log.info("Running HandleWelshFinalOrder task for CaseID {}", details.getId());
         CaseData data = details.getData();
 
-        if (FinalOrderRequested.equals(details.getState()) && data.isWelshApplication() && isFinalOrderFreeTextPresent(data)) {
+        if (data.isWelshApplication() && !isNull(data.getFinalOrder().getDateFinalOrderSubmitted()) && isFinalOrderFreeTextPresent(data)) {
             data.getApplication().setWelshPreviousState(details.getState());
             details.setState(WelshTranslationReview);
             log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
