@@ -137,27 +137,6 @@ public class FinalOrder {
     private TranslatedToLanguage applicant1FinalOrderLateExplanationTranslatedTo;
 
     @CCD(
-        label = "${labelContentTheApplicant2UC} final order late explanation",
-        access = {DefaultAccess.class}
-    )
-    private String applicant2FinalOrderLateExplanation;
-
-    @CCD(
-        label = "${labelContentTheApplicant2UC} final order late explanation (translated)",
-        access = {DefaultAccess.class}
-    )
-    private String applicant2FinalOrderLateExplanationTranslated;
-
-    @CCD(
-        label = "${labelContentTheApplicant2UC} final order late explanation translated to?",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "TranslatedToLanguage",
-        access = {SystemUpdateAndSuperUserAccess.class}
-    )
-    private TranslatedToLanguage applicant2FinalOrderLateExplanationTranslatedTo;
-
-
-    @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
         access = {DefaultAccess.class}
     )
