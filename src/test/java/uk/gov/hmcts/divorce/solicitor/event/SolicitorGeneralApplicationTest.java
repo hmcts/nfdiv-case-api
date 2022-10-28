@@ -119,24 +119,6 @@ public class SolicitorGeneralApplicationTest {
     }
 
     @Test
-    void shouldReturnErrorIfDocumentNotUploaded() {
-        final CaseData caseData = caseData();
-        caseData.setGeneralApplication(GeneralApplication.builder().build());
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
-        details.setState(Holding);
-        details.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            solicitorGeneralApplication.aboutToSubmit(details, details);
-
-        assertThat(response.getErrors()).isNotEmpty();
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains("Please upload a document in order to continue");
-    }
-
-    @Test
     void shouldAddGeneralApplicationDocumentToListOfCaseDocumentsAndUpdateState() {
         final DivorceDocument document = DivorceDocument.builder()
                 .documentLink(Document.builder().build())

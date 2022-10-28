@@ -58,7 +58,6 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         "General Application cannot be submitted as this case is currently linked to an active bulk action case";
     private static final String GENERAL_APPLICATION_ORG_POLICY_ERROR =
         "General Application payment could not be completed as the invokers organisation policy did not match any on the case";
-    private static final String GENERAL_APPLICATION_DOCUMENT_ERROR = "Please upload a document in order to continue";
 
     @Autowired
     private GeneralApplicationSelectFee generalApplicationSelectFee;
@@ -149,19 +148,10 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             }
         }
 
-        if (isNull(generalApplication.getGeneralApplicationDocument())
-            || isNull(generalApplication.getGeneralApplicationDocument().getDocumentLink())) {
-
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList(GENERAL_APPLICATION_DOCUMENT_ERROR))
-                .build();
-
-        } else {
-            generalApplication.getGeneralApplicationDocument().setDocumentType(DocumentType.GENERAL_APPLICATION);
-            data.getDocuments().setDocumentsUploaded(
-                addDocumentToTop(data.getDocuments().getDocumentsUploaded(), generalApplication.getGeneralApplicationDocument())
-            );
-        }
+        generalApplication.getGeneralApplicationDocument().setDocumentType(DocumentType.GENERAL_APPLICATION);
+        data.getDocuments().setDocumentsUploaded(
+            addDocumentToTop(data.getDocuments().getDocumentsUploaded(), generalApplication.getGeneralApplicationDocument())
+        );
 
         final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
             .id(UUID.randomUUID().toString())
