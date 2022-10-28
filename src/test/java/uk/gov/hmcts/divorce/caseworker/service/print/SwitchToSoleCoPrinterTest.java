@@ -40,7 +40,6 @@ import static uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinte
 import static uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter.GET_A_DIVORCE;
 import static uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter.YOU_ARE_DIVORCED;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME;
