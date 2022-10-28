@@ -9,7 +9,10 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -65,4 +68,21 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
             data, caseDetails.getId(), data.getApplicant2(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
     }
 
+    @Test
+    public void shouldNotGenerateCoverLettersForOnlineApplicantsWithContactTypePrivate() {
+        CaseData data = buildCaseDataCOPronounced(NO, PRIVATE, PRIVATE);
+        data.setApplicationType(JOINT_APPLICATION);
+
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(1L)
+            .data(data)
+            .build();
+
+        generateConditionalOrderPronouncedCoversheet.apply(caseDetails);
+
+        assertThat(data.getApplicant1().getCoPronouncedCoverLetterRegenerated()).isNull();
+        assertThat(data.getApplicant2().getCoPronouncedCoverLetterRegenerated()).isNull();
+
+        verifyNoInteractions(coverLetterHelper);
+    }
 }

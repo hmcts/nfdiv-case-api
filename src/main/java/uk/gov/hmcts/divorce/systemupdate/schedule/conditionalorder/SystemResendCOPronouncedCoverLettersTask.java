@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -109,7 +108,7 @@ public class SystemResendCOPronouncedCoverLettersTask implements Runnable {
 
             final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
 
-            if (isCaseEligibleToResendCoverLetter(caseData)) {
+            if (isCaseEligibleToResendTheCoverLetters(caseData)) {
                 log.info("Submitting Resend CO Pronounced letter for Case {}", caseDetails.getId());
                 ccdUpdateService.submitEvent(caseDetails, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, serviceAuth);
             }
@@ -120,24 +119,17 @@ public class SystemResendCOPronouncedCoverLettersTask implements Runnable {
         }
     }
 
-    private boolean isCaseEligibleToResendCoverLetter(final CaseData caseData) {
+    private boolean isCaseEligibleToResendTheCoverLetters(final CaseData caseData) {
         CaseDocuments caseDocuments = caseData.getDocuments();
 
         if (caseData.getApplicant1().isOffline()
             && caseData.getApplicant1().isConfidentialContactDetails()
-            && coverLettersAreNotUnderConfidentialList(caseDocuments, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)) {
+            && !caseDocuments.documentsAreUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)) {
             return true;
         }
 
         return caseData.getApplicant2().isOffline()
             && caseData.getApplicant2().isConfidentialContactDetails()
-            && coverLettersAreNotUnderConfidentialList(caseDocuments, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
-    }
-
-    private boolean coverLettersAreNotUnderConfidentialList(final CaseDocuments caseDocuments, final DocumentType coverLetterType) {
-        return caseDocuments
-                .getDocumentsGenerated()
-                .stream()
-                .anyMatch(doc -> coverLetterType.equals(doc.getValue().getDocumentType()));
+            && !caseDocuments.documentsAreUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
     }
 }
