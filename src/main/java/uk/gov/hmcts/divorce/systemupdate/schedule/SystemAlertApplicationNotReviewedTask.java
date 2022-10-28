@@ -87,9 +87,11 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
                         }
                     }
                 } catch (final CcdManagementException e) {
-                    log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+                    log.error("Submit event failed for Case Id: {}, State: {}, continuing to next case",
+                        caseDetails.getId(),
+                        caseDetails.getState());
                 } catch (final IllegalArgumentException e) {
-                    log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
+                    log.error("Deserialization failed for Case Id: {}, continuing to next case", caseDetails.getId());
                 }
             }
 

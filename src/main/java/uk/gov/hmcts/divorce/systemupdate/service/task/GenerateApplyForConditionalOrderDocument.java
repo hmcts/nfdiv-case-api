@@ -6,28 +6,17 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_CAN_APPLY;
-import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
-import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
-import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
@@ -43,6 +32,9 @@ public class GenerateApplyForConditionalOrderDocument {
     private CommonContent commonContent;
 
     @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
+    @Autowired
     private Clock clock;
 
     public void generateApplyForConditionalOrder(final CaseData caseData,
@@ -52,37 +44,23 @@ public class GenerateApplyForConditionalOrderDocument {
 
         log.info("Generating apply for conditional order pdf for CaseID: {}", caseId);
 
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+                applicant.getLanguagePreference());
+
+        LocalDateTime now = LocalDateTime.now(clock);
+
+        templateContent.putAll(commonContent.templateContentCanApplyForCoOrFo(caseData, caseId, applicant, partner, now.toLocalDate()));
+
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CONDITIONAL_ORDER_CAN_APPLY,
-            templateContent(caseData, caseId, applicant, partner),
+            templateContent,
             caseId,
             CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID,
             applicant.getLanguagePreference(),
-            formatDocumentName(caseId, CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
+            formatDocumentName(caseId, CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME, now)
         );
 
         log.info("Completed generating apply for conditional order pdf for CaseID: {}", caseId);
-    }
-
-    private Map<String, Object> templateContent(final CaseData caseData,
-                                                final Long caseId,
-                                                final Applicant applicant,
-                                                final Applicant partner) {
-
-        final Map<String, Object> templateContent = new HashMap<>();
-
-        templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
-
-        templateContent.put(FIRST_NAME, applicant.getFirstName());
-        templateContent.put(LAST_NAME, applicant.getLastName());
-        templateContent.put(ADDRESS, applicant.getPostalAddress());
-        templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
-        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
-
-        templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
-        templateContent.put(IS_DIVORCE, caseData.isDivorce());
-
-        return templateContent;
     }
 }

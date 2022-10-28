@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.systemupdate.service.print.CertificateOfEntitlementPrinter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
 
@@ -37,8 +38,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -116,8 +117,11 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()) {
             log.info("Sending certificate of entitlement letter to applicant 2 for case: {}", caseId);
-
-            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant2());
+            if (caseData.getApplicationType().isSole()) {
+                certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
+            } else {
+                certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant2());
+            }
             caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(YesOrNo.YES);
         }
     }
@@ -125,18 +129,20 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
 
+        DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
+
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
         final LocalDateTime dateAndTimeOfHearing = conditionalOrder.getDateAndTimeOfHearing();
 
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
-        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(dateTimeFormatter));
 
         templateVars.put(COURT_NAME, conditionalOrder.getCourt().getLabel());
-        templateVars.put(DATE_OF_HEARING, dateAndTimeOfHearing.format(DATE_TIME_FORMATTER));
+        templateVars.put(DATE_OF_HEARING, dateAndTimeOfHearing.format(dateTimeFormatter));
         templateVars.put(TIME_OF_HEARING, dateAndTimeOfHearing.format(TIME_FORMATTER));
-        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43, dateAndTimeOfHearing.plusDays(43).format(DATE_TIME_FORMATTER));
-        templateVars.put(DATE_OF_HEARING_MINUS_SEVEN_DAYS, dateAndTimeOfHearing.minus(7, DAYS).format(DATE_TIME_FORMATTER));
+        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43, dateAndTimeOfHearing.plusDays(43).format(dateTimeFormatter));
+        templateVars.put(DATE_OF_HEARING_MINUS_SEVEN_DAYS, dateAndTimeOfHearing.minus(7, DAYS).format(dateTimeFormatter));
 
         if (applicant.isRepresented()) {
             templateVars.put(APPLICANT_NAME, join(" ", caseData.getApplicant1().getFirstName(), caseData.getApplicant1().getLastName()));
