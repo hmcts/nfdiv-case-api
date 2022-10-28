@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
@@ -17,7 +18,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -29,7 +29,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_1_INTENDS_TO_SWITCH_TO_SOLE_FO = "applicant1-intends-switch-to-sole-fo";
-    private static final String BLANK_LABEL = "";
+    private static final String NEVER_SHOW = "applicant1IntendsToSwitchToSole=\"NEVER_SHOW\"";
+    private static final String BLANK_LABEL = " ";
 
     @Autowired
     private Clock clock;
@@ -40,8 +41,11 @@ public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
             .event(APPLICANT_1_INTENDS_TO_SWITCH_TO_SOLE_FO)
             .forStates(AwaitingJointFinalOrder)
             .name("Intends to switch to sole FO")
-            .description("Applicant 1 intends to switch to sole FO")
-            .showCondition("applicationType=\"jointApplication\" AND applicant1CanIntendToSwitchToSoleFo\"Yes\"")
+            .description("Applicant 1 Intention to apply for a final order")
+            .showCondition("applicationType=\"jointApplication\""
+                + " AND applicant1CanIntendToSwitchToSoleFo=\"Yes\""
+                + " AND doesApplicant1IntendToSwitchToSole!=\"*\""
+            )
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CITIZEN, CASE_WORKER, SUPER_USER)
             .aboutToSubmitCallback(this::aboutToSubmit))
@@ -49,6 +53,9 @@ public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
             .pageLabel("Intention to apply for a final order")
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getFinaliseDivorceOrLegallyEndYourCivilPartnership, NEVER_SHOW)
+            .done()
+            .complex(CaseData::getApplicant2)
+                .readonlyNoSummary(Applicant::getSolicitorRepresented, NEVER_SHOW)
             .done()
             .label("app1OtherApplicantIsRepresented",
                 getOtherApplicantIsRepresentedLabel(), "applicant2SolicitorRepresented=\"Yes\"")
@@ -74,7 +81,7 @@ public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
 
     public static String getOtherApplicantIsRepresentedLabel() {
         return """
-                The quickest way to finalise the ${labelContentFinaliseDivorceOrLegallyEndYourCivilPartnership}
+                The quickest way to ${labelContentFinaliseDivorceOrLegallyEndYourCivilPartnership}
                 is for the other applicant’s solicitor to confirm the joint application for a final order.
                 They have been emailed details of how to do this.
                 """;
