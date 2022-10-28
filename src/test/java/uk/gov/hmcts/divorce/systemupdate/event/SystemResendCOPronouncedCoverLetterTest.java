@@ -8,12 +8,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.divorce.common.notification.ResendConditionalOrderPronouncedNotification;
+import uk.gov.hmcts.divorce.common.service.task.SendRegeneratedCOPronouncedCoverLetters;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoversheet;
+import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetter;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,13 +32,10 @@ public class SystemResendCOPronouncedCoverLetterTest {
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private ResendConditionalOrderPronouncedNotification notification;
+    private RegenerateConditionalOrderPronouncedCoverLetter regenerateCoverLetters;
 
     @Mock
-    private NotificationDispatcher notificationDispatcher;
-
-    @Mock
-    private RegenerateConditionalOrderPronouncedCoversheet regenerateCoverSheet;
+    private SendRegeneratedCOPronouncedCoverLetters sendRegeneratedCoverLetters;
 
     @InjectMocks
     private SystemResendCOPronouncedCoverLetter underTest;
@@ -56,30 +52,20 @@ public class SystemResendCOPronouncedCoverLetterTest {
     }
 
     @Test
-    void shouldRegenerateCoverLetters() {
+    void shouldRegenerateAndSendCoverLetters() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
+
+        when(regenerateCoverLetters.apply(details)).thenReturn(details);
+        when(sendRegeneratedCoverLetters.apply(details)).thenReturn(details);
 
         underTest.aboutToSubmit(details, details);
 
-        verify(regenerateCoverSheet).apply(details);
-    }
-
-    @Test
-    void shouldSendCoverLetters() {
-        final CaseData caseData = caseData();
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
-        details.setData(caseData);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
-
-        underTest.submitted(details, details);
-
-        verify(notificationDispatcher).send(notification, caseData, 1L);
+        verify(regenerateCoverLetters).apply(details);
+        verify(sendRegeneratedCoverLetters).apply(details);
     }
 }

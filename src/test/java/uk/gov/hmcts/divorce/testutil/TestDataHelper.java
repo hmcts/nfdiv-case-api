@@ -33,6 +33,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
@@ -1141,14 +1142,25 @@ public class TestDataHelper {
 
     public static CaseData buildCaseDataCOPronounced(final YesOrNo isOffline, final ContactDetailsType app1ContactType,
                                                      final ContactDetailsType app2ContactType) {
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .addressLine1("line1")
+            .addressLine2("line2")
+            .postTown("city")
+            .postCode("postcode")
+            .build();
+
         Applicant applicant1 = Applicant.builder()
-            .firstName("app1")
+            .address(addressGlobalUK)
+            .firstName("Bob")
+            .lastName("Smith")
             .offline(isOffline)
             .contactDetailsType(app1ContactType)
             .build();
 
         Applicant applicant2 = Applicant.builder()
-            .firstName("app2")
+            .firstName("Lily")
+            .lastName("Jones")
+            .address(addressGlobalUK)
             .offline(isOffline)
             .contactDetailsType(app2ContactType)
             .build();
@@ -1172,8 +1184,14 @@ public class TestDataHelper {
             .build();
 
         return CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
             .applicant1(applicant1)
             .applicant2(applicant2)
+            .conditionalOrder(ConditionalOrder.builder()
+                .court(ConditionalOrderCourt.BIRMINGHAM)
+                .dateAndTimeOfHearing(LOCAL_DATE_TIME)
+                .grantedDate(LOCAL_DATE)
+                .build())
             .documents(CaseDocuments.builder()
                 .documentsGenerated(Lists.newArrayList(coGrantedDoc, coCoverLetterApp1, coCoverLetterApp2))
                 .build())

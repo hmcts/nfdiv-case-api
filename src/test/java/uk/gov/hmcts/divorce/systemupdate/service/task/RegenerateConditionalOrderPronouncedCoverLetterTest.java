@@ -21,13 +21,13 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataCOPronounced;
 
 @ExtendWith(MockitoExtension.class)
-public class RegenerateConditionalOrderPronouncedCoversheetTest {
+public class RegenerateConditionalOrderPronouncedCoverLetterTest {
 
     @Mock
-    private GenerateConditionalOrderPronouncedCoversheet generateCoversheet;
+    private ConditionalOrderPronouncedCoverLetterHelper coverLetterHelper;
 
     @InjectMocks
-    private RegenerateConditionalOrderPronouncedCoversheet underTest;
+    private RegenerateConditionalOrderPronouncedCoverLetter underTest;
 
     @Test
     public void shouldGenerateCoverLettersSoleApplication() {
@@ -48,10 +48,10 @@ public class RegenerateConditionalOrderPronouncedCoversheetTest {
             .stream().map(documentListValue -> documentListValue.getValue().getDocumentType()).toList())
             .containsOnly(CONDITIONAL_ORDER_GRANTED);
 
-        verify(generateCoversheet).generateConditionalOrderPronouncedCoversheet(
+        verify(coverLetterHelper).generateConditionalOrderPronouncedCoversheet(
             data, caseDetails.getId(), data.getApplicant1(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
 
-        verify(generateCoversheet).generateConditionalOrderPronouncedCoversheetOfflineRespondent(
+        verify(coverLetterHelper).generateConditionalOrderPronouncedCoversheetOfflineRespondent(
             data, caseDetails.getId(), data.getApplicant2(), data.getApplicant1());
     }
 
@@ -74,10 +74,10 @@ public class RegenerateConditionalOrderPronouncedCoversheetTest {
             .stream().map(documentListValue -> documentListValue.getValue().getDocumentType()).toList())
             .containsOnly(CONDITIONAL_ORDER_GRANTED);
 
-        verify(generateCoversheet).generateConditionalOrderPronouncedCoversheet(
+        verify(coverLetterHelper).generateConditionalOrderPronouncedCoversheet(
             data, caseDetails.getId(), data.getApplicant1(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
 
-        verify(generateCoversheet).generateConditionalOrderPronouncedCoversheet(
+        verify(coverLetterHelper).generateConditionalOrderPronouncedCoversheet(
             data, caseDetails.getId(), data.getApplicant2(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
     }
 }

@@ -15,10 +15,10 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 
 @Component
 @Slf4j
-public class RegenerateConditionalOrderPronouncedCoversheet implements CaseTask {
+public class RegenerateConditionalOrderPronouncedCoverLetter implements CaseTask {
 
     @Autowired
-    private GenerateConditionalOrderPronouncedCoversheet generateCoversheet;
+    private ConditionalOrderPronouncedCoverLetterHelper coverLetterHelper;
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
@@ -32,7 +32,7 @@ public class RegenerateConditionalOrderPronouncedCoversheet implements CaseTask 
 
             if (anyDocRemoved) {
                 log.info("Regenerating applicant 1 conditional order pronounced coversheet for case id {} ", caseId);
-                generateCoversheet.generateConditionalOrderPronouncedCoversheet(
+                coverLetterHelper.generateConditionalOrderPronouncedCoversheet(
                     caseData,
                     caseId,
                     caseData.getApplicant1(),
@@ -49,7 +49,7 @@ public class RegenerateConditionalOrderPronouncedCoversheet implements CaseTask 
             if (anyDocRemoved) {
                 if (caseData.getApplicationType().isSole()) {
                     log.info("Generating respondent conditional order pronounced coversheet for case id {} ", caseId);
-                    generateCoversheet.generateConditionalOrderPronouncedCoversheetOfflineRespondent(
+                    coverLetterHelper.generateConditionalOrderPronouncedCoversheetOfflineRespondent(
                         caseData,
                         caseId,
                         caseData.getApplicant2(),
@@ -57,7 +57,7 @@ public class RegenerateConditionalOrderPronouncedCoversheet implements CaseTask 
                     );
                 } else {
                     log.info("Generating applicant 2 conditional order pronounced coversheet for case id {} ", caseId);
-                    generateCoversheet.generateConditionalOrderPronouncedCoversheet(
+                    coverLetterHelper.generateConditionalOrderPronouncedCoversheet(
                         caseData,
                         caseId,
                         caseData.getApplicant2(),

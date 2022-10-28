@@ -23,7 +23,6 @@ public class ResendConditionalOrderPronouncedNotification implements ApplicantNo
         if (YES.equals(caseData.getApplicant1().getCoPronouncedCoverLetterRegenerated())) {
             log.info("Resending conditional order letter to applicant 1 for case: {}", caseId);
             conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
-            caseData.getApplication().setCoPronouncedCoverLetterResent(YES);
         }
     }
 
@@ -32,7 +31,6 @@ public class ResendConditionalOrderPronouncedNotification implements ApplicantNo
         if (YES.equals(caseData.getApplicant2().getCoPronouncedCoverLetterRegenerated())) {
             log.info("Resending conditional order letter to applicant 2 for case: {}", caseId);
             conditionalOrderPronouncedPrinter.sendLetter(caseData, caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
-            caseData.getApplication().setCoPronouncedCoverLetterResent(YES);
         }
     }
 }
