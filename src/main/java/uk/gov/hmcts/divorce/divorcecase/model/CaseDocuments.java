@@ -255,7 +255,7 @@ public class CaseDocuments {
             : Optional.empty();
     }
 
-    public boolean documentsAreUnderConfidentialList(final DocumentType documentType) {
+    public boolean isGivenDocumentUnderConfidentialList(final DocumentType documentType) {
         return ofNullable(getConfidentialDocumentsGenerated())
             .orElseGet(Collections::emptyList)
             .stream().filter(Objects::nonNull)

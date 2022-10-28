@@ -271,8 +271,8 @@ class CaseDocumentsTest {
             .documentsGenerated(List.of(documentListValue3, documentListValue1, documentListValue2))
             .build();
 
-        assertThat(caseDocuments.documentsAreUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)).isFalse();
-        assertThat(caseDocuments.documentsAreUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)).isFalse();
+        assertThat(caseDocuments.isGivenDocumentUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)).isFalse();
+        assertThat(caseDocuments.isGivenDocumentUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)).isFalse();
     }
 
     @Test
@@ -298,8 +298,8 @@ class CaseDocumentsTest {
             .confidentialDocumentsGenerated(List.of(documentListValue1, documentListValue2))
             .build();
 
-        assertThat(caseDocuments.documentsAreUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)).isTrue();
-        assertThat(caseDocuments.documentsAreUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)).isTrue();
+        assertThat(caseDocuments.isGivenDocumentUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)).isTrue();
+        assertThat(caseDocuments.isGivenDocumentUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)).isTrue();
     }
 
     private ListValue<ScannedDocument> getDocumentListValue(final String url,

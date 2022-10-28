@@ -124,12 +124,12 @@ public class SystemResendCOPronouncedCoverLettersTask implements Runnable {
 
         if (caseData.getApplicant1().isOffline()
             && caseData.getApplicant1().isConfidentialContactDetails()
-            && !caseDocuments.documentsAreUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)) {
+            && !caseDocuments.isGivenDocumentUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)) {
             return true;
         }
 
         return caseData.getApplicant2().isOffline()
             && caseData.getApplicant2().isConfidentialContactDetails()
-            && !caseDocuments.documentsAreUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
+            && !caseDocuments.isGivenDocumentUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
     }
 }
