@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSwitchToSoleCoNotification;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -56,8 +55,7 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_2_SOLICITOR)
             .showSummary()
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted))
+            .aboutToSubmitCallback(this::aboutToSubmit))
             .page("app1SolSwitchToSoleCo")
             .pageLabel("Changing to a sole conditional order application")
             .label("app1SolSwitchToSoleLabel1", "This case is a joint application.")
@@ -89,17 +87,10 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
         data.getConditionalOrder().setSwitchedToSole(YES);
 
         generateConditionalOrderAnswersDocument.apply(details, data.getApplicant1().getLanguagePreference());
+        notificationDispatcher.send(applicant1SolicitorSwitchToSoleCoNotification, data, caseId);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
-    }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Applicant 1 Solicitor SwitchedToSoleCO submitted callback invoked for case id: {}", details.getId());
-
-        notificationDispatcher.send(applicant1SolicitorSwitchToSoleCoNotification, details.getData(), details.getId());
-        return SubmittedCallbackResponse.builder().build();
     }
 }

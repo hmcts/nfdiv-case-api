@@ -39,7 +39,7 @@ public class Applicant1SolicitorSwitchToSoleCoTest {
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
-    private SolicitorSwitchToSoleCoNotification solicitorSwitchToSoleCoNotification;
+    private SolicitorSwitchToSoleCoNotification applicant1SolicitorSwitchToSoleCoNotification;
 
     @InjectMocks
     private Applicant1SolicitorSwitchToSoleCo applicant1SolicitorSwitchToSoleCo;
@@ -75,18 +75,6 @@ public class Applicant1SolicitorSwitchToSoleCoTest {
         assertThat(response.getData().getConditionalOrder().getSwitchedToSole()).isEqualTo(YES);
 
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
-    }
-
-    @Test
-    void shouldSendEmailsInSubmittedCallback() {
-        CaseData caseData = CaseData.builder().build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        applicant1SolicitorSwitchToSoleCo.submitted(caseDetails, caseDetails);
-
-        verify(notificationDispatcher).send(solicitorSwitchToSoleCoNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(applicant1SolicitorSwitchToSoleCoNotification, caseData, TEST_CASE_ID);
     }
 }

@@ -27,7 +27,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONSE_DUE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
@@ -83,31 +82,6 @@ class Applicant2AppliedForFinalOrderNotificationTest {
             eq(SOLE_APPLIED_FOR_FINAL_ORDER),
             any(),
             eq(ENGLISH)
-        );
-        verifyNoMoreInteractions(notificationService);
-        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());
-    }
-
-    @Test
-    void shouldSendApplicant2NotificationInWelshIfSoleApplication() {
-        CaseData data = validApplicant2CaseData();
-        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
-        data.setApplicationType(SOLE_APPLICATION);
-        data.setFinalOrder(FinalOrder.builder()
-            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
-            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
-        );
-        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
-
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1())).thenReturn(getMainTemplateVars());
-
-        notification.sendToApplicant2(data, 1L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOLE_APPLIED_FOR_FINAL_ORDER),
-            any(),
-            eq(WELSH)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());

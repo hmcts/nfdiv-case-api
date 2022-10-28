@@ -24,12 +24,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class CaseworkerFinalOrderPending implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_FINAL_ORDER_PENDING = "caseworker-final-order-pending";
+    public static final String CASEWORKER_ADD_ADMIN_CLARIFICATION = "caseworker-final-order-pending";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_FINAL_ORDER_PENDING)
+            .event(CASEWORKER_ADD_ADMIN_CLARIFICATION)
             .forStateTransition(EnumSet.of(FinalOrderRequested, AwaitingFinalOrder, FinalOrderOverdue), FinalOrderPending)
             .name("Final Order pending")
             .description("Final Order pending")

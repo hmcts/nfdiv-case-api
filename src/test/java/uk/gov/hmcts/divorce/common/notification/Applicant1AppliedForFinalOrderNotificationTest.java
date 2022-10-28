@@ -30,7 +30,6 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONSE_DUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
@@ -90,30 +89,6 @@ class Applicant1AppliedForFinalOrderNotificationTest {
             eq(SOLE_APPLIED_FOR_FINAL_ORDER),
             any(),
             eq(ENGLISH)
-        );
-        verifyNoMoreInteractions(notificationService);
-        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2());
-    }
-
-    @Test
-    void shouldSendApplicant1NotificationInWelshIfSoleApplication() {
-        setupMocks(clock);
-        CaseData data = caseData();
-        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
-        data.setApplicationType(SOLE_APPLICATION);
-        data.setFinalOrder(FinalOrder.builder()
-            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
-            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
-
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2())).thenReturn(getMainTemplateVars());
-
-        notification.sendToApplicant1(data, 1L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(SOLE_APPLIED_FOR_FINAL_ORDER),
-            any(),
-            eq(WELSH)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2());

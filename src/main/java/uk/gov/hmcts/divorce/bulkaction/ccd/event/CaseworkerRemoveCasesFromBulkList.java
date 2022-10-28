@@ -19,8 +19,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.stream.Collectors.toList;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -36,6 +38,9 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
 
     @Autowired
     private CaseRemovalService caseRemovalService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     private PronouncementListDocService pronouncementListDocService;
@@ -139,7 +144,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
 
         BulkActionCaseData caseData = details.getData();
 
-        caseRemovalService.removeCases(details, caseData.getCasesToBeRemoved());
+        caseRemovalService.removeCases(details, caseData.getCasesToBeRemoved(), request.getHeader(AUTHORIZATION));
 
         return SubmittedCallbackResponse.builder().build();
     }

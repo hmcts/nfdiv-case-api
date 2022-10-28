@@ -22,22 +22,29 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerRemoveCasesFromBulkList.CASEWORKER_REMOVE_CASES_BULK_LIST;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerRemoveCasesFromBulkListTest {
 
     @Mock
     private CaseRemovalService caseRemovalService;
+
+    @Mock
+    private HttpServletRequest request;
 
     @Mock
     private PronouncementListDocService pronouncementListDocService;
@@ -291,9 +298,12 @@ public class CaseworkerRemoveCasesFromBulkListTest {
         details.getData().setCasesAcceptedToListForHearing(singletonList(caseLinkListValue));
         details.setId(1L);
 
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
+
         SubmittedCallbackResponse submittedCallbackResponse = caseworkerRemoveCasesFromBulkList.submitted(details, details);
 
         assertThat(submittedCallbackResponse).isNotNull();
-        verify(caseRemovalService).removeCases(details, casesToRemove);
+        verify(caseRemovalService).removeCases(details, casesToRemove, CASEWORKER_AUTH_TOKEN);
     }
 }

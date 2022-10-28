@@ -101,7 +101,7 @@ public class CaseRemovalServiceIT {
 
         var userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
         var user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(user);
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -145,7 +145,8 @@ public class CaseRemovalServiceIT {
 
         caseRemovalService.removeCases(
             bulkActionCaseDetails,
-            List.of(getBulkListCaseDetailsListValue("2"))
+            List.of(getBulkListCaseDetailsListValue("2")),
+            CASEWORKER_AUTH_TOKEN
         );
 
         verify(coreCaseDataApi)

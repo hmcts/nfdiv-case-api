@@ -35,10 +35,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2NotBroken.APPLICANT_2_NOT_BROKEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_REJECTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_REJECTED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -97,30 +95,6 @@ public class CitizenApplicant2NotBrokenIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT2_APPLICANT2_REJECTED), anyMap(), eq(ENGLISH));
-
-        verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenSendWelshEmailToApplicant1AndApplicant2() throws Exception {
-        CaseData data = validJointApplicant1CaseData();
-        data.getApplicant1().setLanguagePreferenceWelsh(YES);
-        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
-        data.getApplicant2().setLanguagePreferenceWelsh(YES);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, APPLICANT_2_NOT_BROKEN)))
-            .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn();
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT1_APPLICANT2_REJECTED), anyMap(), eq(WELSH));
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT2_APPLICANT2_REJECTED), anyMap(), eq(WELSH));
 
         verifyNoMoreInteractions(notificationService);
     }

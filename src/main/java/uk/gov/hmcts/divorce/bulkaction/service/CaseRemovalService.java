@@ -42,11 +42,11 @@ public class CaseRemovalService {
 
     @Async
     public void removeCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
-                            final List<ListValue<BulkListCaseDetails>> casesToRemove) {
+                            final List<ListValue<BulkListCaseDetails>> casesToRemove, final String authorization) {
 
         final BulkActionCaseData bulkActionCaseData = details.getData();
 
-        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final User user = idamService.retrieveUser(authorization);
         final String serviceAuth = authTokenGenerator.generate();
 
         final List<ListValue<BulkListCaseDetails>> unprocessedCases =

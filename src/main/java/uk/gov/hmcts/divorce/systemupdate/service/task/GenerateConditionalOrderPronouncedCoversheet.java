@@ -11,34 +11,25 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
-import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
-import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
@@ -54,9 +45,6 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
 
     @Autowired
     private Clock clock;
-
-    @Autowired
-    private CommonContent commonContent;
 
     @Autowired
     private DocmosisCommonContent docmosisCommonContent;
@@ -79,22 +67,12 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
 
         if (caseData.getApplicant2().isOffline()) {
             log.info("Generating applicant 2 conditional order pronounced coversheet for case id {} ", caseId);
-            if (caseData.getApplicationType().isSole()) {
-                generateConditionalOrderPronouncedCoversheetOfflineRespondent(
-                    caseData,
-                    caseId,
-                    caseData.getApplicant2(),
-                    caseData.getApplicant1()
-                );
-            } else {
-                generateConditionalOrderPronouncedCoversheet(
-                    caseData,
-                    caseId,
-                    caseData.getApplicant2(),
-                    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2
-                );
-            }
-
+            generateConditionalOrderPronouncedCoversheet(
+                caseData,
+                caseId,
+                caseData.getApplicant2(),
+                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2
+            );
         }
 
         return caseDetails;
@@ -111,22 +89,6 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
             templateVars(caseData, caseId, applicant),
             caseId,
             CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
-            applicant.getLanguagePreference(),
-            formatDocumentName(caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
-        );
-    }
-
-    private void generateConditionalOrderPronouncedCoversheetOfflineRespondent(final CaseData caseData,
-                                                              final Long caseId,
-                                                              final Applicant applicant,
-                                                              final Applicant partner) {
-
-        caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
-            templateVarsForOfflineRespondent(caseData, caseId, applicant, partner),
-            caseId,
-            CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
         );
@@ -156,24 +118,6 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
                 ? caseData.getConditionalOrder().getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER)
                 : null
         );
-
-        return templateContent;
-    }
-
-    private Map<String, Object> templateVarsForOfflineRespondent(final CaseData caseData,
-                                             final Long caseId,
-                                             final Applicant applicant, final Applicant partner) {
-
-        final Map<String, Object> templateContent = templateVars(caseData, caseId, applicant);
-
-        final LocalDateTime dateAndTimeOfHearing = caseData.getConditionalOrder().getDateAndTimeOfHearing();
-        final String dateOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(DATE_TIME_FORMATTER) : null;
-        final String timeOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(TIME_FORMATTER) : null;
-
-        templateContent.put(DATE_OF_HEARING, dateOfHearing);
-        templateContent.put(TIME_OF_HEARING, timeOfHearing);
-        templateContent.put(COURT_NAME, caseData.getConditionalOrder().getCourt().getLabel());
-        templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
 
         return templateContent;
     }
