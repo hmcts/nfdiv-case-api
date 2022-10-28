@@ -133,6 +133,8 @@ public class SwitchToSoleCoPrinterTest {
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         templateContent.put(NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
+        templateContent.put("firstName", respondent.getFirstName());
+        templateContent.put("lastName", respondent.getLastName());
         templateContent.put(ADDRESS, AddressUtil.getPostalAddress(APPLICANT_ADDRESS));
         templateContent.put(DATE, now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(PARTNER, "husband");
@@ -184,7 +186,7 @@ public class SwitchToSoleCoPrinterTest {
                 .build();
 
         final CaseData caseData = CaseData.builder()
-            .divorceOrDissolution(DISSOLUTION)
+            .divorceOrDissolution(DivorceOrDissolution.DISSOLUTION)
             .documents(
                 CaseDocuments.builder()
                     .documentsGenerated(singletonList(switchToSoleCoLetter))
@@ -206,6 +208,8 @@ public class SwitchToSoleCoPrinterTest {
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         templateContent.put(NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
+        templateContent.put("firstName", respondent.getFirstName());
+        templateContent.put("lastName", respondent.getLastName());
         templateContent.put(ADDRESS, AddressUtil.getPostalAddress(APPLICANT_ADDRESS));
         templateContent.put(DATE, now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(PARTNER, "husband");
