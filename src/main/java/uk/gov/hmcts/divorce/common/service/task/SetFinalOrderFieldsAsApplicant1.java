@@ -19,7 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 
 @Slf4j
 @Component
-public class SetFinalOrderFields implements CaseTask {
+public class SetFinalOrderFieldsAsApplicant1 implements CaseTask {
 
     @Autowired
     private Clock clock;

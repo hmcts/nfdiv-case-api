@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.service.task.ProgressFinalOrderState;
-import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFields;
+import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant1;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner;
 public class SubmitFinalOrderService {
 
     @Autowired
-    private SetFinalOrderFields setFinalOrderFields;
+    private SetFinalOrderFieldsAsApplicant1 setFinalOrderFieldsAsApplicant1;
 
     @Autowired
     private SetFinalOrderFieldsAsApplicant2 setFinalOrderFieldsAsApplicant2;
@@ -25,7 +25,7 @@ public class SubmitFinalOrderService {
     public CaseDetails<CaseData, State> submitFinalOrderAsApplicant1(final CaseDetails<CaseData, State> caseDetails) {
 
         return CaseTaskRunner.caseTasks(
-            setFinalOrderFields,
+            setFinalOrderFieldsAsApplicant1,
             progressFinalOrderState
         ).run(caseDetails);
     }
