@@ -12,21 +12,16 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
+import uk.gov.hmcts.divorce.common.service.SubmitFinalOrderService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static java.util.Objects.isNull;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
@@ -58,7 +53,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     private NotificationDispatcher notificationDispatcher;
 
     @Autowired
-    private ProgressFinalOrderState progressFinalOrderState;
+    private SubmitFinalOrderService submitFinalOrderService;
 
     @Autowired
     private Clock clock;
@@ -99,18 +94,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
         data.getApplication().setPreviousState(beforeDetails.getState());
 
-        if (AwaitingFinalOrder.equals(details.getState())) {
-            FinalOrder finalOrder = details.getData().getFinalOrder();
-
-            if (isNull(finalOrder.getApplicant1AppliedForFinalOrderFirst())
-                && isNull(finalOrder.getApplicant2AppliedForFinalOrderFirst())) {
-                finalOrder.setApplicant2AppliedForFinalOrderFirst(NO);
-                finalOrder.setApplicant1AppliedForFinalOrderFirst(YES);
-                finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
-            }
-        }
-
-        var updatedDetails = progressFinalOrderState.apply(details);
+        CaseDetails<CaseData, State> updatedDetails = submitFinalOrderService.submitFinalOrder(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedDetails.getData())
