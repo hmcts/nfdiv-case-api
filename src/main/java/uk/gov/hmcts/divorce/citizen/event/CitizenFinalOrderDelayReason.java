@@ -68,18 +68,10 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
         log.info("Citizen final order delay reason about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
-        State endState = FinalOrderRequested;
-
-        if (data.isWelshApplication()) {
-            data.getApplication().setWelshPreviousState(endState);
-            endState = WelshTranslationReview;
-            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
-                data.getApplication().getWelshPreviousState(), details.getId());
-        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(endState)
+            .state(FinalOrderRequested)
             .build();
     }
 
