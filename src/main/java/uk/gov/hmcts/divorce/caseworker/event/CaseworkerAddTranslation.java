@@ -41,7 +41,7 @@ public class CaseworkerAddTranslation implements CCDConfig<CaseData, State, User
             .page("addTranslationApplicant")
             .pageLabel("Applicant/Applicant1 details")
             .complex(CaseData::getLabelContent)
-                .readonly(LabelContent::getApplicantsOrApplicant1s, ALWAYS_HIDE)
+                .readonlyNoSummary(LabelContent::getApplicantsOrApplicant1s, ALWAYS_HIDE)
             .done()
             .complex(CaseData:: getApplicant1)
                 .readonlyNoSummary(Applicant::getLegalProceedingsDetails)
