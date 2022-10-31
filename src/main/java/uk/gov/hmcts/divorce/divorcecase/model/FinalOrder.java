@@ -117,19 +117,19 @@ public class FinalOrder {
     private LocalDate dateFinalOrderEligibleToRespondent;
 
     @CCD(
-        label = "${labelContentApplicantOrApplicant1} final order late explanation",
+        label = "${labelContentApplicantsOrApplicant1s} final order late explanation",
         access = {DefaultAccess.class}
     )
     private String applicant1FinalOrderLateExplanation;
 
     @CCD(
-        label = "${labelContentApplicantOrApplicant1} final order late explanation (translated)",
+        label = "${labelContentApplicantsOrApplicant1s} final order late explanation (translated)",
         access = {DefaultAccess.class}
     )
     private String applicant1FinalOrderLateExplanationTranslated;
 
     @CCD(
-        label = "${labelContentApplicantOrApplicant1} final order late explanation translated to?",
+        label = "${labelContentApplicantsOrApplicant1s} final order late explanation translated to?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "TranslatedToLanguage",
         access = {SystemUpdateAndSuperUserAccess.class}

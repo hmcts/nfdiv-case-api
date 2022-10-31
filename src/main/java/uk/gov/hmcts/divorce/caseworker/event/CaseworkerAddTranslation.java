@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -27,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class CaseworkerAddTranslation implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_ADD_TRANSLATION = "caseworker-add-translation";
+    private static final String ALWAYS_HIDE = "applicant1LegalProceedingsDetails=\"ALWAYS_HIDE\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -41,7 +41,7 @@ public class CaseworkerAddTranslation implements CCDConfig<CaseData, State, User
             .page("addTranslationApplicant")
             .pageLabel("Applicant/Applicant1 details")
             .complex(CaseData::getLabelContent)
-                .readonly(LabelContent::getTheApplicantOrApplicant1, NEVER_SHOW)
+                .readonly(LabelContent::getApplicantsOrApplicant1s, ALWAYS_HIDE)
             .done()
             .complex(CaseData:: getApplicant1)
                 .readonlyNoSummary(Applicant::getLegalProceedingsDetails)
