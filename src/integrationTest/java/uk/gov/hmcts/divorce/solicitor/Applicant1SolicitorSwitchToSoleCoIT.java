@@ -53,6 +53,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -108,7 +109,7 @@ public class Applicant1SolicitorSwitchToSoleCoIT {
     }
 
     @Test
-    void shouldSwitchApplicationTypeToSoleAndGenerateConditionalOrderAnswersAndNotifyApp1SolicitorAndApp2Solicitor()
+    void shouldSwitchApplicationTypeToSoleAndGenerateConditionalOrderAnswers()
         throws Exception {
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -172,6 +173,34 @@ public class Applicant1SolicitorSwitchToSoleCoIT {
             .inPath("$.data.documentsGenerated")
             .isArray()
             .hasSize(1);
+    }
+
+    @Test
+    void shouldNotifyApp1SolicitorAndApp2Solicitor() throws Exception {
+
+        final String app1SolicitorEmail = "app1solicitor@test.com";
+        final String app2SolicitorEmail = "app2solicitor@test.com";
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplication().setIssueDate(LOCAL_DATE);
+        data.getApplicant1().setSolicitorRepresented(YES);
+        data.getApplicant1().setSolicitor(Solicitor
+            .builder()
+            .email(app1SolicitorEmail)
+            .build());
+        data.getApplicant2().setSolicitorRepresented(YES);
+        data.getApplicant2().setSolicitor(Solicitor
+            .builder()
+            .email(app2SolicitorEmail)
+            .build());
+
+        mockMvc.perform(post(SUBMITTED_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(
+                callbackRequest(data, APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
 
         verify(notificationService)
             .sendEmail(
@@ -189,18 +218,7 @@ public class Applicant1SolicitorSwitchToSoleCoIT {
     }
 
     @Test
-    void shouldSwitchApplicationTypeToSoleAndGenerateConditionalOrderAnswersAndNotifyApplicant1SolicitorAndApplicant2()
-        throws Exception {
-
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("Bearer " + TEST_SYSTEM_AUTHORISATION_TOKEN, UserDetails.builder().build()));
-
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Conditional_Order_Answers.docx");
+    void shouldNotifyApplicant1SolicitorAndApplicant2() throws Exception {
 
         final String app1SolicitorEmail = "app1solicitor@test.com";
         CaseData data = validJointApplicant1CaseData();
@@ -211,15 +229,12 @@ public class Applicant1SolicitorSwitchToSoleCoIT {
             .email(app1SolicitorEmail)
             .build());
 
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(OBJECT_MAPPER.writeValueAsString(
-                    callbackRequest(
-                        data,
-                        APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO,
-                        "ConditionalOrderPending")
+                    callbackRequest(data, APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO)
                 ))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());

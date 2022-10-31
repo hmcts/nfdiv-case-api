@@ -195,6 +195,17 @@ public class AddressUtilTest {
     }
 
     @Test
+    public void shouldReturnFalseIfCountryIsNorthernIrelandAndPostcodeIsNotNull() {
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country("Northern Ireland")
+            .postCode("BT31 1RE")
+            .build();
+
+        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(false));
+    }
+
+    @Test
     public void shouldReturnFalseIfCountryIsFranceAndPostcodeIsNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
@@ -210,6 +221,17 @@ public class AddressUtilTest {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("Scotland")
+            .postCode(null)
+            .build();
+
+        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(false));
+    }
+
+    @Test
+    public void shouldReturnFalseIfCountryIsNorthernIrelandAndPostcodeIsNull() {
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country("Northern Ireland")
             .postCode(null)
             .build();
 

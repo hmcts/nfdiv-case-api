@@ -9,16 +9,17 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -30,6 +31,7 @@ import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
@@ -45,10 +47,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-
 
 @Component
 @Slf4j
@@ -71,6 +73,9 @@ public class CertificateOfEntitlementPrinter {
     @Autowired
     private Clock clock;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     @Value("${final_order.eligible_from_offset_days}")
     private long finalOrderOffsetDays;
 
@@ -80,12 +85,27 @@ public class CertificateOfEntitlementPrinter {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
+    @Autowired
+    private CommonContent commonContent;
+
     public void sendLetter(final CaseData caseData, final Long caseId, final Applicant applicant,
                            final DocumentType coversheetDocumentType) {
 
         generateCoversheet(caseData, caseId, applicant, coversheetDocumentType);
 
-        final List<Letter> certificateOfEntitlementLetters = certificateOfEntitlementLetters(caseData, coversheetDocumentType);
+        validateAndGetCertificateOfEntitlementLetter(caseData, caseId, coversheetDocumentType);
+    }
+
+    public void sendLetter(final CaseData caseData, final Long caseId, final Applicant applicant, final Applicant partner,
+                           final DocumentType coversheetDocumentType) {
+
+        generateCoversheetForOfflineRespondent(caseData, caseId, applicant, partner, coversheetDocumentType);
+
+        validateAndGetCertificateOfEntitlementLetter(caseData, caseId, coversheetDocumentType);
+    }
+
+    private void validateAndGetCertificateOfEntitlementLetter(CaseData caseData, Long caseId, DocumentType coversheetDocumentType) {
+        final List<Letter> certificateOfEntitlementLetters = getCertificateOfEntitlementLetters(caseData, coversheetDocumentType);
 
         if (!isEmpty(certificateOfEntitlementLetters) && certificateOfEntitlementLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
             final String caseIdString = caseId.toString();
@@ -102,9 +122,9 @@ public class CertificateOfEntitlementPrinter {
         }
     }
 
-    private List<Letter> certificateOfEntitlementLetters(CaseData caseData, final DocumentType coversheetDocumentType) {
-
-        final List<Letter> coverLetters = getLettersBasedOnContactPrivacy(caseData, coversheetDocumentType);
+    private List<Letter> getCertificateOfEntitlementLetters(CaseData caseData, final DocumentType coversheetDocumentType) {
+        final List<Letter> coverLetters = getLettersBasedOnContactPrivacy(
+            caseData,coversheetDocumentType);
 
         final Letter coverLetter = firstElement(coverLetters);
         final Letter certificateOfEntitlement =
@@ -138,11 +158,32 @@ public class CertificateOfEntitlementPrinter {
         );
     }
 
+    private void generateCoversheetForOfflineRespondent(final CaseData caseData, final Long caseId,
+                                    final Applicant applicant, final Applicant partner, final DocumentType coversheetDocumentType) {
+
+        log.info("Generating certificate of entitlement coversheet for offline respondent for case id {} ", caseId);
+
+        Map<String, Object> templateVars = templateVars(caseData, caseId, applicant);
+
+        templateVars.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
+
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            coversheetDocumentType,
+            templateVars,
+            caseId,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
+            applicant.getLanguagePreference(),
+            formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
+    }
+
     private Map<String, Object> templateVars(final CaseData caseData,
                                              final Long caseId,
                                              final Applicant applicant) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+                applicant.getLanguagePreference());
 
         templateContent.put(NAME, applicant.isRepresented()
             ? applicant.getSolicitor().getName()

@@ -1,19 +1,17 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 
-import java.time.Clock;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils.EMPTY;
 import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
@@ -53,21 +51,19 @@ public class FinalOrderGrantedTemplateContent {
     public static final String DISSOLUTION_OF_A_CIVIL_PARTNERSHIP_CY = "diddymu partneriaeth sifil";
     public static final String FORMER_CIVIL_PARTNER_CY = "cyn-bartner sifil";
 
-    @Autowired
-    private Clock clock;
-
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         Map<String, Object> templateContent = new HashMap<>();
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
-        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
+        templateContent.put(DATE, isNotEmpty(caseData.getFinalOrder().getGrantedDate())
+            ? caseData.getFinalOrder().getGrantedDate().format(DATE_TIME_FORMATTER) : EMPTY);
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
 
         ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
-        templateContent.put(CO_PRONOUNCED_DATE, conditionalOrder.getGrantedDate() != null
+        templateContent.put(CO_PRONOUNCED_DATE, isNotEmpty(conditionalOrder.getGrantedDate())
             ? conditionalOrder.getGrantedDate().format(DATE_TIME_FORMATTER) : EMPTY);
 
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());

@@ -16,13 +16,10 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerPronounceList.CASEWORKER_PRONOUNCE_LIST;
@@ -30,16 +27,12 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerPronounceListTest {
 
     @Mock
     private CasePronouncementService casePronouncementService;
-
-    @Mock
-    private HttpServletRequest request;
 
     @Mock
     private Clock clock;
@@ -152,12 +145,11 @@ class CaseworkerPronounceListTest {
         details.setData(BulkActionCaseData.builder().build());
         details.setId(1L);
 
-        when(request.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
-        doNothing().when(casePronouncementService).pronounceCases(details, CASEWORKER_AUTH_TOKEN);
+        doNothing().when(casePronouncementService).pronounceCases(details);
 
         SubmittedCallbackResponse submittedCallbackResponse = caseworkerPronounceList.submitted(details, details);
 
         assertThat(submittedCallbackResponse).isNotNull();
-        verify(casePronouncementService).pronounceCases(details, CASEWORKER_AUTH_TOKEN);
+        verify(casePronouncementService).pronounceCases(details);
     }
 }

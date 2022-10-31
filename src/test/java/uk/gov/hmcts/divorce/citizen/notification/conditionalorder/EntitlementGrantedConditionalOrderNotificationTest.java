@@ -121,6 +121,22 @@ class EntitlementGrantedConditionalOrderNotificationTest {
     }
 
     @Test
+    void shouldSendLettersToSoleOfflineRespondentWithCourtHearingContent() {
+        CaseData data = validCaseWithCourtHearing();
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setOffline(YesOrNo.YES);
+        data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
+
+        entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1(),
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
+    }
+
+    @Test
     void shouldSendEmailToJointApplicant2WithCourtHearingContent() {
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);

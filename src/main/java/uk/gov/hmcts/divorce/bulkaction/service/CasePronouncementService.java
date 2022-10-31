@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.bulkaction.service;
 
-import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -12,6 +11,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -49,11 +49,11 @@ public class CasePronouncementService {
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Async
-    public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
-                               final String authorization) {
+    public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details
+    ) {
         final BulkActionCaseData bulkActionCaseData = details.getData();
 
-        final User user = idamService.retrieveUser(authorization);
+        final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
         filterCasesNotInCorrectState(bulkActionCaseData, user, serviceAuth);
@@ -66,11 +66,11 @@ public class CasePronouncementService {
                 user,
                 serviceAuth);
 
-        log.info("Error bulk case details list size {}", unprocessedBulkCases.size());
+        log.info("Error bulk case details list size {} and bulk case id {}", unprocessedBulkCases.size(), details.getId());
 
         List<ListValue<BulkListCaseDetails>> processedBulkCases = bulkActionCaseData.calculateProcessedCases(unprocessedBulkCases);
 
-        log.info("Successfully processed bulk case details list size {}", processedBulkCases.size());
+        log.info("Successfully processed bulk case details list size {} and bulk case id {}", processedBulkCases.size(), details.getId());
 
         bulkActionCaseData.getErroredCaseDetails().addAll(unprocessedBulkCases);
         bulkActionCaseData.getProcessedCaseDetails().addAll(processedBulkCases);
@@ -82,7 +82,7 @@ public class CasePronouncementService {
                 user,
                 serviceAuth
             );
-        } catch (final FeignException e) {
+        } catch (final CcdManagementException e) {
             log.error("Update failed for bulk case id {} ", details.getId(), e);
         }
     }
