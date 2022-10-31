@@ -11,9 +11,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -38,6 +40,9 @@ public class CaseworkerAddTranslation implements CCDConfig<CaseData, State, User
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SYSTEMUPDATE))
             .page("addTranslationApplicant")
             .pageLabel("Applicant/Applicant1 details")
+            .complex(CaseData::getLabelContent)
+                .readonly(LabelContent::getTheApplicantOrApplicant1, NEVER_SHOW)
+            .done()
             .complex(CaseData:: getApplicant1)
                 .readonlyNoSummary(Applicant::getLegalProceedingsDetails)
                 .optional(Applicant::getLegalProceedingsDetailsTranslated,"applicant1LegalProceedingsDetails=\"*\"")
