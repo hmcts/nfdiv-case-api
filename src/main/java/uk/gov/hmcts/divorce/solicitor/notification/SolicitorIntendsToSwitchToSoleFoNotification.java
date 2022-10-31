@@ -27,9 +27,9 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Component
 public class SolicitorIntendsToSwitchToSoleFoNotification implements ApplicantNotification {
 
-    private static final String DATE_PLUS_14_DAYS = "date plus 14 days";
-    private static final String APPLICANT_1_NAME = "applicant 1 name";
-    private static final String APPLICANT_2_NAME = "applicant 2 name";
+    public static final String DATE_PLUS_14_DAYS = "date plus 14 days";
+    public static final String APPLICANT_1_NAME = "applicant 1 name";
+    public static final String APPLICANT_2_NAME = "applicant 2 name";
 
     @Autowired
     private NotificationService notificationService;
