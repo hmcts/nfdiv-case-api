@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -13,6 +14,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorIntendsToSwitchToSoleFoNotification;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -25,12 +29,19 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
+@Slf4j
 @Component
 public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_1_INTENDS_TO_SWITCH_TO_SOLE_FO = "applicant1-intends-switch-to-sole-fo";
     private static final String NEVER_SHOW = "applicant1IntendsToSwitchToSole=\"NEVER_SHOW\"";
     private static final String BLANK_LABEL = " ";
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private SolicitorIntendsToSwitchToSoleFoNotification solicitorIntendsToSwitchToSoleFoNotification;
 
     @Autowired
     private Clock clock;
@@ -48,7 +59,8 @@ public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
             )
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CITIZEN, CASE_WORKER, SUPER_USER)
-            .aboutToSubmitCallback(this::aboutToSubmit))
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted))
             .page("app1IntentionSwitchToSoleFo")
             .pageLabel("Intention to apply for a final order")
             .complex(CaseData::getLabelContent)
@@ -77,6 +89,15 @@ public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
+    }
+
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Applicant2SolicitorIntendsSwitchToSoleFo submitted callback invoked for case id: {}", details.getId());
+
+        notificationDispatcher.send(solicitorIntendsToSwitchToSoleFoNotification, details.getData(), details.getId());
+
+        return SubmittedCallbackResponse.builder().build();
     }
 
     public static String getOtherApplicantIsRepresentedLabel() {
