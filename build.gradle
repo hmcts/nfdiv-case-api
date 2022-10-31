@@ -228,7 +228,6 @@ repositories {
   mavenLocal()
   mavenCentral()
   maven { url 'https://jitpack.io' }
-  jcenter()
 }
 
 def versions = [
@@ -258,11 +257,13 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '5.10.3'
   implementation (group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.2-Categories') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
     exclude group: 'org.apache.poi', module: 'poi-ooxml'
     exclude group: 'org.apache.poi', module: 'poi'
+    exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: 'v4.9.1'
   implementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
