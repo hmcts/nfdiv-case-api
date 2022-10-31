@@ -21,13 +21,17 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.FinalOrder.IntendsToSwitchToSole.I_INTEND_TO_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.INTEND_TO_SWITCHED_TO_SOLE_FO_ERROR;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.getIntendsToSwitchToSoleInformationLabel;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.getOtherApplicantIsNotRepresentedLabel;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.getOtherApplicantIsRepresentedLabel;
@@ -65,7 +69,7 @@ public class Applicant2SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
             .grantHistoryOnly(CITIZEN, CASE_WORKER, SUPER_USER)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted))
-            .page("app2IntentionSwitchToSoleFo")
+            .page("app2IntentionSwitchToSoleFo", this::midEvent)
             .pageLabel("Intention to apply for a final order")
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getFinaliseDivorceOrLegallyEndYourCivilPartnership, NEVER_SHOW)
@@ -79,8 +83,27 @@ public class Applicant2SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
                 getOtherApplicantIsNotRepresentedLabel(),"applicant1SolicitorRepresented=\"No\"")
             .label("app2IntendsSwitchToSoleFoInfo", getIntendsToSwitchToSoleInformationLabel())
             .complex(CaseData::getFinalOrder)
-                .mandatoryNoSummary(FinalOrder::getApplicant2IntendsToSwitchToSole, null, BLANK_LABEL)
+                .optionalNoSummary(FinalOrder::getApplicant2IntendsToSwitchToSole, null, BLANK_LABEL)
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        CaseDetails<CaseData, State> details,
+        CaseDetails<CaseData, State> detailsBefore
+    ) {
+        final CaseData data = details.getData();
+
+        if (isEmpty(data.getFinalOrder().getApplicant2IntendsToSwitchToSole())
+            || !data.getFinalOrder().getApplicant2IntendsToSwitchToSole().contains(I_INTEND_TO_SWITCH_TO_SOLE)
+        ) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList(INTEND_TO_SWITCHED_TO_SOLE_FO_ERROR))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
