@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.common.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.common.service.task.HandleWelshFinalOrder;
 import uk.gov.hmcts.divorce.common.service.task.ProgressFinalOrderState;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant1;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2;
@@ -22,11 +23,15 @@ public class ApplyForFinalOrderService {
     @Autowired
     private ProgressFinalOrderState progressFinalOrderState;
 
+    @Autowired
+    private HandleWelshFinalOrder handleWelshFinalOrder;
+
     public CaseDetails<CaseData, State> applyForFinalOrderAsApplicant1(final CaseDetails<CaseData, State> caseDetails) {
 
         return CaseTaskRunner.caseTasks(
             setFinalOrderFieldsAsApplicant1,
-            progressFinalOrderState
+            progressFinalOrderState,
+            handleWelshFinalOrder
         ).run(caseDetails);
     }
 
@@ -34,7 +39,8 @@ public class ApplyForFinalOrderService {
 
         return CaseTaskRunner.caseTasks(
             setFinalOrderFieldsAsApplicant2,
-            progressFinalOrderState
+            progressFinalOrderState,
+            handleWelshFinalOrder
         ).run(caseDetails);
     }
 }
