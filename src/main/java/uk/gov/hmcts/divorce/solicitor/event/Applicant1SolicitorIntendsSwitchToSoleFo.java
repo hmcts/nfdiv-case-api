@@ -119,7 +119,7 @@ public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
 
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Applicant2SolicitorIntendsSwitchToSoleFo submitted callback invoked for case id: {}", details.getId());
+        log.info("Applicant1SolicitorIntendsSwitchToSoleFo submitted callback invoked for case id: {}", details.getId());
 
         notificationDispatcher.send(solicitorIntendsToSwitchToSoleFoNotification, details.getData(), details.getId());
 
