@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantPartnerNotAppliedForFinalOrder.SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER;
@@ -62,6 +63,7 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrderTest {
         verify(notificationDispatcher).send(partnerNotAppliedForFinalOrderNotification, caseData, details.getId());
         assertThat(response.getData().getFinalOrder().getFinalOrderFirstInTimeNotifiedOtherApplicantNotApplied()).isEqualTo(YES);
         assertThat(response.getData().getFinalOrder().getApplicant1CanIntendToSwitchToSoleFo()).isEqualTo(YES);
+        assertThat(response.getData().getFinalOrder().getDoesApplicant1IntendToSwitchToSole()).isEqualTo(NO);
     }
 
     @Test
@@ -79,5 +81,6 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrderTest {
         verify(notificationDispatcher).send(partnerNotAppliedForFinalOrderNotification, caseData, details.getId());
         assertThat(response.getData().getFinalOrder().getFinalOrderFirstInTimeNotifiedOtherApplicantNotApplied()).isEqualTo(YES);
         assertThat(response.getData().getFinalOrder().getApplicant2CanIntendToSwitchToSoleFo()).isEqualTo(YES);
+        assertThat(response.getData().getFinalOrder().getDoesApplicant2IntendToSwitchToSole()).isEqualTo(NO);
     }
 }

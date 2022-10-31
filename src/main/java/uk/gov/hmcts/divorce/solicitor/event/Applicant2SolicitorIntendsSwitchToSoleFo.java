@@ -59,7 +59,7 @@ public class Applicant2SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
             .description("Applicant 2 Intention to apply for a final order")
             .showCondition("applicationType=\"jointApplication\""
                 + " AND applicant2CanIntendToSwitchToSoleFo=\"Yes\""
-                + " AND doesApplicant2IntendToSwitchToSole!=\"*\""
+                + " AND doesApplicant2IntendToSwitchToSole=\"No\""
             )
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CITIZEN, CASE_WORKER, SUPER_USER)
