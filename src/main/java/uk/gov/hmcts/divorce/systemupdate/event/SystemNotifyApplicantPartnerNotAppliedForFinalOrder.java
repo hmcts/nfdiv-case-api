@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -54,8 +55,10 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrder implements CCDC
 
         if (!data.getApplicationType().isSole() && YES.equals(data.getFinalOrder().getApplicant1AppliedForFinalOrderFirst())) {
             data.getFinalOrder().setApplicant1CanIntendToSwitchToSoleFo(YES);
+            data.getFinalOrder().setDoesApplicant1IntendToSwitchToSole(NO);
         } else if (!data.getApplicationType().isSole() && YES.equals(data.getFinalOrder().getApplicant2AppliedForFinalOrderFirst())) {
             data.getFinalOrder().setApplicant2CanIntendToSwitchToSoleFo(YES);
+            data.getFinalOrder().setDoesApplicant2IntendToSwitchToSole(NO);
         }
 
         data.getFinalOrder().setFinalOrderFirstInTimeNotifiedOtherApplicantNotApplied(YES);
