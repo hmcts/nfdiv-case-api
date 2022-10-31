@@ -32,7 +32,7 @@ public class Applicant1SolicitorIntendsSwitchToSoleFoFT extends FunctionalTestSu
     }
 
     @Test
-    public void shouldSendEmailToApplicant2SolicitorWhenNotRepresented() throws IOException {
+    public void shouldSendEmailToApplicant2WhenNotRepresented() throws IOException {
 
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicant2SolicitorRepresented", NO);
