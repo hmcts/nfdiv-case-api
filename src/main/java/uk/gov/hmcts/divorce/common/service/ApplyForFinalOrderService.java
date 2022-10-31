@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner;
 
 @Service
-public class SubmitFinalOrderService {
+public class ApplyForFinalOrderService {
 
     @Autowired
     private SetFinalOrderFieldsAsApplicant1 setFinalOrderFieldsAsApplicant1;
@@ -22,7 +22,7 @@ public class SubmitFinalOrderService {
     @Autowired
     private ProgressFinalOrderState progressFinalOrderState;
 
-    public CaseDetails<CaseData, State> submitFinalOrderAsApplicant1(final CaseDetails<CaseData, State> caseDetails) {
+    public CaseDetails<CaseData, State> applyForFinalOrderAsApplicant1(final CaseDetails<CaseData, State> caseDetails) {
 
         return CaseTaskRunner.caseTasks(
             setFinalOrderFieldsAsApplicant1,
@@ -30,7 +30,7 @@ public class SubmitFinalOrderService {
         ).run(caseDetails);
     }
 
-    public CaseDetails<CaseData, State> submitFinalOrderAsApplicant2(final CaseDetails<CaseData, State> caseDetails) {
+    public CaseDetails<CaseData, State> applyForFinalOrderAsApplicant2(final CaseDetails<CaseData, State> caseDetails) {
 
         return CaseTaskRunner.caseTasks(
             setFinalOrderFieldsAsApplicant2,

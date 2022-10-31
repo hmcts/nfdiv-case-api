@@ -16,10 +16,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class SubmitFinalOrderServiceTest {
+class ApplyForFinalOrderServiceTest {
 
     @InjectMocks
-    private SubmitFinalOrderService submitFinalOrderService;
+    private ApplyForFinalOrderService applyForFinalOrderService;
 
     @Mock
     private SetFinalOrderFieldsAsApplicant1 setFinalOrderFieldsAsApplicant1;
@@ -31,28 +31,28 @@ class SubmitFinalOrderServiceTest {
     private ProgressFinalOrderState progressFinalOrderState;
 
     @Test
-    void submitFinalOrderAsApplicant1ShouldRunTheCorrectTasks() {
+    void applyForFinalOrderAsApplicant1ShouldRunTheCorrectTasks() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
 
         when(setFinalOrderFieldsAsApplicant1.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
-        submitFinalOrderService.submitFinalOrderAsApplicant1(caseDetails);
+        applyForFinalOrderService.applyForFinalOrderAsApplicant1(caseDetails);
 
         verify(setFinalOrderFieldsAsApplicant1).apply(caseDetails);
         verify(progressFinalOrderState).apply(caseDetails);
     }
 
     @Test
-    void submitFinalOrderAsApplicant2ShouldRunTheCorrectTasks() {
+    void applyForFinalOrderAsApplicant2ShouldRunTheCorrectTasks() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
 
         when(setFinalOrderFieldsAsApplicant2.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(progressFinalOrderState.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
-        submitFinalOrderService.submitFinalOrderAsApplicant2(caseDetails);
+        applyForFinalOrderService.applyForFinalOrderAsApplicant2(caseDetails);
 
         verify(setFinalOrderFieldsAsApplicant2).apply(caseDetails);
         verify(progressFinalOrderState).apply(caseDetails);

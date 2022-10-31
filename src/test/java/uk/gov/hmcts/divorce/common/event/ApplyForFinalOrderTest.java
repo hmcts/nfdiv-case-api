@@ -11,7 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
-import uk.gov.hmcts.divorce.common.service.SubmitFinalOrderService;
+import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -44,7 +44,7 @@ class ApplyForFinalOrderTest {
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
-    private SubmitFinalOrderService submitFinalOrderService;
+    private ApplyForFinalOrderService applyForFinalOrderService;
 
     @InjectMocks
     private ApplyForFinalOrder applyForFinalOrder;
@@ -119,11 +119,11 @@ class ApplyForFinalOrderTest {
         updatedCaseDetails.setData(caseData);
         updatedCaseDetails.setState(FinalOrderRequested);
 
-        when(submitFinalOrderService.submitFinalOrderAsApplicant1(caseDetails)).thenReturn(updatedCaseDetails);
+        when(applyForFinalOrderService.applyForFinalOrderAsApplicant1(caseDetails)).thenReturn(updatedCaseDetails);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse = applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(submitFinalOrderService).submitFinalOrderAsApplicant1(caseDetails);
+        verify(applyForFinalOrderService).applyForFinalOrderAsApplicant1(caseDetails);
         assertThat(aboutToSubmitResponse.getData().getApplication().getPreviousState()).isEqualTo(AwaitingFinalOrder);
 
         verifyNoInteractions(notificationDispatcher);

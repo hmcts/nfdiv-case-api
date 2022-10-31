@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2ApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
-import uk.gov.hmcts.divorce.common.service.SubmitFinalOrderService;
+import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -53,7 +53,7 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
     private NotificationDispatcher notificationDispatcher;
 
     @Autowired
-    private SubmitFinalOrderService submitFinalOrderService;
+    private ApplyForFinalOrderService applyForFinalOrderService;
 
     @Autowired
     private Clock clock;
@@ -94,7 +94,7 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
         data.getApplication().setPreviousState(beforeDetails.getState());
 
-        CaseDetails<CaseData, State> updatedDetails = submitFinalOrderService.submitFinalOrderAsApplicant2(details);
+        CaseDetails<CaseData, State> updatedDetails = applyForFinalOrderService.applyForFinalOrderAsApplicant2(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedDetails.getData())
