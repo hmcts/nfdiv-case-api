@@ -73,7 +73,7 @@ public enum State {
     @CCD(
         label = "Archived",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccess.class, SolicitorAccess.class}
     )
     Archived,
 
