@@ -38,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerWithdrawn.CASEWORKER_WITHDRAWN;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
@@ -132,6 +133,54 @@ public class CaseworkerWithdrawnIT {
                 eq(CITIZEN_APPLICATION_WITHDRAWN),
                 anyMap(),
                 eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void givenRejectEventWhenAboutToSubmitCallbackIsInvokedSendWelshNotifications() throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        CaseData caseData = validCaseDataForIssueApplication();
+        caseData.setDivorceUnit(Court.SERVICE_CENTRE);
+
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_WITHDRAWN)))
+            .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk()
+            );
+
+        verify(ccdAccessService).removeUsersWithRole(anyLong(), eq(
+            List.of(
+                CREATOR.getRole(),
+                APPLICANT_2.getRole()
+            )
+        ));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(CITIZEN_APPLICATION_WITHDRAWN),
+                anyMap(),
+                eq(WELSH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(CITIZEN_APPLICATION_WITHDRAWN),
+                anyMap(),
+                eq(WELSH));
 
         verifyNoMoreInteractions(notificationService);
     }
