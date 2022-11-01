@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.time.Clock;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
@@ -54,9 +53,6 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
     @Autowired
     private ApplyForFinalOrderService applyForFinalOrderService;
-
-    @Autowired
-    private Clock clock;
 
     private static final List<CcdPageConfiguration> pages = List.of(
         new ApplyForFinalOrderDetails()
