@@ -73,7 +73,7 @@ public class FinalOrder {
     }
 
     @CCD(
-        label = "Final Order granted date",
+        label = "Final Order granted date and time",
         access = {DefaultAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -117,25 +117,24 @@ public class FinalOrder {
     private LocalDate dateFinalOrderEligibleToRespondent;
 
     @CCD(
-        label = "Final order late explanation",
+        label = "${labelContentApplicantsOrApplicant1s} final order late explanation",
         access = {DefaultAccess.class}
     )
     private String applicant1FinalOrderLateExplanation;
 
     @CCD(
-        label = "Final order late explanation",
+        label = "${labelContentApplicantsOrApplicant1s} final order late explanation (translated)",
         access = {DefaultAccess.class}
     )
     private String applicant1FinalOrderLateExplanationTranslated;
 
     @CCD(
-        label = "Translated To?",
+        label = "${labelContentApplicantsOrApplicant1s} final order late explanation translated to?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "TranslatedToLanguage",
         access = {SystemUpdateAndSuperUserAccess.class}
     )
     private TranslatedToLanguage applicant1FinalOrderLateExplanationTranslatedTo;
-
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",

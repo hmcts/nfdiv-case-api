@@ -128,8 +128,8 @@ public class NoticeOfProceedingContent {
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
     private static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
 
-    private static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
-    private static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
+    private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
+    private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
 
     @Autowired
     private HoldingPeriodService holdingPeriodService;
@@ -232,7 +232,7 @@ public class NoticeOfProceedingContent {
         templateContent.put(IS_PERSONAL_SERVICE, caseData.getApplication().isPersonalServiceMethod());
         templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateContent.put(URL_TO_LINK_CASE,
-            config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
+            config.getTemplateVars().get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL));
 
         generateDivorceOrDissolutionContent(templateContent, caseData, partner, languagePreference);
 

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service.task;
+package uk.gov.hmcts.divorce.common.service.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 
 @Slf4j
 @Component
@@ -18,6 +17,7 @@ public class ProgressFinalOrderState implements CaseTask {
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
+        log.info("Running ProgressFinalOrderState task for CaseID {}", details.getId());
 
         CaseData data = details.getData();
         State state = details.getState();
@@ -26,16 +26,6 @@ public class ProgressFinalOrderState implements CaseTask {
         state = isSole ? FinalOrderRequested : AwaitingFinalOrder.equals(state)
                 ? AwaitingJointFinalOrder
                 : FinalOrderRequested;
-
-        if (data.isWelshApplication()) {
-            data.getApplication().setWelshPreviousState(state);
-            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
-                data.getApplication().getWelshPreviousState(), details.getId());
-
-            details.setData(data);
-            details.setState(WelshTranslationReview);
-            return details;
-        }
 
         details.setData(data);
         details.setState(state);
