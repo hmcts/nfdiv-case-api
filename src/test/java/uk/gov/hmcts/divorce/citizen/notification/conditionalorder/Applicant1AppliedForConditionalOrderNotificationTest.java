@@ -272,7 +272,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
     }
 
     @Test
-    void shouldWelshSendEmailToJointApplicant1WhoSubmittedCoWhenPartnerApplied() {
+    void shouldSendWelshEmailToJointApplicant1WhoSubmittedCoWhenPartnerApplied() {
         CaseData caseData = caseData(DIVORCE, ApplicationType.JOINT_APPLICATION);
         setSubmittedDate(caseData, List.of(APPLICANT2));
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
