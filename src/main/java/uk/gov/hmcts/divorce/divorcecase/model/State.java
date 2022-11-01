@@ -384,7 +384,10 @@ public enum State {
         Draft,
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
-        Applicant2Approved
+        Applicant2Approved,
+        AwaitingPayment,
+        AwaitingHWFDecision,
+        AwaitingDocuments
     );
 
     public static final EnumSet<State> POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED = EnumSet.complementOf(EnumSet.of(
