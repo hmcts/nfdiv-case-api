@@ -91,7 +91,7 @@ public class CaseworkerWithdrawnIT {
     }
 
     @Test
-    void givenRejectEventWhenAboutToSubmitCallbackIsInvokedRemoveApplicants() throws Exception {
+    void givenWithdrawEventWhenAboutToSubmitCallbackIsInvokedRemoveApplicants() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         CaseData caseData = validCaseDataForIssueApplication();
@@ -138,7 +138,7 @@ public class CaseworkerWithdrawnIT {
     }
 
     @Test
-    void givenRejectEventWhenAboutToSubmitCallbackIsInvokedSendWelshNotifications() throws Exception {
+    void givenWithdrawEventWhenAboutToSubmitCallbackIsInvokedSendWelshNotifications() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         CaseData caseData = validCaseDataForIssueApplication();
@@ -149,6 +149,7 @@ public class CaseworkerWithdrawnIT {
         caseData.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
