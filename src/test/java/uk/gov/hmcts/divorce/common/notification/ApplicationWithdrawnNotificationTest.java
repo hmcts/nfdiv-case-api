@@ -10,14 +10,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -106,12 +104,11 @@ public class ApplicationWithdrawnNotificationTest {
     void shouldSendEmailToSoleRespondentWithDivorceContent() {
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
-        when(commonContent.getPartner(data, data.getApplicant1())).thenReturn("husband");
+        when(commonContent.getPartner(data, data.getApplicant2())).thenReturn("husband");
 
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
@@ -128,7 +125,7 @@ public class ApplicationWithdrawnNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-        verify(commonContent).getPartner(data, data.getApplicant1());
+        verify(commonContent).getPartner(data, data.getApplicant2());
     }
 
     @Test
@@ -136,13 +133,12 @@ public class ApplicationWithdrawnNotificationTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
-        when(commonContent.getPartner(data, data.getApplicant1())).thenReturn("husband");
+        when(commonContent.getPartner(data, data.getApplicant2())).thenReturn("husband");
 
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
@@ -159,14 +155,13 @@ public class ApplicationWithdrawnNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-        verify(commonContent).getPartner(data, data.getApplicant1());
+        verify(commonContent).getPartner(data, data.getApplicant2());
     }
 
     @Test
     void shouldSendEmailToJointApplicant2WithDivorceContent() {
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
@@ -235,35 +230,5 @@ public class ApplicationWithdrawnNotificationTest {
         applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
 
         verifyNoInteractions(notificationService);
-    }
-
-    @Test
-    void shouldNotSendEmailToSoleRespondentIfNotIssued() {
-        CaseData data = validCaseDataForIssueApplication();
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        data.getApplication().setIssueDate(null);
-
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
-    void shouldSendEmailToJointApplicant2IfNotIssued() {
-        CaseData data = validCaseDataForIssueApplication();
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        data.getApplication().setIssueDate(null);
-
-        Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(divorceTemplateVars);
-
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
-
-        verify(notificationService, times(1)).sendEmail(
-            data.getApplicant2EmailAddress(),
-            CITIZEN_APPLICATION_WITHDRAWN,
-            divorceTemplateVars,
-            data.getApplicant2().getLanguagePreference());
     }
 }

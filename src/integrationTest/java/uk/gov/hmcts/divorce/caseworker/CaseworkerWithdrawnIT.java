@@ -23,7 +23,6 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -95,7 +94,6 @@ public class CaseworkerWithdrawnIT {
 
         CaseData caseData = validCaseDataForIssueApplication();
         caseData.setDivorceUnit(Court.SERVICE_CENTRE);
-        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
         caseData.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
