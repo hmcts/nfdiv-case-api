@@ -254,6 +254,7 @@ public class ApplicationWithdrawnNotificationTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(SOLE_APPLICATION);
         data.setDivorceOrDissolution(DIVORCE);
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
         Map<String, String> templateVars = new HashMap<>(getMainTemplateVars());
