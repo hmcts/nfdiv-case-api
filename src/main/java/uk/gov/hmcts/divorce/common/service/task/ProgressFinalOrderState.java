@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service.task;
+package uk.gov.hmcts.divorce.common.service.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,6 +17,7 @@ public class ProgressFinalOrderState implements CaseTask {
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
+        log.info("Running ProgressFinalOrderState task for CaseID {}", details.getId());
 
         CaseData data = details.getData();
         State state = details.getState();
