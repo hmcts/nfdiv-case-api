@@ -23,6 +23,7 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -90,11 +91,12 @@ public class CaseworkerWithdrawnIT {
     }
 
     @Test
-    void givenRejectEventWhenAboutToSubmitCallbackIsInvokedRemoveApplicants() throws Exception {
+    void givenWithdrawEventWhenAboutToSubmitCallbackIsInvokedRemoveApplicants() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         CaseData caseData = validCaseDataForIssueApplication();
         caseData.setDivorceUnit(Court.SERVICE_CENTRE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
         caseData.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
@@ -136,7 +138,7 @@ public class CaseworkerWithdrawnIT {
     }
 
     @Test
-    void givenRejectEventWhenAboutToSubmitCallbackIsInvokedSendWelshNotifications() throws Exception {
+    void givenWithdrawEventWhenAboutToSubmitCallbackIsInvokedSendWelshNotifications() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         CaseData caseData = validCaseDataForIssueApplication();
@@ -147,6 +149,7 @@ public class CaseworkerWithdrawnIT {
         caseData.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
