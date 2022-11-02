@@ -114,9 +114,9 @@ docmosis:
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
       SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx
     welsh:
-      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_V5.docx #TODO: Set correct template when available
-      DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
-      DIVORCE_DRAFT_APPLICATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole_Cy.docx
+      DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint.docx #TODO: Set correct template when available
+      DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx #TODO: Set correct template when available
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order.docx
       CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order.docx
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V2.docx
