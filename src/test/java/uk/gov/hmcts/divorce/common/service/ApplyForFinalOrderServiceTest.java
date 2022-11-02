@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.common.service.task.HandleWelshFinalOrder;
 import uk.gov.hmcts.divorce.common.service.task.ProgressFinalOrderState;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant1;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2;
@@ -30,6 +31,9 @@ class ApplyForFinalOrderServiceTest {
     @Mock
     private ProgressFinalOrderState progressFinalOrderState;
 
+    @Mock
+    private HandleWelshFinalOrder handleWelshFinalOrder;
+
     @Test
     void applyForFinalOrderAsApplicant1ShouldRunTheCorrectTasks() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -42,6 +46,7 @@ class ApplyForFinalOrderServiceTest {
 
         verify(setFinalOrderFieldsAsApplicant1).apply(caseDetails);
         verify(progressFinalOrderState).apply(caseDetails);
+        verify(handleWelshFinalOrder).apply(caseDetails);
     }
 
     @Test
@@ -56,5 +61,6 @@ class ApplyForFinalOrderServiceTest {
 
         verify(setFinalOrderFieldsAsApplicant2).apply(caseDetails);
         verify(progressFinalOrderState).apply(caseDetails);
+        verify(handleWelshFinalOrder).apply(caseDetails);
     }
 }
