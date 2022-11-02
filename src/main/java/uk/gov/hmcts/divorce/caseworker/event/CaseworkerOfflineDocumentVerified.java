@@ -107,30 +107,30 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .page("documentTypeReceived")
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
             .complex(CaseData::getDocuments)
-                .mandatory(CaseDocuments::getTypeOfDocumentAttached)
+            .mandatory(CaseDocuments::getTypeOfDocumentAttached)
             .done()
             .complex(CaseData::getAcknowledgementOfService)
-                .mandatory(AcknowledgementOfService::getHowToRespondApplication, "typeOfDocumentAttached=\"D10\"")
+            .mandatory(AcknowledgementOfService::getHowToRespondApplication, "typeOfDocumentAttached=\"D10\"")
             .done()
             .complex(CaseData::getDocuments)
-                .mandatory(CaseDocuments::getScannedDocumentNames,
-                    "typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\"")
+            .mandatory(CaseDocuments::getScannedDocumentNames,
+                "typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\"")
             .done()
             .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getD84ApplicationType,
-                    "typeOfDocumentAttached=\"D84\"")
-                .mandatory(ConditionalOrder::getD84WhoApplying,
-                    "typeOfDocumentAttached=\"D84\" AND coD84ApplicationType=\"switchToSole\"")
+            .mandatory(ConditionalOrder::getD84ApplicationType,
+                "typeOfDocumentAttached=\"D84\"")
+            .mandatory(ConditionalOrder::getD84WhoApplying,
+                "typeOfDocumentAttached=\"D84\" AND coD84ApplicationType=\"switchToSole\"")
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getStateToTransitionApplicationTo)
+            .mandatory(Application::getStateToTransitionApplicationTo)
             .done()
             .page("stateToTransitionToJoint")
             .showCondition("applicationType=\"jointApplication\" AND typeOfDocumentAttached!=\"D84\"")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getStateToTransitionApplicationTo)
+            .mandatory(Application::getStateToTransitionApplicationTo)
             .done();
     }
 
@@ -227,16 +227,16 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             if (SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
                 log.info(
-                        "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
-                        details.getId());
+                    "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
+                    details.getId());
 
                 final User user = idamService.retrieveSystemUpdateUserDetails();
                 final String serviceAuth = authTokenGenerator.generate();
                 ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
             }
+        } else if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            submitAosService.submitAosNotifications(details);
         }
-        
-        submitAosService.submitAosNotifications(details);
 
         return SubmittedCallbackResponse.builder().build();
     }

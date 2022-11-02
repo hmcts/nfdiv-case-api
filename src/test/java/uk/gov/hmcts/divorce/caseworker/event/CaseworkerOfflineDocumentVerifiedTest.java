@@ -31,7 +31,6 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
@@ -326,7 +325,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .binaryUrl("/filename/binary")
             .filename("filename")
             .build();
-        final ListValue<ScannedDocument> scannedD84Document =  ListValue
+        final ListValue<ScannedDocument> scannedD84Document = ListValue
             .<ScannedDocument>builder()
             .id(FORM.getLabel())
             .value(
@@ -383,7 +382,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .binaryUrl("/filename/binary")
             .filename("filename")
             .build();
-        final ListValue<ScannedDocument> scannedD84Document =  ListValue
+        final ListValue<ScannedDocument> scannedD84Document = ListValue
             .<ScannedDocument>builder()
             .id(FORM.getLabel())
             .value(
@@ -455,21 +454,56 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
-    void shouldSendOfflineNotifications() {
+    void shouldSendOfflineNotificationsOnlyWhenDocumentTypeAttachedIsAosD10() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        CaseData caseData = CaseData.builder()
-                .application(Application.builder()
-                        .issueDate(LocalDate.of(2022, 01, 01))
-                        .stateToTransitionApplicationTo(Holding)
-                        .build())
-                .build();
+        var caseData = CaseData.builder()
+            .documents(
+                CaseDocuments
+                    .builder()
+                    .typeOfDocumentAttached(AOS_D10)
+                    .build()
+            )
+            .application(
+                Application
+                    .builder()
+                    .issueDate(LocalDate.of(2022, 01, 01))
+                    .stateToTransitionApplicationTo(Holding)
+                    .build()
+            )
+            .build();
+
         details.setData(caseData);
 
-        SubmittedCallbackResponse response =
-                caseworkerOfflineDocumentVerified.submitted(details, details);
+        caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verify(submitAosService).submitAosNotifications(details);
         verifyNoMoreInteractions(submitAosService);
+    }
+
+    @Test
+    void shouldNotSendOfflineNotificationsOnlyWhenDocumentTypeAttachedIsOther() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        var caseData = CaseData.builder()
+            .documents(
+                CaseDocuments
+                    .builder()
+                    .typeOfDocumentAttached(OTHER)
+                    .build()
+            )
+            .application(
+                Application
+                    .builder()
+                    .issueDate(LocalDate.of(2022, 01, 01))
+                    .stateToTransitionApplicationTo(Holding)
+                    .build()
+            )
+            .build();
+
+        details.setData(caseData);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verifyNoInteractions(submitAosService);
     }
 
     @Test
@@ -493,7 +527,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verify(notificationDispatcher)
-                .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
+            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
         verify(ccdUpdateService).submitEvent(details, SWITCH_TO_SOLE_CO, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
@@ -515,10 +549,10 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         return ListValue.<ScannedDocument>builder()
             .value(ScannedDocument.builder()
                 .url(Document.builder()
-                        .filename(filename)
-                        .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
-                        .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
-                        .build()
+                    .filename(filename)
+                    .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                    .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                    .build()
                 )
                 .fileName(filename)
                 .type(ScannedDocumentType.OTHER)
