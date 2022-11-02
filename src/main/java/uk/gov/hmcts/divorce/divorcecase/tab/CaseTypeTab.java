@@ -409,7 +409,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("granted")
             .field("grantedDate")
             .field("dateFinalOrderNoLongerEligible")
-            .field("dateFinalOrderEligibleToRespondent", IS_SOLE);
+            .field("dateFinalOrderEligibleToRespondent", IS_SOLE)
+            .field("doesApplicant1IntendToSwitchToSole")
+            .field("dateApplicant1DeclaredIntentionToSwitchToSoleFo")
+            .field("doesApplicant2IntendToSwitchToSole")
+            .field("dateApplicant2DeclaredIntentionToSwitchToSoleFo");
     }
 
     private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
