@@ -21,6 +21,7 @@ public class HandleWelshFinalOrder implements CaseTask {
         CaseData data = details.getData();
 
         if (data.isWelshApplication() && isFinalOrderFreeTextPresent(data) && details.getState().equals(FinalOrderRequested)) {
+            log.info("Setting state to WelshTranslationReview for CaseID {}", details.getId());
             data.getApplication().setWelshPreviousState(details.getState());
             details.setState(WelshTranslationReview);
             log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
@@ -31,7 +32,7 @@ public class HandleWelshFinalOrder implements CaseTask {
     }
 
     private boolean isFinalOrderFreeTextPresent(CaseData data) {
-        // todo add: || !isEmpty(data.getFinalOrder().getApplicant2FinalOrderLateExplanation())
-        return !isEmpty(data.getFinalOrder().getApplicant1FinalOrderLateExplanation());
+        return !isEmpty(data.getFinalOrder().getApplicant1FinalOrderLateExplanation())
+            || !isEmpty(data.getFinalOrder().getApplicant2FinalOrderLateExplanation());
     }
 }
