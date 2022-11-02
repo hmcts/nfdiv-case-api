@@ -251,3 +251,6 @@ bulk-action:
   page-size: 50
 
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
+
+toggle:
+  enable_case_document_access_management: ${ENABLE_CDAM:true}
