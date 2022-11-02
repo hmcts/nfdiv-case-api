@@ -44,9 +44,6 @@ import java.time.LocalDate;
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -372,7 +369,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    public void shouldTriggerSubmittedCallbackAndSendAosResponseLetterToApplicant() throws Exception {
+    public void shouldTriggerSubmittedCallbackAndSendAosResponseLetterToApplicantWhenDocTypeAttachedIsD10() throws Exception {
 
         RetiredFields retiredFields = new RetiredFields();
         retiredFields.setDataVersion(5);
@@ -423,7 +420,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
         data.setDocuments(CaseDocuments.builder()
                         .scannedDocuments(singletonList(doc1))
-                        .typeOfDocumentAttached(CO_D84)
+                        .typeOfDocumentAttached(AOS_D10)
                         .build());
 
         mockMvc.perform(post(SUBMITTED_URL)
@@ -438,8 +435,6 @@ public class CaseworkerOfflineDocumentVerifiedIT {
                 .getContentAsString();
 
         verify(aosPackPrinter).sendAosResponseLetterToApplicant(data, TEST_CASE_ID);
-        verify(appliedForCoPrinter, times(2)).print(any(CaseData.class), anyLong(), any(Applicant.class));
-        verifyNoMoreInteractions(appliedForCoPrinter);
         verifyNoMoreInteractions(aosPackPrinter);
     }
 }
