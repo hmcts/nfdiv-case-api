@@ -132,6 +132,14 @@ public class CaseData {
     private GeneralApplication generalApplication = new GeneralApplication();
 
     @CCD(
+        label = "General Applications",
+        typeOverride = Collection,
+        typeParameterOverride = "GeneralApplication",
+        access = {SolicitorAndSystemUpdateAccess.class}
+    )
+    private List<ListValue<GeneralApplication>> generalApplications;
+
+    @CCD(
         label = "General Referrals",
         typeOverride = Collection,
         typeParameterOverride = "GeneralReferral",
