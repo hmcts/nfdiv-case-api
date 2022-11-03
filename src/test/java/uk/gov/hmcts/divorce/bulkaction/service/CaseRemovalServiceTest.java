@@ -34,7 +34,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMI
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCaseLinkListValue;
 
@@ -75,7 +74,7 @@ public class CaseRemovalServiceTest {
         var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         var caseTask = mock(CaseTask.class);
         var bulkActionCaseDetails = CaseDetails
@@ -93,7 +92,7 @@ public class CaseRemovalServiceTest {
             SERVICE_AUTHORIZATION
         )).thenReturn(emptyList());
 
-        caseRemovalService.removeCases(bulkActionCaseDetails, casesToRemove, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        caseRemovalService.removeCases(bulkActionCaseDetails, casesToRemove);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(casesToRemove),
@@ -139,7 +138,7 @@ public class CaseRemovalServiceTest {
         var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         var caseTask = mock(CaseTask.class);
         var bulkActionCaseDetails = CaseDetails
@@ -157,7 +156,7 @@ public class CaseRemovalServiceTest {
             SERVICE_AUTHORIZATION
         )).thenReturn(singletonList(getBulkListCaseDetailsListValue("3")));
 
-        caseRemovalService.removeCases(bulkActionCaseDetails, casesToRemove, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        caseRemovalService.removeCases(bulkActionCaseDetails, casesToRemove);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(casesToRemove),
@@ -206,7 +205,7 @@ public class CaseRemovalServiceTest {
         var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         var caseTask = mock(CaseTask.class);
         var bulkActionCaseDetails = CaseDetails
@@ -224,7 +223,7 @@ public class CaseRemovalServiceTest {
             SERVICE_AUTHORIZATION
         )).thenReturn(casesToRemove);
 
-        caseRemovalService.removeCases(bulkActionCaseDetails, casesToRemove, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        caseRemovalService.removeCases(bulkActionCaseDetails, casesToRemove);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(casesToRemove),
@@ -268,7 +267,7 @@ public class CaseRemovalServiceTest {
         var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         var caseTask = mock(CaseTask.class);
         var bulkActionCaseDetails = CaseDetails
@@ -298,8 +297,8 @@ public class CaseRemovalServiceTest {
         try {
             caseRemovalService.removeCases(
                 bulkActionCaseDetails,
-                List.of(getBulkListCaseDetailsListValue("2")),
-                TEST_SYSTEM_AUTHORISATION_TOKEN);
+                List.of(getBulkListCaseDetailsListValue("2"))
+            );
         } catch (Exception e) {
             fail("No exception should be thrown by removeCases", e);
         }
