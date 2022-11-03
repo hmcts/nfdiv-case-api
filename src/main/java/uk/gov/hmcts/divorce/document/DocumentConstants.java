@@ -128,6 +128,9 @@ public final class DocumentConstants {
     public static final String FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME = "FinalOrderGrantedCoverLetter";
     public static final String FINAL_ORDER_COVER_LETTER_TEMPLATE_ID = "FINAL_ORDER_GRANTED_COVER_LETTER";
 
+    public static final String APPLICANT1 = "applicant1";
+    public static final String APPLICANT2 = "applicant2";
+
     private DocumentConstants() {
     }
 }
