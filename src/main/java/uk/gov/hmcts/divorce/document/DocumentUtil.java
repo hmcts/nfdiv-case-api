@@ -23,8 +23,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT1;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT1;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
