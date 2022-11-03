@@ -9,6 +9,11 @@
         <cve>CVE-2020-5408</cve>
     </suppress>
   <suppress>
+    <notes>spring-security 2.7.4 has new vulnerability, fixed in version 2.7.5 but springboot currently uses 2.7.4</notes>
+    <cve>CVE-2022-31692</cve>
+    <cve>CVE-2022-31690</cve>
+  </suppress>
+  <suppress>
     <notes>jackson-databind exploit will be fixed in v2.14.0 - Not yet released</notes>
     <cve>CVE-2022-42003</cve>
   </suppress>
