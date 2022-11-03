@@ -16,12 +16,6 @@
     }],
     "PaymentTotal": "55000"
   },
-  "generalApplicationFeePbaNumbers": {
-    "value": {
-      "label": "PBA0012345"
-    },
-    "valueLabel": "PBA0012345"
-  },
   "generalApplicationDocument": {
     "documentLink": {
       "document_url": "http://localhost:4200/assets/d11",
@@ -37,6 +31,6 @@
       "OrganisationID": "App2OrgPolicy"
     }
   },
-  "generalApplicationFeePaymentMethod": "feePayByAccount",
+  "generalApplicationFeePaymentMethod": "feePayByTelephone",
   "warnings": []
 }
