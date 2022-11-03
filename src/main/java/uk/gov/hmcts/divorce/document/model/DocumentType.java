@@ -128,7 +128,7 @@ public enum DocumentType implements HasLabel {
     FINAL_ORDER_CAN_APPLY("Final order can apply"),
 
     @JsonProperty("finalOrderApplication")
-    FINAL_ORDER_APPLICATION("Final Order application"),
+    FINAL_ORDER_APPLICATION("Final Order application (D36)"),
 
     @JsonProperty("finalOrderGranted")
     FINAL_ORDER_GRANTED("Final order granted"),
