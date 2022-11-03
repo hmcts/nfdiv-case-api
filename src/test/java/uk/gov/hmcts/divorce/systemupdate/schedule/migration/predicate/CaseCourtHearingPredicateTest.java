@@ -24,6 +24,8 @@ import java.time.LocalDateTime;
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -90,7 +92,6 @@ class CaseCourtHearingPredicateTest {
     void shouldReturnTrueIfCourtHearingDateIsNull() {
 
         final LocalDateTime localDateTime = now();
-        final LocalDateTime dateAndTimeOfHearing = now().plusDays(1);
         final CaseDetails reformCaseDetails = CaseDetails.builder()
             .id(TEST_CASE_ID)
             .build();
@@ -122,5 +123,124 @@ class CaseCourtHearingPredicateTest {
             .caseHearingIsNotSet(bulkActionCaseData, user, SERVICE_AUTHORIZATION)
             .test(listValue))
             .isTrue();
+    }
+
+    @Test
+    void shouldReturnTrueIfCourtIsNotTheSameAsBulkCase() {
+
+        final LocalDateTime localDateTime = now();
+        final CaseDetails reformCaseDetails = CaseDetails.builder()
+            .id(TEST_CASE_ID)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .dateAndTimeOfHearing(localDateTime)
+                .court(BIRMINGHAM)
+                .build())
+            .build();
+
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final ListValue<BulkListCaseDetails> listValue = new ListValue<BulkListCaseDetails>("1", BulkListCaseDetails.builder()
+            .caseReference(CaseLink.builder()
+                .caseReference(TEST_CASE_ID.toString())
+                .build())
+            .build());
+
+        final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
+            .dateAndTimeOfHearing(localDateTime)
+            .court(BURY_ST_EDMUNDS)
+            .build();
+
+        when(coreCaseDataApi.getCase(user.getAuthToken(), SERVICE_AUTHORIZATION, TEST_CASE_ID.toString()))
+            .thenReturn(reformCaseDetails);
+        when(caseDetailsConverter.convertToCaseDetailsFromReformModel(reformCaseDetails)).thenReturn(caseDetails);
+
+        assertThat(caseCourtHearingPredicate
+            .caseHearingIsNotSet(bulkActionCaseData, user, SERVICE_AUTHORIZATION)
+            .test(listValue))
+            .isTrue();
+    }
+
+    @Test
+    void shouldReturnTrueIfCourtIsNull() {
+
+        final LocalDateTime localDateTime = now();
+        final CaseDetails reformCaseDetails = CaseDetails.builder()
+            .id(TEST_CASE_ID)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .dateAndTimeOfHearing(localDateTime)
+                .build())
+            .build();
+
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final ListValue<BulkListCaseDetails> listValue = new ListValue<BulkListCaseDetails>("1", BulkListCaseDetails.builder()
+            .caseReference(CaseLink.builder()
+                .caseReference(TEST_CASE_ID.toString())
+                .build())
+            .build());
+
+        final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
+            .dateAndTimeOfHearing(localDateTime)
+            .court(BIRMINGHAM)
+            .build();
+
+        when(coreCaseDataApi.getCase(user.getAuthToken(), SERVICE_AUTHORIZATION, TEST_CASE_ID.toString()))
+            .thenReturn(reformCaseDetails);
+        when(caseDetailsConverter.convertToCaseDetailsFromReformModel(reformCaseDetails)).thenReturn(caseDetails);
+
+        assertThat(caseCourtHearingPredicate
+            .caseHearingIsNotSet(bulkActionCaseData, user, SERVICE_AUTHORIZATION)
+            .test(listValue))
+            .isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfCourtHearingDateAndCourtAreTheSameAsBulkCase() {
+
+        final LocalDateTime localDateTime = now();
+        final CaseDetails reformCaseDetails = CaseDetails.builder()
+            .id(TEST_CASE_ID)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .dateAndTimeOfHearing(localDateTime)
+                .court(BIRMINGHAM)
+                .build())
+            .build();
+
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final ListValue<BulkListCaseDetails> listValue = new ListValue<BulkListCaseDetails>("1", BulkListCaseDetails.builder()
+            .caseReference(CaseLink.builder()
+                .caseReference(TEST_CASE_ID.toString())
+                .build())
+            .build());
+
+        final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
+            .dateAndTimeOfHearing(localDateTime)
+            .court(BIRMINGHAM)
+            .build();
+
+        when(coreCaseDataApi.getCase(user.getAuthToken(), SERVICE_AUTHORIZATION, TEST_CASE_ID.toString()))
+            .thenReturn(reformCaseDetails);
+        when(caseDetailsConverter.convertToCaseDetailsFromReformModel(reformCaseDetails)).thenReturn(caseDetails);
+
+        assertThat(caseCourtHearingPredicate
+            .caseHearingIsNotSet(bulkActionCaseData, user, SERVICE_AUTHORIZATION)
+            .test(listValue))
+            .isFalse();
     }
 }
