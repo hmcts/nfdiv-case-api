@@ -77,6 +77,9 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
     @JsonProperty("generalLetter")
     GENERAL_LETTER("Confidential - General letter"),
 
+    @JsonProperty("aosResponseLetter")
+    AOS_RESPONSE_LETTER("Aos response letter"),
+
     @JsonProperty("marriageCert")
     MARRIAGE_CERT("Confidential - Marriage certificate"),
 
