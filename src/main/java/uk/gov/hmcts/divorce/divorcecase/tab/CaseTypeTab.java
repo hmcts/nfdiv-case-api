@@ -40,6 +40,7 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState
 @Component
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String IS_SOLE = "applicationType=\"soleApplication\"";
     private static final String IS_JOINT = "applicationType=\"jointApplication\"";
     private static final String IS_JOINT_AND_HWF_ENTERED = "applicationType=\"jointApplication\" AND applicant2HWFReferenceNumber=\"*\"";
     private static final String IS_NEW_PAPER_CASE = "newPaperCase=\"Yes\"";
@@ -149,15 +150,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildLanguageTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("languageDetails", "Language")
-            .label("LabelLanguageDetails-Applicant-Sole", "applicationType=\"soleApplication\"", "### The applicant")
+            .label("LabelLanguageDetails-Applicant-Sole", IS_SOLE, "### The applicant")
             .label("LabelLanguageDetails-Applicant-Joint", "applicationType=\"jointApplication\"", "### Applicant 1")
             .field("applicant1LanguagePreferenceWelsh")
             .field("applicant1UsedWelshTranslationOnSubmission")
             .field("applicant1LegalProceedingsDetailsTranslated")
             .field("coApplicant1ReasonInformationNotCorrectTranslated")
             .field("applicant1FinalOrderLateExplanationTranslated")
-
-            .label("LabelLanguageDetails-Respondent-Sole", "applicationType=\"soleApplication\"", "### The respondent")
+            .label("LabelLanguageDetails-Respondent-Sole", IS_SOLE, "### The respondent")
             .label("LabelLanguageDetails-Respondent-Joint", "applicationType=\"jointApplication\"", "### Applicant 2")
             .field("applicant2LanguagePreferenceWelsh")
             .field("applicant2LegalProceedingsDetailsTranslated")
@@ -321,6 +321,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("labelConditionalOrderDetails-Applicant1",
                 "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
                 "### Applicant 1")
+            .label("labelApplicant1-SwitchToSole",
+                "finalOrderSwitchedToSole=\"Yes\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
+                "### Applicant 1")
             .field("labelContentUnionType", "applicationType=\"NEVER_SHOW\"")
             .field("labelContentDivorceOrCivilPartnershipApplication", "applicationType=\"NEVER_SHOW\"")
             .field("coApplicant1ApplyForConditionalOrder")
@@ -334,6 +337,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplicant1SolicitorAdditionalComments")
             .label("labelConditionalOrderDetails-Applicant2",
                 "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
+                "### Applicant 2")
+            .label("labelApplicant2-SwitchToSole",
+                "finalOrderSwitchedToSole=\"Yes\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
                 "### Applicant 2")
             .field("coApplicant2ApplyForConditionalOrder")
             .field("coApplicant2ConfirmInformationStillCorrect")
@@ -401,17 +407,18 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 FinalOrderPending,
                 FinalOrderOverdue,
                 FinalOrderComplete))
-            .label("labelFinalOrderDetails-SoleApplicant",
-                "applicationType=\"soleApplication\" AND doesApplicant1WantToApplyForFinalOrder=\"*\"",
-                "### Applicant")
             .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
-            .field("applicant1FinalOrderStatementOfTruth")
             .field("granted")
             .field("grantedDate")
             .field("dateFinalOrderNoLongerEligible")
-            .field("dateFinalOrderEligibleToRespondent")
+            .field("dateFinalOrderEligibleToRespondent", IS_SOLE)
+            .field("doesApplicant1IntendToSwitchToSole")
+            .field("dateApplicant1DeclaredIntentionToSwitchToSoleFo")
+            .field("doesApplicant2IntendToSwitchToSole")
+            .field("dateApplicant2DeclaredIntentionToSwitchToSoleFo")
+            .field("finalOrderSwitchedToSole")
             .label("labelFinalOrderDetails-SoleRespondent",
                 "applicationType=\"soleApplication\" AND doesApplicant2WantToApplyForFinalOrder=\"*\"",
                 "### Respondent")
