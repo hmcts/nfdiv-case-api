@@ -25,6 +25,7 @@ import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -48,6 +49,8 @@ import java.util.stream.Stream;
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -445,6 +448,105 @@ public class SubmitAosIT {
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(expectedResponse("classpath:solicitor-submit-aos-disputed-offline-response.json"));
+    }
+
+    @Test
+    void shouldGenerateAndSendAosResponseLetterWhenApplicant1IsOfflineAndContactIsPrivateAndAosIsDisputed() throws Exception {
+
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .statementOfTruth(YES)
+            .howToRespondApplication(DISPUTE_DIVORCE)
+            .confirmReadPetition(YES)
+            .jurisdictionAgree(YES)
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(getExpectedLocalDate());
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.getDocuments().setScannedDocuments(singletonList(aosScannedDocument()));
+        caseData.getApplicant2().setLegalProceedings(YES);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
+        caseData.getApplicant2().setLegalProceedingsDetails("some description");
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+        stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", "NFD_Respondent_Responded_Disputed_V2.docx");
+        stubAosPackSendLetter();
+
+        final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData, SUBMIT_AOS, AosDrafted.name())))
+                .accept(APPLICATION_JSON))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(jsonStringResponse)
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(expectedResponse("classpath:solicitor-submit-aos-offline-response-with-private-contact.json"));
+    }
+
+    @Test
+    void shouldGenerateAndSendAosResponseLetterWhenApplicant1IsOfflineAndContactIsPrivateAndAosIsUndisputed() throws Exception {
+
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .statementOfTruth(YES)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
+            .confirmReadPetition(YES)
+            .jurisdictionAgree(YES)
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(getExpectedLocalDate());
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.getDocuments().setScannedDocuments(singletonList(aosScannedDocument()));
+        caseData.getApplicant2().setLegalProceedings(YES);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
+        caseData.getApplicant2().setLegalProceedingsDetails("some description");
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+        stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", "FL-NFD-GOR-ENG-Respondent-Responded-Undefended.docx");
+        stubAosPackSendLetter();
+
+        final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData, SUBMIT_AOS, AosDrafted.name())))
+                .accept(APPLICATION_JSON))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(
+            "classpath:solicitor-submit-aos-offline-response-with-private-contact.json"));
+
+        jsonDocument.set("data.howToRespondApplication", "withoutDisputeDivorce");
+
+        assertThatJson(jsonStringResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(jsonDocument.json());
     }
 
     @Test
