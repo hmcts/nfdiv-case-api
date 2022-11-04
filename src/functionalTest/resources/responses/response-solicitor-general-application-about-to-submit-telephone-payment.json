@@ -1,5 +1,16 @@
 {
   "data": {
+    "applicant1SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test Organisation",
+        "OrganisationID": "HEBFGBR"
+      }
+    },
+    "applicant2SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationID": "App2OrgPolicy"
+      }
+    },
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "generalApplicationDocument": {
       "documentLink": {
@@ -7,9 +18,20 @@
         "document_filename": "GA.pdf",
         "document_binary_url": "GA.pdf/binary"
       },
-      "documentDateAdded": "${json-unit.any-string}",
+      "documentDateAdded": "2022-05-04",
       "documentType": "generalApplication"
     },
+    "generalApplicationFeeOrderSummary": {
+      "Fees": [{
+        "id": "1",
+        "value": {
+          "FeeCode": "FEE002",
+          "FeeDescription": "fees for divorce"
+        }
+      }],
+      "PaymentTotal": "55000"
+    },
+    "generalApplicationFeePaymentMethod": "feePayByTelephone",
     "generalApplications": [{
       "id": "${json-unit.any-string}",
       "value": {
@@ -19,9 +41,20 @@
             "document_filename": "GA.pdf",
             "document_binary_url": "GA.pdf/binary"
           },
-          "documentDateAdded": "${json-unit.any-string}",
+          "documentDateAdded": "2022-05-04",
           "documentType": "generalApplication"
-        }
+        },
+        "generalApplicationFeeOrderSummary": {
+          "Fees": [{
+            "id": "1",
+            "value": {
+              "FeeCode": "FEE002",
+              "FeeDescription": "fees for divorce"
+            }
+          }],
+          "PaymentTotal": "55000"
+        },
+        "generalApplicationFeePaymentMethod": "feePayByTelephone"
       }
     }],
     "documentsUploaded": [{
@@ -32,11 +65,11 @@
           "document_filename": "GA.pdf",
           "document_binary_url": "GA.pdf/binary"
         },
-        "documentDateAdded": "${json-unit.any-string}",
+        "documentDateAdded": "2022-05-04",
         "documentType": "generalApplication"
       }
     }],
-    "dataVersion": "${json-unit.any-number}",
+    "dataVersion": 5,
     "warnings": []
   },
   "state": "GeneralApplicationReceived"

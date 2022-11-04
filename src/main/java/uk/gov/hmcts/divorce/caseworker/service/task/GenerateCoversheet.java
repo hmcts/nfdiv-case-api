@@ -30,7 +30,7 @@ public class GenerateCoversheet {
                                    final String templateId,
                                    final Map<String, Object> templateContent,
                                    final LanguagePreference languagePreference) {
-        log.info("Generating coversheet for sole case id {} ", caseId);
+        log.info("Generating coversheet for case id {} ", caseId);
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             COVERSHEET,
@@ -39,6 +39,24 @@ public class GenerateCoversheet {
             templateId,
             languagePreference,
             formatDocumentName(caseId, COVERSHEET_DOCUMENT_NAME, now(clock))
+        );
+    }
+
+    public void generateCoversheet(final CaseData caseData,
+                                   final Long caseId,
+                                   final String templateId,
+                                   final Map<String, Object> templateContent,
+                                   final LanguagePreference languagePreference,
+                                   final String filename) {
+        log.info("Generating coversheet {} for case id {} ", filename, caseId);
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            COVERSHEET,
+            templateContent,
+            caseId,
+            templateId,
+            languagePreference,
+            filename
         );
     }
 }
