@@ -23,6 +23,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT1;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
@@ -150,6 +152,8 @@ public final class DocumentUtil {
             case NOTICE_OF_PROCEEDINGS_APP_2 -> ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2;
             case GENERAL_LETTER -> ConfidentialDocumentsReceived.GENERAL_LETTER;
             case AOS_RESPONSE_LETTER -> ConfidentialDocumentsReceived.AOS_RESPONSE_LETTER;
+            case CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1 -> ConfidentialDocumentsReceived.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+            case CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2 -> ConfidentialDocumentsReceived.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
             default -> ConfidentialDocumentsReceived.OTHER;
         };
     }
@@ -159,11 +163,13 @@ public final class DocumentUtil {
             APPLICANT1, Lists.newArrayList(
                 NOTICE_OF_PROCEEDINGS_APP_1,
                 GENERAL_LETTER,
-                AOS_RESPONSE_LETTER
+                AOS_RESPONSE_LETTER,
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1
             ),
             APPLICANT2, Lists.newArrayList(
                 NOTICE_OF_PROCEEDINGS_APP_2,
-                GENERAL_LETTER
+                GENERAL_LETTER,
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2
             )
         );
     }

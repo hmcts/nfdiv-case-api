@@ -108,7 +108,13 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
     NOTICE_OF_PROCEEDINGS_APP_1("Notice of proceedings for applicant/applicant 1"),
 
     @JsonProperty("noticeOfProceedingsApp2")
-    NOTICE_OF_PROCEEDINGS_APP_2("Notice of proceedings for respondent/applicant 2");
+    NOTICE_OF_PROCEEDINGS_APP_2("Notice of proceedings for respondent/applicant 2"),
+
+    @JsonProperty("certificateOfEntitlementCoverLetter")
+    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1("Certificate of entitlement cover letter for applicant/applicant 1"),
+
+    @JsonProperty("certificateOfEntitlementCoverLetterApp2")
+    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2("Certificate of entitlement cover letter for respondent/applicant 2");
 
     private final String label;
 }
