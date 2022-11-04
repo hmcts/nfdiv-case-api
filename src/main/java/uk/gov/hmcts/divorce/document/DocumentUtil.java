@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -152,6 +153,15 @@ public final class DocumentUtil {
             case AOS_RESPONSE_LETTER -> ConfidentialDocumentsReceived.AOS_RESPONSE_LETTER;
             default -> ConfidentialDocumentsReceived.OTHER;
         };
+    }
+
+    public static void removeDocumentsBasedOnContactPrivacy(final CaseData caseData, final DocumentType documentType) {
+        CaseDocuments caseDocuments = caseData.getDocuments();
+        if (isConfidential(caseData, documentType)) {
+            caseDocuments.removeConfidentialDocumentGeneratedWithType(getConfidentialDocumentType(documentType));
+        } else {
+            caseDocuments.removeDocumentGeneratedWithType(documentType);
+        }
     }
 
     private static Map<String, List<DocumentType>> documentsApplicableForConfidentiality() {

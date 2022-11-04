@@ -10,10 +10,15 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerRemoveCasesFromBulkList.CASEWORKER_REMOVE_CASES_BULK_LIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
@@ -24,7 +29,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 
 @Component
 @Slf4j
@@ -34,6 +42,15 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
+
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -56,16 +73,40 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
 
         final CaseData caseData = details.getData();
 
-        caseData.getDocuments().removeDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED);
-        caseData.getConditionalOrder().setConditionalOrderGrantedDocument(null);
         caseData.getConditionalOrder().setRescindedDate(LocalDate.now(clock));
 
-        if (AwaitingPronouncement.equals(details.getState())) {
-            caseData.setBulkListCaseReferenceLink(null);
+        removeConditionalOrderDocuments(caseData);
+
+        if (caseData.getBulkListCaseReferenceLink() != null) {
+            removeCaseFromBulkList(details);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(details.getData())
             .build();
+    }
+
+    private void removeConditionalOrderDocuments(final CaseData caseData) {
+        removeDocumentsBasedOnContactPrivacy(caseData, CONDITIONAL_ORDER_GRANTED);
+
+        if (caseData.getApplicant1().isOffline()) {
+            removeDocumentsBasedOnContactPrivacy(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
+        }
+
+        if (caseData.getApplicant2().isOffline()) {
+            removeDocumentsBasedOnContactPrivacy(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
+        }
+
+        caseData.getConditionalOrder().setConditionalOrderGrantedDocument(null);
+    }
+
+    private void removeCaseFromBulkList(final CaseDetails<CaseData, State> details) {
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuthorization = authTokenGenerator.generate();
+
+        log.info("Submitting {} event for case id: {}", CASEWORKER_REMOVE_CASES_BULK_LIST, details.getId());
+        ccdUpdateService.submitEvent(details, CASEWORKER_REMOVE_CASES_BULK_LIST, user, serviceAuthorization);
+
+        details.getData().setBulkListCaseReferenceLink(null);
     }
 }
