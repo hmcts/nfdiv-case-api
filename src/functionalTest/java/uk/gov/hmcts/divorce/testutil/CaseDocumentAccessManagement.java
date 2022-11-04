@@ -19,6 +19,7 @@ import uk.gov.hmcts.reform.ccd.document.am.feign.CaseDocumentClientApi;
 import uk.gov.hmcts.reform.document.utils.InMemoryMultipartFile;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY;
 import static io.micrometer.core.instrument.binder.BaseUnits.FILES;
@@ -39,6 +40,7 @@ public class CaseDocumentAccessManagement {
     private static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
     private static final String NFDIV_CASE_API = "nfdiv_case_api";
     private static final String DOCUMENTS = "documents";
+    private static final int FIRST = 0;
 
     @Autowired
     private IdamTokenGenerator idamTokenGenerator;
@@ -70,7 +72,10 @@ public class CaseDocumentAccessManagement {
         );
 
         final String t = restTemplate.postForObject(caseDocumentAccessManagementUrl + "/cases/documents", httpEntity(file), String.class);
-        JsonNode jsonNode = mapper.readTree(t).get(DOCUMENTS).get(0);
+        JsonNode jsonNode =
+            Objects.requireNonNull(mapper.readTree(t))
+                .get(DOCUMENTS)
+                .get(FIRST);
 
         return mapper.treeToValue(jsonNode, CaseDocumentAMDocument.class);
     }
