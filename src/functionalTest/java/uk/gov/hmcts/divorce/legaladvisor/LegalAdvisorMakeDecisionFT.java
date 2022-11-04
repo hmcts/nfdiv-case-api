@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.testutil.CaseDocumentAccessManagement;
+import uk.gov.hmcts.divorce.testutil.CaseDocumentAMDocument;
 import uk.gov.hmcts.divorce.testutil.DocumentManagementStore;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.document.domain.Document;
@@ -300,7 +301,7 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
 
     private uk.gov.hmcts.ccd.sdk.type.Document uploadDocument() throws IOException {
         if (caseDocumentAccessManagementEnabled) {
-            uk.gov.hmcts.reform.ccd.document.am.model.Document document = caseDocumentAccessManagement.upload(
+            CaseDocumentAMDocument document = caseDocumentAccessManagement.upload(
                 "",
                 "draft-divorce-application-1234567890123456.pdf",
                 "classpath:Test.pdf"

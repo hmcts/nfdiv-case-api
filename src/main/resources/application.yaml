@@ -12,7 +12,7 @@ management:
         include: health, info, prometheus
   health:
     case-document-am-api:
-      enabled: true
+      enabled: ${ENABLE_CDAM:true}
 spring:
   application:
     name: NFDIV Case API
