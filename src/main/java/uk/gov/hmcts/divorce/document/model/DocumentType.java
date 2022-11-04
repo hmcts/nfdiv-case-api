@@ -128,7 +128,7 @@ public enum DocumentType implements HasLabel {
     FINAL_ORDER_CAN_APPLY("Final order can apply"),
 
     @JsonProperty("finalOrderApplication")
-    FINAL_ORDER_APPLICATION("Final Order application"),
+    FINAL_ORDER_APPLICATION("Final Order application (D36)"),
 
     @JsonProperty("finalOrderGranted")
     FINAL_ORDER_GRANTED("Final order granted"),
@@ -193,6 +193,9 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("generalLetter")
     GENERAL_LETTER("General letter"),
+
+    @JsonProperty("generalApplication")
+    GENERAL_APPLICATION("General application"),
 
     @JsonProperty("coGrantedCoversheet")
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1("Applicant 1 Conditional Order Granted Coversheet"),
