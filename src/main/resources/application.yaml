@@ -10,7 +10,9 @@ management:
       base-path: /
       exposure:
         include: health, info, prometheus
-
+  health:
+    case-document-am-api:
+      enabled: true
 spring:
   application:
     name: NFDIV Case API
