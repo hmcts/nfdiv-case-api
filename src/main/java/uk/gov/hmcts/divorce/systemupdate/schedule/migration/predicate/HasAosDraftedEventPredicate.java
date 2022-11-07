@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.systemupdate.schedule.migration;
+package uk.gov.hmcts.divorce.systemupdate.schedule.migration.predicate;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;

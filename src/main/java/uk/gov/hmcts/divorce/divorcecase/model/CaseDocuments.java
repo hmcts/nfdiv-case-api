@@ -147,6 +147,9 @@ public class CaseDocuments {
         @JsonProperty("D84")
         CO_D84("Application for a conditional order (D84)"),
 
+        @JsonProperty("D36")
+        FO_D36("Application for a final order (D36)"),
+
         @JsonProperty("Other")
         OTHER("Other");
 
