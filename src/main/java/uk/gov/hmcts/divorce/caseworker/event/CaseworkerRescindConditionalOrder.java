@@ -71,6 +71,8 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
+        log.info("Rescind Conditional order about to submit callback invoked for case id: {}", details.getId());
+
         final CaseData caseData = details.getData();
 
         caseData.getConditionalOrder().setRescindedDate(LocalDate.now(clock));
