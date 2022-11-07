@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -20,7 +19,6 @@ import static com.fasterxml.jackson.databind.MapperFeature.INFER_BUILDER_TYPE_BI
 public class JacksonConfiguration {
 
     @Primary
-    @ConditionalOnProperty(value= "jackson_config_enabled")
     @Bean
     public ObjectMapper getMapper() {
         ObjectMapper mapper = JsonMapper.builder()

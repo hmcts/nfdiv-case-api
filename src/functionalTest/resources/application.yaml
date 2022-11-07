@@ -135,8 +135,6 @@ SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-com
 toggle:
   enable_case_document_access_management: ${ENABLE_CDAM:true}
 
-jackson_config_enabled: false
-
 logging:
   level:
     org:
