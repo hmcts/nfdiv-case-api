@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.event;
+package uk.gov.hmcts.divorce.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -16,7 +16,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -58,12 +57,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSoleCo.SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84ApplicationType.SWITCH_TO_SOLE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_1;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_1;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCHED_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER;
@@ -77,6 +76,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -96,7 +96,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @ContextConfiguration(initializers = {
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class})
-public class CitizenSwitchedToSoleCoIT {
+public class SwitchedToSoleCoIT {
 
     private static final String SWITCH_TO_SOLE_CO_APPLICANT_2_RESPONSE =
         "classpath:switch-to-sole-co-applicant2-response.json";
@@ -143,7 +143,7 @@ public class CitizenSwitchedToSoleCoIT {
     }
 
     @Test
-    public void shouldSwitchApplicationTypeToSoleAndSendApplicant1Notifications() throws Exception {
+    public void shouldSwitchApplicationTypeToSole() throws Exception {
         CaseData data = validJointApplicant1CaseData();
         data.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
@@ -151,11 +151,11 @@ public class CitizenSwitchedToSoleCoIT {
         setupMocks(true, false);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
-                .accept(APPLICATION_JSON))
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
+            .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -173,16 +173,10 @@ public class CitizenSwitchedToSoleCoIT {
             .inPath("$.data.documentsGenerated")
             .isArray()
             .hasSize(1);
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(PARTNER_SWITCHED_TO_SOLE_CO), anyMap(), eq(ENGLISH));
-        verifyNoMoreInteractions(notificationService);
     }
 
     @Test
-    public void shouldSwitchApplicationTypeToSoleAndSendApplicant2Notifications() throws Exception {
+    public void shouldSwitchApplicationTypeToSoleWhenTriggeredByApplicant2() throws Exception {
         CaseData data = validJointApplicant1CaseData();
         data.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
@@ -203,11 +197,11 @@ public class CitizenSwitchedToSoleCoIT {
         ).thenReturn(caseRolesResponse);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
-                .accept(APPLICATION_JSON))
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
+            .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -225,77 +219,6 @@ public class CitizenSwitchedToSoleCoIT {
             .inPath("$.data.documentsGenerated")
             .isArray()
             .hasSize(1);
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(PARTNER_SWITCHED_TO_SOLE_CO), anyMap(), eq(ENGLISH));
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
-        verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
-    public void shouldSwitchApplicationTypeToSoleAndSendApplicant1SolicitorNotifications() throws Exception {
-        CaseData data = validJointApplicant1CaseData();
-
-        final LocalDate issueDate = getExpectedLocalDate();
-        data.getApplication().setIssueDate(issueDate);
-        data.getApplicant1().setSolicitorRepresented(YES);
-        data.getApplicant1().setSolicitor(Solicitor
-            .builder()
-            .email(TEST_SOLICITOR_EMAIL)
-            .build());
-        data.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
-            .build());
-        setupMocks(false, true);
-
-        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
-            .caseAssignmentUserRoles(List.of(
-                CaseAssignmentUserRole.builder().userId("1").caseRole("[APPTWOSOLICITOR]").build(),
-                CaseAssignmentUserRole.builder().userId("2").caseRole("[CREATOR]").build()
-            ))
-            .build();
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(caseAssignmentApi.getUserRoles(
-            BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN,
-            TEST_SERVICE_AUTH_TOKEN,
-            List.of(String.valueOf(TEST_CASE_ID)))
-        ).thenReturn(caseRolesResponse);
-
-        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(actualResponse)
-            .inPath("$.data.applicationType")
-            .isEqualTo(ApplicationType.SOLE_APPLICATION);
-
-        assertThatJson(actualResponse)
-            .inPath("$.data.switchedToSoleCo")
-            .isEqualTo(YES);
-
-        assertThatJson(actualResponse)
-            .inPath("$.data.documentsGenerated")
-            .isArray()
-            .hasSize(1);
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
-                anyMap(),
-                eq(ENGLISH)
-            );
-        verifyNoMoreInteractions(notificationService);
     }
 
     @Test
@@ -325,11 +248,11 @@ public class CitizenSwitchedToSoleCoIT {
         ).thenReturn(caseRolesResponse);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
-                .accept(APPLICATION_JSON))
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
+            .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -340,9 +263,6 @@ public class CitizenSwitchedToSoleCoIT {
             .when(IGNORING_ARRAY_ORDER)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_CO_APPLICANT_2_RESPONSE)));
-
-        verify(switchToSoleCoPrinter)
-            .print(any(CaseData.class), eq(TEST_CASE_ID), any(Applicant.class), any(Applicant.class));
     }
 
     @Test
@@ -359,11 +279,11 @@ public class CitizenSwitchedToSoleCoIT {
         setupMocks(false, false);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
-                .accept(APPLICATION_JSON))
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
+            .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -374,9 +294,83 @@ public class CitizenSwitchedToSoleCoIT {
             .when(IGNORING_ARRAY_ORDER)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_CO_APPLICANT_1_RESPONSE)));
+    }
+
+    @Test
+    public void shouldSendSwitchToSoleNotificationsInSubmittedCallback() throws Exception {
+        CaseData data = validJointApplicant1CaseData();
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
+            .build());
+
+        mockMvc.perform(post(SUBMITTED_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(PARTNER_SWITCHED_TO_SOLE_CO), anyMap(), eq(ENGLISH));
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldSendSwitchToSoleNotificationsToSolicitorAndCitizenInSubmittedCallback() throws Exception {
+        CaseData data = validJointApplicant1CaseData();
+        final LocalDate issueDate = getExpectedLocalDate();
+        data.getApplication().setIssueDate(issueDate);
+        data.getApplicant2().setSolicitorRepresented(YES);
+        data.getApplicant2().setSolicitor(Solicitor
+            .builder()
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
+            .build());
+
+        mockMvc.perform(post(SUBMITTED_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
+                anyMap(),
+                eq(ENGLISH)
+            );
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldPrintSwitchToSoleCoLetterIfD84SwitchToSoleTriggeredByApplicant2() throws Exception {
+
+        CaseData data = validJointApplicant1CaseData();
+        data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .d84ApplicationType(SWITCH_TO_SOLE)
+            .d84WhoApplying(APPLICANT_2)
+            .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
+            .build());
+
+        mockMvc.perform(post(SUBMITTED_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
 
         verify(switchToSoleCoPrinter)
-            .print(any(CaseData.class), eq(TEST_CASE_ID), any(Applicant.class), any(Applicant.class));
+            .print(any(CaseData.class), eq(TEST_CASE_ID));
     }
 
     private void setupMocks(boolean isApplicant1, boolean isApplicant2) throws IOException {
@@ -394,5 +388,6 @@ public class CitizenSwitchedToSoleCoIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Conditional_Order_Answers.docx");
+        stubForDocAssemblyWith("2014c722-122c-4732-b583-75bad8dcedfc", "FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx");
     }
 }

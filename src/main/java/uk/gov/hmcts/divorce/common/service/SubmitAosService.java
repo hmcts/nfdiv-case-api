@@ -47,9 +47,14 @@ public class SubmitAosService {
             setSubmissionAndDueDate,
             generateRespondentAnswersDoc,
             addRespondentAnswersLink,
-            sendAosNotifications,
-            generateAosResponseLetterDocument,
-            sendAosResponseLetterPackToApplicant
+            generateAosResponseLetterDocument
+        ).run(caseDetails);
+    }
+
+    public CaseDetails<CaseData, State> submitAosNotifications(final CaseDetails<CaseData, State> caseDetails) {
+        return caseTasks(
+                sendAosNotifications,
+                sendAosResponseLetterPackToApplicant
         ).run(caseDetails);
     }
 
@@ -58,9 +63,7 @@ public class SubmitAosService {
             setSubmitAosState,
             setSubmissionAndDueDate,
             addRespondentAnswersLink,
-            sendAosNotifications,
-            generateAosResponseLetterDocument,
-            sendAosResponseLetterPackToApplicant
+            generateAosResponseLetterDocument
         ).run(caseDetails);
     }
 }

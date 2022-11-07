@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -40,12 +41,16 @@ import java.util.UUID;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSoleCo.SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84ApplicationType.SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
@@ -56,6 +61,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
 @Component
@@ -113,13 +119,19 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .done()
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getScannedDocumentNames,
-                    "typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\"")
+                    "typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\"")
             .done()
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getD84ApplicationType,
                     "typeOfDocumentAttached=\"D84\"")
                 .mandatory(ConditionalOrder::getD84WhoApplying,
                     "typeOfDocumentAttached=\"D84\" AND coD84ApplicationType=\"switchToSole\"")
+            .done()
+            .complex(CaseData::getFinalOrder)
+                .mandatory(FinalOrder::getD36ApplicationType,
+                    "typeOfDocumentAttached=\"D36\"")
+                .mandatory(FinalOrder::getD36WhoApplying,
+                    "typeOfDocumentAttached=\"D36\" AND d36ApplicationType=\"switchToSole\"")
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
@@ -192,18 +204,34 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getApplicant2().setOffline(YES);
             }
 
-            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
-
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .state(AwaitingLegalAdvisorReferral)
+                .build();
+
+        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+
+            reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
+
+            if (caseData.getApplicationType().isSole()) {
+                caseData.getApplicant1().setOffline(YES);
+            } else {
+                caseData.getApplicant1().setOffline(YES);
+                caseData.getApplicant2().setOffline(YES);
+            }
+
+            final State state = caseData.getApplicationType().isSole() ? AwaitingFinalOrder : AwaitingJointFinalOrder;
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(state)
                 .build();
 
         } else {
             final State state = caseData.getApplication().getStateToTransitionApplicationTo();
 
             if (Holding.equals(state)) {
-                log.info("Setting due date(Issue date + 20 weeks+ 1 day) as state selected is Holding for case id {}",
+                log.info("Setting due date(Issue date + 20 weeks + 1 day) as state selected is Holding for case id {}",
                     details.getId()
                 );
                 details.getData().setDueDate(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()));
@@ -262,16 +290,35 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         final CaseData caseData = details.getData();
 
-        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
+        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+
+            if (SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
+
+                log.info(
+                    "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
+                    details.getId());
+
+                final User user = idamService.retrieveSystemUpdateUserDetails();
+                final String serviceAuth = authTokenGenerator.generate();
+                ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
+            }
+        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
 
             log.info(
-                "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
+                "CaseworkerOfflineDocumentVerified submitted callback triggering Switched To Sole FO event for case id: {}",
                 details.getId());
 
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();
-            ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
+            ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_FO, user, serviceAuth);
+        } else if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            log.info(
+                "CaseworkerOfflineDocumentVerified submitted callback triggering submit aos notifications: {}",
+                details.getId());
+
+            submitAosService.submitAosNotifications(details);
         }
 
         return SubmittedCallbackResponse.builder().build();

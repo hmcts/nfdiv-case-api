@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -31,6 +32,7 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
@@ -44,19 +46,24 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSoleCo.SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84ApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -267,8 +274,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         verify(submitAosService).submitOfflineAos(details);
         assertThat(response.getState().name()).isEqualTo(Holding.name());
         assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
-
-
         assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
     }
 
@@ -370,9 +375,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
-
-        verify(notificationDispatcher)
-            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -432,9 +434,116 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
+    }
 
-        verify(notificationDispatcher)
-            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
+    @Test
+    void shouldSetOnlyApplicant1ToOfflineIfSoleCaseAndD36Selected() {
+        setMockClock(clock);
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedD36Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .scannedDate(now(clock))
+                    .fileName("D36.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().build())
+            .documents(
+                CaseDocuments.builder()
+                    .typeOfDocumentAttached(FO_D36)
+                    .scannedDocuments(List.of(scannedD36Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D36.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(AwaitingFinalOrder);
+        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
+    }
+
+    @Test
+    void shouldSetBothApplicantsToOfflineIfJointCaseAndD36Selected() {
+        setMockClock(clock);
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedD36Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .scannedDate(now(clock))
+                    .fileName("D36.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .applicant2(Applicant.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().build())
+            .documents(
+                CaseDocuments.builder()
+                    .typeOfDocumentAttached(FO_D36)
+                    .scannedDocuments(List.of(scannedD36Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D36.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(AwaitingJointFinalOrder);
+        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
     }
 
     @Test
@@ -459,12 +568,70 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
+    void shouldSendOfflineNotifications() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().typeOfDocumentAttached(AOS_D10).build())
+            .application(Application.builder()
+                    .issueDate(LocalDate.of(2022, 01, 01))
+                    .stateToTransitionApplicationTo(Holding)
+                    .build())
+            .build();
+        details.setData(caseData);
+
+        SubmittedCallbackResponse response =
+                caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verify(submitAosService).submitAosNotifications(details);
+        verifyNoMoreInteractions(submitAosService);
+    }
+
+    @Test
     void shouldTriggerSwitchToSoleEventIfD84AndSwitchToSoleSelected() {
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder()
                 .typeOfDocumentAttached(CO_D84)
                 .build())
             .conditionalOrder(ConditionalOrder.builder().d84ApplicationType(SWITCH_TO_SOLE).build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verify(notificationDispatcher)
+                .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
+        verify(ccdUpdateService).submitEvent(details, SWITCH_TO_SOLE_CO, user, TEST_SERVICE_AUTH_TOKEN);
+    }
+
+    @Test
+    void shouldNotTriggerSwitchToSoleEventIfD84AndSwitchToSoleNotSelected() {
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().build())
+            .build();
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldTriggerSwitchToSoleEventIfD36AndSwitchToSoleSelected() {
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder()
+                .typeOfDocumentAttached(FO_D36)
+                .build())
+            .finalOrder(FinalOrder.builder().d36ApplicationType(SWITCH_TO_SOLE).build())
             .build();
 
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
@@ -477,14 +644,14 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         caseworkerOfflineDocumentVerified.submitted(details, details);
 
-        verify(ccdUpdateService).submitEvent(details, SWITCH_TO_SOLE_CO, user, TEST_SERVICE_AUTH_TOKEN);
+        verify(ccdUpdateService).submitEvent(details, SWITCH_TO_SOLE_FO, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
     @Test
-    void shouldNotTriggerSwitchToSoleEventIfD84AndSwitchToSoleNotSelected() {
+    void shouldNotTriggerSwitchToSoleEventIfD36AndSwitchToSoleNotSelected() {
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder().build())
-            .conditionalOrder(ConditionalOrder.builder().build())
+            .finalOrder(FinalOrder.builder().build())
             .build();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
         details.setData(caseData);
