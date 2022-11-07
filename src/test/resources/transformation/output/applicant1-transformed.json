@@ -2,7 +2,7 @@
   "FirstName": "app1Fname",
   "MiddleName": "",
   "LastName": "app1Lname",
-  "Email": "",
+  "Email": "applicant1Email@me.com",
   "AgreedToReceiveEmails": null,
   "ConfirmReceipt": null,
   "LanguagePreferenceWelsh": null,
