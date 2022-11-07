@@ -64,7 +64,7 @@ public final class DocAssemblyWireMock {
 
         String expectedResponse = expectedDocAssemblyResponse("classpath:wiremock/responses/dg-assembly-response.json")
             .replace("<docUuid>", uuid)
-            .replace("<templateId>", encodedTemplateId);
+            .replace("<templateId>", templateId);
 
         DOC_ASSEMBLY_SERVER.stubFor(
             post("/api/template-renditions")
