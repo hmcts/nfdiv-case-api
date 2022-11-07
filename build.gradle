@@ -22,12 +22,12 @@ plugins {
   id 'pmd'
   id 'jacoco'
   id 'org.owasp.dependencycheck' version '7.3.0'
-  id 'org.sonarqube' version '3.4.0.2513'
+  id 'org.sonarqube' version '3.5.0.2730'
   id 'io.spring.dependency-management' version '1.1.0'
   id 'org.springframework.boot' version '2.7.5'
   id 'com.github.ben-manes.versions' version '0.43.0'
-  id 'hmcts.ccd.sdk' version '5.0.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.432'
+  id 'hmcts.ccd.sdk' version '5.1.0'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.436'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -274,7 +274,7 @@ dependencies {
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.19.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.19.0'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.63'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.68'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.1'
   implementation group: 'org.elasticsearch', name: 'elasticsearch'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
