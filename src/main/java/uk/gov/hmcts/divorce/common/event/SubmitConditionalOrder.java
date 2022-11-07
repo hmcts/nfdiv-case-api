@@ -125,7 +125,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         setIsSubmitted(appQuestions);
 
         final boolean isSole = data.getApplicationType().isSole();
-        boolean haveBothApplicantsSubmitted = app1Questions.getStatementOfTruth() == YES && app2Questions.getStatementOfTruth() == YES;
+        boolean haveBothApplicantsSubmitted = !Objects.isNull(app1Questions.getSubmittedDate())
+            && !Objects.isNull(app2Questions.getSubmittedDate());
 
         var state = isSole || haveBothApplicantsSubmitted ? AwaitingLegalAdvisorReferral : ConditionalOrderPending;
 

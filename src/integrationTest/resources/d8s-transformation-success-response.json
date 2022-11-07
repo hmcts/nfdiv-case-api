@@ -136,6 +136,7 @@
       "warnings": [],
       "applicant1SolicitorAddress": "some street\nsecond line of address\nUK",
       "screenHasMarriageCert": "Yes",
+      "applicant1Email": "app1test@dummy.com",
       "applicant2Email": "app2test@dummy.com",
       "applicant1SolicitorRepresented": "Yes",
       "marriageIssueApplicationWithoutMarriageCertificate": "No",
