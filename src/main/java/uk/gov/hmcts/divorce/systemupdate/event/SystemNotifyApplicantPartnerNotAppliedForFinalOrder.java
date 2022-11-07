@@ -42,7 +42,7 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrder implements CCDC
             .name("Partner not applied for FO")
             .description("Notify Applicant that partner not applied for Final Order")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
+            .grantHistoryOnly(SUPER_USER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
