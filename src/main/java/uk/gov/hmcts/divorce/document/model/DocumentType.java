@@ -41,7 +41,10 @@ public enum DocumentType implements HasLabel {
     BAILIFF_SERVICE_REFUSED("Bailiff Service Refused"),
 
     @JsonProperty("certificateOfEntitlementCoverLetter")
-    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER("Certificate of entitlement cover letter"),
+    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1("Certificate of entitlement cover letter for applicant/applicant 1"),
+
+    @JsonProperty("certificateOfEntitlementCoverLetterApp2")
+    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2("Certificate of entitlement cover letter for respondent/applicant 2"),
 
     @JsonProperty("certificateOfEntitlement")
     CERTIFICATE_OF_ENTITLEMENT("Certificate of entitlement"),
