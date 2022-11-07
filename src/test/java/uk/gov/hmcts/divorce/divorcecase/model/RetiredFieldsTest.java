@@ -102,4 +102,23 @@ class RetiredFieldsTest {
             )
         );
     }
+
+    @Test
+    void shouldMigrateGeneralApplicationAndGeneralApplicationsList() {
+        final GeneralApplication generalApplicationValue = GeneralApplication.builder().build();
+
+        final var data = new HashMap<String, Object>();
+        data.put("generalApplication", generalApplicationValue);
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("generalApplications", List.of(ListValue
+                .<GeneralApplication>builder()
+                .id("1")
+                .value(generalApplicationValue)
+                .build()
+            ))
+        );
+    }
 }
