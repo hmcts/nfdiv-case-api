@@ -32,7 +32,6 @@ public class SolicitorArchiveCase implements CCDConfig<CaseData, State, UserRole
             .description(ARCHIVE_CASE)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(SUPER_USER)
-            .showEventNotes()
         );
     }
 }
