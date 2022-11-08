@@ -21,7 +21,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.EnumSet;
 
-import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
@@ -57,11 +56,10 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             configBuilder
                 .event(SYSTEM_PRONOUNCE_CASE)
                 .forStateTransition(EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived), ConditionalOrderPronounced)
-                .showCondition(NEVER_SHOW)
                 .name("System pronounce case")
                 .description("System pronounce case")
-                .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-                .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
+                .grant(CREATE_READ_UPDATE, SYSTEMUPDATE, SUPER_USER)
+                .grantHistoryOnly(SOLICITOR, CASE_WORKER, LEGAL_ADVISOR)
                 .aboutToSubmitCallback(this::aboutToSubmit)
                 .submittedCallback(this::submitted)
         );
