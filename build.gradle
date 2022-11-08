@@ -26,8 +26,8 @@ plugins {
   id 'io.spring.dependency-management' version '1.1.0'
   id 'org.springframework.boot' version '2.7.5'
   id 'com.github.ben-manes.versions' version '0.43.0'
-  id 'hmcts.ccd.sdk' version '5.0.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.432'
+  id 'hmcts.ccd.sdk' version '5.1.1'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.436'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -274,7 +274,7 @@ dependencies {
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.19.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.19.0'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.63'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.68'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.1'
   implementation group: 'org.elasticsearch', name: 'elasticsearch'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
@@ -309,7 +309,7 @@ dependencies {
   testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.1'
   testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.23.1'
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.5.0'
-  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.4'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.5'
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.8.1'
   testImplementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.0'

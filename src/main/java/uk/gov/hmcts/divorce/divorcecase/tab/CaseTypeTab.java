@@ -321,6 +321,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("labelConditionalOrderDetails-Applicant1",
                 "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
                 "### Applicant 1")
+            .label("labelApplicant1-SwitchToSole",
+                "finalOrderSwitchedToSole=\"Yes\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
+                "### Applicant 1")
             .field("labelContentUnionType", "applicationType=\"NEVER_SHOW\"")
             .field("labelContentDivorceOrCivilPartnershipApplication", "applicationType=\"NEVER_SHOW\"")
             .field("coApplicant1ApplyForConditionalOrder")
@@ -334,6 +337,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplicant1SolicitorAdditionalComments")
             .label("labelConditionalOrderDetails-Applicant2",
                 "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
+                "### Applicant 2")
+            .label("labelApplicant2-SwitchToSole",
+                "finalOrderSwitchedToSole=\"Yes\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
                 "### Applicant 2")
             .field("coApplicant2ApplyForConditionalOrder")
             .field("coApplicant2ConfirmInformationStillCorrect")
@@ -404,12 +410,20 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
-            .field("doesApplicant2WantToApplyForFinalOrder")
-            .field("applicant2FinalOrderExplanation")
             .field("granted")
             .field("grantedDate")
             .field("dateFinalOrderNoLongerEligible")
-            .field("dateFinalOrderEligibleToRespondent", IS_SOLE);
+            .field("dateFinalOrderEligibleToRespondent", IS_SOLE)
+            .field("doesApplicant1IntendToSwitchToSole")
+            .field("dateApplicant1DeclaredIntentionToSwitchToSoleFo")
+            .field("doesApplicant2IntendToSwitchToSole")
+            .field("dateApplicant2DeclaredIntentionToSwitchToSoleFo")
+            .field("finalOrderSwitchedToSole")
+            .label("labelFinalOrderDetails-SoleRespondent",
+                "applicationType=\"soleApplication\" AND doesApplicant2WantToApplyForFinalOrder=\"*\"",
+                "### Respondent")
+            .field("doesApplicant2WantToApplyForFinalOrder")
+            .field("applicant2FinalOrderExplanation");
     }
 
     private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
