@@ -49,7 +49,7 @@ public class CaseworkerRescindConditionalOrderFT extends FunctionalTestSuite {
         request.put("bulkListCaseReference",
             CaseLink.builder().caseReference("1234-1234-1234-1234").build());
 
-        Response response = triggerCallbackWithSystemUpdateUser(
+        Response response = triggerCallback(
             request, RESCIND_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL, AwaitingPronouncement);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());

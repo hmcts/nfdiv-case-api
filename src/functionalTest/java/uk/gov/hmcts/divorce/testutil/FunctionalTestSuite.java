@@ -148,7 +148,32 @@ public abstract class FunctionalTestSuite {
     }
 
     protected Response triggerCallback(Map<String, Object> caseData, String eventId, String url, State state) throws IOException {
-        return triggerCallback(createCallBackRequest(caseData, eventId, state, 1234567890123456L), url);
+        CallbackRequest request = CallbackRequest
+            .builder()
+            .eventId(eventId)
+            .caseDetailsBefore(
+                CaseDetails
+                    .builder()
+                    .id(1234567890123456L)
+                    .data(caseData)
+                    .createdDate(LOCAL_DATE_TIME)
+                    .caseTypeId(CASE_TYPE)
+                    .state(state.name())
+                    .build()
+            )
+            .caseDetails(
+                CaseDetails
+                    .builder()
+                    .id(1234567890123456L)
+                    .data(caseData)
+                    .createdDate(LOCAL_DATE_TIME)
+                    .caseTypeId(CASE_TYPE)
+                    .state(state.name())
+                    .build()
+            )
+            .build();
+
+        return triggerCallback(request, url);
     }
 
     protected Response triggerCallback(CallbackRequest request, String url) throws IOException {
@@ -164,25 +189,6 @@ public abstract class FunctionalTestSuite {
             .post(url);
     }
 
-    protected Response triggerCallback(CallbackRequest request, String url, String idamToken) throws IOException {
-        return RestAssured
-            .given()
-            .relaxedHTTPSValidation()
-            .baseUri(testUrl)
-            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-            .header(SERVICE_AUTHORIZATION, serviceAuthenticationGenerator.generate())
-            .header(AUTHORIZATION, idamToken)
-            .body(request)
-            .when()
-            .post(url);
-    }
-
-    protected Response triggerCallbackWithSystemUpdateUser(
-        Map<String, Object> caseData, String eventId, String url, State state) throws IOException {
-        return triggerCallback(createCallBackRequest(caseData, eventId, state, 1234567890123456L),
-            url, idamTokenGenerator.generateIdamTokenForSystem());
-    }
-
     protected List<CaseDetails> searchForCasesWithQuery(BoolQueryBuilder query) {
         return searchService.searchForAllCasesWithQuery(
             query,
@@ -194,32 +200,5 @@ public abstract class FunctionalTestSuite {
 
     protected CaseData getCaseData(Map<String, Object> data) {
         return objectMapper.convertValue(data, CaseData.class);
-    }
-
-    private CallbackRequest createCallBackRequest(Map<String, Object> caseData, String eventId, State state, Long caseId) {
-        return CallbackRequest
-            .builder()
-            .eventId(eventId)
-            .caseDetailsBefore(
-                CaseDetails
-                    .builder()
-                    .id(caseId)
-                    .data(caseData)
-                    .createdDate(LOCAL_DATE_TIME)
-                    .caseTypeId(CASE_TYPE)
-                    .state(state.name())
-                    .build()
-            )
-            .caseDetails(
-                CaseDetails
-                    .builder()
-                    .id(caseId)
-                    .data(caseData)
-                    .createdDate(LOCAL_DATE_TIME)
-                    .caseTypeId(CASE_TYPE)
-                    .state(state.name())
-                    .build()
-            )
-            .build();
     }
 }
