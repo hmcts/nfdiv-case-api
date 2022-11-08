@@ -40,6 +40,7 @@ import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
@@ -180,6 +181,23 @@ public class CcdSearchService {
             BulkActionCaseTypeConfig.CASE_TYPE,
             sourceBuilder.toString()
         ).getCases();
+    }
+
+    public uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> searchForBulkCaseById(
+        String bulkCaseId, User user, String serviceAuth) {
+
+        final String userId = user.getUserDetails().getId();
+        final String authorization = user.getAuthToken();
+
+        final CaseDetails bulkCaseDetails = coreCaseDataApi.readForCaseWorker(
+            authorization,
+            serviceAuth,
+            userId,
+            JURISDICTION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            bulkCaseId);
+
+        return caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(bulkCaseDetails);
     }
 
     public Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> searchAwaitingPronouncementCasesAllPages(

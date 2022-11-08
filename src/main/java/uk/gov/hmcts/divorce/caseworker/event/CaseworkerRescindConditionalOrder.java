@@ -7,17 +7,23 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import javax.servlet.http.HttpServletRequest;
 
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerRemoveCasesFromBulkList.CASEWORKER_REMOVE_CASES_BULK_LIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -47,10 +53,16 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
     private CcdUpdateService ccdUpdateService;
 
     @Autowired
+    private CcdSearchService ccdSearchService;
+
+    @Autowired
     private IdamService idamService;
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -103,11 +115,24 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
     }
 
     private void removeCaseFromBulkList(final CaseDetails<CaseData, State> details) {
-        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final User user = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
         final String serviceAuthorization = authTokenGenerator.generate();
 
-        log.info("Submitting {} event for case id: {}", CASEWORKER_REMOVE_CASES_BULK_LIST, details.getId());
-        ccdUpdateService.submitEvent(details, CASEWORKER_REMOVE_CASES_BULK_LIST, user, serviceAuthorization);
+        CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails
+            = ccdSearchService.searchForBulkCaseById(
+                details.getData().getBulkListCaseReferenceLink().getCaseReference(), user, serviceAuthorization);
+
+        if (bulkCaseDetails != null) {
+            boolean caseRemovedFromCasesAcceptedToListForHearing =
+                !isEmpty(bulkCaseDetails.getData().getCasesAcceptedToListForHearing())
+                    && bulkCaseDetails.getData().getCasesAcceptedToListForHearing().removeIf(
+                        caseLink -> caseLink.getValue().getCaseReference().equals(details.getId().toString()));
+
+            if (caseRemovedFromCasesAcceptedToListForHearing) {
+                log.info("Submitting {} event for case id: {}", CASEWORKER_REMOVE_CASES_BULK_LIST, details.getId());
+                ccdUpdateService.submitBulkActionEvent(bulkCaseDetails, CASEWORKER_REMOVE_CASES_BULK_LIST, user, serviceAuthorization);
+            }
+        }
 
         details.getData().setBulkListCaseReferenceLink(null);
     }
