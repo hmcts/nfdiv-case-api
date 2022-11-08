@@ -122,6 +122,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("81759115-d69e-4818-a0c5-a1f343d4f914", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx");
+        stubForDocAssemblyWith("411bfbe3-af6c-4458-92f7-7854d3d1de24", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
         stubForDocAssemblyWith("ea114af6-ed73-476b-8cc6-41ec8eb4f0b3", "FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx");
         stubForDocAssemblyWith("b3d8d9de-8706-4b6e-881c-d8b400d6c533", "FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx");

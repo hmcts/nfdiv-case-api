@@ -23,7 +23,9 @@ import java.time.LocalDateTime;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -52,7 +54,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_GRANT_FINAL_ORDER)
-            .forStateTransition(FinalOrderRequested, FinalOrderComplete)
+            .forStates(FinalOrderRequested, FinalOrderPending, GeneralConsiderationComplete)
             .name("Grant Final order")
             .description("Grant Final order")
             .showSummary()
@@ -95,6 +97,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .state(FinalOrderComplete)
             .build();
     }
 

@@ -17,8 +17,8 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
@@ -36,7 +36,7 @@ public class RegenerateCourtOrdersPrinter {
         CONDITIONAL_ORDER_GRANTED,
         FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
         FINAL_ORDER_GRANTED,
-        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER,
+        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
         CERTIFICATE_OF_ENTITLEMENT
     );
     private static final List<DocumentType> APPLICANT_2_DOCUMENTS = List.of(
@@ -44,7 +44,7 @@ public class RegenerateCourtOrdersPrinter {
         CONDITIONAL_ORDER_GRANTED,
         FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
         FINAL_ORDER_GRANTED,
-        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2,
+        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
         CERTIFICATE_OF_ENTITLEMENT
     );
 
@@ -92,7 +92,7 @@ public class RegenerateCourtOrdersPrinter {
 
         final List<Letter> certificateOfEntitlementCoverLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
-            isApplicant1 ? CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2);
+            isApplicant1 ? CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
 
         final List<Letter> certificateOfEntitlementDocuments = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),

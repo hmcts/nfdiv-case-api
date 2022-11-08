@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
@@ -63,7 +63,7 @@ public class CertificateOfEntitlementPrinterTest {
 
     private static final DivorceDocument certificateOfEntitlementCoverLetterValue =
         DivorceDocument.builder()
-            .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER)
+            .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1)
             .build();
 
     @Test
@@ -73,7 +73,7 @@ public class CertificateOfEntitlementPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER);
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -90,7 +90,7 @@ public class CertificateOfEntitlementPrinterTest {
         final CaseData caseData = caseData();
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER);
+        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
 
         verifyNoInteractions(bulkPrintService);
     }

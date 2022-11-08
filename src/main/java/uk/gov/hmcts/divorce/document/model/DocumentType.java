@@ -41,10 +41,10 @@ public enum DocumentType implements HasLabel {
     BAILIFF_SERVICE_REFUSED("Bailiff Service Refused"),
 
     @JsonProperty("certificateOfEntitlementCoverLetter")
-    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER("Certificate of entitlement cover letter"),
+    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1("Certificate of entitlement cover letter for applicant/applicant 1"),
 
     @JsonProperty("certificateOfEntitlementCoverLetterApp2")
-    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2("Applicant 2 Certificate of entitlement cover letter"),
+    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2("Certificate of entitlement cover letter for respondent/applicant 2"),
 
     @JsonProperty("certificateOfEntitlement")
     CERTIFICATE_OF_ENTITLEMENT("Certificate of entitlement"),
@@ -131,7 +131,7 @@ public enum DocumentType implements HasLabel {
     FINAL_ORDER_CAN_APPLY("Final order can apply"),
 
     @JsonProperty("finalOrderApplication")
-    FINAL_ORDER_APPLICATION("Final Order application"),
+    FINAL_ORDER_APPLICATION("Final Order application (D36)"),
 
     @JsonProperty("finalOrderGranted")
     FINAL_ORDER_GRANTED("Final order granted"),
@@ -196,6 +196,9 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("generalLetter")
     GENERAL_LETTER("General letter"),
+
+    @JsonProperty("generalApplication")
+    GENERAL_APPLICATION("General application"),
 
     @JsonProperty("coGrantedCoversheet")
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1("Applicant 1 Conditional Order Granted Coversheet"),

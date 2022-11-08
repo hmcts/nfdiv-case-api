@@ -14,13 +14,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CertificateOfEntitlementContent;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
@@ -47,10 +49,11 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -76,6 +79,12 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
     @Autowired
     private CertificateOfEntitlementContent certificateOfEntitlementContent;
+
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
+    @Autowired
+    private CommonContent commonContent;
 
     @Autowired
     private Clock clock;
@@ -119,7 +128,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
             log.info("Generating certificate of entitlement cover letter for Applicant 1 for case id {} ", caseId);
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
-                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER,
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
                 templateVars(caseData, caseId, caseData.getApplicant1()),
                 caseId,
                 CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
@@ -130,29 +139,52 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
         if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
             log.info("Generating certificate of entitlement cover letter for Applicant 2 for case id {} ", caseId);
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2,
-                templateVars(caseData, caseId, caseData.getApplicant2()),
-                caseId,
-                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
-                caseData.getApplicant2().getLanguagePreference(),
-                formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
-            );
+
+            if (caseData.getApplicationType().isSole()) {
+                Map<String, Object> templateVars = templateVars(caseData, caseId, caseData.getApplicant2());
+
+                templateVars.put(
+                    PARTNER,
+                    commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
+                );
+
+                caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                    caseData,
+                    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+                    templateVars,
+                    caseId,
+                    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
+                    caseData.getApplicant2().getLanguagePreference(),
+                    formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+                );
+
+            } else {
+                caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                    caseData,
+                    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+                    templateVars(caseData, caseId, caseData.getApplicant2()),
+                    caseId,
+                    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
+                    caseData.getApplicant2().getLanguagePreference(),
+                    formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+                );
+            }
         }
+
     }
 
     private Map<String, Object> templateVars(final CaseData caseData,
                                              final Long caseId,
                                              final Applicant applicant) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+            applicant.getLanguagePreference());
 
         templateContent.put(NAME, applicant.isRepresented()
             ? applicant.getSolicitor().getName()
             : join(" ", applicant.getFirstName(), applicant.getLastName())
         );
-        templateContent.put(ADDRESS, applicant.getCorrespondenceAddress());
+        templateContent.put(ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, formatId(caseId));
 
@@ -192,7 +224,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
         final CaseData caseData = caseDetails.getData();
         final List<DocumentType> documentTypesToRemove =
-            List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP_2);
+            List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
 
         if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
             caseData.getDocuments().getDocumentsGenerated()

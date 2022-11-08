@@ -49,6 +49,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
@@ -287,6 +289,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant1().setOffline(YES);
+        data.getApplicant1().setContactDetailsType(PUBLIC);
         data.getApplicant1().setSolicitorRepresented(YES);
         data.getApplicant1().setSolicitor(
             Solicitor.builder()
