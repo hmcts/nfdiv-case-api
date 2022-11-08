@@ -68,6 +68,7 @@ public class SetAosIsDraftedToYesMigration implements Migration {
                 aosIsDraftedReferences5)
             .flatMap(Collection::stream)
             .filter(Objects::nonNull)
+            .distinct()
             .toList();
 
         if (migrateAosIsDrafted && !isEmpty(allReferences)) {

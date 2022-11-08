@@ -123,17 +123,16 @@ class SetAosIsDraftedToYesMigrationTest {
     }
 
     @Test
-    void shouldSetAosIsDraftedToYesForMultipleCombinedReferences() {
+    void shouldSetAosIsDraftedToYesForMultipleCombinedDistinctReferences() {
 
         final long reference2 = TEST_CASE_ID + 1L;
         final long reference3 = TEST_CASE_ID + 2L;
         final long reference4 = TEST_CASE_ID + 3L;
-        final long reference5 = TEST_CASE_ID + 4L;
         setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", true);
         setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences2", List.of(reference2));
         setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences3", List.of(reference3));
         setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences4", List.of(reference4));
-        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences5", List.of(reference5));
+        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences5", List.of(reference4));
 
         final CaseDetails caseDetails1 = CaseDetails.builder()
             .id(1L)
@@ -144,7 +143,7 @@ class SetAosIsDraftedToYesMigrationTest {
 
         when(ccdSearchService
             .searchForAllCasesWithQuery(
-                getQuery(TEST_CASE_ID, reference2, reference3, reference4, reference5),
+                getQuery(TEST_CASE_ID, reference2, reference3, reference4),
                 user,
                 SERVICE_AUTHORIZATION))
             .thenReturn(searchResponse1);
