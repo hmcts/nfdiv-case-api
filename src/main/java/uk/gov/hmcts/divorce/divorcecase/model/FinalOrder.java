@@ -117,25 +117,24 @@ public class FinalOrder {
     private LocalDate dateFinalOrderEligibleToRespondent;
 
     @CCD(
-        label = "Final order late explanation",
+        label = "${labelContentApplicantsOrApplicant1s} final order late explanation",
         access = {DefaultAccess.class}
     )
     private String applicant1FinalOrderLateExplanation;
 
     @CCD(
-        label = "Final order late explanation",
+        label = "${labelContentApplicantsOrApplicant1s} final order late explanation (translated)",
         access = {DefaultAccess.class}
     )
     private String applicant1FinalOrderLateExplanationTranslated;
 
     @CCD(
-        label = "Translated To?",
+        label = "${labelContentApplicantsOrApplicant1s} final order late explanation translated to?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "TranslatedToLanguage",
         access = {SystemUpdateAndSuperUserAccess.class}
     )
     private TranslatedToLanguage applicant1FinalOrderLateExplanationTranslatedTo;
-
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
@@ -167,6 +166,28 @@ public class FinalOrder {
         access = {DefaultAccess.class}
     )
     private YesOrNo finalOrderReminderSentApplicant2;
+
+    @CCD(
+        label = "What application type is the D36?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "OfflineApplicationType",
+        access = {DefaultAccess.class}
+    )
+    private OfflineApplicationType d36ApplicationType;
+
+    @CCD(
+        label = "Who is submitting the D36?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "OfflineWhoApplying",
+        access = {DefaultAccess.class}
+    )
+    private OfflineWhoApplying d36WhoApplying;
+
+    @CCD(
+        label = "Switched to sole",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo finalOrderSwitchedToSole;
 
 
     @CCD(

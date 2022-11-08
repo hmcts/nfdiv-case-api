@@ -137,6 +137,7 @@
       "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
       "applicant1NameChangedHowOtherDetails": "some reason",
       "applicant2FinancialOrder": "Yes",
+      "applicant1Email": "app1test@dummy.com",
       "applicant2Email": "app2test@dummy.com",
       "applicant1SolicitorRepresented": "Yes",
       "applicant1HWFNeedHelp": "Yes",
