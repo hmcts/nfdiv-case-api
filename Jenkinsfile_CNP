@@ -110,6 +110,15 @@ withPipeline(type, product, component) {
         reportFiles          : "index.html",
         reportName           : "Unit Tests Report"
       ]
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/pmd",
+        reportFiles          : "main.html",
+        reportName           : "PMD Report"
+      ]
     }
 
     after('functionalTest') {
