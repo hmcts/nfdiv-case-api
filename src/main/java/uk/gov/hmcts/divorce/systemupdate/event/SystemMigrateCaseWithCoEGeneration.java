@@ -33,7 +33,8 @@ public class SystemMigrateCaseWithCoEGeneration implements CCDConfig<CaseData, S
             .forStates(STATES_NOT_WITHDRAWN_OR_REJECTED)
             .name("Migrate case data")
             .description("Migrate case data to the latest version and generate CoE")
-            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE);
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
+            .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
