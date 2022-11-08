@@ -152,7 +152,7 @@ class SetAosIsDraftedToYesMigrationTest {
 
         setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        assertThat(caseDetails1.getData().get("aosIsDrafted")).isEqualTo("Yes");
+        assertThat(caseDetails1.getData()).containsEntry("aosIsDrafted", "Yes");
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdSearchService);
