@@ -26,15 +26,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinalOrder.IntendsToSwitchToSole.I_INTEND_TO_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT1_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-class Applicant1SwitchToSoleAfterIntentionFONotificationTest {
+class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
 
     @Mock
     private CommonContent commonContent;
@@ -43,7 +44,7 @@ class Applicant1SwitchToSoleAfterIntentionFONotificationTest {
     private NotificationService notificationService;
 
     @InjectMocks
-    private Applicant1SwitchToSoleAfterIntentionFONotification notification;
+    private ApplicantSwitchToSoleAfterIntentionFONotification notification;
 
     @Test
     void shouldSendApplicant1SolicitorNotificationIfJointApplicationAndApplicant1IntendedToSwitchToSoleFO() {
@@ -67,7 +68,7 @@ class Applicant1SwitchToSoleAfterIntentionFONotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
-            eq(APPLICANT1_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
+            eq(APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
             eq(ENGLISH)
         );
@@ -97,6 +98,90 @@ class Applicant1SwitchToSoleAfterIntentionFONotificationTest {
             .build());
 
         notification.sendToApplicant1Solicitor(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
+    @Test
+    void shouldNotSendApplicant1SolicitorNotificationIfApp1IntendsToSwitchToSoleIsNull() {
+        CaseData data = caseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setFinalOrder(FinalOrder.builder()
+            .build());
+
+        notification.sendToApplicant1Solicitor(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
+    @Test
+    void shouldSendApplicant2SolicitorNotificationIfJointApplicationAndApplicant1IntendedToSwitchToSoleFO() {
+        CaseData data = validApplicant2CaseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant2().setSolicitor(Solicitor.builder()
+            .name("App1 Sol")
+            .reference("12344")
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        data.setFinalOrder(FinalOrder.builder()
+            .dateApplicant2DeclaredIntentionToSwitchToSoleFo(getExpectedLocalDate().minusDays(15))
+            .applicant2IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
+            .build());
+
+        when(commonContent.solicitorTemplateVars(data, 1L, data.getApplicant2()))
+            .thenReturn(solicitorTemplateVars(data, data.getApplicant2()));
+
+        notification.sendToApplicant2Solicitor(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
+            any(),
+            eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+
+        verify(commonContent).solicitorTemplateVars(data, 1L, data.getApplicant2());
+    }
+
+    @Test
+    void shouldNotSendApplicant2SolicitorNotificationIfSoleApplication() {
+        CaseData data = caseData();
+        data.setApplicationType(SOLE_APPLICATION);
+
+        notification.sendToApplicant1Solicitor(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
+    @Test
+    void shouldNotSendApplicant2SolicitorNotificationIfApp1IntendsToSwitchToSoleIsNull() {
+        CaseData data = caseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setFinalOrder(FinalOrder.builder()
+            .build());
+
+        notification.sendToApplicant2Solicitor(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
+    @Test
+    void shouldNotSendApplicant2SolicitorNotificationIfApplicant1DoesntIntendToSwitchToSole() {
+        CaseData data = caseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setFinalOrder(FinalOrder.builder()
+            .applicant2IntendsToSwitchToSole(emptySet())
+            .build());
+
+        notification.sendToApplicant2Solicitor(data, 1L);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);

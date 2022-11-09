@@ -6,7 +6,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.notification.Applicant1SwitchToSoleAfterIntentionFONotification;
+import uk.gov.hmcts.divorce.common.notification.ApplicantSwitchToSoleAfterIntentionFONotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFO implements CCDConfig<CaseData, State, UserRole> {
+public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFO implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION
         = "system-notify-applicant-can-switch-to-sole-after-intention-fo";
@@ -31,7 +31,7 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFO implements CC
     private NotificationDispatcher notificationDispatcher;
 
     @Autowired
-    private Applicant1SwitchToSoleAfterIntentionFONotification applicant1SwitchToSoleAfterIntentionFONotification;
+    private ApplicantSwitchToSoleAfterIntentionFONotification applicantSwitchToSoleAfterIntentionFONotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -40,7 +40,7 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFO implements CC
             .event(SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION)
             .forStates(AwaitingJointFinalOrder)
             .name("Notify continue switch to sole")
-            .description("Notify Applicant 1 they can continue switch to sole")
+            .description("Notify Applicant they can continue switch to sole")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
             .retries(120, 120)
@@ -51,8 +51,8 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFO implements CC
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         CaseData data = details.getData();
 
-        notificationDispatcher.send(applicant1SwitchToSoleAfterIntentionFONotification, data, details.getId());
-        data.getFinalOrder().setFinalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention(YES);
+        notificationDispatcher.send(applicantSwitchToSoleAfterIntentionFONotification, data, details.getId());
+        data.getFinalOrder().setFinalOrderApplicantNotifiedCanSwitchToSoleAfterIntention(YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

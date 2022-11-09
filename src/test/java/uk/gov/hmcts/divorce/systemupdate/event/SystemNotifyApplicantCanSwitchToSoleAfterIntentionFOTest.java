@@ -9,7 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.notification.Applicant1SwitchToSoleAfterIntentionFONotification;
+import uk.gov.hmcts.divorce.common.notification.ApplicantSwitchToSoleAfterIntentionFONotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -23,29 +23,29 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinalOrder.IntendsToSwitchToSole.I_INTEND_TO_SWITCH_TO_SOLE;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFO.SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantCanSwitchToSoleAfterIntentionFO.SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTest {
+public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTest {
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
-    private Applicant1SwitchToSoleAfterIntentionFONotification applicant1SwitchToSoleAfterIntentionFONotification;
+    private ApplicantSwitchToSoleAfterIntentionFONotification applicantSwitchToSoleAfterIntentionFONotification;
 
     @InjectMocks
-    private SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFO systemNotifyApplicant1CanSwitchToSoleAfterIntentionFO;
+    private SystemNotifyApplicantCanSwitchToSoleAfterIntentionFO systemNotifyApplicantCanSwitchToSoleAfterIntentionFO;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        systemNotifyApplicant1CanSwitchToSoleAfterIntentionFO.configure(configBuilder);
+        systemNotifyApplicantCanSwitchToSoleAfterIntentionFO.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -65,9 +65,28 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTest {
         details.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            systemNotifyApplicant1CanSwitchToSoleAfterIntentionFO.aboutToSubmit(details, details);
+            systemNotifyApplicantCanSwitchToSoleAfterIntentionFO.aboutToSubmit(details, details);
 
-        verify(notificationDispatcher).send(applicant1SwitchToSoleAfterIntentionFONotification, caseData, details.getId());
-        assertThat(response.getData().getFinalOrder().getFinalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention()).isEqualTo(YES);
+        verify(notificationDispatcher).send(applicantSwitchToSoleAfterIntentionFONotification, caseData, details.getId());
+        assertThat(response.getData().getFinalOrder().getFinalOrderApplicantNotifiedCanSwitchToSoleAfterIntention()).isEqualTo(YES);
+    }
+
+    @Test
+    void shouldSendNotificationToApplicant2SwitchToSoleAfterIntention() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setFinalOrder(FinalOrder.builder()
+            .applicant2IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
+            .dateApplicant2DeclaredIntentionToSwitchToSoleFo(getExpectedLocalDate().minusDays(15))
+            .build());
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemNotifyApplicantCanSwitchToSoleAfterIntentionFO.aboutToSubmit(details, details);
+
+        verify(notificationDispatcher).send(applicantSwitchToSoleAfterIntentionFONotification, caseData, details.getId());
+        assertThat(response.getData().getFinalOrder().getFinalOrderApplicantNotifiedCanSwitchToSoleAfterIntention()).isEqualTo(YES);
     }
 }

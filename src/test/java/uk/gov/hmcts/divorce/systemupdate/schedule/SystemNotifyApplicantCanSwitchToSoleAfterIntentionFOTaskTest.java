@@ -40,16 +40,17 @@ import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUES
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFO.SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION;
-import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTask.APP_1_INTENDED_TO_SWITCH_TO_SOLE;
-import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTask.NOTIFICATION_SENT_FLAG;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantCanSwitchToSoleAfterIntentionFO.SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask.APP_1_INTENDED_TO_SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask.APP_2_INTENDED_TO_SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask.NOTIFICATION_SENT_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTaskTest {
+public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;
@@ -67,14 +68,18 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTaskTest {
     private ObjectMapper objectMapper;
 
     @InjectMocks
-    private SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTask task;
+    private SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask task;
 
     private User user;
 
     private static final BoolQueryBuilder query =
         boolQuery()
             .must(matchQuery(STATE, AwaitingJointFinalOrder))
-            .must(matchQuery(String.format(DATA, APP_1_INTENDED_TO_SWITCH_TO_SOLE), YES))
+            .must(boolQuery()
+                .should(matchQuery(String.format(DATA, APP_1_INTENDED_TO_SWITCH_TO_SOLE), YES))
+                .should(matchQuery(String.format(DATA, APP_2_INTENDED_TO_SWITCH_TO_SOLE), YES))
+                .minimumShouldMatch(1)
+            )
             .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YES));
 
     @BeforeEach
@@ -95,7 +100,7 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTaskTest {
             .finalOrder(
                 FinalOrder.builder()
                     .dateApplicant1DeclaredIntentionToSwitchToSoleFo(datePast14Days)
-                    .finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention(NO)
+                    .finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention(NO)
                     .build()
             )
             .build();
@@ -103,7 +108,7 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTaskTest {
             .finalOrder(
                 FinalOrder.builder()
                     .dateApplicant1DeclaredIntentionToSwitchToSoleFo(dateNotPast14Days)
-                    .finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention(NO)
+                    .finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention(NO)
                     .build()
             )
             .build();
@@ -148,6 +153,69 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTaskTest {
     }
 
     @Test
+    void shouldTriggerSystemUpdateTaskOnEachCaseWhenFinalOrderApp2DateDeclaredIntentionSwitchToSoleIsPastFourteenDays() {
+        final LocalDate datePast14Days = LocalDate.now().minusDays(15);
+        final LocalDate dateNotPast14Days = LocalDate.now().minusDays(6);
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final CaseDetails caseDetails3 = mock(CaseDetails.class);
+        final CaseData caseData1 = CaseData.builder()
+            .finalOrder(
+                FinalOrder.builder()
+                    .dateApplicant2DeclaredIntentionToSwitchToSoleFo(datePast14Days)
+                    .finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention(NO)
+                    .build()
+            )
+            .build();
+        final CaseData caseData2 = CaseData.builder()
+            .finalOrder(
+                FinalOrder.builder()
+                    .dateApplicant2DeclaredIntentionToSwitchToSoleFo(dateNotPast14Days)
+                    .finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention(NO)
+                    .build()
+            )
+            .build();
+
+        when(caseDetails1.getData()).thenReturn(
+            Map.of(
+                "dateApplicant2DeclaredIntentionToSwitchToSoleFo", datePast14Days,
+                "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention", NO
+            )
+        );
+        when(caseDetails2.getData()).thenReturn(
+            Map.of(
+                "dateApplicant2DeclaredIntentionToSwitchToSoleFo", datePast14Days,
+                "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention", NO
+            )
+        );
+        when(caseDetails3.getData()).thenReturn(
+            Map.of(
+                "dateApplicant2DeclaredIntentionToSwitchToSoleFo", dateNotPast14Days,
+                "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention", NO
+            )
+        );
+
+        when(objectMapper.convertValue(Map.of(
+            "dateApplicant2DeclaredIntentionToSwitchToSoleFo", datePast14Days,
+            "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention", NO), CaseData.class)).thenReturn(caseData1);
+        when(objectMapper.convertValue(Map.of(
+            "dateApplicant2DeclaredIntentionToSwitchToSoleFo", dateNotPast14Days,
+            "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention", NO), CaseData.class)).thenReturn(caseData2);
+
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2, caseDetails3);
+
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingJointFinalOrder))
+            .thenReturn(caseDetailsList);
+
+        task.run();
+
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+        verifyNoMoreInteractions(ccdUpdateService);
+    }
+
+    @Test
     void shouldNotTriggerSystemUpdateTaskOnCaseWhenCaseApp1DateDeclaredIntentionIsNotPastFourteenDays() {
         final LocalDate date = LocalDate.now().minusDays(6);
         final CaseDetails caseDetails = mock(CaseDetails.class);
@@ -155,7 +223,7 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTaskTest {
             .finalOrder(
                 FinalOrder.builder()
                     .dateApplicant1DeclaredIntentionToSwitchToSoleFo(date)
-                    .finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention(NO)
+                    .finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention(NO)
                     .build()
             )
             .build();
@@ -169,6 +237,38 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTaskTest {
 
         when(objectMapper.convertValue(Map.of(
             "dateApplicant1DeclaredIntentionToSwitchToSoleFo", date,
+            "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention", NO), CaseData.class)).thenReturn(caseData);
+
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingJointFinalOrder))
+            .thenReturn(singletonList(caseDetails));
+
+        task.run();
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldNotTriggerSystemUpdateTaskOnCaseWhenCaseApp2DateDeclaredIntentionIsNotPastFourteenDays() {
+        final LocalDate date = LocalDate.now().minusDays(6);
+        final CaseDetails caseDetails = mock(CaseDetails.class);
+        final CaseData caseData = CaseData.builder()
+            .finalOrder(
+                FinalOrder.builder()
+                    .dateApplicant2DeclaredIntentionToSwitchToSoleFo(date)
+                    .finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention(NO)
+                    .build()
+            )
+            .build();
+
+        when(caseDetails.getData()).thenReturn(
+            Map.of(
+                "dateApplicant2DeclaredIntentionToSwitchToSoleFo", date,
+                "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention", NO
+            )
+        );
+
+        when(objectMapper.convertValue(Map.of(
+            "dateApplicant2DeclaredIntentionToSwitchToSoleFo", date,
             "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention", NO), CaseData.class)).thenReturn(caseData);
 
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingJointFinalOrder))
@@ -199,7 +299,7 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTaskTest {
             .finalOrder(
                 FinalOrder.builder()
                     .dateApplicant1DeclaredIntentionToSwitchToSoleFo(date)
-                    .finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention(NO)
+                    .finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention(NO)
                     .build()
             )
             .build();
@@ -238,7 +338,7 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTaskTest {
             .finalOrder(
                 FinalOrder.builder()
                     .dateApplicant1DeclaredIntentionToSwitchToSoleFo(date)
-                    .finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention(NO)
+                    .finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention(NO)
                     .build()
             )
             .build();
