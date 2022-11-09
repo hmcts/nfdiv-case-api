@@ -51,7 +51,7 @@ public class ApplicantSwitchToSoleAfterIntentionFONotification implements Applic
                 caseData.getApplicant2().getSolicitor().getEmail(),
                 APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO,
                 commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference()
             );
         }
     }
