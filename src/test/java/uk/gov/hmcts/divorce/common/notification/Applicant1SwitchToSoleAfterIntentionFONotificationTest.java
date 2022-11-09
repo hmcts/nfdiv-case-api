@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
