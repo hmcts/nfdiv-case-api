@@ -52,7 +52,7 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTask implement
 
     @Override
     public void run() {
-        log.info("Notify applicant who intended to switch to sole that they can now do so");
+        log.info("Notify applicant they can switch to sole 14 days after intention final order task started");
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();
