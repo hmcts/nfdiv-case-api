@@ -32,11 +32,11 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTask implements Runnable {
 
     public static final String NOTIFICATION_SENT_FLAG = "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention";
-    public static final String APP_1_INTENDED_TO_SWITCH_TO_SOLE = "doesApplicant1IntendToSwitchToSole";
     private static final int FOURTEEN_DAYS = 14;
+    public static final String APP_1_INTENDED_TO_SWITCH_TO_SOLE = "doesApplicant1IntendToSwitchToSole";
 
     @Autowired
-    private CcdSearchService ccdSearchService;
+    private ObjectMapper objectMapper;
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
@@ -45,17 +45,18 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTask implement
     private IdamService idamService;
 
     @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private CcdSearchService ccdSearchService;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private AuthTokenGenerator authTokenGenerator;
+
 
     @Override
     public void run() {
         log.info("Notify applicant they can switch to sole 14 days after intention final order task started");
 
-        final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();
+        final User user = idamService.retrieveSystemUpdateUserDetails();
 
         try {
             final BoolQueryBuilder query = boolQuery()
