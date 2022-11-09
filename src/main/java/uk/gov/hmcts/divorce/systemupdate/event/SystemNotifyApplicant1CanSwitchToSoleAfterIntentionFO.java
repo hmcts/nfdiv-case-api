@@ -24,7 +24,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFO implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION = "system-notify-applicant-can-switch-to-sole-after-intention-fo";
+    public static final String SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION
+        = "system-notify-applicant-can-switch-to-sole-after-intention-fo";
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
