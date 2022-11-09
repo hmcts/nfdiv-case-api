@@ -72,7 +72,7 @@ public class SetAosIsDraftedToYesMigration implements Migration {
             .toList();
 
         if (migrateAosIsDrafted && !isEmpty(allReferences)) {
-            log.info("Started SetAosIsDraftedToYesMigration with references size: {}", aosIsDraftedReferences);
+            log.info("Started SetAosIsDraftedToYesMigration with references size: {}", allReferences);
             try {
 
                 final List<CaseDetails> caseDetails = searchForAosDraftedCases(allReferences, user, serviceAuthorization);
