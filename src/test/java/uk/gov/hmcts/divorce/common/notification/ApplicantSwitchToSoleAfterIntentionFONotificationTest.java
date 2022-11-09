@@ -104,6 +104,19 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
     }
 
     @Test
+    void shouldNotSendApplicant1SolicitorNotificationIfApp1IntendsToSwitchToSoleIsNull() {
+        CaseData data = caseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setFinalOrder(FinalOrder.builder()
+            .build());
+
+        notification.sendToApplicant1Solicitor(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
+    @Test
     void shouldSendApplicant2SolicitorNotificationIfJointApplicationAndApplicant1IntendedToSwitchToSoleFO() {
         CaseData data = validApplicant2CaseData();
         data.setApplicationType(JOINT_APPLICATION);
@@ -142,6 +155,19 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
 
         notification.sendToApplicant1Solicitor(data, 1L);
+
+        verifyNoInteractions(notificationService);
+        verifyNoInteractions(commonContent);
+    }
+
+    @Test
+    void shouldNotSendApplicant2SolicitorNotificationIfApp1IntendsToSwitchToSoleIsNull() {
+        CaseData data = caseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setFinalOrder(FinalOrder.builder()
+            .build());
+
+        notification.sendToApplicant2Solicitor(data, 1L);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
