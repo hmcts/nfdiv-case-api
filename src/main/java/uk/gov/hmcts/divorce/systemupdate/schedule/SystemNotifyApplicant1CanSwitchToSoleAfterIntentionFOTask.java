@@ -74,12 +74,21 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTask implement
 
                     if (dateFinalOrderIntendsSwitchToSoleNowEligible.isBefore(LocalDate.now())
                         && !caseData.getFinalOrder().hasApplicant1BeenNotifiedTheyCanContinueSwitchToSoleFO()) {
-                        notifyApplicantCanNowSwitchToSole(
-                            caseDetails,
+
+                        log.info(
+                            """
+                            14 days has passed since applicant intended to switch to sole for final order on {} for Case id {}
+                            - notifying them they can continue and switch to sole.
+                            """,
                             caseData.getFinalOrder().getDateApplicant1DeclaredIntentionToSwitchToSoleFo(),
-                            user,
-                            serviceAuthorization
+                            caseDetails.getId()
                         );
+
+                        ccdUpdateService.submitEvent(
+                            caseDetails,
+                            SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION,
+                            user,
+                            serviceAuthorization);
                     }
                 } catch (final CcdManagementException e) {
                     log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
@@ -91,28 +100,11 @@ public class SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFOTask implement
             log.info("Notify applicant they can switch to sole after intention final order task complete.");
 
         } catch (final CcdSearchCaseException e) {
-            log.error("SystemNotifyWhenSecondInTimeNotAppliedForFO schedule task stopped after search error", e);
+            log.error("SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFO schedule task stopped after search error", e);
         } catch (final CcdConflictException e) {
-            log.info("SystemNotifyWhenSecondInTimeNotAppliedForFO schedule task stopping "
+            log.info("SystemNotifyApplicant1CanSwitchToSoleAfterIntentionFO schedule task stopping "
                 + "due to conflict with another running task"
             );
         }
-    }
-
-    private void notifyApplicantCanNowSwitchToSole(CaseDetails caseDetails,
-                                                   LocalDate dateApplicant1DeclaredIntentionToSwitchToSoleFo,
-                                                   User user,
-                                                   String serviceAuth) {
-
-        log.info(
-            """
-            14 days has passed since applicant intended to switch to sole for final order on {} for Case id {}
-            - notifying them they can continue and switch to sole.
-            """,
-            dateApplicant1DeclaredIntentionToSwitchToSoleFo,
-            caseDetails.getId()
-        );
-
-        ccdUpdateService.submitEvent(caseDetails, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, serviceAuth);
     }
 }
