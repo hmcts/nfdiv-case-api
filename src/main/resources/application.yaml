@@ -212,9 +212,9 @@ uk:
             CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: 'b993799e-3e27-4792-9694-4ff1770cb1cf'
             CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER: 'a72d5f64-ac56-49c8-99f2-047a96d1fd87'
             APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER: 'ee403b64-1df6-4630-a233-881e85be0395'
-            JOINT_APPLIED_FOR_CONDITIONAL_ORDER: '0d8c59f1-aea3-4245-8bca-eb0d5558f0fd'
+            JOINT_APPLIED_FOR_CONDITIONAL_ORDER: '7e5978a9-4ceb-45ca-9a41-b3f2822a0824'
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER: '444fbd4b-5c40-4e42-99a0-761cd07933a6'
-            JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER: '6caef42a-91d7-40e5-b440-cbb48daf1415'    #TODO: Welsh translation needed
+            JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER: 'd6b94713-02d8-4851-916f-6bb927a68b00'
             JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER: 'aba8cda5-779e-4943-8fe6-13b7f6a03cf3'
             JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER: 'aba8cda5-779e-4943-8fe6-13b7f6a03cf3'
             CITIZEN_CONDITIONAL_ORDER_PRONOUNCED: 'e7704d69-cf1d-4015-88ba-b998bab99008'
@@ -295,7 +295,7 @@ docmosis:
   templates:
     english:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx
-      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint_V5.docx
+      DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order.docx
       CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx
@@ -310,8 +310,8 @@ docmosis:
       CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx
       CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V4.docx
-      DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers_V3.docx
-      DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers_V3.docx
+      DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers.docx
+      DIVORCE_JOINT_APPLICANT_2_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers.docx
       SERVICE_REFUSAL: NFD_Refusal_Order_Deemed_Dispensed_Service_V2.docx
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved.docx
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved.docx
@@ -346,8 +346,8 @@ docmosis:
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx
-      DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
-      DIVORCE_DRAFT_APPLICATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint.docx #TODO: Set correct template when available
+      DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx #TODO: Set correct template when available
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Cy.docx
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service_CY.docx
@@ -359,8 +359,8 @@ docmosis:
       CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V4.docx #TODO: update content
-      DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx #TODO: update content
-      DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers.docx #TODO: update content
+      DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers.docx #TODO: update content
+      DIVORCE_JOINT_APPLICANT_2_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers.docx #TODO: update content
       SERVICE_REFUSAL: NFD_Refusal_Order_Deemed_Dispensed_Service_V2_Cy.docx
       BAILIFF_APPLICATION_APPROVED: NFD_Bailiff_Application_Approved_Cy.docx
       BAILIFF_APPLICATION_NOT_APPROVED: NFD_Bailiff_Application_Not_Approved_Cy.docx

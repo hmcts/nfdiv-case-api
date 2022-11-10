@@ -37,17 +37,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FINANCIAL_ORDER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MARRIAGE_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FINANCIAL_ORDER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MARRIAGE_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
@@ -135,10 +129,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
-            entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
-            entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
-            entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce from"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, DIVORCE_APPLICATION),
@@ -150,9 +141,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
-            entry(APPLICANT_2_LAST_NAME, null),
             entry(RESPONDENT_SOLICITOR_NAME, "Mr Sol"),
             entry(RESPONDENT_SOLICITOR_EMAIL, "sol@solbros.com"),
             entry(RESPONDENT_SOLICITOR_FIRM_NAME, "Sol Bros"),
@@ -193,10 +182,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
-            entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
-            entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
-            entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, DIVORCE_APPLICATION),
@@ -210,10 +196,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_FIRST_NAME, null),
-            entry(APPLICANT_2_MIDDLE_NAME, null),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
-            entry(APPLICANT_2_LAST_NAME, null),
             entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
             entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
         );
@@ -244,10 +227,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
-            entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
-            entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
-            entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of the civil partnership with"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, TO_END_A_CIVIL_PARTNERSHIP),
@@ -255,9 +235,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
-            entry(APPLICANT_2_LAST_NAME, null),
             entry(RESPONDENT_SOLICITOR_NAME, NOT_GIVEN),
             entry(RESPONDENT_SOLICITOR_EMAIL, NOT_GIVEN),
             entry(RESPONDENT_SOLICITOR_FIRM_NAME, NOT_GIVEN),
@@ -293,10 +271,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
-            entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName()),
-            entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
-            entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of their civil partnership"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(DIVORCE_OR_DISSOLUTION, APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP),
@@ -304,9 +279,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
-            entry(APPLICANT_2_LAST_NAME, null),
             entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
             entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
         );
