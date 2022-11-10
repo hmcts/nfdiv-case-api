@@ -275,8 +275,8 @@ idam:
   api:
     url: ${IDAM_API_BASEURL:http://localhost:5000}
   systemupdate:
-    username: ${IDAM_SYSTEM_UPDATE_USERNAME:dummysystemupdate@test.com}
-    password: ${IDAM_SYSTEM_UPDATE_PASSWORD:dummy}
+    username: FUNCTIONAL_TEST_SYSTEM_USER@mailinator.com
+    password: genericPassword123
   client:
     id: 'divorce'
     secret: ${IDAM_CLIENT_SECRET:123456}

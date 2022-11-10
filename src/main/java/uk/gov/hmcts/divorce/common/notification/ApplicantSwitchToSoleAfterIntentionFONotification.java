@@ -88,7 +88,7 @@ public class ApplicantSwitchToSoleAfterIntentionFONotification implements Applic
         }
     }
 
-    private boolean applicantIntendsToSwitchToSole(final Set<FinalOrder.IntendsToSwitchToSole> intention) {
-        return !isEmpty(intention) && intention.contains(I_INTEND_TO_SWITCH_TO_SOLE);
+    private boolean applicantIntendsToSwitchToSole(final Set<FinalOrder.IntendsToSwitchToSole> intendsToSwitchToSoles) {
+        return !isEmpty(intendsToSwitchToSoles) && intendsToSwitchToSoles.contains(I_INTEND_TO_SWITCH_TO_SOLE);
     }
 }
