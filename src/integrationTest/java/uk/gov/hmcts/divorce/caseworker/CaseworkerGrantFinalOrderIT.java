@@ -21,6 +21,8 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -60,7 +62,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANTS_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
@@ -528,10 +529,10 @@ public class CaseworkerGrantFinalOrderIT {
                     .build())
                 .build();
 
-        final ListValue<DivorceDocument> applicant1FinalOrderGrantedCoverLetter =
-            ListValue.<DivorceDocument>builder()
-                .value(DivorceDocument.builder()
-                    .documentType(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1)
+        final ListValue<ConfidentialDivorceDocument> applicant1FinalOrderGrantedCoverLetter =
+            ListValue.<ConfidentialDivorceDocument>builder()
+                .value(ConfidentialDivorceDocument.builder()
+                    .confidentialDocumentsReceived(ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1)
                     .build())
                 .build();
 
@@ -543,7 +544,11 @@ public class CaseworkerGrantFinalOrderIT {
                 .build();
 
         caseData.getDocuments().setDocumentsGenerated(
-            List.of(finalOrderGrantedLetter, applicant1FinalOrderGrantedCoverLetter, applicant2FinalOrderGrantedCoverLetter)
+            List.of(finalOrderGrantedLetter, applicant2FinalOrderGrantedCoverLetter)
+        );
+
+        caseData.getDocuments().setConfidentialDocumentsGenerated(
+            List.of(applicant1FinalOrderGrantedCoverLetter)
         );
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
