@@ -56,8 +56,8 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
         configBuilder
             .event(SWITCH_TO_SOLE_FO)
             .forStateTransition(EnumSet.of(AwaitingFinalOrder, AwaitingJointFinalOrder), FinalOrderRequested)
-            .name("Switched To Sole FO")
-            .description("Switch to Sole at Final Order stage")
+            .name("Switched to sole final order")
+            .description("Switched to sole final order")
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .retries(120, 120)
