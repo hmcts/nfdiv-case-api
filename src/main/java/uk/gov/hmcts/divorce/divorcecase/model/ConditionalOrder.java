@@ -305,6 +305,12 @@ public class ConditionalOrder {
     )
     private YesOrNo successfulServedByBailiff;
 
+    @CCD(
+        label = "Is a required admin clarification now submitted?",
+        access = {CaseworkerAccess.class}
+    )
+    private YesOrNo isAdminClarificationSubmitted;
+
     @JsonIgnore
     public boolean areClaimsGranted() {
         return nonNull(claimsGranted) && claimsGranted.toBoolean();
