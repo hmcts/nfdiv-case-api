@@ -49,9 +49,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -220,7 +220,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getApplicant2().setOffline(YES);
             }
 
-            final State state = caseData.getApplicationType().isSole() ? AwaitingFinalOrder : AwaitingJointFinalOrder;
+            final State state = caseData.getApplicationType().isSole() ? FinalOrderRequested : AwaitingJointFinalOrder;
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
