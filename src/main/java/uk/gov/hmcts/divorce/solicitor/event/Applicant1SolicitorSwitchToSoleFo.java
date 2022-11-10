@@ -37,8 +37,9 @@ public class Applicant1SolicitorSwitchToSoleFo implements CCDConfig<CaseData, St
         new PageBuilder(configBuilder
             .event(APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_FO)
             .forStateTransition(AwaitingJointFinalOrder, FinalOrderRequested)
-            .showCondition("dateApplicant1DeclaredIntentionToSwitchToSoleFo=\"*\""
-                + " AND finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention=\"Yes\"")
+            .showCondition("applicationType=\"jointApplication\""
+                + " AND dateApplicant1DeclaredIntentionToSwitchToSoleFo=\"*\""
+                + " AND finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention=\"Yes\"")
             .name("Switched to sole final order")
             .description("Switched to sole final order")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER, APPLICANT_1_SOLICITOR)
