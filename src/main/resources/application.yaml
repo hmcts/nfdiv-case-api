@@ -10,7 +10,9 @@ management:
       base-path: /
       exposure:
         include: health, info, prometheus
-
+  health:
+    case-document-am-api:
+      enabled: ${ENABLE_CDAM:true}
 spring:
   application:
     name: NFDIV Case API
@@ -491,3 +493,6 @@ bulk-action:
   page-size: ${BULK_ACTION_BATCH_SIZE_MAX:50}
 
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
+
+toggle:
+  enable_case_document_access_management: ${ENABLE_CDAM:true}
