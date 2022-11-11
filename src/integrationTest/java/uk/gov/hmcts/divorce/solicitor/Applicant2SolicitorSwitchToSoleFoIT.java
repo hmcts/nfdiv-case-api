@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -28,7 +29,9 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
@@ -129,6 +132,17 @@ public class Applicant2SolicitorSwitchToSoleFoIT {
                 .build()
         );
 
+        data.setFinalOrder(
+            FinalOrder.builder()
+                .doesApplicant2WantToApplyForFinalOrder(YES)
+                .applicant2AppliedForFinalOrderFirst(YES)
+                .applicant2CanIntendToSwitchToSoleFo(YES)
+                .applicant2IntendsToSwitchToSole(Set.of(FinalOrder.IntendsToSwitchToSole.I_INTEND_TO_SWITCH_TO_SOLE))
+                .doesApplicant2IntendToSwitchToSole(YES)
+                .dateApplicant2DeclaredIntentionToSwitchToSoleFo(LocalDate.now())
+                .build()
+        );
+
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
@@ -161,6 +175,7 @@ public class Applicant2SolicitorSwitchToSoleFoIT {
             .getResponse()
             .getContentAsString();
 
+        System.out.println(response);
         assertThatJson(response)
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)

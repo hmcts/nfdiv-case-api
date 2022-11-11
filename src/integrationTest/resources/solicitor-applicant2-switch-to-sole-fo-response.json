@@ -42,7 +42,13 @@
     "divorceWho": "wife",
     "issueDate": "2021-04-28",
     "applicant2InviteEmailAddress": "test@test.com",
+    "doesApplicant1WantToApplyForFinalOrder": "Yes",
+    "applicant1AppliedForFinalOrderFirst": "Yes",
     "finalOrderSwitchedToSole": "Yes",
+    "applicant1CanIntendToSwitchToSoleFo": "Yes",
+    "applicant1IntendsToSwitchToSole": ["Yes"],
+    "doesApplicant1IntendToSwitchToSole": "Yes",
+    "dateApplicant1DeclaredIntentionToSwitchToSoleFo": "2022-11-11",
     "dataVersion": 5,
     "warnings": []
   }
