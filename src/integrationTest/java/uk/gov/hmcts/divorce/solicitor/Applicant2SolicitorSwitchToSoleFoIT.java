@@ -142,6 +142,7 @@ public class Applicant2SolicitorSwitchToSoleFoIT {
                 .dateApplicant2DeclaredIntentionToSwitchToSoleFo(LocalDate.now())
                 .build()
         );
+
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
@@ -174,6 +175,7 @@ public class Applicant2SolicitorSwitchToSoleFoIT {
             .getResponse()
             .getContentAsString();
 
+        System.out.println(response);
         assertThatJson(response)
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
