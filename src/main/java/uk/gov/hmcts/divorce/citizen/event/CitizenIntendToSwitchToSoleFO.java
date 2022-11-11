@@ -25,6 +25,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -63,7 +64,7 @@ public class CitizenIntendToSwitchToSoleFO implements CCDConfig<CaseData, State,
             .description("Intend to switch to sole FO")
             .showSummary()
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, CITIZEN, CREATOR, APPLICANT_2)
             .grantHistoryOnly(
                 SUPER_USER,
                 CASE_WORKER,
