@@ -204,13 +204,13 @@ public class FinalOrder {
 
     @CCD(
         label = "Applicant 2 can intend to switch to sole at final order stage",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo applicant2CanIntendToSwitchToSoleFo;
 
     @CCD(
         label = "Applicant 2 intends to switch to sole?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private Set<IntendsToSwitchToSole> applicant2IntendsToSwitchToSole;
 

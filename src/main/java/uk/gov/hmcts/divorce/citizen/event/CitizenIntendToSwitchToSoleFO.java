@@ -64,7 +64,7 @@ public class CitizenIntendToSwitchToSoleFO implements CCDConfig<CaseData, State,
             .description("Intend to switch to sole FO")
             .showSummary()
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CITIZEN, CREATOR, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
             .grantHistoryOnly(
                 SUPER_USER,
                 CASE_WORKER,
