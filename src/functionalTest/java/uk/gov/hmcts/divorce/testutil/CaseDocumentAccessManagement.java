@@ -15,7 +15,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import uk.gov.hmcts.reform.ccd.document.am.feign.CaseDocumentClientApi;
 import uk.gov.hmcts.reform.document.utils.InMemoryMultipartFile;
 
 import java.io.IOException;
@@ -47,9 +46,6 @@ public class CaseDocumentAccessManagement {
 
     @Autowired
     private ServiceAuthenticationGenerator serviceAuthenticationGenerator;
-
-    @Autowired
-    private CaseDocumentClientApi caseDocumentClientApi;
 
     @Autowired
     private RestTemplate restTemplate;
