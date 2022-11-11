@@ -41,7 +41,10 @@ public enum DocumentType implements HasLabel {
     BAILIFF_SERVICE_REFUSED("Bailiff Service Refused"),
 
     @JsonProperty("certificateOfEntitlementCoverLetter")
-    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER("Certificate of entitlement cover letter"),
+    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1("Certificate of entitlement cover letter for applicant/applicant 1"),
+
+    @JsonProperty("certificateOfEntitlementCoverLetterApp2")
+    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2("Certificate of entitlement cover letter for respondent/applicant 2"),
 
     @JsonProperty("certificateOfEntitlement")
     CERTIFICATE_OF_ENTITLEMENT("Certificate of entitlement"),
@@ -134,10 +137,10 @@ public enum DocumentType implements HasLabel {
     FINAL_ORDER_GRANTED("Final order granted"),
 
     @JsonProperty("finalOrderGrantedCoverLetterApp1")
-    FINAL_ORDER_GRANTED_COVER_LETTER_APP_1("Applicant 1 Final order granted cover letter"),
+    FINAL_ORDER_GRANTED_COVER_LETTER_APP_1("Applicant/Applicant 1 Final order granted cover letter"),
 
     @JsonProperty("finalOrderGrantedCoverLetterApp2")
-    FINAL_ORDER_GRANTED_COVER_LETTER_APP_2("Applicant 2 Final order granted cover letter"),
+    FINAL_ORDER_GRANTED_COVER_LETTER_APP_2("Respondent/Applicant 2 Final order granted cover letter"),
 
     @JsonProperty("generalOrder")
     GENERAL_ORDER("General order"),
@@ -198,10 +201,10 @@ public enum DocumentType implements HasLabel {
     GENERAL_APPLICATION("General application"),
 
     @JsonProperty("coGrantedCoversheet")
-    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1("Applicant 1 Conditional Order Granted Coversheet"),
+    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1("Applicant/Applicant 1 Conditional order granted cover letter"),
 
     @JsonProperty("coGrantedCoversheetApp2")
-    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2("Applicant 2 Conditional Order Granted Coversheet"),
+    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2("Respondent/Applicant 2 Conditional order granted cover letter"),
 
     @JsonProperty("switchToSoleCoLetter")
     SWITCH_TO_SOLE_CO_LETTER("Switch to Sole Conditional Order Letter");

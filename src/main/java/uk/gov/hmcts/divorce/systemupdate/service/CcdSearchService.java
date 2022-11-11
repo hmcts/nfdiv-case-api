@@ -214,16 +214,17 @@ public class CcdSearchService {
         int totalResults = pageSize;
 
         final QueryBuilder stateQuery = matchQuery(STATE, state);
-        final QueryBuilder bulkCaseDetailsExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder errorCasesExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder processedCases = existsQuery("data.processedCaseDetails");
 
         final QueryBuilder query = boolQuery()
             .must(stateQuery)
             .must(boolQuery()
-                .must(boolQuery().must(bulkCaseDetailsExist))
-                .should(boolQuery().must(errorCasesExist))
-                .should(boolQuery().mustNot(processedCases)));
+                    .should(boolQuery()
+                        .must(boolQuery().mustNot(errorCasesExist))
+                        .must(boolQuery().mustNot(processedCases)))
+                    .should(boolQuery()
+                        .must(boolQuery().must(errorCasesExist))));
 
         try {
             while (totalResults == pageSize) {
