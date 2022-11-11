@@ -10,7 +10,9 @@ management:
       base-path: /
       exposure:
         include: health, info, prometheus
-
+  health:
+    case-document-am-api:
+      enabled: ${ENABLE_CDAM:true}
 spring:
   application:
     name: NFDIV Case API
