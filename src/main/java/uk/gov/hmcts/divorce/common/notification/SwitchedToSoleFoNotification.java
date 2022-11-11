@@ -48,7 +48,7 @@ public class SwitchedToSoleFoNotification implements ApplicantNotification {
         notificationService.sendEmail(
             caseData.getApplicant2().getEmail(),
             PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER,
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()
         );
     }
