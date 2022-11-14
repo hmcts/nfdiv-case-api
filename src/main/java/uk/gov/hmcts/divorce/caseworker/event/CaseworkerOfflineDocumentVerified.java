@@ -220,11 +220,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getApplicant2().setOffline(YES);
             }
 
-            final State state = caseData.getApplicationType().isSole() ? FinalOrderRequested : AwaitingJointFinalOrder;
-
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .state(state)
+                .state(FinalOrderRequested)
                 .build();
 
         } else {
