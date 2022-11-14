@@ -6,7 +6,6 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -32,7 +31,8 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Slf4j
 public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements Runnable {
 
-    public static final String NOTIFICATION_SENT_FLAG = "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention";
+    public static final String APP_1_NOTIFICATION_SENT_FLAG = "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention";
+    public static final String APP_2_NOTIFICATION_SENT_FLAG = "finalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention";
     private static final int FOURTEEN_DAYS = 14;
     public static final String APP_1_INTENDED_TO_SWITCH_TO_SOLE = "doesApplicant1IntendToSwitchToSole";
     public static final String APP_2_INTENDED_TO_SWITCH_TO_SOLE = "doesApplicant2IntendToSwitchToSole";
@@ -68,7 +68,11 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements
                     .should(matchQuery(String.format(DATA, APP_2_INTENDED_TO_SWITCH_TO_SOLE), YES))
                     .minimumShouldMatch(1)
                 )
-                .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YES));
+                .mustNot((boolQuery()
+                    .should(matchQuery(String.format(DATA, APP_1_NOTIFICATION_SENT_FLAG), YES))
+                    .should(matchQuery(String.format(DATA, APP_2_NOTIFICATION_SENT_FLAG), YES))
+                    .minimumShouldMatch(1)
+                ));
 
             final List<CaseDetails> casesWithApplicantIntendedSwitchToSole =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, AwaitingJointFinalOrder);
@@ -113,17 +117,33 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements
 
     private boolean caseEligibleForNotification(CaseData caseData) {
 
-        FinalOrder finalOrder = caseData.getFinalOrder();
-        LocalDate now = LocalDate.now();
+        // Initialise to date in the future. If intention date is null, this date will stay in
+        // the future and not give false positives during the boolean check at bottom of function.
+        LocalDate dateFinalOrderApp1IntendsSwitchToSoleNowEligible = LocalDate.now().plusDays(1);
+        LocalDate dateFinalOrderApp2IntendsSwitchToSoleNowEligible = LocalDate.now().plusDays(1);
 
-        if (YES.equals(finalOrder.getDoesApplicant1IntendToSwitchToSole())
-            && finalOrder.getDateApplicant1DeclaredIntentionToSwitchToSoleFo() != null) {
-            return finalOrder.getDateApplicant1DeclaredIntentionToSwitchToSoleFo().plusDays(FOURTEEN_DAYS).isBefore(now);
-        } else if (YES.equals(finalOrder.getDoesApplicant2IntendToSwitchToSole())
-            && finalOrder.getDateApplicant2DeclaredIntentionToSwitchToSoleFo() != null) {
-            return finalOrder.getDateApplicant2DeclaredIntentionToSwitchToSoleFo().plusDays(FOURTEEN_DAYS).isBefore(now);
+        final LocalDate dateApplicant1DeclaredIntentionToSwitchToSoleFo
+            = caseData.getFinalOrder().getDateApplicant1DeclaredIntentionToSwitchToSoleFo();
+
+        final LocalDate dateApplicant2DeclaredIntentionToSwitchToSoleFo
+            = caseData.getFinalOrder().getDateApplicant2DeclaredIntentionToSwitchToSoleFo();
+
+        if (dateApplicant1DeclaredIntentionToSwitchToSoleFo != null) {
+            dateFinalOrderApp1IntendsSwitchToSoleNowEligible =
+                dateApplicant1DeclaredIntentionToSwitchToSoleFo.plusDays(FOURTEEN_DAYS);
         }
 
-        return false;
+        if (dateApplicant2DeclaredIntentionToSwitchToSoleFo != null) {
+            dateFinalOrderApp2IntendsSwitchToSoleNowEligible =
+                dateApplicant2DeclaredIntentionToSwitchToSoleFo.plusDays(FOURTEEN_DAYS);
+        }
+
+        boolean shouldSendToApp1 = dateFinalOrderApp1IntendsSwitchToSoleNowEligible.isBefore(LocalDate.now())
+            && !caseData.getFinalOrder().hasApplicant1BeenNotifiedTheyCanContinueSwitchToSoleFO();
+
+        boolean shouldSendToApp2 = dateFinalOrderApp2IntendsSwitchToSoleNowEligible.isBefore(LocalDate.now())
+            && !caseData.getFinalOrder().hasApplicant2BeenNotifiedTheyCanContinueSwitchToSoleFO();
+
+        return shouldSendToApp1 || shouldSendToApp2;
     }
 }

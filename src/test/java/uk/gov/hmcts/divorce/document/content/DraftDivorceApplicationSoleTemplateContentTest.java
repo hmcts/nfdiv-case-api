@@ -49,6 +49,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_POLICY_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_POLICY_HINT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDER_APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDER_APPLICANT_2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
@@ -70,6 +72,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FINANCIAL_ORDER_POLICY_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FINANCIAL_ORDER_POLICY_HINT_TEXT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
@@ -132,6 +136,8 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
             entry(APPLICANT_1_FINANCIAL_ORDER, null),
+            entry(FINANCIAL_ORDER_POLICY_HEADER, TEST_FINANCIAL_ORDER_POLICY_HEADER_TEXT),
+            entry(FINANCIAL_ORDER_POLICY_HINT, TEST_FINANCIAL_ORDER_POLICY_HINT_TEXT),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(MARRIAGE_DATE, null),
@@ -184,6 +190,8 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, true),
             entry(APPLICANT_1_FINANCIAL_ORDER, null),
+            entry(FINANCIAL_ORDER_POLICY_HEADER, TEST_FINANCIAL_ORDER_POLICY_HEADER_TEXT),
+            entry(FINANCIAL_ORDER_POLICY_HINT, TEST_FINANCIAL_ORDER_POLICY_HINT_TEXT),
             entry(APPLICANT_2_FINANCIAL_ORDER, "children of the applicant and the respondent."),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
