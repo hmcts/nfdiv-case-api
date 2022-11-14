@@ -46,7 +46,7 @@ public class CaseworkerUpdateOfflineStatus implements CCDConfig<CaseData, State,
                 .optionalWithLabel(Applicant::getOffline, "Is ${labelContentTheApplicantOrApplicant1} offline?")
             .done()
             .complex(CaseData::getApplicant2)
-                .optionalWithLabel(Applicant::getOffline, "Is ${labelContentTheApplicantOrApplicant1} offline?")
+                .optionalWithLabel(Applicant::getOffline, "Is ${labelContentTheApplicant2} offline?")
             .done();
     }
 }
