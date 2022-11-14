@@ -25,6 +25,8 @@ public class CaseworkerUpdateOfflineStatus implements CCDConfig<CaseData, State,
 
     public static final String CASEWORKER_UPDATE_OFFLINE_STATUS = "caseworker-update-offline-status";
 
+    private static final String NEVER_SHOW = "applicant1Offline=\"NEVER_SHOW\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
