@@ -48,11 +48,7 @@
     "applicant1CanIntendToSwitchToSoleFo": "Yes",
     "applicant1IntendsToSwitchToSole": ["Yes"],
     "doesApplicant1IntendToSwitchToSole": "Yes",
-<<<<<<< HEAD
     "dateApplicant1DeclaredIntentionToSwitchToSoleFo": "${json-unit.any-string}",
-=======
-    "dateApplicant1DeclaredIntentionToSwitchToSoleFo": "2022-11-11",
->>>>>>> NFDIV-2765: Update switch to sole service to switch applicant final order data
     "dataVersion": 5,
     "warnings": []
   }
