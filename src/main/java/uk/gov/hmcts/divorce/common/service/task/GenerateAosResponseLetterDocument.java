@@ -37,7 +37,7 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final AcknowledgementOfService acknowledgementOfService = caseData.getAcknowledgementOfService();
 
-        if (caseData.getApplicant1().isOffline()) {
+        if (caseData.getApplicant1().isApplicantOffline()) {
 
             if (acknowledgementOfService.isDisputed()) {
                 log.info("Generating aos response (disputed) letter pdf for case id: {}", caseDetails.getId());
