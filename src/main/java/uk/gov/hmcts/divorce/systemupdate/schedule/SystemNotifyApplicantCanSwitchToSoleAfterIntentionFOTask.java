@@ -68,11 +68,8 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements
                     .should(matchQuery(String.format(DATA, APP_2_INTENDED_TO_SWITCH_TO_SOLE), YES))
                     .minimumShouldMatch(1)
                 )
-                .mustNot((boolQuery()
-                    .should(matchQuery(String.format(DATA, APP_1_NOTIFICATION_SENT_FLAG), YES))
-                    .should(matchQuery(String.format(DATA, APP_2_NOTIFICATION_SENT_FLAG), YES))
-                    .minimumShouldMatch(1)
-                ));
+                .mustNot(matchQuery(String.format(DATA, APP_1_NOTIFICATION_SENT_FLAG), YES))
+                .mustNot(matchQuery(String.format(DATA, APP_2_NOTIFICATION_SENT_FLAG), YES));
 
             final List<CaseDetails> casesWithApplicantIntendedSwitchToSole =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, AwaitingJointFinalOrder);
