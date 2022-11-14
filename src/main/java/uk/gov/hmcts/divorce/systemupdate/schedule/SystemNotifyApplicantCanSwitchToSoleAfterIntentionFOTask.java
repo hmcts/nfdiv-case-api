@@ -31,7 +31,8 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Slf4j
 public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements Runnable {
 
-    public static final String NOTIFICATION_SENT_FLAG = "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention";
+    public static final String APP_1_NOTIFICATION_SENT_FLAG = "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention";
+    public static final String APP_2_NOTIFICATION_SENT_FLAG = "finalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention";
     private static final int FOURTEEN_DAYS = 14;
     public static final String APP_1_INTENDED_TO_SWITCH_TO_SOLE = "doesApplicant1IntendToSwitchToSole";
     public static final String APP_2_INTENDED_TO_SWITCH_TO_SOLE = "doesApplicant2IntendToSwitchToSole";
@@ -67,7 +68,11 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements
                     .should(matchQuery(String.format(DATA, APP_2_INTENDED_TO_SWITCH_TO_SOLE), YES))
                     .minimumShouldMatch(1)
                 )
-                .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YES));
+                .mustNot((boolQuery()
+                    .should(matchQuery(String.format(DATA, APP_1_NOTIFICATION_SENT_FLAG), YES))
+                    .should(matchQuery(String.format(DATA, APP_2_NOTIFICATION_SENT_FLAG), YES))
+                    .minimumShouldMatch(1)
+                ));
 
             final List<CaseDetails> casesWithApplicantIntendedSwitchToSole =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, AwaitingJointFinalOrder);
@@ -133,8 +138,12 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements
                 dateApplicant2DeclaredIntentionToSwitchToSoleFo.plusDays(FOURTEEN_DAYS);
         }
 
-        return (dateFinalOrderApp1IntendsSwitchToSoleNowEligible.isBefore(LocalDate.now())
-            || dateFinalOrderApp2IntendsSwitchToSoleNowEligible.isBefore(LocalDate.now()))
-            && !caseData.getFinalOrder().hasApplicantBeenNotifiedTheyCanContinueSwitchToSoleFO();
+        boolean shouldSendToApp1 = dateFinalOrderApp1IntendsSwitchToSoleNowEligible.isBefore(LocalDate.now())
+            && !caseData.getFinalOrder().hasApplicant1BeenNotifiedTheyCanContinueSwitchToSoleFO();
+
+        boolean shouldSendToApp2 = dateFinalOrderApp2IntendsSwitchToSoleNowEligible.isBefore(LocalDate.now())
+            && !caseData.getFinalOrder().hasApplicant2BeenNotifiedTheyCanContinueSwitchToSoleFO();
+
+        return shouldSendToApp1 || shouldSendToApp2;
     }
 }

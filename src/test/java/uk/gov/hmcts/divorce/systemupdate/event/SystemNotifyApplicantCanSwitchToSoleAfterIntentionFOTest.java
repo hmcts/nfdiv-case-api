@@ -68,7 +68,7 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTest {
             systemNotifyApplicantCanSwitchToSoleAfterIntentionFO.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(applicantSwitchToSoleAfterIntentionFONotification, caseData, details.getId());
-        assertThat(response.getData().getFinalOrder().getFinalOrderApplicantNotifiedCanSwitchToSoleAfterIntention()).isEqualTo(YES);
+        assertThat(response.getData().getFinalOrder().getFinalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention()).isEqualTo(YES);
     }
 
     @Test
@@ -87,6 +87,6 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTest {
             systemNotifyApplicantCanSwitchToSoleAfterIntentionFO.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(applicantSwitchToSoleAfterIntentionFONotification, caseData, details.getId());
-        assertThat(response.getData().getFinalOrder().getFinalOrderApplicantNotifiedCanSwitchToSoleAfterIntention()).isEqualTo(YES);
+        assertThat(response.getData().getFinalOrder().getFinalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention()).isEqualTo(YES);
     }
 }

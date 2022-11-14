@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.FinalOrder.IntendsToSwitchToSole.I_INTEND_TO_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -52,7 +53,14 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFO implements CCD
         CaseData data = details.getData();
 
         notificationDispatcher.send(applicantSwitchToSoleAfterIntentionFONotification, data, details.getId());
-        data.getFinalOrder().setFinalOrderApplicantNotifiedCanSwitchToSoleAfterIntention(YES);
+
+        if (data.getFinalOrder().getApplicant1IntendsToSwitchToSole() != null
+            && data.getFinalOrder().getApplicant1IntendsToSwitchToSole().contains(I_INTEND_TO_SWITCH_TO_SOLE)) {
+            data.getFinalOrder().setFinalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention(YES);
+        } else if (data.getFinalOrder().getApplicant2IntendsToSwitchToSole() != null
+            && data.getFinalOrder().getApplicant2IntendsToSwitchToSole().contains(I_INTEND_TO_SWITCH_TO_SOLE)) {
+            data.getFinalOrder().setFinalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention(YES);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
