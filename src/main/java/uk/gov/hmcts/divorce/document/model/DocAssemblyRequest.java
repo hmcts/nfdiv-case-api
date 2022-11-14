@@ -19,6 +19,12 @@ public class DocAssemblyRequest {
 
     private String outputFilename;
 
+    private boolean secureDocStoreEnabled;
+
+    private String caseTypeId;
+
+    private String jurisdictionId;
+
     public static class DocAssemblyRequestBuilder {
         public DocAssemblyRequestBuilder templateId(String templateId) {
             this.templateId = Base64.getEncoder()
