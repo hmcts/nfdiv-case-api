@@ -177,7 +177,7 @@ public class NoticeOfProceedingContent {
             templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         }
 
-        templateContent.put(IS_OFFLINE, caseData.getApplicant1().isOffline());
+        templateContent.put(IS_OFFLINE, caseData.getApplicant1().isApplicantOffline());
 
         templateContent.put(
             SUBMISSION_RESPONSE_DATE,
@@ -198,7 +198,7 @@ public class NoticeOfProceedingContent {
                 ? caseData.getApplicant1().getSolicitor().getName()
                 : NOT_REPRESENTED);
 
-        boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline()
+        boolean displayEmailConfirmation = !caseData.getApplicant1().isApplicantOffline()
             && ObjectUtils.isNotEmpty(caseData.getApplicant1().getEmail());
 
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
@@ -226,7 +226,8 @@ public class NoticeOfProceedingContent {
         }
 
         templateContent.put(IS_RESPONDENT_BASED_IN_UK, !caseData.getApplicant2().isBasedOverseas());
-        templateContent.put(CAN_SERVE_BY_EMAIL, !caseData.getApplicant1().isOffline() && !caseData.getApplicant2().isBasedOverseas());
+        templateContent.put(CAN_SERVE_BY_EMAIL,
+            !caseData.getApplicant1().isApplicantOffline() && !caseData.getApplicant2().isBasedOverseas());
 
         templateContent.put(IS_COURT_SERVICE, COURT_SERVICE.equals(caseData.getApplication().getServiceMethod()));
         templateContent.put(IS_PERSONAL_SERVICE, caseData.getApplication().isPersonalServiceMethod());
