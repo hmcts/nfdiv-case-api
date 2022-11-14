@@ -32,10 +32,11 @@ public class CaseworkerUpdateOfflineStatus implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_OFFLINE_STATUS)
             .forStates(POST_SUBMISSION_STATES)
-            .name("Update applicant offline status")
+            .name("Update offline status")
             .description("Update applicant offline status")
-            .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER, CASE_WORKER)
+            .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
             .grantHistoryOnly(
+                CASE_WORKER,
                 SOLICITOR,
                 LEGAL_ADVISOR))
             .page("updateOfflineStatus")
