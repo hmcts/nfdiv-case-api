@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
@@ -36,6 +37,20 @@ public class SwitchedToSoleFinalOrderFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicant1LanguagePreferenceWelsh", "Yes");
         caseData.put("applicant2LanguagePreferenceWelsh", "Yes");
+
+        final Response response = triggerCallback(caseData, SWITCH_TO_SOLE_FO, SUBMITTED_URL, FinalOrderRequested);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldSendSwitchToSoleFoNotificationsWhenApp2IsRepresented() throws Exception {
+
+        final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("issueDate", "2022-06-20");
+        caseData.put("applicant2SolicitorRepresented", YES);
+        caseData.put("applicant2SolicitorEmail", "simulate-delivered@notifications.service.gov.uk");
+        caseData.put("applicant2SolicitorName", "Solicitor");
 
         final Response response = triggerCallback(caseData, SWITCH_TO_SOLE_FO, SUBMITTED_URL, FinalOrderRequested);
 
