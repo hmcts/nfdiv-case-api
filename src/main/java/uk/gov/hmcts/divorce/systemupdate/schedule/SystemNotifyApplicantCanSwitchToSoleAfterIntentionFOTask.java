@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Slf4j
 public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements Runnable {
 
-    public static final String APP_1_NOTIFICATION_SENT_FLAG = "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention";
+    public static final String APP_1_NOTIFICATION_SENT_FLAG = "finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention";
     public static final String APP_2_NOTIFICATION_SENT_FLAG = "finalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention";
     private static final int FOURTEEN_DAYS = 14;
     public static final String APP_1_INTENDED_TO_SWITCH_TO_SOLE = "doesApplicant1IntendToSwitchToSole";
