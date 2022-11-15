@@ -42,9 +42,6 @@ public class CaseworkerUpdateFinalOrderFields implements CCDConfig<CaseData, Sta
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR))
             .page("updateFinalOrderFields")
             .pageLabel("Update FO fields")
-            .complex(CaseData::getFinalOrder)
-                .mandatory(FinalOrder::getDateFinalOrderEligibleFrom)
-                .done()
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getDateAndTimeOfHearing)
             .done();
