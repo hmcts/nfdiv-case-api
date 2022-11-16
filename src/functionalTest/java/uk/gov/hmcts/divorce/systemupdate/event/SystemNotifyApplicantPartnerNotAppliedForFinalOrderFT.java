@@ -21,6 +21,9 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrderFT extends Funct
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-notify-applicant-partner-not-applied-final-order.json";
 
+    private static final String SOLICITOR_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-system-notify-solicitor-other-applicant-not-applied-final-order.json";
+
     @Test
     public void shouldSendEmailToApplicant1WhenFirstInTime() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
@@ -45,6 +48,26 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrderFT extends Funct
     @Test
     public void shouldSendEmailToApplicant2WhenFirstInTime() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
+        request.put("applicant2AppliedForFinalOrderFirst", YES);
+
+        Response response = triggerCallback(request, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldSendEmailToApplicant1SolicitorWhenFirstInTime() throws IOException {
+        Map<String, Object> request = caseData(SOLICITOR_REQUEST);
+        request.put("applicant1AppliedForFinalOrderFirst", YES);
+
+        Response response = triggerCallback(request, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldSendEmailToApplicantSolicitor2WhenFirstInTime() throws IOException {
+        Map<String, Object> request = caseData(SOLICITOR_REQUEST);
         request.put("applicant2AppliedForFinalOrderFirst", YES);
 
         Response response = triggerCallback(request, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
