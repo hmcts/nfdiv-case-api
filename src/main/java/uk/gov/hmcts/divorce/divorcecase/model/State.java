@@ -365,6 +365,13 @@ public enum State {
     WelshTranslationRequested,
 
     @CCD(
+        label = "Judicial Separation, Awaiting legal advisor",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    JSAwaitingLA,
+
+    @CCD(
         label = "Welsh Translation review",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
