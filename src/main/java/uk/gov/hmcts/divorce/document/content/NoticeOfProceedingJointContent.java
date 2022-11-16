@@ -104,7 +104,7 @@ public class NoticeOfProceedingJointContent {
 
         templateContent.put(RELATION, commonContent.getPartner(caseData, partner, applicantLanguagePreference));
 
-        boolean displayEmailConfirmation = !applicant.isOffline() && ObjectUtils.isNotEmpty(applicant.getEmail());
+        boolean displayEmailConfirmation = !applicant.isApplicantOffline() && ObjectUtils.isNotEmpty(applicant.getEmail());
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));

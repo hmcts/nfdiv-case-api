@@ -22,6 +22,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -171,6 +172,27 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
     }
 
     @Test
+    void shouldSendWelshEmailToJointApplicant1WhoDidNotSubmitCoButAlreadyApplied() {
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
+            .build());
+        setSubmittedDate(caseData, List.of(APPLICANT2));
+        setMockClock(clock);
+
+        notification.sendToApplicant1(caseData, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
+            anyMap(),
+            eq(WELSH)
+        );
+    }
+
+    @Test
     void shouldSendEmailToJointApplicant2WhoSubmittedCoWhenPartnerHasNotApplied() {
         CaseData caseData = validApplicant2CaseData();
         setSubmittedDate(caseData, List.of(APPLICANT2));
@@ -200,6 +222,26 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
     }
 
     @Test
+    void shouldSendWelshEmailToJointApplicant2WhoSubmittedCoWhenPartnerHasNotApplied() {
+        CaseData caseData = validApplicant2CaseData();
+        setSubmittedDate(caseData, List.of(APPLICANT2));
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        setMockClock(clock);
+
+        notification.sendToApplicant2(caseData, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLIED_FOR_CONDITIONAL_ORDER),
+            anyMap(),
+            eq(WELSH)
+        );
+        verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
+    }
+
+    @Test
     void shouldSendEmailToJointApplicant2WhoSubmittedCoWhenPartnerApplied() {
         CaseData caseData = validApplicant2CaseData();
         setSubmittedDate(caseData, List.of(APPLICANT1, APPLICANT2));
@@ -218,6 +260,26 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
                 hasEntry(PRONOUNCE_BY_DATE, LocalDate.now().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
+    }
+
+    @Test
+    void shouldSendWelshEmailToJointApplicant2WhoSubmittedCoWhenPartnerApplied() {
+        CaseData caseData = validApplicant2CaseData();
+        setSubmittedDate(caseData, List.of(APPLICANT1, APPLICANT2));
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        setMockClock(clock);
+
+        notification.sendToApplicant2(caseData, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
+            anyMap(),
+            eq(WELSH)
         );
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
     }

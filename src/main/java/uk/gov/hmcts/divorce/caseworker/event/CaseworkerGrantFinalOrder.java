@@ -96,7 +96,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         Long caseId = details.getId();
 
-        if (caseData.getApplicant1().isOffline()) {
+        if (caseData.getApplicant1().isApplicantOffline()) {
             log.info("Generating final order cover letter for Applicant 1 for case id: {} ", caseId);
             generateFinalOrderCoverLetter.apply(
                 caseData,
@@ -106,7 +106,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             );
         }
 
-        if (caseData.getApplicant2().isOffline()) {
+        if (caseData.getApplicant2().isApplicantOffline()) {
             log.info("Generating final order cover letter for Applicant 2 for case id: {} ", caseId);
             generateFinalOrderCoverLetter.apply(
                 caseData,

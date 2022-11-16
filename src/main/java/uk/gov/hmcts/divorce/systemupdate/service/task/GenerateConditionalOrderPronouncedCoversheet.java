@@ -67,7 +67,7 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplicant1().isOffline()) {
+        if (caseData.getApplicant1().isApplicantOffline()) {
             log.info("Generating applicant 1 conditional order pronounced coversheet for case id {} ", caseId);
             generateConditionalOrderPronouncedCoversheet(
                 caseData,
@@ -77,7 +77,7 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
             );
         }
 
-        if (caseData.getApplicant2().isOffline()) {
+        if (caseData.getApplicant2().isApplicantOffline()) {
             log.info("Generating applicant 2 conditional order pronounced coversheet for case id {} ", caseId);
             if (caseData.getApplicationType().isSole()) {
                 generateConditionalOrderPronouncedCoversheetOfflineRespondent(

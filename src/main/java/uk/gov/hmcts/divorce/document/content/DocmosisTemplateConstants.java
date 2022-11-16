@@ -59,6 +59,8 @@ public final class DocmosisTemplateConstants {
     public static final String HAS_FINANCIAL_ORDERS = "hasFinancialOrders";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_1 = "hasFinancialOrderApplicant1";
     public static final String APPLICANT_1_FINANCIAL_ORDER = "applicant1FinancialOrder";
+    public static final String FINANCIAL_ORDER_POLICY_HEADER = "financialOrderPolicyHeader";
+    public static final String FINANCIAL_ORDER_POLICY_HINT = "financialOrderPolicyHintText";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_2 = "hasFinancialOrderApplicant2";
     public static final String APPLICANT_2_FINANCIAL_ORDER = "applicant2FinancialOrder";
     public static final String GENERAL_ORDER_DATE = "generalOrderDate";
@@ -169,6 +171,10 @@ public final class DocmosisTemplateConstants {
     public static final String JUDGE_NAME = "judgeName";
     public static final String CO_PRONOUNCED_DATE = "coPronouncedDate";
     public static final String DATE_FO_ELIGIBLE_FROM = "dateFinalOrderEligibleFrom";
+
+    public static final String FINANCIAL_ORDER_POLICY_HEADER_TEXT = "The applicant wants to apply for a financial order.";
+    public static final String FINANCIAL_ORDER_POLICY_HINT_TEXT = "A financial order is a legal document that describes how the money and "
+        + "property will be divided. The application will be done separately.";
 
     public static final String DIVORCE_AND_DISSOLUTION_HEADER = "divorceAndDissolutionHeader";
     public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT = "Divorce and Dissolution";

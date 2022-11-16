@@ -120,7 +120,13 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1("Applicant 1 Conditional Order Granted Coversheet"),
 
     @JsonProperty("coGrantedCoversheetApp2")
-    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2("Applicant 2 Conditional Order Granted Coversheet");
+    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2("Applicant 2 Conditional Order Granted Coversheet"),
+
+    @JsonProperty("finalOrderGrantedCoverLetterApp1")
+    FINAL_ORDER_GRANTED_COVER_LETTER_APP_1("Applicant 1 Final order granted cover letter"),
+
+    @JsonProperty("finalOrderGrantedCoverLetterApp2")
+    FINAL_ORDER_GRANTED_COVER_LETTER_APP_2("Applicant 2 Final order granted cover letter");
 
     private final String label;
 }
