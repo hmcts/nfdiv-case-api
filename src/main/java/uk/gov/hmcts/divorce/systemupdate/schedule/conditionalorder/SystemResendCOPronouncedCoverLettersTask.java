@@ -122,13 +122,13 @@ public class SystemResendCOPronouncedCoverLettersTask implements Runnable {
     private boolean isCaseEligibleToResendTheCoverLetters(final CaseData caseData) {
         CaseDocuments caseDocuments = caseData.getDocuments();
 
-        if (caseData.getApplicant1().isOffline()
+        if (caseData.getApplicant1().isApplicantOffline()
             && caseData.getApplicant1().isConfidentialContactDetails()
             && !caseDocuments.isGivenDocumentUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)) {
             return true;
         }
 
-        return caseData.getApplicant2().isOffline()
+        return caseData.getApplicant2().isApplicantOffline()
             && caseData.getApplicant2().isConfidentialContactDetails()
             && !caseDocuments.isGivenDocumentUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
     }

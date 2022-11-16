@@ -26,7 +26,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetter implements CaseTask
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplicant1().isOffline() && caseData.getApplicant1().isConfidentialContactDetails()) {
+        if (caseData.getApplicant1().isApplicantOffline() && caseData.getApplicant1().isConfidentialContactDetails()) {
 
             boolean anyDocRemoved = removeExistingCoverLetterIfAny(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
 
@@ -43,7 +43,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetter implements CaseTask
             }
         }
 
-        if (caseData.getApplicant2().isOffline() && caseData.getApplicant2().isConfidentialContactDetails()) {
+        if (caseData.getApplicant2().isApplicantOffline() && caseData.getApplicant2().isConfidentialContactDetails()) {
             boolean anyDocRemoved = removeExistingCoverLetterIfAny(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
 
             if (anyDocRemoved) {
