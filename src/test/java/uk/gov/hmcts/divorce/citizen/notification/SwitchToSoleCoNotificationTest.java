@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
@@ -123,6 +125,29 @@ class SwitchToSoleCoNotificationTest {
     }
 
     @Test
+    void shouldSendNotificationToApplicant2WithDivorceContentWelsh() {
+        CaseData data = validApplicant2CaseData();
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant2(data, CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(PARTNER_SWITCHED_TO_SOLE_CO),
+            argThat(allOf(
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO)
+            )),
+            eq(WELSH)
+        );
+        verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
     void shouldSendNotificationToApplicant2WithDissolutionContent() {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
@@ -143,6 +168,32 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES)
             )),
             eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendNotificationToApplicant2WithDissolutionContentWelsh() {
+        CaseData data = validApplicant2CaseData();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
+        when(commonContent.mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateVars);
+
+        notification.sendToApplicant2(data, CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(PARTNER_SWITCHED_TO_SOLE_CO),
+            argThat(allOf(
+                hasEntry(IS_DIVORCE, NO),
+                hasEntry(IS_DISSOLUTION, YES)
+            )),
+            eq(WELSH)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
