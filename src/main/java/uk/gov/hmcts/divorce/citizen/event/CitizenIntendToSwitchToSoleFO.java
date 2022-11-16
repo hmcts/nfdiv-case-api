@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1IntendToSwitchToSoleFoNotification;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2IntendToSwitchToSoleFoNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -15,12 +16,16 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -47,6 +52,9 @@ public class CitizenIntendToSwitchToSoleFO implements CCDConfig<CaseData, State,
     @Autowired
     private Applicant2IntendToSwitchToSoleFoNotification applicant2IntendToSwitchToSoleFoNotification;
 
+    @Autowired
+    private Clock clock;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
@@ -62,7 +70,27 @@ public class CitizenIntendToSwitchToSoleFO implements CCDConfig<CaseData, State,
                 CASE_WORKER,
                 LEGAL_ADVISOR)
             .retries(120, 120)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted);
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
+                                                                       CaseDetails<CaseData, State> beforeDetails) {
+
+        final Long caseId = details.getId();
+        CaseData data = details.getData();
+
+        if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
+            data.getFinalOrder().setDoesApplicant1IntendToSwitchToSole(YES);
+            data.getFinalOrder().setDateApplicant1DeclaredIntentionToSwitchToSoleFo(LocalDate.now(clock));
+        } else if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
+            data.getFinalOrder().setDoesApplicant2IntendToSwitchToSole(YES);
+            data.getFinalOrder().setDateApplicant2DeclaredIntentionToSwitchToSoleFo(LocalDate.now(clock));
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
     }
 
     public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
