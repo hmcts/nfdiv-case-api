@@ -48,7 +48,7 @@ public class AosPackPrinter {
 
             var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
                 ? !app2.getSolicitor().hasOrgId()
-                : StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isOffline();
+                : StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isApplicantOffline();
 
             var d10Needed = caseData.getApplicationType().isSole() && app2Offline;
             final UUID letterId = bulkPrintService.printAosRespondentPack(print, d10Needed);
@@ -106,7 +106,7 @@ public class AosPackPrinter {
         final List<Letter> aosResponseLetters = getLettersBasedOnContactPrivacy(caseData, AOS_RESPONSE_LETTER);
 
         List<Letter> aosLetters;
-        if (caseData.getApplicant2().isOffline()) {
+        if (caseData.getApplicant2().isApplicantOffline()) {
             // When respondent is offline respondent answers doc is reclassified and added to docs uploaded list
             aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsUploaded(), RESPONDENT_ANSWERS);
 
