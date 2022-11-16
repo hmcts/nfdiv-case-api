@@ -162,6 +162,18 @@ public class FinalOrder {
     private YesOrNo finalOrderFirstInTimeNotifiedOtherApplicantNotApplied;
 
     @CCD(
+        label = "Has applicant 1 been notified they can continue and switch to sole for final order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention;
+
+    @CCD(
+        label = "Has applicant 2 been notified they can continue and switch to sole for final order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo finalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention;
+
+    @CCD(
         label = "Has the respondent been sent a reminder to apply for the Final Order?",
         access = {DefaultAccess.class}
     )
@@ -280,4 +292,13 @@ public class FinalOrder {
         return YES.equals(finalOrderFirstInTimeNotifiedOtherApplicantNotApplied);
     }
 
+    @JsonIgnore
+    public boolean hasApplicant1BeenNotifiedTheyCanContinueSwitchToSoleFO() {
+        return YES.equals(finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention);
+    }
+
+    @JsonIgnore
+    public boolean hasApplicant2BeenNotifiedTheyCanContinueSwitchToSoleFO() {
+        return YES.equals(finalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention);
+    }
 }
