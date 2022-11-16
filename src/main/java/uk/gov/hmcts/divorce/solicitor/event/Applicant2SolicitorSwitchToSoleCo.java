@@ -19,10 +19,13 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSwitchToSoleCoNotification;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.util.EnumSet;
+
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -53,7 +56,7 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
 
         new PageBuilder(configBuilder
             .event(APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO)
-            .forStateTransition(ConditionalOrderPending, AwaitingLegalAdvisorReferral)
+            .forStateTransition(EnumSet.of(ConditionalOrderPending, JSAwaitingLA), AwaitingLegalAdvisorReferral)
             .showCondition("coApplicant2EnableSolicitorSwitchToSoleCo=\"Yes\"")
             .name("Switch To Sole CO")
             .description("Changing to a sole conditional order application")
