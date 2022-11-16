@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Slf4j
 public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements Runnable {
 
-    public static final String APP_1_NOTIFICATION_SENT_FLAG = "finalOrderApplicantNotifiedCanSwitchToSoleAfterIntention";
+    public static final String APP_1_NOTIFICATION_SENT_FLAG = "finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention";
     public static final String APP_2_NOTIFICATION_SENT_FLAG = "finalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention";
     private static final int FOURTEEN_DAYS = 14;
     public static final String APP_1_INTENDED_TO_SWITCH_TO_SOLE = "doesApplicant1IntendToSwitchToSole";
@@ -68,11 +68,8 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements
                     .should(matchQuery(String.format(DATA, APP_2_INTENDED_TO_SWITCH_TO_SOLE), YES))
                     .minimumShouldMatch(1)
                 )
-                .mustNot((boolQuery()
-                    .should(matchQuery(String.format(DATA, APP_1_NOTIFICATION_SENT_FLAG), YES))
-                    .should(matchQuery(String.format(DATA, APP_2_NOTIFICATION_SENT_FLAG), YES))
-                    .minimumShouldMatch(1)
-                ));
+                .mustNot(matchQuery(String.format(DATA, APP_1_NOTIFICATION_SENT_FLAG), YES))
+                .mustNot(matchQuery(String.format(DATA, APP_2_NOTIFICATION_SENT_FLAG), YES));
 
             final List<CaseDetails> casesWithApplicantIntendedSwitchToSole =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, AwaitingJointFinalOrder);

@@ -53,6 +53,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOK
 @ExtendWith(MockitoExtension.class)
 public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
 
+    private static final LocalDate NOW = LocalDate.now();
+
     @Mock
     private CcdUpdateService ccdUpdateService;
 
@@ -81,13 +83,8 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
                 .should(matchQuery(String.format(DATA, APP_2_INTENDED_TO_SWITCH_TO_SOLE), YES))
                 .minimumShouldMatch(1)
             )
-            .mustNot((boolQuery()
-                .should(matchQuery(String.format(DATA, APP_1_NOTIFICATION_SENT_FLAG), YES))
-                .should(matchQuery(String.format(DATA, APP_2_NOTIFICATION_SENT_FLAG), YES))
-                .minimumShouldMatch(1)
-            ));
-
-    private static final LocalDate NOW = LocalDate.now();
+            .mustNot(matchQuery(String.format(DATA, APP_1_NOTIFICATION_SENT_FLAG), YES))
+            .mustNot(matchQuery(String.format(DATA, APP_2_NOTIFICATION_SENT_FLAG), YES));
 
     @BeforeEach
     void setUp() {
