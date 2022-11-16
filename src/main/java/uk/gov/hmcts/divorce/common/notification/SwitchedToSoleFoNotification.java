@@ -33,7 +33,7 @@ public class SwitchedToSoleFoNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
 
-        log.info("Notifying solicitor that they made a sole application for a final order: {}", id);
+        log.info("Notifying applicant 1 that they made a sole application for a final order: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
@@ -46,7 +46,7 @@ public class SwitchedToSoleFoNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
 
-        log.info("Notifying solicitor that they made a sole application for a final order: {}", id);
+        log.info("Notifying applicant 2 that they made a sole application for a final order: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant2().getEmail(),
