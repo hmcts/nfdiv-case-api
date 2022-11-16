@@ -279,7 +279,7 @@ public class Applicant {
     }
 
     @JsonIgnore
-    public boolean isOffline() {
+    public boolean isApplicantOffline() {
         return offline != null && offline.toBoolean();
     }
 
