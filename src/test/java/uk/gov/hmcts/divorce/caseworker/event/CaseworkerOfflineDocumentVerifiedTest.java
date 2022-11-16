@@ -458,7 +458,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
-        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
@@ -516,8 +516,8 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
-        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
-        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
@@ -699,7 +699,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(FinalOrderRequested);
-        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
     }
 
     @Test
@@ -754,8 +754,8 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(FinalOrderRequested);
-        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
-        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
     }
 
     @Test

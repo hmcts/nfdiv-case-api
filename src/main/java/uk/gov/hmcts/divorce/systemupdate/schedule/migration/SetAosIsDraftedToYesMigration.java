@@ -5,6 +5,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.systemupdate.schedule.migration.predicate.HasAosDraftedEventPredicate;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -13,9 +14,11 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
@@ -33,6 +36,18 @@ public class SetAosIsDraftedToYesMigration implements Migration {
     @Value("#{'${AOS_IS_DRAFTED_REFERENCES:}'.split(',')}")
     private List<Long> aosIsDraftedReferences;
 
+    @Value("#{'${AOS_IS_DRAFTED_REFERENCES_2:}'.split(',')}")
+    private List<Long> aosIsDraftedReferences2;
+
+    @Value("#{'${AOS_IS_DRAFTED_REFERENCES_3:}'.split(',')}")
+    private List<Long> aosIsDraftedReferences3;
+
+    @Value("#{'${AOS_IS_DRAFTED_REFERENCES_4:}'.split(',')}")
+    private List<Long> aosIsDraftedReferences4;
+
+    @Value("#{'${AOS_IS_DRAFTED_REFERENCES_5:}'.split(',')}")
+    private List<Long> aosIsDraftedReferences5;
+
     @Autowired
     private CcdSearchService ccdSearchService;
 
@@ -45,12 +60,19 @@ public class SetAosIsDraftedToYesMigration implements Migration {
     @Override
     public void apply(final User user, final String serviceAuthorization) {
 
-        final List<Long> allReferences = aosIsDraftedReferences.stream()
+        final List<Long> allReferences = Stream.of(
+                aosIsDraftedReferences,
+                aosIsDraftedReferences2,
+                aosIsDraftedReferences3,
+                aosIsDraftedReferences4,
+                aosIsDraftedReferences5)
+            .flatMap(Collection::stream)
             .filter(Objects::nonNull)
+            .distinct()
             .toList();
 
         if (migrateAosIsDrafted && !isEmpty(allReferences)) {
-            log.info("Started SetAosIsDraftedToYesMigration with references size: {}", aosIsDraftedReferences);
+            log.info("Started SetAosIsDraftedToYesMigration with references size: {}", allReferences);
             try {
 
                 final List<CaseDetails> caseDetails = searchForAosDraftedCases(allReferences, user, serviceAuthorization);

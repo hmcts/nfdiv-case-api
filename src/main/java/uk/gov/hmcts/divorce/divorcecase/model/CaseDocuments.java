@@ -25,6 +25,7 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
+import static java.util.Optional.ofNullable;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
@@ -40,6 +42,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
 
 @Data
 @AllArgsConstructor
@@ -305,5 +308,13 @@ public class CaseDocuments {
             ? this.getDocumentsGenerated().stream()
             .filter(document -> documentType.equals(document.getValue().getDocumentType())).findFirst()
             : Optional.empty();
+    }
+
+    public boolean isGivenDocumentUnderConfidentialList(final DocumentType documentType) {
+        return ofNullable(getConfidentialDocumentsGenerated())
+            .orElseGet(Collections::emptyList)
+            .stream().filter(Objects::nonNull)
+            .anyMatch(doc -> doc.getValue() != null && getConfidentialDocumentType(documentType)
+                .equals(doc.getValue().getConfidentialDocumentsReceived()));
     }
 }

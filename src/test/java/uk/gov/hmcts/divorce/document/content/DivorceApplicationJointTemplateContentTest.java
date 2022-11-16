@@ -29,19 +29,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FINANCIAL_ORDER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MARRIAGE_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_COURT_CASE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FINANCIAL_ORDER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MARRIAGE_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP;
@@ -52,6 +46,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_OTHER_COURT_CASES_APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_OTHER_COURT_CASES_APPLICANT_2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
@@ -125,10 +120,8 @@ class DivorceApplicationJointTemplateContentTest {
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+            entry(ISSUE_DATE_POPULATED, true),
             entry(ISSUE_DATE, "28 April 2021"),
-            entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
-            entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_FULL_NAME, applicant1.getFullName()),
             entry(APPLICANT_1_POSTAL_ADDRESS, null),
             entry(APPLICANT_1_EMAIL, TEST_USER_EMAIL),
@@ -136,9 +129,6 @@ class DivorceApplicationJointTemplateContentTest {
             entry(APPLICANT_1_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_1, false),
             entry(APPLICANT_1_COURT_CASE_DETAILS, null),
-            entry(APPLICANT_2_FIRST_NAME, TEST_APP2_FIRST_NAME),
-            entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
-            entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
             entry(APPLICANT_2_FINANCIAL_ORDER, null),
@@ -201,10 +191,8 @@ class DivorceApplicationJointTemplateContentTest {
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership"),
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+            entry(ISSUE_DATE_POPULATED, true),
             entry(ISSUE_DATE, "28 April 2021"),
-            entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
-            entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_1_FULL_NAME, applicant1.getFullName()),
             entry(APPLICANT_1_POSTAL_ADDRESS, null),
             entry(APPLICANT_1_EMAIL, TEST_USER_EMAIL),
@@ -212,9 +200,6 @@ class DivorceApplicationJointTemplateContentTest {
             entry(APPLICANT_1_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_1, false),
             entry(APPLICANT_1_COURT_CASE_DETAILS, null),
-            entry(APPLICANT_2_FIRST_NAME, TEST_APP2_FIRST_NAME),
-            entry(APPLICANT_2_MIDDLE_NAME, TEST_APP2_MIDDLE_NAME),
-            entry(APPLICANT_2_LAST_NAME, TEST_APP2_LAST_NAME),
             entry(APPLICANT_2_FULL_NAME, applicant2.getFullName()),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
             entry(APPLICANT_2_FINANCIAL_ORDER, null),
