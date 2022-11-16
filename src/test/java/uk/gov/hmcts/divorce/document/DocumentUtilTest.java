@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
 import java.util.List;
@@ -42,6 +43,8 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
@@ -349,6 +352,37 @@ class DocumentUtilTest {
     @Test
     public void shouldReturnFalseWhenGivenDocumentTypeIsNotApplicableForConfidentiality() {
         assertFalse(isDocumentApplicableForConfidentiality(APPLICATION, true));
+    }
+
+    @Test
+    public void shouldReturnTrueForApplicant1WhenFOCoverLetterTypeIsApplicableForConfidentiality() {
+        assertTrue(isDocumentApplicableForConfidentiality(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, true));
+    }
+
+    @Test
+    public void shouldReturnTrueForApplicant2WhenFOCoverLetterTypeIsApplicableForConfidentiality() {
+        assertTrue(isDocumentApplicableForConfidentiality(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2, false));
+    }
+
+    @Test
+    public void shouldReturnConfidentialDocumentType() {
+        List<DocumentType> documentTypes = Lists.newArrayList(
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            NOTICE_OF_PROCEEDINGS_APP_2,
+            GENERAL_LETTER,
+            FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
+            FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
+        );
+
+        assertThat(documentTypes.stream().map(DocumentUtil::getConfidentialDocumentType)
+                .collect(Collectors.toList()))
+            .containsExactly(
+                ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
+                ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
+                ConfidentialDocumentsReceived.GENERAL_LETTER,
+                ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
+                ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
+            );
     }
 
     @Test

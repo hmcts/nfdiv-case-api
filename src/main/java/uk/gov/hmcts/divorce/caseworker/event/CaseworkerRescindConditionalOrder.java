@@ -103,11 +103,11 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
     private void removeConditionalOrderDocuments(final CaseData caseData) {
         removeDocumentsBasedOnContactPrivacy(caseData, CONDITIONAL_ORDER_GRANTED);
 
-        if (caseData.getApplicant1().isOffline()) {
+        if (caseData.getApplicant1().isApplicantOffline()) {
             removeDocumentsBasedOnContactPrivacy(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
         }
 
-        if (caseData.getApplicant2().isOffline()) {
+        if (caseData.getApplicant2().isApplicantOffline()) {
             removeDocumentsBasedOnContactPrivacy(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
         }
 
