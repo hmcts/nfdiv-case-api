@@ -266,8 +266,6 @@ uk:
             JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER: '7cddc0bf-5b2f-4b4a-b4b6-28cfc22d1cd5'
             JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER: '83a57815-f1a2-4ac8-92b4-5597b9bd5b38'
             SOLE_APPLIED_FOR_FINAL_ORDER: '7e64d645-8973-4bac-95ca-49e54c423655'
-            INTEND_TO_SWITCH_TO_SOLE_FO: 'b734941e-37d8-47b8-aef8-6c51412bcbc1' #TODO - Welsh translation needed
-            PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO: '360465c3-2da5-403a-8163-5487cc214aa7' #TODO - Welsh translation needed
             APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO: 'e414d40e-de04-4aa9-b85c-fc939417f0fd' #TODO - Welsh translation needed
 
 s2s-authorised:
