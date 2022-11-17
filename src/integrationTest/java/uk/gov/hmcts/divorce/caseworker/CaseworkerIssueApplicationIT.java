@@ -63,6 +63,7 @@ import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -184,6 +185,8 @@ public class CaseworkerIssueApplicationIT {
         "classpath:caseworker-issue-joint-application-app2-represented-about-to-submit-response.json";
     private static final String APP2_CONTACT_PRIVATE_CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-joint-application-app2-contact-private-about-to-submit-response.json";
+    private static final String JOINT_APPLICATION_IN_WELSH_CASEWORKER_ABOUT_TO_SUBMIT =
+        "classpath:caseworker-issue-joint-application-in-welsh-about-to-submit-response.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -2097,6 +2100,56 @@ public class CaseworkerIssueApplicationIT {
         verify(bulkPrintService).print(any());
         verify(bulkPrintService).printAosRespondentPack(any(), eq(false));
         verifyNoMoreInteractions(bulkPrintService);
+    }
+
+    @Test
+    void shouldIssueApplicationAndGenerateDocumentsForJointApplicationInWelsh() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
+        caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(YES);
+        caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant 1")
+            .thenReturn("Notice of proceedings applicant 2")
+            .thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, "FL-NFD-APP-WEL-Divorce-Application-Joint.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Joint_V2_Cy.docx");
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response)
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(TestResourceUtil.expectedResponse(JOINT_APPLICATION_IN_WELSH_CASEWORKER_ABOUT_TO_SUBMIT)));
+
+        verifyNoInteractions(notificationService);
     }
 
     private AddressGlobalUK applicantAddress() {
