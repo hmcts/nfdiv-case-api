@@ -75,5 +75,5 @@
     "dataVersion": 5,
     "warnings": []
   },
-  "state": "AwaitingLegalAdvisorReferral"
+  "state": "JSAwaitingLA"
 }

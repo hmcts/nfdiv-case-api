@@ -209,7 +209,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    void shouldTriggerCoSubmissionAndMoveCaseStateToAwaitingLegalAdvisorReferralIfD84Verified() throws Exception {
+    void shouldTriggerCoSubmissionAndMoveCaseStateToJSAwaitingLAIfD84Verified() throws Exception {
 
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
