@@ -32,8 +32,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 
 @Slf4j
 @Component
@@ -98,28 +96,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         caseData.getFinalOrder().setGrantedDate(currentDateTime);
 
-        Long caseId = details.getId();
-
-        if (caseData.getApplicant1().isApplicantOffline()) {
-            log.info("Generating final order cover letter for Applicant 1 for case id: {} ", caseId);
-            generateFinalOrderCoverLetter.apply(
-                caseData,
-                caseId,
-                caseData.getApplicant1(),
-                FINAL_ORDER_GRANTED_COVER_LETTER_APP_1
-            );
-        }
-
-        if (caseData.getApplicant2().isApplicantOffline()) {
-            log.info("Generating final order cover letter for Applicant 2 for case id: {} ", caseId);
-            generateFinalOrderCoverLetter.apply(
-                caseData,
-                caseId,
-                caseData.getApplicant2(),
-                FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
-            );
-        }
-
+        generateFinalOrderCoverLetter.apply(details);
         generateFinalOrder.apply(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
