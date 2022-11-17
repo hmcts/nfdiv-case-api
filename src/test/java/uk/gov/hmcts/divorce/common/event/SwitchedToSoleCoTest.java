@@ -221,7 +221,7 @@ class SwitchedToSoleCoTest {
             .build();
 
         var response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
-        assert(response.getState()).equals(JSAwaitingLA);
+        assertThat(response.getState()).isEqualTo(JSAwaitingLA);
     }
 
     @Test
@@ -235,7 +235,7 @@ class SwitchedToSoleCoTest {
             .build();
 
         var response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
-        assert(response.getState()).equals(AwaitingLegalAdvisorReferral);
+        assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
     }
 
     @Test
