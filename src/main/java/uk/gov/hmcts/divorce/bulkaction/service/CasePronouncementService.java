@@ -60,8 +60,8 @@ public class CasePronouncementService {
         final List<ListValue<BulkListCaseDetails>> erroredCaseDetails = bulkActionCaseData.getErroredCaseDetails();
         final List<ListValue<BulkListCaseDetails>> processedCaseDetails = bulkActionCaseData.getProcessedCaseDetails();
 
-        erroredCaseDetails.removeAll(erroredCaseDetails.stream().toList());
-        processedCaseDetails.removeAll(processedCaseDetails.stream().toList());
+        erroredCaseDetails.clear();
+        processedCaseDetails.clear();
 
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases =
             bulkTriggerService.bulkTrigger(
