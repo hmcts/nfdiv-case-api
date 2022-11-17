@@ -65,6 +65,7 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
         log.info("Generating general order document for templateId : {} case caseId: {}",
             DIVORCE_GENERAL_ORDER, caseId);
 
+        //TODO: call CDAM directly here
         Document generalOrderDocument = caseDataDocumentService.renderDocument(
             generalOrderTemplateContent.apply(caseDataCopy, caseId),
             caseId,

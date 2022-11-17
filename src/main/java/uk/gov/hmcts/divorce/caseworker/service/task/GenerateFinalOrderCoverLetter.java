@@ -48,7 +48,7 @@ public class GenerateFinalOrderCoverLetter {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplicant1().isOffline()) {
+        if (caseData.getApplicant1().isApplicantOffline()) {
             log.info("Generating final order cover letter for Applicant 1 for case id: {} ", caseId);
             generateFinalOrderCoverLetter(
                 caseData,
@@ -58,7 +58,7 @@ public class GenerateFinalOrderCoverLetter {
             );
         }
 
-        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
+        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isApplicantOffline()) {
             log.info("Generating final order cover letter for Applicant 2 for case id: {} ", caseId);
             generateFinalOrderCoverLetter(
                 caseData,

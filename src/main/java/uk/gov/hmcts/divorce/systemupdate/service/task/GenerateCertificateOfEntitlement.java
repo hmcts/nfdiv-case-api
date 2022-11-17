@@ -124,7 +124,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplicant1().isOffline()) {
+        if (caseData.getApplicant1().isApplicantOffline()) {
             log.info("Generating certificate of entitlement cover letter for Applicant 1 for case id {} ", caseId);
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
@@ -137,7 +137,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
             );
         }
 
-        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
+        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isApplicantOffline()) {
             log.info("Generating certificate of entitlement cover letter for Applicant 2 for case id {} ", caseId);
 
             if (caseData.getApplicationType().isSole()) {
