@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AMENDED_APPLICATION_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-
+//initial commit
 @Component
 @Slf4j
 public class CaseworkerIssueAmendedApplication implements CCDConfig<CaseData, State, UserRole> {
