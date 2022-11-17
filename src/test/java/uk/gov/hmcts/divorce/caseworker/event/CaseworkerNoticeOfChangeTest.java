@@ -66,7 +66,7 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant1().isOffline()).isTrue();
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
         assertThat(result.getData().getApplicant1().getSolicitor()).isNull();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
@@ -89,7 +89,7 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant1().isOffline()).isTrue();
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
         assertThat(result.getData().getApplicant1().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
 
@@ -117,7 +117,7 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant1().isOffline()).isFalse();
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
         assertThat(result.getData().getApplicant1().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
 
@@ -146,7 +146,7 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant1().isOffline()).isFalse();
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
         assertThat(result.getData().getApplicant1().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
 
@@ -173,7 +173,7 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant2().isOffline()).isTrue();
+        assertThat(result.getData().getApplicant2().isApplicantOffline()).isTrue();
         assertThat(result.getData().getApplicant2().getSolicitor()).isNull();
         assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(NO);
 
@@ -196,7 +196,7 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant2().isOffline()).isTrue();
+        assertThat(result.getData().getApplicant2().isApplicantOffline()).isTrue();
         assertThat(result.getData().getApplicant2().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(YES);
 
@@ -224,7 +224,7 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant2().isOffline()).isFalse();
+        assertThat(result.getData().getApplicant2().isApplicantOffline()).isFalse();
         assertThat(result.getData().getApplicant2().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(YES);
 
@@ -254,7 +254,7 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant2().isOffline()).isFalse();
+        assertThat(result.getData().getApplicant2().isApplicantOffline()).isFalse();
         assertThat(result.getData().getApplicant2().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(YES);
 

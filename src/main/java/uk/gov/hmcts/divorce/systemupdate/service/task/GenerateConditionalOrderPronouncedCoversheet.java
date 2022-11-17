@@ -4,14 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
-import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -37,31 +32,13 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
 public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
 
-    public static final String NAME = "name";
-    public static final String ADDRESS = "address";
-    public static final String PRONOUNCEMENT_DATE_PLUS_43 = "pronouncementDatePlus43";
-
     @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
-
-    @Autowired
-    private Clock clock;
-
-    @Autowired
-    private CommonContent commonContent;
-
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private ConditionalOrderPronouncedCoverLetterHelper coverLetterHelper;
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
@@ -69,9 +46,9 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplicant1().isOffline()) {
+        if (caseData.getApplicant1().isApplicantOffline()) {
             log.info("Generating applicant 1 conditional order pronounced coversheet for case id {} ", caseId);
-            generateConditionalOrderPronouncedCoversheet(
+            coverLetterHelper.generateConditionalOrderPronouncedCoversheet(
                 caseData,
                 caseId,
                 caseData.getApplicant1(),
@@ -79,24 +56,24 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
             );
         }
 
-        if (caseData.getApplicant2().isOffline()) {
-            log.info("Generating applicant 2 conditional order pronounced coversheet for case id {} ", caseId);
+        if (caseData.getApplicant2().isApplicantOffline()) {
             if (caseData.getApplicationType().isSole()) {
-                generateConditionalOrderPronouncedCoversheetOfflineRespondent(
+                log.info("Generating respondent conditional order pronounced coversheet for case id {} ", caseId);
+                coverLetterHelper.generateConditionalOrderPronouncedCoversheetOfflineRespondent(
                     caseData,
                     caseId,
                     caseData.getApplicant2(),
                     caseData.getApplicant1()
                 );
             } else {
-                generateConditionalOrderPronouncedCoversheet(
+                log.info("Generating applicant 2 conditional order pronounced coversheet for case id {} ", caseId);
+                coverLetterHelper.generateConditionalOrderPronouncedCoversheet(
                     caseData,
                     caseId,
                     caseData.getApplicant2(),
                     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2
                 );
             }
-
         }
 
         return caseDetails;

@@ -1,17 +1,14 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.testutil.TestConstants;
 
@@ -34,7 +31,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_LABEL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_REGISTERED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
@@ -50,6 +46,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
@@ -60,11 +57,6 @@ public class NoticeOfProceedingSolicitorContentTest {
     private static final String ADDRESS = "line 1\ntown\npostcode";
     private static final LocalDate APPLICATION_ISSUE_DATE = LocalDate.of(2022, 3, 30);
     private static final LocalDate APPLICATION_REISSUE_DATE = LocalDate.of(2022, 4, 30);
-    private static final CtscContactDetails CTSC_CONTACT = CtscContactDetails
-        .builder()
-        .emailAddress("divorcecase@justice.gov.uk")
-        .phoneNumber("0300 303 0642")
-        .build();
 
     @Mock
     private HoldingPeriodService holdingPeriodService;
@@ -72,14 +64,11 @@ public class NoticeOfProceedingSolicitorContentTest {
     @Mock
     private CommonContent commonContent;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
     @InjectMocks
     private NoticeOfProceedingSolicitorContent applicantSolicitorNopContent;
-
-    @BeforeEach
-    public void setUp() {
-        ReflectionTestUtils.setField(applicantSolicitorNopContent, "email", "divorcecase@justice.gov.uk");
-        ReflectionTestUtils.setField(applicantSolicitorNopContent, "phoneNumber", "0300 303 0642");
-    }
 
     @Test
     public void shouldMapTemplateContentForSoleDivorceApplication() {
@@ -101,6 +90,8 @@ public class NoticeOfProceedingSolicitorContentTest {
         when(holdingPeriodService.getRespondByDateFor(APPLICATION_ISSUE_DATE))
             .thenReturn(APPLICATION_ISSUE_DATE.plusDays(16));
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("husband");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         final Map<String, Object> templateContent = applicantSolicitorNopContent.apply(caseData, TEST_CASE_ID, true);
 
@@ -121,8 +112,7 @@ public class NoticeOfProceedingSolicitorContentTest {
                 entry(APPLICANT_SOLICITOR_REGISTERED, true),
                 entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
                 entry(IS_JOINT, false),
-                entry(IS_DIVORCE, true),
-                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT))
+                entry(IS_DIVORCE, true))
             .doesNotContain(
                 entry(HAS_CASE_BEEN_REISSUED, true),
                 entry(REISSUE_DATE, "30 April 2022"));
@@ -149,6 +139,8 @@ public class NoticeOfProceedingSolicitorContentTest {
         when(holdingPeriodService.getRespondByDateFor(APPLICATION_ISSUE_DATE))
             .thenReturn(APPLICATION_ISSUE_DATE.plusDays(16));
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("husband");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         final Map<String, Object> templateContent = applicantSolicitorNopContent.apply(caseData, TEST_CASE_ID, true);
 
@@ -170,7 +162,6 @@ public class NoticeOfProceedingSolicitorContentTest {
             entry(APPLICANT_1_SOLICITOR_NAME, "The Solicitor"),
             entry(IS_JOINT, false),
             entry(IS_DIVORCE, true),
-            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
             entry(HAS_CASE_BEEN_REISSUED, true),
             entry(REISSUE_DATE, "30 April 2022")
         );
@@ -197,6 +188,9 @@ public class NoticeOfProceedingSolicitorContentTest {
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("husband");
 
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
         final Map<String, Object> templateContent = applicantSolicitorNopContent.apply(caseData, TEST_CASE_ID, true);
 
         assertThat(templateContent)
@@ -219,8 +213,7 @@ public class NoticeOfProceedingSolicitorContentTest {
                 entry(SOLICITOR_REFERENCE, "Not provided"),
                 entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
                 entry(APPLICANT_1_SOLICITOR_NAME, "The Solicitor"),
-                entry(APPLICANT_2_SOLICITOR_NAME, "The Solicitor"),
-                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT));
+                entry(APPLICANT_2_SOLICITOR_NAME, "The Solicitor"));
 
         verifyNoInteractions(holdingPeriodService);
     }
@@ -249,6 +242,8 @@ public class NoticeOfProceedingSolicitorContentTest {
             .build();
 
         when(commonContent.getPartner(caseData, caseData.getApplicant1(), ENGLISH)).thenReturn("wife");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         final Map<String, Object> templateContent = applicantSolicitorNopContent.apply(caseData, TEST_CASE_ID, false);
 
@@ -268,7 +263,6 @@ public class NoticeOfProceedingSolicitorContentTest {
                 entry(APPLICANT_SOLICITOR_REGISTERED, true),
                 entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
                 entry(IS_JOINT, true),
-                entry(IS_DIVORCE, true),
-                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT));
+                entry(IS_DIVORCE, true));
     }
 }

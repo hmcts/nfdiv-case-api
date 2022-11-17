@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 
 @Service
@@ -105,7 +106,8 @@ public class CasePronouncementService {
                         "Case ID {} will be skipped and moved to processed list as already pronounced",
                         caseDetails.getId());
                     casesToBeAddedToProcessedList.add(String.valueOf(caseDetails.getId()));
-                } else if (!AwaitingPronouncement.name().equals(caseDetails.getState())) {
+                } else if (!AwaitingPronouncement.name().equals(caseDetails.getState())
+                    && !OfflineDocumentReceived.name().equals(caseDetails.getState())) {
                     log.info(
                         "Case ID {} will be skipped and moved to error list as not in correct state to be pronounced",
                         caseDetails.getId());
