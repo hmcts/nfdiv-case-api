@@ -7,7 +7,11 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
+import java.util.List;
+
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 
@@ -55,5 +59,18 @@ public class GenerateConditionalOrderPronouncedCoversheet implements CaseTask {
         }
 
         return caseDetails;
+    }
+
+    public void removeExistingAndGenerateConditionalOrderPronouncedCoversheet(CaseDetails<CaseData, State> caseDetails) {
+        final CaseData caseData = caseDetails.getData();
+        final List<DocumentType> documentTypesToRemove =
+            List.of(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
+
+        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
+            caseData.getDocuments().getDocumentsGenerated()
+                .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
+        }
+
+        apply(caseDetails);
     }
 }
