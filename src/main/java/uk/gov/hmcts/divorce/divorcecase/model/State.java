@@ -332,7 +332,7 @@ public enum State {
     @CCD(
         label = "Offline document received by CW",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccessExcludingCAA.class}
     )
     OfflineDocumentReceived,
 

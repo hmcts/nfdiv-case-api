@@ -64,7 +64,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWIT
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -372,7 +371,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(JSAwaitingLA);
-        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
@@ -430,8 +429,8 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(JSAwaitingLA);
-        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
-        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
@@ -488,7 +487,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(AwaitingFinalOrder);
-        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
     }
 
     @Test
@@ -543,8 +542,8 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(AwaitingJointFinalOrder);
-        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
-        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
     }
 
     @Test
