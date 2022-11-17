@@ -26,6 +26,18 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_
 @Slf4j
 public class AwaitingConditionalOrderReminderNotification implements ApplicantNotification {
 
+    public static final String AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1
+        = "awaitingConditionalOrderReminderNotificationSendToApplicant1";
+
+    public static final String AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1_OFFLINE
+        = "awaitingConditionalOrderReminderNotificationSendToApplicant1Offline";
+
+    public static final String AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT2
+        = "awaitingConditionalOrderReminderNotificationSendToApplicant2";
+
+    public static final String AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT2_OFFLINE
+        = "awaitingConditionalOrderReminderNotificationSendToApplicant2Offline";
+
     @Autowired
     private CommonContent commonContent;
 
@@ -49,89 +61,109 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        log.info("Sending reminder to applicant 1 that they can apply for a conditional order: {}", id);
 
-        final Applicant applicant1 = caseData.getApplicant1();
+        if (!caseData.getSentNotifications().containsKey(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1)) {
+            log.info("Sending reminder to applicant 1 that they can apply for a conditional order: {}", id);
 
-        final Map<String, String> templateVars = commonContent
-            .conditionalOrderTemplateVars(caseData, id, applicant1, caseData.getApplicant2());
-        templateVars.put(IS_REMINDER, YES);
+            final Applicant applicant1 = caseData.getApplicant1();
 
-        notificationService.sendEmail(
-            applicant1.getEmail(),
-            CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
-            templateVars,
-            applicant1.getLanguagePreference()
-        );
+            final Map<String, String> templateVars = commonContent
+                .conditionalOrderTemplateVars(caseData, id, applicant1, caseData.getApplicant2());
+            templateVars.put(IS_REMINDER, YES);
+
+            notificationService.sendEmail(
+                applicant1.getEmail(),
+                CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
+                templateVars,
+                applicant1.getLanguagePreference()
+            );
+
+            caseData.getSentNotifications().put(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1, true);
+        }
     }
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        if (!caseData.getApplicationType().isSole() && nonNull(caseData.getApplicant2().getEmail())) {
-            log.info("Sending reminder applicant 2 that they can apply for a conditional order: {}", id);
 
-            final Applicant applicant2 = caseData.getApplicant2();
+        if (!caseData.getSentNotifications().containsKey(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1)) {
+            if (!caseData.getApplicationType().isSole() && nonNull(caseData.getApplicant2().getEmail())) {
+                log.info("Sending reminder applicant 2 that they can apply for a conditional order: {}", id);
 
-            final Map<String, String> templateVars = commonContent
-                .conditionalOrderTemplateVars(caseData, id, applicant2, caseData.getApplicant1());
-            templateVars.put(IS_REMINDER, YES);
+                final Applicant applicant2 = caseData.getApplicant2();
 
-            notificationService.sendEmail(
-                applicant2.getEmail(),
-                CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
-                templateVars,
-                applicant2.getLanguagePreference()
-            );
+                final Map<String, String> templateVars = commonContent
+                    .conditionalOrderTemplateVars(caseData, id, applicant2, caseData.getApplicant1());
+                templateVars.put(IS_REMINDER, YES);
+
+                notificationService.sendEmail(
+                    applicant2.getEmail(),
+                    CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
+                    templateVars,
+                    applicant2.getLanguagePreference()
+                );
+            }
+            caseData.getSentNotifications().put(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT2, true);
         }
     }
 
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
-        log.info("Sending reminder applicant 1 offline that they can apply for a conditional order: {}", caseId);
 
-        generateCoversheet.generateCoversheet(
-            caseData,
-            caseId,
-            COVERSHEET_APPLICANT,
-            coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
-            caseData.getApplicant1().getLanguagePreference());
-
-        generateConditionalOrderReminderDocument.generateConditionalOrderReminder(
-            caseData,
-            caseId,
-            caseData.getApplicant1(),
-            caseData.getApplicant2());
-
-        generateD84Form.generateD84Document(
-            caseData,
-            caseId);
-
-        conditionalOrderReminderPrinter.sendLetters(caseData, caseId);
-    }
-
-    @Override
-    public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
-        if (!caseData.getApplicationType().isSole()) {
-            log.info("Sending reminder applicant 2 offline that they can apply for a conditional order for joint case: {}", caseId);
+        if (!caseData.getSentNotifications().containsKey(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1_OFFLINE)) {
+            log.info("Sending reminder applicant 1 offline that they can apply for a conditional order: {}", caseId);
 
             generateCoversheet.generateCoversheet(
                 caseData,
                 caseId,
                 COVERSHEET_APPLICANT,
-                coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
-                caseData.getApplicant2().getLanguagePreference());
+                coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
+                caseData.getApplicant1().getLanguagePreference());
 
             generateConditionalOrderReminderDocument.generateConditionalOrderReminder(
                 caseData,
                 caseId,
-                caseData.getApplicant2(),
-                caseData.getApplicant1());
+                caseData.getApplicant1(),
+                caseData.getApplicant2());
 
             generateD84Form.generateD84Document(
                 caseData,
                 caseId);
 
             conditionalOrderReminderPrinter.sendLetters(caseData, caseId);
+
+            caseData.getSentNotifications().put(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1_OFFLINE, true);
+
+        }
+    }
+
+    @Override
+    public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
+
+        if (!caseData.getSentNotifications().containsKey(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT2_OFFLINE)) {
+            if (!caseData.getApplicationType().isSole()) {
+                log.info("Sending reminder applicant 2 offline that they can apply for a conditional order for joint case: {}", caseId);
+
+                generateCoversheet.generateCoversheet(
+                    caseData,
+                    caseId,
+                    COVERSHEET_APPLICANT,
+                    coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
+                    caseData.getApplicant2().getLanguagePreference());
+
+                generateConditionalOrderReminderDocument.generateConditionalOrderReminder(
+                    caseData,
+                    caseId,
+                    caseData.getApplicant2(),
+                    caseData.getApplicant1());
+
+                generateD84Form.generateD84Document(
+                    caseData,
+                    caseId);
+
+                conditionalOrderReminderPrinter.sendLetters(caseData, caseId);
+
+                caseData.getSentNotifications().put(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT2_OFFLINE, true);
+            }
         }
     }
 }

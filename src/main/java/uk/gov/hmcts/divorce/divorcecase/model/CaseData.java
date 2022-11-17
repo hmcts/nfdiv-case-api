@@ -29,7 +29,9 @@ import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -256,6 +258,11 @@ public class CaseData {
         access = {SystemUpdateAndSuperUserAccess.class}
     )
     private List<ListValue<GeneralLetterDetails>> generalLetters;
+
+    @JsonUnwrapped(prefix = "sentNotification")
+    @Builder.Default
+    @CCD(access = {DefaultAccess.class})
+    private Map<String, Boolean> sentNotifications = new HashMap<>();
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {

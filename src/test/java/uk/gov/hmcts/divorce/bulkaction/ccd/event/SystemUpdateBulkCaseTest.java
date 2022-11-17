@@ -11,22 +11,22 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateBulkCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class SystemUpdateCaseTest {
+class SystemUpdateBulkCaseTest {
 
     @InjectMocks
-    private SystemUpdateCase systemUpdateCase;
+    private SystemUpdateBulkCase systemUpdateBulkCase;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
 
         final ConfigBuilderImpl<BulkActionCaseData, BulkActionState, UserRole> configBuilder = createBulkActionConfigBuilder();
 
-        systemUpdateCase.configure(configBuilder);
+        systemUpdateBulkCase.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)

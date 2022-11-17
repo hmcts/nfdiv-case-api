@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
+public class SystemUpdateBulkCaseWithCourtHearingFT extends FunctionalTestSuite {
 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-update-case-with-court-hearing.json";

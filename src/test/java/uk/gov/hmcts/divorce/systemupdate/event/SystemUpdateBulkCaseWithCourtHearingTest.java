@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseWithCourtHearing;
 
 @ExtendWith(MockitoExtension.class)
-class SystemUpdateCaseWithCourtHearingTest {
+class SystemUpdateBulkCaseWithCourtHearingTest {
 
     @Mock
     private GenerateCertificateOfEntitlement generateCertificateOfEntitlement;

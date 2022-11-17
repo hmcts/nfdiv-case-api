@@ -1,12 +1,19 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.notification.AwaitingConditionalOrderReminderNotification;
+import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPendingReminderNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -25,6 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOr
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCase.SYSTEM_UPDATE_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
@@ -52,6 +60,18 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private AwaitingConditionalOrderReminderNotification awaitingConditionalOrderReminderNotification;
+
+    @Autowired
+    private ConditionalOrderPendingReminderNotification conditionalOrderPendingReminderNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${submit_co.reminder_offset_days}")
     private int submitCOrderReminderOffsetDays;
@@ -87,6 +107,28 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
     }
 
     private void remindJointApplicants(CaseDetails caseDetails, User user, String serviceAuth) {
+
+        try {
+            final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
+
+            var state = caseDetails.getState();
+
+            if (AwaitingConditionalOrder.name().equals(state) || ConditionalOrderDrafted.name().equals(state)) {
+                notificationDispatcher.send(awaitingConditionalOrderReminderNotification, caseData, caseDetails.getId());
+            } else {
+                notificationDispatcher.send(conditionalOrderPendingReminderNotification, caseData, caseDetails.getId());
+            }
+        } catch (NotificationException | HttpServerErrorException exception) {
+            log.error("Notification for SystemRemindApplicantsApplyForCOrderTask has failed with exception {} for case id {}",
+                exception.getMessage(), caseDetails.getId());
+
+            // Call event to persist notification flags previously set, to stop notifications being sent multiple times on failed crons.
+            ccdUpdateService.submitEvent(caseDetails, SYSTEM_UPDATE_CASE, user, serviceAuth);
+
+            // Throw the exception to exit, we don't want to continue and call the cron.
+            throw exception;
+        }
+
         try {
             log.info(
                 "20Week holding period +14days elapsed for Case({}) - reminding Joint Applicants they can apply for a Conditional Order",
