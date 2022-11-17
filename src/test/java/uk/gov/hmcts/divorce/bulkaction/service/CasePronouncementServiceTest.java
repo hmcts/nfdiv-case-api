@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
@@ -64,7 +65,7 @@ public class CasePronouncementServiceTest {
     private CasePronouncementService casePronouncementService;
 
     @Test
-    void shouldSuccessfullyPronounceBulkCases() {
+    void shouldSuccessfullyPronounceBulkCasesIfCaseSateAwaitingPronouncement() {
         var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
@@ -83,6 +84,64 @@ public class CasePronouncementServiceTest {
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(1L)
                     .state(AwaitingPronouncement.name())
+                    .build())
+            );
+
+        var caseTask = mock(CaseTask.class);
+        var bulkActionCaseDetails = CaseDetails
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
+
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+
+        when(bulkTriggerService.bulkTrigger(
+            bulkActionCaseData.getBulkListCaseDetails(),
+            SYSTEM_PRONOUNCE_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION
+        )).thenReturn(emptyList());
+
+        casePronouncementService.pronounceCases(bulkActionCaseDetails);
+
+        verify(bulkTriggerService).bulkTrigger(
+            eq(bulkActionCaseData.getBulkListCaseDetails()),
+            eq(SYSTEM_PRONOUNCE_CASE),
+            any(CaseTask.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        );
+
+        verify(ccdUpdateService).submitBulkActionEvent(
+            eq(bulkActionCaseDetails),
+            eq(SYSTEM_UPDATE_BULK_CASE),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        );
+
+    }
+
+    @Test
+    void shouldSuccessfullyPronounceBulkCasesIfCaseStateOfflineDocumentReceived() {
+        var bulkActionCaseData = BulkActionCaseData
+            .builder()
+            .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
+            .court(BIRMINGHAM)
+            .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1")))
+            .erroredCaseDetails(new ArrayList<>())
+            .processedCaseDetails(new ArrayList<>())
+            .build();
+
+        var user = mock(User.class);
+
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(ccdSearchService.searchForCases(List.of("1"), user, SERVICE_AUTHORIZATION))
+            .thenReturn(List.of(
+                uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
+                    .id(1L)
+                    .state(OfflineDocumentReceived.name())
                     .build())
             );
 
