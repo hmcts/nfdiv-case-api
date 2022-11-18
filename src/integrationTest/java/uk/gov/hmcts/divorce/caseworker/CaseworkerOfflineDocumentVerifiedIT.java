@@ -99,7 +99,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         "classpath:caseworker-offline-document-verified-d10-response.json";
 
     private static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_D84_RESPONSE =
-        "classpath:caseworker-offline-document-verified-d84-response.json";
+        "classpath:q.json";
 
     private static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_OTHER_RESPONSE =
         "classpath:caseworker-offline-document-verified-other-response.json";
@@ -208,7 +208,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    void shouldTriggerCoSubmissionAndMoveCaseStateToJSAwaitingLAIfD84Verified() throws Exception {
+    void shouldTriggerCoSubmissionAndMoveCaseStateToJSAwaitingLAIfD84VerifiedAndJudicialSeparation() throws Exception {
 
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
@@ -231,6 +231,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(getApplicant(FEMALE));
+        caseData.setIsJudicialSeparation(YES);
         caseData.setDocuments(
             CaseDocuments.builder()
                 .typeOfDocumentAttached(CO_D84)
