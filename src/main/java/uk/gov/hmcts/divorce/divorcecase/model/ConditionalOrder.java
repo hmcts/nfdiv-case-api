@@ -150,6 +150,11 @@ public class ConditionalOrder {
     private String refusalRejectionAdditionalInfo;
 
     @CCD(
+        label = "Maximum times we can retry the remind applicant apply for CO cron"
+    )
+    private Integer maxCronRetriesRemindApplicant;
+
+    @CCD(
         label = "Provide a refusal reason",
         hint = "Choose at least one of the following",
         typeOverride = MultiSelectList,

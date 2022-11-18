@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -48,6 +49,7 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
         "SystemRemindApplicantsApplyForCOrderTask scheduled task stopped after search error";
     public static final String CCD_CONFLICT_ERROR =
         "SystemRemindApplicantsApplyForCOrderTask scheduled task stopping due to conflict with another running task";
+    private static final int MAX_RETRIES = 5;
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -108,11 +110,10 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
 
     private void remindJointApplicants(CaseDetails caseDetails, User user, String serviceAuth) {
 
+        CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
+        String state = caseDetails.getState();
+
         try {
-            final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-
-            var state = caseDetails.getState();
-
             if (AwaitingConditionalOrder.name().equals(state) || ConditionalOrderDrafted.name().equals(state)) {
                 notificationDispatcher.send(awaitingConditionalOrderReminderNotification, caseData, caseDetails.getId());
             } else {
@@ -122,10 +123,15 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
             log.error("Notification for SystemRemindApplicantsApplyForCOrderTask has failed with exception {} for case id {}",
                 exception.getMessage(), caseDetails.getId());
 
-            // Call event to persist notification flags previously set, to stop notifications being sent multiple times on failed crons.
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_UPDATE_CASE, user, serviceAuth);
+            if (caseData.getConditionalOrder().getMaxCronRetriesRemindApplicant() < MAX_RETRIES) {
+                caseData.getConditionalOrder().setMaxCronRetriesRemindApplicant(
+                    caseData.getConditionalOrder().getMaxCronRetriesRemindApplicant()+1);
 
-            // Throw the exception to exit, we don't want to continue and call the cron.
+                caseDetails.setData(objectMapper.convertValue(caseData, new TypeReference<>() {}));
+                ccdUpdateService.submitEvent(caseDetails, SYSTEM_UPDATE_CASE, user, serviceAuth);
+            }
+
+            // Throw the exception to exit, we don't want to continue and call the 'remind applicant' event.
             throw exception;
         }
 
@@ -134,6 +140,7 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
                 "20Week holding period +14days elapsed for Case({}) - reminding Joint Applicants they can apply for a Conditional Order",
                 caseDetails.getId()
             );
+            caseDetails.setData(objectMapper.convertValue(caseData, new TypeReference<>() {}));
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, serviceAuth);
 
         } catch (final CcdManagementException e) {
