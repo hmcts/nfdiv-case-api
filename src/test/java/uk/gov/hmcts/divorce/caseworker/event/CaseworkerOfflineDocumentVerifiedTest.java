@@ -62,9 +62,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -486,7 +485,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
-        assertThat(response.getState()).isEqualTo(AwaitingFinalOrder);
+        assertThat(response.getState()).isEqualTo(FinalOrderRequested);
         assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
     }
 
@@ -541,7 +540,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
-        assertThat(response.getState()).isEqualTo(AwaitingJointFinalOrder);
+        assertThat(response.getState()).isEqualTo(FinalOrderRequested);
         assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
         assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
     }
