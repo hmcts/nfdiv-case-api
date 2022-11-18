@@ -11,6 +11,8 @@ import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,7 @@ import java.util.UUID;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.CHERISHED;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.COVERSHEET;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.OTHER;
@@ -30,6 +33,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 
 class CaseDocumentsTest {
 
@@ -300,6 +305,30 @@ class CaseDocumentsTest {
 
         assertThat(caseDocuments.isGivenDocumentUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)).isTrue();
         assertThat(caseDocuments.isGivenDocumentUnderConfidentialList(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)).isTrue();
+    }
+
+    @Test
+    void shouldMapScannedDocumentToDivorceDocument() {
+
+        final CaseDocuments caseDocuments = CaseDocuments.builder().build();
+        final Clock clock = mock(Clock.class);
+        setMockClock(clock);
+
+        final ScannedDocument scannedDocument = ScannedDocument.builder()
+            .url(Document.builder().build())
+            .fileName("D36.pdf")
+            .build();
+
+        final DivorceDocument expectedResponse = DivorceDocument.builder()
+            .documentLink(Document.builder().build())
+            .documentFileName("D36.pdf")
+            .documentDateAdded(LocalDate.now(clock))
+            .documentType(FINAL_ORDER_APPLICATION)
+            .documentComment("Reclassified scanned document")
+            .build();
+
+        assertThat(caseDocuments.mapScannedDocumentToDivorceDocument(scannedDocument, FINAL_ORDER_APPLICATION, clock))
+            .isEqualTo(expectedResponse);
     }
 
     private ListValue<ScannedDocument> getDocumentListValue(final String url,
