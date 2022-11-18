@@ -17,10 +17,8 @@ import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronounce
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import static com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils.EMPTY;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT;
@@ -146,14 +144,11 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
         final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
         templateVars.put(COURT_NAME, conditionalOrder.getCourt().getLabel());
         templateVars.put(DATE_OF_HEARING, conditionalOrder.getDateAndTimeOfHearing().format(dateTimeFormatter));
-        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43, isNotEmpty(conditionalOrder.getGrantedDate())
-            ? conditionalOrder.getGrantedDate().plusDays(finalOrderOffsetDays).format(dateTimeFormatter) : EMPTY);
-        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, isNotEmpty(conditionalOrder.getGrantedDate())
-            ? conditionalOrder.getGrantedDate()
-                .plusDays(finalOrderOffsetDays)
-                .plusMonths(finalOrderRespondentOffsetMonth)
-                .format(dateTimeFormatter)
-            : EMPTY);
+        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43,
+            conditionalOrder.getGrantedDate().plusDays(finalOrderOffsetDays).format(dateTimeFormatter));
+        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS,
+            conditionalOrder.getGrantedDate().plusDays(finalOrderOffsetDays)
+                .plusMonths(finalOrderRespondentOffsetMonth).format(dateTimeFormatter));
         return templateVars;
     }
 
@@ -165,8 +160,8 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
         templateVars.put(APPLICANT1_LABEL, caseData.getApplicationType().isSole() ? APPLICANT : APPLICANT_1);
         templateVars.put(APPLICANT2_LABEL, caseData.getApplicationType().isSole() ? RESPONDENT : APPLICANT_2);
         templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));
-        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43, isNotEmpty(caseData.getConditionalOrder().getGrantedDate())
-            ? caseData.getConditionalOrder().getGrantedDate().plusDays(finalOrderOffsetDays).format(DATE_TIME_FORMATTER) : EMPTY);
+        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43,
+            caseData.getConditionalOrder().getGrantedDate().plusDays(finalOrderOffsetDays).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 }
