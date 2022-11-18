@@ -96,40 +96,44 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
         caseData.getApplication().setPreviousState(beforeDetails.getState());
 
         if (qrCodeReadingEnabled) {
-            final List<ListValue<ScannedDocument>> afterScannedDocs = caseData.getDocuments().getScannedDocuments();
-            final List<ListValue<ScannedDocument>> beforeScannedDocs =
-                isNotEmpty(beforeCaseData.getDocuments().getScannedDocuments())
-                    ? beforeCaseData.getDocuments().getScannedDocuments()
-                    : new ArrayList<>();
-
-            Optional<ScannedDocument> mostRecentScannedSubtypeReceived = Stream.ofNullable(afterScannedDocs)
-                .flatMap(Collection::stream)
-                .filter(element -> !beforeScannedDocs.contains(element))
-                .map(ListValue::getValue)
-                .filter(scannedDocument ->
-                    EnumUtils.isValidEnum(
-                        CaseDocuments.ScannedDocumentSubtypes.class,
-                        scannedDocument.getSubtype().toUpperCase(Locale.ROOT)
-                    )
-                )
-                .findFirst();
-
-            if (mostRecentScannedSubtypeReceived.isPresent()) {
-                final ScannedDocument scannedDocument = mostRecentScannedSubtypeReceived.get();
-                final CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype =
-                    CaseDocuments.ScannedDocumentSubtypes.valueOf(scannedDocument.getSubtype().toUpperCase(Locale.ROOT));
-                final DocumentType documentType = getDocumentType(scannedDocumentSubtype);
-
-                if (isNotEmpty(documentType)) {
-                    caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
-                    caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
-                }
-            }
+            handleScannedDocument(caseData, beforeCaseData);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
+    }
+
+    private void handleScannedDocument(CaseData caseData, CaseData beforeCaseData) {
+        final List<ListValue<ScannedDocument>> afterScannedDocs = caseData.getDocuments().getScannedDocuments();
+        final List<ListValue<ScannedDocument>> beforeScannedDocs =
+            isNotEmpty(beforeCaseData.getDocuments().getScannedDocuments())
+                ? beforeCaseData.getDocuments().getScannedDocuments()
+                : new ArrayList<>();
+
+        Optional<ScannedDocument> mostRecentScannedSubtypeReceived = Stream.ofNullable(afterScannedDocs)
+            .flatMap(Collection::stream)
+            .filter(element -> !beforeScannedDocs.contains(element))
+            .map(ListValue::getValue)
+            .filter(scannedDocument ->
+                EnumUtils.isValidEnum(
+                    CaseDocuments.ScannedDocumentSubtypes.class,
+                    scannedDocument.getSubtype().toUpperCase(Locale.ROOT)
+                )
+            )
+            .findFirst();
+
+        if (mostRecentScannedSubtypeReceived.isPresent()) {
+            final ScannedDocument scannedDocument = mostRecentScannedSubtypeReceived.get();
+            final CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype =
+                CaseDocuments.ScannedDocumentSubtypes.valueOf(scannedDocument.getSubtype().toUpperCase(Locale.ROOT));
+            final DocumentType documentType = getDocumentType(scannedDocumentSubtype);
+
+            if (isNotEmpty(documentType)) {
+                caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
+                caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
+            }
+        }
     }
 
     private DocumentType getDocumentType(CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype) {
