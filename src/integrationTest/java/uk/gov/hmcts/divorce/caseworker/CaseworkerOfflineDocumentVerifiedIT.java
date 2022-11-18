@@ -99,7 +99,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         "classpath:caseworker-offline-document-verified-d10-response.json";
 
     private static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_D84_RESPONSE =
-        "classpath:q.json";
+        "classpath:caseworker-offline-document-verified-d84-response.json";
 
     private static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_OTHER_RESPONSE =
         "classpath:caseworker-offline-document-verified-other-response.json";
