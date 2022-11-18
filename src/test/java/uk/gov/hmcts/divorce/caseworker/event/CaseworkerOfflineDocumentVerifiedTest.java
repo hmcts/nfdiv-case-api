@@ -62,6 +62,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
@@ -320,7 +321,65 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
-    void shouldSetOnlyApplicant1ToOfflineIfSoleCaseAndD84Selected() {
+    void shouldSetOnlyApplicant1ToOfflineIfSoleCaseAndStateToJSAwaitingLAD84SelectedAndIsJudicialSeparation() {
+        setMockClock(clock);
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedD84Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .scannedDate(now(clock))
+                    .fileName("D84.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().build())
+            .isJudicialSeparation(YES)
+            .documents(
+                CaseDocuments.builder()
+                    .typeOfDocumentAttached(CO_D84)
+                    .scannedDocuments(List.of(scannedD84Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D84.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(JSAwaitingLA);
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
+        assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
+        assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
+    }
+
+    @Test
+    void shouldSetOnlyApplicant1ToOfflineIfSoleCaseAndStateAwaitingLegalAdvisorReferralIfD84SelectedAndNotJudicialSeparation() {
         setMockClock(clock);
 
         final Document document = Document.builder()
@@ -369,7 +428,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
-        assertThat(response.getState()).isEqualTo(JSAwaitingLA);
+        assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
         assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
@@ -427,7 +486,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
-        assertThat(response.getState()).isEqualTo(JSAwaitingLA);
+        assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
         assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
         assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
