@@ -67,8 +67,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
@@ -321,11 +320,11 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingFinalOrder.name()));
+                jsonPath("$.state").value(FinalOrderRequested.name()));
     }
 
     @Test
-    void shouldTriggerCoSubmissionAndMoveCaseStateToAwaitingJointFinalOrderIfJointCaseAndD36Verified() throws Exception {
+    void shouldTriggerCoSubmissionAndMoveCaseStateToFinalOrderRequestedIfJointCaseAndD36Verified() throws Exception {
 
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
@@ -378,7 +377,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingJointFinalOrder.name()));
+                jsonPath("$.state").value(FinalOrderRequested.name()));
     }
 
     @Test
