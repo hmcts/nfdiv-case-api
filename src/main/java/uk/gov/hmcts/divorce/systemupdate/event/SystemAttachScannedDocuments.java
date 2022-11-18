@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.event;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -43,6 +44,9 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWER
 @Component
 @Slf4j
 public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, UserRole> {
+
+    @Value("${toggle.enable_qr_code_reading}")
+    private boolean qrCodeReadingEnabled;
 
     @Autowired
     private Clock clock;
@@ -91,30 +95,35 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
         final CaseData beforeCaseData = beforeDetails.getData();
         caseData.getApplication().setPreviousState(beforeDetails.getState());
 
-        final List<ListValue<ScannedDocument>> afterScannedDocs = caseData.getDocuments().getScannedDocuments();
-        final List<ListValue<ScannedDocument>> beforeScannedDocs =
-            isNotEmpty(beforeCaseData.getDocuments().getScannedDocuments())
-                ? beforeCaseData.getDocuments().getScannedDocuments()
-                : new ArrayList<>();
+        if (qrCodeReadingEnabled) {
+            final List<ListValue<ScannedDocument>> afterScannedDocs = caseData.getDocuments().getScannedDocuments();
+            final List<ListValue<ScannedDocument>> beforeScannedDocs =
+                isNotEmpty(beforeCaseData.getDocuments().getScannedDocuments())
+                    ? beforeCaseData.getDocuments().getScannedDocuments()
+                    : new ArrayList<>();
 
-        Optional<ScannedDocument> mostRecentScannedSubtypeReceived = Stream.ofNullable(afterScannedDocs)
-            .flatMap(Collection::stream)
-            .filter(element -> !beforeScannedDocs.contains(element))
-            .map(ListValue::getValue)
-            .filter(scannedDocument ->
-                EnumUtils.isValidEnum(CaseDocuments.ScannedDocumentSubtypes.class, scannedDocument.getSubtype().toUpperCase(Locale.ROOT))
-            )
-            .findFirst();
+            Optional<ScannedDocument> mostRecentScannedSubtypeReceived = Stream.ofNullable(afterScannedDocs)
+                .flatMap(Collection::stream)
+                .filter(element -> !beforeScannedDocs.contains(element))
+                .map(ListValue::getValue)
+                .filter(scannedDocument ->
+                    EnumUtils.isValidEnum(
+                        CaseDocuments.ScannedDocumentSubtypes.class,
+                        scannedDocument.getSubtype().toUpperCase(Locale.ROOT)
+                    )
+                )
+                .findFirst();
 
-        if (mostRecentScannedSubtypeReceived.isPresent()) {
-            final ScannedDocument scannedDocument = mostRecentScannedSubtypeReceived.get();
-            final CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype =
-                CaseDocuments.ScannedDocumentSubtypes.valueOf(scannedDocument.getSubtype().toUpperCase(Locale.ROOT));
-            final DocumentType documentType = getDocumentType(scannedDocumentSubtype);
+            if (mostRecentScannedSubtypeReceived.isPresent()) {
+                final ScannedDocument scannedDocument = mostRecentScannedSubtypeReceived.get();
+                final CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype =
+                    CaseDocuments.ScannedDocumentSubtypes.valueOf(scannedDocument.getSubtype().toUpperCase(Locale.ROOT));
+                final DocumentType documentType = getDocumentType(scannedDocumentSubtype);
 
-            if (isNotEmpty(documentType)) {
-                caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
-                caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
+                if (isNotEmpty(documentType)) {
+                    caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
+                    caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
+                }
             }
         }
 
