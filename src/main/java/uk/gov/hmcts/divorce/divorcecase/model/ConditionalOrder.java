@@ -152,7 +152,7 @@ public class ConditionalOrder {
     @CCD(
         label = "Maximum times we can retry the remind applicant apply for CO cron"
     )
-    private Integer maxCronRetriesRemindApplicant;
+    private int maxCronRetriesRemindApplicant;
 
     @CCD(
         label = "Provide a refusal reason",

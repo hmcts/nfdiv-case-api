@@ -131,10 +131,11 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
                 ccdUpdateService.submitEvent(caseDetails, SYSTEM_UPDATE_CASE, user, serviceAuth);
             }
 
-            // Throw the exception to exit, we don't want to continue and call the 'remind applicant' event.
-            throw exception;
+            // return as we don't want to continue and call the 'remind applicant' event.
+            return;
         }
 
+        // If notifications are successful, continue to call the system remind applications CO event.
         try {
             log.info(
                 "20Week holding period +14days elapsed for Case({}) - reminding Joint Applicants they can apply for a Conditional Order",
