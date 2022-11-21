@@ -6,8 +6,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -15,8 +13,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.*;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
@@ -43,8 +45,8 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
         log.info("Caseworker Amend Application Type about to submit callback invoked for case id: {}", details.getId());
         CaseData caseData = details.getData();
 
-        if(!isNull(caseData.getApplicationType())){
-            if(caseData.getDivorceOrDissolution().equals(DIVORCE)){
+        if (!isNull(caseData.getApplicationType())) {
+            if (caseData.getDivorceOrDissolution().equals(DIVORCE)) {
                 caseData.setDivorceOrDissolution(DISSOLUTION);
             } else {
                 caseData.setDivorceOrDissolution(DIVORCE);
