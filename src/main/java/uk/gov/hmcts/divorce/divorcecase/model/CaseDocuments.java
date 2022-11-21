@@ -22,6 +22,8 @@ import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -39,6 +41,7 @@ import static java.util.stream.Collectors.toCollection;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
 
 @Data
@@ -139,6 +142,41 @@ public class CaseDocuments {
         access = {SystemUpdateAndSuperUserAccess.class}
     )
     private OfflineDocumentReceived typeOfDocumentAttached;
+
+    @CCD(
+        label = "Scanned Form Subtype Received?",
+        typeOverride = FixedList,
+        typeParameterOverride = "ScannedDocumentSubtypes"
+    )
+    private ScannedDocumentSubtypes scannedSubtypeReceived;
+
+    @Getter
+    @AllArgsConstructor
+    public enum ScannedDocumentSubtypes implements HasLabel {
+
+        @JsonProperty("D10")
+        D10("D10"),
+
+        @JsonProperty("D84")
+        D84("D84"),
+
+        @JsonProperty("D36")
+        D36("D36"),
+
+        @JsonProperty("D10N")
+        D10N("D10N"),
+
+        @JsonProperty("D84NV")
+        D84NV("D84NV"),
+
+        @JsonProperty("D84NVA")
+        D84NVA("D84NVA"),
+
+        @JsonProperty("D36N")
+        D36N("D36N");
+
+        private final String label;
+    }
 
     @Getter
     @AllArgsConstructor
@@ -249,6 +287,20 @@ public class CaseDocuments {
             this.getDocumentsGenerated()
                 .removeIf(document -> documentType.equals(document.getValue().getDocumentType()));
         }
+    }
+
+    @JsonIgnore
+    public DivorceDocument mapScannedDocumentToDivorceDocument(final ScannedDocument scannedDocument,
+                                                               final DocumentType documentType,
+                                                               final Clock clock) {
+
+        return DivorceDocument.builder()
+            .documentLink(scannedDocument.getUrl())
+            .documentFileName(scannedDocument.getFileName())
+            .documentDateAdded(LocalDate.now(clock))
+            .documentType(documentType)
+            .documentComment("Reclassified scanned document")
+            .build();
     }
 
     public Optional<ListValue<DivorceDocument>> getDocumentGeneratedWithType(final DocumentType documentType) {
