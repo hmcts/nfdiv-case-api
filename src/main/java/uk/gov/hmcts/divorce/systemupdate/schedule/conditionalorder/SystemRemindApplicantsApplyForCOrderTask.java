@@ -123,9 +123,13 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
             log.error("Notification for SystemRemindApplicantsApplyForCOrderTask has failed with exception {} for case id {}",
                 exception.getMessage(), caseDetails.getId());
 
-            if (caseData.getConditionalOrder().getMaxCronRetriesRemindApplicant() < MAX_RETRIES) {
-                caseData.getConditionalOrder().setMaxCronRetriesRemindApplicant(
-                    caseData.getConditionalOrder().getMaxCronRetriesRemindApplicant()+1);
+            if (caseData.getConditionalOrder().getCronRetriesRemindApplicantApplyCo() == null) {
+                caseData.getConditionalOrder().setCronRetriesRemindApplicantApplyCo(0);
+            }
+
+            if (caseData.getConditionalOrder().getCronRetriesRemindApplicantApplyCo() < MAX_RETRIES) {
+                caseData.getConditionalOrder().setCronRetriesRemindApplicantApplyCo(
+                    caseData.getConditionalOrder().getCronRetriesRemindApplicantApplyCo() + 1);
 
                 caseDetails.setData(objectMapper.convertValue(caseData, new TypeReference<>() {}));
                 ccdUpdateService.submitEvent(caseDetails, SYSTEM_UPDATE_CASE, user, serviceAuth);

@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.common.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -25,18 +26,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_
 @Component
 @Slf4j
 public class AwaitingConditionalOrderReminderNotification implements ApplicantNotification {
-
-    public static final String AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1
-        = "awaitingConditionalOrderReminderNotificationSendToApplicant1";
-
-    public static final String AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1_OFFLINE
-        = "awaitingConditionalOrderReminderNotificationSendToApplicant1Offline";
-
-    public static final String AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT2
-        = "awaitingConditionalOrderReminderNotificationSendToApplicant2";
-
-    public static final String AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT2_OFFLINE
-        = "awaitingConditionalOrderReminderNotificationSendToApplicant2Offline";
 
     @Autowired
     private CommonContent commonContent;
@@ -62,7 +51,8 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
 
-        if (!caseData.getSentNotifications().containsKey(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1)) {
+        if (!YesOrNo.YES.equals(caseData.getSentNotifications()
+            .getSentAwaitingConditionalOrderReminderNotificationSendToApplicant1())) {
             log.info("Sending reminder to applicant 1 that they can apply for a conditional order: {}", id);
 
             final Applicant applicant1 = caseData.getApplicant1();
@@ -77,15 +67,16 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
                 templateVars,
                 applicant1.getLanguagePreference()
             );
-
-            caseData.getSentNotifications().put(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1, true);
+            caseData.getSentNotifications()
+                .setSentAwaitingConditionalOrderReminderNotificationSendToApplicant1(YesOrNo.YES);
         }
     }
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
 
-        if (!caseData.getSentNotifications().containsKey(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1)) {
+        if (!YesOrNo.YES.equals(caseData.getSentNotifications()
+            .getAwaitingConditionalOrderReminderNotificationSendToApplicant2())) {
             if (!caseData.getApplicationType().isSole() && nonNull(caseData.getApplicant2().getEmail())) {
                 log.info("Sending reminder applicant 2 that they can apply for a conditional order: {}", id);
 
@@ -102,14 +93,16 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
                     applicant2.getLanguagePreference()
                 );
             }
-            caseData.getSentNotifications().put(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT2, true);
+            caseData.getSentNotifications()
+                .setAwaitingConditionalOrderReminderNotificationSendToApplicant2(YesOrNo.YES);
         }
     }
 
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
 
-        if (!caseData.getSentNotifications().containsKey(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1_OFFLINE)) {
+        if (!YesOrNo.YES.equals(caseData.getSentNotifications()
+            .getAwaitingConditionalOrderReminderNotificationSendToApplicant1Offline())) {
             log.info("Sending reminder applicant 1 offline that they can apply for a conditional order: {}", caseId);
 
             generateCoversheet.generateCoversheet(
@@ -131,15 +124,16 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
 
             conditionalOrderReminderPrinter.sendLetters(caseData, caseId);
 
-            caseData.getSentNotifications().put(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT1_OFFLINE, true);
-
+            caseData.getSentNotifications()
+                .setAwaitingConditionalOrderReminderNotificationSendToApplicant1Offline(YesOrNo.YES);
         }
     }
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
 
-        if (!caseData.getSentNotifications().containsKey(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT2_OFFLINE)) {
+        if (!YesOrNo.YES.equals(caseData.getSentNotifications()
+            .getAwaitingConditionalOrderReminderNotificationSendToApplicant2Offline())) {
             if (!caseData.getApplicationType().isSole()) {
                 log.info("Sending reminder applicant 2 offline that they can apply for a conditional order for joint case: {}", caseId);
 
@@ -162,7 +156,8 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
 
                 conditionalOrderReminderPrinter.sendLetters(caseData, caseId);
 
-                caseData.getSentNotifications().put(AWAITING_CONDITIONAL_ORDER_REMINDER_NOTIFICATION_SEND_TO_APPLICANT2_OFFLINE, true);
+                caseData.getSentNotifications()
+                    .setAwaitingConditionalOrderReminderNotificationSendToApplicant2Offline(YesOrNo.YES);
             }
         }
     }

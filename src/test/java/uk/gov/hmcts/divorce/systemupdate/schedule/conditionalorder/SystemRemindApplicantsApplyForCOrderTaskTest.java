@@ -207,7 +207,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
             .id(1L)
             .build();
         CaseData caseData = CaseData.builder()
-            .conditionalOrder(ConditionalOrder.builder().maxCronRetriesRemindApplicant(5).build())
+            .conditionalOrder(ConditionalOrder.builder().cronRetriesRemindApplicantApplyCo(5).build())
             .build();
 
         when(objectMapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData);
