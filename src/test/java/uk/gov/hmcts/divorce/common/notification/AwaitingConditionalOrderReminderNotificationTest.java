@@ -228,6 +228,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
 
         verifyNoInteractions(notificationService);
     }
+
     @Test
     void shouldNotSendToApplicant1OfflineIfSentInPastSuccessfully() {
         final CaseData caseData = caseData();
@@ -238,6 +239,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
 
         verifyNoInteractions(conditionalOrderReminderPrinter);
     }
+
     @Test
     void shouldNotSendToApplicant2OfflineIfSentInPastSuccessfully() {
         final CaseData caseData = caseData();
