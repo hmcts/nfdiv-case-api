@@ -134,6 +134,7 @@ SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-com
 
 toggle:
   enable_case_document_access_management: ${ENABLE_CDAM:true}
+  enable_qr_code_reading: ${ENABLE_QR_CODE_READING:true}
 
 logging:
   level:
