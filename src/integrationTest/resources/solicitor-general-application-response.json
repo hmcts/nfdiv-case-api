@@ -1,6 +1,7 @@
 {
   "data": {
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "sentNotifications": {},
     "generalApplicationDocument": {
       "documentLink": {
         "document_url": "http://localhost:4200/assets/d11",

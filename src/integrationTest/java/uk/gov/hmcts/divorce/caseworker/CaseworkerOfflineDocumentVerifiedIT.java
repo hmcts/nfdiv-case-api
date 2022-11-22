@@ -33,6 +33,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
+import uk.gov.hmcts.divorce.divorcecase.model.SentNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
@@ -46,6 +47,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -556,7 +558,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
                 .getResponse()
                 .getContentAsString();
 
-        verify(aosPackPrinter).sendAosResponseLetterToApplicant(data, TEST_CASE_ID);
+        verify(aosPackPrinter).sendAosResponseLetterToApplicant(any(), eq(TEST_CASE_ID));
         verifyNoMoreInteractions(aosPackPrinter);
     }
 

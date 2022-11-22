@@ -5,6 +5,7 @@
     "case_data": {
       "applicationType": "soleApplication",
       "applicant1ContactDetailsType": "private",
+      "sentNotifications": {},
       "paperFormApplicantWillServeApplication": "No",
       "paperFormApplicant1SigningSOT": "Yes",
       "solStatementOfReconciliationFirm": "",

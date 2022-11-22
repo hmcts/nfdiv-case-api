@@ -1,5 +1,6 @@
 {
   "data": {
+    "sentNotifications": {},
     "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",

@@ -1,6 +1,7 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
+    "sentNotifications": {},
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant1Email": "test@test.com",
