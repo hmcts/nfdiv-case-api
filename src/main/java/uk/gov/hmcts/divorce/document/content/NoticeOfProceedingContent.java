@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.isNull;
@@ -23,8 +22,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
@@ -158,12 +159,15 @@ public class NoticeOfProceedingContent {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference,
                                      final Applicant partner,
                                      final LanguagePreference languagePreference) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference);
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
@@ -172,6 +176,8 @@ public class NoticeOfProceedingContent {
         templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
         templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
+        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
+        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         if (!isNull(caseData.getDueDate())) {
             templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
