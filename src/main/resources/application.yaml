@@ -140,6 +140,7 @@ uk:
             APPLICANT_APPLY_FOR_FINAL_ORDER: '700d4e14-7eae-4219-b2e6-be01c31e071f'
             SOLE_APPLIED_FOR_FINAL_ORDER: '171a6120-4e41-4d71-99d7-90d10e2f5b9c'
             PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: '42784df1-bf2e-4a8a-b82b-4cc7825d4d3a'
+            SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: 'dc1a3d51-3e93-4f22-b268-ab0f86676f1f'
             JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER: '6db9a294-1613-4926-867a-4302cb0ad6dc'
             JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER: '3a12c67b-da4a-4f56-acff-71bc7f4efa24'
             RESPONDENT_APPLY_FOR_FINAL_ORDER: '33b20df5-0967-490b-ac94-daa1569468d7'
@@ -169,6 +170,7 @@ uk:
             APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO: 'e414d40e-de04-4aa9-b85c-fc939417f0fd'
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT: '8fa6008b-1541-44bc-9ddd-45fa4cd3222c'
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT: 'cdee584c-db6a-4c3a-b2eb-5956940cab58'
+            APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '0e70b66c-dba8-4b7d-8f2e-9f1d05614310'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: 'd7e14a2c-ede8-4f90-8f6f-f7f09ff920c4'
@@ -279,11 +281,13 @@ uk:
             PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: '24d6bb85-82de-49a5-ae97-aec15ecc0ee8'
             INTEND_TO_SWITCH_TO_SOLE_FO: 'b734941e-37d8-47b8-aef8-6c51412bcbc1' #TODO - Welsh translation needed
             PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO: '360465c3-2da5-403a-8163-5487cc214aa7' #TODO - Welsh translation needed
+            SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: 'dc1a3d51-3e93-4f22-b268-ab0f86676f1f' #TODO - Welsh translation needed
             OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR: '8de7c96b-8582-4df4-aa74-89b33ad8454d' #TODO - Welsh translation needed
             OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN: '360465c3-2da5-403a-8163-5487cc214aa7' #TODO - Welsh translation needed
             APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO: 'e414d40e-de04-4aa9-b85c-fc939417f0fd' #TODO - Welsh translation needed
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT: '8fa6008b-1541-44bc-9ddd-45fa4cd3222c' #TODO - Welsh translation needed
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT: 'cdee584c-db6a-4c3a-b2eb-5956940cab58' #TODO - Welsh translation needed
+            APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '0e70b66c-dba8-4b7d-8f2e-9f1d05614310' #TODO - Welsh translation needed
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
@@ -371,8 +375,8 @@ docmosis:
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
     welsh:
-      DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx
-      DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint.docx #TODO: Set correct template when available
+      DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx #TODO: Set correct template when available
+      DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx #TODO: Set correct template when available
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Cy.docx

@@ -118,7 +118,7 @@ docmosis:
       SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx #TODO: Set correct template when available
-      DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint.docx #TODO: Set correct template when available
+      DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx #TODO: Set correct template when available
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order.docx
       CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order.docx
