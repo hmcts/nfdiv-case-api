@@ -87,13 +87,17 @@ public class NoticeOfProceedingJointContent {
     @Autowired
     private CommonContent commonContent;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference,
                                      Applicant applicant,
                                      Applicant partner) {
 
         final LanguagePreference applicantLanguagePreference = applicant.getLanguagePreference();
-        final Map<String, Object> templateContent = new HashMap<>();
+
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(applicantLanguagePreference);
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
@@ -168,12 +172,6 @@ public class NoticeOfProceedingJointContent {
             templateContent.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
         }
-        final var ctscContactDetails = CtscContactDetails
-            .builder()
-            .phoneNumber(phoneNumber)
-            .build();
-
-        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;
     }

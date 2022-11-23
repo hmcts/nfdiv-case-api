@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
@@ -105,6 +106,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
 public class NoticeOfProceedingContentTest {
@@ -120,6 +122,9 @@ public class NoticeOfProceedingContentTest {
 
     @InjectMocks
     private NoticeOfProceedingContent noticeOfProceedingContent;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @BeforeEach
     public void setUp() {
@@ -165,18 +170,17 @@ public class NoticeOfProceedingContentTest {
 
         var ctscContactDetails = CtscContactDetails
             .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
             .poBox("PO Box 13226")
             .town("Harlow")
             .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
             .build();
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
         when(holdingPeriodService.getDueDateFor(LocalDate.of(2021, 6, 18)))
             .thenReturn(LocalDate.of(2021, 11, 6));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -209,7 +213,6 @@ public class NoticeOfProceedingContentTest {
                 entry(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE),
                 entry(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO),
                 entry(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE),
-                entry("ctscContactDetails", ctscContactDetails),
                 entry(APPLICANT_1_ADDRESS, "line1\nline2"),
                 entry(APPLICANT_2_ADDRESS, "10 the street the town UK"),
                 entry(APPLICANT_1_SOLICITOR_NAME, "Not represented"),
@@ -264,17 +267,16 @@ public class NoticeOfProceedingContentTest {
 
         var ctscContactDetails = CtscContactDetails
             .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
             .poBox("PO Box 13226")
             .town("Harlow")
             .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
             .build();
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn(CIVIL_PARTNER);
         when(holdingPeriodService.getDueDateFor(LocalDate.of(2021, 6, 18)))
             .thenReturn(LocalDate.of(2021, 11, 6));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -307,7 +309,6 @@ public class NoticeOfProceedingContentTest {
                 entry(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP),
                 entry(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH),
                 entry(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP),
-                entry("ctscContactDetails", ctscContactDetails),
                 entry(APPLICANT_1_ADDRESS, "line1\nline2"),
                 entry(APPLICANT_2_ADDRESS, "10 the street\nthe town"),
                 entry(APPLICANT_1_SOLICITOR_NAME, "Not represented"),
