@@ -46,7 +46,8 @@ class SetServiceTypeTest {
 
         assertThat(response.getData().getApplicant1()).isEqualTo(expectedCaseData.getApplicant1());
         assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());    }
+        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+    }
 
     @Test
     void shouldNotSetServiceTypeToPersonalServiceIfApplicant1Represented() {
@@ -71,7 +72,8 @@ class SetServiceTypeTest {
 
         assertThat(response.getData().getApplicant1()).isEqualTo(expectedCaseData.getApplicant1());
         assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());    }
+        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+    }
 
     @Test
     void shouldNotSetServiceTypeToPersonalServiceIfApplicant2Represented() {
@@ -96,7 +98,8 @@ class SetServiceTypeTest {
 
         assertThat(response.getData().getApplicant1()).isEqualTo(expectedCaseData.getApplicant1());
         assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());    }
+        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+    }
 
     @Test
     void shouldNotSetServiceTypeToPersonalServiceIfApplicant2NotOverseas() {
