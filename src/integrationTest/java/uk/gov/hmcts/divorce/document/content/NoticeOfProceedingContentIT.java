@@ -33,13 +33,18 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
@@ -48,6 +53,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_REGISTERED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPOND_BY_DATE;
@@ -231,6 +237,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,"Divorce and Dissolution");
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, "HM Courts & Tribunals Service");
+        expectedEntries.put(APPLICANT_2_FULL_NAME, "applicant2FirstName applicant2LastName");
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, "Phone: 0300 303 0642 (Monday to Friday, 8am to 6pm)");
+        expectedEntries.put(CONTACT_EMAIL, "contactdivorce@justice.gov.uk");
+        expectedEntries.put(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name");
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -325,6 +337,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.put(APPLICANT_2_FULL_NAME, "applicant2FirstName applicant2LastName");
+        expectedEntries.put(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name");
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, "Gwasanaeth Ysgariadau a Diddymiadau");
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, "Gwasanaeth Llysoedd a Thribiwnlysoedd EM");
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, "Ffôn: 0300 303 5171 (Dydd Llun i ddydd Iau 9am i 5pm, Dydd Gwener 9am to 4.30pm)");
+        expectedEntries.put(CONTACT_EMAIL, "ymholiadaucymraeg@justice.gov.uk");
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -426,6 +444,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,"Divorce and Dissolution");
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, "HM Courts & Tribunals Service");
+        expectedEntries.put(APPLICANT_2_FULL_NAME, "applicant2FirstName applicant2LastName");
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, "Phone: 0300 303 0642 (Monday to Friday, 8am to 6pm)");
+        expectedEntries.put(CONTACT_EMAIL, "contactdivorce@justice.gov.uk");
+        expectedEntries.put(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name");
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -523,6 +547,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,"Divorce and Dissolution");
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, "HM Courts & Tribunals Service");
+        expectedEntries.put(APPLICANT_2_FULL_NAME, "applicant2FirstName applicant2LastName");
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, "Phone: 0300 303 0642 (Monday to Friday, 8am to 6pm)");
+        expectedEntries.put(CONTACT_EMAIL, "contactdivorce@justice.gov.uk");
+        expectedEntries.put(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name");
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -618,6 +648,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, false);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, CIVIL_PARTNERSHIP_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,"Divorce and Dissolution");
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, "HM Courts & Tribunals Service");
+        expectedEntries.put(APPLICANT_2_FULL_NAME, "applicant2FirstName applicant2LastName");
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, "Phone: 0300 303 0642 (Monday to Friday, 8am to 6pm)");
+        expectedEntries.put(CONTACT_EMAIL, "contactdivorce@justice.gov.uk");
+        expectedEntries.put(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name");
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -713,6 +749,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, false);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, CIVIL_PARTNERSHIP_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,"Gwasanaeth Ysgariadau a Diddymiadau");
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, "Gwasanaeth Llysoedd a Thribiwnlysoedd EM");
+        expectedEntries.put(APPLICANT_2_FULL_NAME, "applicant2FirstName applicant2LastName");
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, "Ffôn: 0300 303 5171 (Dydd Llun i ddydd Iau 9am i 5pm, Dydd Gwener 9am to 4.30pm)");
+        expectedEntries.put(CONTACT_EMAIL, "ymholiadaucymraeg@justice.gov.uk");
+        expectedEntries.put(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name");
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -825,6 +867,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,"Divorce and Dissolution");
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, "HM Courts & Tribunals Service");
+        expectedEntries.put(APPLICANT_2_FULL_NAME, "applicant2FirstName applicant2LastName");
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, "Phone: 0300 303 0642 (Monday to Friday, 8am to 6pm)");
+        expectedEntries.put(CONTACT_EMAIL, "contactdivorce@justice.gov.uk");
+        expectedEntries.put(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name");
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -942,6 +990,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,"Divorce and Dissolution");
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, "HM Courts & Tribunals Service");
+        expectedEntries.put(APPLICANT_2_FULL_NAME, "applicant2FirstName applicant2LastName");
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, "Phone: 0300 303 0642 (Monday to Friday, 8am to 6pm)");
+        expectedEntries.put(CONTACT_EMAIL, "contactdivorce@justice.gov.uk");
+        expectedEntries.put(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name");
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -1048,6 +1102,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,"Divorce and Dissolution");
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, "HM Courts & Tribunals Service");
+        expectedEntries.put(APPLICANT_2_FULL_NAME, "applicant2FirstName applicant2LastName");
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, "Phone: 0300 303 0642 (Monday to Friday, 8am to 6pm)");
+        expectedEntries.put(CONTACT_EMAIL, "contactdivorce@justice.gov.uk");
+        expectedEntries.put(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name");
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
