@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOr
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCase.SYSTEM_UPDATE_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateNFDCase.SYSTEM_UPDATE_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;

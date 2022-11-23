@@ -19,9 +19,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
-public class SystemUpdateBulkCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
+public class SystemUpdateCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
-    public static final String SYSTEM_UPDATE_BULK_CASE = "system-update-bulk-case";
+    public static final String SYSTEM_UPDATE_BULK_CASE = "system-update-case";
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {

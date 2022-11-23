@@ -19,7 +19,7 @@ import java.util.Objects;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateBulkCase.SYSTEM_UPDATE_BULK_CASE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 
 @Service
 @Slf4j

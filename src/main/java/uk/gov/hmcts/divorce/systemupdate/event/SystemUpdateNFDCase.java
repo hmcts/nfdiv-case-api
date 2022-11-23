@@ -16,9 +16,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
-public class SystemUpdateCase implements CCDConfig<CaseData, State, UserRole> {
+public class SystemUpdateNFDCase implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SYSTEM_UPDATE_CASE = "system-update-case";
+    public static final String SYSTEM_UPDATE_CASE = "system-update-nfd-case";
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

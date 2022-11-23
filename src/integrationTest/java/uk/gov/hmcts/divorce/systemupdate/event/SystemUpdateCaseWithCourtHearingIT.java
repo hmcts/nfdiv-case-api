@@ -83,7 +83,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class
 })
-public class SystemUpdateBulkCaseWithCourtHearingIT {
+public class SystemUpdateCaseWithCourtHearingIT {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
