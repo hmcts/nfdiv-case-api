@@ -25,13 +25,6 @@ springdoc:
   packagesToScan: uk.gov.hmcts.divorce,uk.gov.hmcts.ccd.sdk.runtime
   pathsToMatch: /**
 
-logging:
-  level:
-    root: ERROR
-    org.springframework.web: ERROR
-    uk.gov.hmcts.divorce: DEBUG
-    org.hibernate: ERROR
-
 azure:
   application-insights:
     instrumentation-key: ${APP_INSIGHTS_KEY:00000000-0000-0000-0000-000000000000}
