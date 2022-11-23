@@ -185,7 +185,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .forStates(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived, AwaitingService))
             .name("Submit AoS")
             .description("Submit AoS")
-            .showCondition("applicationType=\"soleApplication\"")
+            .showCondition("applicationType=\"soleApplication\" AND aosIsDrafted=\"Yes\"")
             .showSummary()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
