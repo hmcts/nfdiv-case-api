@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.api.callback.Submitted;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccessExcludingCAA;
 import uk.gov.hmcts.divorce.divorcecase.model.access.LegalAdvisorAccess;
@@ -183,6 +184,13 @@ public enum State {
     AwaitingHWFDecision,
 
     @CCD(
+        label = "Awaiting HWF part payment",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingHWFPartPayment,
+
+    @CCD(
         label = "Awaiting joint conditional order",
         hint = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {DefaultStateAccess.class}
@@ -354,8 +362,7 @@ public enum State {
         label = "Submitted",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
-    )
-    Submitted,
+    ) Submitted,
 
     @CCD(
         label = "Welsh Translation requested",
