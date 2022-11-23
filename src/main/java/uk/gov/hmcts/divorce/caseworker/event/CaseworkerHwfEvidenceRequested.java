@@ -30,7 +30,7 @@ public class CaseworkerHwfEvidenceRequested implements CCDConfig<CaseData, State
             .event(CASEWORKER_HWF_EVIDENCE_REQUESTED)
             .forStateTransition(AwaitingHWFDecision, AwaitingHWFEvidence)
             .name("HWF evidence required")
-            .description(TITLE)
+            .description("HWF evidence required")
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
