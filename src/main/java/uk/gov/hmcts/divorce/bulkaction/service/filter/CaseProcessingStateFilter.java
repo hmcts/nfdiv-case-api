@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @Component
 @Slf4j
 public class CaseProcessingStateFilter {
@@ -70,6 +68,6 @@ public class CaseProcessingStateFilter {
     private List<String> getCasesReferences(final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails) {
         return bulkListCaseDetails.stream()
             .map(bulkCase -> bulkCase.getValue().getCaseReference().getCaseReference())
-            .collect(toList());
+            .toList();
     }
 }
