@@ -35,6 +35,7 @@ public class CaseworkerHwfEvidenceRequested implements CCDConfig<CaseData, State
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(
+                CASE_WORKER,
                 SUPER_USER,
                 LEGAL_ADVISOR);
 
