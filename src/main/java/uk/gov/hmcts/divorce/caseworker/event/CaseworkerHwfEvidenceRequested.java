@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.TITLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
