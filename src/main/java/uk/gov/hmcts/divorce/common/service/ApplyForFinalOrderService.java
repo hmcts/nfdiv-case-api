@@ -47,11 +47,11 @@ public class ApplyForFinalOrderService {
         final var finalOrder = caseData.getFinalOrder();
         final List<String> errors = new ArrayList<>();
 
-       if (!caseData.getApplicationType().isSole() && finalOrder.getApplicant1AppliedForFinalOrderFirst().equals(YES) && isApplicant1) {
+       if (!caseData.getApplicationType().isSole() && YES.equals(finalOrder.getApplicant1AppliedForFinalOrderFirst()) && isApplicant1) {
             errors.add("Applicant 1 has already applied for final order.");
         }
 
-        if (!caseData.getApplicationType().isSole() && finalOrder.getApplicant2AppliedForFinalOrderFirst().equals(YES) && !isApplicant1) {
+        if (!caseData.getApplicationType().isSole() && YES.equals(finalOrder.getApplicant2AppliedForFinalOrderFirst()) && !isApplicant1) {
             errors.add("Applicant 2 has already applied for final order.");
         }
 
