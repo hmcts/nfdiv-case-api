@@ -133,8 +133,7 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
 
         if (!YesOrNo.YES.equals(caseData.getSentNotifications()
-            .getAwaitingConditionalOrderReminderNotificationSendToApplicant2Offline())) {
-            if (!caseData.getApplicationType().isSole()) {
+            .getAwaitingConditionalOrderReminderNotificationSendToApplicant2Offline()) && !caseData.getApplicationType().isSole()) {
                 log.info("Sending reminder applicant 2 offline that they can apply for a conditional order for joint case: {}", caseId);
 
                 generateCoversheet.generateCoversheet(
@@ -158,7 +157,6 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
 
                 caseData.getSentNotifications()
                     .setAwaitingConditionalOrderReminderNotificationSendToApplicant2Offline(YesOrNo.YES);
-            }
         }
     }
 }
