@@ -57,11 +57,15 @@ public class CasePronouncementService {
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
-        filterCasesNotInCorrectState(bulkActionCaseData, user, serviceAuth);
+        final List<ListValue<BulkListCaseDetails>> erroredCaseDetails = bulkActionCaseData.getErroredCaseDetails();
+        final List<ListValue<BulkListCaseDetails>> processedCaseDetails = bulkActionCaseData.getProcessedCaseDetails();
+
+        erroredCaseDetails.clear();
+        processedCaseDetails.clear();
 
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases =
             bulkTriggerService.bulkTrigger(
-                bulkActionCaseData.getBulkListCaseDetails(),
+                filterCasesNotInCorrectState(bulkActionCaseData, user, serviceAuth),
                 SYSTEM_PRONOUNCE_CASE,
                 bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_PRONOUNCE_CASE),
                 user,
@@ -73,8 +77,10 @@ public class CasePronouncementService {
 
         log.info("Successfully processed bulk case details list size {} and bulk case id {}", processedBulkCases.size(), details.getId());
 
-        bulkActionCaseData.getErroredCaseDetails().addAll(unprocessedBulkCases);
-        bulkActionCaseData.getProcessedCaseDetails().addAll(processedBulkCases);
+        erroredCaseDetails.addAll(unprocessedBulkCases);
+        processedBulkCases.stream()
+            .filter(listValue -> !processedCaseDetails.contains(listValue))
+            .forEach(processedCaseDetails::add);
 
         try {
             ccdUpdateService.submitBulkActionEvent(
@@ -88,9 +94,9 @@ public class CasePronouncementService {
         }
     }
 
-    private void filterCasesNotInCorrectState(BulkActionCaseData bulkActionCaseData,
-                                              User user,
-                                              String serviceAuth) {
+    private List<ListValue<BulkListCaseDetails>> filterCasesNotInCorrectState(final BulkActionCaseData bulkActionCaseData,
+                                                                              final User user,
+                                                                              final String serviceAuth) {
 
         List<String> caseReferences = bulkActionCaseData.getBulkListCaseDetails().stream()
             .map(bulkCase -> bulkCase.getValue().getCaseReference().getCaseReference())
@@ -127,6 +133,6 @@ public class CasePronouncementService {
                 }
             });
 
-        bulkActionCaseData.setBulkListCaseDetails(updatedBulkList);
+        return updatedBulkList;
     }
 }

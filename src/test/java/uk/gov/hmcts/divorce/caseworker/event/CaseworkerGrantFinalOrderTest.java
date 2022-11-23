@@ -10,13 +10,14 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendFinalOrderGrantedNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -46,7 +47,10 @@ class CaseworkerGrantFinalOrderTest {
     private GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
 
     @Mock
-    private SendFinalOrderGrantedNotifications sendFinalOrderGrantedNotifications;
+    private FinalOrderGrantedNotification finalOrderGrantedNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private CaseworkerGrantFinalOrder caseworkerGrantFinalOrder;
@@ -153,6 +157,6 @@ class CaseworkerGrantFinalOrderTest {
 
         caseworkerGrantFinalOrder.submitted(details, details);
 
-        verify(sendFinalOrderGrantedNotifications).apply(details);
+        verify(notificationDispatcher).send(finalOrderGrantedNotification, caseData, TEST_CASE_ID);
     }
 }
