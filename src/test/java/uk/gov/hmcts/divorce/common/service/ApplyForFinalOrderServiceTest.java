@@ -6,12 +6,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.task.ProgressFinalOrderState;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant1;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,5 +62,42 @@ class ApplyForFinalOrderServiceTest {
 
         verify(setFinalOrderFieldsAsApplicant2).apply(caseDetails);
         verify(progressFinalOrderState).apply(caseDetails);
+    }
+
+    @Test
+    void validateApplyForFinalOrderAddErrorWhenJointAndApplicant1HasAlreadyAppliedForFinalOrder() {
+        final CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .finalOrder(FinalOrder.builder().applicant1AppliedForFinalOrderFirst(YesOrNo.YES).build())
+            .build();
+
+        List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, true);
+
+        assertThat(errors).contains("Applicant 1 has already applied for final order.");
+        assertThat(errors).hasSize(1);
+    }
+
+    @Test
+    void validateApplyForFinalOrderAddErrorWhenJointAndApplicant2HasAlreadyAppliedForFinalOrder() {
+        final CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .finalOrder(FinalOrder.builder().applicant2AppliedForFinalOrderFirst(YesOrNo.YES).build())
+            .build();
+
+        List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, false);
+
+        assertThat(errors).contains("Applicant 2 has already applied for final order.");
+        assertThat(errors).hasSize(1);
+    }
+
+    @Test
+    void validateApplyForFinalOrderNoErrorWhenJointAndNobodyHasAppliedForFinalOrder() {
+        final CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .build();
+
+        List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, false);
+
+        assertThat(errors).hasSize(0);
     }
 }
