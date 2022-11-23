@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.document.content;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -74,9 +73,6 @@ public class NoticeOfProceedingJointContent {
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
     public static final String ADDRESS = "address";
-
-    @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
 
     @Autowired
     private HoldingPeriodService holdingPeriodService;
