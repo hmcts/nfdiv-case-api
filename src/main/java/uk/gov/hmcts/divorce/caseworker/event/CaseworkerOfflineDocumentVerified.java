@@ -30,12 +30,15 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
@@ -191,6 +194,14 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             // setting the status as drafted as AOS answers has been received and is being classified by caseworker
             details.setState(AosDrafted);
 
+            final List<String> errors = validateOfflineAos(details);
+            if (!errors.isEmpty()) {
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .data(caseData)
+                    .errors(errors)
+                    .build();
+            }
+
             final CaseDetails<CaseData, State> response = submitAosService.submitOfflineAos(details);
             response.getData().getApplicant2().setOffline(YES);
             response.getData().getAcknowledgementOfService().setStatementOfTruth(YES);
@@ -323,4 +334,14 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         return SubmittedCallbackResponse.builder().build();
     }
-}
+
+    private List<String> validateOfflineAos(final CaseDetails<CaseData, State> caseDetails) {
+        final List<String> errors = new ArrayList<>();
+        final CaseData caseData = caseDetails.getData();
+
+        if (isNull(caseData.getApplication().getIssueDate())) {
+            errors.add("The application must have been issued to submit offline AOS.");
+        }
+
+        return errors;
+}}
