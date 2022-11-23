@@ -1,0 +1,17 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "soleApplication",
+  "applicant1FirstName": "test_first_name",
+  "applicant1LastName": "test_last_name",
+  "applicant1Email": "applicant1@gmail.com",
+  "applicant2FirstName": "test_first_name",
+  "applicant2LastName": "test_last_name",
+  "applicant2Email": "applicant2@gmail.com",
+  "dueDate": "2020-04-28",
+  "issueDate": "2020-05-28",
+  "applicant1LanguagePreferenceWelsh": "No",
+  "howToRespondApplication": "disputeDivorce",
+  "applicant1SolicitorRepresented": "Yes",
+  "applicant1SolicitorName": "Applicant 1 Solicitor",
+  "applicant1SolicitorEmail": "applicant1.solicitor@gmail.com"
+}
