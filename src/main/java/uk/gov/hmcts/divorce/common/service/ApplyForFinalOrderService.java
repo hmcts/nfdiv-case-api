@@ -10,6 +10,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+
 @Service
 public class ApplyForFinalOrderService {
 
@@ -36,5 +41,20 @@ public class ApplyForFinalOrderService {
             setFinalOrderFieldsAsApplicant2,
             progressFinalOrderState
         ).run(caseDetails);
+    }
+
+    public static List<String> validateApplyForFinalOrder(final CaseData caseData, boolean isApplicant1) {
+        final var finalOrder = caseData.getFinalOrder();
+        final List<String> errors = new ArrayList<>();
+
+       if (!caseData.getApplicationType().isSole() && finalOrder.getApplicant1AppliedForFinalOrderFirst().equals(YES) && isApplicant1) {
+            errors.add("Applicant 1 has already applied for final order.");
+        }
+
+        if (!caseData.getApplicationType().isSole() && finalOrder.getApplicant2AppliedForFinalOrderFirst().equals(YES) && !isApplicant1) {
+            errors.add("Applicant 2 has already applied for final order.");
+        }
+
+        return errors;
     }
 }
