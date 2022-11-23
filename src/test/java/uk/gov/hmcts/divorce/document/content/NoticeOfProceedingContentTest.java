@@ -125,16 +125,6 @@ public class NoticeOfProceedingContentTest {
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
 
-    @BeforeEach
-    public void setUp() {
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "serviceCentre", "Courts and Tribunals Service Centre");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "centreName", "HMCTS Digital Divorce and Dissolution");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "poBox", "PO Box 13226");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "town", "Harlow");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "postcode", "CM20 9UG");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "phoneNumber", "0300 303 0642");
-    }
-
     @Test
     public void shouldSuccessfullyApplyDivorceContentForNoticeOfProceedings() {
         CaseData caseData = caseData();
@@ -166,13 +156,6 @@ public class NoticeOfProceedingContentTest {
         caseData.setCaseInvite(
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
-
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .build();
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
