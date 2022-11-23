@@ -16,6 +16,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -50,6 +51,16 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
     @Test
     public void shouldSendBothApplicantEmailsWhenSubmittedCallbackIsInvoked() throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
+
+        final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, SUBMITTED_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldSendBothApplicantSwitchToSoleEmailsWhenSubmittedCallbackIsInvoked() throws Exception {
+        final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
+        caseData.put("finalOrderSwitchedToSole", YES);
 
         final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, SUBMITTED_URL);
 
