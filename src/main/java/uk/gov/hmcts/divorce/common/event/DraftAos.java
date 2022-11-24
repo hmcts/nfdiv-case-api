@@ -22,11 +22,11 @@ import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -97,15 +97,6 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
                 .build();
         }
 
-        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
-
-        if (null != acknowledgementOfService && acknowledgementOfService.getConfirmReadPetition() == YES) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(singletonList("The Acknowledgement Of Service has already been drafted."))
-                .build();
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseTasks(addMiniApplicationLink)
                 .run(details)
@@ -129,10 +120,15 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private List<String> validateDraftAos(final CaseData caseData) {
+        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
         final List<String> errors = new ArrayList<>();
 
+        if (YES.equals(Optional.ofNullable(acknowledgementOfService.getConfirmReadPetition()).orElse(null))) {
+            return singletonList("The Acknowledgement Of Service has already been drafted.");
+        }
+
         if (isNull(caseData.getApplication().getIssueDate())) {
-            errors.add("You cannot draft the AoS until the case has been issued. Please wait for the case to be issued.");
+            return singletonList("You cannot draft the AoS until the case has been issued. Please wait for the case to be issued.");
         }
 
         return errors;
