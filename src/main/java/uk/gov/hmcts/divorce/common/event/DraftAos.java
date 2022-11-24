@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
