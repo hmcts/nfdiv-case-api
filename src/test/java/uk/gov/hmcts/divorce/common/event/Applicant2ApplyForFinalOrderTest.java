@@ -135,7 +135,7 @@ class Applicant2ApplyForFinalOrderTest {
     }
 
     @Test
-    void returnErrorCallbackIfValidateApplyForFinalOrderFails() {
+    void shouldReturnErrorCallbackIfValidateApplyForFinalOrderFails() {
         final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(AwaitingFinalOrder);

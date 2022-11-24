@@ -37,7 +37,7 @@ class ApplyForFinalOrderServiceTest {
     private ProgressFinalOrderState progressFinalOrderState;
 
     @Test
-    void applyForFinalOrderAsApplicant1ShouldRunTheCorrectTasks() {
+    void shouldRunCorrectTasksForApplyForFinalOrderAsApplicant1() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
 
@@ -51,7 +51,7 @@ class ApplyForFinalOrderServiceTest {
     }
 
     @Test
-    void applyForFinalOrderAsApplicant2ShouldRunTheCorrectTasks() {
+    void shouldRunCorrectTasksForApplyForFinalOrderAsApplicant2() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
 
@@ -65,7 +65,7 @@ class ApplyForFinalOrderServiceTest {
     }
 
     @Test
-    void validateApplyForFinalOrderAddErrorWhenApplicant1HasAlreadyAppliedForFinalOrder() {
+    void shouldAddErrorWhenApplicant1HasAlreadyAppliedForFinalOrder() {
         final CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .finalOrder(FinalOrder.builder().applicant1AppliedForFinalOrderFirst(YesOrNo.YES).build())
@@ -78,7 +78,7 @@ class ApplyForFinalOrderServiceTest {
     }
 
     @Test
-    void validateApplyForFinalOrderAddErrorWhenApplicant2HasAlreadyAppliedForFinalOrder() {
+    void shouldAddErrorWhenApplicant2HasAlreadyAppliedForFinalOrder() {
         final CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .finalOrder(FinalOrder.builder().applicant2AppliedForFinalOrderFirst(YesOrNo.YES).build())
@@ -91,7 +91,7 @@ class ApplyForFinalOrderServiceTest {
     }
 
     @Test
-    void validateApplyForFinalOrderNoErrorWhenNobodyHasAppliedForFinalOrder() {
+    void shouldNotAddErrorWhenNobodyHasAlreadyAppliedForFinalOrderYet() {
         final CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .build();
