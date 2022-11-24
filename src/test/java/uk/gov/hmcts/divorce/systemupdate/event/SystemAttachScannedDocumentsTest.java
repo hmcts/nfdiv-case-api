@@ -25,6 +25,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.api.Event.ATTACH_SCANNED_DOCS;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
+import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36N;
@@ -221,6 +222,53 @@ public class SystemAttachScannedDocumentsTest {
             )
             .build();
         caseData.getDocuments().getScannedDocuments().add(invalidDocument);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemAttachScannedDocuments.aboutToSubmit(details, beforeDetails);
+
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
+    }
+
+    @Test
+    void shouldSkipReclassifyDocumentIfScannedDocumentSubtypesIsNotPresent() {
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedDocWithoutSubtype =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .fileName("test.pdf")
+                    .type(OTHER)
+                    .url(document)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        CaseData beforeCaseData = CaseData.builder()
+            .documents(
+                CaseDocuments.builder()
+                    .scannedDocuments(getScannedDocuments())
+                    .build()
+            )
+            .build();
+        beforeDetails.setData(beforeCaseData);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .documents(
+                CaseDocuments.builder()
+                    .scannedDocuments(getScannedDocuments())
+                    .build()
+            )
+            .build();
+        caseData.getDocuments().getScannedDocuments().add(scannedDocWithoutSubtype);
         details.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
