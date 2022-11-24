@@ -18,8 +18,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 @Service
 public class ApplyForFinalOrderService {
 
-    private static final String APPLICANT_1_ALREADY_APPLIED_FOR_FO_ERROR_MESSAGE = "Applicant 1 has already applied for final order.";
-    private static final String APPLICANT_2_ALREADY_APPLIED_FOR_FO_ERROR_MESSAGE = "Applicant 2 has already applied for final order.";
+    private static final String APP1_ALREADY_APPLIED_FOR_FO_ERR_MESSAGE = "Applicant / Applicant 1 has already applied for final order.";
+    private static final String APP2_ALREADY_APPLIED_FOR_FO_ERR_MESSAGE = "Applicant 2 has already applied for final order.";
 
     @Autowired
     private SetFinalOrderFieldsAsApplicant1 setFinalOrderFieldsAsApplicant1;
@@ -51,11 +51,11 @@ public class ApplyForFinalOrderService {
         final List<String> errors = new ArrayList<>();
 
         if (YES.equals(finalOrder.getApplicant1AppliedForFinalOrderFirst()) && !isApplicant2Event) {
-            errors.add(APPLICANT_1_ALREADY_APPLIED_FOR_FO_ERROR_MESSAGE);
+            errors.add(APP1_ALREADY_APPLIED_FOR_FO_ERR_MESSAGE);
         }
 
         if (YES.equals(finalOrder.getApplicant2AppliedForFinalOrderFirst()) && isApplicant2Event) {
-            errors.add(APPLICANT_2_ALREADY_APPLIED_FOR_FO_ERROR_MESSAGE);
+            errors.add(APP2_ALREADY_APPLIED_FOR_FO_ERR_MESSAGE);
         }
 
         return errors;
