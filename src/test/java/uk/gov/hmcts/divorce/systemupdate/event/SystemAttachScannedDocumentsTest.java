@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
+
 public class SystemAttachScannedDocumentsTest {
 
     @Mock
@@ -45,6 +46,7 @@ public class SystemAttachScannedDocumentsTest {
     private SystemAttachScannedDocuments systemAttachScannedDocuments;
 
     @Test
+
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
@@ -56,6 +58,7 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @Test
+
     void shouldSetScannedSubtypeReceivedToNullInAboutToStartCallback() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getDocuments().setScannedSubtypeReceived(D36);
@@ -69,6 +72,7 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @Test
+
     void shouldSetPreviousState() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -82,6 +86,7 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @Test
+
     void shouldReclassifyScannedDocumentAndAddToDocumentsUploadedIfSubtypeIsValid() {
 
         setMockClock(clock);
@@ -135,6 +140,7 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @Test
+
     void shouldNotSetScannedSubtypeReceivedOrReclassifyDocumentIfScannedDocumentSubtypeIsNotSupported() {
         final Document document = Document.builder()
             .url("/filename")
@@ -183,6 +189,7 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @Test
+
     void shouldNotSetScannedSubtypeReceivedOrReclassifyDocumentIfMostRecentScannedDocumentSubtypesIsInvalid() {
         final Document document = Document.builder()
             .url("/filename")
@@ -229,6 +236,7 @@ public class SystemAttachScannedDocumentsTest {
         assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
         assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
     }
+
 
     private List<ListValue<ScannedDocument>> getScannedDocuments() {
 
