@@ -238,17 +238,21 @@ public class SystemAttachScannedDocumentsTest {
 
     @Test
     void shouldSkipReclassifyDocumentIfScannedDocumentSubtypesIsNotPresent() {
+        setMockClock(clock);
+
+        ReflectionTestUtils.setField(systemAttachScannedDocuments, "qrCodeReadingEnabled", true);
+
         final Document document = Document.builder()
             .url("/filename")
             .binaryUrl("/filename/binary")
             .filename("filename")
             .build();
-        final ListValue<ScannedDocument> scannedDocWithoutSubtype = ListValue
+        final ListValue<ScannedDocument> otherDocument = ListValue
             .<ScannedDocument>builder()
-            .id(FORM.getLabel())
+            .id(OTHER.getLabel())
             .value(
                 ScannedDocument.builder()
-                    .fileName("test.pdf")
+                    .fileName("otherdoc.pdf")
                     .type(OTHER)
                     .url(document)
                     .build()
@@ -273,7 +277,7 @@ public class SystemAttachScannedDocumentsTest {
                     .build()
             )
             .build();
-        caseData.getDocuments().getScannedDocuments().add(scannedDocWithoutSubtype);
+        caseData.getDocuments().getScannedDocuments().add(otherDocument);
         details.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
