@@ -123,7 +123,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
         final List<String> errors = new ArrayList<>();
 
-        if (YES.equals(Optional.ofNullable(acknowledgementOfService.getConfirmReadPetition()).orElse(null))) {
+        if (!isNull(acknowledgementOfService) && YES.equals(acknowledgementOfService.getConfirmReadPetition())) {
             return singletonList("The Acknowledgement Of Service has already been drafted.");
         }
 
