@@ -2,6 +2,8 @@ package uk.gov.hmcts.divorce.systemupdate.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -82,8 +84,10 @@ public class SystemAttachScannedDocumentsTest {
         assertThat(response.getData().getApplication().getPreviousState()).isEqualTo(AwaitingApplicant2Response);
     }
 
-    @Test
-    void shouldReclassifyScannedDocumentAndAddToDocumentsUploadedIfSubtypeIsValid() {
+
+    @ParameterizedTest
+    @ValueSource(strings = {"D10", "D84", "D36"})
+    void shouldReclassifyScannedDocumentAndAddToDocumentsUploadedIfSubtypeIsValid(String subtype) {
 
         setMockClock(clock);
 
@@ -94,13 +98,13 @@ public class SystemAttachScannedDocumentsTest {
             .binaryUrl("/filename/binary")
             .filename("filename")
             .build();
-        final ListValue<ScannedDocument> d36Document =  ListValue
+        final ListValue<ScannedDocument> d36Document = ListValue
             .<ScannedDocument>builder()
             .id(D36.getLabel())
             .value(
                 ScannedDocument.builder()
-                    .subtype("D36")
-                    .fileName("D36.pdf")
+                    .subtype(subtype)
+                    .fileName(subtype + ".pdf")
                     .type(FORM)
                     .url(document)
                     .build()
@@ -131,7 +135,8 @@ public class SystemAttachScannedDocumentsTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             systemAttachScannedDocuments.aboutToSubmit(details, beforeDetails);
 
-        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isEqualTo(D36);
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived())
+            .isEqualTo(CaseDocuments.ScannedDocumentSubtypes.valueOf(subtype));
         assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(1);
     }
 
@@ -142,7 +147,7 @@ public class SystemAttachScannedDocumentsTest {
             .binaryUrl("/filename/binary")
             .filename("filename")
             .build();
-        final ListValue<ScannedDocument> d36NDocument =  ListValue
+        final ListValue<ScannedDocument> d36NDocument = ListValue
             .<ScannedDocument>builder()
             .id(D36N.getLabel())
             .value(
@@ -190,7 +195,7 @@ public class SystemAttachScannedDocumentsTest {
             .binaryUrl("/filename/binary")
             .filename("filename")
             .build();
-        final ListValue<ScannedDocument> invalidDocument =  ListValue
+        final ListValue<ScannedDocument> invalidDocument = ListValue
             .<ScannedDocument>builder()
             .id(FORM.getLabel())
             .value(
@@ -238,7 +243,7 @@ public class SystemAttachScannedDocumentsTest {
             .binaryUrl("/filename/binary")
             .filename("filename")
             .build();
-        final ListValue<ScannedDocument> scannedDocWithoutSubtype =  ListValue
+        final ListValue<ScannedDocument> scannedDocWithoutSubtype = ListValue
             .<ScannedDocument>builder()
             .id(FORM.getLabel())
             .value(
@@ -285,7 +290,7 @@ public class SystemAttachScannedDocumentsTest {
             .binaryUrl("/filename/binary")
             .filename("filename")
             .build();
-        final ListValue<ScannedDocument> scannedD10Document =  ListValue
+        final ListValue<ScannedDocument> scannedD10Document = ListValue
             .<ScannedDocument>builder()
             .id(D10.getLabel())
             .value(
@@ -303,7 +308,7 @@ public class SystemAttachScannedDocumentsTest {
             .binaryUrl("/filename/binary")
             .filename("filename")
             .build();
-        final ListValue<ScannedDocument> scannedD84Document =  ListValue
+        final ListValue<ScannedDocument> scannedD84Document = ListValue
             .<ScannedDocument>builder()
             .id(D84.getLabel())
             .value(
