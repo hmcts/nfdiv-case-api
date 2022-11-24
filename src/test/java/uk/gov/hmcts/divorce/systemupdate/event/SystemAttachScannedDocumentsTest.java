@@ -25,6 +25,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.api.Event.ATTACH_SCANNED_DOCS;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
+import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36N;
@@ -36,7 +37,6 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-
 public class SystemAttachScannedDocumentsTest {
 
     @Mock
@@ -46,7 +46,6 @@ public class SystemAttachScannedDocumentsTest {
     private SystemAttachScannedDocuments systemAttachScannedDocuments;
 
     @Test
-
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
@@ -58,7 +57,6 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @Test
-
     void shouldSetScannedSubtypeReceivedToNullInAboutToStartCallback() {
         final CaseData caseData = CaseData.builder().build();
         caseData.getDocuments().setScannedSubtypeReceived(D36);
@@ -72,7 +70,6 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @Test
-
     void shouldSetPreviousState() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -86,7 +83,6 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @Test
-
     void shouldReclassifyScannedDocumentAndAddToDocumentsUploadedIfSubtypeIsValid() {
 
         setMockClock(clock);
@@ -140,7 +136,6 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @Test
-
     void shouldNotSetScannedSubtypeReceivedOrReclassifyDocumentIfScannedDocumentSubtypeIsNotSupported() {
         final Document document = Document.builder()
             .url("/filename")
@@ -189,7 +184,6 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @Test
-
     void shouldNotSetScannedSubtypeReceivedOrReclassifyDocumentIfMostRecentScannedDocumentSubtypesIsInvalid() {
         final Document document = Document.builder()
             .url("/filename")
@@ -237,6 +231,52 @@ public class SystemAttachScannedDocumentsTest {
         assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
     }
 
+    @Test
+    void shouldSkipReclassifyDocumentIfScannedDocumentSubtypesIsNotPresent() {
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedDocWithoutSubtype =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .fileName("test.pdf")
+                    .type(OTHER)
+                    .url(document)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        CaseData beforeCaseData = CaseData.builder()
+            .documents(
+                CaseDocuments.builder()
+                    .scannedDocuments(getScannedDocuments())
+                    .build()
+            )
+            .build();
+        beforeDetails.setData(beforeCaseData);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .documents(
+                CaseDocuments.builder()
+                    .scannedDocuments(getScannedDocuments())
+                    .build()
+            )
+            .build();
+        caseData.getDocuments().getScannedDocuments().add(scannedDocWithoutSubtype);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemAttachScannedDocuments.aboutToSubmit(details, beforeDetails);
+
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
+    }
 
     private List<ListValue<ScannedDocument>> getScannedDocuments() {
 
