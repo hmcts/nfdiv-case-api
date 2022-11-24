@@ -123,11 +123,11 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         final List<String> errors = new ArrayList<>();
 
         if (!isNull(acknowledgementOfService) && YES.equals(acknowledgementOfService.getConfirmReadPetition())) {
-            return singletonList("The Acknowledgement Of Service has already been drafted.");
+            errors.add("The Acknowledgement Of Service has already been drafted.");
         }
 
         if (isNull(caseData.getApplication().getIssueDate())) {
-            return singletonList("You cannot draft the AoS until the case has been issued. Please wait for the case to be issued.");
+            errors.add("You cannot draft the AoS until the case has been issued. Please wait for the case to be issued.");
         }
 
         return errors;
