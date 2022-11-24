@@ -35,6 +35,9 @@ public class DocmosisCommonContent {
     @Value("${court.locations.serviceCentre.postCode}")
     private String postcode;
 
+    @Value("${court.locations.serviceCentre.email}")
+    private String email;
+
     public Map<String, Object> getBasicDocmosisTemplateContent(LanguagePreference languagePreference) {
         Map<String, Object> templateContent = new HashMap<>();
 
@@ -55,6 +58,7 @@ public class DocmosisCommonContent {
             .poBox(poBox)
             .town(town)
             .postcode(postcode)
+            .emailAddress(email)
             .build();
 
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
