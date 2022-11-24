@@ -46,15 +46,15 @@ public class ApplyForFinalOrderService {
         ).run(caseDetails);
     }
 
-    public static List<String> validateApplyForFinalOrder(final CaseData caseData, boolean isApplicant1) {
+    public static List<String> validateApplyForFinalOrder(final CaseData caseData, boolean isApplicant2Event) {
         final var finalOrder = caseData.getFinalOrder();
         final List<String> errors = new ArrayList<>();
 
-        if (!caseData.getApplicationType().isSole() && YES.equals(finalOrder.getApplicant1AppliedForFinalOrderFirst()) && isApplicant1) {
+        if (YES.equals(finalOrder.getApplicant1AppliedForFinalOrderFirst()) && !isApplicant2Event) {
             errors.add(APPLICANT_1_ALREADY_APPLIED_FOR_FO_ERROR_MESSAGE);
         }
 
-        if (!caseData.getApplicationType().isSole() && YES.equals(finalOrder.getApplicant2AppliedForFinalOrderFirst()) && !isApplicant1) {
+        if (YES.equals(finalOrder.getApplicant2AppliedForFinalOrderFirst()) && isApplicant2Event) {
             errors.add(APPLICANT_2_ALREADY_APPLIED_FOR_FO_ERROR_MESSAGE);
         }
 

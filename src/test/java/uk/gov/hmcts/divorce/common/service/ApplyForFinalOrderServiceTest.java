@@ -65,33 +65,33 @@ class ApplyForFinalOrderServiceTest {
     }
 
     @Test
-    void validateApplyForFinalOrderAddErrorWhenJointAndApplicant1HasAlreadyAppliedForFinalOrder() {
+    void validateApplyForFinalOrderAddErrorWhenApplicant1HasAlreadyAppliedForFinalOrder() {
         final CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .finalOrder(FinalOrder.builder().applicant1AppliedForFinalOrderFirst(YesOrNo.YES).build())
             .build();
 
-        List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, true);
+        List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, false);
 
         assertThat(errors).contains("Applicant 1 has already applied for final order.");
         assertThat(errors).hasSize(1);
     }
 
     @Test
-    void validateApplyForFinalOrderAddErrorWhenJointAndApplicant2HasAlreadyAppliedForFinalOrder() {
+    void validateApplyForFinalOrderAddErrorWhenApplicant2HasAlreadyAppliedForFinalOrder() {
         final CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .finalOrder(FinalOrder.builder().applicant2AppliedForFinalOrderFirst(YesOrNo.YES).build())
             .build();
 
-        List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, false);
+        List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, true);
 
         assertThat(errors).contains("Applicant 2 has already applied for final order.");
         assertThat(errors).hasSize(1);
     }
 
     @Test
-    void validateApplyForFinalOrderNoErrorWhenJointAndNobodyHasAppliedForFinalOrder() {
+    void validateApplyForFinalOrderNoErrorWhenNobodyHasAppliedForFinalOrder() {
         final CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .build();
