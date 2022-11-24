@@ -71,7 +71,7 @@ class ApplyForFinalOrderServiceTest {
             .finalOrder(FinalOrder.builder().applicant1AppliedForFinalOrderFirst(YesOrNo.YES).build())
             .build();
 
-        List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, false);
+        List<String> errors = applyForFinalOrderService.validateApplyForFinalOrder(caseData, false);
 
         assertThat(errors).contains("Applicant / Applicant 1 has already applied for final order.");
         assertThat(errors).hasSize(1);
@@ -84,7 +84,7 @@ class ApplyForFinalOrderServiceTest {
             .finalOrder(FinalOrder.builder().applicant2AppliedForFinalOrderFirst(YesOrNo.YES).build())
             .build();
 
-        List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, true);
+        List<String> errors = applyForFinalOrderService.validateApplyForFinalOrder(caseData, true);
 
         assertThat(errors).contains("Applicant 2 has already applied for final order.");
         assertThat(errors).hasSize(1);
@@ -96,7 +96,7 @@ class ApplyForFinalOrderServiceTest {
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .build();
 
-        List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, false);
+        List<String> errors = applyForFinalOrderService.validateApplyForFinalOrder(caseData, false);
 
         assertThat(errors).hasSize(0);
     }

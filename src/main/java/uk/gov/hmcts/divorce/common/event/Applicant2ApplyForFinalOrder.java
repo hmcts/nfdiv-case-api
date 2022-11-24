@@ -90,7 +90,7 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
         data.getApplication().setPreviousState(beforeDetails.getState());
 
-        final List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(data, true);
+        final List<String> errors = applyForFinalOrderService.validateApplyForFinalOrder(data, true);
         if (!errors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)

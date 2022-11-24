@@ -46,7 +46,7 @@ public class ApplyForFinalOrderService {
         ).run(caseDetails);
     }
 
-    public static List<String> validateApplyForFinalOrder(final CaseData caseData, boolean isApplicant2Event) {
+    public List<String> validateApplyForFinalOrder(final CaseData caseData, boolean isApplicant2Event) {
         final var finalOrder = caseData.getFinalOrder();
         final List<String> errors = new ArrayList<>();
 

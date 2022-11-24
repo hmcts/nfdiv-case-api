@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -143,14 +141,11 @@ class ApplyForFinalOrderTest {
         final List<String> errors = new ArrayList<>();
         errors.add("Test error app1");
 
-        MockedStatic<ApplyForFinalOrderService> applyForFinalOrderServiceMock = mockStatic(ApplyForFinalOrderService.class);
-        applyForFinalOrderServiceMock
-            .when(() -> ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, false)).thenReturn(errors);
+        when(applyForFinalOrderService.validateApplyForFinalOrder(caseData, false)).thenReturn(errors);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse =
             applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(aboutToSubmitResponse.getErrors()).isNotEmpty();
-        applyForFinalOrderServiceMock.close();
     }
 }
