@@ -18,12 +18,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class CaseworkerHwfPartPaymentRequired implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_HWF_Part_Payment_Required = "caseworker-hwf-part-payment-required";
+    public static final String CASEWORKER_HWF_PART_PAYMENT_REQUIRED = "caseworker-hwf-part-payment-required";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_HWF_Part_Payment_Required)
+            .event(CASEWORKER_HWF_PART_PAYMENT_REQUIRED)
             .forStateTransition(AwaitingHWFDecision, AwaitingHWFPartPayment)
             .name("HWF part payment required")
             .description("HWF part payment required")
