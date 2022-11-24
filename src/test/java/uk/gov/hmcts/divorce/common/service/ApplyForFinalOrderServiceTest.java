@@ -73,7 +73,7 @@ class ApplyForFinalOrderServiceTest {
 
         List<String> errors = ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, false);
 
-        assertThat(errors).contains("Applicant 1 has already applied for final order.");
+        assertThat(errors).contains("Applicant / Applicant 1 has already applied for final order.");
         assertThat(errors).hasSize(1);
     }
 

@@ -145,11 +145,12 @@ class ApplyForFinalOrderTest {
 
         MockedStatic<ApplyForFinalOrderService> applyForFinalOrderServiceMock = mockStatic(ApplyForFinalOrderService.class);
         applyForFinalOrderServiceMock
-            .when(() -> ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, true)).thenReturn(errors);
+            .when(() -> ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, false)).thenReturn(errors);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse =
             applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(aboutToSubmitResponse.getErrors()).isNotEmpty();
+        applyForFinalOrderServiceMock.close();
     }
 }

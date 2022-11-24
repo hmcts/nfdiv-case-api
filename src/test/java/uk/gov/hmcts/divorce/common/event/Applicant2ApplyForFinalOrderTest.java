@@ -16,16 +16,12 @@ import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
-import uk.gov.hmcts.divorce.document.DocumentUtil;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -39,7 +35,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 
 @ExtendWith(MockitoExtension.class)
 class Applicant2ApplyForFinalOrderTest {
@@ -152,11 +147,12 @@ class Applicant2ApplyForFinalOrderTest {
 
         MockedStatic<ApplyForFinalOrderService> applyForFinalOrderServiceMock = mockStatic(ApplyForFinalOrderService.class);
         applyForFinalOrderServiceMock
-            .when(() -> ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, false)).thenReturn(errors);
+            .when(() -> ApplyForFinalOrderService.validateApplyForFinalOrder(caseData, true)).thenReturn(errors);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse =
             applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(aboutToSubmitResponse.getErrors()).isNotEmpty();
+        applyForFinalOrderServiceMock.close();
     }
 }
