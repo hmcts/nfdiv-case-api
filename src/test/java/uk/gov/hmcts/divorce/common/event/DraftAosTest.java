@@ -101,7 +101,7 @@ class DraftAosTest {
     }
 
     @Test
-    void shouldThrowErrorAndReturnCaseDataOnAboutToSubmitIfAosHasAlreadyBeenDrafted() {
+    void shouldThrowErrorAndReturnCaseDataOnAboutToStartIfAosHasAlreadyBeenDrafted() {
         final CaseData caseData = CaseData.builder().build();
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .confirmReadPetition(YES)
@@ -121,7 +121,7 @@ class DraftAosTest {
     }
 
     @Test
-    void shouldThrowErrorAndReturnCaseDataOnAboutToSubmitIfApplicationHasNotBeenIssuedYet() {
+    void shouldThrowErrorAndReturnCaseDataOnAboutToStartIfApplicationHasNotBeenIssuedYet() {
         final CaseData caseData = CaseData.builder().build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
