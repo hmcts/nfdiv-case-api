@@ -63,10 +63,10 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .page("attachScannedDocs")
             .pageLabel("Correspondence")
             .complex(CaseData::getDocuments)
-            .mandatory(CaseDocuments::getScannedDocuments)
+                .mandatory(CaseDocuments::getScannedDocuments)
             .done()
             .complex(CaseData::getBulkScanMetaInfo)
-            .mandatoryWithLabel(BulkScanMetaInfo::getEvidenceHandled, "Supplementary evidence handled")
+                .mandatoryWithLabel(BulkScanMetaInfo::getEvidenceHandled, "Supplementary evidence handled")
             .done();
     }
 
