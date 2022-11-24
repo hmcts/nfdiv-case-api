@@ -20,6 +20,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -79,6 +80,28 @@ public class GenerateD10FormTest {
         final var result = generateD10Form.apply(caseDetails);
 
         verifyNoInteractions(generateFormHelper);
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldGenerateD10DocumentForSoleJS() throws IOException {
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.setIsJudicialSeparation(YES);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final var result = generateD10Form.apply(caseDetails);
+
+        verify(generateFormHelper).addFormToGeneratedDocuments(
+            caseData,
+            D10,
+            "D10",
+            "D10.pdf",
+            "/D10.pdf");
         assertThat(result.getData()).isEqualTo(caseData);
     }
 

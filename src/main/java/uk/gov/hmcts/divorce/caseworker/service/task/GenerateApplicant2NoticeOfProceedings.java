@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
@@ -26,6 +27,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP2_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
@@ -76,12 +78,38 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
         if (isSoleApplication) {
             caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
-            generateSoleNoticeOfProceedings(caseData, caseId);
+            if (YesOrNo.YES.equals(caseData.getIsJudicialSeparation())) {
+                generateSoleJSNoticeOfProceedings(caseData, caseId);
+            } else {
+                generateSoleNoticeOfProceedings(caseData, caseId);
+            }
         } else {
             generateJointNoticeOfProceedings(caseData, caseId);
         }
 
         return caseDetails;
+    }
+
+    private void generateSoleJSNoticeOfProceedings(CaseData caseData, Long caseId) {
+        final Applicant applicant2 = caseData.getApplicant2();
+        log.info("Generating NOP for JS respondent for sole case id {} ", caseId);
+        if (!applicant2.isRepresented()) {
+            generateNoticeOfProceedings(
+                caseData,
+                caseId,
+                NFD_NOP_APP2_JS_SOLE,
+                noticeOfProceedingContent.apply(caseData, caseId, applicant2,
+                    caseData.getApplicant2().getLanguagePreference())
+            );
+            log.info("Generating coversheet for JS respondent for sole case id {} ", caseId);
+            generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                COVERSHEET_APPLICANT,
+                coversheetApplicantTemplateContent.apply(caseData, caseId, applicant2),
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        }
     }
 
     private void generateSoleNoticeOfProceedings(final CaseData caseData, final Long caseId) {

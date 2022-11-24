@@ -193,6 +193,11 @@ public final class DocmosisTemplateConstants {
 
     public static final String RESPONSE_DUE_DATE = "responseDueDate";
     public static final String CO_OR_FO = "coOrFo";
+    public static final String JUDICIAL = "judicial";
+    public static final String REISSUED_DATE = "reissuedDate";
+    public static final String RESPONDENT_POSTAL_ADDRESS = "respondentPostalAddress";
+    public static final String MARRIED_TO_MORE_THAN_ONE_PERSON = "marriedToMoreThanOnePerson";
+
 
     private DocmosisTemplateConstants() {
     }
