@@ -6,6 +6,7 @@
       "applicationType": "soleApplication",
       "applicant1ContactDetailsType": "private",
       "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
       "paperFormApplicantWillServeApplication": "No",
       "paperFormApplicant1SigningSOT": "Yes",
       "solStatementOfReconciliationFirm": "",

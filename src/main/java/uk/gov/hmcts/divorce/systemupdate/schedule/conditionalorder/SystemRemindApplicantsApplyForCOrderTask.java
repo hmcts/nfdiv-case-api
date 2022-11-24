@@ -119,13 +119,13 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
             } else {
                 notificationDispatcher.send(conditionalOrderPendingReminderNotification, caseData, caseDetails.getId());
             }
+
+            caseDetails.setData(objectMapper.convertValue(caseData, new TypeReference<>() {}));
+            triggerRemindApplicantsApplyForCo(caseDetails, user, serviceAuth);
+
         } catch (NotificationException | HttpServerErrorException exception) {
             log.error("Notification for SystemRemindApplicantsApplyForCOrderTask has failed with exception {} for case id {}",
                 exception.getMessage(), caseDetails.getId());
-
-            if (caseData.getConditionalOrder().getCronRetriesRemindApplicantApplyCo() == null) {
-                caseData.getConditionalOrder().setCronRetriesRemindApplicantApplyCo(0);
-            }
 
             if (caseData.getConditionalOrder().getCronRetriesRemindApplicantApplyCo() < MAX_RETRIES) {
                 caseData.getConditionalOrder().setCronRetriesRemindApplicantApplyCo(
@@ -134,24 +134,18 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
                 caseDetails.setData(objectMapper.convertValue(caseData, new TypeReference<>() {}));
                 ccdUpdateService.submitEvent(caseDetails, SYSTEM_UPDATE_CASE, user, serviceAuth);
             }
-
-            // return as we don't want to continue and call the 'remind applicant' event.
-            return;
-        }
-
-        // If notifications are successful, continue to call the system remind applications CO event.
-        try {
-            log.info(
-                "20Week holding period +14days elapsed for Case({}) - reminding Joint Applicants they can apply for a Conditional Order",
-                caseDetails.getId()
-            );
-            caseDetails.setData(objectMapper.convertValue(caseData, new TypeReference<>() {}));
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, serviceAuth);
-
         } catch (final CcdManagementException e) {
             log.error(SUBMIT_EVENT_ERROR, caseDetails.getId(), caseDetails.getState());
         } catch (final IllegalArgumentException e) {
             log.error(DESERIALIZATION_ERROR, caseDetails.getId());
         }
+    }
+
+    private void triggerRemindApplicantsApplyForCo(CaseDetails caseDetails, User user, String serviceAuth) {
+        log.info(
+            "20Week holding period +14days elapsed for Case({}) - reminding Joint Applicants they can apply for a Conditional Order",
+            caseDetails.getId()
+        );
+        ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, serviceAuth);
     }
 }

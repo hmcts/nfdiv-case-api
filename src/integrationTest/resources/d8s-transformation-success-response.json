@@ -8,6 +8,7 @@
       "paperFormApplicant1SigningSOT": "Yes",
       "applicant1HWFAppliedForFees": "No",
       "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
       "marriageCertifiedTranslation" : "No",
       "scannedDocuments": [
         {

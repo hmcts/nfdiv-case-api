@@ -211,7 +211,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
     void shouldNotSendToApplicant1IfSentInPastSuccessfully() {
         final CaseData caseData = caseData();
         caseData.getSentNotifications()
-            .setSentAwaitingConditionalOrderReminderNotificationSendToApplicant1(YES);
+            .setAwaitingConditionalOrderReminderNotificationSendToApplicant1(YES);
 
         awaitingConditionalOrderReminderNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
