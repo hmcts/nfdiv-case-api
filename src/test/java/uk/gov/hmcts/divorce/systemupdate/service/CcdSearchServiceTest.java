@@ -27,9 +27,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.concat;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -147,6 +149,47 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Submitted);
 
         assertThat(searchResult.size()).isEqualTo(totalCases);
+    }
+
+    @Test
+    void shouldNotReturnDuplicateCases() {
+        final BoolQueryBuilder query = boolQuery()
+            .must(matchQuery(STATE, Submitted))
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+
+        final List<CaseDetails> caseDetailsList = createCaseDetailsList(PAGE_SIZE, 1L);
+        final List<CaseDetails> duplicateCasesDetailsList = createCaseDetailsList(PAGE_SIZE, 1L);
+
+        final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE)
+            .cases(caseDetailsList).build();
+        final SearchResult searchResult2 = SearchResult.builder().total(PAGE_SIZE)
+            .cases(duplicateCasesDetailsList).build();
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            getSourceBuilder(0, PAGE_SIZE).toString()))
+            .thenReturn(searchResult1);
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            getSourceBuilder(PAGE_SIZE, PAGE_SIZE).toString()))
+            .thenReturn(searchResult2);
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            getSourceBuilder(PAGE_SIZE * 2, PAGE_SIZE).toString()))
+            .thenReturn(SearchResult.builder().total(PAGE_SIZE)
+                .cases(emptyList()).build());
+
+        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Submitted);
+
+        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).isEqualTo(new HashSet<>(caseDetailsList).stream().toList());
     }
 
     @Test
