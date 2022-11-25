@@ -6,10 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -25,7 +23,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FEEDBACK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_JOINT;
@@ -53,23 +50,8 @@ public class GeneralLetterTemplateContentTest {
     @InjectMocks
     private GeneralLetterTemplateContent generalLetterTemplateContent;
 
-    private static final CtscContactDetails CTSC_CONTACT = CtscContactDetails
-        .builder()
-        .emailAddress("divorcecase@justice.gov.uk")
-        .poBox("PO Box 13226")
-        .town("Harlow")
-        .postcode("CM20 9UG")
-        .phoneNumber("0300 303 0642")
-        .build();
-
     @BeforeEach
     public void setUp() {
-        ReflectionTestUtils.setField(generalLetterTemplateContent, "poBox", CTSC_CONTACT.getPoBox());
-        ReflectionTestUtils.setField(generalLetterTemplateContent, "town", CTSC_CONTACT.getTown());
-        ReflectionTestUtils.setField(generalLetterTemplateContent, "postcode", CTSC_CONTACT.getPostcode());
-        ReflectionTestUtils.setField(generalLetterTemplateContent, "email", CTSC_CONTACT.getEmailAddress());
-        ReflectionTestUtils.setField(generalLetterTemplateContent, "phoneNumber", CTSC_CONTACT.getPhoneNumber());
-
         setMockClock(clock, LocalDate.of(2022, 3, 16));
     }
 
@@ -91,8 +73,7 @@ public class GeneralLetterTemplateContentTest {
             entry(RECIPIENT_NAME, "test_first_name test_last_name"),
             entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
             entry(IS_JOINT, true),
-            entry(FEEDBACK, "some feedback"),
-            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
+            entry(FEEDBACK, "some feedback")
         );
     }
 
@@ -114,8 +95,7 @@ public class GeneralLetterTemplateContentTest {
             entry(RECIPIENT_NAME, "test_first_name test_last_name"),
             entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
             entry(IS_JOINT, true),
-            entry(FEEDBACK, "some feedback"),
-            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
+            entry(FEEDBACK, "some feedback")
         );
     }
 
@@ -146,8 +126,7 @@ public class GeneralLetterTemplateContentTest {
             entry(RECIPIENT_NAME, "Other Recipient"),
             entry(RECIPIENT_ADDRESS, "New lane\nBirmingham\nB1 XXX"),
             entry(IS_JOINT, false),
-            entry(FEEDBACK, "some feedback"),
-            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
+            entry(FEEDBACK, "some feedback")
         );
     }
 }
