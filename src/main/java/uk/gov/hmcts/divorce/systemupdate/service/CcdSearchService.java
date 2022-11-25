@@ -95,8 +95,7 @@ public class CcdSearchService {
 
         try {
             while (totalResults == pageSize) {
-                final SearchResult searchResult =
-                    searchForCasesWithQuery(from, pageSize, query, user, serviceAuth);
+                final SearchResult searchResult = searchForCasesWithQuery(from, pageSize, query, user, serviceAuth);
 
                 final List<CaseDetails> pageResults = searchResult.getCases();
 
@@ -209,10 +208,6 @@ public class CcdSearchService {
         final User user,
         final String serviceAuth) {
 
-        final Set<CaseDetails> allCaseDetails = new HashSet<>();
-        int from = 0;
-        int totalResults = pageSize;
-
         final QueryBuilder stateQuery = matchQuery(STATE, state);
         final QueryBuilder errorCasesExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder processedCases = existsQuery("data.processedCaseDetails");
@@ -227,43 +222,19 @@ public class CcdSearchService {
                         .must(boolQuery().must(errorCasesExist))));
 
         try {
-            while (totalResults == pageSize) {
-
-                final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
-                    .searchSource()
-                    .query(query)
-                    .from(from)
-                    .size(pageSize);
-
-                final SearchResult searchResult = coreCaseDataApi.searchCases(
-                    user.getAuthToken(),
-                    serviceAuth,
-                    BulkActionCaseTypeConfig.CASE_TYPE,
-                    sourceBuilder.toString());
-
-                final List<CaseDetails> pageResults = searchResult.getCases();
-                allCaseDetails.addAll(pageResults);
-
-                from += pageSize;
-                totalResults = pageResults.size();
-            }
+            return searchBulkActionCases(user, serviceAuth, query).stream()
+                .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
+                .toList();
         } catch (final FeignException e) {
 
             final String message = String.format("Failed to complete search for Bulk Cases with state of %s", state);
             log.info(message, e);
             throw new CcdSearchCaseException(message, e);
         }
-
-        return allCaseDetails.stream()
-            .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
-            .toList();
     }
 
     public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
         searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(final User user, final String serviceAuth) {
-        final Set<CaseDetails> allCaseDetails = new HashSet<>();
-        int from = 0;
-        int totalResults = pageSize;
 
         final QueryBuilder createdStateQuery = matchQuery(STATE, Created);
         final QueryBuilder listedStateQuery = matchQuery(STATE, Listed);
@@ -278,35 +249,14 @@ public class CcdSearchService {
             .minimumShouldMatch(1);
 
         try {
-            while (totalResults == pageSize) {
-
-                final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
-                    .searchSource()
-                    .query(query)
-                    .from(from)
-                    .size(pageSize);
-
-                final SearchResult searchResult = coreCaseDataApi.searchCases(
-                    user.getAuthToken(),
-                    serviceAuth,
-                    BulkActionCaseTypeConfig.CASE_TYPE,
-                    sourceBuilder.toString());
-
-                final List<CaseDetails> pageResults = searchResult.getCases();
-                allCaseDetails.addAll(pageResults);
-
-                from += pageSize;
-                totalResults = pageResults.size();
-            }
+            return searchBulkActionCases(user, serviceAuth, query).stream()
+                .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
+                .toList();
         } catch (final FeignException e) {
             final String message = "Failed to complete search for Bulk Cases with state of Created or Listed with cases to be removed";
             log.info(message, e);
             throw new CcdSearchCaseException(message, e);
         }
-
-        return allCaseDetails.stream()
-            .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
-            .toList();
     }
 
     public List<CaseDetails> searchForCases(
@@ -460,5 +410,35 @@ public class CcdSearchService {
         log.info("Cases retrieved AwaitingAOS cases with confirmReadPetition equals Yes {}", caseDetails.size());
 
         return caseDetails;
+    }
+
+    private Set<CaseDetails> searchBulkActionCases(final User user, final String serviceAuth, final QueryBuilder query) {
+
+        final Set<CaseDetails> allCaseDetails = new HashSet<>();
+        int from = 0;
+        int totalResults = pageSize;
+
+        while (totalResults == pageSize) {
+
+            final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+                .searchSource()
+                .query(query)
+                .from(from)
+                .size(pageSize);
+
+            final SearchResult searchResult = coreCaseDataApi.searchCases(
+                user.getAuthToken(),
+                serviceAuth,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                sourceBuilder.toString());
+
+            final List<CaseDetails> pageResults = searchResult.getCases();
+            allCaseDetails.addAll(pageResults);
+
+            from += pageSize;
+            totalResults = pageResults.size();
+        }
+
+        return allCaseDetails;
     }
 }
