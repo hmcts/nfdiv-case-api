@@ -36,7 +36,7 @@ public class CaseworkerHWFPartPaymentMade implements CCDConfig<CaseData, State, 
             .name(EVENT_NAME_AND_DESCRIPTION)
             .description(EVENT_NAME_AND_DESCRIPTION)
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, CITIZEN));
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
+            .grantHistoryOnly(SOLICITOR, LEGAL_ADVISOR, CITIZEN));
     }
 }
