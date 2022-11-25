@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.service.task;
 
-import com.microsoft.applicationinsights.core.dependencies.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

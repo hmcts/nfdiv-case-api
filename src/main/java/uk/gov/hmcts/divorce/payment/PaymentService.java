@@ -130,7 +130,7 @@ public class PaymentService {
             );
 
             if (paymentResponseEntity != null) {
-                return new PbaResponse(paymentResponseEntity.getStatusCode(), null, paymentReference);
+                return new PbaResponse(HttpStatus.resolve(paymentResponseEntity.getStatusCode().value()), null, paymentReference);
             }
 
         } catch (FeignException exception) {

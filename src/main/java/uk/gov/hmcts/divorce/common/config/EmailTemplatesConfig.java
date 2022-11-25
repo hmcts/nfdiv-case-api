@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.config;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import javax.validation.constraints.NotNull;
 
 @Component
 @ConfigurationProperties(prefix = "uk.gov.notify.email")

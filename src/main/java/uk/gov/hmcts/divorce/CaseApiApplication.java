@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -24,7 +25,6 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
 import java.util.TimeZone;
-import javax.annotation.PostConstruct;
 
 @SpringBootApplication(
     exclude = {CoreCaseDataClientAutoConfiguration.class},

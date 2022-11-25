@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
@@ -7,7 +8,6 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import java.util.Map;
-import javax.annotation.Resource;
 
 @Component
 public class BulkCaseCaseTaskFactory {

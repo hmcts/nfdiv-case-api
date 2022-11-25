@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.applicationinsights.core.dependencies.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 import feign.FeignException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
