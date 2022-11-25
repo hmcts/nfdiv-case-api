@@ -81,7 +81,8 @@ public class GeneralLetterTemplateContentTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
                 .thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
-        final Map<String, Object> templateContent = generalLetterTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference());
+        final Map<String, Object> templateContent = generalLetterTemplateContent
+                .apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference());
 
         assertThat(templateContent).contains(
             entry(ISSUE_DATE, "16 March 2022"),
