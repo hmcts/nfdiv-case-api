@@ -26,6 +26,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP2_JS_SOLE;
@@ -152,7 +153,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             final LanguagePreference applicant2LanguagePreference = applicant2.getLanguagePreference();
             final Applicant applicant1 = caseData.getApplicant1();
 
-            boolean reissuedAsOfflineAOS = ReissueOption.OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
+            boolean reissuedAsOfflineAOS = OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
 
             if (applicant2.isBasedOverseas()) {
                 log.info("Generating NOP for overseas respondent for sole case id {} ", caseId);

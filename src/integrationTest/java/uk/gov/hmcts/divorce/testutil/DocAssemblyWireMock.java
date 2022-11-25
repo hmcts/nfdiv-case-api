@@ -110,7 +110,7 @@ public final class DocAssemblyWireMock {
         }
     }
 
-    public static void stubDFormsUpload(DocumentUploadClientApi documentUploadClientApi, DocumentType docType, String docTemplateId) {
+    public static void mockDFormsUpload(DocumentUploadClientApi documentUploadClientApi, DocumentType docType, String docTemplateId) {
         UploadResponse uploadResponse = Mockito.mock(UploadResponse.class);
         UploadResponse.Embedded embedded = Mockito.mock(UploadResponse.Embedded.class);
         when(uploadResponse.getEmbedded()).thenReturn(embedded);
