@@ -71,7 +71,7 @@ public class CasePronouncementService {
 
         erroredCaseDetails.addAll(
             bulkTriggerService.bulkTrigger(
-                caseFilterProcessingState.getProcessableCases(),
+                caseFilterProcessingState.getUnprocessedCases(),
                 SYSTEM_PRONOUNCE_CASE,
                 bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_PRONOUNCE_CASE),
                 user,

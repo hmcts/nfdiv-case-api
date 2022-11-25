@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CaseFilterProcessingState {
 
-    private List<ListValue<BulkListCaseDetails>> processableCases;
+    private List<ListValue<BulkListCaseDetails>> unprocessedCases;
     private List<ListValue<BulkListCaseDetails>> erroredCases;
     private List<ListValue<BulkListCaseDetails>> processedCases;
 }

@@ -24,8 +24,8 @@ public class CaseProcessingStateFilter {
     public CaseFilterProcessingState filterProcessingState(final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
                                                            final User user,
                                                            final String serviceAuth,
-                                                           final EnumSet<State> startStates,
-                                                           final State targetState) {
+                                                           final EnumSet<State> prestates,
+                                                           final State postState) {
 
         final List<String> processedCaseReferences = new ArrayList<>();
         final List<String> erroredCaseReferences = new ArrayList<>();
@@ -35,12 +35,12 @@ public class CaseProcessingStateFilter {
 
         ccdSearchService.searchForCases(getCasesReferences(bulkListCaseDetails), user, serviceAuth)
             .forEach(caseDetails -> {
-                if (targetState.name().equals(caseDetails.getState())) {
+                if (postState.name().equals(caseDetails.getState())) {
                     log.info(
                         "Case ID {} will be skipped and moved to processed list as already processed",
                         caseDetails.getId());
                     processedCaseReferences.add(String.valueOf(caseDetails.getId()));
-                } else if (isNotStartState(startStates, caseDetails)) {
+                } else if (isValidPrestate(prestates, caseDetails)) {
                     log.info(
                         "Case ID {} will be skipped and moved to error list as not in correct state to be processed",
                         caseDetails.getId());
@@ -61,7 +61,7 @@ public class CaseProcessingStateFilter {
         return new CaseFilterProcessingState(processableCases, erroredCases, processedCases);
     }
 
-    private boolean isNotStartState(final EnumSet<State> startStates, final CaseDetails caseDetails) {
+    private boolean isValidPrestate(final EnumSet<State> startStates, final CaseDetails caseDetails) {
         return !startStates.contains(State.valueOf(caseDetails.getState()));
     }
 

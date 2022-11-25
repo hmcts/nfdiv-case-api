@@ -76,7 +76,7 @@ class CaseProcessingStateFilterTest {
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
             ConditionalOrderPronounced);
 
-        assertThat(caseFilterProcessingState.getProcessableCases()).isEqualTo(
+        assertThat(caseFilterProcessingState.getUnprocessedCases()).isEqualTo(
             List.of(bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue3));
         assertThat(caseFilterProcessingState.getErroredCases()).isEqualTo(List.of(bulkListCaseDetailsListValue4));
         assertThat(caseFilterProcessingState.getProcessedCases()).isEqualTo(List.of(bulkListCaseDetailsListValue2));
