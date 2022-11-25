@@ -258,7 +258,8 @@ public class CaseData {
     private List<ListValue<GeneralLetterDetails>> generalLetters;
 
     @CCD(
-        label = "Sent notifications"
+        label = "Sent notifications",
+        access = {DefaultAccess.class}
     )
     @Builder.Default
     private SentNotifications sentNotifications = new SentNotifications();
