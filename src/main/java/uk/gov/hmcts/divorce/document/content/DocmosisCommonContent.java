@@ -27,25 +27,25 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PH
 public class DocmosisCommonContent {
 
     @Value("${court.locations.serviceCentre.serviceCentreName}")
-    private String serviceCentre;
+    public static String serviceCentre;
 
     @Value("${court.locations.serviceCentre.centreName}")
-    private String centreName;
+    public static String centreName;
 
     @Value("${court.locations.serviceCentre.poBox}")
-    private String poBox;
+    public static String poBox;
 
     @Value("${court.locations.serviceCentre.town}")
-    private String town;
+    public static String town;
 
     @Value("${court.locations.serviceCentre.postCode}")
-    private String postcode;
+    public static String postcode;
 
     @Value("${court.locations.serviceCentre.email}")
-    private String email;
+    public static String email;
 
     @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
+    public static String phoneNumber;
 
     public Map<String, Object> getBasicDocmosisTemplateContent(LanguagePreference languagePreference) {
         Map<String, Object> templateContent = new HashMap<>();

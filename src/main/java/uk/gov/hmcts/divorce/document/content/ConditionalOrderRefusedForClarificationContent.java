@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
@@ -16,6 +15,11 @@ import java.util.Map;
 import java.util.Set;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.centreName;
+import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.poBox;
+import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.postcode;
+import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.serviceCentre;
+import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.town;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
@@ -46,21 +50,6 @@ public class ConditionalOrderRefusedForClarificationContent {
 
     @Autowired
     private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
-
-    @Value("${court.locations.serviceCentre.serviceCentreName}")
-    private String serviceCentre;
-
-    @Value("${court.locations.serviceCentre.centreName}")
-    private String centreName;
-
-    @Value("${court.locations.serviceCentre.poBox}")
-    private String poBox;
-
-    @Value("${court.locations.serviceCentre.town}")
-    private String town;
-
-    @Value("${court.locations.serviceCentre.postCode}")
-    private String postcode;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 

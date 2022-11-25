@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.document.content;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
@@ -19,6 +18,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdv
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.HER_HONOUR_JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.HIS_HONOUR_JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.PROPER_OFFICER_OF_THE_COURT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.centreName;
+import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.email;
+import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.phoneNumber;
+import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.serviceCentre;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
@@ -48,18 +51,6 @@ public class GeneralOrderTemplateContent {
 
     @Autowired
     private Clock clock;
-
-    @Value("${court.locations.serviceCentre.serviceCentreName}")
-    private String serviceCentre;
-
-    @Value("${court.locations.serviceCentre.centreName}")
-    private String centreName;
-
-    @Value("${court.locations.serviceCentre.email}")
-    private String email;
-
-    @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference) {
