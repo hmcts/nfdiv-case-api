@@ -22,14 +22,14 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.collect.Lists.partition;
-import static java.util.stream.Collectors.toList;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -89,7 +89,7 @@ public class CcdSearchService {
     public List<CaseDetails> searchForAllCasesWithQuery(
         final BoolQueryBuilder query, User user, String serviceAuth, final State... states) {
 
-        final List<CaseDetails> allCaseDetails = new ArrayList<>();
+        final Set<CaseDetails> allCaseDetails = new HashSet<>();
         int from = 0;
         int totalResults = pageSize;
 
@@ -111,7 +111,7 @@ public class CcdSearchService {
             throw new CcdSearchCaseException(message, e);
         }
 
-        return allCaseDetails;
+        return allCaseDetails.stream().toList();
     }
 
     public SearchResult searchForCasesWithQuery(final int from,
@@ -209,7 +209,7 @@ public class CcdSearchService {
         final User user,
         final String serviceAuth) {
 
-        final List<CaseDetails> allCaseDetails = new ArrayList<>();
+        final Set<CaseDetails> allCaseDetails = new HashSet<>();
         int from = 0;
         int totalResults = pageSize;
 
@@ -256,12 +256,12 @@ public class CcdSearchService {
 
         return allCaseDetails.stream()
             .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
-            .collect(toList());
+            .toList();
     }
 
     public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
         searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(final User user, final String serviceAuth) {
-        final List<CaseDetails> allCaseDetails = new ArrayList<>();
+        final Set<CaseDetails> allCaseDetails = new HashSet<>();
         int from = 0;
         int totalResults = pageSize;
 
@@ -306,7 +306,7 @@ public class CcdSearchService {
 
         return allCaseDetails.stream()
             .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
-            .collect(toList());
+            .toList();
     }
 
     public List<CaseDetails> searchForCases(
