@@ -24,7 +24,9 @@ import java.util.Map;
 
 import static java.time.LocalDateTime.now;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP2_JS_SOLE;
@@ -78,8 +80,11 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
         if (isSoleApplication) {
             caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
-            if (YesOrNo.YES.equals(caseData.getIsJudicialSeparation())) {
-                generateSoleJSNoticeOfProceedings(caseData, caseId);
+            ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
+            if (YES.equals(caseDetails.getData().getIsJudicialSeparation())) {
+                if (!DIGITAL_AOS.equals(reissueOption)) {
+                    generateSoleJSNoticeOfProceedings(caseData, caseId);
+                }
             } else {
                 generateSoleNoticeOfProceedings(caseData, caseId);
             }
@@ -251,4 +256,10 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
         );
     }
+
+    private boolean shouldGenerateSpecificJSProceedings(CaseDetails<CaseData, State> caseDetails) {
+        ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
+        return (YES.equals(caseDetails.getData().getIsJudicialSeparation()) && !DIGITAL_AOS.equals(reissueOption));
+    }
 }
+

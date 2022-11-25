@@ -98,6 +98,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOL
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubDFormsUpload;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDownloadBinaryFromDocumentManagement;
@@ -153,6 +154,8 @@ public class CaseworkerReIssueApplicationIT {
         "classpath:caseworker-reissue-application-about-to-submit-app2-not-sol-rep-offline-aos-response.json";
     private static final String REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_REISSUE_CASE_TYPE =
         "classpath:caseworker-reissue-application-about-to-submit-app2-not-sol-rep-reissue-case-response.json";
+    private static final String REISSUE_APPLICATION_JS_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_REISSUE_CASE_TYPE =
+        "classpath:caseworker-reissue-application-js-about-to-submit-app2-not-sol-rep-reissue-case-response.json";
     private static final String REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_REISSUE_CASE_TYPE_WELSH =
         "classpath:caseworker-reissue-application-about-to-submit-app2-not-sol-rep-reissue-case-welsh-response.json";
     private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR =
@@ -182,6 +185,8 @@ public class CaseworkerReIssueApplicationIT {
     private static final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID = "eb780eb7-8982-40a7-b30f-902b582ded26";
     private static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ID = "rf939456-4c5c-491c-9b7f-22056412ff94";
     private static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
+    private static final String NFD_NOP_APP2_JS_SOLE_ID = "c35b1868-e397-457a-aa67-ac1422bb810a";
+    private static final String D10_DOCUMENT_ID = "c35b1868-e397-457a-bb67-ac1422bb811a";
 
     @Autowired
     private MockMvc mockMvc;
@@ -1225,6 +1230,60 @@ public class CaseworkerReIssueApplicationIT {
             .isEqualTo(json(
                     expectedResponse(
                         REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_REISSUE_CASE_TYPE)
+                )
+            );
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldGenerateOnlyRespondentAosAndSetReIssueDateWhenRespondentIsNotSolicitorRepresentedAndReissueTypeIsReissueCaseForJS()
+        throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setAddress(correspondenceAddress());
+        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.setIsJudicialSeparation(YES);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Notice of proceeding respondent")
+            .thenReturn("Coversheet")
+            .thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V2.docx");
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V6.docx");
+        stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Paper_Respondent_JS.docx");
+        stubForDocAssemblyWith(COVERSHEET_APPLICANT_ID, "NFD_Applicant_Coversheet.docx");
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubDFormsUpload(documentUploadClientApi, D10, D10_DOCUMENT_ID);
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_REISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            )
+            .andReturn().getResponse().getContentAsString();
+
+        assertThatJson(response)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(
+                    expectedResponse(
+                        REISSUE_APPLICATION_JS_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_REISSUE_CASE_TYPE)
                 )
             );
 

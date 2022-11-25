@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
@@ -364,6 +365,24 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setEmail("notnull@something.com");
         caseData.setIsJudicialSeparation(YES);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyNoInteractions(generateCoversheet, noticeOfProceedingContent);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
+    }
+
+    @Test
+    void shouldNotGenerateJSWhenSoleAndDigitalReissue() {
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant2().setEmail("notnull@something.com");
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplication().setReissueOption(DIGITAL_AOS);
+
+        final Map<String, Object> templateContent = new HashMap<>();
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
