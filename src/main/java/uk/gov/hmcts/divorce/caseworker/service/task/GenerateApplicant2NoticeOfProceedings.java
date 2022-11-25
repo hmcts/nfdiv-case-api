@@ -255,10 +255,5 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME, now(clock))
         );
     }
-
-    private boolean shouldGenerateSpecificJSProceedings(CaseDetails<CaseData, State> caseDetails) {
-        ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
-        return (YES.equals(caseDetails.getData().getIsJudicialSeparation()) && !DIGITAL_AOS.equals(reissueOption));
-    }
 }
 
