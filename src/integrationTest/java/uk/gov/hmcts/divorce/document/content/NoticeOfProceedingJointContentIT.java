@@ -353,6 +353,11 @@ public class NoticeOfProceedingJointContentIT {
                 .build()
         );
 
+        caseData.getApplicant1().setGender(FEMALE);
+
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 19));
+
         var ctscContactDetails = CtscContactDetails
             .builder()
             .centreName("HMCTS Digital Divorce and Dissolution")
@@ -364,12 +369,8 @@ public class NoticeOfProceedingJointContentIT {
             .phoneNumber("0300 303 0642")
             .build();
 
-        caseData.getApplicant1().setGender(FEMALE);
-
-        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
-        caseData.setDueDate(LocalDate.of(2021, 6, 19));
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
@@ -379,7 +380,6 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_JUSTICE_GOV_UK_CY);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         Map<String, Object> templateContent =
             noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
