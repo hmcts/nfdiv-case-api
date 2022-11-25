@@ -86,8 +86,10 @@ public class CcdSearchService {
     @Autowired
     private CaseDetailsListConverter caseDetailsListConverter;
 
-    public List<CaseDetails> searchForAllCasesWithQuery(
-        final BoolQueryBuilder query, User user, String serviceAuth, final State... states) {
+    public List<CaseDetails> searchForAllCasesWithQuery(final BoolQueryBuilder query,
+                                                        final User user,
+                                                        final String serviceAuth,
+                                                        final State... states) {
 
         final Set<CaseDetails> allCaseDetails = new HashSet<>();
         int from = 0;
@@ -234,7 +236,7 @@ public class CcdSearchService {
     }
 
     public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
-        searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(final User user, final String serviceAuth) {
+    searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(final User user, final String serviceAuth) {
 
         final QueryBuilder createdStateQuery = matchQuery(STATE, Created);
         final QueryBuilder listedStateQuery = matchQuery(STATE, Listed);
