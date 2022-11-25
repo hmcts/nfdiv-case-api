@@ -5,27 +5,19 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.centreName;
-import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.poBox;
-import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.postcode;
-import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.serviceCentre;
-import static uk.gov.hmcts.divorce.document.content.DocmosisCommonContent.town;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
@@ -51,9 +43,14 @@ public class ConditionalOrderRefusedForClarificationContent {
     @Autowired
     private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
-        Map<String, Object> templateContent = new HashMap<>();
+        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference);
 
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
         final Set<ClarificationReason> clarificationReasons = conditionalOrder.getRefusalClarificationReason();
@@ -82,23 +79,11 @@ public class ConditionalOrderRefusedForClarificationContent {
         templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderRefusedForAmendmentContent
             .generateLegalAdvisorComments(conditionalOrder));
 
-        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
-
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, WELSH.equals(languagePreference) ? MARRIAGE_CY : MARRIAGE);
         } else {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
         }
-
-        final var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName(centreName)
-            .serviceCentre(serviceCentre)
-            .poBox(poBox)
-            .town(town)
-            .postcode(postcode)
-            .build();
-        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;
     }
