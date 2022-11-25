@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
@@ -55,9 +56,13 @@ public class GeneralLetterTemplateContent {
     @Autowired
     private Clock clock;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
 
-        Map<String, Object> templateContent = new HashMap<>();
+    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, LanguagePreference languagePreference) {
+
+        Map<String, Object> templateContent = docmosisCommonContent
+                .getBasicDocmosisTemplateContent(languagePreference);
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 

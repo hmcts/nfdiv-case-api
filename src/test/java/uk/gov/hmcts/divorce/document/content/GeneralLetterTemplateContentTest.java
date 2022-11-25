@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FEEDBACK;
@@ -35,6 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataWithGeneralLetter;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
 public class GeneralLetterTemplateContentTest {
@@ -44,6 +46,9 @@ public class GeneralLetterTemplateContentTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
     private GeneralLetterTemplateContent generalLetterTemplateContent;
@@ -73,8 +78,10 @@ public class GeneralLetterTemplateContentTest {
         var caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
 
         when(commonContent.getPartner(any(), any())).thenReturn("wife");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
-        final Map<String, Object> templateContent = generalLetterTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = generalLetterTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference());
 
         assertThat(templateContent).contains(
             entry(ISSUE_DATE, "16 March 2022"),
@@ -93,8 +100,11 @@ public class GeneralLetterTemplateContentTest {
         var caseData = buildCaseDataWithGeneralLetter(GeneralParties.RESPONDENT);
 
         when(commonContent.getPartner(any(), any())).thenReturn("husband");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant2().getLanguagePreference()))
+                .thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
-        final Map<String, Object> templateContent = generalLetterTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = generalLetterTemplateContent.apply(caseData, TEST_CASE_ID,
+                caseData.getApplicant2().getLanguagePreference());
 
         assertThat(templateContent).contains(
             entry(ISSUE_DATE, "16 March 2022"),
@@ -120,7 +130,11 @@ public class GeneralLetterTemplateContentTest {
                 .postCode("B1 XXX")
             .build());
 
-        final Map<String, Object> templateContent = generalLetterTemplateContent.apply(caseData, TEST_CASE_ID);
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
+        final Map<String, Object> templateContent = generalLetterTemplateContent
+                .apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference());
 
         verifyNoInteractions(commonContent);
 
