@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.slf4j.Logger;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -43,9 +42,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 public class SystemPronounceCaseTest {
-
-    @Mock
-    private Logger logger;
 
     @Mock
     private HttpServletRequest httpServletRequest;
@@ -121,13 +117,6 @@ public class SystemPronounceCaseTest {
 
         underTest.submitted(details, details);
 
-        verify(logger)
-            .info("SystemPronounceCase submitted callback invoked for case id: {}", 1L);
-
-        verify(logger)
-            .error("Notification failed with message: {}", "Message", notificationTemplateException);
-
-        verifyNoMoreInteractions(logger);
     }
 
     @Test

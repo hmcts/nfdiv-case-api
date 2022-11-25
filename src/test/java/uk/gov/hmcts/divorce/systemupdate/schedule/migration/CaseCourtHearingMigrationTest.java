@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -31,9 +30,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class CaseCourtHearingMigrationTest {
-
-    @Mock
-    private Logger logger;
 
     @Mock
     private CoreCaseDataApi coreCaseDataApi;
@@ -93,7 +89,6 @@ class CaseCourtHearingMigrationTest {
 
         caseCourtHearingMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(logger).info("Skipping CaseCourtHearingMigration, MIGRATE_CASE_COURT_HEARING={}, references size: {}", false, 1);
         verifyNoInteractions(coreCaseDataApi, setCaseCourtHearingBulkAction);
     }
 
@@ -108,7 +103,6 @@ class CaseCourtHearingMigrationTest {
 
         caseCourtHearingMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(logger).info("Skipping CaseCourtHearingMigration, MIGRATE_CASE_COURT_HEARING={}, references size: {}", true, 0);
         verifyNoInteractions(coreCaseDataApi, setCaseCourtHearingBulkAction);
     }
 
