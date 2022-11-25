@@ -236,7 +236,7 @@ public class CcdSearchService {
     }
 
     public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
-    searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(final User user, final String serviceAuth) {
+        searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(final User user, final String serviceAuth) {
 
         final QueryBuilder createdStateQuery = matchQuery(STATE, Created);
         final QueryBuilder listedStateQuery = matchQuery(STATE, Listed);
