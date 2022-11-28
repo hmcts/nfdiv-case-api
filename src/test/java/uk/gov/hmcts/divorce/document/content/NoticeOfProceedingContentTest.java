@@ -1,12 +1,10 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
@@ -105,6 +103,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
 
 @ExtendWith(MockitoExtension.class)
 public class NoticeOfProceedingContentTest {
@@ -118,18 +117,11 @@ public class NoticeOfProceedingContentTest {
     @Mock
     private DocmosisTemplatesConfig config;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
     @InjectMocks
     private NoticeOfProceedingContent noticeOfProceedingContent;
-
-    @BeforeEach
-    public void setUp() {
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "serviceCentre", "Courts and Tribunals Service Centre");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "centreName", "HMCTS Digital Divorce and Dissolution");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "poBox", "PO Box 13226");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "town", "Harlow");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "postcode", "CM20 9UG");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "phoneNumber", "0300 303 0642");
-    }
 
     @Test
     public void shouldSuccessfullyApplyDivorceContentForNoticeOfProceedings() {
@@ -172,6 +164,9 @@ public class NoticeOfProceedingContentTest {
             .postcode("CM20 9UG")
             .phoneNumber("0300 303 0642")
             .build();
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
@@ -271,6 +266,9 @@ public class NoticeOfProceedingContentTest {
             .postcode("CM20 9UG")
             .phoneNumber("0300 303 0642")
             .build();
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn(CIVIL_PARTNER);
         when(holdingPeriodService.getDueDateFor(LocalDate.of(2021, 6, 18)))
