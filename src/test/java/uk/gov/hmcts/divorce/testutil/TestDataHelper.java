@@ -818,7 +818,7 @@ public class TestDataHelper {
         return basicDocmosisTemplateContent;
     }
 
-    public static Map<String, Object> getBasicDocmosisTemplateContentWithUpdatedEmail(LanguagePreference languagePreference) {
+    public static Map<String, Object> getBasicDocmosisTemplateContentWithCtscContactDetails(LanguagePreference languagePreference) {
         Map<String, Object> basicDocmosisTemplateContent = getBasicDocmosisTemplateContent(languagePreference);
 
         var ctscContactDetails = CtscContactDetails

@@ -44,7 +44,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithUpdatedEmail;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
 
 @ExtendWith(MockitoExtension.class)
 class ConditionalOrderRefusedForClarificationContentTest {
@@ -72,7 +72,7 @@ class ConditionalOrderRefusedForClarificationContentTest {
         CaseData caseData = buildCaseData();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
-                .thenReturn(getBasicDocmosisTemplateContentWithUpdatedEmail(ENGLISH));
+                .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         Map<String, Object> templateContent = conditionalOrderRefusedForClarificationContent.apply(
                 caseData,

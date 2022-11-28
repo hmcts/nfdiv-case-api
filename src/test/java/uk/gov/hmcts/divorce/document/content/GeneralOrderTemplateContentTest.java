@@ -41,7 +41,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithUpdatedEmail;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,7 +72,7 @@ class GeneralOrderTemplateContentTest {
         caseData.getApplicant2().setLastName("name");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
-                .thenReturn(getBasicDocmosisTemplateContentWithUpdatedEmail(ENGLISH));
+                .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         Map<String, Object> templateContent = generalOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
