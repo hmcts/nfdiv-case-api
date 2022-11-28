@@ -163,6 +163,7 @@ public class NoticeOfProceedingContentTest {
             .town("Harlow")
             .postcode("CM20 9UG")
             .phoneNumber("0300 303 0642")
+            .emailAddress("contactdivorce@justice.gov.uk")
             .build();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
@@ -265,6 +266,7 @@ public class NoticeOfProceedingContentTest {
             .town("Harlow")
             .postcode("CM20 9UG")
             .phoneNumber("0300 303 0642")
+            .emailAddress("contactdivorce@justice.gov.uk")
             .build();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))

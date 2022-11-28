@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,9 +43,14 @@ public class ConditionalOrderRefusedForClarificationContent {
     @Autowired
     private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
-        Map<String, Object> templateContent = new HashMap<>();
+        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference);
 
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
         final Set<ClarificationReason> clarificationReasons = conditionalOrder.getRefusalClarificationReason();
@@ -74,8 +78,6 @@ public class ConditionalOrderRefusedForClarificationContent {
 
         templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderRefusedForAmendmentContent
             .generateLegalAdvisorComments(conditionalOrder));
-
-        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, WELSH.equals(languagePreference) ? MARRIAGE_CY : MARRIAGE);

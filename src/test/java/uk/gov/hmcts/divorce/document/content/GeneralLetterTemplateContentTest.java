@@ -35,7 +35,6 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataWithGeneralLetter;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,7 +54,9 @@ public class GeneralLetterTemplateContentTest {
 
     private static final CtscContactDetails CTSC_CONTACT = CtscContactDetails
             .builder()
-            .emailAddress("divorcecase@justice.gov.uk")
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .emailAddress("contactdivorce@justice.gov.uk")
             .poBox("PO Box 13226")
             .town("Harlow")
             .postcode("CM20 9UG")
@@ -126,7 +127,7 @@ public class GeneralLetterTemplateContentTest {
             .build());
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
-                .thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+                .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         final Map<String, Object> templateContent = generalLetterTemplateContent
                 .apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference());
