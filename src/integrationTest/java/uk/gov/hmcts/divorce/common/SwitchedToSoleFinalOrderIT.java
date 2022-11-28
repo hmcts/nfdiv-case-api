@@ -19,7 +19,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -30,6 +32,8 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -38,7 +42,11 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -47,9 +55,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_1;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
@@ -59,11 +71,15 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
@@ -101,6 +117,9 @@ public class SwitchedToSoleFinalOrderIT {
 
     @MockBean
     private CaseAssignmentApi caseAssignmentApi;
+
+    @MockBean
+    private NotificationService notificationService;
 
     @BeforeAll
     static void setUp() {
@@ -209,6 +228,56 @@ public class SwitchedToSoleFinalOrderIT {
             .when(IGNORING_ARRAY_ORDER)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_FO_APPLICANT_1_RESPONSE)));
+    }
+
+    @Test
+    public void shouldSendSwitchToSoleNotificationsInSubmittedCallback() throws Exception {
+        CaseData dataAfterSwitchToSoleFo = validJointApplicant1CaseData();
+        dataAfterSwitchToSoleFo.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        dataAfterSwitchToSoleFo.setFinalOrder(FinalOrder.builder()
+            .doesApplicant1IntendToSwitchToSole(YES)
+            .dateFinalOrderSubmitted(LocalDateTime.now())
+            .build());
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(dataAfterSwitchToSoleFo, SWITCH_TO_SOLE_FO)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER), anyMap(), eq(ENGLISH));
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldSendSwitchToSoleNotificationsInSubmittedCallbackWhenApp2Represented() throws Exception {
+        CaseData dataAfterSwitchToSoleFo = validJointApplicant1CaseData();
+        dataAfterSwitchToSoleFo.getApplication().setIssueDate(LocalDate.now());
+        dataAfterSwitchToSoleFo.getApplicant2().setSolicitorRepresented(YES);
+        dataAfterSwitchToSoleFo.getApplicant2().setSolicitor(Solicitor.builder()
+                .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        dataAfterSwitchToSoleFo.setFinalOrder(FinalOrder.builder()
+            .doesApplicant1IntendToSwitchToSole(YES)
+            .dateFinalOrderSubmitted(LocalDateTime.now())
+            .build());
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(dataAfterSwitchToSoleFo, SWITCH_TO_SOLE_FO)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER), anyMap(), eq(ENGLISH));
+        verifyNoMoreInteractions(notificationService);
     }
 
     private void setupMocks(boolean isApplicant1, boolean isApplicant2) throws IOException {

@@ -47,6 +47,7 @@ public final class DocmosisTemplateConstants {
     public static final String ENDING_CIVIL_PARTNERSHIP = "ending the civil partnership";
     public static final String ENDING_CIVIL_PARTNERSHIP_CY = "dod â phartneriaeth sifil i ben";
     public static final String RELATIONSHIP = "relationship";
+    public static final String RELATIONSHIP_CY = "berthynas";
     public static final String RELATION = "relation";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
     public static final String CIVIL_PARTNERSHIP_CY = "bartneriaeth sifil";
