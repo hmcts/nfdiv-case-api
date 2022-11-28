@@ -67,7 +67,7 @@ public class GeneralOrderTemplateContentIT {
         var ctscContactDetails = CtscContactDetails
             .builder()
             .centreName("HMCTS Digital Divorce and Dissolution")
-            .emailAddress("divorcecase@justice.gov.uk")
+            .emailAddress("contactdivorce@justice.gov.uk")
             .serviceCentre("Courts and Tribunals Service Centre")
             .phoneNumber("0300 303 0642")
             .poBox("PO Box 13226")
@@ -112,7 +112,7 @@ public class GeneralOrderTemplateContentIT {
         var ctscContactDetails = CtscContactDetails
             .builder()
             .centreName("HMCTS Digital Divorce and Dissolution")
-            .emailAddress("divorcecase@justice.gov.uk")
+            .emailAddress("contactdivorce@justice.gov.uk")
             .serviceCentre("Courts and Tribunals Service Centre")
             .phoneNumber("0300 303 0642")
             .poBox("PO Box 13226")

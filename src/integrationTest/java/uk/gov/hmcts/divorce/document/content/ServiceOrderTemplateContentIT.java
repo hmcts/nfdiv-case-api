@@ -96,7 +96,7 @@ public class ServiceOrderTemplateContentIT {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("contactdivorce@justice.gov.uk");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -123,7 +123,7 @@ public class ServiceOrderTemplateContentIT {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("contactdivorce@justice.gov.uk");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -149,7 +149,7 @@ public class ServiceOrderTemplateContentIT {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("contactdivorce@justice.gov.uk");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -176,7 +176,7 @@ public class ServiceOrderTemplateContentIT {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
+        ctscContactDetails.setEmailAddress("contactdivorce@justice.gov.uk");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -205,11 +205,11 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
             entry(PARTNER, "priod"),
-            entry(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS_CY)
+            entry(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS_CY),
+            entry("ctscContactDetails", ctscContactDetails)
         );
     }
 
@@ -223,11 +223,11 @@ public class ServiceOrderTemplateContentIT {
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         assertThat(templateContent).contains(
             entry(PARTNER, "partner sifil"),
-            entry(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY)
+            entry(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY),
+            entry("ctscContactDetails", ctscContactDetails)
         );
     }
 
@@ -255,7 +255,7 @@ public class ServiceOrderTemplateContentIT {
     private CtscContactDetails buildCtscContactDetails() {
         return CtscContactDetails
             .builder()
-            .emailAddress("divorcecase@justice.gov.uk")
+            .emailAddress("contactdivorce@justice.gov.uk")
             .phoneNumber("0300 303 0642")
             .build();
     }
