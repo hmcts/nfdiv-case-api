@@ -92,6 +92,7 @@ docmosis:
       APPLIED_FOR_CONDITIONAL_ORDER_LETTER: FL-NFD-GOR-ENG-Applied-For-Conditional-Order-Letter.docx
       NFD_RESP_RESPONDED_DISPUTED: FL-NFD-GOR-ENG-Respondent-Responded-Defended.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
+      NFD_RESP_NOT_RESPONDED_JS: FL-NFD-GOR-ENG-Respondent-Not-Responded-JS.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
       COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended.docx
@@ -144,6 +145,7 @@ docmosis:
       APPLIED_FOR_CONDITIONAL_ORDER_LETTER: FL-NFD-GOR-ENG-Applied-For-Conditional-Order-Letter.docx #TODO: add translated content
       NFD_RESP_RESPONDED_DISPUTED: FL-NFD-GOR-ENG-Respondent-Responded-Defended.docx #TODO: update content
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx #TODO: update content
+      NFD_RESP_NOT_RESPONDED_JS: FL-NFD-GOR-ENG-Respondent-Not-Responded-JS.docx #TODO: add translated content
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended.docx #TODO: update content
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
       COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
