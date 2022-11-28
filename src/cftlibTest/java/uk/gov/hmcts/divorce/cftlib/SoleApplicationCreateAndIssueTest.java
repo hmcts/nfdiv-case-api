@@ -39,10 +39,10 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
         page.locator("#applicant1SolicitorName").click();
         // Fill #applicant1SolicitorName
         page.locator("#applicant1SolicitorName").fill("James McDee");
-        // Click input[type="email"]
-        page.locator("input[type=\"email\"]").click();
-        // Fill input[type="email"]
-        page.locator("input[type=\"email\"]").fill("james@mcdee.com");
+        // Click #applicant1SolicitorEmail]
+        page.locator("#applicant1SolicitorEmail").click();
+        // Fill #applicant1SolicitorEmail]
+        page.locator("#applicant1SolicitorEmail").fill("james@mcdee.com");
         // Click text=I confirm I’m willing to accept service of all correspondence and orders by emai
         page.locator("text=I confirm I’m willing to accept service of all correspondence and orders by emai").click();
         // Click text=Search for an organisation You can only search for organisations already registe >> input[type="text"]
