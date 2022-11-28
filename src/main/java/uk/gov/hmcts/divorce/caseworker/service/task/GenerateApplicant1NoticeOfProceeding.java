@@ -9,8 +9,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 
 import java.time.Clock;
@@ -18,11 +20,14 @@ import java.util.Map;
 
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 
@@ -41,6 +46,15 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
 
     @Autowired
     private NoticeOfProceedingSolicitorContent solicitorContent;
+
+    @Autowired
+    private NoticeOfProceedingJointJudicialSeparationContent jointContentJudicialSeparationContent;
+
+    @Autowired
+    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
+
+    @Autowired
+    private GenerateCoversheet generateCoversheet;
 
     @Autowired
     private Clock clock;
@@ -103,10 +117,28 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             content = solicitorContent.apply(caseData, caseId, true);
             templateId = NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
         } else {
-            log.info("Generating applicant 1 notice of proceedings for joint case id {} ", caseId);
+            if (caseData.isJudicialSeparation()) {
+                log.info("Generating applicant 1 notice of proceedings for joint Judicial Separation case id {} ", caseId);
 
-            content = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
-            templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+                content  = jointContentJudicialSeparationContent.apply(caseData, caseId, caseData.getApplicant1(),
+                    caseData.getApplicant2());
+                templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
+
+                log.info("Generating coversheet for applicant 1 for joint judicial separation case id {} ", caseId);
+                generateCoversheet.generateCoversheet(
+                    caseData,
+                    caseId,
+                    COVERSHEET_APPLICANT,
+                    coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
+                    caseData.getApplicant1().getLanguagePreference(),
+                    formatDocumentName(caseId, COVERSHEET_DOCUMENT_NAME, "applicant1", now(clock))
+                );
+            } else {
+                log.info("Generating applicant 1 notice of proceedings for joint case id {} ", caseId);
+
+                content = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+                templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+            }
         }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(

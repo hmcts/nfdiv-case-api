@@ -3,12 +3,14 @@ package uk.gov.hmcts.divorce.caseworker.service.task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJSOrNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 
@@ -20,8 +22,11 @@ public class SetPostIssueState implements CaseTask {
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
         final Application application = caseDetails.getData().getApplication();
+        final CaseData caseData = caseDetails.getData();
 
-        if (!caseDetails.getData().getApplicationType().isSole()) {
+        if (!caseData.getApplicationType().isSole() && caseData.isJudicialSeparation()) {
+            caseDetails.setState(AwaitingJSOrNullity);
+        } else if (!caseDetails.getData().getApplicationType().isSole()) {
             caseDetails.setState(Holding);
         } else if (application.isSolicitorServiceMethod() || application.isPersonalServiceMethod()) {
             caseDetails.setState(AwaitingService);
