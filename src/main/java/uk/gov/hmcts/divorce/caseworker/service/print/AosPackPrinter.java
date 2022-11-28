@@ -15,13 +15,11 @@ import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.coversheetsBasedOnApplicant;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -157,10 +155,6 @@ public class AosPackPrinter {
         //Always get document on top of list as new document is added to top after generation
         final Letter notificationLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1));
 
-        final Letter coversheetLetter = firstElement(coversheetsBasedOnApplicant(lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(), COVERSHEET), "applicant1"));
-        final Letter d84Letter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D84));
-
         final List<Letter> currentAosLetters = new ArrayList<>();
 
         if (null != notificationLetter) {
@@ -169,32 +163,14 @@ public class AosPackPrinter {
         if (null != divorceApplicationLetter) {
             currentAosLetters.add(divorceApplicationLetter);
         }
-        if (null != coversheetLetter) {
-            currentAosLetters.add(coversheetLetter);
-        }
-        if (null != d84Letter) {
-            currentAosLetters.add(d84Letter);
-        }
         return currentAosLetters;
     }
 
     private List<Letter> aosLettersForRespondent(CaseData caseData) {
+        final Letter coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
         final Letter respondentInvitationLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_2));
         final Letter divorceApplicationLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(),
             APPLICATION));
-        final Letter d84Letter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D84));
-
-        Letter coversheetLetter;
-        if (!caseData.getApplicationType().isSole() && caseData.isJudicialSeparation()) {
-            coversheetLetter = firstElement(coversheetsBasedOnApplicant(lettersWithDocumentType(
-                caseData.getDocuments().getDocumentsGenerated(),
-                COVERSHEET),
-                "applicant2"
-                )
-            );
-        } else {
-            coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
-        }
 
         final List<Letter> currentAosLetters = new ArrayList<>();
 
@@ -206,9 +182,6 @@ public class AosPackPrinter {
         }
         if (null != divorceApplicationLetter) {
             currentAosLetters.add(divorceApplicationLetter);
-        }
-        if (null != d84Letter) {
-            currentAosLetters.add(d84Letter);
         }
         return currentAosLetters;
     }
@@ -226,29 +199,10 @@ public class AosPackPrinter {
             caseData.getDocuments().getDocumentsGenerated(),
             APPLICATION);
 
-        final Letter coversheetLetterApp1 = firstElement(coversheetsBasedOnApplicant(lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            COVERSHEET),
-            "applicant1"
-            )
-        );
-
-        final Letter coversheetLetterApp2 = firstElement(coversheetsBasedOnApplicant(lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            COVERSHEET),
-            "applicant2"
-            )
-        );
-
-        Letter coversheetLetter = null;
-        if (null == coversheetLetterApp1 && null == coversheetLetterApp2) {
-            coversheetLetter = firstElement(coversheetLetters);
-        }
-
+        final Letter coversheetLetter = firstElement(coversheetLetters);
         final Letter respondentInvitationLetter = firstElement(respondentInvitationLetters);
         final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
         final Letter notificationLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1));
-        final Letter d84Letter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D84));
 
         final List<Letter> currentAosLetters = new ArrayList<>();
 
@@ -259,15 +213,6 @@ public class AosPackPrinter {
         if (null != divorceApplicationLetter) {
             currentAosLetters.add(divorceApplicationLetter);
         }
-
-        if (null != coversheetLetterApp1) {
-            currentAosLetters.add(coversheetLetterApp1);
-        }
-
-        if (null != coversheetLetterApp2) {
-            currentAosLetters.add(coversheetLetterApp2);
-        }
-
         if (null != coversheetLetter) {
             currentAosLetters.add(coversheetLetter);
         }
@@ -278,10 +223,6 @@ public class AosPackPrinter {
 
         if (null != divorceApplicationLetter) {
             currentAosLetters.add(divorceApplicationLetter);
-        }
-
-        if (null != d84Letter) {
-            currentAosLetters.add(d84Letter);
         }
 
         return currentAosLetters;
