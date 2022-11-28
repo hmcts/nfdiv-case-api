@@ -55,5 +55,5 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
-    }//as
+    }
 }
