@@ -18,13 +18,13 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 @ExtendWith(MockitoExtension.class)
 class CaseworkerAmendApplicationTypeTest {
     @InjectMocks
-    private CaseworkerAmendCase caseworkerAmendCase;
+    private CaseworkerAmendApplicationType caseworkerAmendApplicationType;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        caseworkerAmendCase.configure(configBuilder);
+        caseworkerAmendApplicationType.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
