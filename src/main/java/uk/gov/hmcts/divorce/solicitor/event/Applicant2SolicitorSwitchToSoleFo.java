@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static java.util.Collections.singletonList;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -66,8 +67,7 @@ public class Applicant2SolicitorSwitchToSoleFo implements CCDConfig<CaseData, St
         log.info("Mid-event callback triggered for App2SolSwitchToSoleFO");
 
         final CaseData data = details.getData();
-
-        if (!data.getFinalOrder().getDoesApplicant2WantToApplyForFinalOrder().toBoolean()) {
+        if (NO.equals(data.getFinalOrder().getDoesApplicant2WantToApplyForFinalOrder())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
                 .errors(singletonList("You must select 'Yes' to apply for Final Order"))
