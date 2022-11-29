@@ -72,6 +72,6 @@ class CaseworkerAmendApplicationTypeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
             .aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getDivorceOrDissolution().equals(""));
+        assertThat(response.getData().getDivorceOrDissolution().equals(null));
     }
 }
