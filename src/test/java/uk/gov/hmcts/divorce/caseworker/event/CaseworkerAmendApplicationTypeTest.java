@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAmendApplicationType.CASEWORKER_AMEND_APPLICATION_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
@@ -65,6 +66,7 @@ class CaseworkerAmendApplicationTypeTest {
     @Test
     void shouldSetApplicationTypeToNullOnAboutToSubmit() {
         final CaseData caseData = CaseData.builder().build();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).build();
 
@@ -72,5 +74,17 @@ class CaseworkerAmendApplicationTypeTest {
             .aboutToSubmit(caseDetails, caseDetails);
 
         assertNull(response.getData().getDivorceOrDissolution());
+    }
+
+    @Test
+    void shouldKeepApplicationTypeToNotNullOnAboutToSubmit() {
+        final CaseData caseData = CaseData.builder().build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
+            .aboutToSubmit(caseDetails, caseDetails);
+
+        assertNotNull(response.getData().getDivorceOrDissolution());
     }
 }
