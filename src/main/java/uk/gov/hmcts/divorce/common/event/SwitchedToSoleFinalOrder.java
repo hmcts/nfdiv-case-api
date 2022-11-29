@@ -17,8 +17,8 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.EnumSet;
 import javax.servlet.http.HttpServletRequest;
+import java.util.EnumSet;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -64,7 +64,7 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
 
         configBuilder
             .event(SWITCH_TO_SOLE_FO)
-            .forStateTransition(EnumSet.of(AwaitingFinalOrder, AwaitingJointFinalOrder), FinalOrderRequested)
+            .forStateTransition(EnumSet.of(AwaitingFinalOrder, AwaitingJointFinalOrder, FinalOrderRequested), FinalOrderRequested)
             .name("Switched to sole final order")
             .description("Switched to sole final order")
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
