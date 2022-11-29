@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNull;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAmendApplicationType.CASEWORKER_AMEND_APPLICATION_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -63,7 +64,7 @@ class CaseworkerAmendApplicationTypeTest {
     }
 
     @Test
-    void shouldSetApplicationTypeToBlankOnAboutToSubmit() {
+    void shouldSetApplicationTypeToNullOnAboutToSubmit() {
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
         caseData.setDivorceOrDissolution(null);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -72,6 +73,6 @@ class CaseworkerAmendApplicationTypeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
             .aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getDivorceOrDissolution().equals(null));
+        assertNull(response.getData().getDivorceOrDissolution());
     }
 }
