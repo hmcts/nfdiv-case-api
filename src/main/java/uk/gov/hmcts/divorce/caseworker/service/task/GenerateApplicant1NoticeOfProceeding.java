@@ -20,6 +20,7 @@ import java.util.Map;
 
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
@@ -69,7 +70,11 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         if (isSoleApplication) {
             generateSoleNoticeOfProceedings(caseData, caseId);
         } else {
-            generateJointNoticeOfProceedings(caseData, caseId);
+            if (caseData.isJudicialSeparation() && !DIGITAL_AOS.equals(caseData.getApplication().getReissueOption())) {
+                generateJointJSNoticeOfProceedings(caseData, caseId);
+            } else {
+                generateJointNoticeOfProceedings(caseData, caseId);
+            }
         }
 
         return caseDetails;
@@ -117,29 +122,41 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             content = solicitorContent.apply(caseData, caseId, true);
             templateId = NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
         } else {
-            if (caseData.isJudicialSeparation()) {
-                log.info("Generating applicant 1 notice of proceedings for joint Judicial Separation case id {} ", caseId);
+            log.info("Generating applicant 1 notice of proceedings for joint case id {} ", caseId);
 
-                content  = jointContentJudicialSeparationContent.apply(caseData, caseId, caseData.getApplicant1(),
-                    caseData.getApplicant2());
-                templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
-
-                log.info("Generating coversheet for applicant 1 for joint judicial separation case id {} ", caseId);
-                generateCoversheet.generateCoversheet(
-                    caseData,
-                    caseId,
-                    COVERSHEET_APPLICANT,
-                    coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
-                    caseData.getApplicant1().getLanguagePreference(),
-                    formatDocumentName(caseId, COVERSHEET_DOCUMENT_NAME, "applicant1", now(clock))
-                );
-            } else {
-                log.info("Generating applicant 1 notice of proceedings for joint case id {} ", caseId);
-
-                content = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
-                templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
-            }
+            content = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+            templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
         }
+
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            NOTICE_OF_PROCEEDINGS_APP_1,
+            content,
+            caseId,
+            templateId,
+            caseData.getApplicant1().getLanguagePreference(),
+            formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
+        );
+    }
+
+    private void generateJointJSNoticeOfProceedings(CaseData caseData, Long caseId) {
+        String templateId;
+        Map<String, Object> content;
+        log.info("Generating applicant 1 notice of proceedings for joint Judicial Separation case id {} ", caseId);
+
+        content = jointContentJudicialSeparationContent.apply(caseData, caseId, caseData.getApplicant1(),
+            caseData.getApplicant2());
+        templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
+
+        log.info("Generating coversheet for applicant 1 for joint judicial separation case id {} ", caseId);
+        generateCoversheet.generateCoversheet(
+            caseData,
+            caseId,
+            COVERSHEET_APPLICANT,
+            coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
+            caseData.getApplicant1().getLanguagePreference(),
+            formatDocumentName(caseId, COVERSHEET_DOCUMENT_NAME, "applicant1", now(clock))
+        );
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,

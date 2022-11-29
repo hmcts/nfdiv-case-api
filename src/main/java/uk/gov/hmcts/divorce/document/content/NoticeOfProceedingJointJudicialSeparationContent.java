@@ -55,7 +55,7 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
         templateContent.put(ADDRESS, applicant.getPostalAddress());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
 
-        if (caseData.getApplication().getReissueDate() != null) {
+        if (null != caseData.getApplication().getReissueDate()) {
             templateContent.put(REISSUED_DATE, "Reissued on: " + caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
         }
 
