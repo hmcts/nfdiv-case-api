@@ -14,15 +14,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAmendApplicationType.CASEWORKER_AMEND_APPLICATION_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -49,7 +43,8 @@ class CaseworkerAmendApplicationTypeTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
+            .aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
     }
@@ -61,7 +56,8 @@ class CaseworkerAmendApplicationTypeTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
+            .aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getDivorceOrDissolution().equals(DIVORCE));
     }
@@ -73,7 +69,8 @@ class CaseworkerAmendApplicationTypeTest {
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).build();
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
+            .aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getDivorceOrDissolution().equals(""));
     }
