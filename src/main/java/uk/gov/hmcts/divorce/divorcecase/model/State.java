@@ -351,6 +351,20 @@ public enum State {
     OfflineDocumentReceived,
 
     @CCD(
+        label = "AwaitingJS/Nullity",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingJsNullity,
+
+    @CCD(
+        label = "AwaitingAnswer",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingAnswer,
+
+    @CCD(
         label = "Pending hearing outcome",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}

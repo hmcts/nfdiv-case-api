@@ -51,19 +51,19 @@ public class SubmitAosService {
         ).run(caseDetails);
     }
 
-    public CaseDetails<CaseData, State> submitAosNotifications(final CaseDetails<CaseData, State> caseDetails) {
-        return caseTasks(
-                sendAosNotifications,
-                sendAosResponseLetterPackToApplicant
-        ).run(caseDetails);
-    }
-
     public CaseDetails<CaseData, State> submitOfflineAos(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setSubmitAosState,
             setSubmissionAndDueDate,
             addRespondentAnswersLink,
             generateAosResponseLetterDocument
+        ).run(caseDetails);
+    }
+
+    public CaseDetails<CaseData, State> submitAosNotifications(final CaseDetails<CaseData, State> caseDetails) {
+        return caseTasks(
+            sendAosNotifications,
+            sendAosResponseLetterPackToApplicant
         ).run(caseDetails);
     }
 }

@@ -9,7 +9,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.Arrays;
@@ -22,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
@@ -45,6 +49,24 @@ class SetSubmitAosStateTest {
         final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(AwaitingConditionalOrder);
+    }
+
+    @Test
+    void shouldSetStateToAwaitingJsNullityIfApplicationIsD8sAndD10IsDisputed() {
+        final CaseData caseData = caseData();
+        caseData.setAcknowledgementOfService(
+            AcknowledgementOfService.builder().howToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE).build()
+        );
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setIsJudicialSeparation(YES);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData)
+            .state(OfflineDocumentReceived)
+            .build();
+
+        final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(AwaitingJsNullity);
     }
 
     @Test
