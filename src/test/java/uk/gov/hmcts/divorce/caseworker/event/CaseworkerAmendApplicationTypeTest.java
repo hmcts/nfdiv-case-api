@@ -39,7 +39,7 @@ class CaseworkerAmendApplicationTypeTest {
 
     @Test
     void shouldSetApplicationTypeFromDivorceToDissolutionOnAboutToSubmit() {
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        final CaseData caseData = CaseData.builder().build();
         caseData.setDivorceOrDissolution(DIVORCE);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).build();
@@ -65,8 +65,7 @@ class CaseworkerAmendApplicationTypeTest {
 
     @Test
     void shouldSetApplicationTypeToNullOnAboutToSubmit() {
-        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
-        caseData.setDivorceOrDissolution(null);
+        final CaseData caseData = CaseData.builder().build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).build();
 
