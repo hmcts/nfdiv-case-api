@@ -47,6 +47,7 @@ class CaseworkerAmendApplicationTypeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
             .aboutToSubmit(caseDetails, caseDetails);
 
+        assertNotNull(response.getData().getDivorceOrDissolution());
         assertThat(response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
     }
 
@@ -60,6 +61,7 @@ class CaseworkerAmendApplicationTypeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
             .aboutToSubmit(caseDetails, caseDetails);
 
+        assertNotNull(response.getData().getDivorceOrDissolution());
         assertThat(response.getData().getDivorceOrDissolution().equals(DIVORCE));
     }
 
@@ -85,8 +87,9 @@ class CaseworkerAmendApplicationTypeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
             .aboutToSubmit(caseDetails, caseDetails);
 
-        //assertNotNull(response.getData().getDivorceOrDissolution());
-        assertThat(response.getData().getDivorceOrDissolution().equals(DIVORCE)||response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
+        assertNotNull(response.getData().getDivorceOrDissolution());
+        assertThat(response.getData().getDivorceOrDissolution().equals(DIVORCE)
+            ||response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
 
 
     }
