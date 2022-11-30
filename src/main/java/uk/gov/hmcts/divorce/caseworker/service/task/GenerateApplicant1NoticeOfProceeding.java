@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 
 import java.time.Clock;
@@ -23,6 +24,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_A
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JOINT_OFFLINE_JUDICIAL_SEPARATION_CITIZEN;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 
@@ -44,6 +46,9 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private NoticeOfProceedingJointJudicialSeparationContent jointJudicialSeparationContent;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -105,8 +110,15 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         } else {
             log.info("Generating applicant 1 notice of proceedings for joint case id {} ", caseId);
 
-            content = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
-            templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+            if (caseData.getIsJudicialSeparation().toBoolean() && caseData.getApplicant1().isApplicantOffline()) {
+                content = jointJudicialSeparationContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+                templateId = NFD_NOP_JOINT_OFFLINE_JUDICIAL_SEPARATION_CITIZEN;
+
+            } else {
+                content = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+                templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+
+            }
         }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
