@@ -47,6 +47,7 @@ class CaseworkerAmendApplicationTypeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
             .aboutToSubmit(caseDetails, caseDetails);
 
+        assertThat(response.getData().getDivorceOrDissolution());
         assertThat(response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
     }
 
@@ -60,6 +61,7 @@ class CaseworkerAmendApplicationTypeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
             .aboutToSubmit(caseDetails, caseDetails);
 
+        assertThat(response.getData().getDivorceOrDissolution());
         assertThat(response.getData().getDivorceOrDissolution().equals(DIVORCE));
     }
 
@@ -74,17 +76,5 @@ class CaseworkerAmendApplicationTypeTest {
             .aboutToSubmit(caseDetails, caseDetails);
 
         assertNull(response.getData().getDivorceOrDissolution());
-    }
-
-    @Test
-    void shouldKeepApplicationTypeToNotNullOnAboutToSubmit() {
-        final CaseData caseData = CaseData.builder().build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
-            .aboutToSubmit(caseDetails, caseDetails);
-
-        assertNotNull(response.getData().getDivorceOrDissolution());
     }
 }
