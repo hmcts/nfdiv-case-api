@@ -68,8 +68,8 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
             templateContent.put(MARRIED_TO_MORE_THAN_ONE_PERSON, MARRIED_TO_MORE_THAN_ONE_PERSON_TEXT);
         }
 
-        templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, judicialSeparationProceedingsFinalText);
-        templateContent.put(JUDICIAL_SEPARATION, judicialSeparationFinalText);
+        templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, judicialSeparationProceedingsFinalText.toString());
+        templateContent.put(JUDICIAL_SEPARATION, judicialSeparationFinalText.toString());
         templateContent.put(RELATION, commonContent.getPartner(caseData, partner));
         templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
