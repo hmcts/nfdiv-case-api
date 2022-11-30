@@ -44,7 +44,7 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
         log.info("Caseworker Amend Application Type about to submit callback invoked for case id: {}", details.getId());
         CaseData caseData = details.getData();
 
-        if (!isNull(caseData.getApplicationType())) {
+        if (!isNull(caseData.getDivorceOrDissolution())) {
             if (caseData.getDivorceOrDissolution().equals(DIVORCE)) {
                 caseData.setDivorceOrDissolution(DISSOLUTION);
             } else {
