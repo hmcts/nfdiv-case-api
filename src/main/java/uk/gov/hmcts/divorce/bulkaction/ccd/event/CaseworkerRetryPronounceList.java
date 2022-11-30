@@ -53,7 +53,7 @@ public class CaseworkerRetryPronounceList implements CCDConfig<BulkActionCaseDat
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
         log.info("{} Retry pronounce list submitted callback invoked for Case Id: {}", CASEWORKER_RETRY_PRONOUNCE_LIST, details.getId());
-        casePronouncementService.pronounceCases(details);
+        casePronouncementService.retryPronounceCases(details);
         return SubmittedCallbackResponse.builder().build();
     }
 }
