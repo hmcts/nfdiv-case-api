@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseFilterProcessingState;
 import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseProcessingStateFilter;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -97,7 +98,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             bulkListCaseDetails,
             new ArrayList<>(),
@@ -161,7 +162,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced),
-            ConditionalOrderPronounced
+            EnumSet.noneOf(State.class)
         )).thenReturn(new CaseFilterProcessingState(
             bulkListCaseDetails,
             new ArrayList<>(),
@@ -235,7 +236,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             bulkListCaseDetails,
             new ArrayList<>(),
@@ -313,7 +314,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             new ArrayList<>(),
             bulkListCaseDetails,
@@ -380,7 +381,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             bulkListCaseDetails,
             new ArrayList<>(),
@@ -448,7 +449,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             bulkListCaseDetails,
             new ArrayList<>(),
@@ -516,7 +517,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             new ArrayList<>(),
             new ArrayList<>(),
@@ -580,7 +581,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             bulkListCaseDetails,
             new ArrayList<>(),

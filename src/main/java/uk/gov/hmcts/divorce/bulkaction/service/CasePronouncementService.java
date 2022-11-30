@@ -55,16 +55,25 @@ public class CasePronouncementService {
 
     @Async
     public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
-        pronounceCasesWithFilter(details, EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived));
+        pronounceCasesWithFilter(
+            details,
+            EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
+            EnumSet.of(ConditionalOrderPronounced)
+        );
     }
 
     @Async
     public void retryPronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
-        pronounceCasesWithFilter(details, EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced));
+        pronounceCasesWithFilter(
+            details,
+            EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced),
+            EnumSet.noneOf(State.class)
+        );
     }
 
     private void pronounceCasesWithFilter(CaseDetails<BulkActionCaseData, BulkActionState> details,
-                                          EnumSet<State> awaitingPronouncement
+                                          EnumSet<State> awaitingPronouncement,
+                                          EnumSet<State> postStates
     ) {
         final BulkActionCaseData bulkActionCaseData = details.getData();
         final User user = idamService.retrieveSystemUpdateUserDetails();
@@ -75,7 +84,7 @@ public class CasePronouncementService {
             user,
             serviceAuth,
             awaitingPronouncement,
-            ConditionalOrderPronounced);
+            postStates);
 
         final List<ListValue<BulkListCaseDetails>> erroredCaseDetails = caseFilterProcessingState.getErroredCases();
         final List<ListValue<BulkListCaseDetails>> processedCaseDetails = caseFilterProcessingState.getProcessedCases();

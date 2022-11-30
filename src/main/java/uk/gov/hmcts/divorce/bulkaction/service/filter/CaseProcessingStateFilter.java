@@ -25,7 +25,7 @@ public class CaseProcessingStateFilter {
                                                            final User user,
                                                            final String serviceAuth,
                                                            final EnumSet<State> prestates,
-                                                           final State postState) {
+                                                           final EnumSet<State> postStates) {
 
         final List<String> processedCaseReferences = new ArrayList<>();
         final List<String> erroredCaseReferences = new ArrayList<>();
@@ -35,7 +35,7 @@ public class CaseProcessingStateFilter {
 
         ccdSearchService.searchForCases(getCasesReferences(bulkListCaseDetails), user, serviceAuth)
             .forEach(caseDetails -> {
-                if (postState.name().equals(caseDetails.getState())) {
+                if (postStates.contains(State.valueOf(caseDetails.getState()))) {
                     log.info(
                         "Case ID {} will be skipped and moved to processed list as already processed",
                         caseDetails.getId());
