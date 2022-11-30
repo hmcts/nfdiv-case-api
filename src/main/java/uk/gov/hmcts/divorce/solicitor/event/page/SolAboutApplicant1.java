@@ -37,6 +37,12 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
                     "Is ${labelContentTheApplicantOrApplicant1} name different to that on the"
                         + " ${labelContentMarriageOrCivilPartnership} certificate?")
+                .mandatoryWithoutDefaultValue(Applicant::getNameDifferentToMarriageCertificateMethod,
+                    "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
+                    "What evidence will be provided for the name change? ")
+                .mandatoryWithoutDefaultValue(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
+                    "applicant1NameDifferentToMarriageCertificateMethod=\"other\"",
+                    "If not through marriage or deed poll, please provide details of how they legally changed they name")
                 .mandatoryWithoutDefaultValue(Applicant::getNameChangedHow,
                 "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
                 "What evidence will be provided for the name change? ")

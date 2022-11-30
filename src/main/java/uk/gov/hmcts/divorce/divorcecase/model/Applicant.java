@@ -83,10 +83,28 @@ public class Applicant {
     )
     private YesOrNo lastNameChangedWhenMarried;
 
+    @CCD(label = "How did they change their last name when they got married?")
+    private Set<ChangedNameHow> lastNameChangedWhenMarriedMethod;
+
+    @CCD(
+        label = "Details of how they changed their last name when they got married",
+        typeOverride = TextArea
+    )
+    private String lastNameChangedWhenMarriedOtherDetails;
+
     @CCD(
         label = "Have they changed their name since they got married?"
     )
     private YesOrNo nameDifferentToMarriageCertificate;
+
+    @CCD(label = "How did they change their name since they got married?")
+    private Set<ChangedNameHow> nameDifferentToMarriageCertificateMethod;
+
+    @CCD(
+        label = "Details of how they changed their name since they got married",
+        typeOverride = TextArea
+    )
+    private String nameDifferentToMarriageCertificateOtherDetails;
 
     @CCD(label = "How did they change their name?")
     private Set<ChangedNameHow> nameChangedHow;
