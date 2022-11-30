@@ -33,6 +33,7 @@ class DocmosisCommonContentTest {
     private static final String PO_BOX = "PO Box 13226";
     private static final String TOWN = "Harlow";
     private static final String POSTCODE = "CM20 9UG";
+    private static final String PHONE_NUMBER = "0300 303 0642";
 
     private static final int EXPECTED_ENTRY_SIZE = 5;
 
@@ -41,6 +42,7 @@ class DocmosisCommonContentTest {
         .poBox(PO_BOX)
         .town(TOWN)
         .postcode(POSTCODE)
+        .phoneNumber(PHONE_NUMBER)
         .build();
 
     @InjectMocks
@@ -51,6 +53,7 @@ class DocmosisCommonContentTest {
         ReflectionTestUtils.setField(docmosisCommonContent, "poBox", PO_BOX);
         ReflectionTestUtils.setField(docmosisCommonContent, "town", TOWN);
         ReflectionTestUtils.setField(docmosisCommonContent, "postcode", POSTCODE);
+        ReflectionTestUtils.setField(docmosisCommonContent, "phoneNumber", PHONE_NUMBER);
     }
 
     @Test
@@ -60,6 +63,7 @@ class DocmosisCommonContentTest {
 
         var templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
+        CTSC_CONTACT.setEmailAddress(CONTACT_DIVORCE_EMAIL);
         assertThat(templateContent).isNotEmpty().hasSize(EXPECTED_ENTRY_SIZE)
             .contains(
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
@@ -76,6 +80,7 @@ class DocmosisCommonContentTest {
 
         var templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
+        CTSC_CONTACT.setEmailAddress(CONTACT_JUSTICE_GOV_UK_CY);
         assertThat(templateContent).isNotEmpty().hasSize(EXPECTED_ENTRY_SIZE)
             .contains(
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY),
