@@ -23,7 +23,7 @@ public class SetPostIssueState implements CaseTask {
         final Application application = caseDetails.getData().getApplication();
         final CaseData caseData = caseDetails.getData();
 
-        if (!caseData.getApplicationType().isSole() && caseData.isJudicialSeparation()) {
+        if (!caseData.getApplicationType().isSole() && caseData.isJudicialSeparationCase()) {
             caseDetails.setState(AwaitingJSOrNullity);
         } else if (!caseDetails.getData().getApplicationType().isSole()) {
             caseDetails.setState(Holding);

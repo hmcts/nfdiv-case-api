@@ -70,7 +70,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         if (isSoleApplication) {
             generateSoleNoticeOfProceedings(caseData, caseId);
         } else {
-            if (caseData.isJudicialSeparation() && !DIGITAL_AOS.equals(caseData.getApplication().getReissueOption())) {
+            if (caseData.isJudicialSeparationCase() && !DIGITAL_AOS.equals(caseData.getApplication().getReissueOption())) {
                 generateJointJSNoticeOfProceedings(caseData, caseId);
             } else {
                 generateJointNoticeOfProceedings(caseData, caseId);

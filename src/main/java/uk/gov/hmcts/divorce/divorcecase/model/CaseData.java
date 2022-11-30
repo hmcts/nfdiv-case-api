@@ -299,7 +299,7 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public boolean isJudicialSeparation() {
+    public boolean isJudicialSeparationCase() {
         return YES.equals(this.isJudicialSeparation);
     }
 

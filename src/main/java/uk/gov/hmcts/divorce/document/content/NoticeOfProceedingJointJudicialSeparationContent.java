@@ -59,11 +59,11 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
             templateContent.put(REISSUED_DATE, "Reissued on: " + caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
         }
 
-        String judicialSeparationProceedingsFinalText = JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT;
-        String judicialSeparationFinalText = JUDICIAL_SEPARATION_SUBTEXT;
+        StringBuilder judicialSeparationProceedingsFinalText = new StringBuilder(JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT);
+        StringBuilder judicialSeparationFinalText = new StringBuilder(JUDICIAL_SEPARATION_SUBTEXT);
         if (caseData.isDivorce()) {
-            judicialSeparationProceedingsFinalText = JUDICIAL + " " + judicialSeparationProceedingsFinalText;
-            judicialSeparationFinalText = JUDICIAL + " " + judicialSeparationFinalText;
+            judicialSeparationProceedingsFinalText.insert(0, JUDICIAL + " ");
+            judicialSeparationFinalText.insert(0, JUDICIAL + " ");
 
             templateContent.put(MARRIED_TO_MORE_THAN_ONE_PERSON, MARRIED_TO_MORE_THAN_ONE_PERSON_TEXT);
         }

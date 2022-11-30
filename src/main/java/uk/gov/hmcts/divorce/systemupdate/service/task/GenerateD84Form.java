@@ -39,7 +39,7 @@ public class GenerateD84Form implements CaseTask {
         final boolean d84DocumentAlreadyGenerated =
             documentsWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D84);
 
-        var d84Needed = !caseData.getApplicationType().isSole() && caseData.isJudicialSeparation();
+        var d84Needed = !caseData.getApplicationType().isSole() && caseData.isJudicialSeparationCase();
 
         if (d84Needed && !d84DocumentAlreadyGenerated) {
             addD84ToGeneratedDocuments(caseData, caseId);
