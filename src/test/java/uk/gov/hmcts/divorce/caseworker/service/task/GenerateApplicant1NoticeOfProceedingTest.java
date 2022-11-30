@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
@@ -247,6 +248,26 @@ class GenerateApplicant1NoticeOfProceedingTest {
         final Map<String, Object> templateContent = new HashMap<>();
 
         when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_APP1_JS_SOLE);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldGenerateApplicantJSNopInWelshWhenCaseIsSoleJudicialSeparationAndApplicantIsNotRepresented() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO);
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), WELSH)).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 

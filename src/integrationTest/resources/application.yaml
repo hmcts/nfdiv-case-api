@@ -161,7 +161,7 @@ docmosis:
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline.docx
       NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V2.docx #TODO: update content
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2_Cy.docx
-      NFD_NOP_APP1_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_JS_Sole.docx
+      NFD_NOP_APP1_JS_SOLE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant_JS_Sole.docx
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order.docx #TODO: update content
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx #TODO: update welsh content
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx

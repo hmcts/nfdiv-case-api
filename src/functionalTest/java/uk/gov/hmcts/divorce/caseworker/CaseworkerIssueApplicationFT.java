@@ -175,4 +175,19 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForOfflineSoleJudicialSeparationInWelsh() throws Exception {
+        final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
+        caseData.put("isJudicialSeparation", "Yes");
+        caseData.remove("applicant1Email");
+        caseData.remove("applicant2Email");
+        caseData.put("applicant1Offline", "Yes");
+        caseData.put("applicant2Offline", "Yes");
+        caseData.put("applicant1LanguagePreferenceWelsh", YES);
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
 }
