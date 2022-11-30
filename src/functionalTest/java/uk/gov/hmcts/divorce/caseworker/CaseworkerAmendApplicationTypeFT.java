@@ -24,6 +24,7 @@ public class CaseworkerAmendApplicationTypeFT extends FunctionalTestSuite {
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-caseworker-amend-application-type.json";
     private static final String RESPONSE = "classpath:responses/response-caseworker-amend-application-type.json";
     private static final String REQUEST_EMPTY = "classpath:request/casedata/ccd-callback-caseworker-amend-application-type-null-type.json";
+    private static final String RESPONSE_EMPTY =  "classpath:responses/response-caseworker-amend-application-type-null-type.json";
 
     @Test
     public void shouldUpdateCaseDataWithDissolution() throws Exception {
@@ -55,7 +56,7 @@ public class CaseworkerAmendApplicationTypeFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(
-                REQUEST_EMPTY
+                RESPONSE_EMPTY
             )));
     }
 }
