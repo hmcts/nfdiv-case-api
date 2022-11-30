@@ -47,7 +47,7 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
         if (!isNull(caseData.getApplicationType())) {
             if (caseData.getDivorceOrDissolution().equals(DIVORCE)) {
                 caseData.setDivorceOrDissolution(DISSOLUTION);
-            } else {
+            } else if(caseData.getDivorceOrDissolution().equals(DISSOLUTION)) {
                 caseData.setDivorceOrDissolution(DIVORCE);
             }
         }
