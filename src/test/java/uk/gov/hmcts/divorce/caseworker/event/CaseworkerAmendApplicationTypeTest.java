@@ -89,7 +89,7 @@ class CaseworkerAmendApplicationTypeTest {
 
         assertNotNull(response.getData().getDivorceOrDissolution());
         assertThat(response.getData().getDivorceOrDissolution().equals(DIVORCE)
-            ||response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
+            || response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
 
 
     }
