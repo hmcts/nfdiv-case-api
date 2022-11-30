@@ -111,6 +111,13 @@ public final class DocumentUtil {
             .collect(toList());
     }
 
+    public static List<Letter> coversheetsBasedOnApplicant(final List<Letter> coversheets, String appicant1Or2) {
+        return ofNullable(coversheets)
+            .flatMap(Collection::stream)
+            .filter(coversheet -> coversheet.getDivorceDocument().getDocumentFileName().contains(appicant1Or2))
+            .collect(toList());
+    }
+
     public static List<Letter> mapToLetters(final List<ListValue<Document>> documents, final DocumentType documentType) {
 
         final AtomicInteger letterIndex = new AtomicInteger();

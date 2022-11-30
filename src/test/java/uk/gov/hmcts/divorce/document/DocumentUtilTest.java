@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.coversheetsBasedOnApplicant;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
@@ -41,6 +42,7 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.isDocumentApplicableFor
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
@@ -381,6 +383,41 @@ class DocumentUtilTest {
                 ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
                 ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
             );
+    }
+
+    @Test
+    public void shouldReturnCoversheetsBasedOnApplicant() {
+        final ListValue<DivorceDocument> coversheetApp1Doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .documentFileName("coversheet-1669298408633097-applicant1-2022-11-25:11:12.pdf")
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> coversheetApp1Doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .documentFileName("coversheet-1669298408633097-applicant1-2022-11-25:10:10.pdf")
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> coversheetApp2Doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .documentFileName("coversheet-1669298408633097-applicant2-2022-11-25:10:10.pdf")
+                .build())
+            .build();
+
+        List<Letter> coversheetLetters = lettersWithDocumentType(Lists.newArrayList(
+            coversheetApp1Doc1,
+            coversheetApp1Doc2,
+            coversheetApp2Doc1), COVERSHEET);
+
+        List<Letter> coversheetLettersResponse = coversheetsBasedOnApplicant(coversheetLetters, "applicant1");
+
+        assertThat(coversheetLettersResponse).size().isEqualTo(2);
+        assertThat(coversheetLettersResponse.get(0).getDivorceDocument().equals(coversheetApp1Doc1.getValue()));
+        assertThat(coversheetLettersResponse.get(1).getDivorceDocument().equals(coversheetApp1Doc2.getValue()));
     }
 
     private DocumentInfo documentInfo() {
