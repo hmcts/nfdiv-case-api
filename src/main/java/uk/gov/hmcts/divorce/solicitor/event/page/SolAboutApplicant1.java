@@ -43,12 +43,6 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .mandatoryWithoutDefaultValue(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
                     "applicant1NameDifferentToMarriageCertificateMethod=\"other\"",
                     "If not through marriage or deed poll, please provide details of how they legally changed they name")
-                .mandatoryWithoutDefaultValue(Applicant::getNameChangedHow,
-                "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
-                "What evidence will be provided for the name change? ")
-                .mandatoryWithoutDefaultValue(Applicant::getNameChangedHowOtherDetails,
-                "applicant1NameChangedHow=\"other\"",
-                "If not through marriage or deed poll, please provide details of how they legally changed they name")
                 .mandatoryWithoutDefaultValue(Applicant::getGender, "divorceOrDissolution=\"dissolution\"",
                 "Is ${labelContentTheApplicantOrApplicant1} male or female?")
                 .done()
