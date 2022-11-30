@@ -66,13 +66,13 @@ class CaseworkerAmendApplicationTypeTest {
     @Test
     void shouldSetApplicationTypeToNullOnAboutToSubmit() {
         final CaseData caseData = CaseData.builder().build();
-        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.setDivorceOrDissolution(null);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
             .aboutToSubmit(caseDetails, caseDetails);
 
-        assertNotNull(response.getData().getDivorceOrDissolution());
+        assertNull(response.getData().getDivorceOrDissolution());
     }
 }
