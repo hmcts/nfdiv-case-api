@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
@@ -402,7 +403,8 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 TEST_CASE_ID,
                 COVERSHEET_APPLICANT,
                 templateContent,
-                ENGLISH
+                ENGLISH,
+                formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, "applicant2", now(clock))
             );
 
         assertThat(result.getData()).isEqualTo(caseData);
