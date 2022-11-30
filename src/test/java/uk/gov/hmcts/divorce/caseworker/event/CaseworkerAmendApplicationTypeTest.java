@@ -37,7 +37,7 @@ class CaseworkerAmendApplicationTypeTest {
             .contains(CASEWORKER_AMEND_APPLICATION_TYPE);
     }
 
-    @Test
+ /*   @Test
     void shouldSetApplicationTypeFromDivorceToDissolutionOnAboutToSubmit() {
         final CaseData caseData = CaseData.builder().build();
         caseData.setDivorceOrDissolution(DIVORCE);
@@ -93,6 +93,6 @@ class CaseworkerAmendApplicationTypeTest {
 
 
     }
-
+*/
 
 }
