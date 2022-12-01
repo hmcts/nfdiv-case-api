@@ -14,5 +14,5 @@
   "applicant1SolicitorName": "Applicant 1 Solicitor",
   "applicant1SolicitorEmail": "applicant1.solicitor@gmail.com",
   "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-  "dataVersion": "${json-unit.any-number}"
+  "dataVersion": 5
 }
