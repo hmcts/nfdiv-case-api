@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
@@ -25,9 +26,11 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
@@ -84,7 +87,8 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
             .phoneNumber("0300 303 0642")
             .build();
 
-        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), caseData.getApplicant2()
+            .getLanguagePreference())).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
             caseData,
@@ -137,7 +141,8 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
             .phoneNumber("0300 303 0642")
             .build();
 
-        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), caseData.getApplicant2()
+            .getLanguagePreference())).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
             caseData,
@@ -189,7 +194,8 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
             .phoneNumber("0300 303 0642")
             .build();
 
-        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), caseData.getApplicant2()
+            .getLanguagePreference())).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
             caseData,
@@ -210,6 +216,167 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(JUDICIAL_SEPARATION, "separation"),
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+                entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
+            );
+
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyJSDivorceContentWelsh() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .postTown("town")
+                .postCode("postcode")
+                .build()
+        );
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
+        caseData.setIsJudicialSeparation(YES);
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        var ctscContactDetails = CtscContactDetails
+            .builder()
+            .phoneNumber("0300 303 5171")
+            .build();
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.WELSH)).thenReturn("gwraig");
+
+        Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            caseData.getApplicant2());
+
+        assertThat(templateContent)
+            .contains(
+                entry(CASE_REFERENCE, formatId(1616591401473378L)),
+                entry(FIRST_NAME, TEST_FIRST_NAME),
+                entry(LAST_NAME, TEST_LAST_NAME),
+                entry(ISSUE_DATE, "18 June 2021"),
+                entry(ADDRESS, "line1\nline2\ntown\npostcode"),
+                entry(RELATION, "gwraig"),
+                entry(JUDICIAL_SEPARATION_PROCEEDINGS, "achos ymwahaniad cyfreithiol"),
+                entry(JUDICIAL_SEPARATION, "ymwahaniad cyfreithiol"),
+                entry(DIVORCE_AND_DISSOLUTION_HEADER, "Ysgariadau a Diddymiadau"),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_JUSTICE_GOV_UK_CY),
+                entry(CTSC_CONTACT_DETAILS, ctscContactDetails),
+                entry(MARRIED_TO_MORE_THAN_ONE_PERSON, "Rhaid i chi ddweud wrth y llys os ydych wedi bod yn briod i fwy nag"
+                    + " un unigolyn yn ystod y briodas hon.")
+            );
+
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyJSDissolutionContentWelsh() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .postTown("town")
+                .postCode("postcode")
+                .build()
+        );
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
+        caseData.setIsJudicialSeparation(YES);
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        var ctscContactDetails = CtscContactDetails
+            .builder()
+            .phoneNumber("0300 303 5171")
+            .build();
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.WELSH)).thenReturn("gwraig");
+
+        Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            caseData.getApplicant2());
+
+        assertThat(templateContent)
+            .contains(
+                entry(CASE_REFERENCE, formatId(1616591401473378L)),
+                entry(FIRST_NAME, TEST_FIRST_NAME),
+                entry(LAST_NAME, TEST_LAST_NAME),
+                entry(ISSUE_DATE, "18 June 2021"),
+                entry(ADDRESS, "line1\nline2\ntown\npostcode"),
+                entry(JUDICIAL_SEPARATION_PROCEEDINGS, "achos ymwahaniad"),
+                entry(RELATION, "gwraig"),
+                entry(JUDICIAL_SEPARATION, "ymwahaniad"),
+                entry(DIVORCE_AND_DISSOLUTION_HEADER, "Ysgariadau a Diddymiadau"),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_JUSTICE_GOV_UK_CY),
+                entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
+            );
+
+    }
+
+
+    @Test
+    public void shouldSuccessfullyApplyJSDissolutionReissueContentWelsh() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant1().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("UK")
+                .postTown("town")
+                .postCode("postcode")
+                .build()
+        );
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
+        caseData.setIsJudicialSeparation(YES);
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.getApplication().setReissueDate(LocalDate.of(2021, 8, 18));
+        var ctscContactDetails = CtscContactDetails
+            .builder()
+            .phoneNumber("0300 303 5171")
+            .build();
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.WELSH)).thenReturn("gwraig");
+
+        Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            caseData.getApplicant2());
+
+        assertThat(templateContent)
+            .contains(
+                entry(CASE_REFERENCE, formatId(1616591401473378L)),
+                entry(FIRST_NAME, TEST_FIRST_NAME),
+                entry(LAST_NAME, TEST_LAST_NAME),
+                entry(ISSUE_DATE, "18 June 2021"),
+                entry(REISSUED_DATE, "Ailgyhoeddwyd ar: "),
+                entry(ADDRESS, "line1\nline2\ntown\npostcode"),
+                entry(JUDICIAL_SEPARATION_PROCEEDINGS, "achos ymwahaniad"),
+                entry(RELATION, "gwraig"),
+                entry(JUDICIAL_SEPARATION, "ymwahaniad"),
+                entry(DIVORCE_AND_DISSOLUTION_HEADER, "Ysgariadau a Diddymiadau"),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_JUSTICE_GOV_UK_CY),
                 entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
             );
 
