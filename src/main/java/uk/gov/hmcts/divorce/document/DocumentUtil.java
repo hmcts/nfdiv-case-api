@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.document.print.model.Letter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
@@ -114,6 +115,7 @@ public final class DocumentUtil {
     public static List<Letter> coversheetsBasedOnApplicant(final List<Letter> coversheets, String appicant1Or2) {
         return ofNullable(coversheets)
             .flatMap(Collection::stream)
+            .filter(coversheet -> Objects.nonNull(coversheet.getDivorceDocument().getDocumentFileName()))
             .filter(coversheet -> coversheet.getDivorceDocument().getDocumentFileName().contains(appicant1Or2))
             .collect(toList());
     }

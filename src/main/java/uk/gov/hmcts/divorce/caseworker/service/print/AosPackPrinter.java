@@ -185,7 +185,7 @@ public class AosPackPrinter {
         final Letter d84Letter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D84));
 
         Letter coversheetLetter;
-        if (!caseData.getApplicationType().isSole() && caseData.isJudicialSeparationCase()) {
+        if (caseData.isJudicialSeparationCase() && !caseData.getApplicationType().isSole()) {
             coversheetLetter = firstElement(coversheetsBasedOnApplicant(lettersWithDocumentType(
                 caseData.getDocuments().getDocumentsGenerated(),
                 COVERSHEET),
