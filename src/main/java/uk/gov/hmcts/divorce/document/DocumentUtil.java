@@ -117,7 +117,7 @@ public final class DocumentUtil {
             .flatMap(Collection::stream)
             .filter(coversheet -> Objects.nonNull(coversheet.getDivorceDocument().getDocumentFileName()))
             .filter(coversheet -> coversheet.getDivorceDocument().getDocumentFileName().contains(appicant1Or2))
-            .collect(toList());
+            .toList();
     }
 
     public static List<Letter> mapToLetters(final List<ListValue<Document>> documents, final DocumentType documentType) {

@@ -386,38 +386,20 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void shouldReturnCoversheetsBasedOnApplicant() {
+    public void shouldReturnNullIfNoCoversheetsBasedOnApplicant() {
         final ListValue<DivorceDocument> coversheetApp1Doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(COVERSHEET)
-                .documentFileName("coversheet-1669298408633097-applicant1-2022-11-25:11:12.pdf")
-                .build())
-            .build();
-
-        final ListValue<DivorceDocument> coversheetApp1Doc2 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(COVERSHEET)
-                .documentFileName("coversheet-1669298408633097-applicant1-2022-11-25:10:10.pdf")
-                .build())
-            .build();
-
-        final ListValue<DivorceDocument> coversheetApp2Doc1 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(COVERSHEET)
-                .documentFileName("coversheet-1669298408633097-applicant2-2022-11-25:10:10.pdf")
+                .documentFileName("coversheet-1669298408633097-2022-11-25:11:12.pdf")
                 .build())
             .build();
 
         List<Letter> coversheetLetters = lettersWithDocumentType(Lists.newArrayList(
-            coversheetApp1Doc1,
-            coversheetApp1Doc2,
-            coversheetApp2Doc1), COVERSHEET);
+            coversheetApp1Doc1), COVERSHEET);
 
         List<Letter> coversheetLettersResponse = coversheetsBasedOnApplicant(coversheetLetters, "applicant1");
 
-        assertThat(coversheetLettersResponse).size().isEqualTo(2);
-        assertThat(coversheetLettersResponse.get(0).getDivorceDocument().equals(coversheetApp1Doc1.getValue()));
-        assertThat(coversheetLettersResponse.get(1).getDivorceDocument().equals(coversheetApp1Doc2.getValue()));
+        assertThat(coversheetLettersResponse).isEmpty();
     }
 
     private DocumentInfo documentInfo() {
