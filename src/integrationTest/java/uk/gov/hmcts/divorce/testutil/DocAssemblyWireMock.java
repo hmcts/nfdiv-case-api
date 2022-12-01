@@ -2,18 +2,12 @@ package uk.gov.hmcts.divorce.testutil;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import org.mockito.Mockito;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
-import uk.gov.hmcts.reform.document.DocumentUploadClientApi;
-import uk.gov.hmcts.reform.document.domain.Document;
-import uk.gov.hmcts.reform.document.domain.UploadResponse;
 
 import java.io.IOException;
 import java.util.Base64;
-import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -21,10 +15,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.unauthorized;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.nio.file.Files.readAllBytes;
-import static java.util.Arrays.asList;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -108,26 +98,6 @@ public final class DocAssemblyWireMock {
                 .of("doc_assembly.url=" + "http://localhost:" + DOC_ASSEMBLY_SERVER.port())
                 .applyTo(applicationContext.getEnvironment());
         }
-    }
-
-    public static void mockDFormsUpload(DocumentUploadClientApi documentUploadClientApi, DocumentType docType, String docTemplateId) {
-        UploadResponse uploadResponse = Mockito.mock(UploadResponse.class);
-        UploadResponse.Embedded embedded = Mockito.mock(UploadResponse.Embedded.class);
-        when(uploadResponse.getEmbedded()).thenReturn(embedded);
-        uk.gov.hmcts.reform.document.domain.Document doc = new uk.gov.hmcts.reform.document.domain.Document();
-        doc.links = new uk.gov.hmcts.reform.document.domain.Document.Links();
-        doc.links.self = new uk.gov.hmcts.reform.document.domain.Document.Link();
-        doc.links.self.href = "http://dm-store-aat.service.core-compute-aat.internal/documents/" + docTemplateId;
-        doc.links.binary = new uk.gov.hmcts.reform.document.domain.Document.Link();
-        doc.links.binary.href = "http://dm-store-aat.service.core-compute-aat.internal/documents/" + docTemplateId + "/binaryUrl";
-        doc.originalDocumentName = docType.getLabel() + ".pdf";
-        List<Document> formDocList = asList(doc);
-        when(embedded.getDocuments()).thenReturn(formDocList);
-        when(documentUploadClientApi.upload(anyString(),
-            anyString(),
-            anyString(),
-            anyList()
-        )).thenReturn(uploadResponse);
     }
 
 }
