@@ -6,9 +6,11 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
@@ -17,9 +19,13 @@ import java.time.Clock;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
@@ -43,6 +49,12 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
     private NoticeOfProceedingSolicitorContent solicitorContent;
 
     @Autowired
+    private GenerateCoversheet generateCoversheet;
+
+    @Autowired
+    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
+
+    @Autowired
     private Clock clock;
 
     @Override
@@ -52,13 +64,53 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final boolean isSoleApplication = caseData.getApplicationType().isSole();
 
+        ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
         if (isSoleApplication) {
-            generateSoleNoticeOfProceedings(caseData, caseId);
+            if (YES.equals(caseDetails.getData().getIsJudicialSeparation())) {
+                if (!DIGITAL_AOS.equals(reissueOption)) {
+                    generateSoleJSNoticeOfProceedings(caseData, caseId);
+                }
+            } else {
+                generateSoleNoticeOfProceedings(caseData, caseId);
+            }
         } else {
             generateJointNoticeOfProceedings(caseData, caseId);
         }
 
         return caseDetails;
+    }
+
+    private void generateSoleJSNoticeOfProceedings(CaseData caseData, Long caseId) {
+        final Applicant applicant1 = caseData.getApplicant1();
+        log.info("Generating NOP for JS respondent for sole case id {} ", caseId);
+        if (applicant1.isBasedOverseas() || caseData.getApplication().isPersonalServiceMethod()) {
+            final String templateId;
+            final Map<String, Object> content;
+            log.info("Generating notice of proceedings for applicant1 for sole case id {} ", caseId);
+
+            content = templateContent.apply(caseData, caseId, caseData.getApplicant2(), applicant1.getLanguagePreference());
+            templateId = NFD_NOP_APP1_JS_SOLE;
+
+
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                NOTICE_OF_PROCEEDINGS_APP_1,
+                content,
+                caseId,
+                templateId,
+                applicant1.getLanguagePreference(),
+                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
+            );
+
+            log.info("Generating coversheet for Applicant1 JS respondent for sole case id {} ", caseId);
+            generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                COVERSHEET_APPLICANT,
+                coversheetApplicantTemplateContent.apply(caseData, caseId, applicant1),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
     }
 
     private void generateSoleNoticeOfProceedings(CaseData caseData, Long caseId) {

@@ -366,6 +366,7 @@ docmosis:
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order.docx
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
+      NFD_NOP_APP1_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint.docx
@@ -420,6 +421,7 @@ docmosis:
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order.docx #TODO: update welsh content
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx #TODO: update welsh content
+      NFD_NOP_APP1_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole.docx #TODO: update welsh content
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
@@ -515,3 +517,10 @@ SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 toggle:
   enable_case_document_access_management: ${ENABLE_CDAM:true}
   enable_qr_code_reading: ${ENABLE_QR_CODE_READING:true}
+
+logging:
+  level:
+    root: ERROR
+    org.springframework.web: ERROR
+    uk.gov.hmcts.divorce: DEBUG
+    org.hibernate: ERROR

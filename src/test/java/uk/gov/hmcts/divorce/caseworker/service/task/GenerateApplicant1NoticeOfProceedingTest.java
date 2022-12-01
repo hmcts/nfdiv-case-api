@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
@@ -36,11 +37,14 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
@@ -66,6 +70,12 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private GenerateCoversheet generateCoversheet;
+
+    @Mock
+    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
 
     @InjectMocks
     private GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
@@ -231,6 +241,99 @@ class GenerateApplicant1NoticeOfProceedingTest {
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_JA1_JOINT_APP1APP2_CIT);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldGenerateJSWhenSoleForPersonalService() {
+        setMockClock(clock);
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country("United Kingdom")
+            .postCode("W1J7NT")
+            .build();
+        caseData.getApplicant1().setAddress(addressGlobalUK);
+        caseData.setIsJudicialSeparation(YES);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_APP1_JS_SOLE);
+
+        verify(generateCoversheet)
+            .generateCoversheet(
+                caseData,
+                TEST_CASE_ID,
+                COVERSHEET_APPLICANT,
+                templateContent,
+                ENGLISH
+            );
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldGenerateJSWhenSoleForBasedOverseas() {
+        setMockClock(clock);
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        AddressGlobalUK addressGlobalOverseas = AddressGlobalUK.builder()
+            .country("France")
+            .postCode("75005")
+            .build();
+        caseData.getApplicant1().setAddress(addressGlobalOverseas);
+        caseData.setIsJudicialSeparation(YES);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_APP1_JS_SOLE);
+
+        verify(generateCoversheet)
+            .generateCoversheet(
+                caseData,
+                TEST_CASE_ID,
+                COVERSHEET_APPLICANT,
+                templateContent,
+                ENGLISH
+            );
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldNotGenerateJSWhenSoleRepresented() {
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, YES);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant1().setEmail("notnull@something.com");
+        caseData.setIsJudicialSeparation(YES);
+
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyNoInteractions(generateCoversheet, noticeOfProceedingContent);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldNotGenerateJSWhenSoleAndDigitalReissue() {
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant1().setEmail("notnull@something.com");
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplication().setReissueOption(DIGITAL_AOS);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyNoInteractions(generateCoversheet, noticeOfProceedingContent);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
