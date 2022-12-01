@@ -20,10 +20,18 @@ public class SendAosPackToApplicant implements CaseTask {
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
+        final boolean shouldSendJudicialSeparationPack =
+            caseData.getIsJudicialSeparation().toBoolean()
+                && caseData.getApplicant1().isApplicantOffline()
+                && !caseData.getApplicationType().isSole();
 
         if (caseData.getApplication().isCourtServiceMethod()) {
             log.info("Sending NOP and application pack to bulk print as applicant 1 is not represented. Case id: {}:", caseId);
             aosPackPrinter.sendAosLetterToApplicant(caseData, caseId);
+        } else if (shouldSendJudicialSeparationPack) {
+
+            log.info("Sending Respondent Judicial Separation AoS pack to bulk print.  Case ID: {}", caseId);
+            aosPackPrinter.sendJudicialSeparationAoSLetterToApplicant(caseData, caseId);
         } else {
             log.info("Bulk printing NOP and application pack. Case id: {}:", caseId);
             aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, caseId);

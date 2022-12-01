@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -61,9 +62,49 @@ public class AosPackPrinter {
         }
     }
 
+    public void sendJudicialSeparationAoSLetterToRespondent(final CaseData caseData, final Long caseId) {
+
+        final List<Letter> currentAosLetters = aosLetters(caseData, NOTICE_OF_PROCEEDINGS_APP_2);
+
+        if (!isEmpty(currentAosLetters)) {
+
+            final String caseIdString = caseId.toString();
+            final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_RESPONDENT_PACK);
+
+
+            final UUID letterId = bulkPrintService.printAosRespondentPack(print, false);
+            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+        } else {
+            log.warn(
+                "AoS Pack print for respondent has missing documents. Expected documents with type {} , for Case ID: {}",
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_2),
+                caseId);
+        }
+    }
+
+    public void sendJudicialSeparationAoSLetterToApplicant(final CaseData caseData, final Long caseId) {
+
+        final List<Letter> currentAosLetters = aosLetters(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
+
+        if (!isEmpty(currentAosLetters)) {
+
+            final String caseIdString = caseId.toString();
+            final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_RESPONDENT_PACK);
+
+
+            final UUID letterId = bulkPrintService.printAosRespondentPack(print, false);
+            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+        } else {
+            log.warn(
+                "AoS Pack print for applicant has missing documents. Expected documents with type {} , for Case ID: {}",
+                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_1),
+                caseId);
+        }
+    }
+
     public void sendAosLetterToApplicant(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> currentAosLetters = aosLetters(caseData);
+        final List<Letter> currentAosLetters = aosLetters(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
 
         if (!isEmpty(currentAosLetters)) {
 
@@ -144,7 +185,7 @@ public class AosPackPrinter {
         }
     }
 
-    private List<Letter> aosLetters(CaseData caseData) {
+    private List<Letter> aosLetters(CaseData caseData, DocumentType documentType) {
         final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
             APPLICATION);
@@ -153,7 +194,7 @@ public class AosPackPrinter {
         final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
 
         //Always get document on top of list as new document is added to top after generation
-        final Letter notificationLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1));
+        final Letter notificationLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, documentType));
 
         final List<Letter> currentAosLetters = new ArrayList<>();
 

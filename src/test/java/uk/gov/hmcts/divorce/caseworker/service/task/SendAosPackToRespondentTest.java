@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -36,6 +38,7 @@ class SendAosPackToRespondentTest {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.setApplicant2(respondent());
+        caseData.setIsJudicialSeparation(NO);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -53,6 +56,7 @@ class SendAosPackToRespondentTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.setApplicant2(respondent());
+        caseData.setIsJudicialSeparation(NO);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -70,6 +74,7 @@ class SendAosPackToRespondentTest {
         final var caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.setIsJudicialSeparation(NO);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -79,5 +84,23 @@ class SendAosPackToRespondentTest {
         sendAosPackToRespondent.apply(caseDetails);
 
         verifyNoInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldSendJudicialSeparationAoSLetterToRespondent() {
+        final var caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicant2(respondent());
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant2().setOffline(YES);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        sendAosPackToRespondent.apply(caseDetails);
+
+        verify(aosPackPrinter).sendJudicialSeparationAoSLetterToRespondent(caseData, TEST_CASE_ID);
     }
 }

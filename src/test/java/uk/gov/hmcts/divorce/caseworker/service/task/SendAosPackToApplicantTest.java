@@ -37,6 +37,7 @@ class SendAosPackToApplicantTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant1().setOffline(YES);
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
             Solicitor
@@ -60,6 +61,7 @@ class SendAosPackToApplicantTest {
         final var caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant2().setSolicitorRepresented(NO);
 
@@ -71,6 +73,23 @@ class SendAosPackToApplicantTest {
 
         verify(aosPackPrinter).sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
 
+        verifyNoMoreInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldSendJudicialSeparationAoSLetterToRespondent() {
+        final var caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.setIsJudicialSeparation(YES);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        sendAosPackToApplicant.apply(caseDetails);
+
+        verify(aosPackPrinter).sendJudicialSeparationAoSLetterToApplicant(caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(aosPackPrinter);
     }
 }
