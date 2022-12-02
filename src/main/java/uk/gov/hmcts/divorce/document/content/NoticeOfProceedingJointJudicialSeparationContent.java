@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import com.launchdarkly.shaded.kotlin.jvm.internal.PackageReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_JS_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
@@ -23,6 +28,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_JS_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -52,10 +60,14 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
 
     public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY = "Ysgariadau a Diddymiadau";
 
-    public static final String PHONE_NUMBER_CY = "0300 303 5171";
+    @Value("${court.locations.serviceCentre.poBox}")
+    private String poBox;
 
-    @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
+    @Value("${court.locations.serviceCentre.postCode}")
+    private String postCode;
+
+    @Value("${court.locations.serviceCentre.town}")
+    private String town;
 
     @Autowired
     private CommonContent commonContent;
@@ -64,58 +76,81 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
                                      final Long ccdCaseReference,
                                      Applicant applicant,
                                      Applicant partner) {
-        final Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = new HashMap<>();
         final LanguagePreference applicantLanguagePreference = applicant.getLanguagePreference();
 
+        templateContent.put(RELATION, commonContent.getPartner(caseData, partner, applicantLanguagePreference));
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(FIRST_NAME, applicant.getFirstName());
         templateContent.put(LAST_NAME, applicant.getLastName());
         templateContent.put(ADDRESS, applicant.getPostalAddress());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
 
-        if (null != caseData.getApplication().getReissueDate()) {
+        final var ctscContactDetails = CtscContactDetails
+            .builder()
+            .postcode(postCode)
+            .town(town)
+            .build();
 
-            templateContent.put(
-                REISSUED_DATE,
-                WELSH.equals(applicantLanguagePreference) ? REISSUED_TEXT_CY : REISSUED_TEXT
-                    + caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER)
-            );
+        if (WELSH.equals(applicantLanguagePreference)) {
+            getWelshTemplateContent(templateContent, caseData);
+            ctscContactDetails.setPoBox("Blwch Post 13226");
+        } else {
+            getEnglishTemplateContent(templateContent, caseData);
+            ctscContactDetails.setPoBox(poBox);
         }
 
-        StringBuilder judicialSeparationProceedingsFinalText = new StringBuilder(
-            WELSH.equals(applicantLanguagePreference) ? JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT_CY : JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT
-        );
-        StringBuilder judicialSeparationFinalText = new StringBuilder(
-            WELSH.equals(applicantLanguagePreference) ? JUDICIAL_SEPARATION_SUBTEXT_CY : JUDICIAL_SEPARATION_SUBTEXT
-        );
+        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+
+        return templateContent;
+    }
+
+    private Map<String, Object> getEnglishTemplateContent(Map<String, Object> templateContent, CaseData caseData) {
+
+        if (null != caseData.getApplication().getReissueDate()) {
+            templateContent.put(REISSUED_DATE, REISSUED_TEXT + caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
+        }
+
+        StringBuilder judicialSeparationProceedingsFinalText = new StringBuilder(JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT);
+        StringBuilder judicialSeparationFinalText = new StringBuilder(JUDICIAL_SEPARATION_SUBTEXT);
         if (caseData.isDivorce()) {
-            if (WELSH.equals(applicantLanguagePreference)) {
-                judicialSeparationProceedingsFinalText.append(" " + JUDICIAL_CY);
-                judicialSeparationFinalText.append(" " + JUDICIAL_CY);
+            judicialSeparationProceedingsFinalText.insert(0, JUDICIAL + " ");
+            judicialSeparationFinalText.insert(0, JUDICIAL + " ");
 
-                templateContent.put(MARRIED_TO_MORE_THAN_ONE_PERSON, MARRIED_TO_MORE_THAN_ONE_PERSON_TEXT_CY);
-            } else {
-                judicialSeparationProceedingsFinalText.insert(0, JUDICIAL + " ");
-                judicialSeparationFinalText.insert(0, JUDICIAL + " ");
-
-                templateContent.put(MARRIED_TO_MORE_THAN_ONE_PERSON, MARRIED_TO_MORE_THAN_ONE_PERSON_TEXT);
-            }
+            templateContent.put(MARRIED_TO_MORE_THAN_ONE_PERSON, MARRIED_TO_MORE_THAN_ONE_PERSON_TEXT);
         }
 
         templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, judicialSeparationProceedingsFinalText.toString());
         templateContent.put(JUDICIAL_SEPARATION, judicialSeparationFinalText.toString());
-        templateContent.put(RELATION, commonContent.getPartner(caseData, partner, applicantLanguagePreference));
-        templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER,
-            WELSH.equals(applicantLanguagePreference) ? DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY : DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
-        templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL,
-            WELSH.equals(applicantLanguagePreference) ? CONTACT_JUSTICE_GOV_UK_CY : CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT);
 
-        final var ctscContactDetails = CtscContactDetails
-            .builder()
-            .phoneNumber(WELSH.equals(applicantLanguagePreference) ? PHONE_NUMBER_CY : phoneNumber)
-            .build();
+        return templateContent;
+    }
 
-        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+    private Map<String, Object> getWelshTemplateContent(Map<String, Object> templateContent, CaseData caseData) {
+
+        if (null != caseData.getApplication().getReissueDate()) {
+            templateContent.put(REISSUED_DATE, REISSUED_TEXT_CY + caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
+        }
+
+        StringBuilder judicialSeparationProceedingsFinalText = new StringBuilder(JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT_CY);
+        StringBuilder judicialSeparationFinalText = new StringBuilder(JUDICIAL_SEPARATION_SUBTEXT_CY);
+        if (caseData.isDivorce()) {
+            judicialSeparationProceedingsFinalText.append(" " + JUDICIAL_CY);
+            judicialSeparationFinalText.append(" " + JUDICIAL_CY);
+
+            templateContent.put(MARRIED_TO_MORE_THAN_ONE_PERSON, MARRIED_TO_MORE_THAN_ONE_PERSON_TEXT_CY);
+        }
+
+        templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, judicialSeparationProceedingsFinalText.toString());
+        templateContent.put(JUDICIAL_SEPARATION, judicialSeparationFinalText.toString());
+        templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
+        templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_JS_TEXT_CY);
+        templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_JUSTICE_GOV_UK_CY);
+        templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
 
         return templateContent;
     }

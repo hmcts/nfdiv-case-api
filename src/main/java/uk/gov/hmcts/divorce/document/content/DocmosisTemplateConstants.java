@@ -184,11 +184,13 @@ public final class DocmosisTemplateConstants {
     public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER = "courtsAndTribunalsServiceHeader";
     public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT = "HM Courts & Tribunals Service";
     public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY = "Gwasanaeth Llysoedd a Thribiwnlysoedd EM";
+    public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER_JS_TEXT_CY = "Gwasanaeth Llysoedd a Thribiwnlysoedd EF";
 
     public static final String CONTACT_EMAIL = "contactEmail";
 
     public static final String PHONE_AND_OPENING_TIMES = "phoneAndOpeningTimes";
     public static final String PHONE_AND_OPENING_TIMES_TEXT = "Phone: 0300 303 0642 (Monday to Friday, 8am to 6pm)";
+    public static final String PHONE_AND_OPENING_TIMES_JS_TEXT = "Phone: 0300 303 0642 (Monday to Friday, 8am to 8pm)";
     public static final String PHONE_AND_OPENING_TIMES_TEXT_CY =
         "Ffôn: 0300 303 5171 (Dydd Llun i ddydd Iau 9am i 5pm, Dydd Gwener 9am to 4.30pm)";
 
