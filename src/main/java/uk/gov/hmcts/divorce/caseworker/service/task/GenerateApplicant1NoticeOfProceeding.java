@@ -82,15 +82,14 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
 
     private void generateSoleJSNoticeOfProceedings(CaseData caseData, Long caseId) {
         final Applicant applicant1 = caseData.getApplicant1();
-        log.info("Generating NOP for JS respondent for sole case id {} ", caseId);
+        log.info("Generating NOP for applicant1 JS for sole case id {} ", caseId);
         if (applicant1.isBasedOverseas() || caseData.getApplication().isPersonalServiceMethod()) {
             final String templateId;
             final Map<String, Object> content;
-            log.info("Generating notice of proceedings for applicant1 for sole case id {} ", caseId);
+            log.info("Generating notice of proceedings for applicant1 JS for sole case id {} ", caseId);
 
             content = templateContent.apply(caseData, caseId, caseData.getApplicant2(), applicant1.getLanguagePreference());
             templateId = NFD_NOP_APP1_JS_SOLE;
-
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
