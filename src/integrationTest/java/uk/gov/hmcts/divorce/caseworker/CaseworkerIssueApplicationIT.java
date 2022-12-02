@@ -1009,6 +1009,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant1().getSolicitor().setEmail(null);
         caseData.getApplicant2().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder()
