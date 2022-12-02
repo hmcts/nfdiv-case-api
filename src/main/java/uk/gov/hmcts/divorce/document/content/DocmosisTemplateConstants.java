@@ -47,6 +47,7 @@ public final class DocmosisTemplateConstants {
     public static final String ENDING_CIVIL_PARTNERSHIP = "ending the civil partnership";
     public static final String ENDING_CIVIL_PARTNERSHIP_CY = "dod â phartneriaeth sifil i ben";
     public static final String RELATIONSHIP = "relationship";
+    public static final String RELATIONSHIP_CY = "berthynas";
     public static final String RELATION = "relation";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
     public static final String CIVIL_PARTNERSHIP_CY = "bartneriaeth sifil";
@@ -188,6 +189,7 @@ public final class DocmosisTemplateConstants {
 
     public static final String PHONE_AND_OPENING_TIMES = "phoneAndOpeningTimes";
     public static final String PHONE_AND_OPENING_TIMES_TEXT = "Phone: 0300 303 0642 (Monday to Friday, 8am to 6pm)";
+    public static final String PHONE_AND_OPENING_TIMES_JS_TEXT = "Phone: 0300 303 0642 (Monday to Friday, 8am to 8pm)";
     public static final String PHONE_AND_OPENING_TIMES_TEXT_CY =
         "Ffôn: 0300 303 5171 (Dydd Llun i ddydd Iau 9am i 5pm, Dydd Gwener 9am to 4.30pm)";
 

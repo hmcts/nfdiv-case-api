@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import static java.lang.String.format;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -66,6 +67,9 @@ public class ReIssueApplicationService {
     @Autowired
     private GenerateD10Form generateD10Form;
 
+    @Autowired
+    private GenerateD84Form generateD84Form;
+
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
         ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
 
@@ -107,6 +111,7 @@ public class ReIssueApplicationService {
                 generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
                 generateD10Form,
+                generateD84Form,
                 resetAosFields
             ).run(caseDetails);
         } else if (REISSUE_CASE.equals(reissueOption)) {
@@ -119,6 +124,7 @@ public class ReIssueApplicationService {
                 generateApplicant2NoticeOfProceedings,
                 generateDivorceApplication,
                 generateD10Form,
+                generateD84Form,
                 resetAosFields
             ).run(caseDetails);
         } else {

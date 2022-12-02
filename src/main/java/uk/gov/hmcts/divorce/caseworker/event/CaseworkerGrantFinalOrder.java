@@ -7,14 +7,15 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendFinalOrderGrantedNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
@@ -48,7 +49,10 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
     private GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
 
     @Autowired
-    private SendFinalOrderGrantedNotifications sendFinalOrderGrantedNotifications;
+    private FinalOrderGrantedNotification finalOrderGrantedNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -103,9 +107,13 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
+
+        final Long caseId = details.getId();
+        final CaseData caseData = details.getData();
+
         log.info("CitizenSaveAndClose submitted callback invoked for case id: {}", details.getId());
 
-        sendFinalOrderGrantedNotifications.apply(details);
+        notificationDispatcher.send(finalOrderGrantedNotification, caseData, caseId);
 
         return SubmittedCallbackResponse.builder().build();
     }

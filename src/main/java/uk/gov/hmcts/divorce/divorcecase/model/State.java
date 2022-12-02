@@ -197,6 +197,13 @@ public enum State {
     AwaitingJointFinalOrder,
 
     @CCD(
+        label = "Awaiting JS/Nullity",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    AwaitingJSOrNullity,
+
+    @CCD(
         label = "Awaiting judge clarification",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -213,7 +220,7 @@ public enum State {
     @CCD(
         label = "Awaiting service",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
+        access = {DefaultStateAccess.class}
     )
     AwaitingService,
 

@@ -67,7 +67,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue, OfflineDocumentReceived, AwaitingService))
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
-            .showCondition("applicationType=\"soleApplication\"")
+            .showCondition("applicationType=\"soleApplication\" AND aosIsDrafted!=\"Yes\"")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
