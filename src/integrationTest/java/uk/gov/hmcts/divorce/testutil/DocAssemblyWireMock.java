@@ -110,24 +110,4 @@ public final class DocAssemblyWireMock {
         }
     }
 
-    public static void mockDFormsUpload(DocumentUploadClientApi documentUploadClientApi, DocumentType docType, String docTemplateId) {
-        UploadResponse uploadResponse = Mockito.mock(UploadResponse.class);
-        UploadResponse.Embedded embedded = Mockito.mock(UploadResponse.Embedded.class);
-        when(uploadResponse.getEmbedded()).thenReturn(embedded);
-        uk.gov.hmcts.reform.document.domain.Document doc = new uk.gov.hmcts.reform.document.domain.Document();
-        doc.links = new uk.gov.hmcts.reform.document.domain.Document.Links();
-        doc.links.self = new uk.gov.hmcts.reform.document.domain.Document.Link();
-        doc.links.self.href = "http://dm-store-aat.service.core-compute-aat.internal/documents/" + docTemplateId;
-        doc.links.binary = new uk.gov.hmcts.reform.document.domain.Document.Link();
-        doc.links.binary.href = "http://dm-store-aat.service.core-compute-aat.internal/documents/" + docTemplateId + "/binary";
-        doc.originalDocumentName = docType.getLabel() + ".pdf";
-        List<Document> formDocList = asList(doc);
-        when(embedded.getDocuments()).thenReturn(formDocList);
-        when(documentUploadClientApi.upload(anyString(),
-            anyString(),
-            anyString(),
-            anyList()
-        )).thenReturn(uploadResponse);
-    }
-
 }
