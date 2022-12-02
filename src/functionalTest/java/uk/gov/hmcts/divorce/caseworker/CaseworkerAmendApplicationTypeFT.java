@@ -37,7 +37,6 @@ public class CaseworkerAmendApplicationTypeFT extends FunctionalTestSuite {
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
-            .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(
                 RESPONSE
             )));
@@ -54,7 +53,6 @@ public class CaseworkerAmendApplicationTypeFT extends FunctionalTestSuite {
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
-            .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(
                 RESPONSE_EMPTY
             )));
