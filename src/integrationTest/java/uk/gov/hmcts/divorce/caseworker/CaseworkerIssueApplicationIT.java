@@ -88,6 +88,8 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.C
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.EndCivilPartnership.END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -303,6 +305,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().getAddress().setCountry("UK");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setIsJudicialSeparation(NO);
 
         stubAosPackSendLetterToApplicant1CourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();
@@ -611,6 +614,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.setIsJudicialSeparation(NO);
 
         stubAosPackSendLetterToApplicant1CourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();
@@ -964,6 +968,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.setIsJudicialSeparation(NO);
 
         stubAosPackSendLetterToApplicant1CourtService(AOS_COVER_LETTER_TEMPLATE_ID);
 
@@ -1715,6 +1720,9 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         caseData.getApplicant2().setContactDetailsType(ContactDetailsType.PRIVATE);
         caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.setIsJudicialSeparation(NO);
+        caseData.getApplicant1().setContactDetailsType(PUBLIC);
+
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())

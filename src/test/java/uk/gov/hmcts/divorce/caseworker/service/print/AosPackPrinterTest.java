@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
@@ -95,13 +96,13 @@ class AosPackPrinterTest {
     @Test
     void shouldPrintJudicialSeparationAosPackForRespondent() {
 
-        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(NOTICE_OF_PROCEEDINGS_APP_2)
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(APPLICATION)
                 .build())
@@ -109,11 +110,12 @@ class AosPackPrinterTest {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
+            .isJudicialSeparation(YES)
             .applicant2(
                 Applicant.builder()
                     .offline(YES)
                     .build())
-            .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
             .build();
 
         when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(false))).thenReturn(randomUUID());
@@ -124,20 +126,20 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetters().size()).isEqualTo(2);
-        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
-        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
     }
 
     @Test
     void shouldPrintJudicialSeparationAosPackForApplicant() {
 
-        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(APPLICATION)
                 .build())
@@ -145,11 +147,12 @@ class AosPackPrinterTest {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
+            .isJudicialSeparation(YES)
             .applicant1(
                 Applicant.builder()
                     .offline(YES)
                     .build())
-            .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
             .build();
 
         when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(false))).thenReturn(randomUUID());
@@ -160,8 +163,8 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetters().size()).isEqualTo(2);
-        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
-        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
     }
 
     @Test
