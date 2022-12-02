@@ -1216,6 +1216,7 @@ public class CaseworkerIssueApplicationIT {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
             Solicitor
@@ -1561,6 +1562,7 @@ public class CaseworkerIssueApplicationIT {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
+        caseData.setIsJudicialSeparation(NO);
 
         CallbackRequest callbackRequest = callbackRequest(
             caseData,
