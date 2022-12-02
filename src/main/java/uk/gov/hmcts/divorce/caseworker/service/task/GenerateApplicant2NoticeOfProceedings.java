@@ -192,7 +192,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                 templateId = NFD_NOP_JOINT_OFFLINE_JUDICIAL_SEPARATION_CITIZEN;
 
             } else {
-                templateContent = jointJudicialSeparationContent.apply(caseData, caseId, caseData.getApplicant2(),
+                templateContent = jointTemplateContent.apply(caseData, caseId, caseData.getApplicant2(),
                     caseData.getApplicant1());
                 templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 

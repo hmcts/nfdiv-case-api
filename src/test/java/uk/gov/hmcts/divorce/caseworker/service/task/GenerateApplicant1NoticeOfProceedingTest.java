@@ -222,6 +222,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         setMockClock(clock);
 
         final CaseData caseData = caseData(JOINT_APPLICATION, NO);
+        caseData.setIsJudicialSeparation(NO);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
