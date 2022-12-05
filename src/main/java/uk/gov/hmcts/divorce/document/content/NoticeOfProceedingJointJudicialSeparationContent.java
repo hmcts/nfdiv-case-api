@@ -1,31 +1,19 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_JS_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -46,24 +34,20 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
 
     public static final String REISSUED_TEXT = "Reissued on: ";
 
-    @Value("${court.locations.serviceCentre.poBox}")
-    private String poBox;
-
-    @Value("${court.locations.serviceCentre.postCode}")
-    private String postCode;
-
-    @Value("${court.locations.serviceCentre.town}")
-    private String town;
-
     @Autowired
     private CommonContent commonContent;
+
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference,
                                      Applicant applicant,
                                      Applicant partner) {
-        Map<String, Object> templateContent = new HashMap<>();
+
         final LanguagePreference applicantLanguagePreference = applicant.getLanguagePreference();
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference());
 
         templateContent.put(RELATION, commonContent.getPartner(caseData, partner, applicantLanguagePreference));
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
@@ -71,25 +55,15 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
         templateContent.put(LAST_NAME, applicant.getLastName());
         templateContent.put(ADDRESS, applicant.getPostalAddress());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
-        templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
-
-        final var ctscContactDetails = CtscContactDetails
-            .builder()
-            .postcode(postCode)
-            .town(town)
-            .build();
 
         if (!WELSH.equals(applicantLanguagePreference)) {
             getEnglishTemplateContent(templateContent, caseData);
-            ctscContactDetails.setPoBox(poBox);
         }
-
-        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;
     }
 
-    private Map<String, Object> getEnglishTemplateContent(Map<String, Object> templateContent, CaseData caseData) {
+    private void getEnglishTemplateContent(Map<String, Object> templateContent, CaseData caseData) {
 
         if (null != caseData.getApplication().getReissueDate()) {
             templateContent.put(REISSUED_DATE, REISSUED_TEXT + caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
@@ -106,11 +80,6 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
 
         templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, judicialSeparationProceedingsFinalText.toString());
         templateContent.put(JUDICIAL_SEPARATION, judicialSeparationFinalText.toString());
-        templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
-        templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT);
-
-        return templateContent;
     }
 
 }
