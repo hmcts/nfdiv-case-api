@@ -70,6 +70,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder, FinalOrderOverdue)
             .name(APPLY_FOR_FINAL_ORDER)
             .description(APPLY_FOR_FINAL_ORDER)
+            .showCondition("doesApplicant1WantToApplyForFinalOrder!=\"Yes\"")
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_1_SOLICITOR)
