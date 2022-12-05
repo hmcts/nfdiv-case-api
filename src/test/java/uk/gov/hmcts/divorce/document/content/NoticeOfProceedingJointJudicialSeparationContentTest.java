@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
@@ -92,7 +93,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
             .town("Harlow")
             .build();
 
-        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
             caseData,
@@ -149,7 +150,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
             .town("Harlow")
             .build();
 
-        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
             caseData,
@@ -205,7 +206,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
             .town("Harlow")
             .build();
 
-        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
             caseData,

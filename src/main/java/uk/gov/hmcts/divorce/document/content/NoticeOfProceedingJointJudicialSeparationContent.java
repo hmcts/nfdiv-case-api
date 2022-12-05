@@ -6,11 +6,13 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
@@ -42,6 +44,8 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
     public static final String JUDICIAL_SEPARATION_SUBTEXT = "separation";
     public static final String JUDICIAL = "judicial";
 
+    public static final String REISSUED_TEXT = "Reissued on: ";
+
     @Value("${court.locations.serviceCentre.poBox}")
     private String poBox;
 
@@ -58,15 +62,37 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
                                      final Long ccdCaseReference,
                                      Applicant applicant,
                                      Applicant partner) {
-        final Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = new HashMap<>();
+        final LanguagePreference applicantLanguagePreference = applicant.getLanguagePreference();
+
+        templateContent.put(RELATION, commonContent.getPartner(caseData, partner, applicantLanguagePreference));
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(FIRST_NAME, applicant.getFirstName());
         templateContent.put(LAST_NAME, applicant.getLastName());
         templateContent.put(ADDRESS, applicant.getPostalAddress());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
+
+        final var ctscContactDetails = CtscContactDetails
+            .builder()
+            .postcode(postCode)
+            .town(town)
+            .build();
+
+        if (!WELSH.equals(applicantLanguagePreference)) {
+            getEnglishTemplateContent(templateContent, caseData);
+            ctscContactDetails.setPoBox(poBox);
+        }
+
+        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+
+        return templateContent;
+    }
+
+    private Map<String, Object> getEnglishTemplateContent(Map<String, Object> templateContent, CaseData caseData) {
 
         if (null != caseData.getApplication().getReissueDate()) {
-            templateContent.put(REISSUED_DATE, "Reissued on: " + caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
+            templateContent.put(REISSUED_DATE, REISSUED_TEXT + caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
         }
 
         StringBuilder judicialSeparationProceedingsFinalText = new StringBuilder(JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT);
@@ -80,20 +106,9 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
 
         templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, judicialSeparationProceedingsFinalText.toString());
         templateContent.put(JUDICIAL_SEPARATION, judicialSeparationFinalText.toString());
-        templateContent.put(RELATION, commonContent.getPartner(caseData, partner));
         templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT);
-
-        final var ctscContactDetails = CtscContactDetails
-            .builder()
-            .poBox(poBox)
-            .postcode(postCode)
-            .town(town)
-            .build();
-
-        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;
     }
