@@ -119,9 +119,6 @@ public final class DocumentConstants {
 
     public static final String CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID = "CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT";
 
-    public static final String CONDITIONAL_ORDER_PRONOUNCED_JS_TEMPLATE_ID = "CONDITIONAL_ORDER_PRONOUNCED_JS";
-    public static final String CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID = "CO_GRANTED_COVER_LETTER_JS";
-
     public static final String FINAL_ORDER_CAN_APPLY_TEMPLATE_ID = "FINAL_ORDER_CAN_APPLY";
     public static final String FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME = "finalOrderCanApply";
 
