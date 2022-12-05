@@ -60,6 +60,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.AC
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_IS_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP;
@@ -423,6 +424,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(WHO_APPLIED, "applicant");
         expectedEntries.put(SOLICITOR_ADDRESS, "10 the street the town UK");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
+        expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
@@ -815,6 +817,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(WHO_APPLIED, "applicant's solicitor");
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "Yes");
+        expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(IS_COURT_SERVICE, false);
         expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
@@ -929,6 +932,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(WHO_APPLIED, "applicant's solicitor");
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "Yes");
+        expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(REISSUE_DATE, "18 June 2021");
         expectedEntries.put(HAS_CASE_BEEN_REISSUED, true);
         expectedEntries.put(IS_COURT_SERVICE, false);
@@ -1038,6 +1042,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(WHO_APPLIED, "applicant");
         expectedEntries.put(RESPOND_BY_DATE, "4 July 2021");
         expectedEntries.put(RESPONDENT_SOLICITOR_REGISTERED, "No");
+        expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(IS_COURT_SERVICE, true);
         expectedEntries.put(IS_PERSONAL_SERVICE, false);
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");

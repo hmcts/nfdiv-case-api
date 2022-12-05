@@ -352,7 +352,7 @@ public class NoticeOfProceedingContent {
 
         templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, applicant2Solicitor.hasOrgId() ? "Yes" : "No");
 
-        templateContent.put(APPLICANT_2_IS_REPRESENTED, caseData.getApplicant2().isRepresented() ? "Yes" : "No");
+        templateContent.put(APPLICANT_2_IS_REPRESENTED, caseData.getApplicant2().isRepresented());
         if (personalServiceMethod) {
             if (WELSH.equals(languagePreference)) {
                 templateContent.put(RELATIONS_SOLICITOR,
