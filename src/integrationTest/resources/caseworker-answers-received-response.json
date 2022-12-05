@@ -1,4 +1,5 @@
 {
+  "state": "Holding",
   "data": {
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "servicePaymentFeePaymentMethod": "feePayByAccount",
