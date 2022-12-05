@@ -303,7 +303,6 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().getAddress().setCountry("UK");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
-        caseData.setIsJudicialSeparation(NO);
 
         stubAosPackSendLetterToApplicant1CourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();
@@ -612,20 +611,19 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.setIsJudicialSeparation(NO);
 
         stubAosPackSendLetterToApplicant1CourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();
 
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk());
 
@@ -895,14 +893,14 @@ public class CaseworkerIssueApplicationIT {
         stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andReturn();
@@ -966,7 +964,6 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.setIsJudicialSeparation(NO);
 
         stubAosPackSendLetterToApplicant1CourtService(AOS_COVER_LETTER_TEMPLATE_ID);
 
@@ -1009,7 +1006,6 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant1().getSolicitor().setEmail(null);
         caseData.getApplicant2().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
-        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder()
@@ -1068,7 +1064,6 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(YES);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
-        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant1().getSolicitor().setEmail(null);
         caseData.getApplicant2().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
@@ -1156,14 +1151,14 @@ public class CaseworkerIssueApplicationIT {
         stubAosPackSendLetterToApplicant1CourtService(AOS_COVER_LETTER_TEMPLATE_ID);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andReturn();
@@ -1218,7 +1213,6 @@ public class CaseworkerIssueApplicationIT {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
-        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
             Solicitor
@@ -1500,14 +1494,14 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk());
 
@@ -1564,7 +1558,6 @@ public class CaseworkerIssueApplicationIT {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
-        caseData.setIsJudicialSeparation(NO);
 
         CallbackRequest callbackRequest = callbackRequest(
             caseData,
@@ -1722,8 +1715,6 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         caseData.getApplicant2().setContactDetailsType(ContactDetailsType.PRIVATE);
         caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.setIsJudicialSeparation(NO);
-
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())

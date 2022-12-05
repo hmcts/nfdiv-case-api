@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -110,7 +111,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         } else {
             log.info("Generating applicant 1 notice of proceedings for joint case id {} ", caseId);
 
-            if (caseData.getIsJudicialSeparation().toBoolean() && caseData.getApplicant1().isApplicantOffline()) {
+            if (YesOrNo.YES.equals(caseData.getIsJudicialSeparation()) && caseData.getApplicant1().isApplicantOffline()) {
                 content = jointJudicialSeparationContent.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
                 templateId = NFD_NOP_JOINT_OFFLINE_JUDICIAL_SEPARATION_CITIZEN;
 
