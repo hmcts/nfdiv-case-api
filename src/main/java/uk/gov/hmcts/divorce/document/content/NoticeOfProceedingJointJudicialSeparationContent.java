@@ -13,6 +13,8 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
@@ -20,6 +22,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_JS_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -38,8 +42,14 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
     public static final String JUDICIAL_SEPARATION_SUBTEXT = "separation";
     public static final String JUDICIAL = "judicial";
 
-    @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
+    @Value("${court.locations.serviceCentre.poBox}")
+    private String poBox;
+
+    @Value("${court.locations.serviceCentre.postCode}")
+    private String postCode;
+
+    @Value("${court.locations.serviceCentre.town}")
+    private String town;
 
     @Autowired
     private CommonContent commonContent;
@@ -72,11 +82,15 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
         templateContent.put(JUDICIAL_SEPARATION, judicialSeparationFinalText.toString());
         templateContent.put(RELATION, commonContent.getPartner(caseData, partner));
         templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT);
 
         final var ctscContactDetails = CtscContactDetails
             .builder()
-            .phoneNumber(phoneNumber)
+            .poBox(poBox)
+            .postcode(postCode)
+            .town(town)
             .build();
 
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);

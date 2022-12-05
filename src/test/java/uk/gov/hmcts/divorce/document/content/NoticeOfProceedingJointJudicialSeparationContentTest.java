@@ -25,6 +25,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
@@ -32,6 +34,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_JS_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent.JUDICIAL_SEPARATION_PROCEEDINGS;
@@ -55,7 +59,9 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
 
     @BeforeEach
     public void setUp() {
-        ReflectionTestUtils.setField(nopJointJudicialSeparationContent, "phoneNumber", "0300 303 0642");
+        ReflectionTestUtils.setField(nopJointJudicialSeparationContent, "poBox", "PO Box 13226");
+        ReflectionTestUtils.setField(nopJointJudicialSeparationContent, "postCode", "CM20 9UG");
+        ReflectionTestUtils.setField(nopJointJudicialSeparationContent, "town", "Harlow");
     }
 
     @Test
@@ -81,7 +87,9 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         var ctscContactDetails = CtscContactDetails
             .builder()
-            .phoneNumber("0300 303 0642")
+            .poBox("PO Box 13226")
+            .postcode("CM20 9UG")
+            .town("Harlow")
             .build();
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
@@ -103,6 +111,8 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "judicial separation proceedings"),
                 entry(JUDICIAL_SEPARATION, "judicial separation"),
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
+                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
+                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
                 entry(CTSC_CONTACT_DETAILS, ctscContactDetails),
                 entry(MARRIED_TO_MORE_THAN_ONE_PERSON, "You must tell the court if you’ve been married to more than one"
@@ -134,7 +144,9 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         var ctscContactDetails = CtscContactDetails
             .builder()
-            .phoneNumber("0300 303 0642")
+            .poBox("PO Box 13226")
+            .postcode("CM20 9UG")
+            .town("Harlow")
             .build();
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
@@ -157,6 +169,8 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(JUDICIAL_SEPARATION, "separation"),
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
+                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT),
                 entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
             );
 
@@ -186,7 +200,9 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.getApplication().setReissueDate(LocalDate.of(2021, 8, 18));
         var ctscContactDetails = CtscContactDetails
             .builder()
-            .phoneNumber("0300 303 0642")
+            .poBox("PO Box 13226")
+            .postcode("CM20 9UG")
+            .town("Harlow")
             .build();
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
@@ -210,6 +226,8 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(JUDICIAL_SEPARATION, "separation"),
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
+                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT),
                 entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
             );
 

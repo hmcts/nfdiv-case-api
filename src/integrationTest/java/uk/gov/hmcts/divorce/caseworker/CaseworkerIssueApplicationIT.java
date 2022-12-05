@@ -39,6 +39,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
+import uk.gov.hmcts.divorce.testutil.DocumentUploadDFormsMocker;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.divorce.testutil.TestResourceUtil;
@@ -115,7 +116,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
-import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.mockDFormsUpload;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
@@ -198,6 +198,9 @@ public class CaseworkerIssueApplicationIT {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private DocumentUploadDFormsMocker documentUploadDFormsMocker;
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
@@ -2134,7 +2137,7 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        mockDFormsUpload(documentUploadClientApi, D84, D84_DOCUMENT_ID);
+        documentUploadDFormsMocker.mockDFormsUpload(D84, D84_DOCUMENT_ID);
         stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOTICE_OF_PROCEEDING_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();
 
