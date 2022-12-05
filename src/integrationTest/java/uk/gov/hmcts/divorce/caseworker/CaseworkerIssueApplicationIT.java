@@ -1068,6 +1068,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(YES);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant1().getSolicitor().setEmail(null);
         caseData.getApplicant2().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
