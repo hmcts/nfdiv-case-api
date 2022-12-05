@@ -68,9 +68,8 @@ public class SystemJsDisputedAnswerOverdueTask implements Runnable {
                     .must(matchQuery(STATE, AwaitingAnswer))
                     .must(matchQuery(String.format(DATA, IS_JUDICIAL_SEPARATION), YesOrNo.YES))
                     .must(matchQuery(String.format(DATA, AOS_RESPONSE), DISPUTE_DIVORCE.getType()))
-                    .filter(
-                        rangeQuery(String.format(DATA, AWAITING_JS_ANSWER_START_DATE)).lte(LocalDate.now().minusDays(answerOverdueOffsetDays))
-                    );
+                    .filter(rangeQuery(String.format(DATA, AWAITING_JS_ANSWER_START_DATE))
+                            .lte(LocalDate.now().minusDays(answerOverdueOffsetDays)));
 
             ccdSearchService.searchForAllCasesWithQuery(query, systemUser, serviceAuth, AwaitingAnswer)
                 .forEach(caseDetails -> submitEvent(caseDetails, systemUser, serviceAuth));
