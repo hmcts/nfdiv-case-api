@@ -34,8 +34,10 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
+import uk.gov.hmcts.divorce.testutil.DocumentUploadDFormsMocker;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
+import uk.gov.hmcts.divorce.testutil.TestResourceUtil;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.document.DocumentUploadClientApi;
 import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
@@ -169,6 +171,9 @@ public class CaseworkerReIssueApplicationIT {
         "classpath:caseworker-reissue-sole-citizen-application-personal-service-about-to-submit-response.json";
     private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_SOLICITOR_SERVICE =
         "classpath:caseworker-issue-application-about-to-submit-solicitor-service-response.json";
+    private static final String APP2_CONTACT_PRIVATE_CASEWORKER_REISSUE_APPLICATION_JS_ABOUT_TO_SUBMIT =
+        "classpath:caseworker-reissue-application-sole-js-about-to-submit-respondent-response.json";
+
 
     private static final String MINI_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
     private static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
@@ -181,13 +186,20 @@ public class CaseworkerReIssueApplicationIT {
     private static final String NOP_ONLINE_SOLE_RESP_TEMPLATE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
     private static final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID = "eb780eb7-8982-40a7-b30f-902b582ded26";
     private static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ID = "rf939456-4c5c-491c-9b7f-22056412ff94";
-    private static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
+    private static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63cc";
+    private static final String APPLICANT_COVERSHEET_TEMPLATE_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
+    private static final String NFD_NOP_APP2_JS_SOLE_ID = "c35b1868-e397-457a-aa67-ac1422bb810a";
+    private static final String NFD_NOP_APP1_JS_SOLE_ID = "c35b1868-e397-457a-zz67-ac1422bb810a";
+    private static final String D10_DOCUMENT_ID = "c35b1868-e397-457a-bb67-ac1422bb810a";
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private DocumentUploadDFormsMocker documentUploadDFormsMocker;
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
@@ -1229,6 +1241,65 @@ public class CaseworkerReIssueApplicationIT {
             );
 
         verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldAddNOPDocumentsToDocumentsGeneratedForJudicialSeparationApplicant1() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
+        caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(YES);
+        caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setOffline(YES);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant")
+            .thenReturn("Coversheet")
+            .thenReturn("Notice of proceeding respondent")
+            .thenReturn("Coversheet")
+            .thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5_Cy.docx");
+
+        stubForDocAssemblyWith(NFD_NOP_APP1_JS_SOLE_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole.docx");
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
+        stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V6.docx");
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE_ID,
+            "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline.docx");
+        documentUploadDFormsMocker.mockDFormsUpload(D10, D10_DOCUMENT_ID);
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_REISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response)
+            .isEqualTo(json(TestResourceUtil.expectedResponse(APP2_CONTACT_PRIVATE_CASEWORKER_REISSUE_APPLICATION_JS_ABOUT_TO_SUBMIT)));
     }
 
     @Test
