@@ -41,12 +41,10 @@ public class DocmosisCommonContent {
         if (ENGLISH.equals(languagePreference)) {
             templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
             templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-            templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
             templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         } else {
             templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
             templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
-            templateContent.put(CONTACT_EMAIL, CONTACT_JUSTICE_GOV_UK_CY);
             templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         }
 
@@ -58,6 +56,7 @@ public class DocmosisCommonContent {
             .build();
 
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+        templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
 
         return templateContent;
     }

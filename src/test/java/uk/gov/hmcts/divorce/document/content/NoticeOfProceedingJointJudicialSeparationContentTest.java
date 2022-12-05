@@ -1,16 +1,13 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
@@ -26,20 +23,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_JS_TEXT_CY;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_JS_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent.JUDICIAL_SEPARATION_PROCEEDINGS;
@@ -58,15 +44,11 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
     @Mock
     private CommonContent commonContent;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
     @InjectMocks
     private NoticeOfProceedingJointJudicialSeparationContent nopJointJudicialSeparationContent;
-
-    @BeforeEach
-    public void setUp() {
-        ReflectionTestUtils.setField(nopJointJudicialSeparationContent, "poBox", "PO Box 13226");
-        ReflectionTestUtils.setField(nopJointJudicialSeparationContent, "postCode", "CM20 9UG");
-        ReflectionTestUtils.setField(nopJointJudicialSeparationContent, "town", "Harlow");
-    }
 
     @Test
     public void shouldSuccessfullyApplyJSDivorceContent() {
@@ -89,13 +71,10 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .poBox("PO Box 13226")
-            .postcode("CM20 9UG")
-            .town("Harlow")
-            .build();
 
+        Map<String, Object> addressContent = docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH);
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(addressContent);
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -114,11 +93,6 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(RELATION, "wife"),
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "judicial separation proceedings"),
                 entry(JUDICIAL_SEPARATION, "judicial separation"),
-                entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
-                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
-                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
-                entry(CTSC_CONTACT_DETAILS, ctscContactDetails),
                 entry(MARRIED_TO_MORE_THAN_ONE_PERSON, "You must tell the court if you’ve been married to more than one"
                     + " person during this marriage.")
             );
@@ -146,13 +120,10 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .poBox("PO Box 13226")
-            .postcode("CM20 9UG")
-            .town("Harlow")
-            .build();
 
+        Map<String, Object> addressContent = docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH);
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(addressContent);
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -170,12 +141,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(ADDRESS, "line1\nline2\ntown\npostcode"),
                 entry(RELATION, "wife"),
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "separation proceedings"),
-                entry(JUDICIAL_SEPARATION, "separation"),
-                entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
-                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
-                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT),
-                entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
+                entry(JUDICIAL_SEPARATION, "separation")
             );
 
     }
@@ -202,13 +168,10 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.getApplication().setReissueDate(LocalDate.of(2021, 8, 18));
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .poBox("PO Box 13226")
-            .postcode("CM20 9UG")
-            .town("Harlow")
-            .build();
 
+        Map<String, Object> addressContent = docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH);
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(addressContent);
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -227,12 +190,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(ADDRESS, "line1\nline2\ntown\npostcode"),
                 entry(RELATION, "wife"),
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "separation proceedings"),
-                entry(JUDICIAL_SEPARATION, "separation"),
-                entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
-                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
-                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT),
-                entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
+                entry(JUDICIAL_SEPARATION, "separation")
             );
 
     }
@@ -259,13 +217,10 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .poBox("Blwch Post 13226")
-            .postcode("CM20 9UG")
-            .town("Harlow")
-            .build();
 
+        Map<String, Object> addressContent = docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH);
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(WELSH)).thenReturn(addressContent);
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("gwraig");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -284,11 +239,6 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(RELATION, "gwraig"),
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "achos ymwahaniad cyfreithiol"),
                 entry(JUDICIAL_SEPARATION, "ymwahaniad cyfreithiol"),
-                entry(DIVORCE_AND_DISSOLUTION_HEADER, "Ysgariadau a Diddymiadau"),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
-                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_JS_TEXT_CY),
-                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
-                entry(CTSC_CONTACT_DETAILS, ctscContactDetails),
                 entry(MARRIED_TO_MORE_THAN_ONE_PERSON, "Rhaid i chi ddweud wrth y llys os ydych wedi bod yn briod i fwy nag"
                     + " un unigolyn yn ystod y briodas hon.")
             );
@@ -317,13 +267,10 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .poBox("Blwch Post 13226")
-            .postcode("CM20 9UG")
-            .town("Harlow")
-            .build();
 
+        Map<String, Object> addressContent = docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH);
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(WELSH)).thenReturn(addressContent);
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("gwraig");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -341,12 +288,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(ADDRESS, "line1\nline2\ntown\npostcode"),
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "achos ymwahaniad"),
                 entry(RELATION, "gwraig"),
-                entry(JUDICIAL_SEPARATION, "ymwahaniad"),
-                entry(DIVORCE_AND_DISSOLUTION_HEADER, "Ysgariadau a Diddymiadau"),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
-                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_JS_TEXT_CY),
-                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
-                entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
+                entry(JUDICIAL_SEPARATION, "ymwahaniad")
             );
 
     }
@@ -375,13 +317,10 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.getApplication().setReissueDate(LocalDate.of(2021, 8, 18));
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .poBox("Blwch Post 13226")
-            .postcode("CM20 9UG")
-            .town("Harlow")
-            .build();
 
+        Map<String, Object> addressContent = docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH);
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(WELSH)).thenReturn(addressContent);
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("gwraig");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -400,12 +339,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(ADDRESS, "line1\nline2\ntown\npostcode"),
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "achos ymwahaniad"),
                 entry(RELATION, "gwraig"),
-                entry(JUDICIAL_SEPARATION, "ymwahaniad"),
-                entry(DIVORCE_AND_DISSOLUTION_HEADER, "Ysgariadau a Diddymiadau"),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
-                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_JS_TEXT_CY),
-                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
-                entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
+                entry(JUDICIAL_SEPARATION, "ymwahaniad")
             );
 
     }
