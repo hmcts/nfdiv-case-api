@@ -192,6 +192,13 @@ public class CaseData {
     private LocalDate dueDate;
 
     @CCD(
+        label = "Awaiting answer start date",
+        access = {DefaultAccess.class, CaseworkerAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate awaitingJsAnswerStartDate;
+
+    @CCD(
         label = "Notes",
         typeOverride = Collection,
         typeParameterOverride = "CaseNote",
