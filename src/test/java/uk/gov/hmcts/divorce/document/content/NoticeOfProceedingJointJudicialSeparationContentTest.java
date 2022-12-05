@@ -24,7 +24,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
@@ -113,7 +113,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
                 entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
                 entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
                 entry(CTSC_CONTACT_DETAILS, ctscContactDetails),
                 entry(MARRIED_TO_MORE_THAN_ONE_PERSON, "You must tell the court if you’ve been married to more than one"
                     + " person during this marriage.")
@@ -168,7 +168,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "separation proceedings"),
                 entry(JUDICIAL_SEPARATION, "separation"),
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
                 entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
                 entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT),
                 entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
@@ -225,7 +225,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "separation proceedings"),
                 entry(JUDICIAL_SEPARATION, "separation"),
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
                 entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
                 entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT),
                 entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
