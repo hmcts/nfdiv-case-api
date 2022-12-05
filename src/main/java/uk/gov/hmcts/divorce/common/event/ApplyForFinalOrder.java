@@ -70,6 +70,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder, FinalOrderOverdue)
             .name(APPLY_FOR_FINAL_ORDER)
             .description(APPLY_FOR_FINAL_ORDER)
+            .showCondition("doesApplicant1WantToApplyForFinalOrder!=\"Yes\"")
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_1_SOLICITOR)
@@ -89,6 +90,14 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
         CaseData data = details.getData();
 
         data.getApplication().setPreviousState(beforeDetails.getState());
+
+        final List<String> errors = applyForFinalOrderService.validateApplyForFinalOrder(data, false);
+        if (!errors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .errors(errors)
+                .build();
+        }
 
         CaseDetails<CaseData, State> updatedDetails = applyForFinalOrderService.applyForFinalOrderAsApplicant1(details);
 
