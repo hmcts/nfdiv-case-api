@@ -323,7 +323,7 @@ docmosis:
       CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V2.docx
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V2.docx
-      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order.docx
+      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V1.docx
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx
       SERVICE_ORDER: NFD_Service_Order_V2.docx #TODO: update content
@@ -352,7 +352,7 @@ docmosis:
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2.docx
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V7.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V9.docx
-      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline.docx
+      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline_V1.docx
       NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V2.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V3.docx
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V3.docx
@@ -370,7 +370,7 @@ docmosis:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx #TODO: Set correct template when available
-      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order.docx #TODO: update template once available
+      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V1.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Cy.docx
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service_CY.docx
       SERVICE_ORDER: NFD_Service_Order_V2_Cy.docx
@@ -409,7 +409,7 @@ docmosis:
       NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V2.docx  #TODO: add translated content
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V3.docx #TODO: add translated content
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V3.docx #TODO: add translated content
-      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline.docx
+      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline_V1.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: NFD_Notice_Of_Proceedings_Joint_V2_Cy.docx
       NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V3.docx #TODO: update welsh content
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS2-V6.docx #TODO: update welsh content
