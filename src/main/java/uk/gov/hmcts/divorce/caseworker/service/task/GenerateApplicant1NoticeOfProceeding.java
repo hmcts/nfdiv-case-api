@@ -97,7 +97,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
     }
 
     private String getTemplateForPersonalOrSolicitorServiceMethod(boolean isCourtService, CaseData caseData, Long caseId) {
-        if (!isCourtService && (YES.equals(caseData.getIsJudicialSeparation()) || caseData.getApplicant2().isBasedOverseas())) {
+        if (YES.equals(caseData.getIsJudicialSeparation()) && (!isCourtService || caseData.getApplicant2().isBasedOverseas())) {
             log.info("Generating notice of " + (caseData.isDivorce() ? "judicial " : "")
                     + "separation proceedings for applicant solicitor for " + "case id {} ", caseId);
 
