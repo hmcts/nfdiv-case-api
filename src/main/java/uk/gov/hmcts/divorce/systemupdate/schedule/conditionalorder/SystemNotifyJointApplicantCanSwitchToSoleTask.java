@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.systemupdate.schedule.TaskEventSubmit;
+import uk.gov.hmcts.divorce.systemupdate.schedule.AbstractTaskEventSubmit;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-public class SystemNotifyJointApplicantCanSwitchToSoleTask extends TaskEventSubmit implements Runnable {
+public class SystemNotifyJointApplicantCanSwitchToSoleTask extends AbstractTaskEventSubmit {
 
     public static final String NOTIFICATION_FLAG = "jointApplicantNotifiedCanSwitchToSole";
     public static final String CCD_SEARCH_ERROR =

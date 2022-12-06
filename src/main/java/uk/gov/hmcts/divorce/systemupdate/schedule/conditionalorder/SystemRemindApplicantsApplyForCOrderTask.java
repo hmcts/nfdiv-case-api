@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-public class SystemRemindApplicantsApplyForCOrderTask extends TaskEventSubmit implements Runnable {
+public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventSubmit {
 
     public static final String NOTIFICATION_FLAG = "applicantsRemindedCanApplyForConditionalOrder";
     public static final String CCD_SEARCH_ERROR =
