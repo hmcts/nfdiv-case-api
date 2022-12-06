@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosPackPrinter;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -72,6 +73,26 @@ class SendAosPackToApplicantTest {
         sendAosPackToApplicant.apply(caseDetails);
 
         verify(aosPackPrinter).sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
+
+        verifyNoMoreInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldSendAosLetterAndApplicantAosPackForJudicialSeparation() {
+        final var caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setIsJudicialSeparation(YES);
+        caseData.setApplicant1(Applicant.builder()
+            .offline(YES)
+            .build());
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        sendAosPackToApplicant.apply(caseDetails);
+
+        verify(aosPackPrinter).sendAosLetterToApplicant(caseData, TEST_CASE_ID);
 
         verifyNoMoreInteractions(aosPackPrinter);
     }
