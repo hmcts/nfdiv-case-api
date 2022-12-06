@@ -243,7 +243,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(WELSH));
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContentNewEmail(WELSH));
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("gwraig");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -296,7 +296,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(WELSH));
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContentNewEmail(WELSH));
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("gwraig");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -349,7 +349,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.getApplication().setReissueDate(LocalDate.of(2021, 8, 18));
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(WELSH));
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContentNewEmail(WELSH));
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("gwraig");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
