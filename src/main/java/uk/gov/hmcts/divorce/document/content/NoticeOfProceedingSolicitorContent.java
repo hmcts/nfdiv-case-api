@@ -126,9 +126,6 @@ public class NoticeOfProceedingSolicitorContent {
             templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
             templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, applicant2Solicitor.getAddress());
             templateContent.put(IS_APP1_REPRESENTED, applicant1.isRepresented());
-            //TODO Need to fix this once we find out if Solicitor address can be overseas
-            //templateContent.put(ADDRESS_BASED_OVERSEAS, );
-
         }
 
         return templateContent;
