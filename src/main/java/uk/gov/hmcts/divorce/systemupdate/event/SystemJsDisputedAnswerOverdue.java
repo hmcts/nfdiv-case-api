@@ -23,7 +23,7 @@ public class SystemJsDisputedAnswerOverdue implements CCDConfig<CaseData, State,
         configBuilder
             .event(SYSTEM_JS_DISPUTED_ANSWER_OVERDUE)
             .forStateTransition(AwaitingAnswer, AwaitingJsNullity)
-            .name("System JS Disputed Answer Overdue")
+            .name("SystemJSDisputedAnswerOverdue")
             .description("System JS Disputed Answer Overdue")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .retries(120, 120);
