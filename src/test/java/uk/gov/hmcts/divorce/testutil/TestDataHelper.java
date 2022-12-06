@@ -805,12 +805,27 @@ public class TestDataHelper {
         if (ENGLISH.equals(languagePreference)) {
             basicDocmosisTemplateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
             basicDocmosisTemplateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-            basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+            basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
             basicDocmosisTemplateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         } else {
             basicDocmosisTemplateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
             basicDocmosisTemplateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
-            basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+            basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_JUSTICE_GOV_UK_CY);
+            basicDocmosisTemplateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
+        }
+        return basicDocmosisTemplateContent;
+    }
+
+    public static Map<String, Object> getBasicDocmosisTemplateContentNewEmail(LanguagePreference languagePreference) {
+        Map<String, Object> basicDocmosisTemplateContent = new HashMap<>();
+        basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        if (ENGLISH.equals(languagePreference)) {
+            basicDocmosisTemplateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+            basicDocmosisTemplateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+            basicDocmosisTemplateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        } else {
+            basicDocmosisTemplateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
+            basicDocmosisTemplateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
             basicDocmosisTemplateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         }
         return basicDocmosisTemplateContent;
