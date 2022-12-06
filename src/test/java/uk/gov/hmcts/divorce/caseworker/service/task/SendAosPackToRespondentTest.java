@@ -101,6 +101,6 @@ class SendAosPackToRespondentTest {
 
         sendAosPackToRespondent.apply(caseDetails);
 
-        verify(aosPackPrinter).sendJudicialSeparationAoSLetterToRespondent(caseData, TEST_CASE_ID);
+        verify(aosPackPrinter).sendJudicialSeparationAoSLetterToApplicant2(caseData, TEST_CASE_ID);
     }
 }

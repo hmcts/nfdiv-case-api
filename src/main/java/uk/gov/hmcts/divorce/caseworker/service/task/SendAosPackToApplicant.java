@@ -26,13 +26,10 @@ public class SendAosPackToApplicant implements CaseTask {
                 && caseData.getApplicant1().isApplicantOffline()
                 && !caseData.getApplicationType().isSole();
 
-        if (caseData.getApplication().isCourtServiceMethod()) {
-            log.info("Sending NOP and application pack to bulk print as applicant 1 is not represented. Case id: {}:", caseId);
+        if (caseData.getApplication().isCourtServiceMethod() || shouldSendJudicialSeparationPack) {
+            log.info("Sending NOP and application pack to bulk print as applicant 1 is not represented or is JudicialSeparation. "
+                + "Case id: {}:", caseId);
             aosPackPrinter.sendAosLetterToApplicant(caseData, caseId);
-        } else if (shouldSendJudicialSeparationPack) {
-
-            log.info("Sending Respondent Judicial Separation AoS pack to bulk print.  Case ID: {}", caseId);
-            aosPackPrinter.sendJudicialSeparationAoSLetterToApplicant(caseData, caseId);
         } else {
             log.info("Bulk printing NOP and application pack. Case id: {}:", caseId);
             aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, caseId);

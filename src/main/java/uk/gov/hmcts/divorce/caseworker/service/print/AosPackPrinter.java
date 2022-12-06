@@ -62,8 +62,8 @@ public class AosPackPrinter {
         }
     }
 
-    public void sendJudicialSeparationAoSLetterToRespondent(final CaseData caseData, final Long caseId) {
-
+    public void sendJudicialSeparationAoSLetterToApplicant2(final CaseData caseData, final Long caseId) {
+        log.info("Sending Judicial Separation AosS letter pack for Applicant2 for case {}", caseId);
         final List<Letter> currentAosLetters = aosLetters(caseData, NOTICE_OF_PROCEEDINGS_APP_2);
 
         if (!isEmpty(currentAosLetters)) {
@@ -82,25 +82,6 @@ public class AosPackPrinter {
         }
     }
 
-    public void sendJudicialSeparationAoSLetterToApplicant(final CaseData caseData, final Long caseId) {
-
-        final List<Letter> currentAosLetters = aosLetters(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
-
-        if (!isEmpty(currentAosLetters)) {
-
-            final String caseIdString = caseId.toString();
-            final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_RESPONDENT_PACK);
-
-
-            final UUID letterId = bulkPrintService.printAosRespondentPack(print, false);
-            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
-        } else {
-            log.warn(
-                "AoS Pack print for applicant has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_1),
-                caseId);
-        }
-    }
 
     public void sendAosLetterToApplicant(final CaseData caseData, final Long caseId) {
 

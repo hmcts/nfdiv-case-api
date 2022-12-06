@@ -32,7 +32,7 @@ public class SendAosPackToRespondent implements CaseTask {
             aosPackPrinter.sendAosLetterToRespondent(caseData, caseId);
         } else if (shouldSendJudicialSeparationPack) {
             log.info("Sending Respondent Judicial Separation AoS pack to bulk print.  Case ID: {}", caseId);
-            aosPackPrinter.sendJudicialSeparationAoSLetterToRespondent(caseData, caseId);
+            aosPackPrinter.sendJudicialSeparationAoSLetterToApplicant2(caseData, caseId);
         }
 
         return caseDetails;
