@@ -8,11 +8,14 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
+import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.EnumSet;
 import javax.servlet.http.HttpServletRequest;
@@ -50,18 +53,25 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
     @Autowired
     private SwitchToSoleService switchToSoleService;
 
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private SwitchedToSoleFoNotification switchedToSoleFoNotification;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
             .event(SWITCH_TO_SOLE_FO)
-            .forStateTransition(EnumSet.of(AwaitingFinalOrder, AwaitingJointFinalOrder), FinalOrderRequested)
-            .name("Switched To Sole FO")
-            .description("Switch to Sole at Final Order stage")
+            .forStateTransition(EnumSet.of(AwaitingFinalOrder, AwaitingJointFinalOrder, FinalOrderRequested), FinalOrderRequested)
+            .name("Switched to sole final order")
+            .description("Switched to sole final order")
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .retries(120, 120)
-            .aboutToSubmitCallback(this::aboutToSubmit);
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -95,5 +105,15 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("SWITCH_TO_SOLE_FO submitted callback invoked for case id: {}", details.getId());
+
+        notificationDispatcher.send(switchedToSoleFoNotification, details.getData(), details.getId());
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
