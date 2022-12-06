@@ -19,18 +19,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_JS_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent.JUDICIAL_SEPARATION_PROCEEDINGS;
@@ -49,6 +49,9 @@ public class NoticeOfProceedingJointJudicialSeparationContentIT {
 
     @Autowired
     private CommonContent commonContent;
+
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
 
     @Autowired
     private NoticeOfProceedingJointJudicialSeparationContent noticeOfProceedingContentJudicialSeparation;
@@ -95,9 +98,9 @@ public class NoticeOfProceedingJointJudicialSeparationContentIT {
         expectedEntries.put(JUDICIAL_SEPARATION_PROCEEDINGS, "judicial separation proceedings");
         expectedEntries.put(JUDICIAL_SEPARATION, "judicial separation");
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_JS_TEXT);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(MARRIED_TO_MORE_THAN_ONE_PERSON, MARRIED_TO_MORE_THAN_ONE_PERSON_TEXT);
         expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
