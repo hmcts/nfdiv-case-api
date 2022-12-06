@@ -27,13 +27,16 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent.JUDICIAL_SEPARATION_PROCEEDINGS;
@@ -239,9 +242,8 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        Map<String, Object> addressContent = docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH);
-
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(WELSH)).thenReturn(addressContent);
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(WELSH));
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("gwraig");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -257,6 +259,10 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(LAST_NAME, TEST_LAST_NAME),
                 entry(ISSUE_DATE, "18 June 2021"),
                 entry(ADDRESS, "line1\nline2\ntown\npostcode"),
+                entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY),
+                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY),
+                entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
+                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
                 entry(RELATION, "gwraig"),
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "achos ymwahaniad cyfreithiol"),
                 entry(JUDICIAL_SEPARATION, "ymwahaniad cyfreithiol"),
@@ -289,9 +295,8 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        Map<String, Object> addressContent = docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH);
-
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(WELSH)).thenReturn(addressContent);
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(WELSH));
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("gwraig");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -307,6 +312,10 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(LAST_NAME, TEST_LAST_NAME),
                 entry(ISSUE_DATE, "18 June 2021"),
                 entry(ADDRESS, "line1\nline2\ntown\npostcode"),
+                entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY),
+                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY),
+                entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
+                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "achos ymwahaniad"),
                 entry(RELATION, "gwraig"),
                 entry(JUDICIAL_SEPARATION, "ymwahaniad")
@@ -339,9 +348,8 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.getApplication().setReissueDate(LocalDate.of(2021, 8, 18));
 
-        Map<String, Object> addressContent = docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH);
-
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(WELSH)).thenReturn(addressContent);
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(WELSH));
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("gwraig");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -358,6 +366,10 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
                 entry(ISSUE_DATE, "18 June 2021"),
                 entry(REISSUED_DATE, "Ailgyhoeddwyd ar: 18 August 2021"),
                 entry(ADDRESS, "line1\nline2\ntown\npostcode"),
+                entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY),
+                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY),
+                entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
+                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
                 entry(JUDICIAL_SEPARATION_PROCEEDINGS, "achos ymwahaniad"),
                 entry(RELATION, "gwraig"),
                 entry(JUDICIAL_SEPARATION, "ymwahaniad")
