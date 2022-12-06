@@ -646,6 +646,70 @@ class AosPackPrinterTest {
     }
 
     @Test
+    void shouldNotPrintJudicialSeparationAosPackForRespondentIfRequiredDocumentsAreNotPresent() {
+
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(RESPONDENT_ANSWERS)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NAME_CHANGE_EVIDENCE)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .isJudicialSeparation(NO)
+            .applicant2(
+                Applicant.builder()
+                    .offline(NO)
+                    .build()
+            )
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
+            .build();
+
+
+        aosPackPrinter.sendJudicialSeparationAoSLetterToRespondent(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(bulkPrintService);
+    }
+
+    @Test
+    void shouldNotPrintJudicialSeparationAosPackForApplicantIfRequiredDocumentsAreNotPresent() {
+
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(RESPONDENT_ANSWERS)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NAME_CHANGE_EVIDENCE)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .isJudicialSeparation(NO)
+            .applicant2(
+                Applicant.builder()
+                    .offline(NO)
+                    .build()
+            )
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
+            .build();
+
+
+        aosPackPrinter.sendJudicialSeparationAoSLetterToApplicant(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(bulkPrintService);
+    }
+
+    @Test
     void shouldPrintAosPackForApplicantIfRequiredDocumentsArePresentAndApplicantContactIsPrivate() {
 
         final ListValue<ConfidentialDivorceDocument> doc1 = ListValue.<ConfidentialDivorceDocument>builder()

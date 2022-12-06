@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
+import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingsWithAddressContent;
 
@@ -47,6 +48,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICA
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JOINT_OFFLINE_JUDICIAL_SEPARATION_CITIZEN;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE;
@@ -86,6 +88,9 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
     @Mock
     private GenerateCoversheet generateCoversheet;
+
+    @Mock
+    private NoticeOfProceedingJointJudicialSeparationContent jointJudicialSeparationContent;
 
     @Mock
     private Clock clock;
@@ -370,6 +375,29 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNull();
         classMock.close();
+    }
+
+    @Test
+    void shouldGenerateJointOfflineJudicialSeparationCitizenNoP() {
+        setMockClock(clock);
+
+
+        final CaseData caseData = caseData(JOINT_APPLICATION, NO, NO);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(YES);
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(jointJudicialSeparationContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
+            .thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_JOINT_OFFLINE_JUDICIAL_SEPARATION_CITIZEN);
+
+        assertThat(result.getData()).isEqualTo(caseData);
     }
 
     private void verifyInteractions(CaseData caseData, Map<String, Object> templateContent,
