@@ -17,10 +17,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -35,17 +37,26 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPOND_BY_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_IS_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_TO;
@@ -118,6 +129,9 @@ public class NoticeOfProceedingContentTest {
     @Mock
     private DocmosisTemplatesConfig config;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
     @InjectMocks
     private NoticeOfProceedingContent noticeOfProceedingContent;
 
@@ -129,6 +143,8 @@ public class NoticeOfProceedingContentTest {
         ReflectionTestUtils.setField(noticeOfProceedingContent, "town", "Harlow");
         ReflectionTestUtils.setField(noticeOfProceedingContent, "postcode", "CM20 9UG");
         ReflectionTestUtils.setField(noticeOfProceedingContent, "phoneNumber", "0300 303 0642");
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(any())).thenReturn(getBasicDocmosisContent());
     }
 
     @Test
@@ -163,16 +179,6 @@ public class NoticeOfProceedingContentTest {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
         when(holdingPeriodService.getDueDateFor(LocalDate.of(2021, 6, 18)))
@@ -183,6 +189,8 @@ public class NoticeOfProceedingContentTest {
             TEST_CASE_ID,
             caseData.getApplicant2(),
             ENGLISH);
+
+        assertBasicContent(templateContent);
 
         assertThat(templateContent)
             .contains(
@@ -209,7 +217,7 @@ public class NoticeOfProceedingContentTest {
                 entry(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE),
                 entry(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO),
                 entry(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE),
-                entry("ctscContactDetails", ctscContactDetails),
+                entry("ctscContactDetails", getCtscContactDetails()),
                 entry(APPLICANT_1_ADDRESS, "line1\nline2"),
                 entry(APPLICANT_2_ADDRESS, "10 the street the town UK"),
                 entry(APPLICANT_1_SOLICITOR_NAME, "Not represented"),
@@ -226,7 +234,8 @@ public class NoticeOfProceedingContentTest {
                 entry(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true),
                 entry(IS_DIVORCE, true),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS),
-                entry(IS_OFFLINE, false)
+                entry(IS_OFFLINE, false),
+                entry(APPLICANT_2_IS_REPRESENTED, true)
             );
     }
 
@@ -262,16 +271,6 @@ public class NoticeOfProceedingContentTest {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn(CIVIL_PARTNER);
         when(holdingPeriodService.getDueDateFor(LocalDate.of(2021, 6, 18)))
             .thenReturn(LocalDate.of(2021, 11, 6));
@@ -281,6 +280,8 @@ public class NoticeOfProceedingContentTest {
             TEST_CASE_ID,
             caseData.getApplicant2(),
             ENGLISH);
+
+        assertBasicContent(templateContent);
 
         assertThat(templateContent)
             .contains(
@@ -307,7 +308,7 @@ public class NoticeOfProceedingContentTest {
                 entry(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP),
                 entry(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH),
                 entry(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP),
-                entry("ctscContactDetails", ctscContactDetails),
+                entry("ctscContactDetails", getCtscContactDetails()),
                 entry(APPLICANT_1_ADDRESS, "line1\nline2"),
                 entry(APPLICANT_2_ADDRESS, "10 the street\nthe town"),
                 entry(APPLICANT_1_SOLICITOR_NAME, "Not represented"),
@@ -326,4 +327,38 @@ public class NoticeOfProceedingContentTest {
                 entry(IS_OFFLINE, false)
             );
     }
+
+    private Map<String, Object> getBasicDocmosisContent() {
+        Map<String, Object> basicContent = new HashMap<>();
+        basicContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        basicContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        basicContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        basicContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+
+        return basicContent;
+    }
+
+    private CtscContactDetails getCtscContactDetails() {
+        return CtscContactDetails
+            .builder()
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .poBox("PO Box 13226")
+            .town("Harlow")
+            .postcode("CM20 9UG")
+            .phoneNumber("0300 303 0642")
+            .build();
+
+    }
+
+    private void assertBasicContent(Map<String, Object> templateContent) {
+        assertThat(templateContent)
+            .contains(
+                entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
+                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
+                entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
+                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT)
+            );
+    }
+
 }
