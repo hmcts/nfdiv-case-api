@@ -109,14 +109,26 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
     }
 
     private void remindJointApplicants(CaseDetails caseDetails, User user, String serviceAuth) {
+        log.info("Calling to remind applicant's they can apply for a conditional order for case {} in state {}",
+            caseDetails.getId(),
+            caseDetails.getState()
+        );
 
         CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
         String state = caseDetails.getState();
 
         try {
             if (AwaitingConditionalOrder.name().equals(state) || ConditionalOrderDrafted.name().equals(state)) {
+                log.info("Awaiting conditional order notification firing for case {} in state {}",
+                    caseDetails.getId(),
+                    caseDetails.getState()
+                );
                 notificationDispatcher.send(awaitingConditionalOrderReminderNotification, caseData, caseDetails.getId());
             } else {
+                log.info("Conditional order pending reminder notification firing for case {} in state {}",
+                    caseDetails.getId(),
+                    caseDetails.getState()
+                );
                 notificationDispatcher.send(conditionalOrderPendingReminderNotification, caseData, caseDetails.getId());
             }
 
