@@ -190,7 +190,7 @@ public class NoticeOfProceedingContentTest {
             caseData.getApplicant2(),
             ENGLISH);
 
-        assertBasicContent(templateContent);
+        assertBasicDocmosisContent(templateContent);
 
         assertThat(templateContent)
             .contains(
@@ -281,7 +281,7 @@ public class NoticeOfProceedingContentTest {
             caseData.getApplicant2(),
             ENGLISH);
 
-        assertBasicContent(templateContent);
+        assertBasicDocmosisContent(templateContent);
 
         assertThat(templateContent)
             .contains(
@@ -351,7 +351,7 @@ public class NoticeOfProceedingContentTest {
 
     }
 
-    private void assertBasicContent(Map<String, Object> templateContent) {
+    private void assertBasicDocmosisContent(Map<String, Object> templateContent) {
         assertThat(templateContent)
             .contains(
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
