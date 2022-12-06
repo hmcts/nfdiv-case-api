@@ -54,7 +54,7 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
 
         final LanguagePreference applicantLanguagePreference = applicant.getLanguagePreference();
         Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference());
+            applicantLanguagePreference);
 
         templateContent.put(RELATION, commonContent.getPartner(caseData, partner, applicantLanguagePreference));
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
