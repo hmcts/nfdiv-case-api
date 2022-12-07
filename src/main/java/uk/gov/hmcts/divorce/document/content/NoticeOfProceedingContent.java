@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.isNull;
@@ -140,6 +139,9 @@ public class NoticeOfProceedingContent {
     @Autowired
     private DocmosisTemplatesConfig config;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     @Value("${court.locations.serviceCentre.serviceCentreName}")
     private String serviceCentre;
 
@@ -163,7 +165,7 @@ public class NoticeOfProceedingContent {
                                      final Applicant partner,
                                      final LanguagePreference languagePreference) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(partner.getLanguagePreference());
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 

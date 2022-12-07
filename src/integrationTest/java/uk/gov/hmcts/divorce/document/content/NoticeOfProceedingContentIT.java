@@ -38,8 +38,14 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
@@ -48,6 +54,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_REGISTERED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPOND_BY_DATE;
@@ -147,6 +155,9 @@ public class NoticeOfProceedingContentIT {
     @Autowired
     private NoticeOfProceedingContent noticeOfProceedingContent;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingNoticeOfProceedingDocumentForDivorceApplication() {
         CaseData caseData = caseData();
@@ -212,7 +223,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put("ctscContactDetails", getCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
@@ -231,6 +242,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.putAll(getDocmosisCommonContent());
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -272,16 +284,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -306,7 +308,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put("ctscContactDetails", getCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
@@ -325,6 +327,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.putAll(getDocmosisCommonContent());
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -366,16 +369,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -401,7 +394,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put("ctscContactDetails", getCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
@@ -426,6 +419,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.putAll(getDocmosisCommonContent());
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -470,16 +464,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -504,7 +488,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put("ctscContactDetails", getCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
@@ -523,6 +507,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.putAll(getDocmosisCommonContent());
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -565,16 +550,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -599,7 +574,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put("ctscContactDetails", getCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
@@ -618,6 +593,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, false);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, CIVIL_PARTNERSHIP_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.putAll(getDocmosisCommonContent());
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -660,16 +636,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -694,7 +660,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put("ctscContactDetails", getCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
@@ -713,6 +679,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, false);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, CIVIL_PARTNERSHIP_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.putAll(getDocmosisCommonContent());
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -766,16 +733,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -800,7 +757,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put("ctscContactDetails", getCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1");
         expectedEntries.put(APPLICANT_2_ADDRESS, "The avenue");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "app 1 sol");
@@ -825,6 +782,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.putAll(getDocmosisCommonContent());
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -879,16 +837,6 @@ public class NoticeOfProceedingContentIT {
                 .build()
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
 
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
@@ -914,7 +862,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put("ctscContactDetails", getCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1");
         expectedEntries.put(APPLICANT_2_ADDRESS, "The avenue");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "app 1 sol");
@@ -942,6 +890,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.putAll(getDocmosisCommonContent());
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -989,16 +938,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -1023,7 +962,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put("ctscContactDetails", getCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_2_ADDRESS, "The avenue");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
@@ -1048,6 +987,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
+        expectedEntries.putAll(getDocmosisCommonContent());
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -1284,5 +1224,28 @@ public class NoticeOfProceedingContentIT {
         );
 
         assertThat(templateContent).containsAllEntriesOf(expectedEntries);
+    }
+
+    private CtscContactDetails getCtscContactDetails() {
+        return CtscContactDetails
+            .builder()
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .poBox("PO Box 13226")
+            .town("Harlow")
+            .postcode("CM20 9UG")
+            .phoneNumber("0300 303 0642")
+            .build();
+
+    }
+
+    private Map<String,?> getDocmosisCommonContent() {
+        HashMap<String, String> docmosisCommon = new HashMap<>();
+        docmosisCommon.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        docmosisCommon.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        docmosisCommon.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        docmosisCommon.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+
+        return docmosisCommon;
     }
 }
