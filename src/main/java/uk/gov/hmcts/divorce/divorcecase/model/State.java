@@ -183,18 +183,18 @@ public enum State {
     AwaitingHWFDecision,
 
     @CCD(
-        label = "Awaiting HWF part payment",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
-    )
-    AwaitingHWFPartPayment,
-
-    @CCD(
         label = "Awaiting HWF evidence",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
     )
     AwaitingHWFEvidence,
+
+    @CCD(
+        label = "Awaiting HWF part payment",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingHWFPartPayment,
 
     @CCD(
         label = "Awaiting joint conditional order",
