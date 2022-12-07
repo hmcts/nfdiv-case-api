@@ -36,7 +36,9 @@ class ConditionalOrderCommonContentTest {
     @Test
     void shouldGenerateLegalAdvisorCommentsForMoreInfo() {
         final List<ConditionalOrderCommonContent.RefusalReason> refusalReasons =
-            List.of(new ConditionalOrderCommonContent.RefusalReason("Jurisdiction details"), new ConditionalOrderCommonContent.RefusalReason("Court does not have jurisdiction"));
+            List.of(
+                new ConditionalOrderCommonContent.RefusalReason("Jurisdiction details"),
+                new ConditionalOrderCommonContent.RefusalReason("Court does not have jurisdiction"));
 
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
@@ -64,7 +66,8 @@ class ConditionalOrderCommonContentTest {
             )
             .build();
 
-        List<ConditionalOrderCommonContent.RefusalReason> result = conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder());
+        List<ConditionalOrderCommonContent.RefusalReason> result = conditionalOrderCommonContent.generateLegalAdvisorComments(
+            caseData.getConditionalOrder());
 
         assertThat(result).isEqualTo(refusalReasons);
     }
@@ -99,7 +102,8 @@ class ConditionalOrderCommonContentTest {
             )
             .build();
 
-        List<ConditionalOrderCommonContent.RefusalReason> result = conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder());
+        List<ConditionalOrderCommonContent.RefusalReason> result = conditionalOrderCommonContent.generateLegalAdvisorComments(
+            caseData.getConditionalOrder());
 
         assertThat(result).isEqualTo(refusalReasons);
     }

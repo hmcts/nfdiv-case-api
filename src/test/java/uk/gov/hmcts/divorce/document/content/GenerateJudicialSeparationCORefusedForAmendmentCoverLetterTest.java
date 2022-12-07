@@ -127,7 +127,8 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
-        generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(caseData, TEST_CASE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
+        generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
+            caseData, TEST_CASE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),

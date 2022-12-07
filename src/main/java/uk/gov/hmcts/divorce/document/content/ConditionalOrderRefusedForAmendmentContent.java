@@ -70,7 +70,8 @@ public class ConditionalOrderRefusedForAmendmentContent {
 
         templateContent.put(IS_JUDICIAL_SEPARATION, caseData.getIsJudicialSeparation().toBoolean());
 
-        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()));
+        templateContent.put(
+            LEGAL_ADVISOR_COMMENTS, conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()));
 
         templateContent.put(PARTNER, conditionalOrderCommonContent.getPartner(caseData));
 
