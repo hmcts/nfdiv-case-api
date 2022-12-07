@@ -64,10 +64,10 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .pageLabel("Correspondence")
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getScannedDocuments)
-                .done()
+            .done()
             .complex(CaseData::getBulkScanMetaInfo)
                 .mandatoryWithLabel(BulkScanMetaInfo::getEvidenceHandled, "Supplementary evidence handled")
-                .done();
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
@@ -115,12 +115,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .flatMap(Collection::stream)
             .filter(element -> !beforeScannedDocs.contains(element))
             .map(ListValue::getValue)
-            .filter(scannedDocument ->
-                EnumUtils.isValidEnum(
-                    CaseDocuments.ScannedDocumentSubtypes.class,
-                    scannedDocument.getSubtype().toUpperCase(Locale.ROOT)
-                )
-            )
+            .filter(SystemAttachScannedDocuments::isValidDocumentSubtype)
             .findFirst();
 
         if (mostRecentScannedSubtypeReceived.isPresent()) {
@@ -134,6 +129,14 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
                 caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
             }
         }
+    }
+
+    private static boolean isValidDocumentSubtype(ScannedDocument scannedDocument) {
+        return isNotEmpty(scannedDocument.getSubtype())
+            && EnumUtils.isValidEnum(
+            CaseDocuments.ScannedDocumentSubtypes.class,
+            scannedDocument.getSubtype().toUpperCase(Locale.ROOT)
+        );
     }
 
     private DocumentType getDocumentType(CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype) {
