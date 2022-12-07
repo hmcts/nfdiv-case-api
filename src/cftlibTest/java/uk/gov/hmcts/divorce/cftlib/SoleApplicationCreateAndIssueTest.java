@@ -39,9 +39,9 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
         page.locator("#applicant1SolicitorName").click();
         // Fill #applicant1SolicitorName
         page.locator("#applicant1SolicitorName").fill("James McDee");
-        // Click input[type="email"]
+        // Click #applicant1SolicitorEmail]
         page.locator("#applicant1SolicitorEmail").click();
-        // Fill input[type="email"]
+        // Fill #applicant1SolicitorEmail]
         page.locator("#applicant1SolicitorEmail").fill("james@mcdee.com");
         // Click text=I confirm I’m willing to accept service of all correspondence and orders by emai
         page.locator("text=I confirm I’m willing to accept service of all correspondence and orders by emai").click();
@@ -203,7 +203,6 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
     @RetryingTest(maxAttempts = 3)
     @Order(2)
     public void submitCase() {
-        page.pause();
         signInWithSolicitor();
         page.navigate("http://localhost:3000/cases/case-details/" + caseRef);
         // Select 2: Object
