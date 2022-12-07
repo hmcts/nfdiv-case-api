@@ -143,6 +143,10 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
                 caseData.getConditionalOrder().setCronRetriesRemindApplicantApplyCo(
                     caseData.getConditionalOrder().getCronRetriesRemindApplicantApplyCo() + 1);
 
+                log.error("Calling system update case in SystemRemindApplicantsApplyForCOrderTask for case id {} in state {}",
+                    caseDetails.getId(),
+                    caseDetails.getState());
+
                 caseDetails.setData(objectMapper.convertValue(caseData, new TypeReference<>() {}));
                 ccdUpdateService.submitEvent(caseDetails, SYSTEM_UPDATE_CASE, user, serviceAuth);
             }
