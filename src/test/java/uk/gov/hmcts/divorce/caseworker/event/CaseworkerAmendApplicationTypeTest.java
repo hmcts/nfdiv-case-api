@@ -48,6 +48,7 @@ class CaseworkerAmendApplicationTypeTest {
             .aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
+        assertThat(response.getData().getLabelContent().getMarriageOrCivilPartnership().equals("civil partnership"));
     }
 
     @Test
@@ -62,6 +63,7 @@ class CaseworkerAmendApplicationTypeTest {
 
         assertNotNull(response.getData().getDivorceOrDissolution());
         assertThat(response.getData().getDivorceOrDissolution().equals(DIVORCE));
+        assertThat(response.getData().getLabelContent().getMarriageOrCivilPartnership().equals("marriage"));
     }
 
     @Test

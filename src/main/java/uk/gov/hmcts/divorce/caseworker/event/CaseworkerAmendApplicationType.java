@@ -51,6 +51,7 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
                 caseData.setDivorceOrDissolution(DIVORCE);
             }
         }
+        caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
