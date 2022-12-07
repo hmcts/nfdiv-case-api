@@ -40,9 +40,9 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
         // Fill #applicant1SolicitorName
         page.locator("#applicant1SolicitorName").fill("James McDee");
         // Click input[type="email"]
-        page.locator("input[type=\"email\"]").click();
+        page.locator("#applicant1SolicitorEmail").click();
         // Fill input[type="email"]
-        page.locator("input[type=\"email\"]").fill("james@mcdee.com");
+        page.locator("#applicant1SolicitorEmail").fill("james@mcdee.com");
         // Click text=I confirm I’m willing to accept service of all correspondence and orders by emai
         page.locator("text=I confirm I’m willing to accept service of all correspondence and orders by emai").click();
         // Click text=Search for an organisation You can only search for organisations already registe >> input[type="text"]
@@ -203,6 +203,7 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
     @RetryingTest(maxAttempts = 3)
     @Order(2)
     public void submitCase() {
+        page.pause();
         signInWithSolicitor();
         page.navigate("http://localhost:3000/cases/case-details/" + caseRef);
         // Select 2: Object
@@ -252,9 +253,9 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
         // Select 1: 05af69c6-72f8-478d-bd11-56f533e980e0
         page.locator("select").selectOption(select("PBA0077597"));
         // Click input[type="text"]
-        page.locator("input[type=\"text\"]").click();
+        page.locator("#feeAccountReference").click();
         // Fill input[type="text"]
-        page.locator("input[type=\"text\"]").fill("123");
+        page.locator("#feeAccountReference").fill("123");
         // Click text=Continue
         page.locator("text=Continue").click();
         assertThat(page).hasURL("http://localhost:3000/cases/case-details/" + caseRef + "/trigger/solicitor-submit-application/solicitor"
