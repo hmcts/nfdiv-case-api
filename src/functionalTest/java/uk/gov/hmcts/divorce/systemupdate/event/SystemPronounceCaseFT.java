@@ -14,6 +14,9 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_WELSH_TRANSLATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.IS_JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -175,7 +178,25 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
-        request.put("isJudicialSeparation", "Yes");
+        request.put(IS_JUDICIAL_SEPARATION, YES.getValue());
+
+        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(OFFLINE_NOT_REPRESENTED_RESPONSE)));
+    }
+
+    @Test
+    public void shouldGenerateCOGrantedDocAndCoversheetInWelshAndSendPronouncementLettersToApplicantsInJudicialSeparation()
+        throws IOException {
+
+        Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
+        request.put(IS_JUDICIAL_SEPARATION, YES.getValue());
+        request.put(APPLICANT_WELSH_TRANSLATION, YES.getValue());
 
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 

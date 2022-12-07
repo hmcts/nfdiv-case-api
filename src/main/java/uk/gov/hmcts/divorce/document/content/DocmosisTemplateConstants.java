@@ -179,7 +179,7 @@ public final class DocmosisTemplateConstants {
 
     public static final String DIVORCE_AND_DISSOLUTION_HEADER = "divorceAndDissolutionHeader";
     public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT = "Divorce and Dissolution";
-    public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY = "Gwasanaeth Ysgariadau a Diddymiadau";
+    public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY = "Ysgariadau a Diddymiadau";
 
     public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER = "courtsAndTribunalsServiceHeader";
     public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT = "HM Courts & Tribunals Service";

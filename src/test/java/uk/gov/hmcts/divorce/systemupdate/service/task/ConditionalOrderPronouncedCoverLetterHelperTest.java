@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
@@ -35,15 +36,19 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -306,7 +311,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
     }
 
     @Test
-    void shouldGenerateDivorceCoGrantedCoversheetAddressedToofflineRespondentInJudicialSeparation() {
+    void shouldGenerateDivorceCoGrantedCoversheetAddressedToOfflineRespondentInJudicialSeparation() {
 
         setMockClock(clock);
 
@@ -347,6 +352,48 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
             TEST_CASE_ID,
             CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID,
             ENGLISH,
+            formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
+        );
+
+        verifyNoMoreInteractions(caseDataDocumentService);
+    }
+
+    @Test
+    void shouldGenerateConditionalOrderPronouncedCoversheetInWelshForJudicialSeparation() {
+
+        setMockClock(clock);
+
+        CaseData caseData = buildCaseDataCOPronounced(YES, PUBLIC, PRIVATE);
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        Map<String, Object> applicant1TemplateVars = new HashMap<>();
+        applicant1TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
+        applicant1TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
+        applicant1TemplateVars.put(CONTACT_EMAIL, CONTACT_JUSTICE_GOV_UK_CY);
+        applicant1TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
+        applicant1TemplateVars.put(NAME, "Bob Smith");
+        applicant1TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        applicant1TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
+        applicant1TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+        applicant1TemplateVars.put(IS_DIVORCE, true);
+        applicant1TemplateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
+        applicant1TemplateVars.put(PRONOUNCEMENT_DATE_PLUS_43,
+            caseData.getConditionalOrder().getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER));
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(WELSH)).thenReturn(getBasicDocmosisTemplateContent(WELSH));
+
+        coverLetterHelper.generateConditionalOrderPronouncedCoversheet(caseData, TEST_CASE_ID, caseData.getApplicant1(),
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
+
+        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
+            caseData,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
+            applicant1TemplateVars,
+            TEST_CASE_ID,
+            CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID,
+            WELSH,
             formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
         );
 
