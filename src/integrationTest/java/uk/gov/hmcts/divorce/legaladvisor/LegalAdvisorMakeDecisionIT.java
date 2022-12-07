@@ -101,7 +101,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @DirtiesContext
 public class LegalAdvisorMakeDecisionIT {
 
-    private static final String REJECTED_REFUSAL_ORDER_TEMPLATE_FILE_NAME = "FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order.docx";
+    private static final String REJECTED_REFUSAL_ORDER_TEMPLATE_FILE_NAME = "FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V2.docx";
     private static final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME =
         "FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx";
     private static final String CLARIFICATION_REFUSAL_ORDER_WELSH_TEMPLATE_FILE_NAME =
