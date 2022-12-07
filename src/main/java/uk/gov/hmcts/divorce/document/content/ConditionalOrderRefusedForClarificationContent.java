@@ -45,7 +45,7 @@ public class ConditionalOrderRefusedForClarificationContent {
     private Clock clock;
 
     @Autowired
-    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
+    private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
     @Value("${court.locations.serviceCentre.serviceCentreName}")
     private String serviceCentre;
@@ -90,8 +90,7 @@ public class ConditionalOrderRefusedForClarificationContent {
         templateContent.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
 
-        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderRefusedForAmendmentContent
-            .generateLegalAdvisorComments(conditionalOrder));
+        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderCommonContent.generateLegalAdvisorComments(conditionalOrder));
 
         LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
 

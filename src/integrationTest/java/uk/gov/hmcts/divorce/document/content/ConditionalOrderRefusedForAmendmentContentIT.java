@@ -117,7 +117,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Rejected comments")));
+            List.of(new ConditionalOrderCommonContent.RefusalReason("Rejected comments")));
         expectedEntries.put(PARTNER, "wife");
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
@@ -156,7 +156,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Rejected comments")));
+            List.of(new ConditionalOrderCommonContent.RefusalReason("Rejected comments")));
         expectedEntries.put(PARTNER, "civil partner");
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
@@ -196,8 +196,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason(MARRIAGE_CERTIFICATE.getLabel()),
-                new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Clarification comments")));
+            List.of(new ConditionalOrderCommonContent.RefusalReason(MARRIAGE_CERTIFICATE.getLabel()),
+                new ConditionalOrderCommonContent.RefusalReason("Clarification comments")));
         expectedEntries.put(PARTNER, "civil partner");
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
@@ -235,7 +235,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Rejected comments")));
+            List.of(new ConditionalOrderCommonContent.RefusalReason("Rejected comments")));
         expectedEntries.put(PARTNER, "gwraig");
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
@@ -274,7 +274,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Rejected comments")));
+            List.of(new ConditionalOrderCommonContent.RefusalReason("Rejected comments")));
         expectedEntries.put(PARTNER, "priod");
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
@@ -315,8 +315,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP_CY);
         expectedEntries.put("legalAdvisorComments",
-            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason(MARRIAGE_CERTIFICATE.getLabel()),
-                new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Clarification comments")));
+            List.of(new ConditionalOrderCommonContent.RefusalReason(MARRIAGE_CERTIFICATE.getLabel()),
+                new ConditionalOrderCommonContent.RefusalReason("Clarification comments")));
         expectedEntries.put(PARTNER, "partner sifil");
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
