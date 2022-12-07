@@ -3,21 +3,14 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
-import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
-import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
-import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.bulkaction.service.CasePronouncementService;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-import java.util.List;
-
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 
 @Component
 @Slf4j
@@ -33,10 +26,7 @@ public class SystemProcessFailedPronouncedCasesTask implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
-
-    @Autowired
-    private BulkCaseProcessingService bulkCaseProcessingService;
+    private CasePronouncementService casePronouncementService;
 
     @Override
     public void run() {
@@ -48,17 +38,9 @@ public class SystemProcessFailedPronouncedCasesTask implements Runnable {
 
         try {
 
-            final List<CaseDetails<BulkActionCaseData, BulkActionState>> bulkCases = ccdSearchService
-                .searchForUnprocessedOrErroredBulkCases(Pronounced, user, serviceAuth);
-
-            bulkCases
-                .forEach(caseDetailsBulkCase -> bulkCaseProcessingService
-                    .updateUnprocessedBulkCases(
-                        caseDetailsBulkCase,
-                        SYSTEM_PRONOUNCE_CASE,
-                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase, SYSTEM_PRONOUNCE_CASE),
-                        user,
-                        serviceAuth));
+            ccdSearchService
+                .searchForUnprocessedOrErroredBulkCases(Pronounced, user, serviceAuth)
+                .forEach(caseDetailsBulkCase -> casePronouncementService.pronounceCases(caseDetailsBulkCase));
 
         } catch (final CcdSearchCaseException e) {
             log.error("Retry bulk case pronounced errors schedule task, stopped after search error", e);
