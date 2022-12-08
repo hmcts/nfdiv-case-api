@@ -160,6 +160,53 @@ class GenerateAosResponseLetterDocumentTest {
     }
 
     @Test
+    void shouldGenerateRespondentAnswerDocWhenApplicant1IsOfflineAndIsDisputedAndNotJS() {
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
+        caseData.setIsJudicialSeparation(NO);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(aosResponseLetterTemplateContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+
+        doNothing()
+            .when(caseDataDocumentService).renderDocumentAndUpdateCaseData(
+                caseData,
+                AOS_RESPONSE_LETTER,
+                templateContent,
+                TEST_CASE_ID,
+                RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID,
+                caseData.getApplicant1().getLanguagePreference(),
+                AOS_RESPONSE_LETTER_DOCUMENT_NAME
+            );
+
+        final CaseDetails<CaseData, State> result = generateAosResponseLetterDocument.apply(caseDetails);
+
+        verify(caseDataDocumentService)
+            .renderDocumentAndUpdateCaseData(
+                caseData,
+                AOS_RESPONSE_LETTER,
+                templateContent,
+                TEST_CASE_ID,
+                RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID,
+                caseData.getApplicant1().getLanguagePreference(),
+                AOS_RESPONSE_LETTER_DOCUMENT_NAME
+            );
+
+        verifyNoMoreInteractions(caseDataDocumentService);
+        verifyNoInteractions(aosUndefendedResponseLetterTemplateContent);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
     void shouldNotGenerateAnyDocWhenApplicant1IsNotOffline() {
 
         final CaseData caseData = caseData();
