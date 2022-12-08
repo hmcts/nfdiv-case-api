@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 
@@ -63,6 +64,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
             .build();
         caseData.setConditionalOrder(conditionalOrder);
         caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
         caseData.getApplicant1().setOffline(YES);
@@ -80,6 +82,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
+        expectedEntries.put("isJudicialSeparation", false);
         expectedEntries.put("legalAdvisorComments", emptyList());
         expectedEntries.put(PARTNER, "spouse");
 
@@ -100,6 +103,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
             .build();
         caseData.setConditionalOrder(conditionalOrder);
         caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
         caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
@@ -116,6 +120,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
+        expectedEntries.put("isJudicialSeparation", false);
         expectedEntries.put("legalAdvisorComments",
             List.of(new ConditionalOrderCommonContent.RefusalReason("Rejected comments")));
         expectedEntries.put(PARTNER, "wife");
@@ -138,6 +143,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         caseData.setConditionalOrder(conditionalOrder);
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
         caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
@@ -155,6 +161,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
+        expectedEntries.put("isJudicialSeparation", false);
         expectedEntries.put("legalAdvisorComments",
             List.of(new ConditionalOrderCommonContent.RefusalReason("Rejected comments")));
         expectedEntries.put(PARTNER, "civil partner");
@@ -178,6 +185,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         caseData.setConditionalOrder(conditionalOrder);
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
         caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
@@ -194,6 +202,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
+        expectedEntries.put("isJudicialSeparation", false);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
         expectedEntries.put("legalAdvisorComments",
             List.of(new ConditionalOrderCommonContent.RefusalReason(MARRIAGE_CERTIFICATE.getLabel()),
@@ -217,6 +226,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
             .build();
         caseData.setConditionalOrder(conditionalOrder);
         caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
@@ -234,6 +244,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE_WELSH);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
+        expectedEntries.put("isJudicialSeparation", false);
         expectedEntries.put("legalAdvisorComments",
             List.of(new ConditionalOrderCommonContent.RefusalReason("Rejected comments")));
         expectedEntries.put(PARTNER, "gwraig");
@@ -255,6 +266,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
             .build();
         caseData.setConditionalOrder(conditionalOrder);
         caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
@@ -273,6 +285,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE_WELSH);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
+        expectedEntries.put("isJudicialSeparation", false);
         expectedEntries.put("legalAdvisorComments",
             List.of(new ConditionalOrderCommonContent.RefusalReason("Rejected comments")));
         expectedEntries.put(PARTNER, "priod");
@@ -296,6 +309,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         caseData.setConditionalOrder(conditionalOrder);
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setIsJudicialSeparation(NO);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
@@ -313,6 +327,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP_CY);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
+        expectedEntries.put("isJudicialSeparation", false);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP_CY);
         expectedEntries.put("legalAdvisorComments",
             List.of(new ConditionalOrderCommonContent.RefusalReason(MARRIAGE_CERTIFICATE.getLabel()),

@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -371,6 +372,7 @@ public class LegalAdvisorMakeDecisionIT {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
+        caseData.setIsJudicialSeparation(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -414,7 +416,7 @@ public class LegalAdvisorMakeDecisionIT {
     }
 
     @Test
-    public void shouldSetStateToAwaitingAmendedApplicationAnsSendNotificationToBothApplicantsIfConditionalOrderIsRejectedForAmendment()
+    public void shouldSetStateToAwaitingAmendedApplicationAndSendNotificationToBothApplicantsIfConditionalOrderIsRejectedForAmendment()
         throws Exception {
 
         setMockClock(clock);
