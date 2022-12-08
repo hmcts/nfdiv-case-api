@@ -68,10 +68,13 @@ public class CasePronouncementService {
 
         final List<ListValue<BulkListCaseDetails>> erroredCaseDetails = caseFilterProcessingState.getErroredCases();
         final List<ListValue<BulkListCaseDetails>> processedCaseDetails = caseFilterProcessingState.getProcessedCases();
+        final List<ListValue<BulkListCaseDetails>> unprocessedCases = caseFilterProcessingState.getUnprocessedCases();
+
+        log.info("Unprocessed bulk case details list size {} and bulk case id {}", unprocessedCases.size(), details.getId());
 
         erroredCaseDetails.addAll(
             bulkTriggerService.bulkTrigger(
-                caseFilterProcessingState.getUnprocessedCases(),
+                unprocessedCases,
                 SYSTEM_PRONOUNCE_CASE,
                 bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_PRONOUNCE_CASE),
                 user,
