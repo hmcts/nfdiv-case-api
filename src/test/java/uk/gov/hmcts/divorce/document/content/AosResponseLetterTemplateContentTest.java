@@ -32,6 +32,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -69,11 +71,17 @@ public class AosResponseLetterTemplateContentTest {
                 .build()
             )
             .build();
+        final Applicant applicant2 = Applicant.builder()
+            .firstName(TEST_APP2_FIRST_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
+            .offline(YES)
+            .build();
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
             .applicant1(applicant1)
+            .applicant2(applicant2)
             .dueDate(LocalDate.of(2020, 5, 21))
             .application(
                 Application.builder().issueDate(LocalDate.of(2020, 1, 1)).build()
@@ -92,6 +100,9 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("caseReference", formatId(TEST_CASE_ID));
         expectedEntries.put("applicant1FirstName", TEST_FIRST_NAME);
         expectedEntries.put("applicant1LastName", TEST_LAST_NAME);
+        expectedEntries.put("applicant2FirstName", TEST_APP2_FIRST_NAME);
+        expectedEntries.put("applicant2LastName", TEST_APP2_LAST_NAME);
+        expectedEntries.put("isDivorce", true);
         expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");
         expectedEntries.put("divorceOrCivilPartnershipEmail", "divorcecase@justice.gov.uk");
         expectedEntries.put("divorceOrEndCivilPartnershipApplication", "divorce application");
@@ -128,10 +139,17 @@ public class AosResponseLetterTemplateContentTest {
             )
             .build();
 
+        final Applicant applicant2 = Applicant.builder()
+            .firstName(TEST_APP2_FIRST_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
+            .offline(YES)
+            .build();
+
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DISSOLUTION)
             .applicant1(applicant1)
+            .applicant2(applicant2)
             .dueDate(LocalDate.of(2020, 5, 21))
             .application(
                 Application.builder().issueDate(LocalDate.of(2020, 1, 1)).build()
@@ -151,6 +169,9 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("applicant1FirstName", TEST_FIRST_NAME);
         expectedEntries.put("applicant1LastName", TEST_LAST_NAME);
         expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");
+        expectedEntries.put("applicant2FirstName", TEST_APP2_FIRST_NAME);
+        expectedEntries.put("applicant2LastName", TEST_APP2_LAST_NAME);
+        expectedEntries.put("isDivorce", false);
         expectedEntries.put("divorceOrCivilPartnershipEmail", "divorcecase@justice.gov.uk");
         expectedEntries.put("divorceOrEndCivilPartnershipApplication", "application to end your civil partnership");
         expectedEntries.put("issueDate", "1 January 2020");

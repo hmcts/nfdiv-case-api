@@ -12,7 +12,9 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.AosResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.content.AosUndefendedResponseLetterTemplateContent;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_UNDISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
@@ -38,29 +40,41 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
         final AcknowledgementOfService acknowledgementOfService = caseData.getAcknowledgementOfService();
 
         if (caseData.getApplicant1().isApplicantOffline()) {
-
-            if (acknowledgementOfService.isDisputed()) {
-                log.info("Generating aos response (disputed) letter pdf for case id: {}", caseDetails.getId());
+            if (YES.equals(caseData.getIsJudicialSeparation()) && !acknowledgementOfService.isDisputed()) {
+                log.info("Generating JS aos response (undisputed) letter pdf for case id: {}", caseDetails.getId());
                 caseDataDocumentService.renderDocumentAndUpdateCaseData(
                     caseData,
                     AOS_RESPONSE_LETTER,
                     aosResponseLetterTemplateContent.apply(caseData, caseId),
                     caseId,
-                    RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID,
+                    NFD_NOP_APP1_JS_SOLE_UNDISPUTED,
                     caseData.getApplicant1().getLanguagePreference(),
                     AOS_RESPONSE_LETTER_DOCUMENT_NAME
                 );
             } else {
-                log.info("Generating aos response (undefended) letter pdf for case id: {}", caseId);
-                caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                    caseData,
-                    AOS_RESPONSE_LETTER,
-                    aosUndefendedResponseLetterTemplateContent.apply(caseData, caseId),
-                    caseId,
-                    RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID,
-                    caseData.getApplicant1().getLanguagePreference(),
-                    AOS_RESPONSE_LETTER_DOCUMENT_NAME
-                );
+                if (acknowledgementOfService.isDisputed()) {
+                    log.info("Generating aos response (disputed) letter pdf for case id: {}", caseDetails.getId());
+                    caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                        caseData,
+                        AOS_RESPONSE_LETTER,
+                        aosResponseLetterTemplateContent.apply(caseData, caseId),
+                        caseId,
+                        RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID,
+                        caseData.getApplicant1().getLanguagePreference(),
+                        AOS_RESPONSE_LETTER_DOCUMENT_NAME
+                    );
+                } else {
+                    log.info("Generating aos response (undefended) letter pdf for case id: {}", caseId);
+                    caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                        caseData,
+                        AOS_RESPONSE_LETTER,
+                        aosUndefendedResponseLetterTemplateContent.apply(caseData, caseId),
+                        caseId,
+                        RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID,
+                        caseData.getApplicant1().getLanguagePreference(),
+                        AOS_RESPONSE_LETTER_DOCUMENT_NAME
+                    );
+                }
             }
         }
         return caseDetails;
