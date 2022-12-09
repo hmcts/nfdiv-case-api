@@ -28,9 +28,10 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
     public static final String MARRIED_TO_MORE_THAN_ONE_PERSON = "marriedToMoreThanOnePerson";
     public static final String MARRIED_TO_MORE_THAN_ONE_PERSON_TEXT = "You must tell the court if you’ve been married to more than"
         + " one person during this marriage.";
-    public static final String JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT = "separation proceedings";
-    public static final String JUDICIAL_SEPARATION_SUBTEXT = "separation";
-    public static final String JUDICIAL = "judicial";
+    public static final String SEPARATION_PROCEEDINGS_TEXT = "separation proceedings";
+    public static final String SEPARATION_TEXT = "separation";
+    public static final String JUDICIAL_SEPARATION_PROCEEDINGS_TEXT = "judicial separation proceedings";
+    public static final String JUDICIAL_SEPARATION_TEXT = "judicial separation";
 
     public static final String REISSUED_TEXT = "Reissued on: ";
 
@@ -69,17 +70,14 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
             templateContent.put(REISSUED_DATE, REISSUED_TEXT + caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
         }
 
-        StringBuilder judicialSeparationProceedingsFinalText = new StringBuilder(JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT);
-        StringBuilder judicialSeparationFinalText = new StringBuilder(JUDICIAL_SEPARATION_SUBTEXT);
         if (caseData.isDivorce()) {
-            judicialSeparationProceedingsFinalText.insert(0, JUDICIAL + " ");
-            judicialSeparationFinalText.insert(0, JUDICIAL + " ");
-
+            templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, JUDICIAL_SEPARATION_PROCEEDINGS_TEXT);
+            templateContent.put(JUDICIAL_SEPARATION, JUDICIAL_SEPARATION_TEXT);
             templateContent.put(MARRIED_TO_MORE_THAN_ONE_PERSON, MARRIED_TO_MORE_THAN_ONE_PERSON_TEXT);
+        } else {
+            templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, SEPARATION_PROCEEDINGS_TEXT);
+            templateContent.put(JUDICIAL_SEPARATION, SEPARATION_TEXT);
         }
-
-        templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, judicialSeparationProceedingsFinalText.toString());
-        templateContent.put(JUDICIAL_SEPARATION, judicialSeparationFinalText.toString());
     }
 
 }
