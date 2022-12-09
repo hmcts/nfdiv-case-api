@@ -8,32 +8,28 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.EnumSet;
-
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-public class CaseworkerHwfRefused implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerHwfPartPaymentRequired implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_HWF_REFUSED = "caseworker-hwf-refused";
+    public static final String CASEWORKER_HWF_PART_PAYMENT_REQUIRED = "caseworker-hwf-part-payment-required";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_HWF_REFUSED)
-            .forStateTransition(EnumSet.of(AwaitingHWFDecision, AwaitingHWFEvidence, AwaitingHWFPartPayment), AwaitingDocuments)
-            .name("HWF refused")
-            .description("HWF refused")
+            .event(CASEWORKER_HWF_PART_PAYMENT_REQUIRED)
+            .forStateTransition(AwaitingHWFDecision, AwaitingHWFPartPayment)
+            .name("HWF part payment required")
+            .description("HWF part payment required")
+            .showSummary()
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR));
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 }

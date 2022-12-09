@@ -106,7 +106,7 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplication().setPreviousReissueOption(DIGITAL_AOS);
         expectedCaseData.getApplicant2().setOffline(NO);
 
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
@@ -140,7 +140,7 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplicant2().setOffline(YES);
         expectedCaseData.getApplication().setPreviousReissueOption(OFFLINE_AOS);
 
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
@@ -173,7 +173,7 @@ class ReIssueApplicationServiceTest {
         var expectedCaseData = caseData();
         expectedCaseData.getApplication().setPreviousReissueOption(REISSUE_CASE);
 
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
@@ -217,7 +217,8 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplication().setPreviousReissueOption(DIGITAL_AOS);
         expectedCaseData.getApplicant2().setOffline(NO);
 
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
+        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
@@ -264,7 +265,7 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
         expectedCaseData.getApplication().setPreviousReissueOption(OFFLINE_AOS);
 
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
@@ -309,7 +310,7 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
         expectedCaseData.getApplication().setPreviousReissueOption(REISSUE_CASE);
 
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
