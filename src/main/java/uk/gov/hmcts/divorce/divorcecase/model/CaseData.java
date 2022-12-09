@@ -264,6 +264,13 @@ public class CaseData {
     )
     private List<ListValue<GeneralLetterDetails>> generalLetters;
 
+    @CCD(
+        label = "Sent notifications",
+        access = {DefaultAccess.class}
+    )
+    @Builder.Default
+    private SentNotifications sentNotifications = new SentNotifications();
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
