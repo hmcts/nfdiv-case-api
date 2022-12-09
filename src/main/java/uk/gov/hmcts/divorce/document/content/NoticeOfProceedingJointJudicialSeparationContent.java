@@ -30,9 +30,10 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
         + " one person during this marriage.";
     public static final String MARRIED_TO_MORE_THAN_ONE_PERSON_TEXT_CY = "Rhaid i chi ddweud wrth y llys os ydych wedi bod yn briod i"
         + " fwy nag un unigolyn yn ystod y briodas hon.";
-    public static final String JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT = "separation proceedings";
-    public static final String JUDICIAL_SEPARATION_SUBTEXT = "separation";
-    public static final String JUDICIAL = "judicial";
+    public static final String SEPARATION_PROCEEDINGS_TEXT = "separation proceedings";
+    public static final String SEPARATION_TEXT = "separation";
+    public static final String JUDICIAL_SEPARATION_PROCEEDINGS_TEXT = "judicial separation proceedings";
+    public static final String JUDICIAL_SEPARATION_TEXT = "judicial separation";
 
     public static final String JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT_CY = "achos ymwahaniad";
     public static final String JUDICIAL_SEPARATION_SUBTEXT_CY = "ymwahaniad";
@@ -78,18 +79,14 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
             templateContent.put(REISSUED_DATE, REISSUED_TEXT + caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
         }
 
-        StringBuilder judicialSeparationProceedingsFinalText = new StringBuilder(JUDICIAL_SEPARATION_PROCEEDINGS_SUBTEXT);
-        StringBuilder judicialSeparationFinalText = new StringBuilder(JUDICIAL_SEPARATION_SUBTEXT);
         if (caseData.isDivorce()) {
-            judicialSeparationProceedingsFinalText.insert(0, JUDICIAL + " ");
-            judicialSeparationFinalText.insert(0, JUDICIAL + " ");
-
+            templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, JUDICIAL_SEPARATION_PROCEEDINGS_TEXT);
+            templateContent.put(JUDICIAL_SEPARATION, JUDICIAL_SEPARATION_TEXT);
             templateContent.put(MARRIED_TO_MORE_THAN_ONE_PERSON, MARRIED_TO_MORE_THAN_ONE_PERSON_TEXT);
+        } else {
+            templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, SEPARATION_PROCEEDINGS_TEXT);
+            templateContent.put(JUDICIAL_SEPARATION, SEPARATION_TEXT);
         }
-
-        templateContent.put(JUDICIAL_SEPARATION_PROCEEDINGS, judicialSeparationProceedingsFinalText.toString());
-        templateContent.put(JUDICIAL_SEPARATION, judicialSeparationFinalText.toString());
-
     }
 
     private void getWelshTemplateContent(Map<String, Object> templateContent, CaseData caseData) {
