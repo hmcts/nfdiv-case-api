@@ -70,6 +70,7 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
             .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder, FinalOrderOverdue)
             .name(APPLICANT2_APPLY_FOR_FINAL_ORDER)
             .description(APPLICANT2_APPLY_FOR_FINAL_ORDER)
+            .showCondition("applicationType=\"jointApplication\" AND doesApplicant2WantToApplyForFinalOrder!=\"Yes\"")
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_2, APPLICANT_2_SOLICITOR)
@@ -89,6 +90,14 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
         CaseData data = details.getData();
 
         data.getApplication().setPreviousState(beforeDetails.getState());
+
+        final List<String> errors = applyForFinalOrderService.validateApplyForFinalOrder(data, true);
+        if (!errors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .errors(errors)
+                .build();
+        }
 
         CaseDetails<CaseData, State> updatedDetails = applyForFinalOrderService.applyForFinalOrderAsApplicant2(details);
 
