@@ -27,7 +27,7 @@ plugins {
   id 'org.springframework.boot' version '2.7.5'
   id 'com.github.ben-manes.versions' version '0.44.0'
   id 'hmcts.ccd.sdk' version '5.2.1'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.483'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.496'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -257,7 +257,7 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '5.10.3'
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.0.0'
   implementation (group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.2-Categories') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
