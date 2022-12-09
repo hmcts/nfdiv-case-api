@@ -51,6 +51,8 @@
     },
     "documentUploadComplete": "Yes",
     "issueDate": "2021-06-17",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicationPayments": [
       {
         "value": {

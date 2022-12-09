@@ -18,6 +18,8 @@
     "previousReissueOption": "offlineAos",
     "reissueDate": "2021-06-17",
     "issueDate": "${json-unit.ignore}",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1PrayerDissolveDivorce": [
       "dissolveDivorce"
     ],
