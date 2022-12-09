@@ -1,5 +1,7 @@
 {
   "data": {
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",
