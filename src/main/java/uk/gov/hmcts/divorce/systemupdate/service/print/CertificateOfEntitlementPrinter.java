@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 
 
@@ -50,10 +50,8 @@ public class CertificateOfEntitlementPrinter {
     }
 
     private List<Letter> certificateOfEntitlementLetters(CaseData caseData, DocumentType coverLetterDocumentType) {
-        final List<Letter> coverLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            coverLetterDocumentType);
 
+        final List<Letter> coverLetters = getLettersBasedOnContactPrivacy(caseData, coverLetterDocumentType);
         final Letter coverLetter = firstElement(coverLetters);
         final Letter certificateOfEntitlement =
             new Letter(caseData.getConditionalOrder().getCertificateOfEntitlementDocument(), 1);
