@@ -1987,6 +1987,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail(null);
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.setDueDate(LocalDate.now().plusDays(14));
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(NO);
         addGeneratedDocuments(caseData);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -2029,6 +2030,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail("notNull@email.com");
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.setDueDate(LocalDate.now().plusDays(14));
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(NO);
         addGeneratedDocuments(caseData);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -2069,6 +2071,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail("notNull@email.com");
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.setDueDate(LocalDate.now().plusDays(14));
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(NO);
         addGeneratedDocuments(caseData);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
