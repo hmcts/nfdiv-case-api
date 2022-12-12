@@ -422,7 +422,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
     }
 
     @Test
@@ -438,7 +438,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
     }
 
     @Test
@@ -455,7 +455,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
     }
 
     @Test
@@ -472,7 +472,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
     }
 
     @Test
@@ -491,7 +491,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicant2().isOffline()).isFalse();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isFalse();
     }
 
     private CaseData caseData() {

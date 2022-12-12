@@ -61,6 +61,9 @@ doc_assembly:
 document_management:
   url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store-aat.service.core-compute-aat.internal}
 
+case_document_am:
+  url: ${CASE_DOCUMENT_AM_URL:http://ccd-case-document-am-api-aat.service.core-compute-aat.internal}
+
 prd:
   api:
     url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}
@@ -129,6 +132,9 @@ bulk-action:
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
 
+toggle:
+  enable_case_document_access_management: ${ENABLE_CDAM:true}
+  enable_qr_code_reading: ${ENABLE_QR_CODE_READING:true}
 
 logging:
   level:

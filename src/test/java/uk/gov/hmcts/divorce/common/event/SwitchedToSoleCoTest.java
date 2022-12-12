@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,20 +31,20 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSoleCo.SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84ApplicationType.SWITCH_TO_SOLE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_1;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_1;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-class CitizenSwitchedToSoleCoTest {
+class SwitchedToSoleCoTest {
 
     @Mock
     private SwitchToSoleCoNotification switchToSoleCoNotification;
@@ -71,13 +71,13 @@ class CitizenSwitchedToSoleCoTest {
     private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
 
     @InjectMocks
-    private CitizenSwitchedToSoleCo citizenSwitchedToSoleCo;
+    private SwitchedToSoleCo switchedToSoleCo;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        citizenSwitchedToSoleCo.configure(configBuilder);
+        switchedToSoleCo.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -95,7 +95,7 @@ class CitizenSwitchedToSoleCoTest {
             .build();
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails, WELSH);
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
@@ -113,7 +113,7 @@ class CitizenSwitchedToSoleCoTest {
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app2-token");
         when(ccdAccessService.isApplicant2("app2-token", caseId)).thenReturn(true);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
@@ -140,7 +140,7 @@ class CitizenSwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
@@ -164,7 +164,7 @@ class CitizenSwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         verify(generateSwitchToSoleCoLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
         verify(switchToSoleService).switchApplicantData(caseData);
@@ -186,7 +186,7 @@ class CitizenSwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        citizenSwitchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         verify(generateSwitchToSoleCoLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
         verifyNoInteractions(switchToSoleService);
@@ -201,7 +201,7 @@ class CitizenSwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        citizenSwitchedToSoleCo.submitted(caseDetails, caseDetails);
+        switchedToSoleCo.submitted(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
@@ -221,7 +221,7 @@ class CitizenSwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        citizenSwitchedToSoleCo.submitted(caseDetails, caseDetails);
+        switchedToSoleCo.submitted(caseDetails, caseDetails);
 
         verify(switchToSoleCoPrinter).print(caseData, caseId);
         verifyNoMoreInteractions(switchToSoleCoPrinter);

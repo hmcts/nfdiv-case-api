@@ -11,6 +11,8 @@
         "OrganisationID": "App2OrgPolicy"
       }
     },
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicationPayments": [{
       "id": "${json-unit.any-string}",
@@ -28,7 +30,7 @@
         "document_binary_url": "GA.pdf/binary"
       },
       "documentDateAdded": "${json-unit.any-string}",
-      "documentType": "d11"
+      "documentType": "generalApplication"
     },
     "generalApplicationFeeOrderSummary": {
       "Fees": [{
@@ -47,6 +49,37 @@
       },
       "valueLabel": "PBA0012345"
     },
+    "generalApplications": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "generalApplicationDocument": {
+          "documentLink": {
+            "document_url": "http://localhost:4200/assets/d11",
+            "document_filename": "GA.pdf",
+            "document_binary_url": "GA.pdf/binary"
+          },
+          "documentDateAdded": "${json-unit.any-string}",
+          "documentType": "generalApplication"
+        },
+        "generalApplicationFeeOrderSummary": {
+          "Fees": [{
+            "id": "1",
+            "value": {
+              "FeeCode": "FEE002",
+              "FeeDescription": "fees for divorce"
+            }
+          }],
+          "PaymentTotal": "55000"
+        },
+        "generalApplicationFeePaymentMethod": "feePayByAccount",
+        "generalApplicationFeePbaNumbers": {
+          "value": {
+            "label": "PBA0012345"
+          },
+          "valueLabel": "PBA0012345"
+        }
+      }
+    }],
     "documentsUploaded": [{
       "id": "${json-unit.any-string}",
       "value": {
@@ -56,7 +89,7 @@
           "document_binary_url": "GA.pdf/binary"
         },
         "documentDateAdded": "${json-unit.any-string}",
-        "documentType": "d11"
+        "documentType": "generalApplication"
       }
     }],
     "dataVersion": 5,

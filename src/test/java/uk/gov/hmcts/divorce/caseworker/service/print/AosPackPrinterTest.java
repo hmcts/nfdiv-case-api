@@ -437,6 +437,44 @@ class AosPackPrinterTest {
     }
 
     @Test
+    void shouldPrintAosResponseLetterForApplicantIfRequiredDocumentsArePresentAndApplicantContactIsPrivate() {
+
+        final ListValue<ConfidentialDivorceDocument> doc1 = ListValue.<ConfidentialDivorceDocument>builder()
+            .value(ConfidentialDivorceDocument.builder()
+                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.AOS_RESPONSE_LETTER)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> respondentAnswersDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(RESPONDENT_ANSWERS)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .contactDetailsType(ContactDetailsType.PRIVATE)
+                .build())
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(singletonList(respondentAnswersDoc))
+                .confidentialDocumentsGenerated(singletonList(doc1))
+                .build())
+            .build();
+
+        when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
+
+        aosPackPrinter.sendAosResponseLetterToApplicant(caseData, TEST_CASE_ID);
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("aos-response-pack");
+        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(doc1.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(respondentAnswersDoc.getValue());
+    }
+
+    @Test
     void shouldNotPrintAosPackIfRequiredDocumentsAreNotPresent() {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()

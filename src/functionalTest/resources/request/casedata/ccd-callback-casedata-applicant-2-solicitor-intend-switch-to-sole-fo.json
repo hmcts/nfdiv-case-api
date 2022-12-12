@@ -1,0 +1,15 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "jointApplication",
+  "applicant1FirstName": "test_first_name",
+  "applicant1LastName": "test_last_name",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2FirstName": "test_first_name",
+  "applicant2LastName": "test_last_name",
+  "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1SolicitorRepresented": "Yes",
+  "applicant1SolicitorName": "Applicant 1 Solicitor",
+  "applicant1SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1SolicitorReference": "Applicant 1 Solicitor Reference",
+  "doesApplicant2IntendToSwitchToSole": "Yes"
+}

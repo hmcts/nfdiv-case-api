@@ -2,17 +2,14 @@ package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
@@ -25,7 +22,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_LABEL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_REGISTERED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -47,21 +43,19 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Slf4j
 public class NoticeOfProceedingSolicitorContent {
 
-    @Value("${court.locations.serviceCentre.email}")
-    private String email;
-
-    @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
-
     @Autowired
     private HoldingPeriodService holdingPeriodService;
 
     @Autowired
     private CommonContent commonContent;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, boolean isApplicantSolicitor) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference());
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
@@ -121,12 +115,6 @@ public class NoticeOfProceedingSolicitorContent {
             templateContent.put(HAS_CASE_BEEN_REISSUED, true);
             templateContent.put(REISSUE_DATE, caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
         }
-
-        templateContent.put(CTSC_CONTACT_DETAILS, CtscContactDetails
-            .builder()
-            .emailAddress(email)
-            .phoneNumber(phoneNumber)
-            .build());
 
         return templateContent;
     }

@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84WhoApplying.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -66,6 +67,7 @@ public class SwitchToSoleServiceTest {
     void shouldSwitchUserDataIfApplicant2TriggeredD84SwitchToSole() {
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
+        caseData.setFinalOrder(FinalOrder.builder().build());
 
         final Applicant applicant1BeforeSwitch = caseData.getApplicant1();
         final Applicant applicant2BeforeSwitch = caseData.getApplicant2();
@@ -80,6 +82,7 @@ public class SwitchToSoleServiceTest {
     void shouldSwitchDocumentsUploadedIfApplicant2TriggeredD84SwitchToSole() {
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
+        caseData.setFinalOrder(FinalOrder.builder().build());
 
         final ListValue<DivorceDocument> doc1 =
             getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "co_granted.pdf", CONDITIONAL_ORDER_GRANTED);
@@ -102,6 +105,7 @@ public class SwitchToSoleServiceTest {
     void shouldSetDivorceWhoIfNewApplicant2GenderIsNotNull() {
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
+        caseData.setFinalOrder(FinalOrder.builder().build());
 
         switchToSoleService.switchApplicantData(caseData);
 
@@ -113,6 +117,7 @@ public class SwitchToSoleServiceTest {
     void shouldSetDivorceWhoToNullIfNewApplicant2GenderIsNull() {
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
+        caseData.setFinalOrder(FinalOrder.builder().build());
         caseData.getApplicant1().setGender(null);
 
         switchToSoleService.switchApplicantData(caseData);

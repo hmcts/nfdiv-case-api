@@ -2,17 +2,14 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -82,43 +79,18 @@ public class ConditionalOrder {
     private LocalDateTime dateD84FormScanned;
 
     @CCD(
-        label = "What application type is the D84?"
+        label = "What application type is the D84?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "OfflineApplicationType"
     )
-    private D84ApplicationType d84ApplicationType;
-
-    @Getter
-    @AllArgsConstructor
-    public enum D84ApplicationType implements HasLabel {
-
-        @JsonProperty("sole")
-        SOLE("Sole"),
-
-        @JsonProperty("joint")
-        JOINT("Joint"),
-
-        @JsonProperty("switchToSole")
-        SWITCH_TO_SOLE("Switch to sole");
-
-        private final String label;
-    }
+    private OfflineApplicationType d84ApplicationType;
 
     @CCD(
-        label = "Who is submitting the D84?"
+        label = "Who is submitting the D84?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "OfflineWhoApplying"
     )
-    private D84WhoApplying d84WhoApplying;
-
-    @Getter
-    @AllArgsConstructor
-    public enum D84WhoApplying implements HasLabel {
-
-        @JsonProperty("applicant1")
-        APPLICANT_1("Applicant 1"),
-
-        @JsonProperty("applicant2")
-        APPLICANT_2("Applicant 2");
-
-        private final String label;
-    }
+    private OfflineWhoApplying d84WhoApplying;
 
     @CCD(
         label = "Switched to sole"
@@ -176,6 +148,11 @@ public class ConditionalOrder {
         typeOverride = TextArea
     )
     private String refusalRejectionAdditionalInfo;
+
+    @CCD(
+        label = "How many times have we tried the remind applicant apply for CO cron"
+    )
+    private int cronRetriesRemindApplicantApplyCo;
 
     @CCD(
         label = "Provide a refusal reason",
@@ -332,6 +309,12 @@ public class ConditionalOrder {
         label = "Did bailiff serve successfully?"
     )
     private YesOrNo successfulServedByBailiff;
+
+    @CCD(
+        label = "Is a required admin clarification now submitted?",
+        access = {CaseworkerAccess.class}
+    )
+    private YesOrNo isAdminClarificationSubmitted;
 
     @JsonIgnore
     public boolean areClaimsGranted() {
