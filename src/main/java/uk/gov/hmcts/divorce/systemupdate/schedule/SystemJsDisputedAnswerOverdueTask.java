@@ -8,10 +8,8 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -32,19 +30,14 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-public class SystemJsDisputedAnswerOverdueTask implements Runnable {
+public class SystemJsDisputedAnswerOverdueTask extends AbstractTaskEventSubmit implements Runnable {
 
-    private static final String SUBMIT_EVENT_ERROR = "Submit event failed for case(id={}), continuing to next case";
-    private static final String DESERIALIZATION_ERROR = "Deserialization failed for case(id={}), continuing to next case";
     private static final String CCD_SEARCH_ERROR = "JsDisputedAnswerOverdue schedule task stopped after search error";
     private static final String TASK_CONFLICT_ERROR =
         "JsDisputedAnswerOverdue scheduled task stopping due to conflict with another running task";
 
     @Autowired
     private CcdSearchService ccdSearchService;
-
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
 
     @Autowired
     private IdamService idamService;
@@ -69,10 +62,10 @@ public class SystemJsDisputedAnswerOverdueTask implements Runnable {
                     .must(matchQuery(String.format(DATA, IS_JUDICIAL_SEPARATION), YesOrNo.YES))
                     .must(matchQuery(String.format(DATA, AOS_RESPONSE), DISPUTE_DIVORCE.getType()))
                     .filter(rangeQuery(String.format(DATA, AWAITING_JS_ANSWER_START_DATE))
-                            .lte(LocalDate.now().minusDays(answerOverdueOffsetDays)));
+                        .lte(LocalDate.now().minusDays(answerOverdueOffsetDays)));
 
             ccdSearchService.searchForAllCasesWithQuery(query, systemUser, serviceAuth, AwaitingAnswer)
-                .forEach(caseDetails -> submitEvent(caseDetails, systemUser, serviceAuth));
+                .forEach(caseDetails -> updateState(caseDetails, systemUser, serviceAuth));
 
             log.info("JsDisputedAnswerOverdue scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
@@ -82,14 +75,8 @@ public class SystemJsDisputedAnswerOverdueTask implements Runnable {
         }
     }
 
-    private void submitEvent(CaseDetails caseDetails, User user, String serviceAuth) {
-        try {
-            log.info("Answer Overdue for Disputed JS Case (id={}), setting state to AwaitingJS/Nullity", caseDetails.getId());
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, user, serviceAuth);
-        } catch (final CcdManagementException e) {
-            log.error(SUBMIT_EVENT_ERROR, caseDetails.getId());
-        } catch (final IllegalArgumentException e) {
-            log.error(DESERIALIZATION_ERROR, caseDetails.getId());
-        }
+    private void updateState(CaseDetails caseDetails, User user, String serviceAuth) {
+        log.info("Answer Overdue for Disputed JS Case (id={}), setting state to AwaitingJS/Nullity", caseDetails.getId());
+        submitEvent(caseDetails, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, user, serviceAuth);
     }
 }
