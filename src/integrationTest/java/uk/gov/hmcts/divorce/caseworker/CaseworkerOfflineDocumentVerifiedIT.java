@@ -168,6 +168,8 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         final CaseData caseData = caseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setIsJudicialSeparation(NO);
 
         caseData.getApplicant2().setLegalProceedings(YES);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");
