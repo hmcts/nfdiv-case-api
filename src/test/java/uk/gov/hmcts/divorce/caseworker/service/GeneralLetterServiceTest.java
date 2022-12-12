@@ -43,7 +43,8 @@ public class GeneralLetterServiceTest {
 
         var expectedCaseData = buildCaseDataWithGeneralLetter(APPLICANT);
 
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+        assertThat(response.getData().getDocuments()).isEqualTo(expectedCaseData.getDocuments());
 
         verify(generateGeneralLetter).apply(caseDetails);
         verify(sendGeneralLetter).apply(caseDetails);
