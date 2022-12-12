@@ -45,7 +45,7 @@ public class SystemJsDisputedAnswerOverdueTask extends AbstractTaskEventSubmit {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    @Value("${js_answer_overdue.offset_days}")
+    @Value("${judicial_separation_answer_overdue.offset_days}")
     private int answerOverdueOffsetDays;
 
     @Override

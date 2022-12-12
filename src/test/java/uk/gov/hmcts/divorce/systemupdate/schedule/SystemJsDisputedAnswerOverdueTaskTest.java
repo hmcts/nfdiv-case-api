@@ -59,7 +59,7 @@ class SystemJsDisputedAnswerOverdueTaskTest {
     @Mock
     private CcdUpdateService ccdUpdateService;
 
-    @Value("${js_answer_overdue.offset_days}")
+    @Value("${judicial_separation_answer_overdue.offset_days}")
     private int answerOverdueOffsetDays;
 
     @InjectMocks
