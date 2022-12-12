@@ -10,7 +10,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 @Component
 @Slf4j
-public abstract class AbstractTaskEventSubmit {
+public class TaskEventSubmit {
 
     private static final String SUBMIT_EVENT_ERROR = "Submit event failed for case(id={}), continuing to next case";
     private static final String DESERIALIZATION_ERROR = "Deserialization failed for case(id={}), continuing to next case";

@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
-import uk.gov.hmcts.divorce.systemupdate.schedule.AbstractTaskEventSubmit;
+import uk.gov.hmcts.divorce.systemupdate.schedule.TaskEventSubmit;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventSubmit implements Runnable {
+public class SystemRemindApplicantsApplyForCOrderTask extends TaskEventSubmit implements Runnable {
 
     public static final String NOTIFICATION_FLAG = "applicantsRemindedCanApplyForConditionalOrder";
     public static final String CCD_SEARCH_ERROR =

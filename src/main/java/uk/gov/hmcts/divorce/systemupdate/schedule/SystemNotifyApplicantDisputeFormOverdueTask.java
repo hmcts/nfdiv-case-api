@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-public class SystemNotifyApplicantDisputeFormOverdueTask extends AbstractTaskEventSubmit implements Runnable {
+public class SystemNotifyApplicantDisputeFormOverdueTask extends TaskEventSubmit implements Runnable {
 
     public static final String NOTIFICATION_SENT_FLAG = "applicantNotifiedDisputeFormOverdue";
     private static final String CCD_SEARCH_ERROR = "NotifyApplicantDisputeFormOverdue schedule task stopped after search error";
