@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.AosResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.content.AosUndefendedResponseLetterTemplateContent;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
@@ -32,6 +33,9 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
     @Autowired
     private AosUndefendedResponseLetterTemplateContent aosUndefendedResponseLetterTemplateContent;
 
+    @Autowired
+    private GenerateD84Form generateD84Form;
+
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
 
@@ -43,6 +47,7 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
             if (YES.equals(caseData.getIsJudicialSeparation())) {
                 if (acknowledgementOfService.isDisputed()) {
                     log.info("Generating JS aos response (disputed) letter pdf for case id: {}", caseDetails.getId());
+                    generateD84Form.generateD84Document(caseData, caseId);
                     caseDataDocumentService.renderDocumentAndUpdateCaseData(
                         caseData,
                         AOS_RESPONSE_LETTER,

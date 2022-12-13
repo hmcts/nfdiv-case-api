@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.AosResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.content.AosUndefendedResponseLetterTemplateContent;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +44,9 @@ class GenerateAosResponseLetterDocumentTest {
 
     @Mock
     private AosUndefendedResponseLetterTemplateContent aosUndefendedResponseLetterTemplateContent;
+
+    @Mock
+    private GenerateD84Form generateD84Form;
 
     @InjectMocks
     private GenerateAosResponseLetterDocument generateAosResponseLetterDocument;
@@ -156,6 +160,7 @@ class GenerateAosResponseLetterDocumentTest {
                 AOS_RESPONSE_LETTER_DOCUMENT_NAME
             );
 
+        verify(generateD84Form).generateD84Document(caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(caseDataDocumentService);
     }
 
