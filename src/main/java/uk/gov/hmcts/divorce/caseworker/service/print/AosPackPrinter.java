@@ -142,9 +142,11 @@ public class AosPackPrinter {
             log.info("Letter service size {}, for case {}", aosResponseLetterWithAos.size(), caseId);
             for (Letter letter : aosResponseLetterWithAos) {
                 DivorceDocument divorceDocument = letter.getDivorceDocument();
-                log.info("Letter docType {}, name {}, for case {}",
+                log.info("aosResponseLetterWithAos Letter docType {}, name {}, for case {}",
                     divorceDocument == null ? null : divorceDocument.getDocumentType(),
                     divorceDocument == null ? null : divorceDocument.getDocumentFileName(),
+                    divorceDocument == null || divorceDocument.getDocumentLink() == null ? null :
+                        divorceDocument.getDocumentLink().getBinaryUrl(),
                     caseId);
             }
             final String caseIdString = caseId.toString();
