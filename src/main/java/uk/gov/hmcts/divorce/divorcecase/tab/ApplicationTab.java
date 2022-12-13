@@ -98,9 +98,9 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameDifferentToMarriageCertificateMethod")
             .field("applicant1NameDifferentToMarriageCertificateOtherDetails")
             .field("applicant1NameChangedHow",
-                "applicant1LastNameChangedWhenMarriedMethod!=\"*\" AND applicant1NameDifferentToMarriageCertificateMethod!=\"*\"")
+                "applicant1LastNameChangedWhenMarriedMethod!=\"*\" OR applicant1NameDifferentToMarriageCertificateMethod!=\"*\"")
             .field("applicant1NameChangedHowOtherDetails",
-                "applicant1LastNameChangedWhenMarriedOtherDetails!=\"*\" AND applicant1NameDifferentToMarriageCertificateOtherDetails!=\"*\"")
+                "applicant1LastNameChangedWhenMarriedOtherDetails!=\"*\" OR applicant1NameDifferentToMarriageCertificateOtherDetails!=\"*\"")
             .field("applicant1ContactDetailsType", NEVER_SHOW)
             .field("divorceWho")
             .field("applicant1ScreenHasMarriageBroken")
@@ -158,9 +158,9 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2NameDifferentToMarriageCertificateMethod")
             .field("applicant2NameDifferentToMarriageCertificateOtherDetails")
             .field("applicant2NameChangedHow",
-                "applicant2LastNameChangedWhenMarriedMethod!=\"*\" AND applicant2NameDifferentToMarriageCertificateMethod!=\"*\"")
+                "applicant2LastNameChangedWhenMarriedMethod!=\"*\" OR applicant2NameDifferentToMarriageCertificateMethod!=\"*\"")
             .field("applicant2NameChangedHowOtherDetails",
-                "applicant2LastNameChangedWhenMarriedOtherDetails!=\"*\" AND applicant2NameDifferentToMarriageCertificateOtherDetails!=\"*\"")
+                "applicant2LastNameChangedWhenMarriedOtherDetails!=\"*\" OR applicant2NameDifferentToMarriageCertificateOtherDetails!=\"*\"")
             .field("applicant2ContactDetailsType", NEVER_SHOW)
             .field("applicant2ScreenHasMarriageBroken")
             .field("applicant2PcqId")
