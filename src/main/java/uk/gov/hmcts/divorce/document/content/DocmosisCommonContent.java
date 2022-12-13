@@ -51,7 +51,7 @@ public class DocmosisCommonContent {
     @Value("${court.locations.serviceCentre.poBox}")
     private String poBox;
 
-    @Value("${court.locations.serviceCentre.poBoxCy:Blwch Post 13226}")
+    @Value("${court.locations.serviceCentre.poBoxCy}")
     private String poBoxCy;
 
     @Value("${court.locations.serviceCentre.town}")
