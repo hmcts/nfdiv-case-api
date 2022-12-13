@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
 @NoArgsConstructor
@@ -55,6 +56,24 @@ public class RetiredFields {
         typeParameterOverride = "RejectionReason"
     )
     private Set<RejectionReason> coRefusalRejectionReason;
+
+    @CCD(label = "How did they change their name?")
+    private Set<ChangedNameHow> applicant1NameChangedHow;
+
+    @CCD(
+        label = "Details of how they changed their name",
+        typeOverride = TextArea
+    )
+    private String applicant1NameChangedHowOtherDetails;
+
+    @CCD(label = "How did they change their name?")
+    private Set<ChangedNameHow> applicant2NameChangedHow;
+
+    @CCD(
+        label = "Details of how they changed their name",
+        typeOverride = TextArea
+    )
+    private String applicant2NameChangedHowOtherDetails;
 
     @JsonIgnore
     private static final TriConsumer<Map<String, Object>, String, Object> DO_NOTHING = (data, key, val) -> {
