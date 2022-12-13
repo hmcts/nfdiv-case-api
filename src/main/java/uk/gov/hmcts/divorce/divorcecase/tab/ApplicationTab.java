@@ -97,8 +97,10 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameDifferentToMarriageCertificate")
             .field("applicant1NameDifferentToMarriageCertificateMethod")
             .field("applicant1NameDifferentToMarriageCertificateOtherDetails")
-            .field("applicant1NameChangedHow")
-            .field("applicant1NameChangedHowOtherDetails")
+            .field("applicant1NameChangedHow",
+                "applicant1LastNameChangedWhenMarriedMethod!=\"*\" AND applicant1NameDifferentToMarriageCertificateMethod!=\"*\"")
+            .field("applicant1NameChangedHowOtherDetails",
+                "applicant1LastNameChangedWhenMarriedOtherDetails!=\"*\" AND applicant1NameDifferentToMarriageCertificateOtherDetails!=\"*\"")
             .field("applicant1ContactDetailsType", NEVER_SHOW)
             .field("divorceWho")
             .field("applicant1ScreenHasMarriageBroken")
@@ -155,8 +157,10 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2NameDifferentToMarriageCertificate")
             .field("applicant2NameDifferentToMarriageCertificateMethod")
             .field("applicant2NameDifferentToMarriageCertificateOtherDetails")
-            .field("applicant2NameChangedHow")
-            .field("applicant2NameChangedHowOtherDetails")
+            .field("applicant2NameChangedHow",
+                "applicant2LastNameChangedWhenMarriedMethod!=\"*\" AND applicant2NameDifferentToMarriageCertificateMethod!=\"*\"")
+            .field("applicant2NameChangedHowOtherDetails",
+                "applicant2LastNameChangedWhenMarriedOtherDetails!=\"*\" AND applicant2NameDifferentToMarriageCertificateOtherDetails!=\"*\"")
             .field("applicant2ContactDetailsType", NEVER_SHOW)
             .field("applicant2ScreenHasMarriageBroken")
             .field("applicant2PcqId")
