@@ -3,11 +3,13 @@ package uk.gov.hmcts.divorce.legaladvisor.service.task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -27,6 +29,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LA
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
@@ -39,6 +42,9 @@ public class GenerateCoRefusedCoverLetter {
 
     @Autowired
     private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
+
+    @Autowired
+    private CommonContent commonContent;
 
     @Autowired
     private Clock clock;
@@ -77,6 +83,10 @@ public class GenerateCoRefusedCoverLetter {
         templateContent.put(FIRST_NAME, applicant.getFirstName());
         templateContent.put(LAST_NAME, applicant.getLastName());
         templateContent.put(ADDRESS, applicant.getPostalAddress());
+
+        if (YesOrNo.YES.equals(caseData.getIsJudicialSeparation())) {
+            templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2(), applicant.getLanguagePreference()));
+        }
 
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
 

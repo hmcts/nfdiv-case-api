@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.legaladvisor.service.printer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -20,6 +21,7 @@ import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_REFUSAL_CLARIFICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
@@ -118,8 +120,10 @@ public class AwaitingClarificationApplicationPrinter {
         generateCoRefusedCoverLetter.generateAndUpdateCaseData(
             caseData,
             caseId,
-            CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+            YesOrNo.YES.equals(caseData.getIsJudicialSeparation()) ? JUDICIAL_SEPARATION_REFUSAL_CLARIFICATION_TEMPLATE_ID :
+                CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             applicant
         );
     }
+
 }
