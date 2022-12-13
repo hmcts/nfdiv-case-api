@@ -401,10 +401,9 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("aos-response-pack");
-        assertThat(print.getLetters().size()).isEqualTo(3);
+        assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(aosResponseDoc.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(respondentAnswersDoc.getValue());
-        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(d84Form.getValue());
     }
 
     @Test
