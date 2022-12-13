@@ -28,7 +28,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
@@ -109,7 +108,7 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
 
         templateContent.put(FEEDBACK, conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()));
 
-        if (caseData.getApplication().isPaperCase() == true && applicant.isRepresented()) {
+        if (caseData.getApplication().isPaperCase() && applicant.isRepresented()) {
             templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
             templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
             templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
