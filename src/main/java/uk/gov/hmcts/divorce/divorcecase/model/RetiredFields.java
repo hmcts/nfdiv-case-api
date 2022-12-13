@@ -13,6 +13,8 @@ import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.List;
@@ -57,21 +59,29 @@ public class RetiredFields {
     )
     private Set<RejectionReason> coRefusalRejectionReason;
 
-    @CCD(label = "How did they change their name?")
+    @CCD(
+        label = "How did they change their name?",
+        access = {DefaultAccess.class}
+    )
     private Set<ChangedNameHow> applicant1NameChangedHow;
 
     @CCD(
         label = "Details of how they changed their name",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
     )
     private String applicant1NameChangedHowOtherDetails;
 
-    @CCD(label = "How did they change their name?")
+    @CCD(
+        label = "How did they change their name?",
+        access = {Applicant2Access.class}
+    )
     private Set<ChangedNameHow> applicant2NameChangedHow;
 
     @CCD(
         label = "Details of how they changed their name",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        access = {Applicant2Access.class}
     )
     private String applicant2NameChangedHowOtherDetails;
 

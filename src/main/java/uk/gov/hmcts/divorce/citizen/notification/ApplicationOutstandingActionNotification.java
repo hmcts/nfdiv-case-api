@@ -13,11 +13,10 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
@@ -170,8 +169,15 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     }
 
     private Set<ChangedNameHow> getNameChangedHowSet(CaseData caseData) {
-        return Stream.concat(Optional.ofNullable(caseData.getApplicant1().getNameChangedHow()).orElse(Set.of()).stream(),
-                Optional.ofNullable(caseData.getApplicant2().getNameChangedHow()).orElse(Set.of()).stream())
-                .collect(Collectors.toSet());
+        Set<ChangedNameHow> resultSet = new HashSet<>();
+
+        resultSet.addAll(caseData.getApplicant1().getLastNameChangedWhenMarriedMethod());
+        resultSet.addAll(caseData.getApplicant1().getNameDifferentToMarriageCertificateMethod());
+        resultSet.addAll(caseData.getApplicant2().getLastNameChangedWhenMarriedMethod());
+        resultSet.addAll(caseData.getApplicant2().getNameDifferentToMarriageCertificateMethod());
+        resultSet.addAll(caseData.getRetiredFields().getApplicant1NameChangedHow());
+        resultSet.addAll(caseData.getRetiredFields().getApplicant2NameChangedHow());
+
+        return resultSet;
     }
 }
