@@ -241,16 +241,7 @@ public class CcdSearchService {
                     .should(boolQuery()
                         .must(boolQuery().must(errorCasesExist))));
 
-        try {
-            return searchBulkActionCases(user, serviceAuth, query).stream()
-                .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
-                .toList();
-        } catch (final FeignException e) {
-
-            final String message = String.format("Failed to complete search for Bulk Cases with state of %s", state);
-            log.info(message, e);
-            throw new CcdSearchCaseException(message, e);
-        }
+        return searchForBulkCases(user, serviceAuth, query);
     }
 
     public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
@@ -268,12 +259,18 @@ public class CcdSearchService {
             .should(listedStateQuery)
             .minimumShouldMatch(1);
 
+        return searchForBulkCases(user, serviceAuth, query);
+    }
+
+    public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
+        searchForBulkCases(final User user, final String serviceAuth, final QueryBuilder query) {
+
         try {
             return searchBulkActionCases(user, serviceAuth, query).stream()
                 .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
                 .toList();
         } catch (final FeignException e) {
-            final String message = "Failed to complete search for Bulk Cases with state of Created or Listed with cases to be removed";
+            final String message = "Failed to complete search for Bulk Cases";
             log.info(message, e);
             throw new CcdSearchCaseException(message, e);
         }
