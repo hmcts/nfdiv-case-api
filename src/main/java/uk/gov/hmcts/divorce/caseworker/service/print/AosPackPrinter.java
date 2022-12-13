@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -140,8 +141,11 @@ public class AosPackPrinter {
 
             log.info("Letter service size {}, for case {}", aosResponseLetterWithAos.size(), caseId);
             for (Letter letter : aosResponseLetterWithAos) {
-                log.info("Letter docType {}, name {}, for case {}", letter.getDivorceDocument().getDocumentType(),
-                    letter.getDivorceDocument().getDocumentFileName(), caseId);
+                DivorceDocument divorceDocument = letter.getDivorceDocument();
+                log.info("Letter docType {}, name {}, for case {}",
+                    divorceDocument == null ? null : divorceDocument.getDocumentType(),
+                    divorceDocument == null ? null : divorceDocument.getDocumentFileName(),
+                    caseId);
             }
             final String caseIdString = caseId.toString();
             final Print print = new Print(aosResponseLetterWithAos, caseIdString, caseIdString, LETTER_TYPE_AOS_RESPONSE_PACK);
