@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -23,12 +24,15 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_REFUSAL_CLARIFICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent.LEGAL_ADVISOR_COMMENTS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -49,11 +53,14 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PH
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,6 +74,9 @@ public class GenerateCoRefusedCoverLetterTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private CommonContent commonContent;
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
@@ -203,6 +213,83 @@ public class GenerateCoRefusedCoverLetterTest {
             eq(templateContent),
             eq(TEST_CASE_ID),
             eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
+            eq(ENGLISH),
+            anyString()
+        );
+    }
+
+    @Test
+    void shouldGenerateCoRefusedCoverLetterWithDivorceContentForJudicialSeparation() {
+        setMockClock(clock);
+
+        final List<ConditionalOrderRefusedForAmendmentContent.RefusalReason> refusalReasons =
+            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Court does not have jurisdiction"));
+
+
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+        templateContent.put(FIRST_NAME, "Bob");
+        templateContent.put(LAST_NAME, "Smith");
+        templateContent.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
+        templateContent.put(IS_JOINT, true);
+        templateContent.put(PARTNER, "wife");
+        templateContent.put(LEGAL_ADVISOR_COMMENTS, refusalReasons);
+        templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
+        templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicationType(JOINT_APPLICATION)
+            .isJudicialSeparation(YES)
+            .applicant1(
+                Applicant.builder()
+                    .firstName("Bob")
+                    .lastName("Smith")
+                    .gender(MALE)
+                    .address(APPLICANT_ADDRESS)
+                    .languagePreferenceWelsh(NO)
+                    .build()
+            )
+            .applicant2(
+                Applicant.builder()
+                    .firstName("Julie")
+                    .lastName("Smith")
+                    .gender(FEMALE)
+                    .build()
+            )
+            .conditionalOrder(
+                ConditionalOrder.builder()
+                    .refusalRejectionAdditionalInfo("Court does not have jurisdiction")
+                    .build()
+            )
+            .build();
+
+        when(conditionalOrderRefusedForAmendmentContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
+            .thenReturn(refusalReasons);
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference()));
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference()))
+            .thenReturn("wife");
+
+        generateCoRefusedCoverLetter.generateAndUpdateCaseData(
+            caseData,
+            TEST_CASE_ID,
+            JUDICIAL_SEPARATION_REFUSAL_CLARIFICATION_TEMPLATE_ID,
+            caseData.getApplicant1()
+        );
+
+        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
+            eq(caseData),
+            eq(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER),
+            eq(templateContent),
+            eq(TEST_CASE_ID),
+            eq(JUDICIAL_SEPARATION_REFUSAL_CLARIFICATION_TEMPLATE_ID),
             eq(ENGLISH),
             anyString()
         );

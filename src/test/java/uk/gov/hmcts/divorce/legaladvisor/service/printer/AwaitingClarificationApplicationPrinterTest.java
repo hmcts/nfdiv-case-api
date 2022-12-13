@@ -28,10 +28,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_REFUSAL_CLARIFICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -192,6 +195,194 @@ public class AwaitingClarificationApplicationPrinterTest {
             caseData,
             TEST_CASE_ID,
             CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+            caseData.getApplicant1()
+        );
+
+        verifyNoInteractions(bulkPrintService);
+    }
+
+
+    @Test
+    void shouldPrintJointJudicialSeparationAwaitingClarificationPack() {
+
+        final ListValue<DivorceDocument> coversheetDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> coCanApplyDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> coRefusalDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_REFUSAL)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .isJudicialSeparation(YES)
+            .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
+            .applicant2(Applicant.builder().build())
+            .documents(
+                CaseDocuments.builder()
+                    .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc))
+                    .build()
+            )
+            .build();
+
+        when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
+
+        awaitingClarificationApplicationPrinter.sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1()
+        );
+
+        verify(generateCoversheet).generateCoversheet(
+            eq(caseData),
+            eq(TEST_CASE_ID),
+            eq(COVERSHEET_APPLICANT),
+            anyMap(),
+            eq(ENGLISH)
+        );
+
+        verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
+            caseData,
+            TEST_CASE_ID,
+            JUDICIAL_SEPARATION_REFUSAL_CLARIFICATION_TEMPLATE_ID,
+            caseData.getApplicant1()
+        );
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("awaiting-clarification-application-letter");
+        assertThat(print.getLetters().size()).isEqualTo(3);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(coversheetDoc.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coCanApplyDoc.getValue());
+        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(coRefusalDoc.getValue());
+
+        verify(bulkPrintService).print(print);
+    }
+
+    @Test
+    void shouldPrintSoleJudicialSeparationAwaitingClarificationPack() {
+
+        final ListValue<DivorceDocument> coversheetDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> coCanApplyDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> coRefusalDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_REFUSAL)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .isJudicialSeparation(YES)
+            .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
+            .applicant2(Applicant.builder().build())
+            .documents(
+                CaseDocuments.builder()
+                    .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc))
+                    .build()
+            )
+            .build();
+
+        when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
+
+        awaitingClarificationApplicationPrinter.sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1()
+        );
+
+        verify(generateCoversheet).generateCoversheet(
+            eq(caseData),
+            eq(TEST_CASE_ID),
+            eq(COVERSHEET_APPLICANT),
+            anyMap(),
+            eq(ENGLISH)
+        );
+
+        verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
+            caseData,
+            TEST_CASE_ID,
+            JUDICIAL_SEPARATION_REFUSAL_CLARIFICATION_TEMPLATE_ID,
+            caseData.getApplicant1()
+        );
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("awaiting-clarification-application-letter");
+        assertThat(print.getLetters().size()).isEqualTo(3);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(coversheetDoc.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coCanApplyDoc.getValue());
+        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(coRefusalDoc.getValue());
+
+        verify(bulkPrintService).print(print);
+    }
+
+    @Test
+    void shouldNotPrintIfNumberOfAwaitingClarificationLettersDoesNotMatchExpectedDocumentsSizeForJudicialSeparation() {
+
+        final ListValue<DivorceDocument> coversheetDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> coCanApplyDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .isJudicialSeparation(YES)
+            .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
+            .applicant2(Applicant.builder().build())
+            .documents(
+                CaseDocuments.builder()
+                    .documentsGenerated(asList(coversheetDoc, coCanApplyDoc))
+                    .build()
+            )
+            .build();
+
+        awaitingClarificationApplicationPrinter.sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1()
+        );
+
+        verify(generateCoversheet).generateCoversheet(
+            eq(caseData),
+            eq(TEST_CASE_ID),
+            eq(COVERSHEET_APPLICANT),
+            anyMap(),
+            eq(ENGLISH)
+        );
+
+        verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
+            caseData,
+            TEST_CASE_ID,
+            JUDICIAL_SEPARATION_REFUSAL_CLARIFICATION_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 
