@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
 
 @Component
 @Slf4j
@@ -54,7 +55,7 @@ public class AwaitingAmendedApplicationPrinter {
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         generateLetters(caseData, caseId, applicant);
-        final List<Letter> currentAwaitingAmendedApplicationLetters = awaitingAmendedApplicationLetters(caseData);
+        final List<Letter> currentAwaitingAmendedApplicationLetters = awaitingAmendedApplicationLetters(caseData, applicant);
 
         if (!isEmpty(currentAwaitingAmendedApplicationLetters)
             && currentAwaitingAmendedApplicationLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
@@ -78,14 +79,16 @@ public class AwaitingAmendedApplicationPrinter {
         }
     }
 
-    private List<Letter> awaitingAmendedApplicationLetters(final CaseData caseData) {
+    private List<Letter> awaitingAmendedApplicationLetters(final CaseData caseData, final Applicant applicant) {
 
         final List<Letter> coversheetLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
             COVERSHEET);
 
         DocumentType refusalCoverLetterType = caseData.getIsJudicialSeparation().toBoolean()
-            ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER
+            ? caseData.getApplication().isPaperCase() && applicant.isRepresented()
+                ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
+                : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER
             : CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 
         final List<Letter> refusalCoverLetters = lettersWithDocumentType(
