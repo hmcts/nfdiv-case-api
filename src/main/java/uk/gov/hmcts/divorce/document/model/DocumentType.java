@@ -77,7 +77,9 @@ public enum DocumentType implements HasLabel {
     JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER("Judicial separation conditional order refusal cover letter"),
 
     @JsonProperty("judicialSeparationConditionalOrderRefusalSolicitorCoverLetter")
-    JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER("Judicial separation conditional order refusal solicitor cover letter"),
+    JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER(
+        "Judicial separation conditional order refusal solicitor cover letter"
+    ),
 
     @JsonProperty("correspondence")
     CORRESPONDENCE("Correspondence"),
