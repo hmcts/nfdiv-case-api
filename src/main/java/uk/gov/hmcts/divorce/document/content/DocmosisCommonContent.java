@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
@@ -30,7 +31,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
@@ -47,6 +50,9 @@ public class DocmosisCommonContent {
 
     @Value("${court.locations.serviceCentre.poBox}")
     private String poBox;
+
+    @Value("${court.locations.serviceCentre.poBoxCy:Blwch Post 13226}")
+    private String poBoxCy;
 
     @Value("${court.locations.serviceCentre.town}")
     private String town;
@@ -77,7 +83,7 @@ public class DocmosisCommonContent {
 
         final var ctscContactDetails = CtscContactDetails
             .builder()
-            .poBox(poBox)
+            .poBox(ENGLISH.equals(languagePreference) ? poBox : poBoxCy)
             .town(town)
             .postcode(postcode)
             .emailAddress(courtEmail)
@@ -109,24 +115,27 @@ public class DocmosisCommonContent {
         templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
         templateContent.put(IS_JOINT, isJoint);
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
-        templateContent.put(APPLICANT_1_SOLICITOR_NAME, solicitorName(applicant1, applicant1Solicitor));
-        templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName(applicant2, applicant2Solicitor));
+        templateContent.put(APPLICANT_1_SOLICITOR_NAME, solicitorName(applicant1, applicant1Solicitor, applicant1.getLanguagePreference()));
+        templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName(applicant2, applicant2Solicitor, applicant2.getLanguagePreference()));
         templateContent.put(SOLICITOR_NAME, isApplicantSolicitor ? applicant1Solicitor.getName() : applicant2Solicitor.getName());
         templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor ? applicant1Solicitor.getAddress() : applicant2Solicitor.getAddress());
 
         templateContent.put(
             SOLICITOR_REFERENCE,
-            isApplicantSolicitor ? solicitorReference(applicant1Solicitor) : solicitorReference(applicant2Solicitor)
+            isApplicantSolicitor
+                ? solicitorReference(applicant1Solicitor, applicant1.getLanguagePreference())
+                : solicitorReference(applicant2Solicitor, applicant2.getLanguagePreference())
         );
 
         return templateContent;
     }
 
-    private String solicitorName(Applicant applicant, Solicitor solicitor) {
-        return applicant.isRepresented() ? solicitor.getName() : NOT_REPRESENTED;
+    private String solicitorName(Applicant applicant, Solicitor solicitor, LanguagePreference languagePreference) {
+        return applicant.isRepresented() ? solicitor.getName() : WELSH.equals(languagePreference) ? NOT_REPRESENTED_CY : NOT_REPRESENTED;
     }
 
-    private String solicitorReference(Solicitor solicitor) {
-        return isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : NOT_PROVIDED;
+    private String solicitorReference(Solicitor solicitor, LanguagePreference languagePreference) {
+        return isNotEmpty(solicitor.getReference())
+            ? solicitor.getReference() : WELSH.equals(languagePreference) ? NOT_PROVIDED_CY : NOT_PROVIDED;
     }
 }

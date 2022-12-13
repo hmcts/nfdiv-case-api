@@ -157,6 +157,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
@@ -179,6 +180,7 @@ public class TestDataHelper {
 
     public static final LocalDate LOCAL_DATE = LocalDate.of(2021, 4, 28);
     public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 4, 28, 1, 0);
+    public static final String TEST_ADDRESS = "line1\nline2\ncity\npostcode";
     private static final String DOC_CONTROL_NUMBER = "61347040100200003";
     private static final LocalDateTime DOC_SCANNED_DATE_META_INFO = LocalDateTime.of(2022, 1, 1, 12, 12, 0);
     private static final String DOCUMENT_URL = "http://localhost:8080/documents/640055da-9330-11ec-b909-0242ac120002";
@@ -1212,5 +1214,53 @@ public class TestDataHelper {
                 .documentsGenerated(Lists.newArrayList(coGrantedDoc, coCoverLetterApp1, coCoverLetterApp2))
                 .build())
             .build();
+    }
+
+    public static CaseData caseDataWithSolicitor() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setApplicant1(Applicant.builder()
+            .firstName("Bob")
+            .lastName("Smith")
+            .offline(YES)
+            .address(APPLICANT_ADDRESS)
+            .solicitorRepresented(NO)
+            .solicitor(Solicitor.builder().build())
+            .languagePreferenceWelsh(NO)
+            .build());
+        caseData.setApplicant2(Applicant.builder()
+            .firstName("Julie")
+            .lastName("Smith")
+            .offline(YES)
+            .address(APPLICANT_ADDRESS)
+            .solicitorRepresented(NO)
+            .solicitor(Solicitor.builder().build())
+            .languagePreferenceWelsh(NO)
+            .build());
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        String sol1Name = "Sol1";
+        String sol2Name = "Sol2";
+        String sol1Reference = "1234";
+        String sol2Reference = "4567";
+
+        caseData.getApplicant1().setSolicitor(Solicitor.builder()
+            .reference(sol1Reference)
+            .name(sol1Name)
+            .address(TEST_ADDRESS)
+            .build());
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitor(Solicitor.builder()
+            .reference(sol2Reference)
+            .name(sol2Name)
+            .address(TEST_ADDRESS)
+            .build());
+
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .dateAndTimeOfHearing(LocalDateTime.of(2022, 4, 28, 10, 0, 0))
+            .court(BURY_ST_EDMUNDS)
+            .build());
+
+        return caseData;
     }
 }

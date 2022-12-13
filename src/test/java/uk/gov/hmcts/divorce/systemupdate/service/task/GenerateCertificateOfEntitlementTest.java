@@ -43,6 +43,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
@@ -54,19 +55,23 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_FO_ELIGIBLE_FROM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
@@ -89,13 +94,13 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.TEST_ADDRESS;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithSolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getSolicitorDocTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
 class GenerateCertificateOfEntitlementTest {
-
-    private static final String TEST_ADDRESS = "line1\nline2\ncity\npostcode";
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -778,28 +783,74 @@ class GenerateCertificateOfEntitlementTest {
         );
     }
 
-    private CaseData caseDataWithSolicitor() {
-        final CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(YES);
-        caseData.getApplicant1().setSolicitorRepresented(YES);
-        String sol1Name = "Sol1";
-        String sol2Name = "Sol2";
-        String sol1Reference = "1234";
-        String sol2Reference = "4567";
+    @Test
+    void shouldRenderCoverLetterInWelshToApplicantsSolicitorWhenJointJudicialSeparationAndBothApplicantsOfflineAndRepresented() {
 
-        caseData.getApplicant1().setSolicitor(Solicitor.builder()
-            .reference(sol1Reference)
-            .name(sol1Name)
-            .address(TEST_ADDRESS)
-            .build());
-        caseData.getApplicant2().setSolicitorRepresented(YES);
-        caseData.getApplicant2().setSolicitor(Solicitor.builder()
-            .reference(sol2Reference)
-            .name(sol2Name)
-            .address(TEST_ADDRESS)
-            .build());
+        setMockClock(clock);
 
-        return caseData;
+        final CaseData caseData = caseDataWithSolicitor();
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .dateAndTimeOfHearing(LocalDateTime.of(2022, 4, 28, 10, 0, 0))
+            .court(BURY_ST_EDMUNDS)
+            .build());
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        Map<String, Object> applicantTemplateVars = new HashMap<>();
+        applicantTemplateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
+        applicantTemplateVars.put(SOLICITOR_REFERENCE, caseData.getApplicant1().getSolicitor().getReference());
+        applicantTemplateVars.put(SOLICITOR_ADDRESS, caseData.getApplicant1().getSolicitor().getAddress());
+        applicantTemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+
+        applicantTemplateVars.put(COURT_NAME, caseData.getConditionalOrder().getCourt().getLabel());
+        applicantTemplateVars.put(DATE_OF_HEARING,
+            caseData.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER));
+        applicantTemplateVars.put(TIME_OF_HEARING,
+            caseData.getConditionalOrder().getDateAndTimeOfHearing().format(TIME_FORMATTER));
+        applicantTemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
+        applicantTemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
+        applicantTemplateVars.put(CONTACT_EMAIL, CONTACT_JUSTICE_GOV_UK_CY);
+        applicantTemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
+        applicantTemplateVars.put(IS_DIVORCE, true);
+        applicantTemplateVars.put(IS_JOINT, true);
+
+        Map<String, Object> respondentTemplateVars = new HashMap<>(applicantTemplateVars);
+        respondentTemplateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+        respondentTemplateVars.put(SOLICITOR_REFERENCE, caseData.getApplicant2().getSolicitor().getReference());
+        respondentTemplateVars.put(SOLICITOR_ADDRESS, caseData.getApplicant2().getSolicitor().getAddress());
+
+        when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, true, WELSH))
+            .thenReturn(getSolicitorDocTemplateContent(caseData, caseData.getApplicant1()));
+
+        when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, false, WELSH))
+            .thenReturn(getSolicitorDocTemplateContent(caseData, caseData.getApplicant2()));
+
+        generateCertificateOfEntitlement.generateCertificateOfEntitlementCoverLetters(details);
+
+        verify(caseDataDocumentService, atMostOnce()).renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            applicantTemplateVars,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            WELSH,
+            formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
+
+        verify(caseDataDocumentService, atMostOnce()).renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+            respondentTemplateVars,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            ENGLISH,
+            formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
     }
 
     private CaseData caseData() {
