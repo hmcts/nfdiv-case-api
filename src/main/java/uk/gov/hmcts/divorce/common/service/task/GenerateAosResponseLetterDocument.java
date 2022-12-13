@@ -47,7 +47,6 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
             if (YES.equals(caseData.getIsJudicialSeparation())) {
                 if (acknowledgementOfService.isDisputed()) {
                     log.info("Generating JS aos response (disputed) letter pdf for case id: {}", caseDetails.getId());
-                    generateD84Form.generateD84Document(caseData, caseId);
                     caseDataDocumentService.renderDocumentAndUpdateCaseData(
                         caseData,
                         AOS_RESPONSE_LETTER,
@@ -57,6 +56,7 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
                         caseData.getApplicant1().getLanguagePreference(),
                         AOS_RESPONSE_LETTER_DOCUMENT_NAME
                     );
+                    generateD84Form.generateD84Document(caseData, caseId);
                 }
             } else {
                 if (acknowledgementOfService.isDisputed()) {

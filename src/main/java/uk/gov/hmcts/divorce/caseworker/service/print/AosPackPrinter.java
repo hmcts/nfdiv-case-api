@@ -138,6 +138,11 @@ public class AosPackPrinter {
 
         if (!isEmpty(aosResponseLetterWithAos) && aosResponseLetterWithAos.size() >= AOS_RESPONSE_LETTERS_COUNT) {
 
+            log.info("Letter service size {}, for case {}", aosResponseLetterWithAos.size(), caseId);
+            for (Letter letter : aosResponseLetterWithAos) {
+                log.info("Letter docType {}, name {}, for case {}", letter.getDivorceDocument().getDocumentType(),
+                    letter.getDivorceDocument().getDocumentFileName(), caseId);
+            }
             final String caseIdString = caseId.toString();
             final Print print = new Print(aosResponseLetterWithAos, caseIdString, caseIdString, LETTER_TYPE_AOS_RESPONSE_PACK);
             final UUID letterId = bulkPrintService.print(print);
