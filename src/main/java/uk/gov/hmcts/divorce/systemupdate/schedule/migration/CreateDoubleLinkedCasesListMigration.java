@@ -29,13 +29,15 @@ public class CreateDoubleLinkedCasesListMigration implements Migration {
     @Autowired
     private CcdSearchService ccdSearchService;
 
-    private Map<String, Set<Long>> caseToBulkCasesMap = new HashMap<>();
-
     @Override
     public void apply(final User user, final String serviceAuthorization) {
 
         if (migrateCreateDoubleLinkedList) {
+
             log.info("Started CreateDoubleLinkedCasesListMigration");
+
+            final Map<String, Set<Long>> caseToBulkCasesMap = new HashMap<>();
+
             try {
 
                 final List<CaseDetails<BulkActionCaseData, BulkActionState>> bulkCases = ccdSearchService
