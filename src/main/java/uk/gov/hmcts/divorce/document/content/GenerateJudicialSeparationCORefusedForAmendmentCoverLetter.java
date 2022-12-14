@@ -82,19 +82,21 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
     }
 
     private String getSolicitorName(final Applicant applicant) {
-        return applicant.isRepresented()
-            ? applicant.getSolicitor().getName()
-            : WELSH.equals(applicant.getLanguagePreference())
-                ? "nas cynrychiolwyd"
-                : "not represented";
+        if (applicant.isRepresented()) {
+            return applicant.getSolicitor().getName();
+        }
+        return WELSH.equals(applicant.getLanguagePreference())
+            ? "nas cynrychiolwyd"
+            : "not represented";
     }
 
     private String getSolicitorReference(final Applicant applicant) {
-        return applicant.isRepresented() && applicant.getSolicitor().getReference() != null
-            ? applicant.getSolicitor().getReference()
-            : WELSH.equals(applicant.getLanguagePreference())
-                ? "heb ei ddarparu"
-                : "not provided";
+        if (applicant.isRepresented() && applicant.getSolicitor().getReference() != null) {
+            return applicant.getSolicitor().getReference();
+        }
+        return WELSH.equals(applicant.getLanguagePreference())
+            ? "heb ei ddarparu"
+            : "not provided";
     }
 
     private Map<String, Object> templateContent(final CaseData caseData, final Long ccdCaseReference, final Applicant applicant) {
