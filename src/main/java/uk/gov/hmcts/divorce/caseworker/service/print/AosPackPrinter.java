@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -107,11 +108,11 @@ public class AosPackPrinter {
         final List<Letter> aosResponseLetters = getLettersBasedOnContactPrivacy(caseData, AOS_RESPONSE_LETTER);
 
         List<Letter> aosLetters;
-        //List<Letter> d84FormLetters = null;
+        List<Letter> d84FormLetters = null;
         if (caseData.getApplicant2().isApplicantOffline()) {
             // When respondent is offline respondent answers doc is reclassified and added to docs uploaded list
             aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsUploaded(), RESPONDENT_ANSWERS);
-        //d84FormLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D84);
+            d84FormLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D84);
         } else {
             // When respondent is online respondent answers doc is generated and added to docs generated list
             aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), RESPONDENT_ANSWERS);
@@ -121,7 +122,7 @@ public class AosPackPrinter {
 
         final Letter aosLetter = firstElement(aosLetters);
 
-        //final Letter d84FormLetter = firstElement(d84FormLetters);
+        final Letter d84FormLetter = firstElement(d84FormLetters);
 
         final List<Letter> aosResponseLetterWithAos = new ArrayList<>();
 
@@ -132,9 +133,9 @@ public class AosPackPrinter {
             aosResponseLetterWithAos.add(aosLetter);
         }
 
-        //if (null != d84FormLetter) {
-        //  aosResponseLetterWithAos.add(d84FormLetter);
-        //}
+        if (null != d84FormLetter) {
+          aosResponseLetterWithAos.add(d84FormLetter);
+        }
 
         if (!isEmpty(aosResponseLetterWithAos) && aosResponseLetterWithAos.size() >= AOS_RESPONSE_LETTERS_COUNT) {
 
