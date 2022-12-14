@@ -134,7 +134,7 @@ public class AosPackPrinter {
         }
 
         if (null != d84FormLetter) {
-          aosResponseLetterWithAos.add(d84FormLetter);
+            aosResponseLetterWithAos.add(d84FormLetter);
         }
 
         if (!isEmpty(aosResponseLetterWithAos) && aosResponseLetterWithAos.size() >= AOS_RESPONSE_LETTERS_COUNT) {
