@@ -137,6 +137,11 @@ public class AosPackPrinter {
             aosResponseLetterWithAos.add(d84FormLetter);
         }
 
+        Letter coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
+        if (null != coversheetLetter) {
+            aosResponseLetterWithAos.add(coversheetLetter);
+        }
+
         if (!isEmpty(aosResponseLetterWithAos) && aosResponseLetterWithAos.size() >= AOS_RESPONSE_LETTERS_COUNT) {
 
             log.info("Letter service size {}, for case {}", aosResponseLetterWithAos.size(), caseId);

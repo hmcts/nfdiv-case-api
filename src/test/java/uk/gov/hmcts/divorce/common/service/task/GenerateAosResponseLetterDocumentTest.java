@@ -6,11 +6,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.AosResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.content.AosUndefendedResponseLetterTemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import java.util.HashMap;
@@ -47,6 +49,12 @@ class GenerateAosResponseLetterDocumentTest {
 
     @Mock
     private GenerateD84Form generateD84Form;
+
+    @Mock
+    private GenerateCoversheet generateCoversheet;
+
+    @Mock
+    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
 
     @InjectMocks
     private GenerateAosResponseLetterDocument generateAosResponseLetterDocument;
@@ -161,6 +169,7 @@ class GenerateAosResponseLetterDocumentTest {
             );
 
         verify(generateD84Form).generateD84Document(caseData, TEST_CASE_ID);
+        verify(coversheetApplicantTemplateContent).apply(caseData, TEST_CASE_ID, caseData.getApplicant1());
         verifyNoMoreInteractions(caseDataDocumentService);
     }
 
@@ -181,6 +190,8 @@ class GenerateAosResponseLetterDocumentTest {
         generateAosResponseLetterDocument.apply(caseDetails);
 
         verifyNoMoreInteractions(caseDataDocumentService);
+        verifyNoMoreInteractions(generateD84Form);
+        verifyNoMoreInteractions(coversheetApplicantTemplateContent);
     }
 
     @Test
@@ -226,6 +237,8 @@ class GenerateAosResponseLetterDocumentTest {
 
         verifyNoMoreInteractions(caseDataDocumentService);
         verifyNoInteractions(aosUndefendedResponseLetterTemplateContent);
+        verifyNoMoreInteractions(generateD84Form);
+        verifyNoMoreInteractions(coversheetApplicantTemplateContent);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
