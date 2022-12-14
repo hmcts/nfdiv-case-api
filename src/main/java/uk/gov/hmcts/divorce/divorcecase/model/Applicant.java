@@ -106,6 +106,15 @@ public class Applicant {
     )
     private String nameDifferentToMarriageCertificateOtherDetails;
 
+    @CCD(label = "How did they change their name?")
+    private Set<ChangedNameHow> nameChangedHow;
+
+    @CCD(
+        label = "Details of how they changed their name",
+        typeOverride = TextArea
+    )
+    private String nameChangedHowOtherDetails;
+
     @CCD(label = "Address")
     private AddressGlobalUK address;
 
