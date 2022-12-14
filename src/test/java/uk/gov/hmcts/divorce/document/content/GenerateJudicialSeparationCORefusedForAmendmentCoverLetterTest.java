@@ -110,7 +110,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(JOINT_APPLICATION)
-            .isJudicialSeparation(YesOrNo.YES)
+            .isJudicialSeparation(YES)
             .applicant1(
                 Applicant.builder()
                     .firstName("Bob")
@@ -182,10 +182,10 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(JOINT_APPLICATION)
-            .isJudicialSeparation(YesOrNo.YES)
+            .isJudicialSeparation(YES)
             .applicant1(
                 Applicant.builder()
-                    .solicitorRepresented(YesOrNo.YES)
+                    .solicitorRepresented(YES)
                     .solicitor(
                         Solicitor.builder()
                             .name("App1 Solicitor Name")
@@ -201,7 +201,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             )
             .applicant2(
                 Applicant.builder()
-                    .solicitorRepresented(YesOrNo.YES)
+                    .solicitorRepresented(YES)
                     .solicitor(
                         Solicitor.builder()
                             .name("App2 Solicitor Name")
@@ -216,7 +216,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             )
             .application(
                 Application.builder()
-                    .newPaperCase(YesOrNo.YES)
+                    .newPaperCase(YES)
                     .build()
             )
             .conditionalOrder(
@@ -273,10 +273,10 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(SOLE_APPLICATION)
-            .isJudicialSeparation(YesOrNo.YES)
+            .isJudicialSeparation(YES)
             .applicant1(
                 Applicant.builder()
-                    .solicitorRepresented(YesOrNo.YES)
+                    .solicitorRepresented(YES)
                     .solicitor(
                         Solicitor.builder()
                             .name("App1 Solicitor Name")
@@ -298,7 +298,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             )
             .application(
                 Application.builder()
-                    .newPaperCase(YesOrNo.YES)
+                    .newPaperCase(YES)
                     .build()
             )
             .conditionalOrder(
