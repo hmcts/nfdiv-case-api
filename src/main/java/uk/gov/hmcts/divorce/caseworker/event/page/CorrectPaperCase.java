@@ -141,7 +141,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
                     "Have they changed their name since they ${labelContentGotMarriedOrFormedCivilPartnership}?")
                 .mandatory(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
-                "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
+                    "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatoryWithLabel(Applicant::getAddress, "${labelContentRespondentsOrApplicant2s} address")
                 .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentRespondentsOrApplicant2s} phone number")
                 .optionalWithLabel(Applicant::getEmail, "${labelContentRespondentsOrApplicant2s} email address")
