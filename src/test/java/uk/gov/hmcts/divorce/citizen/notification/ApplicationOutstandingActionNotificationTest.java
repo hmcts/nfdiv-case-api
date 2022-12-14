@@ -40,6 +40,7 @@ import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingAc
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ChangedNameHow.DEED_POLL;
+import static uk.gov.hmcts.divorce.divorcecase.model.ChangedNameHow.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
