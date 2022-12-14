@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
@@ -212,6 +213,75 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             eq(TEST_CASE_ID),
             eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
             eq(WELSH),
+            anyString()
+        );
+    }
+
+    @Test
+    void shouldGenerateAndUpdateCaseDataForCivilPartnership() {
+        setMockClock(clock);
+
+        final List<ConditionalOrderCommonContent.RefusalReason> refusalReasons =
+            List.of(new ConditionalOrderCommonContent.RefusalReason("Court does not have jurisdiction"));
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        templateContent.put(CONTACT_EMAIL, "divorcecase@justice.gov.uk");
+        templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+        templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
+        templateContent.put(IS_JOINT, true);
+        templateContent.put(FIRST_NAME, "Bob");
+        templateContent.put(LAST_NAME, "Smith");
+        templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
+        templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
+        templateContent.put(FEEDBACK, refusalReasons);
+        templateContent.put(PARTNER, "wife");
+        templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DivorceOrDissolution.DISSOLUTION)
+            .applicationType(JOINT_APPLICATION)
+            .isJudicialSeparation(YES)
+            .applicant1(
+                Applicant.builder()
+                    .firstName("Bob")
+                    .lastName("Smith")
+                    .address(APPLICANT_ADDRESS)
+                    .languagePreferenceWelsh(NO)
+                    .build()
+            )
+            .applicant2(
+                Applicant.builder()
+                    .gender(FEMALE)
+                    .build()
+            )
+            .conditionalOrder(
+                ConditionalOrder.builder()
+                    .refusalRejectionAdditionalInfo("Court does not have jurisdiction")
+                    .build()
+            )
+            .build();
+
+        templateContent.put(ADDRESS, caseData.getApplicant1().getAddress());
+
+        when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
+            .thenReturn(refusalReasons);
+        when(conditionalOrderCommonContent.getPartner(caseData))
+            .thenReturn("wife");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference()));
+
+        generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
+            caseData, TEST_CASE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
+
+        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
+            eq(caseData),
+            eq(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER),
+            eq(templateContent),
+            eq(TEST_CASE_ID),
+            eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
+            eq(ENGLISH),
             anyString()
         );
     }
