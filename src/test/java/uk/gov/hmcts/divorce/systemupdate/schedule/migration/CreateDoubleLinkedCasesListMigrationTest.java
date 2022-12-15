@@ -23,6 +23,7 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -106,6 +107,30 @@ class CreateDoubleLinkedCasesListMigrationTest {
 
         verify(logger).info("Case Id: {} linked in bulk Cases: {}", "2", Set.of(1L, 2L));
         verify(logger).info("Case Id: {} linked in bulk Cases: {}", "4", Set.of(3L, 4L));
+    }
+
+    @Test
+    void shouldHandleNullCaseList() {
+
+        setField(createDoubleLinkedCasesListMigration, "migrateCreateDoubleLinkedList", true);
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+        bulkCaseDetails.setId(1L);
+        bulkCaseDetails.setData(BulkActionCaseData.builder()
+            .bulkListCaseDetails(null)
+            .build());
+
+        final List<CaseDetails<BulkActionCaseData, BulkActionState>> caseDetailsList
+            = List.of(bulkCaseDetails);
+
+        when(ccdSearchService.searchForBulkCases(user, SERVICE_AUTHORIZATION, boolQuery()))
+            .thenReturn(caseDetailsList);
+
+        try {
+            createDoubleLinkedCasesListMigration.apply(user, SERVICE_AUTHORIZATION);
+        } catch (final Exception e) {
+            fail(String.format("Exception has been thrown: %s", e.getMessage()));
+        }
     }
 
     @Test
