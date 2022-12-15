@@ -206,4 +206,48 @@ class AwaitingConditionalOrderReminderNotificationTest {
 
         verifyNoInteractions(conditionalOrderReminderPrinter);
     }
+
+    @Test
+    void shouldNotSendToApplicant1IfSentInPastSuccessfully() {
+        final CaseData caseData = caseData();
+        caseData.getSentNotifications()
+            .setAwaitingConditionalOrderReminderNotificationSendToApplicant1(YES);
+
+        awaitingConditionalOrderReminderNotification.sendToApplicant1(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendToApplicant2IfSentInPastSuccessfully() {
+        final CaseData caseData = caseData();
+        caseData.getSentNotifications()
+            .setAwaitingConditionalOrderReminderNotificationSendToApplicant2(YES);
+
+        awaitingConditionalOrderReminderNotification.sendToApplicant2(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendToApplicant1OfflineIfSentInPastSuccessfully() {
+        final CaseData caseData = caseData();
+        caseData.getSentNotifications()
+            .setAwaitingConditionalOrderReminderNotificationSendToApplicant1Offline(YES);
+
+        awaitingConditionalOrderReminderNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(conditionalOrderReminderPrinter);
+    }
+
+    @Test
+    void shouldNotSendToApplicant2OfflineIfSentInPastSuccessfully() {
+        final CaseData caseData = caseData();
+        caseData.getSentNotifications()
+            .setAwaitingConditionalOrderReminderNotificationSendToApplicant2Offline(YES);
+
+        awaitingConditionalOrderReminderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(conditionalOrderReminderPrinter);
+    }
 }
