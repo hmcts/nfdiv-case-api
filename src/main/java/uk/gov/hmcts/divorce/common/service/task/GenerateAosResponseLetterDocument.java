@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.document.content.AosUndefendedResponseLetterTemplate
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
@@ -59,7 +59,7 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
                         AOS_RESPONSE_LETTER,
                         aosUndefendedResponseLetterTemplateContent.apply(caseData, caseId),
                         caseId,
-                        NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED,
+                        NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED,
                         caseData.getApplicant1().getLanguagePreference(),
                         AOS_RESPONSE_LETTER_DOCUMENT_NAME
                     );
