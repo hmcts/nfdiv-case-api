@@ -77,11 +77,7 @@ public class AosResponseLetterTemplateContent {
         templateContent.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
         templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());
-        templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
-        templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
-        templateContent.put(IS_DIVORCE, caseData.isDivorce());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
-        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(
@@ -106,6 +102,10 @@ public class AosResponseLetterTemplateContent {
         }
 
         if (YES.equals(caseData.getIsJudicialSeparation())) {
+            templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
+            templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
+            templateContent.put(IS_DIVORCE, caseData.isDivorce());
+            templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
             templateContent.put(RECIPIENT_NAME, caseData.getApplicant1().isRepresented()
                 ? caseData.getApplicant1().getSolicitor().getName() : caseData.getApplicant1().getFullName());
             templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().isRepresented()
