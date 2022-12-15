@@ -187,12 +187,27 @@ class GenerateAosResponseLetterDocumentTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(aosResponseLetterTemplateContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
 
         generateAosResponseLetterDocument.apply(caseDetails);
 
-        verifyNoMoreInteractions(caseDataDocumentService);
+        verify(caseDataDocumentService)
+            .renderDocumentAndUpdateCaseData(
+                caseData,
+                AOS_RESPONSE_LETTER,
+                templateContent,
+                TEST_CASE_ID,
+                RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID,
+                caseData.getApplicant1().getLanguagePreference(),
+                AOS_RESPONSE_LETTER_DOCUMENT_NAME
+            );
+
         verifyNoMoreInteractions(generateD84Form);
         verifyNoMoreInteractions(coversheetApplicantTemplateContent);
+        verifyNoMoreInteractions(caseDataDocumentService);
     }
 
     @Test
