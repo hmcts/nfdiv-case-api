@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.Optional.ofNullable;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 
 @Component
@@ -50,14 +49,11 @@ public class CreateDoubleLinkedCasesListMigration implements Migration {
                     final BulkActionCaseData bulkCase = bulkDetails.getData();
                     final Long bulkCaseId = bulkDetails.getId();
 
-                    ofNullable(bulkCase.getBulkListCaseDetails())
-                        .ifPresent(list -> list
-                            .forEach(value -> {
-                                final String caseReference = value.getValue().getCaseReference().getCaseReference();
-                                final Set<Long> bulkCaseReferences = caseToBulkCasesMap
-                                    .computeIfAbsent(caseReference, s -> new HashSet<>());
-                                bulkCaseReferences.add(bulkCaseId);
-                            }));
+                    bulkCase.getBulkListCaseDetails().forEach(value -> {
+                        final String caseReference = value.getValue().getCaseReference().getCaseReference();
+                        final Set<Long> bulkCaseReferences = caseToBulkCasesMap.computeIfAbsent(caseReference, s -> new HashSet<>());
+                        bulkCaseReferences.add(bulkCaseId);
+                    });
                 });
 
                 caseToBulkCasesMap.entrySet().stream()
