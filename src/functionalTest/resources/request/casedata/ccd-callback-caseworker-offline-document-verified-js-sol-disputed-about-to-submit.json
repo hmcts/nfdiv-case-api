@@ -151,7 +151,7 @@
   "applicant1SolicitorName": "Applicant 1 Solicitor",
   "applicant2SolicitorName": "Applicant 2 Solicitor",
   "coApplicant1IsSubmitted": "No",
-  "howToRespondApplication": "withoutDisputeDivorce",
+  "howToRespondApplication": "disputeDivorce",
   "jurisdictionConnections": [
     "A"
   ],
@@ -175,7 +175,7 @@
   "labelContentTheApplicant2UC": "Respondent",
   "applicant1ContactDetailsType": "public",
   "applicant2ContactDetailsType": "public",
-  "applicant1SolicitorRepresented": "No",
+  "applicant1SolicitorRepresented": "Yes",
   "applicant2SolicitorRepresented": "No",
   "applicant1PrayerDissolveDivorce": [
     "dissolveDivorce"

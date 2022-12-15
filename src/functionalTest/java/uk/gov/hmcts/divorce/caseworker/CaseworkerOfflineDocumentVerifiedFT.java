@@ -58,7 +58,7 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendAosLetterForJSDisputed() throws IOException {
+    public void shouldSendAosLetterForApp1SolJSDisputed() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D10_JS_SOL_DISPUTED_REQUEST);
         caseData.put("coDateD84FormScanned", "2022-01-01T12:12");
         caseData.put("coApplicant1SubmittedDate", "2022-01-18T12:12:12.123");
@@ -70,7 +70,7 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendAosLetterForJSDisputedForSubmitted() throws IOException {
+    public void shouldSendAosLetterForApp1SolJSDisputedForSubmitted() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D10_JS_SOL_DISPUTED_SUBMITTED_REQUEST);
         caseData.put("coDateD84FormScanned", "2022-01-01T12:12");
         caseData.put("coApplicant1SubmittedDate", "2022-01-18T12:12:12.123");
