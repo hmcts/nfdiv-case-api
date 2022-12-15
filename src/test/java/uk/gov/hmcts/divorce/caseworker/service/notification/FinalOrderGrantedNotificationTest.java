@@ -44,6 +44,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANTS_FINAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -58,7 +60,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 public class FinalOrderGrantedNotificationTest {
 
     private static final long TEST_CASE_ID = 1234567890123456L;
-    private static final String IS_SWITCHED_TO_SOLE_PARTNER = "isSwitchedToSolePartner";
 
     @Mock
     private CommonContent commonContent;
@@ -89,7 +90,6 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
-        templateContent.put(IS_SWITCHED_TO_SOLE_PARTNER, NO);
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
@@ -99,6 +99,39 @@ public class FinalOrderGrantedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(APPLICANTS_FINAL_ORDER_GRANTED),
+            eq(templateContent),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void shouldSendSwitchedToSoleFinalOrderGrantedEmailToApplicant1() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+
+        final Applicant applicant2 = getApplicant();
+        caseData.setApplicant2(applicant2);
+
+        caseData.getFinalOrder().setFinalOrderSwitchedToSole(YesOrNo.YES);
+
+        Map<String, String> templateContent = new HashMap<>();
+        templateContent.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
+        templateContent.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
+        templateContent.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
+        templateContent.put(FIRST_NAME, caseData.getApplicant1().getFirstName());
+        templateContent.put(LAST_NAME, caseData.getApplicant1().getLastName());
+        templateContent.put(PARTNER, "partner");
+        templateContent.put(COURT_EMAIL, "courtEmail");
+
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        finalOrderGrantedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT),
             eq(templateContent),
             eq(ENGLISH)
         );
@@ -171,7 +204,6 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(LAST_NAME, caseData.getApplicant2().getLastName());
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
-        templateContent.put(IS_SWITCHED_TO_SOLE_PARTNER, NO);
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
@@ -181,6 +213,40 @@ public class FinalOrderGrantedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(APPLICANTS_FINAL_ORDER_GRANTED),
+            eq(templateContent),
+            eq(ENGLISH)
+        );
+    }
+
+    @Test
+    void shouldSendSwitchedToSoleFinalOrderGrantedEmailToApplicant2() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+
+        final Applicant applicant2 = getApplicant();
+        applicant2.setSolicitorRepresented(YesOrNo.NO);
+        caseData.setApplicant2(applicant2);
+
+        caseData.getFinalOrder().setFinalOrderSwitchedToSole(YesOrNo.YES);
+
+        Map<String, String> templateContent = new HashMap<>();
+        templateContent.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
+        templateContent.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
+        templateContent.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
+        templateContent.put(FIRST_NAME, caseData.getApplicant2().getFirstName());
+        templateContent.put(LAST_NAME, caseData.getApplicant2().getLastName());
+        templateContent.put(PARTNER, "partner");
+        templateContent.put(COURT_EMAIL, "courtEmail");
+
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        finalOrderGrantedNotification.sendToApplicant2(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT),
             eq(templateContent),
             eq(ENGLISH)
         );
