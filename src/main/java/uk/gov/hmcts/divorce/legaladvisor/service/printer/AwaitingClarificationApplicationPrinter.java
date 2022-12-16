@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.content.GenerateJudicialSeparationCORefusedForClarificationCoverLetter;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -21,6 +22,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -43,11 +45,14 @@ public class AwaitingClarificationApplicationPrinter {
     @Autowired
     private GenerateCoRefusedCoverLetter generateCoRefusedCoverLetter;
 
+    @Autowired
+    private GenerateJudicialSeparationCORefusedForClarificationCoverLetter generateJudicialSeparationCORefusedForClarificationCoverLetter;
+
     private static final int EXPECTED_DOCUMENTS_SIZE = 3;
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         generateLetters(caseData, caseId, applicant);
-        final List<Letter> currentAwaitingClarificationApplicationLetters = awaitingClarificationApplicationLetters(caseData);
+        final List<Letter> currentAwaitingClarificationApplicationLetters = awaitingClarificationApplicationLetters(caseData, applicant);
 
         if (!isEmpty(currentAwaitingClarificationApplicationLetters)
             && currentAwaitingClarificationApplicationLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
@@ -71,7 +76,7 @@ public class AwaitingClarificationApplicationPrinter {
         }
     }
 
-    private List<Letter> awaitingClarificationApplicationLetters(final CaseData caseData) {
+    private List<Letter> awaitingClarificationApplicationLetters(final CaseData caseData, final Applicant applicant) {
 
         final List<Letter> coversheetLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
@@ -80,7 +85,7 @@ public class AwaitingClarificationApplicationPrinter {
 
         final List<Letter> refusalCoverLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
-            CONDITIONAL_ORDER_REFUSAL_COVER_LETTER
+            generateJudicialSeparationCORefusedForClarificationCoverLetter.getDocumentType(caseData, applicant)
         );
 
         final List<Letter> refusalLetters = lettersWithDocumentType(
@@ -103,6 +108,16 @@ public class AwaitingClarificationApplicationPrinter {
         if (refusalLetter != null) {
             awaitingClarificationLetters.add(refusalLetter);
         }
+        if (caseData.getIsJudicialSeparation().toBoolean()) {
+            final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
+                caseData.getDocuments().getDocumentsGenerated(),
+                APPLICATION
+            );
+            final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
+            if (divorceApplicationLetter != null) {
+                awaitingClarificationLetters.add(divorceApplicationLetter);
+            }
+        }
 
         return awaitingClarificationLetters;
     }
@@ -115,11 +130,20 @@ public class AwaitingClarificationApplicationPrinter {
             coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
             applicant.getLanguagePreference()
         );
-        generateCoRefusedCoverLetter.generateAndUpdateCaseData(
-            caseData,
-            caseId,
-            CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-            applicant
-        );
+        if (caseData.getApplication().isPaperCase() && applicant.isRepresented() && caseData.getIsJudicialSeparation().toBoolean()) {
+            generateJudicialSeparationCORefusedForClarificationCoverLetter.generateAndUpdateCaseData(
+                caseData,
+                caseId,
+                CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+                applicant
+            );
+        } else {
+            generateCoRefusedCoverLetter.generateAndUpdateCaseData(
+                caseData,
+                caseId,
+                CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+                applicant
+            );
+        }
     }
 }
