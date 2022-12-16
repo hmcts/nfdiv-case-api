@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.GenerateJudicialSeparationCORefusedForAmendmentCoverLetter;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -27,8 +26,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
 
 @Component
 @Slf4j
@@ -85,16 +82,9 @@ public class AwaitingAmendedApplicationPrinter {
             caseData.getDocuments().getDocumentsGenerated(),
             COVERSHEET);
 
-        DocumentType refusalCoverLetterType = CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
-        if (caseData.getIsJudicialSeparation().toBoolean()) {
-            refusalCoverLetterType = caseData.getApplication().isPaperCase() && applicant.isRepresented()
-                ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
-                : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
-        }
-
         final List<Letter> refusalCoverLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
-            refusalCoverLetterType
+            generateJudicialSeparationCORefusedForAmendmentCoverLetter.getDocumentType(caseData, applicant)
         );
 
         final List<Letter> refusalLetters = lettersWithDocumentType(

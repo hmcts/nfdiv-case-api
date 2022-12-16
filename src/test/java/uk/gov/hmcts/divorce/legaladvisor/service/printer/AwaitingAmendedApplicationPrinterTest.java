@@ -108,6 +108,8 @@ public class AwaitingAmendedApplicationPrinterTest {
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
+        when(generateJudicialSeparationCORefusedForAmendmentCoverLetter.getDocumentType(caseData, caseData.getApplicant1()))
+            .thenReturn(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
 
         awaitingAmendedApplicationPrinter.sendLetters(
             caseData,
@@ -183,6 +185,8 @@ public class AwaitingAmendedApplicationPrinterTest {
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
+        when(generateJudicialSeparationCORefusedForAmendmentCoverLetter.getDocumentType(caseData, caseData.getApplicant1()))
+            .thenReturn(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
 
         awaitingAmendedApplicationPrinter.sendLetters(
             caseData,
@@ -259,6 +263,8 @@ public class AwaitingAmendedApplicationPrinterTest {
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
+        when(generateJudicialSeparationCORefusedForAmendmentCoverLetter.getDocumentType(caseData, caseData.getApplicant1()))
+            .thenReturn(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
 
         awaitingAmendedApplicationPrinter.sendLetters(
             caseData,
@@ -344,6 +350,9 @@ public class AwaitingAmendedApplicationPrinterTest {
             )
             .isJudicialSeparation(YesOrNo.NO)
             .build();
+
+        when(generateJudicialSeparationCORefusedForAmendmentCoverLetter.getDocumentType(caseData, caseData.getApplicant1()))
+            .thenReturn(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
 
         awaitingAmendedApplicationPrinter.sendLetters(
             caseData,

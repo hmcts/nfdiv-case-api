@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_FIRM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
@@ -66,9 +67,7 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
 
         log.info("Generating Judicial Separation Conditional Order Refused Cover Letter for case id {} ", caseId);
 
-        final DocumentType coverLetter = caseData.getApplication().isPaperCase() && applicant.isRepresented()
-            ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
-            : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+        final DocumentType coverLetter = this.getDocumentType(caseData, applicant);
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
@@ -79,6 +78,10 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME, now(clock))
         );
+    }
+
+    public DocumentType getDocumentType(final CaseData caseData, final Applicant applicant) {
+        return conditionalOrderCommonContent.getDocumentType(caseData, applicant, false);
     }
 
     private String getSolicitorName(final Applicant applicant) {
