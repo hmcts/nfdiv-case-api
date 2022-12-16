@@ -118,7 +118,7 @@ public class SuperuserRemoveCaseFromBulkList implements CCDConfig<BulkActionCase
                     .toList());
         }
 
-        if (bulkActionCaseData.getPronouncementListDocument() != null) {
+        if (nonNull(bulkActionCaseData.getPronouncementListDocument())) {
             pronouncementListDocService.generateDocument(details);
         }
 
