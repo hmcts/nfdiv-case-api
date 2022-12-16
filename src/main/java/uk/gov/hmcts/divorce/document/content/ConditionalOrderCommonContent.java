@@ -5,9 +5,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.ArrayList;
@@ -20,6 +22,10 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE_WELSH;
 
@@ -62,6 +68,23 @@ public class ConditionalOrderCommonContent {
             return legalAdvisorComments;
 
         }
+    }
+
+    public DocumentType getDocumentType(final CaseData caseData, final Applicant applicant, final boolean isClarificationRefusal) {
+        final boolean isRepresentedPaperCase = caseData.getApplication().isPaperCase() && applicant.isRepresented();
+
+        if (caseData.getIsJudicialSeparation().toBoolean()) {
+            if (isClarificationRefusal) {
+                return isRepresentedPaperCase
+                    ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER
+                    : CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+                // Check this - which doc should be sent to unrepresented applicants for JS clarification refusal?
+            }
+            return isRepresentedPaperCase
+                ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
+                : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+        }
+        return CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
     }
 
     public String getPartner(final CaseData caseData) {
