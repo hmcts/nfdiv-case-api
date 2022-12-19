@@ -21,6 +21,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
@@ -58,7 +59,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_GRANT_FINAL_ORDER)
-            .forStates(FinalOrderRequested, FinalOrderPending, GeneralConsiderationComplete)
+            .forStateTransition(EnumSet.of(FinalOrderRequested, FinalOrderPending, GeneralConsiderationComplete), FinalOrderComplete)
             .name("Grant Final order")
             .description("Grant Final order")
             .showSummary()
@@ -101,7 +102,6 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(FinalOrderComplete)
             .build();
     }
 
