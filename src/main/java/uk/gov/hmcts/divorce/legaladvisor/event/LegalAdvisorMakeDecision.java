@@ -171,7 +171,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
         }
 
         conditionalOrder.setLegalAdvisorDecisions(
-            conditionalOrder.addAuditRecord(
+            CaseData.addAuditRecord(
                 conditionalOrder.getLegalAdvisorDecisions(),
                 conditionalOrder.populateLegalAdvisorDecision(LocalDate.now(clock))
             )

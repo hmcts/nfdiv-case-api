@@ -110,7 +110,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 .build();
 
         conditionalOrder.setClarificationResponsesSubmitted(
-            conditionalOrder.addAuditRecord(
+            CaseData.addAuditRecord(
                 conditionalOrder.getClarificationResponsesSubmitted(),
                 clarificationResponse
             )

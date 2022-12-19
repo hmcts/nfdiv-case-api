@@ -40,6 +40,7 @@ import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Objects.nonNull;
+import static java.util.UUID.randomUUID;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
@@ -485,5 +486,20 @@ public class CaseData {
             conditionalOrder.setScannedD84Form(divorceDocument.getDocumentLink());
             conditionalOrder.setDateD84FormScanned(scannedDocument.getScannedDate());
         }
+    }
+
+    @JsonIgnore
+    public static <T> List<ListValue<T>> addAuditRecord(final List<ListValue<T>> auditRecords,
+                                                 final T value) {
+
+        final var listItemId = String.valueOf(randomUUID());
+        final var listValue = new ListValue<>(listItemId, value);
+        final List<ListValue<T>> list = isEmpty(auditRecords)
+            ? new ArrayList<>()
+            : auditRecords;
+
+        list.add(0, listValue);
+
+        return list;
     }
 }

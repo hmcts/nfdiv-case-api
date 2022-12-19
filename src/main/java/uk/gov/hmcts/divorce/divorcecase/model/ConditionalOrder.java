@@ -364,21 +364,6 @@ public class ConditionalOrder {
     }
 
     @JsonIgnore
-    public <T> List<ListValue<T>> addAuditRecord(final List<ListValue<T>> auditRecords,
-                                                 final T value) {
-
-        final var listItemId = String.valueOf(randomUUID());
-        final var listValue = new ListValue<>(listItemId, value);
-        final List<ListValue<T>> list = isEmpty(auditRecords)
-            ? new ArrayList<>()
-            : auditRecords;
-
-        list.add(0, listValue);
-
-        return list;
-    }
-
-    @JsonIgnore
     public LegalAdvisorDecision populateLegalAdvisorDecision(LocalDate decisionDate) {
 
         if (hasConditionalOrderBeenGranted()) {
