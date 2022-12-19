@@ -232,6 +232,13 @@ public enum State {
     AwaitingService,
 
     @CCD(
+        label = "LA Review",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    LAReview,
+
+    @CCD(
         label = "Awaiting service consideration",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
