@@ -28,7 +28,6 @@ public class LegalAdvisorReview implements CCDConfig<CaseData, State, UserRole> 
 
     public static final String LEGAL_ADVISOR_REVIEW = "legal-advisor-review";
 
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
