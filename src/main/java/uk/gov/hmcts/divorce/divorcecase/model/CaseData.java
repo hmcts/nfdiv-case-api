@@ -411,11 +411,11 @@ public class CaseData {
 
         if (isEmpty(application.getApplicationPayments())) {
             List<ListValue<Payment>> payments = new ArrayList<>();
-            payments.add(new ListValue<>(UUID.randomUUID().toString(), payment));
+            payments.add(new ListValue<>(randomUUID().toString(), payment));
             application.setApplicationPayments(payments);
         } else {
             application.getApplicationPayments()
-                .add(new ListValue<>(UUID.randomUUID().toString(), payment));
+                .add(new ListValue<>(randomUUID().toString(), payment));
         }
     }
 
