@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorReview.LEGAL_ADVISOR_REVIEW;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
