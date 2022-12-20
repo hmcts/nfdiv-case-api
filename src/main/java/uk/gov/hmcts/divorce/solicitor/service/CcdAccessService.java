@@ -180,11 +180,13 @@ public class CcdAccessService {
             .collect(Collectors.toList());
 
         if (!assignmentUserRoles.isEmpty()) {
+            log.info("removeUsersWithRole assignmentUserRoles.size: {}", assignmentUserRoles.size());
             final var caseAssignmentUserRolesReq = CaseAssignmentUserRolesRequest.builder()
                 .caseAssignmentUserRolesWithOrganisation(assignmentUserRoles)
                 .build();
 
-            caseAssignmentApi.removeCaseUserRoles(auth, s2sToken, caseAssignmentUserRolesReq);
+            CaseAssignmentUserRolesResponse response1 = caseAssignmentApi.removeCaseUserRoles(auth, s2sToken, caseAssignmentUserRolesReq);
+            log.info("removeUsersWithRole status: {}", response1.getStatusMessage());
         }
     }
 

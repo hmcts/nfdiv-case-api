@@ -298,6 +298,12 @@ public class CcdAccessServiceTest {
             )
         ).thenReturn(response);
 
+        when(caseAssignmentApi.removeCaseUserRoles(
+            eq(SYSTEM_UPDATE_AUTH_TOKEN),
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            any(CaseAssignmentUserRolesRequest.class)
+        )).thenReturn(CaseAssignmentUserRolesResponse.builder().build());
+
         assertThatCode(() -> ccdAccessService.removeUsersWithRole(TEST_CASE_ID, List.of("[CREATOR]")))
             .doesNotThrowAnyException();
 
