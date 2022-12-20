@@ -271,6 +271,13 @@ public class CaseData {
     @Builder.Default
     private SentNotifications sentNotifications = new SentNotifications();
 
+    @CCD(
+        label = "All final orders granted",
+        typeOverride = Collection,
+        typeParameterOverride = "FinalOrder"
+    )
+    private List<ListValue<FinalOrder>> finalOrdersGrantedAudit;
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);

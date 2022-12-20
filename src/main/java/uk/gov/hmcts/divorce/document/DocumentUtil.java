@@ -176,6 +176,17 @@ public final class DocumentUtil {
         }
     }
 
+    public static void removeDocumentsBasedOnContactPrivacy(final CaseData caseData, final List<DocumentType> documentTypes) {
+        CaseDocuments caseDocuments = caseData.getDocuments();
+        for (final DocumentType documentType: documentTypes) {
+            if (isConfidential(caseData, documentType)) {
+                caseDocuments.removeConfidentialDocumentGeneratedWithType(getConfidentialDocumentType(documentType));
+            } else {
+                caseDocuments.removeDocumentGeneratedWithType(documentType);
+            }
+        }
+    }
+
     private static Map<String, List<DocumentType>> documentsApplicableForConfidentiality() {
         return Map.of(
             APPLICANT1, Lists.newArrayList(
