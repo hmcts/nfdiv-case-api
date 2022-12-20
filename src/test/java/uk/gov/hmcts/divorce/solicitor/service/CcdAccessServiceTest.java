@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -310,7 +311,7 @@ public class CcdAccessServiceTest {
                     .build()))
             .build();
 
-        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(idamService, times(2)).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
         verify(caseAssignmentApi)
             .getUserRoles(
