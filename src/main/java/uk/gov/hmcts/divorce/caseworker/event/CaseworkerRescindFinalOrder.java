@@ -68,10 +68,7 @@ public class CaseworkerRescindFinalOrder implements CCDConfig<CaseData, State, U
         caseData.setRescindedFinalOrders(CaseData.addAuditRecord(caseData.getRescindedFinalOrders(), finalOrderForAudit));
 
         // Nullify current final order
-        caseData.getFinalOrder().setGranted(null);
-        caseData.getFinalOrder().setGrantedDate(null);
-        caseData.getFinalOrder().setDoesApplicant1WantToApplyForFinalOrder(null);
-        caseData.getFinalOrder().setDoesApplicant2WantToApplyForFinalOrder(null);
+        caseData.setFinalOrder(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
